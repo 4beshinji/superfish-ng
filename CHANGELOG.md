@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add full-domain seminar pillbox TM010/TM011 runs, field-overlap mode identification, three-level length sweeps and a local result gallery.
+- Add arbitrary saved-mode plots with electric field arrows, magnetic fields and axial/radial probes.
+- Use signed SF7 fields for higher-mode Wine comparisons; align voltage and power to a common energy normalization.
 - Compare three fundamental-mode cases against installed SUPERFISH under Wine with independent mesh refinement and aligned RF conventions.
 - Add opt-in reference runner, comparison plots, and four offline conversion tests; document the remaining corner peak-field discrepancy.
 - Set the near-term milestone to calculation and visualization of the four user-supplied seminar documents' examples.

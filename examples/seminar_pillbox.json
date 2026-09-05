@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "name": "Seminar pillbox R75mm L80mm: TM010 and TM011",
+  "geometry": {"type": "pillbox", "radius_m": 0.075, "length_m": 0.08},
+  "mesh": {"nr": 64, "nz": 70},
+  "solver": {"modes": 2},
+  "rf": {"beta": 1.0, "conductivity_s_per_m": 58001276.02807262, "normalization_j": 1.0}
+}

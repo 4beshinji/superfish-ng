@@ -46,6 +46,11 @@ def scalar(text, name):
 
 
 def parse_sfo(path):
+    """Read SFO for sign-definite fundamental-mode comparisons.
+
+    SFO's printed axial Ez table is an absolute value. Higher modes must use
+    read_sf7_line() for the actual signed components before voltage integration.
+    """
     text = path.read_text(encoding='latin-1')
     if 'Treating the problem geometry as a single full cell:' not in text:
         raise ValueError('expected a full cell: explicitly set ZCTR to the cavity midpoint')
@@ -93,6 +98,28 @@ def parse_sfo(path):
     values['axis_voltage_vs_sfo_relative_difference'] = float(abs(abs(v_axis) / vacc - 1))
     return {'version': version, 'nodes': int(scalar(text, 'NPINP')), 'quantities': values,
             'axis': axis.tolist(), 'sfo_sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+
+
+def read_sf7_line(path):
+    """Read signed SF7 (z,r,Ez,Er,|E|,Hphi), converted to SI units."""
+    text = Path(path).read_text(encoding='latin-1')
+    header = re.search(r'^\s*\(cm\)\s+\(cm\)\s+\(MV/m\)\s+\(MV/m\)\s+\(MV/m\)\s+\(A/m\)\s*$', text, re.M)
+    if not header:
+        raise ValueError('missing signed SF7 field header with expected units')
+    rows = []
+    for line in text[header.end():].splitlines():
+        fields = line.split()
+        if not fields and not rows:
+            continue
+        if len(fields) != 6 or any(re.fullmatch(NUMBER, value) is None for value in fields):
+            break
+        rows.append([float(v.replace('D', 'E')) for v in fields])
+    result = np.asarray(rows)
+    if len(result) < 3 or not np.isfinite(result).all():
+        raise ValueError('incomplete or nonfinite SF7 field table')
+    result[:, :2] /= 100
+    result[:, 2:5] *= 1e6
+    return result
 
 
 def write_deck(case, folder, dx_cm, frequency_mhz):

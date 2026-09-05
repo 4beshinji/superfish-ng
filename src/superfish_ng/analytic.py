@@ -40,3 +40,42 @@ def pillbox_tm010(radius_m, length_m, beta=1., conductivity_s_per_m=5.8e7):
             "r_over_q_circuit_ohm": float(rq/2),
             "epk_over_eacc_estimate": float(1/ttf) if ttf > 1e-12 else None,
             "bpk_over_eacc_estimate_mt_per_mv_per_m": float(hmax/(C0*ttf)*1e9) if ttf > 1e-12 else None}
+
+
+def pillbox_tm_mode(radius_m, length_m, n=1, p=0, beta=1.,
+                    conductivity_s_per_m=5.8e7, normalization_j=1.):
+    """Full-cavity TM0np reference: Hphi=H0 J1(chi*r/R) cos(p*pi*z/L).
+
+    Axial mean cos² is 1 for p=0, 1/2 otherwise. Both end plates contribute
+    to loss. Peak phasors, total stored energy, no FEM calibration.
+    """
+    f = tm0np_frequency(radius_m, length_m, n, p)
+    positive(beta, 'beta')
+    positive(conductivity_s_per_m, 'conductivity_s_per_m')
+    positive(normalization_j, 'normalization_j')
+    if beta > 1:
+        raise ValueError('beta must be <= 1')
+    omega = TAU*f
+    chi = jn_zeros(0, n)[-1]
+    alpha, kz = chi/radius_m, p*np.pi/length_m
+    average = 1. if p == 0 else .5
+    h0 = np.sqrt(2*normalization_j/(MU0*np.pi*radius_m**2*length_m*j1(chi)**2*average))
+    e0 = h0*alpha/(omega*EPS0)
+    kb = omega/(beta*C0)
+    def exp_integral(k):
+        x = k*length_m/2
+        return length_m*np.exp(1j*x)*np.sinc(x/np.pi)
+    voltage = e0*(exp_integral(kb+kz)+exp_integral(kb-kz))/2
+    absolute = e0*length_m*(1. if p == 0 else 2/np.pi)
+    rs = np.sqrt(omega*MU0/(2*conductivity_s_per_m))
+    loss = np.pi*rs*h0**2*j1(chi)**2*(radius_m*length_m*average+radius_m**2)
+    q0 = omega*normalization_j/loss
+    rq = abs(voltage)**2/(omega*normalization_j)
+    return {'frequency_hz': float(f), 'stored_energy_j': float(normalization_j),
+            'surface_resistance_ohm': float(rs), 'wall_loss_w': float(loss),
+            'q0': float(q0), 'geometry_factor_ohm': float(q0*rs),
+            'vacc_v': float(abs(voltage)), 'transit_time_factor_abs': float(abs(voltage)/absolute),
+            'r_over_q_accelerator_ohm': float(rq), 'r_over_q_circuit_ohm': float(rq/2),
+            'r_shunt_accelerator_ohm': float(rq*q0), 'r_shunt_circuit_ohm': float(rq*q0/2),
+            'h0_a_per_m': float(h0), 'e0_v_per_m': float(e0),
+            'radial_wave_number_per_m': float(alpha), 'axial_wave_number_per_m': float(kz)}

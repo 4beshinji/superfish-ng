@@ -11,6 +11,9 @@ SUPERFISH全体の置換、旧入力形式の互換性、KEKの実機モデル�
 Wine版SUPERFISHとの3形状の基本モード照合は実施済みで、[比較結果](docs/SUPERFISH_COMPARISON.md)を記録しています。
 多セルの垂直段差・円弧と全モードの演習対応はこれから実装します。
 
+PillboxのTM010/TM011・長さ掃引・電磁場の図は [演習ガイド](docs/SEMINAR_PILLBOX.md) から実行できます。
+`python scripts/seminar_pillbox.py --out out/seminar-new` で例題の計算と結果選択HTMLを生成します（plot依存が必要）。
+
 ## ローカルで開始する
 
 本PJのルートは `/home/sin/code/superfish` です。`superfish-ng/` を追加で挟まず、以下の構造で開発します。

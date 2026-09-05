@@ -72,6 +72,16 @@ class SuperfishComparisonTests(unittest.TestCase):
             self.assertIn('zctr=9.0', (root/'cavity.af').read_text())
             self.assertIn('$po x=6.5, y=10.5 $', (root/'cavity.af').read_text())
 
+    def test_sf7_signed_components_are_preserved_in_si(self):
+        text = '  (cm) (cm) (MV/m) (MV/m) (MV/m) (A/m)\n0 0 2 0 2 0\n4 0 0 0 0 0\n8 0 -2 0 2 0\nend\n'
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'sf7.txt'
+            path.write_text(text)
+            fields = comparison.read_sf7_line(path)
+            self.assertEqual(fields[-1, 0], .08)
+            self.assertEqual(fields[-1, 2], -2e6)
+            self.assertEqual(fields[-1, 4], 2e6)
+
 
 if __name__ == '__main__':
     unittest.main()

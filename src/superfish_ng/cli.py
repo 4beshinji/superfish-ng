@@ -22,6 +22,12 @@ def main(argv=None):
     check = sub.add_parser("converge", help="TM010 pillbox refinement benchmark, with exit-code gate")
     check.add_argument("--levels", nargs="+", type=int, default=[8, 16, 32, 64])
     check.add_argument("--out", required=True, type=Path)
+    plot = sub.add_parser("plot", help="plot a saved mode and axial/radial probes (requires plot extra)")
+    plot.add_argument("run", type=Path)
+    plot.add_argument("--out", required=True, type=Path)
+    plot.add_argument("--mode", type=int, default=1)
+    plot.add_argument("--probe-z-m", type=float)
+    plot.add_argument("--mesh", action="store_true")
     args = parser.parse_args(argv)
     try:
         if args.command == "solve":
@@ -32,6 +38,12 @@ def main(argv=None):
             for mode in result["modes"]:
                 print(f"Mode {mode['mode_index']}: {mode['frequency_hz']/1e6:.6f} MHz, "
                       f"Q0={mode['q0']:.3f}, R/Q(acc)={mode['r_over_q_accelerator_ohm']:.6f} ohm")
+        elif args.command == "plot":
+            try:
+                from .visualize import plot_mode
+            except ImportError as exc:
+                raise ValueError("plotting requires the optional dependencies: pip install -e '.[plot]'") from exc
+            plot_mode(args.run, args.out, args.mode, args.probe_z_m, args.mesh)
         else:
             if args.out.exists():
                 raise ValueError(f"output already exists: {args.out}")

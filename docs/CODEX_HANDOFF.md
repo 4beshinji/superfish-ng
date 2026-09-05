@@ -4,7 +4,8 @@
 
 ユーザー指定の [セミナー4資料の例題計算・可視化](MILESTONE_SEMINAR.md) を優先する。
 Wine版SUPERFISHとの3形状の基本モード照合は完了し、[比較結果](SUPERFISH_COMPARISON.md) を保存した。
-次の作業はマイルストーンS1（pillbox TM010/TM011の演習セットと可視化）。
+S1の全領域TM010/TM011・長さ掃引・図・CSV・HTMLとWine/SF7照合は実装済み（[記録](SEMINAR_PILLBOX.md)）。
+次はS1に残る半領域の電気／磁気対称境界、その後S2の4セルflat-nose垂直段差メッシュ。
 以下の開始プロンプトはseed時点の記録で、次課題P0-01の優先順はこの更新で置き換える。
 
 ## 開始プロンプト
