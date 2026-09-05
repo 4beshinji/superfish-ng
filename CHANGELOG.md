@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Compare three fundamental-mode cases against installed SUPERFISH under Wine with independent mesh refinement and aligned RF conventions.
+- Add opt-in reference runner, comparison plots, and four offline conversion tests; document the remaining corner peak-field discrepancy.
+- Set the near-term milestone to calculation and visualization of the four user-supplied seminar documents' examples.
 - Establish `/home/sin/code/superfish` as the development root with a dedicated Python 3.12 environment.
 - Restrict ZIP packaging to explicit project paths and reject file/directory symlinks before reading them.
 - Add packaging regression tests; exclude pre-existing workspace assets and preserve the seed evidence.

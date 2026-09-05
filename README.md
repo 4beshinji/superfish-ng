@@ -7,6 +7,10 @@
 SUPERFISH全体の置換、旧入力形式の互換性、KEKの実機モデルとの一致はまだ実現・検証していません。
 プロジェクト名は作業名で、LANL・DOE・KEKの公式製品ではありません。
 
+当面のマイルストーンは、指定4資料に基づく [セミナー例題の計算と可視化](docs/MILESTONE_SEMINAR.md)です。
+Wine版SUPERFISHとの3形状の基本モード照合は実施済みで、[比較結果](docs/SUPERFISH_COMPARISON.md)を記録しています。
+多セルの垂直段差・円弧と全モードの演習対応はこれから実装します。
+
 ## ローカルで開始する
 
 本PJのルートは `/home/sin/code/superfish` です。`superfish-ng/` を追加で挟まず、以下の構造で開発します。
@@ -93,7 +97,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 - 電磁場はピークphasorです。既定で全蓄積エネルギー1 Jに正規化します。運転電力1 Wの指定ではありません。
 - R/Qは `|Vacc|²/(ωU)` と `|Vacc|²/(2ωU)` を別名で出力します。
 - 周波数順のmode番号は物理モード名ではありません。形状変更時のmode trackingは未実装。
-- 既存ソルバ・測定との比較は未実施。非円筒例の数値は動作例と自己収束の記録です。
+- Wine版SUPERFISHと3形状の基本モードを照合済み。多セル全モード・測定との比較は未実施。角部のピーク電場には差が残ります。
 
 ## Codexに引き継ぐ
 

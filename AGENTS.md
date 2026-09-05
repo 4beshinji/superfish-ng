@@ -11,6 +11,11 @@ legacy launchers are user-owned local assets outside the implementation scope.
 Do not inspect legacy code/binaries or include those assets in source packages.
 The original root README is preserved as `README-legacy.md` for the user.
 
+The user explicitly authorized black-box comparison with installed Wine SUPERFISH
+on 2026-09-05. For that workflow, running the existing executable and reading input
+decks, configuration and numerical output is permitted. Keep raw legacy results
+under ignored `out/`; do not inspect/copy solver source or redistribute executables.
+
 ## Subagent model routing
 
 - Use `explorer` (Luna max) for delegated repository investigation and review.
