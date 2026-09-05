@@ -9,12 +9,14 @@ import { createHash } from 'node:crypto';
 
 const options = {};
 for (let i = 2; i < process.argv.length; i += 2) {
-  if (!['--html', '--out', '--chrome'].includes(process.argv[i]) || !process.argv[i + 1]) {
-    throw new Error('Usage: node scripts/verify_gallery.mjs --html INDEX_HTML --out NEW_DIRECTORY [--chrome EXECUTABLE]');
+  if (!['--html', '--out', '--chrome', '--mode'].includes(process.argv[i]) || !process.argv[i + 1]) {
+    throw new Error('Usage: node scripts/verify_gallery.mjs --html INDEX_HTML --out NEW_DIRECTORY [--chrome EXECUTABLE] [--mode gallery|static]');
   }
   options[process.argv[i]] = process.argv[i + 1];
 }
 if (!options['--html'] || !options['--out']) throw new Error('--html and --out are required');
+const scenario = options['--mode'] || 'gallery';
+if (!['gallery', 'static'].includes(scenario)) throw new Error('--mode must be gallery or static');
 const html = resolve(options['--html']);
 const out = resolve(options['--out']);
 await access(html);
@@ -30,7 +32,7 @@ browser.on('error', error => { browserError = error; });
 browser.stderr.on('data', data => { stderr += data; });
 const pending = new Map();
 const report = { html, executable, mode: 'headless integration test; isolated temporary profile; no existing desktop session',
-  node: process.version, selections: [], passed: false };
+  scenario, node: process.version, selections: [], passed: false };
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const pause = ms => new Promise(done => setTimeout(done, ms));
 
@@ -81,12 +83,12 @@ try {
   const navigation = await call('Page.navigate', { url: pathToFileURL(html).href }, sessionId);
   if (navigation.errorText) throw new Error(navigation.errorText);
   for (let attempt = 0; attempt < 200; attempt++) {
-    if (await evaluate('document.readyState === "complete" && document.querySelectorAll("select option").length > 0')) break;
+    if (await evaluate('document.readyState === "complete"'+(scenario === 'gallery' ? ' && document.querySelectorAll("select option").length > 0' : ''))) break;
     if (attempt === 199) throw new Error('gallery did not finish loading with a mode selector');
     await pause(50);
   }
   await evaluate('Promise.all([...document.images].map(image => image.decode())).then(() => true)');
-  const values = await evaluate('[...document.querySelector("select").options].map(option => option.value)');
+  const values = scenario === 'gallery' ? await evaluate('[...document.querySelector("select").options].map(option => option.value)') : ['static'];
   const links = await evaluate('[...document.querySelectorAll("a[href], img[src]")].map(e => e.href || e.src)');
   report.link_sha256 = {};
   for (const link of links) {
@@ -96,15 +98,16 @@ try {
     if (relative(dirname(html), path).split(/[\\/]/).includes('..')) throw new Error(`gallery link leaves its result directory: ${path}`);
     report.link_sha256[path] = hash(await readFile(path));
   }
-  await evaluate('document.querySelector("select").focus()');
+  if (scenario === 'gallery') await evaluate('document.querySelector("select").focus()');
   const key = async (name, code) => {
     for (const type of ['keyDown', 'keyUp']) await call('Input.dispatchKeyEvent', { type, key: name, code: name, windowsVirtualKeyCode: code }, sessionId);
     await pause(60);
   };
-  await key('Home', 36);
+  if (scenario === 'gallery') await key('Home', 36);
   for (let i = 0; i < values.length; i++) {
     if (i) await key('ArrowDown', 40);
-    const state = await evaluate(`(() => {
+    const state = scenario === 'static' ? await evaluate(`({ selected: 'static', visible: ['static'],
+      images: [...document.images].map(image => ({ src: image.src, width: image.naturalWidth, height: image.naturalHeight })) })`) : await evaluate(`(() => {
       const visible = [...document.querySelectorAll('section.mode')].filter(e => !e.hidden && getComputedStyle(e).display !== 'none');
       return { selected: document.querySelector('select').value, visible: visible.map(e => e.id),
         images: visible.flatMap(e => [...e.querySelectorAll('img')].map(image => ({ src: image.src, width: image.naturalWidth, height: image.naturalHeight }))) };
@@ -123,7 +126,7 @@ try {
   }
   report.passed = hash(await readFile(html)) === report.html_sha256;
   if (!report.passed) throw new Error('gallery HTML changed during verification');
-  console.log(`PASS: ${values.length} keyboard selections, ${links.length} local links/images; ${out}`);
+  console.log(`PASS: ${values.length} ${scenario === 'gallery' ? 'keyboard selections' : 'static pages'}, ${links.length} local links/images; ${out}`);
 } catch (error) {
   report.error = String(error.stack || error);
   process.exitCode = 1;

@@ -19,6 +19,7 @@ PillboxのTM010/TM011・長さ掃引・電磁場の図は [演習ガイド](docs
 `--case` はflat4/rounded4/rounded7。数値ゲート未達はFAILとして保存・表示します。
 端部比較は `python scripts/seminar_end_cells.py --flat-half-extra-n 384 --out out/ends-new`。
 収束確認済みの7セル設定は `--triangulation crossed --levels 64 128 256` を明示します。
+全演習の新規計算と入口HTMLは [一括実行ガイド](docs/SEMINAR_SUITE.md)。初回の一括検証は実行中です。
 
 ## ローカルで開始する
 
@@ -88,7 +89,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | RF量 | f、U、表面抵抗、壁損失、Q0、G、通過位相を含むVacc、R/Q、シャントインピーダンス、TTF |
 | 表面電磁場 | Epk/Eacc、Bpk/Eaccの一次要素推定値。角部では収束保証なし |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 63テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧・交差分割、バンド同定。生成HTMLはheadless操作も検証 |
+| 検証 | 66テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧・交差分割、バンド同定。生成HTMLはheadless操作も検証 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 `docs/VALIDATION_REPORT.md` に数値と解釈をまとめています。

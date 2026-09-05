@@ -11,6 +11,7 @@ node scripts/verify_gallery.mjs \
 
 既設Node 22とChromeを使用する。今回の実測はNode v22.22.1、Chrome/151.0.7922.137。
 新しいnpmパッケージやPythonのWeb依存は不要。`--chrome` で検証用実行形式を明示できる。
+選択UIを持たないページには `--mode static` を使い、キーボード選択を検査したとは記録しない。
 計算・PNG・HTML生成にはこれらの検証ツールを要求しない。
 
 一時プロファイルを作り、headless Chromeへloopback上の一時DevTools接続を開く。
@@ -41,9 +42,11 @@ node scripts/verify_gallery.mjs \
 | 交差分割7セル・NG収束合格 | 7 | 24 | `out/gallery-test-rounded7-crossed-20260905/verification.json` |
 | 丸み付き4セル・Wine照合合格 | 4 | 16 | `out/gallery-test-rounded4-wine-20260905/verification.json` |
 | full/half端部比較 | 8 | 51 | `out/gallery-test-end-cells-ready-20260905/verification.json` |
+| 対称境界の静的ページ | 選択操作なし | 21 | `out/gallery-test-symmetry-static-20260905/verification.json` |
 | 故障fixture | 2 | 2 | `out/gallery-test-broken-fixture-20260905/verification.json`（期待通りFAIL） |
 
 従来分割の7セル画面の数値FAILはそのまま保持され、交差分割の新しい7セル画面ではNG収束がPASSになった。
 UIテストのPASSを数値精度やWine照合のPASSと混同しない。
+静的ページ対応後も故障fixtureは期待通りFAIL（`out/gallery-test-broken-suite-20260905`）。
 デスクトップのOrca CLIの起動問題を修正したわけではない。
 ここで証明したのは生成HTMLのheadlessブラウザー上の操作と描画であり、OS固有のメニュー操作ではない。

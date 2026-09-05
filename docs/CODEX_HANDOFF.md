@@ -19,6 +19,11 @@ full-end切断面を実装した `scripts/seminar_end_cells.py` も追加。初�
 追加nr=384で変化0.32373%を確認し、`out/seminar-end-cells-ready-20260905` の最終レポートはPASS。
 `out/gallery-test-end-cells-ready-20260905` で全8選択肢・51リンク/画像のheadless検査も合格した。
 Pillbox/rounded4/7のHTMLはheadless Chromeの実キー入力で検証済み。Orcaの既存デスクトップ操作は行っていない。
+S6の `scripts/seminar_suite.py` と入口HTML生成を実装し、`out/seminar-suite-20260905` で全NGを新規に計算中。
+参照は既存Wine生出力を検査して再利用し、必要なrounded7出力は最大14400秒の読取専用待ちを明示した。
+開始時のsource/tests/scripts/examples hashを固定しているため、実行中にこれらを編集しない。
+進捗は `suite.json` とジョブ別log。完了・合否を確認するまではS6やマイルストーンを完了にしない。
+操作手順と判定仕様は [SEMINAR_SUITE.md](SEMINAR_SUITE.md)。
 以下の開始プロンプトはseed時点の記録で、次課題P0-01の優先順はこの更新で置き換える。
 
 ## 開始プロンプト
@@ -47,7 +52,7 @@ AGENTS.md、README.md、docs/PHYSICS.md、docs/PROVENANCE.mdを最初に読み�
 
 `Case.load → make_mesh → assemble → solve → quantities → save_run`。
 式と積分は `src/superfish_ng/fem.py` と `rf.py`、独立解析解は `analytic.py`。
-テストは `unittest` 63件。seedの主要数値は `benchmarks/validation/`、最新照合は `docs/SEMINAR_PILLBOX.md` と `docs/SEMINAR_MULTICELL.md`。
+テストは `unittest` 66件。seedの主要数値は `benchmarks/validation/`、最新照合は `docs/SEMINAR_PILLBOX.md` と `docs/SEMINAR_MULTICELL.md`。
 出力は別の新規ディレクトリへ作る。既存ベンチマークを直接上書きして初期値を失わないこと。
 
 ## 直近の注意点
