@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+out/
+validation-ci/
+.pytest_cache/
+
+# Existing local assets are outside the Superfish-NG source distribution.
+/.agents/
+/.codex/
+/.wine-superfish/
+/SUPERFISH/
+/SUPERFISH.zip
+/superfish-ng-0.1.0-seed.zip
+/*.pdf
+/解説/
+/README-legacy.md
+/run-superfish.sh
+/plot-superfish.sh
+/setup-superfish.iss

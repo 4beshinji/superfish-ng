@@ -1,0 +1,11 @@
+Superfish-NG
+Copyright 2026 Superfish-NG contributors.
+
+Independent implementation of public mathematical equations and analytical tests.
+This project is not an official LANL, DOE, KEK or SUPERFISH release and is not
+endorsed by those organizations. No legacy SUPERFISH source, executable,
+manual, proprietary input deck or third-party solver is included.
+
+Project-authored source, documentation, synthetic examples and generated test
+results are provided under Apache-2.0; dependencies retain their own licenses.
+Bibliographic references identify third-party works, whose rights are unchanged.

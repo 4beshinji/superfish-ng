@@ -1,0 +1,28 @@
+test_case_roundtrip (test_interface.InterfaceTests.test_case_roundtrip) ... ok
+test_cli_solve_and_refuse_overwrite (test_interface.InterfaceTests.test_cli_solve_and_refuse_overwrite) ... ok
+test_convergence_gate_fails_for_coarse_mesh (test_interface.InterfaceTests.test_convergence_gate_fails_for_coarse_mesh) ... ok
+test_duplicate_json_keys_rejected (test_interface.InterfaceTests.test_duplicate_json_keys_rejected) ... ok
+test_exports_have_units_and_finite_arrays (test_interface.InterfaceTests.test_exports_have_units_and_finite_arrays) ... ok
+test_profile_corners_boundary_tags_and_positive_mesh (test_interface.InterfaceTests.test_profile_corners_boundary_tags_and_positive_mesh) ... ok
+test_reject_invalid_geometry_and_numbers (test_interface.InterfaceTests.test_reject_invalid_geometry_and_numbers) ... ok
+test_too_many_modes (test_interface.InterfaceTests.test_too_many_modes) ... ok
+test_unknown_physics_not_silently_ignored (test_interface.InterfaceTests.test_unknown_physics_not_silently_ignored) ... ok
+test_beta_changes_voltage_but_not_eigenproblem (test_physics.PhysicsTests.test_beta_changes_voltage_but_not_eigenproblem) ... ok
+test_energy_and_mode_orthogonality (test_physics.PhysicsTests.test_energy_and_mode_orthogonality) ... ok
+test_geometric_scaling_nontrivial_profile (test_physics.PhysicsTests.test_geometric_scaling_nontrivial_profile) ... ok
+test_linear_voltage_independent_quadrature_and_zero_k (test_physics.PhysicsTests.test_linear_voltage_independent_quadrature_and_zero_k) ... ok
+test_mass_and_stiffness_constant_trial_integrals (test_physics.PhysicsTests.test_mass_and_stiffness_constant_trial_integrals) ... ok
+test_mesh_refinement_decreases_frequency_error (test_physics.PhysicsTests.test_mesh_refinement_decreases_frequency_error) ... ok
+test_normalization_and_conductivity_scaling (test_physics.PhysicsTests.test_normalization_and_conductivity_scaling) ... ok
+test_physical_field_shape_against_bessel_not_only_frequency (test_physics.PhysicsTests.test_physical_field_shape_against_bessel_not_only_frequency) ... ok
+test_q0_geometry_factor_rq_and_ttf (test_physics.PhysicsTests.test_q0_geometry_factor_rq_and_ttf) ... ok
+test_rq_factor_two_and_shunt_definitions (test_physics.PhysicsTests.test_rq_factor_two_and_shunt_definitions) ... ok
+test_six_modes_including_axial_and_radial_families (test_physics.PhysicsTests.test_six_modes_including_axial_and_radial_families) ... ok
+test_surface_peak_estimates_on_smooth_pillbox (test_physics.PhysicsTests.test_surface_peak_estimates_on_smooth_pillbox) ... ok
+test_tm010_frequency (test_physics.PhysicsTests.test_tm010_frequency) ... ok
+test_voltage_cancellation_returns_null_peak_ratios (test_physics.PhysicsTests.test_voltage_cancellation_returns_null_peak_ratios) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.169s
+
+OK

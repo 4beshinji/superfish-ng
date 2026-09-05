@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "name": "pillbox R100mm L200mm",
+  "geometry": {"type": "pillbox", "radius_m": 0.1, "length_m": 0.2},
+  "mesh": {"nr": 32, "nz": 40},
+  "solver": {"modes": 4},
+  "rf": {"beta": 1.0, "conductivity_s_per_m": 58000000, "normalization_j": 1.0}
+}

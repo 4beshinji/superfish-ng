@@ -1,0 +1,4 @@
+# Exact core versions used for the delivered benchmark; Python 3.12.13.
+# This is a version snapshot, not a hash-locked/offline dependency bundle.
+numpy==2.3.5
+scipy==1.17.0

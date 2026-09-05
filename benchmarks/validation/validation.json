@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.39",
+    "openblas_num_threads": "1"
+  },
+  "commands": [
+    {
+      "name": "tests",
+      "command": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5443923910002013
+    },
+    {
+      "name": "convergence",
+      "command": [
+        "-m",
+        "superfish_ng",
+        "converge",
+        "--out",
+        "/workspace/scratch/fa2135c4e3d2/superfish-ng/benchmarks/final_validation/pillbox_convergence.json"
+      ],
+      "exit_code": 0,
+      "seconds": 0.43208857199988415
+    }
+  ],
+  "source_sha256": {
+    "src/superfish_ng/__init__.py": "43fa74701068bebbfdef5c32625d7417bb1ac9d8aa9fbd13d75f69cb100261db",
+    "src/superfish_ng/__main__.py": "849162808fbd2f320a8657b71cf69ef03039b5e2992f011e81f7c71cb2a678d1",
+    "src/superfish_ng/analytic.py": "831ae1a18bbadb225319c609a5e0b30eaf991452840c5fc787bdba16f7c65649",
+    "src/superfish_ng/cli.py": "80ef44122ab6d75eb1a41ad572e113ef2b961cd646d2fed338b07bec3a8f7c62",
+    "src/superfish_ng/config.py": "b2e7725e3f53ca7e5e56bc8cfcec161c0871f9b768086cf92d28eb5d8cfd562f",
+    "src/superfish_ng/constants.py": "a4357bcf2ce6614cded0e9c300b4f2e7b59974c08ba8455e27041b190d49cb5a",
+    "src/superfish_ng/fem.py": "50018dd992b05950b0486bdb73be99c7167dff8d025c25b7d3f0824eaafb5b49",
+    "src/superfish_ng/io.py": "9f8fdc8aa02dee3c2c2a07f1f2b3abab0ea7516e2a880e6f99e957e467ab091b",
+    "src/superfish_ng/mesh.py": "d692309ab013e052c39ba668a07578b9fe4d04ec805f5b1c07e289407d4e55c7",
+    "src/superfish_ng/rf.py": "915eeb8787a65f7bb4e18cf03895e07339986be6468e17a04ebb54965dc31a8e",
+    "src/superfish_ng/solver.py": "502bc4148bfac6dfa36027ee5e52a457459128c695a974999b0c10f35c7148f7",
+    "tests/test_interface.py": "8bab6d6fe64cc3288adcf98e52d77db32760aa3521d9d4d97dbca2880e02b5cf",
+    "tests/test_physics.py": "b07dde6bb18ff0079d245e98b18cc4fef8a2845951fc97a36e07c4e1100e80a7",
+    "scripts/package.py": "0d989297aa8c5f26071ec8d53c3771d941cbeae4e7681f23b910f3374ce825ff",
+    "scripts/plot_results.py": "b7c6fe046febbec88ba648e18ed43ea8728a89a16aaf8d5b88c63de00109569d",
+    "scripts/report_validation.py": "4be61c0652107c518d651d50803549166192cf8fe981b83f3025adb5a1bc6b13",
+    "scripts/validate.py": "737d8ef5e7456ac99af6d33b71388430d87f4cd4f54fd47df8963e5b2ce13011",
+    "scripts/verify_manifest.py": "7ca436825a2ca92ec1923b057ff49ba91458b5b93d293b67a084682b32ad0439",
+    "examples/pillbox.json": "4be2a58301591977ba7e9b1bd3fc80bde57d39dc2921701c634d84e01c09883b",
+    "examples/shaped_cell.json": "e1b17b9cced122e02313beb64d91722d680a349d135b2920cab0b7540f5aac49"
+  },
+  "not_performed": [
+    "external solver comparison",
+    "legacy SUPERFISH comparison",
+    "measured cavity validation",
+    "GUI/ParaView interactive check"
+  ]
+}

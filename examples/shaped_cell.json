@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "name": "synthetic necked cavity; closed ends; not KEK geometry",
+  "geometry": {"type": "profile", "points_zr_m": [[0.0, 0.045], [0.025, 0.045], [0.065, 0.105], [0.115, 0.105], [0.155, 0.045], [0.18, 0.045]]},
+  "mesh": {"nr": 32, "nz": 64},
+  "solver": {"modes": 3},
+  "rf": {"beta": 1.0, "conductivity_s_per_m": 58000000, "normalization_j": 1.0}
+}

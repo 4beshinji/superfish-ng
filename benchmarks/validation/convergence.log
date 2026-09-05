@@ -1,0 +1,4 @@
+n=8: f=1147.498644588 MHz, relative error=6.39e-05
+n=16: f=1147.444554942 MHz, relative error=1.68e-05
+n=32: f=1147.430164085 MHz, relative error=4.26e-06
+n=64: f=1147.426504135 MHz, relative error=1.07e-06

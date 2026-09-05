@@ -1,0 +1,180 @@
+# 物理・数値仕様 — canonical specification v1
+
+本ファイルの式はMaxwell方程式から今回の実装用に導出したものです。
+公開の背景資料は [R1–R5, R11](REFERENCES.md)。旧SUPERFISHのアルゴリズムの転記ではありません。
+
+## 1. 対象と単位
+
+円筒座標 `(r, φ, z)`、SI単位、真空、一様ε0・μ0、閉じた完全導体境界を仮定する。
+断面領域は `0 < z < L, 0 < r < R(z)`。`R(z)`は連続な正値折れ線。
+`∂/∂φ=0`、磁場は `H = Hφ(r,z) eφ`、電場は `(Er,0,Ez)`。
+一般形状では分離変数のTM0npというラベルは使わず、m=0 TMファミリーと呼ぶ。
+
+phasorは `exp(+iωt)`、場はRMSではなくピーク振幅。
+定数は `c=299792458 m/s`、`μ0=1.25663706127e-6 H/m`、`ε0=1/(μ0 c²)`。
+μ0はSI再定義後は厳密定数ではなく、CODATA 2022中心値を固定している [R19]。
+
+## 2. 強形式とPEC
+
+Maxwell方程式から
+
+\[
+\nabla\times\mathbf H=i\omega\epsilon_0\mathbf E,\qquad
+\nabla\times\mathbf E=-i\omega\mu_0\mathbf H.
+\]
+
+したがって
+
+\[
+-\partial_r^2 H_\phi-\frac1r\partial_r H_\phi
+-\partial_z^2H_\phi+\frac{H_\phi}{r^2}=k^2H_\phi,
+\quad k=\omega/c.
+\]
+
+真空側外向き法線を `(nr,nz)` とすると、PEC `n×E=0` は
+
+\[
+\partial_n H_\phi+\frac{n_r}{r}H_\phi=0
+\]
+
+である。円筒側壁に `∂r Hφ=0` を課す実装は誤り。
+平坦な端板では `∂z Hφ=0`、円筒側壁では `∂r Hφ+Hφ/r=0`。
+傾斜壁にも同じ法線条件を使う。軸は金属壁ではなく座標特異点。
+
+## 3. 軸上正則化と弱形式
+
+有限で正則な場は `Hφ=O(r)` なので、未知関数を `u=Hφ/r` とする。
+離散空間で `u` は連続P1、従って軸上でも有限。`Hφ=0` は自動的に満たされる。
+滑らかな厳密解では `∂r u=0` だが、この導関数条件をP1節点へ追加しない。
+軸上自由度も固有値問題に残す。軸上の `u=0` は誤った条件。
+
+試験関数の磁場を `rv eφ` として、curl-curlのエネルギー形式を用いる。
+
+\[
+a(u,v)=\int_\Omega r\left[(2u+r u_r)(2v+r v_r)+r^2u_zv_z\right]drdz,
+\]
+\[
+b(u,v)=\int_\Omega r^3uv\,drdz,
+\qquad a(u,v)=k^2b(u,v).
+\]
+
+2πは両辺で消える。PECはこの形式の自然境界条件なのでDirichlet自由度を削除しない。
+確認用に部分積分すると、同じ剛性形式は
+
+\[
+a(u,v)=\int_\Omega r^3\nabla u\cdot\nabla v\,drdz
++\int_{\partial\Omega}2r^2n_r uv\,ds.
+\]
+
+境界項を捨てると別の問題になる。実装は展開前の非負エネルギー形をそのまま積分する。
+P1が許されるのはこのスカラーTM縮約だからで、一般3Dベクトル電場に同じ節点要素を流用しない。
+3D/m>0拡張ではH(curl)空間、勾配nullspace、軸上条件を別に設計する [R4,R5,R11]。
+
+## 4. 離散化・固有値計算
+
+- 要素は直線三角形。`u = Σ uj Nj`、面積座標Niは一次。
+- 剛性被積分関数は3次、質量は5次の多項式。
+- Duffy変換した4×4 Gauss積分を用いる。変換のJacobianを含め質量まで厳密積分可能。
+- `K u = λ M u`、`λ=k²`。固有周波数は `c sqrt(λ)/(2π)`。
+- `Dii=1/sqrt(Mii)` によって `(DKD)y = λ(DMD)y`、`u=Dy` と平衡化。
+- `eigsh(..., M=B, sigma=0, which='LM')` で低い固有値を求める [R8]。
+- 固定seedの開始ベクトル。縮退固有空間の基底が別環境でも同一になる保証はない。
+- 残差は `||Ku−λMu||/(||Ku||+|λ| ||Mu||)`。1e-7超は失敗。
+- M内積の直交性と電気/磁気エネルギー差を記録する。
+
+残差やエネルギー整合は離散方程式内の検査であり、メッシュ誤差やモデル誤差の保証ではない。
+全モード検索・縮退mode tracking・誤差推定・適応メッシュは未実装。
+
+## 5. 電磁場復元
+
+磁場固有ベクトルを実数に取ると
+
+\[
+H_\phi=ru,\quad
+\widetilde E_r=-\frac{r u_z}{\omega\epsilon_0},\quad
+\widetilde E_z=\frac{2u+r u_r}{\omega\epsilon_0},
+\quad \mathbf E=-i\widetilde{\mathbf E}.
+\]
+
+出力の `quadrature` はこの実数の `Ẽ`。HとEが同時に最大になる意味ではない。
+軸上は `Ẽz(0,z)=2u(0,z)/(ωε0)`。`H/r`を0/0で評価せず、極限を使用する。
+uは連続、uの勾配は要素間で不連続。VTKのEはセル中心、軸CSVは軸上節点の線形補間。
+
+## 6. エネルギーと壁損失
+
+\[
+U=\frac14\int_V(\epsilon_0|E|^2+\mu_0|H|^2)dV,
+\qquad dV=2\pi r\,drdz.
+\]
+
+固有モードでは `UE=UH` なので `U=μ0π uᵀMu`。既定でU=1 Jに正規化する。
+瞬時全エネルギーも理想定常固有モードでは一定で、この平均値に等しい。
+損失計算では全PEC境界を回転した実表面を積分する。軸は表面損失に含めない。
+
+\[
+R_s=\sqrt{\frac{\omega\mu_0}{2\sigma}},\quad
+P=\frac{R_s}{2}\int_S|H_t|^2dS,\quad dS=2\pi r\,ds,
+\]
+\[
+Q_0=\frac{\omega U}{P},\qquad G=Q_0R_s.
+\]
+
+この形状ではHφはすべての壁に接する。端板の磁場損失も必要。
+σは一様な常伝導金属の入力値。表皮効果の良導体近似と低損失摂動を仮定する。
+損失による固有周波数シフトや空洞の温度を計算しているわけではない。
+
+## 7. 加速量の規約
+
+\[
+V(\beta)=\int_0^L\widetilde E_z(0,z)
+\exp\left(i\frac{\omega z}{\beta c}\right)dz,\qquad V_{acc}=|V|.
+\]
+
+全体の位相因子−iを除いて複素電圧を出力する。βc一定、ビームの摂動・速度変化は無視。
+区分線形Ezと指数関数の積は解析積分し、低βでも積分点不足を起こさない。
+
+\[
+E_{acc}=V_{acc}/L,\quad
+T_{abs}=V_{acc}/\int_0^L|\widetilde E_z|dz.
+\]
+
+`Tabs`は符号反転する多セル場でも0～1になる絶対値分母の規約。
+`∫Ez dz`を分母に取る他のTTFと同一視しない。ここでLは入力の全長で、別のactive lengthはまだ指定できない。
+
+| 名称 | 定義 |
+|---|---|
+| `r_over_q_accelerator_ohm` | V²/(ωU) |
+| `r_over_q_circuit_ohm` | V²/(2ωU) |
+| `r_shunt_accelerator_ohm` | V²/P |
+| `r_shunt_circuit_ohm` | V²/(2P) |
+
+R/Qには分野や文献で係数2の違いがある [R2]。比較時には名称だけでなく式・phasor・Uを照合する。
+EpkはPEC境界に接する要素の片側微分で計算した表面最大値。
+Bpkは各直線境界上の二次式 `μ0 r u` の端点と停留点で最大化。
+Epk/Eaccは無次元、Bpk/Eaccは `mT/(MV/m)` で出力する。
+Vが絶対値積分に対して1e-12以下なら、ピーク比はJSON nullとする。
+折れ線角部の場が特異ならメッシュを細かくしてもEpkが有限値に収束しない可能性がある。
+
+## 8. 独立解析ベンチマーク
+
+半径R、長さLのpillbox、J0のn番目の正零点をχ0nとする。
+
+\[
+f_{0np}=\frac{c}{2\pi}\sqrt{(\chi_{0n}/R)^2+(p\pi/L)^2},
+\quad n\ge1,\ p\ge0.
+\]
+
+TM010について `Ez=E0 J0(χ01 r/R)`、`Hφ=(E0/Z0) J1(χ01 r/R)`。
+
+\[
+T=|\operatorname{sinc}(\omega L/(2\beta c))|,
+\quad U=\frac{\epsilon_0}{2}\pi R^2L E_0^2J_1(\chi_{01})^2,
+\]
+\[
+G=\frac{\omega\mu_0RL}{2(R+L)},\quad
+(R/Q)_{acc}=\frac{2LT^2}{\omega\epsilon_0\pi R^2J_1(\chi_{01})^2}.
+\]
+
+ここでsinc(x)=sin(x)/x。NumPy sincの引数はx/πにする。
+Epk/Eacc=1/T。Bpk/Eaccは `max J1/(cT)`、最大J1は側壁ではなく端板上の途中の半径で現れる。
+この解析モジュールはテスト専用で、FEMの値を置き換えたり較正したりしない。

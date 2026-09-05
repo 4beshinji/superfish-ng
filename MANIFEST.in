@@ -1,0 +1,6 @@
+include LICENSE NOTICE README.md AGENTS.md CHANGELOG.md CONTRIBUTING.md requirements-reproduce.txt
+include .python-version
+recursive-include docs *.md *.bib
+recursive-include examples *.json
+recursive-include tests *.py
+recursive-include scripts *.py

@@ -1,0 +1,38 @@
+[
+  {
+    "label": "TM010",
+    "analytic_hz": 1147425278.3521001,
+    "numerical_hz": 1147428411.7640955,
+    "relative_error": 2.730820084284602e-06
+  },
+  {
+    "label": "TM011",
+    "analytic_hz": 1370513318.4730113,
+    "numerical_hz": 1370732662.483999,
+    "relative_error": 0.0001600451509893297
+  },
+  {
+    "label": "TM012",
+    "analytic_hz": 1887716270.0584638,
+    "numerical_hz": 1888983453.5074525,
+    "relative_error": 0.0006712785544564781
+  },
+  {
+    "label": "TM013",
+    "analytic_hz": 2524298447.0533576,
+    "numerical_hz": 2528210997.6934586,
+    "relative_error": 0.001549955649922552
+  },
+  {
+    "label": "TM020",
+    "analytic_hz": 2633819797.0124393,
+    "numerical_hz": 2635183641.619461,
+    "relative_error": 0.0005178200150857126
+  },
+  {
+    "label": "TM021",
+    "analytic_hz": 2738380672.924267,
+    "numerical_hz": 2740795565.6100054,
+    "relative_error": 0.0008818688758709392
+  }
+]

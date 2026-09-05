@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "software_version": "0.1.0",
+  "case_sha256": "88ea507c8d82ef739af2a06b0bd1fe0d4c0ee73737144233e52b5586f0ec5c61",
+  "case": {
+    "schema_version": 1,
+    "name": "synthetic necked cavity; closed ends; not KEK geometry",
+    "geometry": {
+      "type": "profile",
+      "points_zr_m": [
+        [
+          0.0,
+          0.045
+        ],
+        [
+          0.025,
+          0.045
+        ],
+        [
+          0.065,
+          0.105
+        ],
+        [
+          0.115,
+          0.105
+        ],
+        [
+          0.155,
+          0.045
+        ],
+        [
+          0.18,
+          0.045
+        ]
+      ]
+    },
+    "mesh": {
+      "nr": 32,
+      "nz": 64
+    },
+    "solver": {
+      "modes": 3
+    },
+    "rf": {
+      "beta": 1.0,
+      "conductivity_s_per_m": 58000000,
+      "normalization_j": 1.0
+    }
+  },
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.39"
+  },
+  "mesh": {
+    "nodes": 2211,
+    "triangles": 4224
+  },
+  "mass_orthogonality_error": 1.9984014443252818e-15,
+  "scope": "vacuum; closed PEC; axis-connected; m=0 TM only; perturbative normal-conductor loss",
+  "conventions": {
+    "phasor": "exp(+i omega t); H real, E=-i*exported_quadrature",
+    "energy": "U=1/4 integral(eps|E|^2+mu|H|^2)dV",
+    "rq_accelerator": "|Vacc|^2/(omega U)",
+    "rq_circuit": "|Vacc|^2/(2 omega U)",
+    "voltage": "integral Ez_quadrature(0,z) exp(+i omega z/(beta c)) dz; global -i omitted",
+    "vtk_coordinates": "x=r, y=z, z=0; scalar cylindrical components"
+  },
+  "modes": [
+    {
+      "mode_index": 1,
+      "frequency_hz": 1272134241.829243,
+      "relative_eigen_residual": 1.309481198720474e-13,
+      "stored_energy_j": 1.0000000000000093,
+      "electric_energy_j": 0.5000000000000091,
+      "magnetic_energy_j": 0.5000000000000003,
+      "energy_balance_relative": 8.770761894538655e-15,
+      "surface_resistance_ohm": 0.009305342073527234,
+      "wall_loss_w": 250987.1110616131,
+      "q0": 31846.476670507018,
+      "geometry_factor_ohm": 296.3423592556725,
+      "voltage_real_v": -641982.3475956242,
+      "voltage_imag_v": 592279.8151055911,
+      "vacc_v": 873462.4857461835,
+      "beta": 1.0,
+      "active_length_m": 0.18,
+      "eacc_v_per_m": 4852569.365256576,
+      "transit_time_factor_abs": 0.45499976494830313,
+      "r_over_q_accelerator_ohm": 95.4499496261689,
+      "r_over_q_circuit_ohm": 47.72497481308445,
+      "r_shunt_accelerator_ohm": 3039744.593970858,
+      "r_shunt_circuit_ohm": 1519872.296985429,
+      "epk_surface_estimate_v_per_m": 10471469.796195038,
+      "bpk_surface_estimate_t": 0.03187479075879882,
+      "epk_over_eacc_estimate": 2.157922743190167,
+      "bpk_over_eacc_estimate_mt_per_mv_per_m": 6.56864196254791,
+      "peak_status": "P1 one-sided surface estimate; corners may be singular; no error bound"
+    },
+    {
+      "mode_index": 2,
+      "frequency_hz": 2177957086.6272936,
+      "relative_eigen_residual": 7.069332944866116e-14,
+      "stored_energy_j": 0.9999999999999998,
+      "electric_energy_j": 0.5000000000000008,
+      "magnetic_energy_j": 0.49999999999999906,
+      "energy_balance_relative": 1.720845688168993e-15,
+      "surface_resistance_ohm": 0.01217560445138992,
+      "wall_loss_w": 388916.35587159364,
+      "q0": 35186.249587513885,
+      "geometry_factor_ohm": 428.4138571054508,
+      "voltage_real_v": 721500.5362953574,
+      "voltage_imag_v": -497651.5047397603,
+      "vacc_v": 876481.6278988601,
+      "beta": 1.0,
+      "active_length_m": 0.18,
+      "eacc_v_per_m": 4869342.37721589,
+      "transit_time_factor_abs": 0.37333136866835,
+      "r_over_q_accelerator_ohm": 56.13793685037684,
+      "r_over_q_circuit_ohm": 28.06896842518842,
+      "r_shunt_accelerator_ohm": 1975283.4573454526,
+      "r_shunt_circuit_ohm": 987641.7286727263,
+      "epk_surface_estimate_v_per_m": 15068941.942318227,
+      "bpk_surface_estimate_t": 0.04219376046745857,
+      "epk_over_eacc_estimate": 3.094656480272823,
+      "bpk_over_eacc_estimate_mt_per_mv_per_m": 8.665186630721866,
+      "peak_status": "P1 one-sided surface estimate; corners may be singular; no error bound"
+    },
+    {
+      "mode_index": 3,
+      "frequency_hz": 2486682443.9111013,
+      "relative_eigen_residual": 3.215827430591841e-13,
+      "stored_energy_j": 1.0000000000000004,
+      "electric_energy_j": 0.5000000000000008,
+      "magnetic_energy_j": 0.4999999999999998,
+      "energy_balance_relative": 9.992007221626405e-16,
+      "surface_resistance_ohm": 0.013009962227753014,
+      "wall_loss_w": 439348.87202722527,
+      "q0": 35562.36874607355,
+      "geometry_factor_ohm": 462.66507411584126,
+      "voltage_real_v": 19077.231840635184,
+      "voltage_imag_v": 927605.7377417386,
+      "vacc_v": 927801.8891261736,
+      "beta": 1.0,
+      "active_length_m": 0.18,
+      "eacc_v_per_m": 5154454.939589853,
+      "transit_time_factor_abs": 0.27123876600202423,
+      "r_over_q_accelerator_ohm": 55.09476162133056,
+      "r_over_q_circuit_ohm": 27.54738081066528,
+      "r_shunt_accelerator_ohm": 1959300.2287547786,
+      "r_shunt_circuit_ohm": 979650.1143773893,
+      "epk_surface_estimate_v_per_m": 20650592.883912537,
+      "bpk_surface_estimate_t": 0.039511614655408145,
+      "epk_over_eacc_estimate": 4.006358213610794,
+      "bpk_over_eacc_estimate_mt_per_mv_per_m": 7.665527222273503,
+      "peak_status": "P1 one-sided surface estimate; corners may be singular; no error bound"
+    }
+  ]
+}
