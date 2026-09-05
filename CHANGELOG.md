@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add explicit v2 stepped profiles and conforming slab meshes with boundary/topology/area checks; solve the seminar flat-nose 4-cell example and record preliminary signed Wine comparisons, including unresolved cancellation-sensitive R/Q error.
 - Add strict v2 electric/magnetic end symmetry, essential-DOF elimination, loss-free symmetry tags and explicit full-cavity field reflection; preserve v1 PEC inputs.
 - Verify both half-domain pillbox parities at either end against theory, independent full FEM and signed full-domain Wine SF7; export half/full plots and RF metadata.
 - Add full-domain seminar pillbox TM010/TM011 runs, field-overlap mode identification, three-level length sweeps and a local result gallery.

@@ -16,6 +16,8 @@ class Mesh:
 
 
 def make_mesh(case: Case) -> Mesh:
+    if case.geometry_type == "stepped_profile":
+        return make_stepped_mesh(case)
     zs = []
     for (za, _), (zb, _) in zip(case.profile, case.profile[1:]):
         count = max(1, int(np.ceil(case.nz * (zb - za) / case.length - 1e-12)))
@@ -32,11 +34,18 @@ def make_mesh(case: Case) -> Mesh:
             b = a+stride
             triangles.extend(((a, a+1, b+1), (a, b+1, b)))
     triangles = np.array(triangles, dtype=np.int64)
+    return finish_mesh(case, points, triangles, np.arange(0, len(points), stride))
+
+
+def finish_mesh(case, points, triangles, axis_nodes):
+    """Extract boundary incidence without assuming a structured node stride."""
     incidence = {}
     for cell, t in enumerate(triangles):
         for a, b in ((t[0], t[1]), (t[1], t[2]), (t[2], t[0])):
             edge = tuple(sorted((a, b)))
             incidence.setdefault(edge, []).append(cell)
+    if any(len(cells) > 2 for cells in incidence.values()):
+        raise ValueError("nonmanifold triangle edge")
     boundary = [(e, c[0]) for e, c in incidence.items() if len(c) == 1]
     edges = np.array([e for e, _ in boundary], dtype=np.int64)
     tags = np.full(len(edges), "pec", dtype="U20")
@@ -44,9 +53,104 @@ def make_mesh(case: Case) -> Mesh:
     tags[np.all(points[edges, 1] == 0, axis=1)] = case.z_min
     tags[np.all(points[edges, 1] == case.length, axis=1)] = case.z_max
     result = Mesh(points, triangles, edges, tags,
-                  np.array([c for _, c in boundary]), np.arange(0, len(points), stride))
+                  np.array([c for _, c in boundary]), axis_nodes)
     element_geometry(result)  # reject degenerate geometry before assembly
     return result
+
+
+def make_stepped_mesh(case):
+    """Conforming axial slabs with shared absolute radial levels at every step.
+
+    Each slab is a trapezoid. Unequal column heights are joined by triangles;
+    neighboring slabs share all nodes below the smaller aperture. Vertical
+    disk faces remain boundary edges, never short artificial sloping walls.
+    """
+    maximum = max(r for _, r in case.profile)
+    levels = np.unique(np.concatenate((np.linspace(0., maximum, case.nr+1),
+                                       np.array(case.profile)[:, 1])))
+    points, triangles, lookup = [], [], {}
+    epsilon = 32*np.finfo(float).eps*maximum
+
+    def column(z, radius):
+        # Only eliminate floating-point near-duplicates; retain the exact wall.
+        radii = np.append(levels[levels < radius-epsilon], radius)
+        indices = []
+        for r in radii:
+            key = (float(r), float(z))
+            if key not in lookup:
+                lookup[key] = len(points)
+                points.append(key)
+            indices.append(lookup[key])
+        return indices, radii
+
+    for (za, ra), (zb, rb) in zip(case.profile, case.profile[1:]):
+        if zb == za:
+            continue
+        count = max(1, int(np.ceil(case.nz*(zb-za)/case.length-1e-12)))
+        zs = np.linspace(za, zb, count+1)
+        radii = np.linspace(ra, rb, count+1)
+        left, lr = column(zs[0], radii[0])
+        for z, radius in zip(zs[1:], radii[1:]):
+            right, rr = column(z, radius)
+            i = j = 0
+            while i < len(left)-1 or j < len(right)-1:
+                if i == len(left)-1:
+                    triangles.append((left[i], right[j+1], right[j]))
+                    j += 1
+                elif j == len(right)-1 or lr[i+1] < rr[j+1]:
+                    triangles.append((left[i], left[i+1], right[j]))
+                    i += 1
+                elif lr[i+1] == rr[j+1]:
+                    triangles.extend(((left[i], left[i+1], right[j+1]), (left[i], right[j+1], right[j])))
+                    i += 1
+                    j += 1
+                else:
+                    triangles.append((left[i], right[j+1], right[j]))
+                    j += 1
+            left, lr = right, rr
+    points, triangles = np.asarray(points), np.asarray(triangles, dtype=np.int64)
+    axis = np.flatnonzero(points[:, 0] == 0.)
+    axis = axis[np.argsort(points[axis, 1])]
+    mesh = finish_mesh(case, points, triangles, axis)
+    validate_profile_mesh(case, mesh)
+    return mesh
+
+
+def validate_profile_mesh(case, mesh):
+    """Reject missing/extra boundary, cracks and area errors in slab meshes."""
+    _, counts = np.unique(mesh.boundary_edges, return_counts=True)
+    if np.any(counts != 2):
+        raise ValueError("mesh boundary has a crack or branch")
+    all_edges = np.sort(np.concatenate((mesh.triangles[:, [0, 1]], mesh.triangles[:, [1, 2]],
+                                        mesh.triangles[:, [2, 0]])), axis=1)
+    edge_count = len(np.unique(all_edges, axis=0))
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    graph = coo_matrix((np.ones(len(all_edges)), all_edges.T), shape=(len(mesh.points), len(mesh.points))).tocsr()
+    if (connected_components(graph, directed=False, return_labels=False) != 1
+            or len(mesh.points)-edge_count+len(mesh.triangles) != 1):
+        raise ValueError("mesh must be a connected disk without holes")
+    boundary = [(0., 0.)]+list(case.profile)+[(case.length, 0.), (0., 0.)]
+    segments = np.array(list(zip(boundary, boundary[1:])))[:, :, ::-1]
+    scale = max(case.length, max(r for _, r in case.profile))
+    tolerance = 128*np.finfo(float).eps*scale
+    covered = np.zeros(len(mesh.boundary_edges), dtype=bool)
+    ends = mesh.points[mesh.boundary_edges]
+    for a, b in segments:
+        delta = b-a
+        offsets = ends-a
+        cross = offsets[:, :, 0]*delta[1]-offsets[:, :, 1]*delta[0]
+        fraction = offsets @ delta/(delta @ delta)
+        covered |= np.all((np.abs(cross) <= tolerance*np.linalg.norm(delta)) &
+                          (fraction >= -tolerance/np.linalg.norm(delta)) &
+                          (fraction <= 1+tolerance/np.linalg.norm(delta)), axis=1)
+    expected_length = np.linalg.norm(segments[:, 1]-segments[:, 0], axis=1).sum()
+    actual_length = np.linalg.norm(ends[:, 1]-ends[:, 0], axis=1).sum()
+    expected_area = sum((b[0]-a[0])*(a[1]+b[1])/2 for a, b in zip(case.profile, case.profile[1:]))
+    _, det, _ = element_geometry(mesh)
+    if (not covered.all() or abs(actual_length/expected_length-1) > 1e-10
+            or abs(det.sum()/(2*expected_area)-1) > 1e-10):
+        raise ValueError("mesh does not reproduce the prescribed profile boundary and area")
 
 
 def element_geometry(mesh):

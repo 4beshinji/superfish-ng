@@ -232,13 +232,15 @@ def main():
     return 0 if report['passed'] else 1
 
 
-def run_wine_mode(folder):
+def run_wine_mode(folder, length_m=.08):
+    if not np.isfinite(length_m) or length_m <= 0:
+        raise ValueError('SF7 axis length must be finite and positive')
     with (folder/'wine.log').open('w') as log:
         proc = subprocess.run([str(ROOT/'run-superfish.sh'), str(folder/'cavity.af')],
                               stdout=log, stderr=subprocess.STDOUT, timeout=120)
     if proc.returncode:
         raise RuntimeError(f'Wine failed in {folder}')
-    (folder/'cavity.in7').write_text('line plotfiles\n0 0 8 0\n800\nend\n')
+    (folder/'cavity.in7').write_text(f'line plotfiles\n0 0 {length_m*100:.12g} 0\n800\nend\n')
     with (folder/'sf7.log').open('w') as log:
         proc = subprocess.run(['wine', 'C:\\LANL\\SF7.EXE', 'CAVITY.T35'], cwd=folder,
                               env=dict(os.environ, WINEPREFIX=str(ROOT/'.wine-superfish'), WINEDEBUG='-all'),

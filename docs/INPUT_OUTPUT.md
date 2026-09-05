@@ -44,6 +44,14 @@ Pythonでは `Case(..., z_min='electric_symmetry')` を用いる。
 エネルギー・電圧・R/Qは入力領域の値であり、半領域の値を全空洞の値と解釈しない。
 例題では半領域U=0.5 Jとし、明示的な鏡映で全空洞U=1 Jの場を得る。
 
+### v2: 垂直段差のある外壁
+
+`geometry.type:stepped_profile` と `points_zr_m` を用いる。zは0から非減少、半径は正。
+同一zの2点による孤立した垂直段差を許す。3点連続の同一z、同一点の重複、逆行するz、
+最初・最後の区間が垂直の形状は拒否する。従来profileとv1の拒否条件は変更しない。
+mesh.nrは最大半径までの分割数で、壁頂点半径の格子を追加する。nzは非垂直区間の軸分割目安。
+例題と検査記録は [SEMINAR_MULTICELL.md](SEMINAR_MULTICELL.md)。円弧の入力はまだ未対応。
+
 ## コマンド
 
 - `superfish-ng solve CASE --out NEW_DIRECTORY`

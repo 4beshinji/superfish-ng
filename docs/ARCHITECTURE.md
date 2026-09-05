@@ -4,11 +4,12 @@
 
 | モジュール | 責務 | 依存先 |
 |---|---|---|
-| config.py | strict case v1、単位/幾何制約、canonical入力 | 標準ライブラリ |
-| mesh.py | R(z)から三角形、軸/PECタグ、要素勾配 | NumPy |
+| config.py | strict case v1/v2、単位/幾何/対称境界制約、canonical入力 | 標準ライブラリ |
+| mesh.py | profile/段差から三角形、境界タグ、要素勾配・トポロジー検査 | NumPy、SciPy sparse |
 | fem.py | Hφ=r u のK,Mを組み立て | mesh、SciPy sparse |
 | solver.py | 平衡化、固有値、残差、直交性、エネルギー正規化 | fem、ARPACK |
 | rf.py | 復元場、軸積分、表面積分、規約を固定したRF量 | mesh、定数 |
+| symmetry.py | 対称部分領域のメッシュ・場を全空洞へ鏡映、残差検査 | mesh、fem |
 | analytic.py | 独立解析解。solverから参照しない | SciPy special |
 | io.py | JSON/CSV/NPZ/VTK、入力hash・環境メタデータ | solver出力、rf |
 | cli.py | solve/converge、失敗コード、上書き拒否 | 上記API |
@@ -71,3 +72,12 @@ JSON case v1、正規化した入力SHA-256、環境、規約、結果を保存�
 100万自由度・MPI・GPUに対応する設計や性能測定は行っていない。
 サイズ増加時は疎行列factorizationのメモリが支配的になり得るため、実ケースで測定してからSLEPc等を選ぶ。
 一様に細分するだけで特異角のピーク値が改善するとは期待しない。
+
+## ADR-005: 垂直段差は共有半径格子のスラブメッシュで拡張する
+
+測定された必要性: セミナーflat-noseの入力には同一zの異なるrがあり、従来profileは入力段階で拒否した。
+決定: v2のstepped_profileを追加し、軸連結・z非減少の外壁という制約を維持した適合スラブメッシュを実装する。
+垂直面を正確に保ち、面積・境界包含・位相構造・解析積分で検査する。従来profileの経路は維持する。
+新しい依存ライブラリは追加しない。連結性検査に既存SciPyのcsgraphを使用する。
+不利: 一般CADやz方向に折り返す輪郭には対応しない。複数の頂点半径は全スラブの格子を増やす。
+再検討条件: 円弧近似の点数が格子を過大にする、強い傾斜で細長い要素が増える、適応細分が必要になる場合。

@@ -40,6 +40,7 @@ class Case:
     name: str = "cavity"
     z_min: str = "pec"
     z_max: str = "pec"
+    geometry_type: str = "profile"
 
     def __post_init__(self):
         if not isinstance(self.name, str):
@@ -55,8 +56,17 @@ class Case:
                 raise ValueError("profile z must be finite")
             converted.append((float(z), positive(r, "profile radius")))
         object.__setattr__(self, "profile", tuple(converted))
-        if self.profile[0][0] != 0 or any(b[0] <= a[0] for a, b in zip(self.profile, self.profile[1:])):
-            raise ValueError("profile must start at z=0 and have strictly increasing z")
+        if self.geometry_type not in ("profile", "stepped_profile"):
+            raise ValueError("geometry_type must be profile or stepped_profile")
+        if self.geometry_type == "profile":
+            if self.profile[0][0] != 0 or any(b[0] <= a[0] for a, b in zip(self.profile, self.profile[1:])):
+                raise ValueError("profile must start at z=0 and have strictly increasing z")
+        else:
+            if (self.profile[0][0] != 0 or self.profile[-1][0] <= 0
+                    or any(b[0] < a[0] or b == a for a, b in zip(self.profile, self.profile[1:]))
+                    or self.profile[1][0] == 0 or self.profile[-2][0] == self.profile[-1][0]
+                    or any(a[0] == b[0] == c[0] for a, b, c in zip(self.profile, self.profile[1:], self.profile[2:]))):
+                raise ValueError("stepped_profile requires nondecreasing z from zero, isolated nonzero vertical steps, and nonvertical first/last segments")
         integer(self.nr, "nr", 2)
         integer(self.nz, "nz", 2)
         integer(self.modes, "modes")
@@ -91,18 +101,21 @@ class Case:
             keys(g, ["type", "radius_m", "length_m"], ["type", "radius_m", "length_m"], "geometry")
             radius = positive(g["radius_m"], "radius_m")
             profile = ((0.0, radius), (positive(g["length_m"], "length_m"), radius))
-        elif g.get("type") == "profile":
+        elif g.get("type") in ("profile", "stepped_profile"):
+            if g["type"] == "stepped_profile" and data["schema_version"] != 2:
+                raise ValueError("stepped_profile requires schema_version 2")
             keys(g, ["type", "points_zr_m"], ["type", "points_zr_m"], "geometry")
             if not isinstance(g["points_zr_m"], list):
                 raise ValueError("points_zr_m must be an array")
             profile = g["points_zr_m"]
         else:
-            raise ValueError("geometry type must be pillbox or profile")
+            raise ValueError("geometry type must be pillbox, profile or stepped_profile")
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
         keys(mesh, ["nr", "nz"], [], "mesh")
         keys(solver, ["modes"], [], "solver")
         keys(rf, ["beta", "conductivity_s_per_m", "normalization_j"], [], "rf")
-        return cls(profile=profile, name=data.get("name", "cavity"), **mesh, **solver, **rf, **boundaries)
+        return cls(profile=profile, geometry_type="stepped_profile" if g["type"] == "stepped_profile" else "profile",
+                   name=data.get("name", "cavity"), **mesh, **solver, **rf, **boundaries)
 
     @classmethod
     def load(cls, path):
@@ -117,10 +130,12 @@ class Case:
 
     def to_dict(self):
         data = {"schema_version": 1, "name": self.name,
-                "geometry": {"type": "profile", "points_zr_m": [list(p) for p in self.profile]},
+                "geometry": {"type": self.geometry_type, "points_zr_m": [list(p) for p in self.profile]},
                 "mesh": {"nr": self.nr, "nz": self.nz}, "solver": {"modes": self.modes},
                 "rf": {"beta": self.beta, "conductivity_s_per_m": self.conductivity_s_per_m,
                        "normalization_j": self.normalization_j}}
         if self.z_min != "pec" or self.z_max != "pec":
             data.update(schema_version=2, boundaries={"z_min": self.z_min, "z_max": self.z_max})
+        if self.geometry_type == "stepped_profile":
+            data["schema_version"] = 2
         return data
