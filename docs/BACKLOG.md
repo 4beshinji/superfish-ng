@@ -6,16 +6,14 @@
 記録は [LOCAL_DEVELOPMENT.md](LOCAL_DEVELOPMENT.md)。次の数値開発課題はP0-01。
 
 2026-09-05追記: ユーザー指定の優先マイルストーンは
-[セミナー4資料の例題計算・可視化](MILESTONE_SEMINAR.md)。直近はS1〜S6の順で進める。
+[セミナー4資料の例題計算・可視化](MILESTONE_SEMINAR.md)。S1〜S6は全例題一括実行で完了した。
 Wine版SUPERFISHの3形状照合は完了（[記録](SUPERFISH_COMPARISON.md)）。
 これはP0-01のNGSolve/GetDP照合を実行したという意味ではない。
 
-S1進捗: 全領域Pillbox TM010/TM011、長さ掃引、場の図・CSV・結果HTML、符号付きSF7照合を実装済み。
-半領域の電気／磁気対称境界・全空洞鏡映も実装・検証済み。次はS2の垂直段差。[検証結果](SEMINAR_PILLBOX.md)を参照。
-S2進捗: 適合垂直段差メッシュと4セルflatの計算・初回Wine照合を実装。次は両コードの収束・同定ゲートと円弧。[記録](SEMINAR_MULTICELL.md)。
-最新進捗: flat4/rounded4の全モードWine照合・収束が合格。交差分割により7セルの微小R/Q収束も合格。
-端部full-cell比較の数値・画面検査も合格。次は7セルWine照合とS6一括検証。
-rounded7のWine追加細分は実行ハンドルと出力の状態を確認して継続し、重複起動しない。
+最終記録: `out/seminar-suite-final-20260905` の9数値ジョブ・69テスト・7ページ検査がPASS。
+Pillbox全/半領域、長さ掃引、flat4/rounded4/rounded7の全モード、端部full/half比較を計算・表示できる。
+Wine対象17モードの両コード細分・照合も合格。7セルπの追加DX=0.01を含み、未達履歴も保持する。
+詳細は [受入監査](MILESTONE_ACCEPTANCE.md)。以下は以後の候補で、今回のマイルストーンの残件ではない。
 
 | ID | 依存 | 内容 | 受入条件 |
 |---|---|---|---|

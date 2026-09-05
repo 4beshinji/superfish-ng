@@ -7,11 +7,12 @@
 SUPERFISH全体の置換、旧入力形式の互換性、KEKの実機モデルとの一致はまだ実現・検証していません。
 プロジェクト名は作業名で、LANL・DOE・KEKの公式製品ではありません。
 
-当面のマイルストーンは、指定4資料に基づく [セミナー例題の計算と可視化](docs/MILESTONE_SEMINAR.md)です。
+指定4資料に基づく [セミナー例題の計算と可視化](docs/MILESTONE_SEMINAR.md) のマイルストーンは完了しました。
 Wine版SUPERFISHとの3形状の基本モード照合は実施済みで、[比較結果](docs/SUPERFISH_COMPARISON.md)を記録しています。
 多セルの段差・円弧、4/7モードの計算・同定・分散曲線・表示を実装済みです。
-[比較と残件](docs/SEMINAR_MULTICELL.md)：flat4の全4モードWine照合・収束と、交差分割の7セルNG収束は合格。
-rounded4のWine照合、端部full-cell比較と表示も合格。残件は7セルWine照合と演習一括検証です。
+[最終結果の入口](out/seminar-suite-final-20260905/index.html) から例題・モードを選択できます。
+全NG新規計算の9検証ジョブ、7ページの画面検査、対象17モードのWine照合が合格しました。
+対象・受入基準・対象外は [受入記録](docs/MILESTONE_ACCEPTANCE.md)、細分の履歴は [多セル記録](docs/SEMINAR_MULTICELL.md) に明記しています。
 
 PillboxのTM010/TM011・長さ掃引・電磁場の図は [演習ガイド](docs/SEMINAR_PILLBOX.md) から実行できます。
 `python scripts/seminar_pillbox.py --out out/seminar-new` で例題の計算と結果選択HTMLを生成します（plot依存が必要）。
@@ -19,7 +20,7 @@ PillboxのTM010/TM011・長さ掃引・電磁場の図は [演習ガイド](docs
 `--case` はflat4/rounded4/rounded7。数値ゲート未達はFAILとして保存・表示します。
 端部比較は `python scripts/seminar_end_cells.py --flat-half-extra-n 384 --out out/ends-new`。
 収束確認済みの7セル設定は `--triangulation crossed --levels 64 128 256` を明示します。
-全演習の新規計算と入口HTMLは [一括実行ガイド](docs/SEMINAR_SUITE.md)。初回の一括検証は実行中です。
+全演習の新規計算と入口HTMLは [一括実行ガイド](docs/SEMINAR_SUITE.md)。初回の未達結果も上書きせず保持しています。
 
 ## ローカルで開始する
 
@@ -89,7 +90,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | RF量 | f、U、表面抵抗、壁損失、Q0、G、通過位相を含むVacc、R/Q、シャントインピーダンス、TTF |
 | 表面電磁場 | Epk/Eacc、Bpk/Eaccの一次要素推定値。角部では収束保証なし |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 66テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧・交差分割、バンド同定。生成HTMLはheadless操作も検証 |
+| 検証 | 69テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧・交差分割、バンド同定。生成HTMLはheadless操作も検証 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 `docs/VALIDATION_REPORT.md` に数値と解釈をまとめています。
@@ -107,7 +108,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 - 電磁場はピークphasorです。既定で全蓄積エネルギー1 Jに正規化します。運転電力1 Wの指定ではありません。
 - R/Qは `|Vacc|²/(ωU)` と `|Vacc|²/(2ωU)` を別名で出力します。
 - 周波数順のmode番号は物理モード名ではありません。形状変更時のmode trackingは未実装。
-- Wine版SUPERFISHと3形状の基本モード、Pillbox TM010/TM011、flat4の全4モードを照合済み。円弧形状全モードの照合は進行中。測定との比較は未実施で、角部のピーク電場には差が残ります。
+- Wine版SUPERFISHとの基本3形状照合に加え、セミナーの80 mm Pillbox TM010/TM011、flat4・rounded4・rounded7の計17モードを照合済み。full-end比較形状と長さ40/120 mmはWine直接照合の対象外です。測定との比較は未実施で、角部のピーク電場には差が残ります。
 
 ## Codexに引き継ぐ
 

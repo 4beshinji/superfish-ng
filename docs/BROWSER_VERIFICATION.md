@@ -9,7 +9,8 @@ node scripts/verify_gallery.mjs \
   --out out/browser-check-new
 ```
 
-既設Node 22とChromeを使用する。今回の実測はNode v22.22.1、Chrome/151.0.7922.137。
+既設Node 22とChromeを使用する。初期検査はNode v22.22.1、Chrome/151.0.7922.137。
+最終一括実行の実測はNode v22.22.1、Chrome/152.0.7977.82（各verification.jsonの実行記録を優先する）。
 新しいnpmパッケージやPythonのWeb依存は不要。`--chrome` で検証用実行形式を明示できる。
 選択UIを持たないページには `--mode static` を使い、キーボード選択を検査したとは記録しない。
 計算・PNG・HTML生成にはこれらの検証ツールを要求しない。
@@ -25,6 +26,12 @@ node scripts/verify_gallery.mjs \
 [Runtime domain](https://chromedevtools.github.io/devtools-protocol/tot/Runtime/)。
 
 ## 検査内容とエビデンス
+
+最終一括検証 `out/seminar-suite-final-20260905/browser/` は全7ページPASS。
+Pillbox 6選択/24リンク、symmetry静的1ページ/21リンク、flat4 4/16、rounded4 4/16、
+end_cells 8/51、rounded7 7/25、portal 6/22。各ページのverification.jsonにhashと実表示状態を保存した。
+最終入口と7セルπのスクリーンショットも目視し、場・単位・モード・分散・符号付きWine重ね描きを確認した。
+以下はそれ以前の個別検査の履歴。
 
 - 全画像を実際にデコードし、表示画像のnaturalWidth/Heightが正であることを確認。
 - Home/ArrowDownキーで全選択肢へ移動し、選択値と唯一の表示セクションが一致することを確認。

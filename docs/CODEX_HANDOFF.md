@@ -2,7 +2,11 @@
 
 ## 現在の優先目標（2026-09-05更新）
 
-ユーザー指定の [セミナー4資料の例題計算・可視化](MILESTONE_SEMINAR.md) を優先する。
+ユーザー指定の [セミナー4資料の例題計算・可視化](MILESTONE_SEMINAR.md) は完了。
+最終結果は `out/seminar-suite-final-20260905/index.html`、受入監査は [MILESTONE_ACCEPTANCE.md](MILESTONE_ACCEPTANCE.md)。
+9数値ジョブ・69テスト・7ページ検査がPASS。全NGは新規計算、Wineは入力・hashを検査して再利用した。
+最終suite.jsonはPASSかつsource_changed_during_run=false。継続待ちの計算プロセスはない。
+以下の個別試行・失敗も履歴として保持する。次の機能拡張はユーザーの次の指示で選ぶ。
 Wine版SUPERFISHとの3形状の基本モード照合は完了し、[比較結果](SUPERFISH_COMPARISON.md) を保存した。
 S1の全領域TM010/TM011・長さ掃引・図・CSV・HTMLとWine/SF7照合は実装済み（[記録](SEMINAR_PILLBOX.md)）。
 S1の半領域の電気／磁気対称境界・全空洞鏡映も完了。`seminar_symmetry.py` で再現可能。
@@ -13,8 +17,7 @@ rounded4はNG・形状近似・Wine3段階の全検査合格（`out/seminar-roun
 rounded7は任意のcrossed分割を追加し、nr=64/128/256で全量PASS。
 `out/seminar-rounded7-crossed-native-20260905` と `out/seminar-rounded7-crossed-geometry-20260905` を参照。
 円弧半領域の鏡映にも対応したが、対称反射だけのR/Q改善試験は不成功。失敗試験も保存済み。
-rounded7のWine dx=0.0125計算は `out/seminar-rounded-wine-20260905/rounded7` で進行中。
-既存tool handle/プロセスを確認し、重複起動しない。次は7セルWine照合とS6一括検証。
+rounded7のWine3段階は `out/seminar-rounded-wine-20260905/rounded7` で完了。
 full-end切断面を実装した `scripts/seminar_end_cells.py` も追加。初回検査はflat/halfのR/Qだけ1.1521%でFAIL。
 追加nr=384で変化0.32373%を確認し、`out/seminar-end-cells-ready-20260905` の最終レポートはPASS。
 `out/gallery-test-end-cells-ready-20260905` で全8選択肢・51リンク/画像のheadless検査も合格した。
@@ -22,11 +25,13 @@ Pillbox/rounded4/7のHTMLはheadless Chromeの実キー入力で検証済み。O
 S6の `scripts/seminar_suite.py` と入口HTML生成を実装し、`out/seminar-suite-20260905` の全NG計算・全7画面検査は終了。
 全体FAILの原因は7セルπモードのWine側R/Q細分1.98217%とTTF。NG–Wine差は全モード合格。
 RAM設定で追加DX=0.01/0.011 cmはSFO生成前に失敗。ローカルSF.INIのStoreTempDataInRAM=Noを使う
-`out/seminar-rounded7-wine-extra-20260905/disk-dx0.01/mode7` を実行中。既設SF.INIは変更していない。
-モード別追加細分の検証を実装し、`out/seminar-suite-final-20260905` で全NGを再び新規計算中。
+`out/seminar-rounded7-wine-extra-20260905/disk-dx0.01/mode7` が正常終了。既設SF.INIは変更していない。
+πの追加R/Q細分変化0.658403%、NG–Wine差0.757236%で合格。元の未達履歴は消さない。
+モード別追加細分の検証を実装し、`out/seminar-suite-final-20260905` で全NGを再び新規計算してPASS。
 参照は既存Wine生出力を検査して再利用し、必要なrounded7出力は最大14400秒の読取専用待ちを明示した。
-開始時のsource/tests/scripts/examples hashを固定しているため、実行中にこれらを編集しない。
-進捗は `suite.json` とジョブ別log。完了・合否を確認するまではS6やマイルストーンを完了にしない。
+開始時のsource/tests/scripts/examples hashと終了時の一致を確認した。今後も一括実行中にはソースを編集しない。
+最終suite.json、全子レポート、参照ファイル、画面とリンク先のhashも再監査した。
+追加参照を含む比較はfinal_legacy_modesを読む。legacy[-1]は追加前の履歴であり、πの旧FAILが意図的に残る。
 操作手順と判定仕様は [SEMINAR_SUITE.md](SEMINAR_SUITE.md)。
 以下の開始プロンプトはseed時点の記録で、次課題P0-01の優先順はこの更新で置き換える。
 

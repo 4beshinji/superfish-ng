@@ -2,7 +2,8 @@
 
 `scripts/seminar_suite.py` はS1〜S6の対象を新しい出力先へ順番に計算し、例題選択の入口HTMLを生成する。
 初回 `out/seminar-suite-20260905` は全NG計算・全画面検査を完了したが、7セルπモードのWine側細分が未達で全体FAIL。
-追加参照を使う `out/seminar-suite-final-20260905` を新規実行中で、マイルストーン完了はまだ主張しない。
+追加参照を使う `out/seminar-suite-final-20260905` は全NG新規計算を完了し、9数値ジョブ・7ページ検査がPASS。
+実行中ソース変更なし。最終結果は同ディレクトリのindex.html、受入記録は [MILESTONE_ACCEPTANCE.md](MILESTONE_ACCEPTANCE.md)。
 
 ## この環境のWine参照を使った再現コマンド
 
@@ -12,7 +13,8 @@ OPENBLAS_NUM_THREADS=1 MPLCONFIGDIR=/tmp/superfish-matplotlib \
   --out out/seminar-suite-new \
   --pillbox-reference-run out/seminar-pillbox-ready-20260905 \
   --flat-reference-run out/seminar-flat-ready-20260905 \
-  --rounded-reference-root out/seminar-rounded-wine-20260905
+  --rounded-reference-root out/seminar-rounded-wine-20260905 \
+  --rounded7-extra-reference 6 .01 out/seminar-rounded7-wine-extra-20260905/disk-dx0.01/mode7
 ```
 
 各NG例題は新規に解く。`--native-runs` や `--native-roots` は一括実行では使用しない。
@@ -63,8 +65,10 @@ AF/SEGの全バイト一致と、そのモードで直前より細かいDXを要
 
 この環境ではRAM作業データのDX=0.01と0.011 cm実行がSFO生成前に失敗した（0.011の終了コード240）。
 原因は確定していない。インストール済みSF.INIに説明された `StoreTempDataInRAM=No` を
-新規出力先のローカルSF.INIへ指定してDX=0.01を試行中。既設SF.INIは変更していない。
+新規出力先のローカルSF.INIへ指定したDX=0.01計算とSF7は終了コード0で完了した。既設SF.INIは変更していない。
 このローカル設定も追加参照のhashへ含め、物理条件と作業データの保存方法を区別する。
+追加細分のR/Q変化0.658403%、TTF変化0.324383%、NG–Wine R/Q差0.757236%で全ゲート合格。
+旧3段階は保持するため、最終比較には `final_legacy_modes` を使う。単にlegacy[-1]を読むと追加前の履歴になる。
 
 ## 表示・保存・合否
 

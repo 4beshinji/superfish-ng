@@ -2,12 +2,15 @@
 
 ## Unreleased
 
+- Complete the four-document seminar milestone: fresh native calculations, 17 direct Wine mode comparisons, 9 numerical jobs, 69 tests and 7 headless page checks pass with unchanged source hashes.
+- Resolve the seven-cell pi reference-refinement gate using an additional DX=0.01 cm Wine run with local disk scratch configuration; retain failed RAM runs and prior numerical failures, without relaxing thresholds.
+
 - Retain per-mode supplemental Wine refinement histories, re-identify the complete signed-field band, and keep original failed convergence levels visible.
 - Report Wine/SF7 exit codes and include local reference configuration hashes when present; physical solvers and acceptance thresholds are unchanged.
 
 - Add optional reflection-neutral crossed P1 triangulation, verified by periodic cell-amplitude, geometry and analytic RF invariants; preserve default meshes and v1 case hashes.
 - Support radius-preserving arc reflection and seminar full/half end-cell geometry, numerical refinement and field visualization without transferring half-end phase labels.
-- Complete all-mode flat4 and rounded4 Wine comparisons with independent refinement gates; retain failed intermediate reports. Rounded7 native/geometry convergence passes, Wine verification remains in progress.
+- Complete all-mode flat4 and rounded4 Wine comparisons with independent refinement gates; retain failed intermediate reports. Rounded7 native/geometry convergence and Wine verification also pass in the final suite.
 
 - Add radius-preserving circular profiles, bounded chord approximation and independent area/convergence checks for the rounded four/seven-cell seminar examples.
 - Identify the four/seven-cell band using cell fields and zero counts, fit cosine dispersion with residuals, and generate multi-mode result galleries with explicit failed gates.
