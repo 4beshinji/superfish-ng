@@ -7,10 +7,17 @@ Wine版SUPERFISHとの3形状の基本モード照合は完了し、[比較結�
 S1の全領域TM010/TM011・長さ掃引・図・CSV・HTMLとWine/SF7照合は実装済み（[記録](SEMINAR_PILLBOX.md)）。
 S1の半領域の電気／磁気対称境界・全空洞鏡映も完了。`seminar_symmetry.py` で再現可能。
 段差・円弧、4/7モード同定と分散曲線も実装済み。[記録](SEMINAR_MULTICELL.md)を参照。
-flat4はNG nr=128/256/512の細分が合格。Wine dx=0.0125まででは最低モードの参照側R/Q変化が1.085%で未達。
-追加のdx=0.01を `out/seminar-flat-wine-dx001-20260905` で実行中。プロセス/既存tool handleを確認してから継続すること。
-rounded4はNGと形状近似の検査が合格、rounded7はπモード等の微小R/Qが未収束。
-次は7セルの追加細分または正しい対称境界による計算効率化、rounded4/7のWine照合、端部full-cell比較、一括検証。
+flat4はNG nr=128/256/512とWine dx=0.05/0.025/0.0125/0.01で全照合・収束PASS。
+`out/seminar-flat-ready-20260905` とheadless検査 `out/gallery-test-flat-ready-20260905` が最終結果。
+rounded4はNG・形状近似・Wine3段階の全検査合格（`out/seminar-rounded4-wine-comparison-20260905`）。
+rounded7は任意のcrossed分割を追加し、nr=64/128/256で全量PASS。
+`out/seminar-rounded7-crossed-native-20260905` と `out/seminar-rounded7-crossed-geometry-20260905` を参照。
+円弧半領域の鏡映にも対応したが、対称反射だけのR/Q改善試験は不成功。失敗試験も保存済み。
+rounded7のWine dx=0.0125計算は `out/seminar-rounded-wine-20260905/rounded7` で進行中。
+既存tool handle/プロセスを確認し、重複起動しない。次は7セルWine照合とS6一括検証。
+full-end切断面を実装した `scripts/seminar_end_cells.py` も追加。初回検査はflat/halfのR/Qだけ1.1521%でFAIL。
+追加nr=384で変化0.32373%を確認し、`out/seminar-end-cells-ready-20260905` の最終レポートはPASS。
+`out/gallery-test-end-cells-ready-20260905` で全8選択肢・51リンク/画像のheadless検査も合格した。
 Pillbox/rounded4/7のHTMLはheadless Chromeの実キー入力で検証済み。Orcaの既存デスクトップ操作は行っていない。
 以下の開始プロンプトはseed時点の記録で、次課題P0-01の優先順はこの更新で置き換える。
 
@@ -40,7 +47,7 @@ AGENTS.md、README.md、docs/PHYSICS.md、docs/PROVENANCE.mdを最初に読み�
 
 `Case.load → make_mesh → assemble → solve → quantities → save_run`。
 式と積分は `src/superfish_ng/fem.py` と `rf.py`、独立解析解は `analytic.py`。
-テストは `unittest` 56件。seedの主要数値は `benchmarks/validation/`、最新照合は `docs/SEMINAR_PILLBOX.md` と `docs/SEMINAR_MULTICELL.md`。
+テストは `unittest` 63件。seedの主要数値は `benchmarks/validation/`、最新照合は `docs/SEMINAR_PILLBOX.md` と `docs/SEMINAR_MULTICELL.md`。
 出力は別の新規ディレクトリへ作る。既存ベンチマークを直接上書きして初期値を失わないこと。
 
 ## 直近の注意点

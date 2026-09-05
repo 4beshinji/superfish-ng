@@ -24,6 +24,7 @@ def main(argv=None):
     parser.add_argument('--case', choices=['rounded4', 'rounded7'], required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--nr', type=int, default=128)
+    parser.add_argument('--triangulation', choices=['diagonal', 'crossed'], help='explicit P1 quad subdivision')
     parser.add_argument('--tolerances-m', type=float, nargs='+', default=[1.2e-5, 3e-6, 7.5e-7])
     args = parser.parse_args(argv)
     tolerances = args.tolerances_m
@@ -35,6 +36,8 @@ def main(argv=None):
     sources = sorted((ROOT/'src').rglob('*.py'))+[Path(__file__).resolve(), ROOT/'scripts/seminar_multicell.py']
     hashes = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
     base = Case.load(ROOT/'examples'/EXERCISES[args.case][0])
+    if args.triangulation is not None:
+        base = replace(base, triangulation=args.triangulation)
     report = {'scope': 'chord tolerance variation at fixed nr/nz; boundary vertices and total DOF also change',
               'case': args.case, 'nr': args.nr, 'nz': round(args.nr*base.nz/base.nr), 'levels': [],
               'limits': {'frequency_relative': .001, 'rf_relative': .01}, 'source_sha256': hashes}

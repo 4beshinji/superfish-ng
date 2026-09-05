@@ -43,6 +43,7 @@ class Case:
     geometry_type: str = "profile"
     arcs: tuple[tuple[int, float, str], ...] = ()  # (end vertex index, radius m, direction in z,r)
     arc_chord_tolerance_m: float = 1e-5
+    triangulation: str = "diagonal"
 
     def __post_init__(self):
         if not isinstance(self.name, str):
@@ -71,6 +72,8 @@ class Case:
                 raise ValueError("stepped_profile requires nondecreasing z from zero, isolated nonzero vertical steps, and nonvertical first/last segments")
         integer(self.nr, "nr", 2)
         integer(self.nz, "nz", 2)
+        if self.triangulation not in ('diagonal', 'crossed'):
+            raise ValueError('triangulation must be diagonal or crossed')
         integer(self.modes, "modes")
         positive(self.beta, "beta")
         if self.beta > 1:
@@ -140,7 +143,9 @@ class Case:
             geometry_options = {'arcs': tuple((a['end_index'], a['radius_m'], a['direction']) for a in g['arcs']),
                                 'arc_chord_tolerance_m': g['chord_tolerance_m']}
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
-        keys(mesh, ["nr", "nz"], [], "mesh")
+        keys(mesh, ["nr", "nz", "triangulation"], [], "mesh")
+        if 'triangulation' in mesh and data['schema_version'] != 2:
+            raise ValueError('explicit triangulation requires schema_version 2')
         keys(solver, ["modes"], [], "solver")
         keys(rf, ["beta", "conductivity_s_per_m", "normalization_j"], [], "rf")
         return cls(profile=profile, geometry_type="profile" if g["type"] == "pillbox" else g['type'],
@@ -170,4 +175,7 @@ class Case:
         if self.geometry_type == 'arc_profile':
             data['geometry'].update(arcs=[{'end_index': i, 'radius_m': r, 'direction': d} for i, r, d in self.arcs],
                                     chord_tolerance_m=self.arc_chord_tolerance_m)
+        if self.triangulation != 'diagonal':
+            data['schema_version'] = 2
+            data['mesh']['triangulation'] = self.triangulation
         return data

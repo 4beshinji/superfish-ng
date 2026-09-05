@@ -14,8 +14,6 @@ def reflect_solution(case, solution):
     are unchanged, so energy and loss double. The original mode indices are a
     subset of the full spectrum, not its global frequency ranks.
     """
-    if case.geometry_type == 'arc_profile':
-        raise ValueError('arc-profile reflection metadata is not yet supported; solve the full input geometry')
     sides = [side for side in ('z_min', 'z_max') if getattr(case, side) != 'pec']
     if len(sides) != 1:
         raise ValueError('reflection requires exactly one symmetry end and one PEC end')
@@ -35,8 +33,12 @@ def reflect_solution(case, solution):
         mirrored[:, 1] += case.length
         profile = tuple((case.length-z, r) for z, r in reversed(case.profile))
         profile += tuple((case.length+z, r) for z, r in case.profile[1:])
+        count = len(case.profile)
+        arcs = tuple((count-i, radius, direction) for i, radius, direction in case.arcs)
+        arcs += tuple((count-1+i, radius, direction) for i, radius, direction in case.arcs)
     else:
         profile = case.profile + tuple((2*case.length-z, r) for z, r in reversed(case.profile[:-1]))
+        arcs = case.arcs+tuple((2*len(case.profile)-1-i, radius, direction) for i, radius, direction in case.arcs)
     mapping = np.arange(len(original))
     mapping[~on_plane] = np.arange(len(original), len(original)+np.count_nonzero(~on_plane))
     points = np.vstack((original, mirrored[~on_plane]))
@@ -58,7 +60,9 @@ def reflect_solution(case, solution):
     gram = u.T @ mu
     norms = np.sqrt(np.diag(gram))
     orthogonality = float(np.max(np.abs(gram/np.outer(norms, norms)-np.eye(case.modes))))
-    full = replace(case, profile=profile, z_min='pec', z_max='pec', nz=2*case.nz,
+    # Reflection reverses orientation, as does traversing the mirrored wall in
+    # increasing z; together they preserve each minor arc's cw/ccw direction.
+    full = replace(case, profile=profile, arcs=arcs, z_min='pec', z_max='pec', nz=2*case.nz,
                    normalization_j=2*case.normalization_j, name=case.name+' [reflected full cavity]')
     result = Solution(reflected, k, m, solution.eigenvalues.copy(), solution.frequencies_hz.copy(),
                       u, residuals, orthogonality,

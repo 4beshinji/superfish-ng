@@ -37,8 +37,13 @@ node scripts/verify_gallery.mjs \
 | Pillbox全領域 | 6 | 27 | `out/gallery-test-pillbox-final-20260905/verification.json` |
 | 丸み付き4セル | 4 | 15 | `out/gallery-test-rounded4-final-20260905/verification.json` |
 | 丸み付き7セル | 7 | 24 | `out/gallery-test-rounded7-final-20260905/verification.json` |
+| 平坦4セル・最終Wine照合 | 4 | 16 | `out/gallery-test-flat-ready-20260905/verification.json` |
+| 交差分割7セル・NG収束合格 | 7 | 24 | `out/gallery-test-rounded7-crossed-20260905/verification.json` |
+| 丸み付き4セル・Wine照合合格 | 4 | 16 | `out/gallery-test-rounded4-wine-20260905/verification.json` |
+| full/half端部比較 | 8 | 51 | `out/gallery-test-end-cells-ready-20260905/verification.json` |
 | 故障fixture | 2 | 2 | `out/gallery-test-broken-fixture-20260905/verification.json`（期待通りFAIL） |
 
-7セル画面の数値検証結果はFAILのまま保持されている。UIテストのPASSを数値精度のPASSと混同しない。
+従来分割の7セル画面の数値FAILはそのまま保持され、交差分割の新しい7セル画面ではNG収束がPASSになった。
+UIテストのPASSを数値精度やWine照合のPASSと混同しない。
 デスクトップのOrca CLIの起動問題を修正したわけではない。
 ここで証明したのは生成HTMLのheadlessブラウザー上の操作と描画であり、OS固有のメニュー操作ではない。

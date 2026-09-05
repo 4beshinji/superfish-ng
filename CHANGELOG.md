@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add optional reflection-neutral crossed P1 triangulation, verified by periodic cell-amplitude, geometry and analytic RF invariants; preserve default meshes and v1 case hashes.
+- Support radius-preserving arc reflection and seminar full/half end-cell geometry, numerical refinement and field visualization without transferring half-end phase labels.
+- Complete all-mode flat4 and rounded4 Wine comparisons with independent refinement gates; retain failed intermediate reports. Rounded7 native/geometry convergence passes, Wine verification remains in progress.
+
 - Add radius-preserving circular profiles, bounded chord approximation and independent area/convergence checks for the rounded four/seven-cell seminar examples.
 - Identify the four/seven-cell band using cell fields and zero counts, fit cosine dispersion with residuals, and generate multi-mode result galleries with explicit failed gates.
 - Add optional dependency-free Node/Chrome headless keyboard/graphics/link verification, including an intentionally failing gallery fixture.

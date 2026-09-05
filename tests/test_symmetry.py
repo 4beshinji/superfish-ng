@@ -14,6 +14,21 @@ from superfish_ng.rf import quantities
 
 
 class SymmetryTests(unittest.TestCase):
+    def test_arc_reflection_preserves_circle_metadata_and_energy(self):
+        from superfish_ng.symmetry import reflect_solution
+        from superfish_ng.geometry import profile_area
+        profile = ((0., .04), (.02, .04), (.02, .02), (.03, .01), (.04, .01))
+        for side in ('z_min', 'z_max'):
+            case = Case(profile, geometry_type='arc_profile', arcs=((3, .01, 'ccw'),),
+                        nr=12, nz=16, modes=2, **{side: 'electric_symmetry'})
+            solution = solve(case)
+            full, reflected = reflect_solution(case, solution)
+            self.assertEqual(len(full.arcs), 2)
+            self.assertTrue(all(radius == .01 and direction == 'ccw' for _, radius, direction in full.arcs))
+            self.assertAlmostEqual(profile_area(full), 2*profile_area(case), places=14)
+            self.assertLess(np.max(reflected.residuals), 1e-7)
+            self.assertAlmostEqual(quantities(full, reflected)['stored_energy_j'], 2., places=10)
+
     def test_boundary_schema_is_explicit_and_strict(self):
         base = Case(((0., .075), (.04, .075)))
         self.assertEqual(base.to_dict()['schema_version'], 1)

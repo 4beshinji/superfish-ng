@@ -1,8 +1,36 @@
 # 多セル演習：垂直段差メッシュの実装記録
 
 2026-09-05。段差・円弧・4/7モード同定・分散フィット・HTML表示を実装した。
-多セル演習の全受入条件は未達。7セルの微小R/Qの収束、丸み付き形状のWine照合、
+多セル演習の全受入条件は未達。交差分割で7セルの微小R/Q収束は合格し、丸み付き形状のWine照合、
 端部full-cell比較と全例題一括検証が残る。
+
+## 追加検証：flat4の全照合合格と交差分割
+
+`out/seminar-flat-ready-20260905/index.html` は全4モードの数値ゲートPASS。
+NGのnr=128/256/512とWine dx=0.05/0.025/0.0125/0.01 cmを使用し、最終2段階も独立に検査した。
+既存の保存場・生Wine出力を検査して再利用したレポートであり、このHTML生成時に全計算を再実行したものではない。
+最大周波数差0.000421%、最大R/Q差0.059415%、最大軸上場L2差0.010529%。
+Wine最低モードR/Qの最後の細分変化は0.184916%となり、前段の1.085%未達を解消した。
+`out/gallery-test-flat-ready-20260905` で全4モードの実キー入力・16リンク/画像をheadless検証した。
+
+7セルでは、従来nr=64の0モードに1.0000→0.9901のセル振幅の傾きがあった。
+`mesh.triangulation:crossed` で四辺形を中心節点へ4分割すると、0/πモードの等振幅は約1.3e-10以内になる。
+これはFEM空間の変更であり、解いた場の平均化や数値補正はしていない。既定のdiagonal分割は維持する。
+`out/seminar-seven-crossed-probe-20260905` のnr=64→128でπモードR/Q変化は約1.83%に低下したが、まだFAIL。
+追加nr=256の生計算は `out/seminar-seven-crossed-fine-20260905` に保存した。
+nr=64/128/256を使った `out/seminar-rounded7-crossed-native-20260905/index.html` は全数値ゲートPASS。
+πモードR/Qはnr=128で0.0089600333 Ω、nr=256で0.0089034259 Ω、最終変化0.6318%。
+別の固定nr=128・弦誤差12/3/0.75 µm試験も全量PASS（最大変化0.988403%）。
+結果は `out/seminar-rounded7-crossed-geometry-20260905/comparison.json`。閾値は1%のまま変更していない。
+この7セルPASSはNG内部の収束であり、Wine照合の完了ではない。
+円弧4セル半領域から7セルへの偶対称反射だけでは改善しなかった試験も
+`out/seminar-seven-parity-probe-20260905` に保持する。
+
+円弧4セルWineのdx=0.05/0.025/0.0125 cm計算は完了し、全照合・両コードの収束がPASS。
+`out/seminar-rounded4-wine-comparison-20260905/index.html`：最大周波数差0.003152%、Q0差0.001365%、
+R/Q差0.402161%、軸上場L2差0.064637%。Wineの最大R/Q細分変化は0.371362%。
+円弧7セルWineの新規計算は `out/seminar-rounded-wine-20260905/rounded7` で実行中。
+完了は各modeのSFOとOUTSF7を確認し、計算途中のフォルダを参照完了としない。
 
 ## 再現方法
 
@@ -136,4 +164,24 @@ Pillbox・rounded4・rounded7の生成HTMLはheadlessブラウザーの実キー
 full-cell側の図はiris中心、half-cell側は空洞中心で切っている。
 単に端の大半径ギャップだけを延長したモデルと同一視しない。
 同じ周期34.99 mmを保つfull-cell版なら端にhalf-diskを残し、4セル全長は139.96 mmになる。
-これは図に基づく比較形状の構成方針で、当該full-cell版はまだ計算していない。
+この切断面で `examples/seminar_4cell_flat_full_ends.json` と `seminar_4cell_rounded_full_ends.json` を作成し、
+`scripts/seminar_end_cells.py` で同じ円弧・周期・孔を持つhalf/full各4モードを計算・可視化した。
+断面積が元のhalf-end型の4/3、端面半径がiris最小半径、形状が鏡映対称であることをテストする。
+full-end側には半セル用cos位相を流用せず、実際の零交差0〜3個で並べる。同じ零交差数でも同じ位相進みとは主張しない。
+比較グラフだけz/L・最大振幅で揃え、元のSI軸場CSVとU=1 Jの場を別途保持する。
+
+初回 `out/seminar-end-cells-20260905` はflat/halfの最低モードR/Q細分変化1.1521%だけがFAIL。
+full側の全モードとrounded両端形状は合格。flat/halfに追加nr=384を実行し、R/Qは
+nr=256の0.0422991543から0.0424360874 Ωへ変化（0.32373%）。追加段階を明示した
+`out/seminar-end-cells-ready-20260905/index.html` は全検査PASS、実行中ソース変更なし。
+全8選択肢・51リンク/画像を `out/gallery-test-end-cells-ready-20260905` でheadless検証した。
+
+```bash
+python scripts/seminar_end_cells.py --flat-half-extra-n 384 --out out/end-cells-new
+```
+
+既定nr=64/128/256にflat/halfだけ384を追加する。既存場を使う場合のみ `--native-roots` を明示し、
+一致するcase・hash・保存場を検査して再利用を記録する。全例題一括回帰ではこのオプションを使わず新規に解く。
+
+交差分割・端部比較の変更後は63件のunittestと `out/validation-crossed-ends-20260905` が合格。
+seedのPillbox/合成空洞の周波数・Q0・R/Qとの差は最大9.55e-15で、丸め誤差内。全Pythonソースは3.10文法検査も合格した。

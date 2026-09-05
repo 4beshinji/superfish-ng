@@ -30,16 +30,29 @@ def make_mesh(case: Case) -> Mesh:
     zs.append(case.length)
     radius = np.interp(zs, *np.array(case.profile).T)
     stride = case.nr + 1
-    points = np.array([(s*r, z) for z, r in zip(zs, radius)
-                       for s in np.linspace(0, 1, stride)], dtype=float)
+    points = [(s*r, z) for z, r in zip(zs, radius)
+              for s in np.linspace(0, 1, stride)]
+    axis_nodes = np.arange(0, len(points), stride)
     triangles = []
     for j in range(len(zs)-1):
         for i in range(case.nr):
             a = j*stride+i
             b = a+stride
-            triangles.extend(((a, a+1, b+1), (a, b+1, b)))
+            append_quad(points, triangles, (a, a+1, b+1, b), case.triangulation)
     triangles = np.array(triangles, dtype=np.int64)
-    return finish_mesh(case, points, triangles, np.arange(0, len(points), stride))
+    return finish_mesh(case, np.asarray(points), triangles, axis_nodes)
+
+
+def append_quad(points, triangles, vertices, triangulation):
+    """Split a counterclockwise trapezoid without changing its boundary."""
+    a, b, c, d = vertices
+    if triangulation == 'diagonal':
+        triangles.extend(((a, b, c), (a, c, d)))
+    else:
+        center = len(points)
+        points.append(tuple(sum(points[v][k] for v in vertices)/4 for k in (0, 1)))
+        triangles.extend(((a, b, center), (b, c, center),
+                          (c, d, center), (d, a, center)))
 
 
 def finish_mesh(case, points, triangles, axis_nodes):
@@ -116,7 +129,8 @@ def make_stepped_mesh(case):
                     triangles.append((left[i], left[i+1], right[j]))
                     i += 1
                 elif lr[i+1] == rr[j+1]:
-                    triangles.extend(((left[i], left[i+1], right[j+1]), (left[i], right[j+1], right[j])))
+                    append_quad(points, triangles, (left[i], left[i+1], right[j+1], right[j]),
+                                case.triangulation)
                     i += 1
                     j += 1
                 else:

@@ -74,6 +74,7 @@ def main(argv=None):
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--case', choices=list(EXERCISES), default='flat4')
     parser.add_argument('--levels', type=int, nargs='+')
+    parser.add_argument('--triangulation', choices=['diagonal', 'crossed'], help='explicit P1 quad subdivision; default preserves the input')
     parser.add_argument('--chord-tolerance-m', type=float, help='arc sagitta bound, independent of FEM mesh counts')
     parser.add_argument('--native-runs', type=Path, nargs='+', help='reuse matching saved native runs, in level order; explicitly recorded')
     parser.add_argument('--run-legacy', action='store_true')
@@ -102,6 +103,8 @@ def main(argv=None):
     source_at_start = {str(p.relative_to(ROOT)): digest(p) for p in source_paths}
     filename, starts = EXERCISES[args.case]
     base = Case.load(ROOT/'examples'/filename)
+    if args.triangulation is not None:
+        base = replace(base, triangulation=args.triangulation)
     if args.chord_tolerance_m is not None:
         if base.geometry_type != 'arc_profile':
             parser.error('chord tolerance is only meaningful for arc_profile exercises')

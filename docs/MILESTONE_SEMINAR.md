@@ -11,7 +11,9 @@
 S2の垂直段差メッシュとflat-noseの4モード計算を実装した（[記録](SEMINAR_MULTICELL.md)）。
 S3の円弧、S4の4/7モード同定・分散曲線、S5のHTML選択も実装した。
 Pillbox・rounded4/7画面のheadlessキーボード操作と描画を検証済み（[記録](BROWSER_VERIFICATION.md)）。
-次は7セルの微小R/Q収束、rounded4/7のWine照合、端部full-cell比較とS6の一括検証。
+追加進捗: flat4の全4モードWine照合・両コード収束が合格。交差分割で7セルのNG/形状細分も合格。
+rounded4もWine照合が合格。端部full-cell比較の数値細分と全8画面のheadless検査も合格。
+rounded7のWine照合とS6一括検証を継続中。
 
 ## 対象資料と例題
 
@@ -33,9 +35,9 @@ Pillbox・rounded4/7画面のheadlessキーボード操作と描画を検証済�
 | 例題 | ローカル参照入力 | NGの現在の状態 |
 |---|---|---|
 | Pillbox | `SUPERFISH/Pillbox/pillbox.af`、`p11.af` | 全/半領域TM010/TM011、長さ掃引、図とCSV、解析/Wine全領域との照合済み |
-| 4セルflat-nose | `SUPERFISH/4cell_flat/flat_1.af` 〜 `flat_4.af` | 垂直段差・4モード計算と初回Wine照合を実装。収束受入は未達 |
-| 4セルreal-nose | `SUPERFISH/4cell/4cell_1_2837.af` ほか4件 | 円弧・4モード・分散曲線・NG/形状細分のゲートが合格。Wine照合は未実行 |
-| 7セルreal-nose | `SUPERFISH/7cell/7cell_1_2837.af` ほか7件 | 円弧・7モード・分散曲線を実装。微小R/QのNG/形状細分ゲートが未達、Wine照合は未実行 |
+| 4セルflat-nose | `SUPERFISH/4cell_flat/flat_1.af` 〜 `flat_4.af` | 垂直段差・4モード・Wine照合・両コードの収束が合格 |
+| 4セルreal-nose | `SUPERFISH/4cell/4cell_1_2837.af` ほか4件 | 円弧・4モード・分散曲線・NG/形状細分・Wine照合が合格 |
+| 7セルreal-nose | `SUPERFISH/7cell/7cell_1_2837.af` ほか7件 | 円弧・7モード・分散曲線、交差分割のNG/形状細分ゲート合格。Wine照合を計算中 |
 
 入力の座標は `(x,y)=(z,r)`、単位cm。多セル外半径40.887 mm、空洞ギャップ29.99 mm、
 ディスク厚5 mm、端ギャップ14.995 mm。平坦先端の孔半径は10.857 mm。
@@ -72,7 +74,7 @@ Pillbox・rounded4/7画面のheadlessキーボード操作と描画を検証済�
 
 ## 現在までのエビデンス
 
-開発ルート整備・既存ソルバーの動作確認は完了。円弧・モード同定拡張後は56件のオフラインテストが合格。
+開発ルート整備・既存ソルバーの動作確認は完了。交差分割・端部例題追加後は63件のオフラインテストが合格。
 Wine版との3形状・各3段階の基本モード照合は [SUPERFISH_COMPARISON.md](SUPERFISH_COMPARISON.md) に記録した。
 多セルの全数値収束・Wine照合、端部full-cell比較、例題の一括導線・検証は未完了であり、次の作業。
 参照用のユーザー資料・legacy入力・生出力はローカル資産として扱い、実装配布物には同梱しない。
