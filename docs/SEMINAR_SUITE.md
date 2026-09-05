@@ -1,7 +1,8 @@
 # セミナー全例題の一括実行
 
 `scripts/seminar_suite.py` はS1〜S6の対象を新しい出力先へ順番に計算し、例題選択の入口HTMLを生成する。
-現時点では初回一括検証を実行中で、完了・全ゲート合格はまだ主張しない。
+初回 `out/seminar-suite-20260905` は全NG計算・全画面検査を完了したが、7セルπモードのWine側細分が未達で全体FAIL。
+追加参照を使う `out/seminar-suite-final-20260905` を新規実行中で、マイルストーン完了はまだ主張しない。
 
 ## この環境のWine参照を使った再現コマンド
 
@@ -43,6 +44,28 @@ OPENBLAS_NUM_THREADS=1 MPLCONFIGDIR=/tmp/superfish-matplotlib \
 周波数0.1%、RF量1%、軸場相対L2 1%を維持し、最後の2段階の変化も独立に評価する。
 角部ピークの精度保証、端部full-cellのWine照合、一般的なモード交差追跡はこの一括検証に含めない。
 
+### 特定モードの参照側追加細分
+
+7セルπモードのWine dx=0.025→0.0125 cmでR/Q変化が1.98217%、TTFも1%を超えた。
+NGとのR/Q差は0.10382%でも参照側の収束とは別の検査なので、この初回結果はFAILとして残す。
+追加参照を使う場合は一括へ以下を追加する（0始まりの位相indexで、modeの周波数順位ではない）。
+
+```bash
+--rounded7-extra-reference 6 .01 out/seminar-rounded7-wine-extra-20260905/disk-dx0.01/mode7
+```
+
+個別比較では `--extra-wine-reference PHASE_INDEX DX_CM DIRECTORY` を使用する。
+AF/SEGの全バイト一致と、そのモードで直前より細かいDXを要求する。
+追加の符号付き軸場を含めて全バンドを再同定し、別モード・重複モードを拒否する。場の平均化・補正はしない。
+元の全バンド3段階は `legacy` に残し、追加は `supplemental_legacy`、判定対象は `final_legacy_modes` に記録する。
+最終DXはモードごとに明示し、すべてのモードを同じ追加DXで計算したという表示はしない。
+形状・物理条件・1%ゲートは変更しない。
+
+この環境ではRAM作業データのDX=0.01と0.011 cm実行がSFO生成前に失敗した（0.011の終了コード240）。
+原因は確定していない。インストール済みSF.INIに説明された `StoreTempDataInRAM=No` を
+新規出力先のローカルSF.INIへ指定してDX=0.01を試行中。既設SF.INIは変更していない。
+このローカル設定も追加参照のhashへ含め、物理条件と作業データの保存方法を区別する。
+
 ## 表示・保存・合否
 
 完了後に出力先の `index.html` を開く。6種類の例題ページへ移動し、モードを選んで場・軸上/半径方向CSVを確認する。
@@ -52,6 +75,11 @@ PNGは計算した場の可視化で、図中の単位・正規化を維持す�
 ```bash
 superfish-ng plot out/my-run --mode 1 --mesh --out out/my-run-mesh.png
 ```
+
+一括計算の保存場に対してCLIの `--mesh --probe-z-m` を実行し、Pillbox TM011と円弧4セルmode 4の
+メッシュ・電界矢印・磁場・指定半径プローブを確認した。
+`out/seminar-mesh-display-pillbox-20260905.png` と `out/seminar-mesh-display-rounded4-20260905.png`。
+描画確認には分割が見える粗いメッシュを使ったため、図中の数値を最細メッシュの照合値とは混同しない。
 
 - `suite.json`: 進行中はpassed=false。最後に全数値・全7ページの画面検査・実行中ソース不変を合わせた判定。
 - `numerical.json`: 全数値ジョブ終了時の不変スナップショット。画面検査の完了判定は含まない。

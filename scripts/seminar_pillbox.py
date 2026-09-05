@@ -241,14 +241,14 @@ def run_wine_mode(folder, length_m=.08, timeout_s=120):
         proc = subprocess.run([str(ROOT/'run-superfish.sh'), str(folder/'cavity.af')],
                               stdout=log, stderr=subprocess.STDOUT, timeout=timeout_s)
     if proc.returncode:
-        raise RuntimeError(f'Wine failed in {folder}')
+        raise RuntimeError(f'Wine exited with code {proc.returncode} in {folder}; inspect wine.log and OUTFIS.TXT')
     (folder/'cavity.in7').write_text(f'line plotfiles\n0 0 {length_m*100:.12g} 0\n800\nend\n')
     with (folder/'sf7.log').open('w') as log:
         proc = subprocess.run(['wine', 'C:\\LANL\\SF7.EXE', 'CAVITY.T35'], cwd=folder,
                               env=dict(os.environ, WINEPREFIX=str(ROOT/'.wine-superfish'), WINEDEBUG='-all'),
                               stdout=log, stderr=subprocess.STDOUT, timeout=timeout_s)
     if proc.returncode:
-        raise RuntimeError(f'SF7 failed in {folder}')
+        raise RuntimeError(f'SF7 exited with code {proc.returncode} in {folder}; inspect sf7.log')
 
 
 if __name__ == '__main__':

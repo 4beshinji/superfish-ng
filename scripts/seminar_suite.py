@@ -87,6 +87,8 @@ def main(argv=None):
     parser.add_argument('--flat-reference-run', type=Path)
     parser.add_argument('--rounded-reference-root', type=Path)
     parser.add_argument('--rounded7-chord-m', type=float, default=7.5e-7)
+    parser.add_argument('--rounded7-extra-reference', action='append', nargs=3, default=[],
+                        metavar=('PHASE_INDEX', 'DX_CM', 'DIRECTORY'), help='supplemental saved Wine refinement for one 0-based phase')
     parser.add_argument('--reference-wait-seconds', type=float, default=0., help='read-only wait for ongoing rounded Wine outputs; contents are then validated by each comparison')
     parser.add_argument('--skip-browser', action='store_true', help='skip UI checks; deliberately cannot pass the complete milestone')
     args = parser.parse_args(argv)
@@ -99,6 +101,18 @@ def main(argv=None):
         parser.error('rounded7 chord tolerance must be positive and below 1 mm')
     if not 0 <= args.reference_wait_seconds <= 86400:
         parser.error('reference wait must be between 0 and 86400 seconds')
+    if args.native_only and args.rounded7_extra_reference:
+        parser.error('supplemental Wine references cannot be used with native-only')
+    extra7, previous_dx = [], dict.fromkeys(range(7), .0125)
+    for phase_text, dx_text, directory in args.rounded7_extra_reference:
+        try:
+            phase, dx = int(phase_text), float(dx_text)
+        except ValueError:
+            parser.error('supplemental phase and dx must be numeric')
+        if phase not in previous_dx or not 0 < dx < previous_dx[phase]:
+            parser.error('supplemental phase must be 0..6 and dx strictly finer for that phase')
+        previous_dx[phase] = dx
+        extra7.append((str(phase), str(dx), str(Path(directory).resolve())))
     out = args.out.resolve()
     if not out.is_relative_to(ROOT/'out') or out == ROOT/'out':
         parser.error('suite output must be a new subdirectory under project out/')
@@ -118,6 +132,9 @@ def main(argv=None):
         if not reference.get('passed') or not reference.get('wine_compared'):
             parser.error('flat reference must be a passing Wine comparison')
         flat = ['--reference-dirs']+sorted({str(Path(m['source_directory']).parent) for r in reference['legacy'] for m in r['modes']})
+        for extra in reference.get('supplemental_legacy', []):
+            mode = extra['mode']
+            flat += ['--extra-wine-reference', str(extra['phase_index']), str(mode['dx_cm']), mode['source_directory']]
     rounded = {name: wine or (['--reference-dirs', str((args.rounded_reference_root/name).resolve())]
                               if args.rounded_reference_root else []) for name in ('rounded4', 'rounded7')}
     jobs = [
@@ -132,7 +149,8 @@ def main(argv=None):
         ('geometry7', '7セル円弧近似の細分検査', 'seminar_geometry.py', ['--case', 'rounded7', '--triangulation', 'crossed', '--tolerances-m',
          str(4*args.rounded7_chord_m), str(args.rounded7_chord_m), str(args.rounded7_chord_m/4)], 'comparison.json'),
         ('rounded7', '円弧ディスク7セル・全モード', 'seminar_multicell.py', ['--case', 'rounded7', '--triangulation', 'crossed', '--levels', '64', '128', '256',
-         '--chord-tolerance-m', str(args.rounded7_chord_m), '--wine-timeout-s', '1200']+rounded['rounded7'], 'comparison.json'),
+         '--chord-tolerance-m', str(args.rounded7_chord_m), '--wine-timeout-s', '1200']+rounded['rounded7']+
+         [value for extra in extra7 for value in ['--extra-wine-reference', *extra]], 'comparison.json'),
     ]
     for name, label, script, options, filename in jobs:
         command = [sys.executable, str(ROOT/'scripts'/script), '--out', str(out/name)]+options
@@ -144,6 +162,8 @@ def main(argv=None):
             count = 7 if name == 'rounded7' else 4
             files = [args.rounded_reference_root/name/f'dx{dx:g}'/f'mode{i}'/filename
                      for dx in (.05, .025, .0125) for i in range(1, count+1) for filename in ('CAVITY.SFO', 'OUTSF7.TXT')]
+            if name == 'rounded7':
+                files += [Path(extra[2])/filename for extra in extra7 for filename in ('CAVITY.SFO', 'OUTSF7.TXT')]
             row['reference_wait_completed'] = wait_for_reference_files(files, args.reference_wait_seconds)
         with (out/f'{name}.log').open('w') as log:
             result = subprocess.run(command, cwd=ROOT, env=environment, stdout=log, stderr=subprocess.STDOUT)

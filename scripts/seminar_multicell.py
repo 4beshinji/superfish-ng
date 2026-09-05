@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Multicell seminar: field identity, refinement, Wine comparison and plots."""
 import argparse
+from copy import deepcopy
 from dataclasses import replace
 import hashlib
 import html
@@ -69,6 +70,42 @@ def gates(errors):
     return {key: value < (.001 if key == 'frequency_hz' else .01) for key, value in errors.items()}
 
 
+def finer_dx(value, previous):
+    dx = float(value)
+    if not np.isfinite(dx) or not 0 < dx < previous:
+        raise ValueError('supplemental Wine dx must be positive and strictly finer than this mode\'s previous dx')
+    return dx
+
+
+def replacement_identity(case, phase_rows, phase_index, candidate):
+    """Re-identify the complete band after one independently refined mode changes.
+
+    These are separate eigenproblems at per-mode mesh sizes, not one uniform
+    finer mesh. Raw fields are unchanged; only a temporary identification grid
+    is interpolated. Wrong/duplicate modes must fail the complete assignment.
+    """
+    rows = list(phase_rows)
+    rows[phase_index] = (candidate, None)
+    z = np.asarray(rows[0][0]['axis'])[:, 0]
+    fields = np.column_stack([np.interp(z, np.asarray(sf['axis'])[:, 0], np.asarray(sf['axis'])[:, 1]) for sf, _ in rows])
+    identity = identify_cell_band(z, fields, np.linspace(0., case.length, case.modes))
+    if any(m['mode_index'] != i+1 for i, m in enumerate(identity)):
+        raise ValueError('supplemental reference does not replace the requested physical phase')
+    return identity[phase_index]
+
+
+def mode_comparison(case, mode, sf, directory, native_q, native_axis, dx):
+    q, error = signed_axis_metrics(sf, native_axis, case.normalization_j)
+    difference = relative(native_q, q)
+    return dict(mode, dx_cm=dx, quantities=q, relative_differences=difference,
+                axis_relative_l2=error, gates=dict(gates(difference), axis_l2=error < .01),
+                source_directory=str(directory),
+                file_sha256={name: digest(directory/name) for name in
+                             ['cavity.af', 'cavity.seg', 'CAVITY.SFO', 'OUTSF7.TXT']+
+                             (['SF.INI'] if (directory/'SF.INI').is_file() else [])},
+                sfo_version=sf['version'])
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, required=True)
@@ -81,6 +118,9 @@ def main(argv=None):
     parser.add_argument('--reference-dirs', type=Path, nargs='+', help='raw Wine roots with dxVALUE/modeN (or modeN) directories; exact input checked')
     parser.add_argument('--wine-dx', type=float, nargs='+', default=[.05, .025, .0125])
     parser.add_argument('--wine-timeout-s', type=float, default=600.)
+    parser.add_argument('--extra-wine-reference', action='append', nargs=3, default=[],
+                        metavar=('PHASE_INDEX', 'DX_CM', 'DIRECTORY'),
+                        help='saved supplemental refinement for one physical phase (0-based), independently re-identified; repeat for further levels')
     args = parser.parse_args(argv)
     if args.levels is None:
         args.levels = [128, 256, 512] if args.case == 'flat4' else [32, 64, 128]
@@ -96,6 +136,8 @@ def main(argv=None):
         parser.error('at least three strictly decreasing positive Wine mesh sizes are required')
     out = args.out.resolve()
     compare = args.run_legacy or args.reference_dirs is not None
+    if args.extra_wine_reference and not compare:
+        parser.error('supplemental Wine references require a full-band Wine comparison')
     if compare and (not out.is_relative_to(ROOT/'out') or out == ROOT/'out'):
         parser.error('reference data must remain under a new project out/ directory')
     out.mkdir(parents=True, exist_ok=False)
@@ -168,27 +210,54 @@ def main(argv=None):
             for p, mode in enumerate(identity):
                 sf, directory = sf_rows[mode['mode_index']-1]
                 index = finest['modes'][p]['mode_index']-1
-                q, error = signed_axis_metrics(sf, axes[index], base.normalization_j)
-                difference = relative(finest['modes'][p]['quantities'], q)
-                check = dict(gates(difference), axis_l2=error < .01)
-                modes.append(dict(mode, quantities=q, relative_differences=difference,
-                                  axis_relative_l2=error, gates=check, source_directory=str(directory),
-                                  file_sha256={name: digest(directory/name) for name in ('cavity.af', 'cavity.seg', 'CAVITY.SFO', 'OUTSF7.TXT')},
-                                  sfo_version=sf['version']))
+                modes.append(mode_comparison(base, mode, sf, directory, finest['modes'][p]['quantities'], axes[index], dx))
             report['legacy'].append({'dx_cm': dx, 'modes': modes})
             print(f'Wine dx={dx}: '+', '.join(f"{m['label']} R/Q={m['quantities']['r_over_q_accelerator_ohm']:.6f}" for m in modes), flush=True)
         for last, prev in zip(report['legacy'][-1]['modes'], report['legacy'][-2]['modes']):
             last['refinement_errors'] = relative(last['quantities'], prev['quantities'])
             last['refinement_gates'] = gates(last['refinement_errors'])
+        final_modes = deepcopy(report['legacy'][-1]['modes'])
+        final_rows = [sf_rows[m['mode_index']-1] for m in final_modes]
+        report['supplemental_legacy'] = []
+        for phase_text, dx_text, directory_text in args.extra_wine_reference:
+            p = int(phase_text)
+            if not 0 <= p < count:
+                raise ValueError('supplemental phase index is outside this band')
+            previous = final_modes[p]
+            dx = finer_dx(dx_text, previous['dx_cm'])
+            directory = Path(directory_text).resolve()
+            expected = out/'wine'/'supplemental'/f'phase{p}-dx{dx:g}'
+            expected.mkdir(parents=True)
+            write_deck(base, expected, dx, starts[previous['mode_index']-1])
+            if any(not (directory/name).exists() or (directory/name).read_bytes() != (expected/name).read_bytes()
+                   for name in ('cavity.af', 'cavity.seg')):
+                raise ValueError('supplemental AF/SEG does not match the requested geometry, launch and dx')
+            sf = parse_sfo(directory/'CAVITY.SFO')
+            data = read_sf7_line(directory/'OUTSF7.TXT')
+            if (np.max(np.abs(data[:, 1])) > 1e-12 or abs(data[0, 0]) > 1e-12
+                    or abs(data[-1, 0]-base.length) > 1e-10):
+                raise ValueError('supplemental Wine axis does not cover the full input domain')
+            sf['axis'] = data[:, [0, 2]].tolist()
+            identity = replacement_identity(base, final_rows, p, sf)
+            # Preserve the original launch index; the temporary identification
+            # columns are phase-ordered and are not new global mode ranks.
+            identity['mode_index'] = previous['mode_index']
+            index = finest['modes'][p]['mode_index']-1
+            last = mode_comparison(base, identity, sf, directory, finest['modes'][p]['quantities'], axes[index], dx)
+            last['refinement_errors'] = relative(last['quantities'], previous['quantities'])
+            last['refinement_gates'] = gates(last['refinement_errors'])
+            report['supplemental_legacy'].append({'phase_index': p, 'previous_dx_cm': previous['dx_cm'], 'mode': last})
+            final_modes[p], final_rows[p] = last, (sf, directory)
+            print(f"Wine supplemental phase={p}, dx={dx}: R/Q={last['quantities']['r_over_q_accelerator_ohm']:.9f}", flush=True)
+        report['final_legacy_modes'] = final_modes
         fig, axs = plt.subplots((count+1)//2, 2, figsize=(11, 3.3*((count+1)//2)), layout='constrained')
         for p, ax in enumerate(axs.ravel()):
             if p >= count:
                 ax.set_axis_off()
                 continue
             native_index = finest['modes'][p]['mode_index']-1
-            wine_index = report['legacy'][-1]['modes'][p]['mode_index']-1
-            sf, _ = sf_rows[wine_index]
-            reference = sf_axes[wine_index].copy()
+            sf, _ = final_rows[p]
+            reference = np.asarray(sf['axis']).copy()
             reference[:, 1] *= np.sqrt(base.normalization_j/sf['quantities']['stored_energy_j'])
             native = axes[native_index].copy()
             if np.dot(np.interp(reference[:, 0], native[:, 0], native[:, 1]), reference[:, 1]) < 0:
@@ -208,7 +277,7 @@ def main(argv=None):
     fig, axs = plt.subplots(2, 1, figsize=(8, 7), layout='constrained')
     axs[0].plot(np.array(phase)/np.pi, np.array(frequencies)/1e6, 'o', label='NG')
     if compare:
-        axs[0].plot(np.array(phase)/np.pi, [m['quantities']['frequency_hz']/1e6 for m in report['legacy'][-1]['modes']], 'x', label='Wine')
+        axs[0].plot(np.array(phase)/np.pi, [m['quantities']['frequency_hz']/1e6 for m in final_modes], 'x', label='Wine (final per-mode mesh)')
     theta = np.linspace(0., np.pi, 200)
     axs[0].plot(theta/np.pi, (fit['m1_hz']+fit['m2_hz']*np.cos(theta))/1e6, label='NG cosine fit')
     axs[0].set(ylabel='Frequency [MHz]', title=f'{base.name}: field-identified dispersion')
@@ -232,9 +301,10 @@ def main(argv=None):
         panels.append(f'<section id="mode{p}" class="mode" {"hidden" if p else ""}><h2>{mode["label"]}</h2>'
                       f'<img src="mode{p}.png" alt="Mode {mode["label"]}: electric/magnetic fields and probes">'
                       f'<p>零交差={mode["zero_crossings"]}、セル場一致度={mode["cell_overlap"]:.8f}</p>'
+                      +(f'<p>Wine最終DX={final_modes[p]["dx_cm"]:g} cm（モード別に細分履歴を保持）</p>' if compare else '')+
                       f'<a href="axis{p}.csv">軸上CSV</a> · <a href="radial{p}.csv">半径方向CSV</a></section>')
     report['native_refinement_passed'] = all(native_gates)
-    report['passed'] = report['native_refinement_passed'] and (not compare or all(all(m['gates'].values()) and all(m['refinement_gates'].values()) for m in report['legacy'][-1]['modes']))
+    report['passed'] = report['native_refinement_passed'] and (not compare or all(all(m['gates'].values()) and all(m['refinement_gates'].values()) for m in final_modes))
     report['report_source_sha256'] = source_at_start
     report['source_changed_during_run'] = source_at_start != {str(p.relative_to(ROOT)): digest(p) for p in source_paths}
     report['passed'] = report['passed'] and not report['source_changed_during_run']

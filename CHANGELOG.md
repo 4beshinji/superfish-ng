@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Retain per-mode supplemental Wine refinement histories, re-identify the complete signed-field band, and keep original failed convergence levels visible.
+- Report Wine/SF7 exit codes and include local reference configuration hashes when present; physical solvers and acceptance thresholds are unchanged.
+
 - Add optional reflection-neutral crossed P1 triangulation, verified by periodic cell-amplitude, geometry and analytic RF invariants; preserve default meshes and v1 case hashes.
 - Support radius-preserving arc reflection and seminar full/half end-cell geometry, numerical refinement and field visualization without transferring half-end phase labels.
 - Complete all-mode flat4 and rounded4 Wine comparisons with independent refinement gates; retain failed intermediate reports. Rounded7 native/geometry convergence passes, Wine verification remains in progress.
