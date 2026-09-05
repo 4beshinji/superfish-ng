@@ -42,13 +42,17 @@ def save_run(case, solution, directory):
               "environment": {"python": platform.python_version(), "numpy": np.__version__, "scipy": scipy.__version__, "platform": platform.platform()},
               "mesh": {"nodes": len(solution.mesh.points), "triangles": len(solution.mesh.triangles)},
               "mass_orthogonality_error": solution.orthogonality_error,
-              "scope": "vacuum; closed PEC; axis-connected; m=0 TM only; perturbative normal-conductor loss",
+              "field_construction": solution.construction,
+              "scope": "vacuum; closed PEC cavity or explicit symmetry subdomain; axis-connected; m=0 TM only; perturbative normal-conductor loss",
               "conventions": {"phasor": "exp(+i omega t); H real, E=-i*exported_quadrature",
                               "energy": "U=1/4 integral(eps|E|^2+mu|H|^2)dV",
+                              "domain": "all RF integrals cover the input domain only; symmetry planes have no wall loss; no automatic volume or voltage doubling",
                               "rq_accelerator": "|Vacc|^2/(omega U)", "rq_circuit": "|Vacc|^2/(2 omega U)",
                               "voltage": "integral Ez_quadrature(0,z) exp(+i omega z/(beta c)) dz; global -i omitted",
                               "vtk_coordinates": "x=r, y=z, z=0; scalar cylindrical components"},
               "modes": [quantities(case, solution, i) for i in range(case.modes)]}
+    if solution.source_case is not None:
+        result['reflection_source_case'] = solution.source_case
     (directory/"case.json").write_text(json.dumps(case.to_dict(), indent=2)+"\n", encoding="utf-8")
     (directory/"results.json").write_text(json.dumps(result, indent=2, allow_nan=False)+"\n", encoding="utf-8")
     mesh = solution.mesh

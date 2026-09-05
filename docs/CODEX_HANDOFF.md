@@ -5,7 +5,8 @@
 ユーザー指定の [セミナー4資料の例題計算・可視化](MILESTONE_SEMINAR.md) を優先する。
 Wine版SUPERFISHとの3形状の基本モード照合は完了し、[比較結果](SUPERFISH_COMPARISON.md) を保存した。
 S1の全領域TM010/TM011・長さ掃引・図・CSV・HTMLとWine/SF7照合は実装済み（[記録](SEMINAR_PILLBOX.md)）。
-次はS1に残る半領域の電気／磁気対称境界、その後S2の4セルflat-nose垂直段差メッシュ。
+S1の半領域の電気／磁気対称境界・全空洞鏡映も完了。`seminar_symmetry.py` で再現可能。
+次はS2の4セルflat-nose垂直段差メッシュ。S5の実画面操作は未確認。
 以下の開始プロンプトはseed時点の記録で、次課題P0-01の優先順はこの更新で置き換える。
 
 ## 開始プロンプト
@@ -34,7 +35,7 @@ AGENTS.md、README.md、docs/PHYSICS.md、docs/PROVENANCE.mdを最初に読み�
 
 `Case.load → make_mesh → assemble → solve → quantities → save_run`。
 式と積分は `src/superfish_ng/fem.py` と `rf.py`、独立解析解は `analytic.py`。
-テストは `unittest` 23件。主要数値を含む実行記録は `benchmarks/validation/`。
+テストは `unittest` 44件。seedの主要数値は `benchmarks/validation/`、最新照合は `docs/SEMINAR_PILLBOX.md`。
 出力は別の新規ディレクトリへ作る。既存ベンチマークを直接上書きして初期値を失わないこと。
 
 ## 直近の注意点

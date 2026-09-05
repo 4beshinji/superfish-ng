@@ -120,7 +120,8 @@ def main():
               'scope': 'full closed pillboxes; TM010/TM011; radius .075 m; beta=1; U=1 J',
               'wine_compared': compare_legacy, 'cases': [],
               'limits': {'frequency_relative': .001, 'rf_relative': .01, 'axis_l2': .01},
-              'not_completed': ['half-domain electric/magnetic symmetry boundaries', 'multicell exercises']}
+              'related_exercises': 'scripts/seminar_symmetry.py verifies half-domain electric/magnetic symmetry',
+              'not_completed': ['multicell exercises', 'desktop interaction verification']}
     if args.run_legacy:
         report['environment']['wine'] = subprocess.check_output(['wine', '--version'], text=True).strip()
     elif args.reference_run:

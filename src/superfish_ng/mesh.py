@@ -10,7 +10,7 @@ class Mesh:
     points: np.ndarray
     triangles: np.ndarray
     boundary_edges: np.ndarray
-    boundary_tags: np.ndarray  # axis / pec
+    boundary_tags: np.ndarray  # axis / pec / electric_symmetry / magnetic_symmetry
     boundary_cells: np.ndarray
     axis_nodes: np.ndarray
 
@@ -39,7 +39,10 @@ def make_mesh(case: Case) -> Mesh:
             incidence.setdefault(edge, []).append(cell)
     boundary = [(e, c[0]) for e, c in incidence.items() if len(c) == 1]
     edges = np.array([e for e, _ in boundary], dtype=np.int64)
-    tags = np.where(np.all(points[edges, 0] == 0, axis=1), "axis", "pec")
+    tags = np.full(len(edges), "pec", dtype="U20")
+    tags[np.all(points[edges, 0] == 0, axis=1)] = "axis"
+    tags[np.all(points[edges, 1] == 0, axis=1)] = case.z_min
+    tags[np.all(points[edges, 1] == case.length, axis=1)] = case.z_max
     result = Mesh(points, triangles, edges, tags,
                   np.array([c for _, c in boundary]), np.arange(0, len(points), stride))
     element_geometry(result)  # reject degenerate geometry before assembly

@@ -2,7 +2,8 @@
 
 指定資料の全領域pillboxについて、TM010/TM011の計算、長さ掃引、電磁場の図、
 電界矢印、軸上・半径方向プローブ、結果を選ぶHTMLページを追加した。
-半領域の電気／磁気対称境界は次の作業で、S1全体とセミナーマイルストーン全体は未完了。
+半領域の電気／磁気対称境界も実装し、下記の独立照合を完了した。
+S1の数値例題は対応済み。セミナーマイルストーン全体とS5の実画面操作確認は未完了。
 
 ## 使用方法
 
@@ -97,6 +98,42 @@ TM011の場の反転、電界矢印、磁場、半径方向曲線、図の軸と
 HTMLの6選択肢と画像・CSV・JSONの全27リンクの実在を確認した。ブラウザー上での選択操作はまだ未確認。
 Computer Use用Orca CLIが `bad option: --no-sandbox` で起動できず、デスクトップ操作による確認は行えていない。
 
-次は全領域解との照合を伴う半領域の電気／磁気対称境界、その後4セルflat-noseの垂直段差メッシュへ進む。
+次は4セルflat-noseの垂直段差メッシュへ進む。
 
 既存seedの周波数・Q0・R/Qとの差は円筒・非円筒とも最大9.33e-15で、浮動小数点丸めの水準を維持した。
+
+## 半領域の対称境界と全空洞再構成
+
+```bash
+# 半領域そのものを計算・表示する
+superfish-ng solve examples/seminar_pillbox_half_magnetic.json --out out/half-new
+superfish-ng plot out/half-new --out out/half-new.png
+# 場を鏡映し、全領域のRF量を積分する（U=0.5 J → 1 J）
+superfish-ng solve examples/seminar_pillbox_half_magnetic.json --reflect-full --out out/reflected-new
+# 左右端・電気/磁気対称の4組、各3メッシュ、全領域FEMとの照合と8枚の図
+OPENBLAS_NUM_THREADS=1 python scripts/seminar_symmetry.py \
+  --reference-run out/seminar-pillbox-ready-20260905 --out out/symmetry-new
+```
+
+電気対称の例題は `examples/seminar_pillbox_half_electric.json`。
+`--reference-run` を省略すると解析式と独立全領域FEMの照合のみ実行し、Wine未比較を明記する。
+生成結果は `out/seminar-symmetry-ready-20260905/index.html`。
+
+磁気対称は端面自由度u=0を消去し、自由行の残差を評価する。電気対称は自然条件で自由度を消去しない。
+両者とも実金属面ではないので壁損失から除く。反射でU/Pは2倍、Q/Gは不変になる。
+半領域の加速電圧は全空洞の半分とは限らず、全空洞R/Qは反射後の符号付き場から求める。
+鏡映後の場も全領域のK/Mで残差検査する。モード番号は対称性で選ばれた部分スペクトル内の順位。
+
+| 対称性・端 | 反射後f [MHz] | Wine全領域との周波数差 | R/Q差 | 軸上Ez L2差 |
+|---|---:|---:|---:|---:|
+| TM010・z_min | 1529.901098 | 0.000110% | 0.01431% | 0.00707% |
+| TM010・z_max | 1529.901098 | 0.000110% | 0.01152% | 0.00708% |
+| TM011・z_min | 2419.095984 | 0.005117% | 0.02188% | 0.02161% |
+| TM011・z_max | 2419.029490 | 0.002368% | 0.00966% | 0.01851% |
+
+半径分割24/48/96、半長40 mmに対応する軸分割13/26/51で計算した。
+左右端の微小な差は三角形の対角方向による離散化差であり、補正していない。
+解析値・直接全領域FEM・メッシュ変化・Wine全領域のf/Q/G/RQ/P/TTF、軸場のゲートがすべて合格。
+Wineの半領域入力を実行したわけではなく、既取得の全領域SFO/SF7に照合した。
+44件のunittestと `out/validation-symmetry-final-20260905` の検証が合格。
+seedの周波数・Q0・R/Qとの差は最大9.55e-15で、数値拡張後も丸めの水準を維持した。

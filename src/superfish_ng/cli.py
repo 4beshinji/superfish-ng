@@ -19,6 +19,7 @@ def main(argv=None):
     run = sub.add_parser("solve", help="solve a JSON case and export RF quantities/fields")
     run.add_argument("case", type=Path)
     run.add_argument("--out", required=True, type=Path, help="new output directory; must not exist")
+    run.add_argument("--reflect-full", action="store_true", help="reflect a single symmetry end; export the full cavity at twice the input energy")
     check = sub.add_parser("converge", help="TM010 pillbox refinement benchmark, with exit-code gate")
     check.add_argument("--levels", nargs="+", type=int, default=[8, 16, 32, 64])
     check.add_argument("--out", required=True, type=Path)
@@ -34,7 +35,11 @@ def main(argv=None):
             if args.out.exists():
                 raise ValueError(f"output already exists: {args.out}; choose a new directory")
             case = Case.load(args.case)
-            result = save_run(case, solve(case), args.out)
+            solution = solve(case)
+            if args.reflect_full:
+                from .symmetry import reflect_solution
+                case, solution = reflect_solution(case, solution)
+            result = save_run(case, solution, args.out)
             for mode in result["modes"]:
                 print(f"Mode {mode['mode_index']}: {mode['frequency_hz']/1e6:.6f} MHz, "
                       f"Q0={mode['q0']:.3f}, R/Q(acc)={mode['r_over_q_accelerator_ohm']:.6f} ohm")

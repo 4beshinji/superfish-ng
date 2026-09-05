@@ -38,6 +38,8 @@ class Case:
     conductivity_s_per_m: float = 5.8e7
     normalization_j: float = 1.0
     name: str = "cavity"
+    z_min: str = "pec"
+    z_max: str = "pec"
 
     def __post_init__(self):
         if not isinstance(self.name, str):
@@ -63,6 +65,10 @@ class Case:
             raise ValueError("beta must be <= 1")
         positive(self.conductivity_s_per_m, "conductivity_s_per_m")
         positive(self.normalization_j, "normalization_j")
+        for side in ("z_min", "z_max"):
+            value = getattr(self, side)
+            if not isinstance(value, str) or value not in ("pec", "electric_symmetry", "magnetic_symmetry"):
+                raise ValueError(f"{side} must be pec, electric_symmetry or magnetic_symmetry")
 
     @property
     def length(self):
@@ -70,10 +76,14 @@ class Case:
 
     @classmethod
     def from_dict(cls, data):
-        keys(data, ["schema_version", "name", "geometry", "mesh", "solver", "rf"],
+        keys(data, ["schema_version", "name", "geometry", "mesh", "solver", "rf", "boundaries"],
              ["schema_version", "geometry"], "case")
-        if type(data["schema_version"]) is not int or data["schema_version"] != 1:
-            raise ValueError("only schema_version 1 is supported")
+        if type(data["schema_version"]) is not int or data["schema_version"] not in (1, 2):
+            raise ValueError("only schema_version 1 and 2 are supported")
+        if data["schema_version"] == 1 and "boundaries" in data:
+            raise ValueError("explicit boundaries require schema_version 2")
+        boundaries = data.get("boundaries", {})
+        keys(boundaries, ["z_min", "z_max"], [], "boundaries")
         g = data["geometry"]
         if not isinstance(g, dict):
             raise ValueError("geometry must be an object")
@@ -92,7 +102,7 @@ class Case:
         keys(mesh, ["nr", "nz"], [], "mesh")
         keys(solver, ["modes"], [], "solver")
         keys(rf, ["beta", "conductivity_s_per_m", "normalization_j"], [], "rf")
-        return cls(profile=profile, name=data.get("name", "cavity"), **mesh, **solver, **rf)
+        return cls(profile=profile, name=data.get("name", "cavity"), **mesh, **solver, **rf, **boundaries)
 
     @classmethod
     def load(cls, path):
@@ -106,8 +116,11 @@ class Case:
         return cls.from_dict(json.loads(Path(path).read_text(encoding="utf-8"), object_pairs_hook=reject_duplicate))
 
     def to_dict(self):
-        return {"schema_version": 1, "name": self.name,
+        data = {"schema_version": 1, "name": self.name,
                 "geometry": {"type": "profile", "points_zr_m": [list(p) for p in self.profile]},
                 "mesh": {"nr": self.nr, "nz": self.nz}, "solver": {"modes": self.modes},
                 "rf": {"beta": self.beta, "conductivity_s_per_m": self.conductivity_s_per_m,
                        "normalization_j": self.normalization_j}}
+        if self.z_min != "pec" or self.z_max != "pec":
+            data.update(schema_version=2, boundaries={"z_min": self.z_min, "z_max": self.z_max})
+        return data

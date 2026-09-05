@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add strict v2 electric/magnetic end symmetry, essential-DOF elimination, loss-free symmetry tags and explicit full-cavity field reflection; preserve v1 PEC inputs.
+- Verify both half-domain pillbox parities at either end against theory, independent full FEM and signed full-domain Wine SF7; export half/full plots and RF metadata.
 - Add full-domain seminar pillbox TM010/TM011 runs, field-overlap mode identification, three-level length sweeps and a local result gallery.
 - Add arbitrary saved-mode plots with electric field arrows, magnetic fields and axial/radial probes.
 - Use signed SF7 fields for higher-mode Wine comparisons; align voltage and power to a common energy normalization.

@@ -11,7 +11,7 @@ Wine版SUPERFISHの3形状照合は完了（[記録](SUPERFISH_COMPARISON.md)）
 これはP0-01のNGSolve/GetDP照合を実行したという意味ではない。
 
 S1進捗: 全領域Pillbox TM010/TM011、長さ掃引、場の図・CSV・結果HTML、符号付きSF7照合を実装済み。
-次は半領域の電気／磁気対称境界。[検証結果](SEMINAR_PILLBOX.md)を参照。
+半領域の電気／磁気対称境界・全空洞鏡映も実装・検証済み。次はS2の垂直段差。[検証結果](SEMINAR_PILLBOX.md)を参照。
 
 | ID | 依存 | 内容 | 受入条件 |
 |---|---|---|---|

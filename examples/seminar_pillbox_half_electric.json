@@ -1,0 +1,9 @@
+{
+  "schema_version": 2,
+  "name": "Pillbox TM010 half: electric symmetry at z=0",
+  "geometry": {"type": "pillbox", "radius_m": 0.075, "length_m": 0.04},
+  "boundaries": {"z_min": "electric_symmetry", "z_max": "pec"},
+  "mesh": {"nr": 64, "nz": 35},
+  "solver": {"modes": 1},
+  "rf": {"beta": 1.0, "conductivity_s_per_m": 58001276.02807262, "normalization_j": 0.5}
+}

@@ -123,6 +123,8 @@ def read_sf7_line(path):
 
 
 def write_deck(case, folder, dx_cm, frequency_mhz):
+    if case.z_min != 'pec' or case.z_max != 'pec':
+        raise ValueError('this Wine deck writer supports full PEC cavities only, not symmetry domains')
     profile = [(z * 100, r * 100) for z, r in case.profile]
     header = (f'Independent closed vacuum cavity comparison: {case.name}\n'
               f'$reg kprob=1, icylin=1, dx={dx_cm}, freq={frequency_mhz},\n'

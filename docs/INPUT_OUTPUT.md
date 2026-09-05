@@ -1,8 +1,8 @@
-# 入出力仕様 v1
+# 入出力仕様 v1/v2
 
 ## 入力
 
-UTF-8 JSON。トップレベル `schema_version:1` とgeometryは必須。
+UTF-8 JSON。トップレベル `schema_version`（1または2）とgeometryは必須。
 未知キー・重複JSONキー・不正な数値・未対応geometryを拒否する。
 材料や境界を入力しなければ自動推定するのではなく、v1の仕様が真空/PECに固定されている。
 `epsilon_r` や `boundary:PMC` などを追加するとエラーになる。
@@ -32,11 +32,23 @@ zは0から厳密に増加し、全rは正。点間のRは線形で、両端にP
 | rf.normalization_j | 1.0 | 正の有限値、全蓄積エネルギー |
 
 極端なアスペクト比・巨大/微小寸法・過大な節点数での数値安定性は保証しない。
-case v1の範囲拡張では、入力移行と拒否条件をテストしてからschema_versionを更新する。
+v1の従来入力・既定PEC境界・canonical hashは維持する。
+
+### v2: 平坦なz端面の対称条件
+
+`"schema_version":2` と `"boundaries":{"z_min":"magnetic_symmetry","z_max":"pec"}` のように指定する。
+端面は `pec`（既定）、`electric_symmetry`（自然境界・損失なし）、
+`magnetic_symmetry`（u=0の本質境界・損失なし）のいずれか。側壁はPECのまま。
+未知の端面キー・境界名、v1へのboundaries追加は拒否する。全PECはv1へ正規化して出力する。
+Pythonでは `Case(..., z_min='electric_symmetry')` を用いる。
+エネルギー・電圧・R/Qは入力領域の値であり、半領域の値を全空洞の値と解釈しない。
+例題では半領域U=0.5 Jとし、明示的な鏡映で全空洞U=1 Jの場を得る。
 
 ## コマンド
 
 - `superfish-ng solve CASE --out NEW_DIRECTORY`
+- `superfish-ng solve HALF_CASE --reflect-full --out NEW_DIRECTORY`（一端対称・他端PECのみ。鏡映後の全空洞を保存）
+- `superfish-ng plot RUN --mode 1 --mesh --probe-z-m 0.02 --out NEW_PNG`（plot依存が必要）
 - `superfish-ng converge --levels 8 16 32 64 --out NEW_JSON`
 - `superfish-ng --version`
 
@@ -61,7 +73,7 @@ NPZ:
 | points_rz_m | (N,2) | r,z [m] |
 | triangles | (T,3) | 0-based節点index |
 | boundary_edges | (B,2) | 境界辺の節点index |
-| boundary_tags | (B,) | axisまたはpec文字列 |
+| boundary_tags | (B,) | axis、pec、electric_symmetry、magnetic_symmetry文字列 |
 | boundary_cells | (B,) | 境界に接する要素index |
 | axis_nodes | (A,) | z昇順の軸節点 |
 | u_a_per_m2 | (N,modes) | Hφ/r、単位A/m² |
@@ -73,6 +85,8 @@ ParaViewでEを表示する際はCell Dataを選ぶ。回転させる場合は�
 今回ParaViewアプリによる対話操作は確認していない。
 
 RFキーの式はPHYSICS.md。
+`field_construction` に直接固有値計算か鏡映かを記録する。鏡映出力は元のv2入力を
+`reflection_source_case` に保存し、部分スペクトルのmode番号であることを明記する。
 `*_estimate`は表面場の一次要素推定で、メッシュ独立な設計値を意味しない。
 ゼロに近い加速電圧でピーク比が定義しづらい場合はnull。NaN/InfinityをJSONに保存しない。
 

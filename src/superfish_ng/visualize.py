@@ -24,6 +24,7 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False):
     with np.load(run/'fields.npz', allow_pickle=False) as data:
         p, t, u = data['points_rz_m'], data['triangles'], data['u_a_per_m2']
         edges, freqs = data['boundary_edges'], data['frequencies_hz']
+        tags = data['boundary_tags']
     zmin, zmax = p[:, 1].min(), p[:, 1].max()
     probe_z = zmin+(zmax-zmin)/4 if probe_z_m is None else float(probe_z_m)
     if not np.isfinite(probe_z) or not zmin <= probe_z <= zmax:
@@ -59,7 +60,13 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False):
         # One polyline collection is substantially faster than per-edge artists.
         boundary = p[edges][:, :, [1, 0]]*1000
         from matplotlib.collections import LineCollection
-        ax.add_collection(LineCollection(boundary, colors='#444444', linewidths=.65))
+        for tag, color, style in [('pec', '#444444', '-'), ('axis', '#777777', ':'),
+                                  ('electric_symmetry', '#00a66c', '--'), ('magnetic_symmetry', '#d68a00', '--')]:
+            if np.any(tags == tag):
+                ax.add_collection(LineCollection(boundary[tags == tag], colors=color, linewidths=1.2,
+                                                 linestyles=style, label=tag.replace('_', ' ')))
+        if np.any(np.isin(tags, ['electric_symmetry', 'magnetic_symmetry'])):
+            ax.legend(fontsize=7, loc='upper right')
         ax.set(xlabel='z [mm]', ylabel='r [mm]', aspect='equal')
     axes[1, 0].plot(axis[:, 0]*1000, axis[:, 1]/1e6)
     axes[1, 0].axhline(0, color='gray', lw=.6)
@@ -74,8 +81,11 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False):
     second.legend(loc='upper right', fontsize=8)
     for ax in axes[1]:
         ax.grid(alpha=.25)
+    domain = 'input domain only; symmetry loss excluded' if 'boundaries' in results['case'] else 'full closed PEC cavity'
+    if 'reflection_source_case' in results:
+        domain += '; parity-filtered modes'
     fig.suptitle(f"{results['case']['name']} | mode {mode} | {q['frequency_hz']/1e6:.6f} MHz\n"
-                 f"Q0={q['q0']:.2f} | R/Q(acc)={q['r_over_q_accelerator_ohm']:.4f} ohm | U={q['stored_energy_j']:.4g} J | peak phasors, closed PEC")
+                 f"Q0={q['q0']:.2f} | R/Q(acc)={q['r_over_q_accelerator_ohm']:.4f} ohm | U={q['stored_energy_j']:.4g} J | peak phasors\n{domain}")
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=160)
     plt.close(fig)
