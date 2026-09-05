@@ -13,7 +13,7 @@ from .rf import cell_fields
 from .sampling import FieldSampler, radial_extent
 
 
-def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False):
+def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None):
     run, out = Path(run), Path(out)
     if out.exists():
         raise ValueError(f'output already exists: {out}')
@@ -21,6 +21,9 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False):
     if isinstance(mode, bool) or not isinstance(mode, int) or not 1 <= mode <= len(results['modes']):
         raise ValueError('mode must be a valid one-based mode number')
     q = results['modes'][mode-1]
+    if mode_label is not None and not isinstance(mode_label, str):
+        raise ValueError('mode label must be a string')
+    label = f'{mode_label} (mode {mode})' if mode_label else f'Mode {mode}'
     with np.load(run/'fields.npz', allow_pickle=False) as data:
         p, t, u = data['points_rz_m'], data['triangles'], data['u_a_per_m2']
         edges, freqs = data['boundary_edges'], data['frequencies_hz']
@@ -49,7 +52,7 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False):
     nonzero = samples['inside'] & (magnitude > np.nanmax(magnitude)*1e-8)
     axes[0, 0].quiver(zz.ravel()[nonzero]*1000, rr.ravel()[nonzero]*1000,
                       ezq[nonzero]/magnitude[nonzero], erq[nonzero]/magnitude[nonzero], color='#69d7ff', scale=35, width=.003)
-    axes[0, 0].set_title(f'Mode {mode}: |E|, field lines and direction')
+    axes[0, 0].set_title(f'{label}: |E|, field lines and direction')
     fig.colorbar(electric, ax=axes[0, 0], label='Peak |E| [MV/m]')
     magnetic = axes[0, 1].tripcolor(mesh, MU0*p[:, 0]*u[:, mode-1]*1000, shading='gouraud', cmap='coolwarm', rasterized=True)
     axes[0, 1].set_title('Signed azimuthal magnetic field')
@@ -84,7 +87,7 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False):
     domain = 'input domain only; symmetry loss excluded' if 'boundaries' in results['case'] else 'full closed PEC cavity'
     if 'reflection_source_case' in results:
         domain += '; parity-filtered modes'
-    fig.suptitle(f"{results['case']['name']} | mode {mode} | {q['frequency_hz']/1e6:.6f} MHz\n"
+    fig.suptitle(f"{results['case']['name']} | {label} | {q['frequency_hz']/1e6:.6f} MHz\n"
                  f"Q0={q['q0']:.2f} | R/Q(acc)={q['r_over_q_accelerator_ohm']:.4f} ohm | U={q['stored_energy_j']:.4g} J | peak phasors\n{domain}")
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=160)

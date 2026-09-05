@@ -95,6 +95,17 @@
 [開発元ライセンス](https://github.com/scipy/scipy/blob/main/LICENSE.txt)
 — 閲覧: 開発元ライセンス。今回のZIPにNumPy/SciPy本体は同梱しない。
 
+## 可視化の検証
+
+**R22. Chrome for Developers, Chrome Headless mode.**
+[公式文書](https://developer.chrome.com/docs/automation-and-testing/headless)
+— 2026-09-05閲覧。可視ウィンドウを表示しない自動テスト方法を確認。数値ソルバーには利用しない。
+
+**R23. Chrome DevTools Protocol, Target / Runtime / Page / Input domains.**
+[公式プロトコル](https://chromedevtools.github.io/devtools-protocol/)
+— 2026-09-05閲覧。公開Target/Runtime APIを確認し、実ブラウザーでキー入力・状態・スクリーンショットを検査した。
+第三者の通信ライブラリやコードをコピーせず、Node標準WebSocketで呼び出す。
+
 ## 読む順番
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、

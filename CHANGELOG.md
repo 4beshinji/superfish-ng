@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add radius-preserving circular profiles, bounded chord approximation and independent area/convergence checks for the rounded four/seven-cell seminar examples.
+- Identify the four/seven-cell band using cell fields and zero counts, fit cosine dispersion with residuals, and generate multi-mode result galleries with explicit failed gates.
+- Add optional dependency-free Node/Chrome headless keyboard/graphics/link verification, including an intentionally failing gallery fixture.
 - Add explicit v2 stepped profiles and conforming slab meshes with boundary/topology/area checks; solve the seminar flat-nose 4-cell example and record preliminary signed Wine comparisons, including unresolved cancellation-sensitive R/Q error.
 - Add strict v2 electric/magnetic end symmetry, essential-DOF elimination, loss-free symmetry tags and explicit full-cavity field reflection; preserve v1 PEC inputs.
 - Verify both half-domain pillbox parities at either end against theory, independent full FEM and signed full-domain Wine SF7; export half/full plots and RF metadata.

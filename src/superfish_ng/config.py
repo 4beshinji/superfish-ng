@@ -41,6 +41,8 @@ class Case:
     z_min: str = "pec"
     z_max: str = "pec"
     geometry_type: str = "profile"
+    arcs: tuple[tuple[int, float, str], ...] = ()  # (end vertex index, radius m, direction in z,r)
+    arc_chord_tolerance_m: float = 1e-5
 
     def __post_init__(self):
         if not isinstance(self.name, str):
@@ -56,8 +58,8 @@ class Case:
                 raise ValueError("profile z must be finite")
             converted.append((float(z), positive(r, "profile radius")))
         object.__setattr__(self, "profile", tuple(converted))
-        if self.geometry_type not in ("profile", "stepped_profile"):
-            raise ValueError("geometry_type must be profile or stepped_profile")
+        if self.geometry_type not in ("profile", "stepped_profile", "arc_profile"):
+            raise ValueError("geometry_type must be profile, stepped_profile or arc_profile")
         if self.geometry_type == "profile":
             if self.profile[0][0] != 0 or any(b[0] <= a[0] for a, b in zip(self.profile, self.profile[1:])):
                 raise ValueError("profile must start at z=0 and have strictly increasing z")
@@ -75,6 +77,24 @@ class Case:
             raise ValueError("beta must be <= 1")
         positive(self.conductivity_s_per_m, "conductivity_s_per_m")
         positive(self.normalization_j, "normalization_j")
+        positive(self.arc_chord_tolerance_m, "arc_chord_tolerance_m")
+        if self.geometry_type != 'arc_profile' and (self.arcs or self.arc_chord_tolerance_m != 1e-5):
+            raise ValueError('arc metadata requires arc_profile geometry')
+        if self.geometry_type == 'arc_profile':
+            converted_arcs = []
+            for arc in self.arcs:
+                if not isinstance(arc, (list, tuple)) or len(arc) != 3:
+                    raise ValueError('arcs must contain [end_index, radius_m, direction]')
+                index, radius, direction = arc
+                integer(index, 'arc end_index')
+                if index >= len(self.profile) or direction not in ('cw', 'ccw'):
+                    raise ValueError('arc end_index out of range or unsupported direction')
+                converted_arcs.append((index, positive(radius, 'arc radius'), direction))
+            if not converted_arcs or len({a[0] for a in converted_arcs}) != len(converted_arcs):
+                raise ValueError('arc_profile requires nonempty arcs with unique end indices')
+            object.__setattr__(self, 'arcs', tuple(sorted(converted_arcs)))
+            from .geometry import linearize_profile
+            linearize_profile(self)  # validate radius, monotonicity and positive r before meshing
         for side in ("z_min", "z_max"):
             value = getattr(self, side)
             if not isinstance(value, str) or value not in ("pec", "electric_symmetry", "magnetic_symmetry"):
@@ -101,21 +121,30 @@ class Case:
             keys(g, ["type", "radius_m", "length_m"], ["type", "radius_m", "length_m"], "geometry")
             radius = positive(g["radius_m"], "radius_m")
             profile = ((0.0, radius), (positive(g["length_m"], "length_m"), radius))
-        elif g.get("type") in ("profile", "stepped_profile"):
-            if g["type"] == "stepped_profile" and data["schema_version"] != 2:
-                raise ValueError("stepped_profile requires schema_version 2")
-            keys(g, ["type", "points_zr_m"], ["type", "points_zr_m"], "geometry")
+        elif g.get("type") in ("profile", "stepped_profile", "arc_profile"):
+            if g["type"] != "profile" and data["schema_version"] != 2:
+                raise ValueError("stepped_profile and arc_profile require schema_version 2")
+            arc_keys = ["arcs", "chord_tolerance_m"] if g["type"] == 'arc_profile' else []
+            keys(g, ["type", "points_zr_m"]+arc_keys, ["type", "points_zr_m"]+arc_keys, "geometry")
             if not isinstance(g["points_zr_m"], list):
                 raise ValueError("points_zr_m must be an array")
             profile = g["points_zr_m"]
         else:
-            raise ValueError("geometry type must be pillbox, profile or stepped_profile")
+            raise ValueError("geometry type must be pillbox, profile, stepped_profile or arc_profile")
+        geometry_options = {}
+        if g['type'] == 'arc_profile':
+            if not isinstance(g['arcs'], list):
+                raise ValueError('geometry.arcs must be an array')
+            for arc in g['arcs']:
+                keys(arc, ['end_index', 'radius_m', 'direction'], ['end_index', 'radius_m', 'direction'], 'arc')
+            geometry_options = {'arcs': tuple((a['end_index'], a['radius_m'], a['direction']) for a in g['arcs']),
+                                'arc_chord_tolerance_m': g['chord_tolerance_m']}
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
         keys(mesh, ["nr", "nz"], [], "mesh")
         keys(solver, ["modes"], [], "solver")
         keys(rf, ["beta", "conductivity_s_per_m", "normalization_j"], [], "rf")
-        return cls(profile=profile, geometry_type="stepped_profile" if g["type"] == "stepped_profile" else "profile",
-                   name=data.get("name", "cavity"), **mesh, **solver, **rf, **boundaries)
+        return cls(profile=profile, geometry_type="profile" if g["type"] == "pillbox" else g['type'],
+                   name=data.get("name", "cavity"), **mesh, **solver, **rf, **boundaries, **geometry_options)
 
     @classmethod
     def load(cls, path):
@@ -136,6 +165,9 @@ class Case:
                        "normalization_j": self.normalization_j}}
         if self.z_min != "pec" or self.z_max != "pec":
             data.update(schema_version=2, boundaries={"z_min": self.z_min, "z_max": self.z_max})
-        if self.geometry_type == "stepped_profile":
+        if self.geometry_type in ("stepped_profile", "arc_profile"):
             data["schema_version"] = 2
+        if self.geometry_type == 'arc_profile':
+            data['geometry'].update(arcs=[{'end_index': i, 'radius_m': r, 'direction': d} for i, r, d in self.arcs],
+                                    chord_tolerance_m=self.arc_chord_tolerance_m)
         return data

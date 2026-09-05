@@ -2,6 +2,7 @@
 import importlib.util
 from pathlib import Path
 import sys
+import tempfile
 import unittest
 import numpy as np
 from superfish_ng import Case, solve
@@ -37,3 +38,15 @@ class SeminarRunnerTests(unittest.TestCase):
         self.assertAlmostEqual(2*np.pi*q9['frequency_hz']*q9['stored_energy_j']/q9['wall_loss_w'], q9['q0'])
         self.assertLess(e1, 1e-12)
         self.assertLess(e9, 1e-12)
+
+    def test_saved_multicell_import_checks_axis_against_stored_field(self):
+        from seminar_multicell import read_native
+        from superfish_ng.io import save_run
+        case = Case(((0., .075), (.08, .075)), nr=6, nz=8, modes=2)
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/'run'
+            save_run(case, solve(case), path)
+            _, axes = read_native(path, case)
+            axes[0][0, 1] *= 1.1
+            np.savetxt(path/'axis_001.csv', axes[0], delimiter=',', header='z_m,Ez_quadrature_V_per_m', comments='')
+            with self.assertRaises(ValueError): read_native(path, case)

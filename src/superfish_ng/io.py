@@ -53,6 +53,14 @@ def save_run(case, solution, directory):
               "modes": [quantities(case, solution, i) for i in range(case.modes)]}
     if solution.source_case is not None:
         result['reflection_source_case'] = solution.source_case
+    if case.geometry_type == 'arc_profile':
+        from .geometry import linearize_profile
+        polygon = linearize_profile(case)
+        result['geometry_approximation'] = {
+            'method': 'straight chords of specified circular minor arcs; original vertices/radii remain in case',
+            'maximum_arc_sagitta_m': case.arc_chord_tolerance_m,
+            'linearized_wall_vertices': len(polygon),
+            'near_duplicate_coordinate_tolerance_m': 32*np.finfo(float).eps*max(r for _, r in polygon)}
     (directory/"case.json").write_text(json.dumps(case.to_dict(), indent=2)+"\n", encoding="utf-8")
     (directory/"results.json").write_text(json.dumps(result, indent=2, allow_nan=False)+"\n", encoding="utf-8")
     mesh = solution.mesh

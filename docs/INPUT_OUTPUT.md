@@ -50,7 +50,24 @@ Pythonでは `Case(..., z_min='electric_symmetry')` を用いる。
 同一zの2点による孤立した垂直段差を許す。3点連続の同一z、同一点の重複、逆行するz、
 最初・最後の区間が垂直の形状は拒否する。従来profileとv1の拒否条件は変更しない。
 mesh.nrは最大半径までの分割数で、壁頂点半径の格子を追加する。nzは非垂直区間の軸分割目安。
-例題と検査記録は [SEMINAR_MULTICELL.md](SEMINAR_MULTICELL.md)。円弧の入力はまだ未対応。
+例題と検査記録は [SEMINAR_MULTICELL.md](SEMINAR_MULTICELL.md)。
+
+### v2: 元の半径を保持する円弧外壁
+
+`geometry.type:arc_profile` と元の `points_zr_m` を指定し、曲線の区間を以下のように記す。
+
+```json
+"arcs": [{"end_index":3,"radius_m":0.003,"direction":"ccw"}],
+"chord_tolerance_m":0.000003
+```
+
+end_indexは0始まりの頂点番号で、前の頂点からその頂点までが円弧。重複番号は禁止。
+directionは(z,r)座標でcwまたはccw。π以下の短円弧のみで、z非減少・正半径の領域を維持する。
+元の点・半径・向きと、直線近似の最大弦誤差を別々に保存する。FEM要素自体は直線のP1三角形。
+arc_profileにはarcsとchord_tolerance_mの両方が必須。他のgeometryへarc metadataを付けると拒否する。
+非常に近い半径格子点は最大半径×32 machine epsilon以内だけ併合する。
+円弧の鏡映メタデータは現在未対応のため `--reflect-full` は拒否する。全領域入力で計算する。
+Wineへの比較用出力は検証済みのccw円弧のみを扱う。一般的なlegacy入力の互換パーサーではない。
 
 ## コマンド
 

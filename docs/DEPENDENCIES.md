@@ -36,6 +36,11 @@ NumPy/SciPyのwheelはBLAS/LAPACK等を同梱する場合があり、上の表�
 
 ## オフライン運用
 
+生成HTMLの任意の統合検証は、既設Node 22とChromeを別プロセスで利用する。
+今回の実測はNode v22.22.1とChrome/151.0.7922.137。npm依存はなく、計算・可視化の実行時依存にも加えない。
+本体をZIP/wheelへ同梱しない。検証は一時プロファイルとローカル結果ファイルを用い、ページの外部HTTP通信を遮断する。
+採用理由と範囲はARCHITECTURE.mdのADR-006、実行記録はBROWSER_VERIFICATION.md。
+
 solverとテストは依存導入後にネット接続を使用しない。
 完全オフライン導入が必要な場合は、対象OS/Pythonで `pip download` によりwheelhouseを別途作成し、
 ハッシュと依存ライセンス一覧を添えて配布する。今回のZIPはwheelhouseを含まない。

@@ -131,7 +131,14 @@ def write_deck(case, folder, dx_cm, frequency_mhz):
               f'xdri=0, ydri={profile[0][1]}, kmethod=1, beta=1, zctr={case.length*50},\n'
               'nbslo=0, nbsup=1, nbslf=1, nbsrt=1, epsik=1e-10 $\n')
     points = [(0, 0)] + profile + [(case.length * 100, 0), (0, 0)]
-    (folder / 'cavity.af').write_text(header + ''.join(f'$po x={z:.12g}, y={r:.12g} $\n' for z, r in points))
+    arcs = {index+1: radius for index, radius, direction in case.arcs}
+    if any(direction != 'ccw' for _, _, direction in case.arcs):
+        raise ValueError('Wine arc export is currently verified only for ccw arcs')
+    lines = []
+    for i, (z, r) in enumerate(points):
+        extra = f', nt=4, radius={arcs[i]*100:.12g}' if i in arcs else ''
+        lines.append(f'$po x={z:.12g}, y={r:.12g}{extra} $\n')
+    (folder / 'cavity.af').write_text(header + ''.join(lines))
     segments = ' '.join(str(n) for n in range(1, len(profile) + 2))
     (folder / 'cavity.seg').write_text(f'FieldSegments\n{segments}\nEndData\nEnd\n')
 

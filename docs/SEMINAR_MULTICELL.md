@@ -1,7 +1,8 @@
 # 多セル演習：垂直段差メッシュの実装記録
 
-2026-09-05。S2の幾何・メッシュを実装した。多セル演習の全受入条件は未達。
-丸み付き4/7セル、モード同定の自動化、分散フィット、両コードの収束検査は次の作業。
+2026-09-05。段差・円弧・4/7モード同定・分散フィット・HTML表示を実装した。
+多セル演習の全受入条件は未達。7セルの微小R/Qの収束、丸み付き形状のWine照合、
+端部full-cell比較と全例題一括検証が残る。
 
 ## 再現方法
 
@@ -55,3 +56,84 @@ NG結果は `out/seminar-flat-probe-20260905`、図は `out/seminar-flat-probe-2
 nr=128では軸場差が0.1225%へ低下した一方、R/Q差は1.6244%で相対受入目標を超えている。
 粗い段階では約19%の差もあり、単一メッシュで合格とはしない。
 Wine側も細分して周波数・RF量・場の収束を確認すること。誤差基準の緩和や数値補正は行っていない。
+
+## 追加のメッシュ細分とモード同定
+
+NGはnr=128/256/512、nz=336/672/1344まで細分した。最細は620,488節点。
+最終2段階の全4モードの周波数・Q/G/RQ/P/TTF変化が従来の閾値以内になった。
+最低モードのR/Qは0.0424236 Ω、最終変化は約0.702%。閾値を緩めず、実計算を細分した結果である。
+Wineはdx=0.05/0.025/0.0125 cmを計算済みで、最細とのNG比較自体は全モード合格するが、
+最低モードのWine側最終R/Q変化が約1.085%のため、全体はFAILと記録した。
+この結果は `out/seminar-flat-comparison-20260905` に保持する。
+さらにdx=0.01 cmを `out/seminar-flat-wine-dx001-20260905` で計算中。
+完了済みの最低モードはf=2835.277280 MHz、R/Q=0.0423984 Ω、NGとの軸場L2差0.00513%。
+残りの計算と最終レポート再生成を確認するまではWine照合完了としない。
+
+`modes.identify_cell_band` はセル中心値のcosパターンとの重なりと軸上の零交差数を両方検査し、
+割当てを一対一に決める。重なりの下限は0.98。列の順序・符号を入れ替えた7モードfixtureでも同定する。
+これは対象のhalf-end-cellバンドの同定であり、任意の高次radialファミリーの分類器ではない。
+分散はf=m1+m2 cosθを最小二乗フィットし、周波数と符号付き残差を別々に保存する。
+残差はcosモデルからの差であり、ソルバーの固有値残差ではない。
+
+```bash
+python scripts/seminar_multicell.py --case flat4 --run-legacy --out out/flat-exercise-new
+python scripts/seminar_multicell.py --case rounded4 --out out/rounded4-new
+python scripts/seminar_multicell.py --case rounded7 --out out/rounded7-new
+```
+
+各コマンドは全モード図、軸上/半径方向CSV、分散曲線と残差、比較JSON、モード選択HTMLを生成する。
+既定のNGメッシュはflat4が128/256/512、rounded4/7が32/64/128。
+`--levels`、`--wine-dx`、`--wine-timeout-s` で検証設定を明示できる。
+`--native-runs` は既存計算の再利用を明記し、入力・case hash・保存場と軸CSVの一致を検査する。
+`--reference-dirs` はWineのAF/SEGを再生成した入力と全バイト比較し、生SFO/SF7を読む。
+全ファイルhashを記録する。実行中にソースが変わった場合はPASSにしない。
+
+## 円弧を保持した4セル・7セル
+
+`examples/seminar_4cell_rounded.json` と `seminar_7cell_rounded.json` は元入力の円弧半径3 mm、
+端点、反時計回りの指定を保持する。v2のarc_profileは円弧を指定した最大弦誤差で直線近似してメッシュへ渡す。
+単純な短円弧の中心と角度から独立に生成し、z逆行・軸への交差・不可能な半径を拒否する。
+元の円弧パラメーターをcaseに残し、出力には近似方法・最大弦誤差・近接座標の丸め許容幅を記録する。
+
+既存のrounded4 `OUTAUT.TXT` の最初の円弧の境界8点について、指定中心からの半径差は
+最大3.73e-11 mであり、出力座標の印字精度内で同じ円を確認した。
+提供寸法の円弧と直線の接続は完全な接線連続ではない。見た目を滑らかにする補正を加えず、表面ピークの収束も保証しない。
+
+円弧の最大弦誤差3 µmを固定し、rounded4のnr=32/64/128の全モードで最終メッシュ変化が合格した。
+`out/seminar-rounded4-native-20260905/index.html` に保存した。これはまだWine比較なしの結果である。
+
+| 位相 | rounded4 NG [MHz] | R/Q [Ω] |
+|---|---:|---:|
+| 0 | 2837.245886 | 0.034705 |
+| π/3 | 2843.829867 | 248.660520 |
+| 2π/3 | 2856.959744 | 242.454681 |
+| π | 2863.505719 | 66.011701 |
+
+## FEM分割と円弧近似の検査を分ける
+
+```bash
+python scripts/seminar_geometry.py --case rounded4 --out out/geometry4-new
+python scripts/seminar_geometry.py --case rounded7 --out out/geometry7-new
+```
+
+固定のnr/nzに対して最大弦誤差12/3/0.75 µmを変える。境界の点数と総自由度も変わるため、
+完全にFEM誤差を取り除いた「純粋な形状誤差」とは呼ばない。FEM分割数を変える試験とは別の入力制御で評価する。
+円弧部分の正確な断面積は、弦の多角形面積から符号付き円弧部分の面積を加減して計算する。
+rounded4では断面積誤差が1.53e-7→3.83e-8→9.58e-9 m²へ減少し、
+最終の周波数・RF量変化も合格した（`out/seminar-rounded4-geometry-20260905`）。
+
+rounded7も全7モードを同定し、図・分散曲線を `out/seminar-rounded7-native-20260905` に保存した。
+ただしnr=64→128のπモードR/Q変化は9.53%、π/3モードは1.46%で、数値ゲートはFAIL。
+形状近似3→0.75 µmのπモードR/Q変化も1.19%で、`out/seminar-rounded7-geometry-20260905` はFAIL。
+πモードのR/Qは約0.009 Ωで相殺に敏感である。追加細分や幾何の厳密な対称性を利用した計算を検討し、
+基準を満たすまで合格にはしない。
+
+56件のunittestと `out/validation-multicell-foundations-20260905` が合格。
+Pillbox・rounded4・rounded7の生成HTMLはheadlessブラウザーの実キーボード入力で検証した。
+詳細は [BROWSER_VERIFICATION.md](BROWSER_VERIFICATION.md)。UIのPASSと数値のPASSは独立に保持する。
+
+端部比較を実装する際は本文p.28の赤い切断面を確認すること。
+full-cell側の図はiris中心、half-cell側は空洞中心で切っている。
+単に端の大半径ギャップだけを延長したモデルと同一視しない。
+同じ周期34.99 mmを保つfull-cell版なら端にhalf-diskを残し、4セル全長は139.96 mmになる。
+これは図に基づく比較形状の構成方針で、当該full-cell版はまだ計算していない。

@@ -9,10 +9,13 @@ SUPERFISH全体の置換、旧入力形式の互換性、KEKの実機モデル�
 
 当面のマイルストーンは、指定4資料に基づく [セミナー例題の計算と可視化](docs/MILESTONE_SEMINAR.md)です。
 Wine版SUPERFISHとの3形状の基本モード照合は実施済みで、[比較結果](docs/SUPERFISH_COMPARISON.md)を記録しています。
-多セルの垂直段差と4セルflat-nose計算を実装済みです。[初回比較](docs/SEMINAR_MULTICELL.md)は収束確認中で、円弧と4/7セルの演習一括対応は未完了です。
+多セルの段差・円弧、4/7モードの計算・同定・分散曲線・表示を実装済みです。
+[比較と残件](docs/SEMINAR_MULTICELL.md)：7セルの微小R/Q収束、丸み付き形状のWine照合、端部full-cell比較と演習一括検証は未完了です。
 
 PillboxのTM010/TM011・長さ掃引・電磁場の図は [演習ガイド](docs/SEMINAR_PILLBOX.md) から実行できます。
 `python scripts/seminar_pillbox.py --out out/seminar-new` で例題の計算と結果選択HTMLを生成します（plot依存が必要）。
+多セルは `python scripts/seminar_multicell.py --case rounded4 --out out/rounded4-new`。
+`--case` はflat4/rounded4/rounded7。数値ゲート未達はFAILとして保存・表示します。
 
 ## ローカルで開始する
 
@@ -74,7 +77,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 | 分野 | 0.1.0 の内容 |
 |---|---|
-| 形状 | pillbox、折れ線 `R(z)`、v2の垂直段差壁。各断面は軸から壁まで真空 |
+| 形状 | pillbox、折れ線 `R(z)`、垂直段差、半径を保持した短円弧の直線近似。各断面は軸から壁まで真空 |
 | メッシュ | 形状に沿った2D三角形、一次要素、軸・PEC・電気/磁気対称境界のタグ |
 | 物理 | 真空、回転対称、m=0 TM系、PEC外壁、平坦z端の対称条件と鏡映 |
 | 固有値 | 一般化対称固有値問題、SciPy/ARPACKのshift-invert、複数モード |
@@ -82,7 +85,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | RF量 | f、U、表面抵抗、壁損失、Q0、G、通過位相を含むVacc、R/Q、シャントインピーダンス、TTF |
 | 表面電磁場 | Epk/Eacc、Bpk/Eaccの一次要素推定値。角部では収束保証なし |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 49テスト、pillbox収束、6モード、Bessel場、RF量、対称境界、段差メッシュ、スケーリング |
+| 検証 | 56テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧メッシュ、バンド同定。生成HTMLはheadless操作も検証 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 `docs/VALIDATION_REPORT.md` に数値と解釈をまとめています。
@@ -94,7 +97,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 ## 重要な制約
 
 - m=0のTEモード、m>0の双極・四重極モード、同軸TEM、静電場、静磁場、非線形材料は未実装。
-- `R(z)>0` が必要です。穴・内導体・円弧・z方向に折返す輪郭・任意CAD・RFQを扱えません。
+- `R(z)>0` が必要です。穴・内導体・z方向に折返す輪郭・任意CAD・RFQを扱えません。円弧はz非減少の短円弧のみです。
 - 両端は既定で金属板、v2入力で電気/磁気対称面を指定できます。細い首は開放ビームポートではありません。
 - Q0は理想PEC固有場に常伝導表面抵抗を適用する摂動推定です。複素固有周波数、超伝導BCS損失、放射損失は計算しません。
 - 電磁場はピークphasorです。既定で全蓄積エネルギー1 Jに正規化します。運転電力1 Wの指定ではありません。

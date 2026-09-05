@@ -10,6 +10,8 @@
 | solver.py | 平衡化、固有値、残差、直交性、エネルギー正規化 | fem、ARPACK |
 | rf.py | 復元場、軸積分、表面積分、規約を固定したRF量 | mesh、定数 |
 | symmetry.py | 対称部分領域のメッシュ・場を全空洞へ鏡映、残差検査 | mesh、fem |
+| geometry.py | 短円弧の厳密パラメーター、弦近似、断面積 | NumPy |
+| modes.py | 演習バンドのセル場/零交差による同定、分散フィット | NumPy、SciPy optimize |
 | analytic.py | 独立解析解。solverから参照しない | SciPy special |
 | io.py | JSON/CSV/NPZ/VTK、入力hash・環境メタデータ | solver出力、rf |
 | cli.py | solve/converge、失敗コード、上書き拒否 | 上記API |
@@ -81,3 +83,11 @@ JSON case v1、正規化した入力SHA-256、環境、規約、結果を保存�
 新しい依存ライブラリは追加しない。連結性検査に既存SciPyのcsgraphを使用する。
 不利: 一般CADやz方向に折り返す輪郭には対応しない。複数の頂点半径は全スラブの格子を増やす。
 再検討条件: 円弧近似の点数が格子を過大にする、強い傾斜で細長い要素が増える、適応細分が必要になる場合。
+
+## ADR-006: 生成HTMLは既設headless Chromeで統合検証する
+
+必要性: 静的リンク監査ではmode選択イベントや実際の画像表示を証明できず、デスクトップ用Orca CLIも起動できなかった。
+決定: Node 22の標準WebSocketとChromeの公開プロトコルで、一時プロファイルのheadlessテストを追加する。
+既存デスクトップの操作ではなく、生成したローカルHTMLのキーボード操作・画像・リンクに検査を限定する。
+PythonアプリにWeb frameworkを導入せず、npm依存も追加しない。Chrome/Nodeは任意の検証ツールとして別途必要。
+失敗fixtureで検査自体のFAIL経路を確認し、UI合格と数値合格を別に報告する。

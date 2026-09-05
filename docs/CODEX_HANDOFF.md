@@ -6,8 +6,12 @@
 Wine版SUPERFISHとの3形状の基本モード照合は完了し、[比較結果](SUPERFISH_COMPARISON.md) を保存した。
 S1の全領域TM010/TM011・長さ掃引・図・CSV・HTMLとWine/SF7照合は実装済み（[記録](SEMINAR_PILLBOX.md)）。
 S1の半領域の電気／磁気対称境界・全空洞鏡映も完了。`seminar_symmetry.py` で再現可能。
-S2の垂直段差メッシュとflat-nose計算も実装。次は4モード同定とWine/NG両側の細分照合、S3の円弧。
-最低モードのR/Qは相殺に敏感で1%目標未達。[記録](SEMINAR_MULTICELL.md)を参照。S5の実画面操作は未確認。
+段差・円弧、4/7モード同定と分散曲線も実装済み。[記録](SEMINAR_MULTICELL.md)を参照。
+flat4はNG nr=128/256/512の細分が合格。Wine dx=0.0125まででは最低モードの参照側R/Q変化が1.085%で未達。
+追加のdx=0.01を `out/seminar-flat-wine-dx001-20260905` で実行中。プロセス/既存tool handleを確認してから継続すること。
+rounded4はNGと形状近似の検査が合格、rounded7はπモード等の微小R/Qが未収束。
+次は7セルの追加細分または正しい対称境界による計算効率化、rounded4/7のWine照合、端部full-cell比較、一括検証。
+Pillbox/rounded4/7のHTMLはheadless Chromeの実キー入力で検証済み。Orcaの既存デスクトップ操作は行っていない。
 以下の開始プロンプトはseed時点の記録で、次課題P0-01の優先順はこの更新で置き換える。
 
 ## 開始プロンプト
@@ -36,7 +40,7 @@ AGENTS.md、README.md、docs/PHYSICS.md、docs/PROVENANCE.mdを最初に読み�
 
 `Case.load → make_mesh → assemble → solve → quantities → save_run`。
 式と積分は `src/superfish_ng/fem.py` と `rf.py`、独立解析解は `analytic.py`。
-テストは `unittest` 49件。seedの主要数値は `benchmarks/validation/`、最新照合は `docs/SEMINAR_PILLBOX.md` と `docs/SEMINAR_MULTICELL.md`。
+テストは `unittest` 56件。seedの主要数値は `benchmarks/validation/`、最新照合は `docs/SEMINAR_PILLBOX.md` と `docs/SEMINAR_MULTICELL.md`。
 出力は別の新規ディレクトリへ作る。既存ベンチマークを直接上書きして初期値を失わないこと。
 
 ## 直近の注意点

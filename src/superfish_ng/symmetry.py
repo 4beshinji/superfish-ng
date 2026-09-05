@@ -14,6 +14,8 @@ def reflect_solution(case, solution):
     are unchanged, so energy and loss double. The original mode indices are a
     subset of the full spectrum, not its global frequency ranks.
     """
+    if case.geometry_type == 'arc_profile':
+        raise ValueError('arc-profile reflection metadata is not yet supported; solve the full input geometry')
     sides = [side for side in ('z_min', 'z_max') if getattr(case, side) != 'pec']
     if len(sides) != 1:
         raise ValueError('reflection requires exactly one symmetry end and one PEC end')

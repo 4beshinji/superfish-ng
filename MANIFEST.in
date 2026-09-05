@@ -3,4 +3,5 @@ include .python-version
 recursive-include docs *.md *.bib
 recursive-include examples *.json
 recursive-include tests *.py
-recursive-include scripts *.py
+recursive-include tests/fixtures *.html *.svg
+recursive-include scripts *.py *.mjs

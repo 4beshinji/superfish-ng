@@ -95,8 +95,9 @@ Er/Ezは要素内の片側微分を用い、見た目の平滑化を数値へ混
 39件のunittestと `scripts/validate.py` が合格。
 TM011の場の反転、電界矢印、磁場、半径方向曲線、図の軸と凡例を生成PNGで確認した。
 図の微小な鋸歯状の変化はP1微分が要素間で不連続であるためで、精度向上の代わりに隠していない。
-HTMLの6選択肢と画像・CSV・JSONの全27リンクの実在を確認した。ブラウザー上での選択操作はまだ未確認。
-Computer Use用Orca CLIが `bad option: --no-sandbox` で起動できず、デスクトップ操作による確認は行えていない。
+HTMLの6選択肢と画像・CSV・JSONの全27リンクをheadless Chromeで確認し、全選択肢を実キー入力で切り替えた。
+記録は [BROWSER_VERIFICATION.md](BROWSER_VERIFICATION.md)。
+Computer Use用Orca CLIの起動エラーは修正しておらず、既存デスクトップの操作とは別の統合テストである。
 
 次は4セルflat-noseの垂直段差メッシュへ進む。
 

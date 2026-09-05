@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Straight P1 triangles in (r,z); profile corners are mesh vertices."""
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import numpy as np
 from .config import Case
 
@@ -16,6 +16,11 @@ class Mesh:
 
 
 def make_mesh(case: Case) -> Mesh:
+    if case.geometry_type == 'arc_profile':
+        from .geometry import linearize_profile
+        polygon = replace(case, profile=linearize_profile(case), geometry_type='stepped_profile',
+                          arcs=(), arc_chord_tolerance_m=1e-5)
+        return make_stepped_mesh(polygon)
     if case.geometry_type == "stepped_profile":
         return make_stepped_mesh(case)
     zs = []
@@ -70,9 +75,19 @@ def make_stepped_mesh(case):
                                        np.array(case.profile)[:, 1])))
     points, triangles, lookup = [], [], {}
     epsilon = 32*np.finfo(float).eps*maximum
+    distinct = [levels[0]]
+    for value in levels[1:]:
+        if value-distinct[-1] > epsilon:
+            distinct.append(value)
+    levels = np.array(distinct)
 
     def column(z, radius):
-        # Only eliminate floating-point near-duplicates; retain the exact wall.
+        # Merge only roundoff-scale duplicates, including translated arc samples.
+        index = np.searchsorted(levels, radius)
+        for near in levels[max(0, index-1):index+1]:
+            if abs(radius-near) <= epsilon:
+                radius = near
+                break
         radii = np.append(levels[levels < radius-epsilon], radius)
         indices = []
         for r in radii:

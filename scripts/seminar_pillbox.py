@@ -121,7 +121,7 @@ def main():
               'wine_compared': compare_legacy, 'cases': [],
               'limits': {'frequency_relative': .001, 'rf_relative': .01, 'axis_l2': .01},
               'related_exercises': 'scripts/seminar_symmetry.py verifies half-domain electric/magnetic symmetry',
-              'not_completed': ['multicell exercises', 'desktop interaction verification']}
+              'not_completed': ['whole-milestone numerical/reference acceptance', 'full-end-cell comparison', 'all-exercise integrated workflow']}
     if args.run_legacy:
         report['environment']['wine'] = subprocess.check_output(['wine', '--version'], text=True).strip()
     elif args.reference_run:
@@ -232,19 +232,21 @@ def main():
     return 0 if report['passed'] else 1
 
 
-def run_wine_mode(folder, length_m=.08):
+def run_wine_mode(folder, length_m=.08, timeout_s=120):
     if not np.isfinite(length_m) or length_m <= 0:
         raise ValueError('SF7 axis length must be finite and positive')
+    if not np.isfinite(timeout_s) or timeout_s <= 0:
+        raise ValueError('Wine timeout must be finite and positive')
     with (folder/'wine.log').open('w') as log:
         proc = subprocess.run([str(ROOT/'run-superfish.sh'), str(folder/'cavity.af')],
-                              stdout=log, stderr=subprocess.STDOUT, timeout=120)
+                              stdout=log, stderr=subprocess.STDOUT, timeout=timeout_s)
     if proc.returncode:
         raise RuntimeError(f'Wine failed in {folder}')
     (folder/'cavity.in7').write_text(f'line plotfiles\n0 0 {length_m*100:.12g} 0\n800\nend\n')
     with (folder/'sf7.log').open('w') as log:
         proc = subprocess.run(['wine', 'C:\\LANL\\SF7.EXE', 'CAVITY.T35'], cwd=folder,
                               env=dict(os.environ, WINEPREFIX=str(ROOT/'.wine-superfish'), WINEDEBUG='-all'),
-                              stdout=log, stderr=subprocess.STDOUT, timeout=120)
+                              stdout=log, stderr=subprocess.STDOUT, timeout=timeout_s)
     if proc.returncode:
         raise RuntimeError(f'SF7 failed in {folder}')
 
