@@ -85,3 +85,12 @@ python scripts/package.py --out /tmp/superfish-ng-next.zip
 
 次の数値開発課題はP0-01（外部ソルバーによる独立照合）。この初回作業では未実施。
 GUI、ParaView対話操作、外部ソルバー・実機との比較、Hosted CIは実施していない。
+
+## セミナー拡張後の配布スモーク検査 — 2026-09-05
+
+初回整備の上記記録とは別に、交差分割・端部比較・一括ドライバーを含む開発ZIPを検査した。
+`/tmp/superfish-ng-suite-dev-20260905.zip` は2,390,765 bytes、122エントリ。
+SHA-256は `ce4d0ec2eaa3f58e2808cc9abfe7281065f01c3f3b81ebea179db9cde7da394b`。
+`/tmp/superfish-suite-check.syTIAP/superfish-ng` へ展開し、manifest対象121ファイルと66件のunittestが合格した。
+元プロジェクトと同じ.venvの依存を使い、`PYTHONPATH=src`で展開先のコードを実行した。別OSの検証ではない。
+このZIPは開発途中のsnapshotであり、7セルWine照合・初回全演習一括検証の完了版とは呼ばない。
