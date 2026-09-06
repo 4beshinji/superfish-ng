@@ -114,11 +114,12 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## Codexに引き継ぐ
 
-汎用GUI・共通入出力の開発計画は [docs/GUI_IO_PLAN.md](docs/GUI_IO_PLAN.md)。
-KEK資料の対象操作を当面の受入範囲とし、例題への作り込みを避け、全体品質への寄与で
-機能・設計を判断します。開発中のGUIは `superfish-ng gui --workspace out/gui-workspace`
-で起動できます（plot依存が必要）。円筒・輪郭編集、計算、保存場表示の初期実装があり、
-掃引等の拡張と全体受入は未完了です。
+汎用GUIは `superfish-ng gui --workspace out/gui-workspace` で起動します。
+形状・円弧・繰り返し部分の編集、計算と中止、保存場・RF量の表示、
+寸法掃引・収束比較を、CLI/Pythonと共通の入力・計算機能で扱えます。
+描画にはplot extraが必要です。導入と操作は [GUIガイド](docs/GUI_GUIDE.md)、
+範囲と判断基準は [開発計画](docs/GUI_IO_PLAN.md)、検証は [受入記録](docs/GUI_ACCEPTANCE.md) を参照。
+例題専用の処理を作らず、操作性・再現性・数値の信頼性・保守性で変更を判断します。
 
 このディレクトリをCodexで開きます。Gitを新規に初期化する場合も、このディレクトリをルートとします。
 

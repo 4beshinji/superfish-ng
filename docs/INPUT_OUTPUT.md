@@ -147,7 +147,7 @@ RFキーの式はPHYSICS.md。
 Epkは従来と同じP1片側微分の推定値。特異角のピーク収束を保証する設定ではない。
 検証例と計算量は [PHYSICAL_MESH_REFINEMENT.md](PHYSICAL_MESH_REFINEMENT.md)。
 
-## 編集用プロジェクト v1（GUI開発中）
+## 編集用プロジェクト v1
 
 Case v1/v2は従来どおり直接読み込める。編集情報は別のproject_versionで管理する。
 GUI・CLI・Pythonの入口は同じProject.from_dict/loadを使用する。
@@ -165,7 +165,7 @@ GUI・CLI・Pythonの入口は同じProject.from_dict/loadを使用する。
 ```
 
 必須はproject_version=1とcase。reflect_fullはboolean（既定false）、
-一端対称・他端PECのときだけtrueを許す。表示長単位はm/mm（既定mm）。
+一端対称・他端PECのときだけtrueを許す。表示長単位はm/mm（既定mm）。初期GUIのフォームはmm表示に統一し、保存時もmmを記録する。
 未知キー・重複JSONキーを拒否する。数値の保存単位は表示単位によらずSI。
 任意のsectionsは `[{"geometry": <既存geometry>, "count": <正整数>}, ...]`。
 各geometryはz=0から始まり、count回平行移動して順に接続する。
@@ -194,4 +194,67 @@ manifest.json（全出力hashと実装ファイルhash）。完了はmanifest保
 状態はqueued/running/complete/failed/cancelled/interrupted。completeでも
 numerical_validation=not_checkedであり、収束判定とは別。
 GUIでの保存はブラウザーのダウンロード。計算入力だけのJSONも出力できる。
-GUIの全機能は開発中で、最新範囲はGUI_IO_PLAN.mdの進捗を参照。
+操作方法はGUI_GUIDE.md、受入条件はGUI_IO_PLAN.mdを参照。
+
+## 条件群の定義 study v1
+
+```json
+{
+  "study_version": 1,
+  "project": {"project_version": 1, "case": {"schema_version": 1,
+    "geometry": {"type": "pillbox", "radius_m": 0.06, "length_m": 0.08}}},
+  "kind": "mesh_convergence",
+  "parameter": "mesh_scale",
+  "values": [1, 2, 4]
+}
+```
+
+- kind=sweep: 既存の数値フィールドを `/case/...` または `/sections/...` のパスで指定する。
+  配列位置は0始まり。値はSI。canonical caseでは円筒もpoints_zr_mへ展開されるため、
+  円筒長さは `/case/geometry/points_zr_m/1/0`、値の例は `[0.04,0.08,0.12]`。
+- kind=mesh_convergence: parameter=mesh_scale、厳密増加する正整数の倍率列。
+  nr/nzを倍率倍、境界/角最大辺長を倍率で割る。細分領域半径と弦誤差は維持する。
+- kind=geometry_convergence: 円弧case限定。parameter=/case/geometry/chord_tolerance_m、
+  厳密減少する正の弦誤差列。メッシュ設定と円弧半径は維持する。
+- 全点の入力を先に検査する。不正なパス、未対応条件、未知キー、非数・不正な値列を拒否する。
+  sectionsの値変更は形状を再展開し、case geometryへの直接変更はsectionsとの結び付きを解除する。
+- sweepは独立スペクトルの計算であり、番号によるモード追跡をしない。
+  同一形状の細分比較だけ、共通の内部点でHφを評価して体積重み付きの重なりを診断する。
+  高い一致度と他候補からの分離を要求し、近接縮退・曖昧な対応はUNVERIFIEDにする。
+  最大4096個の要素重心での診断であり、連続空間の厳密な内積・誤差上界ではない。
+- 周波数、RF量、軸上場の細分変化を別ゲートにする。表面ピークはP1推定として保持する。
+  ゼロ分母の相対変化は未定義とし、絶対R/Q差は解釈用に併記する。
+
+`superfish-ng study study.json --out NEW_DIRECTORY` または
+`execute_study(Study.from_dict(data), new_directory)` で実行する。
+CLIは数値判定FAILの場合に終了コード1。掃引等の未検証はUNVERIFIEDと明示する。
+GUIは同じStudyを別プロセスで順次実行し、中止可能。各点を同時に大量起動しない。
+study.json、study-results.json、各point-NNNの個別ジョブとmanifestを保存する。
+計算完了と数値PASSを区別する。条件群の定義はプロジェクトとは別ファイルで保存する。
+
+バンド同定のCLI: `superfish-ng band RUN --centers-m 0 0.03499 0.06998 0.10497 --out NEW_JSON`。
+中心は例示であり、任意の等間隔中心列を指定可能。両端PEC、中心が両端面を含むこと、
+元の輪郭頂点・円弧の周期性、実場の同定を検査する。full-end/非周期は拒否する。
+
+## 保存結果の利用
+
+`superfish_ng.saved.read_solution(directory)` は従来save_runの出力を読み込む。
+Case hash、配列寸法・有限性・境界、周波数と軸CSVの対応を検査し、再計算しない。
+`JobManager.import_result(path)` は完了ジョブまたは従来出力を新しい履歴へコピーする。
+旧形式に元の完了manifestがない場合はorigin/source_completionにその事実を残す。
+読込検査は数値収束の保証ではない。
+
+- `superfish-ng probe RUN --z-m 0.02 --mode 1 --out NEW_CSV`
+  は保存場を401点で評価し、r_m,z_m,Er_quadrature_V_per_m,Ez_quadrature_V_per_m,Hphi_A_per_m,Bphi_Tを出力する。
+  同名`.csv.json`にモード番号、周波数、z、標本数、入力hash、U、phasor規約を保存する。
+  CSVまたは設定JSONが既存なら上書きしない。Pythonは`export_radial_probe`を使う。
+- `superfish-ng compare-pillbox RUN --out NEW_JSON` は一定半径・全PEC円筒を
+  独立解析式と比較する。実際のHφからTM0npを対応付け、周波数・RF・軸場の
+  誤差を分ける。近接縮退・曖昧なラベルはUNVERIFIED。全モードPASSのときだけ終了コード0。
+  Pythonは`compare_pillbox`を使う。例題名による分岐や数値の補正はない。
+
+上記RUNはresults.json/fields.npz等を含むsolutionディレクトリ。管理ジョブでは
+`<job>/solution`を指定する。図のキャッシュには場hashと描画実装・依存版を、
+プローブには場hashと実装hash・位置・モードを含め、別条件の結果を再利用しない。
+GUIは読込直後のSI輪郭を保持し、実際の形状編集時だけmmから再構成する。
+表示単位の往復丸めで組立定義とcanonical Caseの厳密一致を壊さないためである。

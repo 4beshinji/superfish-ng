@@ -5,10 +5,13 @@
 ユーザー依頼に基づき [GUI_IO_PLAN.md](GUI_IO_PLAN.md) を作成した。
 例題専用の処理を作らず、対応物理範囲の汎用操作を提供し、KEK対象操作と例題外の
 合成ケースで受け入れる。追加機能・抽象化は全体品質への寄与で判断する。
-追加指示でG0〜G5の受入完了を `/goal` に設定し開発中。ADR-009でローカルブラウザー方式を選定。
-Project・JobManager・初期GUIを実装し91テストと合成円筒の実ブラウザー操作がPASS。
-新規Web/Qt依存なし。旧結果取込、掃引/収束/比較/分散、全体受入と操作ガイドは残件。
-進捗表はGUI_IO_PLAN.md。`python -m superfish_ng gui --workspace out/gui-workspace` で起動。
+追加指示でG0〜G5の受入完了を `/goal` に設定した。ADR-009/010により
+Project・JobManager・保存結果読込・Study・ローカルGUIを共通化した。
+新規Web/Qt依存なし。形状編集、旧結果取込、掃引/収束/比較/分散を実装済み。
+32数値受入、101 unittest、別環境へ展開したwheelのGUI計算/描画がPASS。
+G0〜G5の技術的受入を完了。実行証拠・対象外・主観評価の未実施はGUI_ACCEPTANCE.md、
+操作はGUI_GUIDE.mdを参照。
+`python -m superfish_ng gui --workspace out/gui-workspace` で起動する。
 既存の半端部バンド同定を任意形状へ適用しない。一般mode tracking・tuneは本計画の対象外。
 
 ## 境界・局所メッシュ改善 — 2026-09-06

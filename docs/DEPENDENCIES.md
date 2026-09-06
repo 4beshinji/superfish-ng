@@ -52,3 +52,9 @@ ADR-009によりPython標準HTTPサーバーと同梱HTML/CSS/JavaScriptを採�
 利用者は既存ブラウザーを使用し、ChromeやNodeをアプリに同梱しない。
 `verify_gui.mjs` は任意の開発時検証ツールで、実測はChrome 152.0.7977.82 / Node 23.11.1。
 Tkはこの環境では表示環境不足、Qtは未導入。両者のライセンスや性能が同等だという判断ではない。
+
+新規GUIファイルの可読性を整えるため、開発時だけPrettier 3.6.2とRuff 0.15.20を使用した。
+Prettierは`/tmp/superfish-gui-npm-cache`から明示したJS/HTML/CSSへ適用し、
+package.jsonやnode_modules、実行時依存は追加していない。Ruffは新規Pythonファイルに限定した。
+参照は[Prettier CLI](https://prettier.io/docs/cli)と
+[Ruff formatter](https://docs.astral.sh/ruff/formatter/)の公式文書。ツール本体の同梱なし。

@@ -36,11 +36,49 @@ def main(argv=None):
     project = sub.add_parser("run-project", help="solve a shared project or existing case")
     project.add_argument("project", type=Path)
     project.add_argument("--out", type=Path, required=True)
+    study = sub.add_parser("study", help="run a saved parameter or refinement study")
+    study.add_argument("study", type=Path)
+    study.add_argument("--out", type=Path, required=True)
+    band = sub.add_parser("band", help="analyze an explicitly declared half-end cell band")
+    band.add_argument("run", type=Path)
+    band.add_argument("--centers-m", nargs="+", type=float, required=True)
+    band.add_argument("--out", type=Path, required=True)
+    probe = sub.add_parser("probe", help="export a radial probe from saved fields")
+    probe.add_argument("run", type=Path)
+    probe.add_argument("--z-m", type=float, required=True)
+    probe.add_argument("--mode", type=int, default=1)
+    probe.add_argument("--out", type=Path, required=True)
+    reference = sub.add_parser("compare-pillbox", help="compare saved cylindrical modes with independent analytical fields and RF")
+    reference.add_argument("run", type=Path)
+    reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "gui":
             from .gui import serve
             serve(args.workspace, args.port, not args.no_browser)
+        elif args.command == "study":
+            from .studies import Study, execute_study
+            from .project import parse_json
+            study = Study.from_dict(parse_json(args.study.read_text()))
+            report = execute_study(study, args.out)
+            print(f"study complete; numerical status: {report['numerical_status']}")
+            return 1 if report['numerical_status'] == 'FAIL' else 0
+        elif args.command == "compare-pillbox":
+            from .saved import compare_pillbox
+            if args.out.exists():raise ValueError(f"output already exists: {args.out}")
+            report = compare_pillbox(args.run)
+            with args.out.open('x') as stream:json.dump(report, stream, indent=2, allow_nan=False)
+            return 0 if all(m['status']=='PASS' for m in report['modes']) else 1
+        elif args.command == "probe":
+            from .saved import export_radial_probe
+            export_radial_probe(args.run, args.out, args.z_m, args.mode)
+        elif args.command == "band":
+            from .saved import analyze_band
+            if args.out.exists():
+                raise ValueError(f"output already exists: {args.out}")
+            report = analyze_band(args.run, args.centers_m)
+            with args.out.open('x') as stream:
+                json.dump(report, stream, indent=2, allow_nan=False)
         elif args.command == "run-project":
             from .project import Project
             from .jobs import execute_project
