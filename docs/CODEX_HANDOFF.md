@@ -1,5 +1,19 @@
 # ローカルCodexへの引継ぎ
 
+## 角部診断の追加 — 2026-09-06
+
+ユーザーの質問を受け、P1-04の切り分け評価を実施。
+[SURFACE_FIELD_DIAGNOSTICS.md](SURFACE_FIELD_DIAGNOSTICS.md)に新規計算と解釈を記録する。
+鋭角のEpkは細分で上昇するため、過去のNG–Wine差14.8%を有限厳密値の誤差と解釈しない。
+実装本体は変更していない。現checkoutには過去out/がなく、ユーザー許可でWine比較環境も新設した。
+NG25計算（元の19＋真空側固定点6）とWine鋭角/接線円弧各4段階を完了。
+最終参照は `out/surface-wine-arcs-20260906/report.json`、図と集約値は
+`out/surface-wine-report-final-20260906/`。鋭角の生結果は検査して再利用した。
+Wine最細の鋭角ピーク変化17.48%、丸み対照ピーク変化2.81%を未収束として残す。
+丸み対照のNG–Wine差は1.21%。今回の診断をP1-04全体の完了やEpk精度保証と呼ばない。
+78テストと `out/validation-surface-final-20260906/` の既存数値検証は合格。
+Wineランタイムは `/tmp/superfish-wine-runtime/`。一時領域の掃除後は再作成が必要。
+
 ## 現在の優先目標（2026-09-05更新）
 
 ユーザー指定の [セミナー4資料の例題計算・可視化](MILESTONE_SEMINAR.md) は完了。

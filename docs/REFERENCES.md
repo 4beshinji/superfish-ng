@@ -106,6 +106,20 @@
 — 2026-09-05閲覧。公開Target/Runtime APIを確認し、実ブラウザーでキー入力・状態・スクリーンショットを検査した。
 第三者の通信ライブラリやコードをコピーせず、Node標準WebSocketで呼び出す。
 
+## 角点の診断
+
+**R24. William F. Mitchell, A Collection of 2D Elliptic Problems for Testing Adaptive Algorithms.**
+NISTIR 7668 (2010), §2.2 Reentrant Corner。
+[NIST公式PDF](https://math.nist.gov/~WMitchell/papers/nistir7668.pdf)
+— 2026-09-06閲覧。角度ωに対する局所解のべき指数π/ωを確認。
+RFのNeumann主部への対応はSURFACE_FIELD_DIAGNOSTICS.mdで別途導出し、
+数値解の補正や解析値による置換には用いない。外部コードのコピーなし。
+
+**R25. Los Alamos Accelerator Code Group, Poisson Superfish v7, SFCODES.DOC.**
+— 2026-09-06、ユーザーが許可したローカルインストールの付属公式文書を閲覧。
+AutomeshのPO入力欄NT/RADIUSで円弧方向の指定（NT=4/5）を確認した。
+文書はローカルの外部参照であり、実装・配布へ同梱しない。ソースコードの参照・転用なし。
+
 ## 読む順番
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、
