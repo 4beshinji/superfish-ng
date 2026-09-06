@@ -146,3 +146,52 @@ RFキーの式はPHYSICS.md。
 
 Epkは従来と同じP1片側微分の推定値。特異角のピーク収束を保証する設定ではない。
 検証例と計算量は [PHYSICAL_MESH_REFINEMENT.md](PHYSICAL_MESH_REFINEMENT.md)。
+
+## 編集用プロジェクト v1（GUI開発中）
+
+Case v1/v2は従来どおり直接読み込める。編集情報は別のproject_versionで管理する。
+GUI・CLI・Pythonの入口は同じProject.from_dict/loadを使用する。
+
+```json
+{
+  "project_version": 1,
+  "case": {
+    "schema_version": 1,
+    "geometry": {"type": "pillbox", "radius_m": 0.06, "length_m": 0.09}
+  },
+  "reflect_full": false,
+  "display_length_unit": "mm"
+}
+```
+
+必須はproject_version=1とcase。reflect_fullはboolean（既定false）、
+一端対称・他端PECのときだけtrueを許す。表示長単位はm/mm（既定mm）。
+未知キー・重複JSONキーを拒否する。数値の保存単位は表示単位によらずSI。
+任意のsectionsは `[{"geometry": <既存geometry>, "count": <正整数>}, ...]`。
+各geometryはz=0から始まり、count回平行移動して順に接続する。
+一致する接続点は共有し、半径が異なる接続は垂直PEC段差となる。不正な段差接続は拒否する。
+円弧半径・向きを保持して終点番号を移し、弦誤差は各円弧部分の指定値の最小値を用いる。
+編集時の膨張を防ぐため展開頂点上限は100000。精度を保証する上限ではない。
+sectionsを保存する場合、展開したgeometryとcaseのcanonical geometryの一致を必須にする。
+`Project.from_sections(template, sections)` で両方を同時に作成できる。
+
+```python
+from superfish_ng.project import Project
+from superfish_ng.jobs import execute_project
+project = Project.load("my-project.json")  # 既存Case JSONも受理
+execute_project(project, "out/my-project-new")
+```
+
+- `superfish-ng run-project PROJECT_OR_CASE --out NEW_DIRECTORY`
+- `superfish-ng gui --workspace out/gui-workspace`（ブラウザー自動起動、plot extra必要）
+- `superfish-ng gui --workspace out/gui-workspace --no-browser`（起動URLを表示）
+
+workspaceは計算履歴の保存先として再利用するが、各計算は固有の新規サブディレクトリを作る。
+同時に2アプリで同じworkspaceを開かない。Linuxのファイルロックで競合を拒否する。
+ジョブ内はproject.json、job.json、log.txt（背景実行時）、solution/（従来の計算出力）、
+manifest.json（全出力hashと実装ファイルhash）。完了はmanifest保存後に確定する。
+計算中に実装が変わった場合は失敗として新規再実行を要求する。
+状態はqueued/running/complete/failed/cancelled/interrupted。completeでも
+numerical_validation=not_checkedであり、収束判定とは別。
+GUIでの保存はブラウザーのダウンロード。計算入力だけのJSONも出力できる。
+GUIの全機能は開発中で、最新範囲はGUI_IO_PLAN.mdの進捗を参照。

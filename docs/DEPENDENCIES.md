@@ -44,3 +44,11 @@ NumPy/SciPyのwheelはBLAS/LAPACK等を同梱する場合があり、上の表�
 solverとテストは依存導入後にネット接続を使用しない。
 完全オフライン導入が必要な場合は、対象OS/Pythonで `pip download` によりwheelhouseを別途作成し、
 ハッシュと依存ライセンス一覧を添えて配布する。今回のZIPはwheelhouseを含まない。
+
+## GUI試作からの方式選定 — 2026-09-06
+
+ADR-009によりPython標準HTTPサーバーと同梱HTML/CSS/JavaScriptを採用する。
+追加Python/npmライブラリなし。GUIでの場描画には既存Matplotlibのplot extraが必要。
+利用者は既存ブラウザーを使用し、ChromeやNodeをアプリに同梱しない。
+`verify_gui.mjs` は任意の開発時検証ツールで、実測はChrome 152.0.7977.82 / Node 23.11.1。
+Tkはこの環境では表示環境不足、Qtは未導入。両者のライセンスや性能が同等だという判断ではない。

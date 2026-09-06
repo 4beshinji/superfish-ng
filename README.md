@@ -116,7 +116,9 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 汎用GUI・共通入出力の開発計画は [docs/GUI_IO_PLAN.md](docs/GUI_IO_PLAN.md)。
 KEK資料の対象操作を当面の受入範囲とし、例題への作り込みを避け、全体品質への寄与で
-機能・設計を判断します。現在は計画作成段階で、GUIの実装・受入は未完了です。
+機能・設計を判断します。開発中のGUIは `superfish-ng gui --workspace out/gui-workspace`
+で起動できます（plot依存が必要）。円筒・輪郭編集、計算、保存場表示の初期実装があり、
+掃引等の拡張と全体受入は未完了です。
 
 このディレクトリをCodexで開きます。Gitを新規に初期化する場合も、このディレクトリをルートとします。
 

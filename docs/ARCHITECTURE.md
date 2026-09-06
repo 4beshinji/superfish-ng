@@ -110,3 +110,31 @@ PythonアプリにWeb frameworkを導入せず、npm依存も追加しない。C
 最終判定・図は各モードの最後の参照に対応させ、そのDX・直前との変化・出力hashを記録する。
 不利: 最終参照のメッシュサイズがモード間で異なる。全バンドを同じ追加DXで解いたとは表示できない。
 同定テンプレートで場を置換・平均化せず、1%のRFゲートも変えない。新規依存や物理ソルバー変更はない。
+
+## ADR-009: ローカルブラウザーGUIと別プロセス計算
+
+2026-09-06、GUI_IO_PLAN G0。既存Case/FEM/保存場のMatplotlib描画を使い、
+Python標準のThreadingHTTPServerと同梱HTML/CSS/JavaScriptでローカル操作を提供する。
+追加Webフレームワーク、Qt、npm依存は導入しない。描画には既存plot extraを使用する。
+Tkはimportできたが、この環境ではDISPLAYがなく最小ウィンドウが起動しなかった。
+デスクトップ方式の操作性能は未測定。Qtを追加する必要性は現時点で示されていない。
+
+ブラウザー試作は半径65 mm・長さ90 mmを実際の入力操作で設定して計算・描画した。
+ページ読込143 ms、solveとplot合計0.919秒、計算中の状態取得2.15〜6.78 ms。
+独立plotの最大RSSは115832 KiB、実時間1.83秒（その試行ではBLASスレッド数未固定）。
+本実装の最小導線は半径65 mm・長さ95 mm、2モードの入力・計算・表示・不正入力保持がPASS。
+Chrome 152.0.7977.82 / Node 23.11.1 / Python 3.12.3、Linux headlessでの測定である。
+結果: `out/gui-g0-browser-20260906-retry/`、`out/gui-first-browser-20260906/`。
+初回はsandboxのsocket制限、試作の最初のEnter操作試験は計算開始せず失敗した。
+loopback起動の実行許可と実クリック検証で再試行し、成功を確認した。失敗をUI合格に数えない。
+
+計算はsubprocessで画面から分離する。JobManagerが固有ディレクトリ、状態、
+中止と再起動時の中断判定を管理し、manifestのファイルhashで完了後の欠落を検出する。
+既存save_runの保存形式・直接APIは変更せず、管理対象ジョブのsolution/内で利用する。
+公開サーバー用途には使わない。127.0.0.1限定、Host/Origin確認、起動時のセッションtoken、
+静的ファイルの許可リスト、外部資産を使わないCSPを持つ。URLは起動したユーザーだけで扱う。
+GUIの計算完了はメッシュ収束済みを意味しない。
+
+参照: [Python http.server](https://docs.python.org/3/library/http.server.html)、
+[Python tkinter](https://docs.python.org/3/library/tkinter.html) の公式API文書。
+ソース実装のコピーなし。http.serverをインターネット向けサービスへ転用する設計ではない。

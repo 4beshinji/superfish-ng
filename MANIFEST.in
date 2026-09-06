@@ -5,3 +5,5 @@ recursive-include examples *.json
 recursive-include tests *.py
 recursive-include tests/fixtures *.html *.svg
 recursive-include scripts *.py *.mjs
+
+recursive-include src/superfish_ng/web *.html *.css *.js

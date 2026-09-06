@@ -29,9 +29,24 @@ def main(argv=None):
     plot.add_argument("--mode", type=int, default=1)
     plot.add_argument("--probe-z-m", type=float)
     plot.add_argument("--mesh", action="store_true")
+    gui = sub.add_parser("gui", help="open the local cavity workspace (plot extra required)")
+    gui.add_argument("--workspace", type=Path, default=Path("out/gui-workspace"))
+    gui.add_argument("--port", type=int, default=0)
+    gui.add_argument("--no-browser", action="store_true")
+    project = sub.add_parser("run-project", help="solve a shared project or existing case")
+    project.add_argument("project", type=Path)
+    project.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command == "solve":
+        if args.command == "gui":
+            from .gui import serve
+            serve(args.workspace, args.port, not args.no_browser)
+        elif args.command == "run-project":
+            from .project import Project
+            from .jobs import execute_project
+            result = execute_project(Project.load(args.project), args.out)
+            print(f"{result['status']}: {args.out}")
+        elif args.command == "solve":
             if args.out.exists():
                 raise ValueError(f"output already exists: {args.out}; choose a new directory")
             case = Case.load(args.case)

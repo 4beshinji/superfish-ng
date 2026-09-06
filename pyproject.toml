@@ -19,3 +19,6 @@ superfish-ng = "superfish_ng.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+superfish_ng = ["web/*.html", "web/*.css", "web/*.js"]
