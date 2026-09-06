@@ -10,6 +10,7 @@ SUPERFISH全体の置換、旧入力形式の互換性、KEKの実機モデル�
 指定4資料に基づく [セミナー例題の計算と可視化](docs/MILESTONE_SEMINAR.md) のマイルストーンは完了しました。
 Wine版SUPERFISHとの3形状の基本モード照合は実施済みで、[比較結果](docs/SUPERFISH_COMPARISON.md)を記録しています。
 角部のピーク差については、[表面電場の切り分け評価](docs/SURFACE_FIELD_DIAGNOSTICS.md)で局所メッシュ・固定点・丸み対照を調べています。
+[境界実長指定と角近傍の局所細分](docs/PHYSICAL_MESH_REFINEMENT.md)を追加し、固定点電場とPEC接線成分の改善を確認しました。
 多セルの段差・円弧、4/7モードの計算・同定・分散曲線・表示を実装済みです。
 [最終結果の入口](out/seminar-suite-final-20260905/index.html) から例題・モードを選択できます。
 全NG新規計算の9検証ジョブ、7ページの画面検査、対象17モードのWine照合が合格しました。
@@ -91,7 +92,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | RF量 | f、U、表面抵抗、壁損失、Q0、G、通過位相を含むVacc、R/Q、シャントインピーダンス、TTF |
 | 表面電磁場 | Epk/Eacc、Bpk/Eaccの一次要素推定値。角部では収束保証なし |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 78テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧・交差分割、バンド同定、表面電場診断。生成HTMLはheadless操作も検証 |
+| 検証 | 82テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧・交差分割、バンド同定、表面電場診断。生成HTMLはheadless操作も検証 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 `docs/VALIDATION_REPORT.md` に数値と解釈をまとめています。

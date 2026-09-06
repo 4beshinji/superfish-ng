@@ -45,6 +45,10 @@ class Case:
     arc_chord_tolerance_m: float = 1e-5
     triangulation: str = "diagonal"
 
+    boundary_max_edge_m: float | None = None
+    corner_max_edge_m: float | None = None
+    corner_radius_m: float | None = None
+
     def __post_init__(self):
         if not isinstance(self.name, str):
             raise ValueError("name must be a string")
@@ -70,6 +74,13 @@ class Case:
                     or self.profile[1][0] == 0 or self.profile[-2][0] == self.profile[-1][0]
                     or any(a[0] == b[0] == c[0] for a, b, c in zip(self.profile, self.profile[1:], self.profile[2:]))):
                 raise ValueError("stepped_profile requires nondecreasing z from zero, isolated nonzero vertical steps, and nonvertical first/last segments")
+        for name in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m'):
+            if getattr(self, name) is not None:
+                positive(getattr(self, name), name)
+        if (self.corner_max_edge_m is None) != (self.corner_radius_m is None):
+            raise ValueError('corner_max_edge_m and corner_radius_m must be specified together')
+        if self.corner_max_edge_m is not None and self.geometry_type == 'arc_profile':
+            raise ValueError('corner refinement requires a polygon profile; arc tangent junctions are not sharp corners')
         integer(self.nr, "nr", 2)
         integer(self.nz, "nz", 2)
         if self.triangulation not in ('diagonal', 'crossed'):
@@ -143,7 +154,12 @@ class Case:
             geometry_options = {'arcs': tuple((a['end_index'], a['radius_m'], a['direction']) for a in g['arcs']),
                                 'arc_chord_tolerance_m': g['chord_tolerance_m']}
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
-        keys(mesh, ["nr", "nz", "triangulation"], [], "mesh")
+        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m"], [], "mesh")
+        if any(k in mesh for k in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m')) and data['schema_version'] != 2:
+            raise ValueError('physical mesh sizes require schema_version 2')
+        for k in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m'):
+            if k in mesh:
+                positive(mesh[k], k)
         if 'triangulation' in mesh and data['schema_version'] != 2:
             raise ValueError('explicit triangulation requires schema_version 2')
         keys(solver, ["modes"], [], "solver")
@@ -178,4 +194,8 @@ class Case:
         if self.triangulation != 'diagonal':
             data['schema_version'] = 2
             data['mesh']['triangulation'] = self.triangulation
+        for key in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m'):
+            if getattr(self, key) is not None:
+                data['schema_version'] = 2
+                data['mesh'][key] = getattr(self, key)
         return data

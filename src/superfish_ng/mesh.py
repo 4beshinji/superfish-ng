@@ -16,6 +16,13 @@ class Mesh:
 
 
 def make_mesh(case: Case) -> Mesh:
+    mesh = make_base_mesh(case)
+    if case.boundary_max_edge_m is not None or case.corner_max_edge_m is not None:
+        mesh = refine_physical_edges(case, mesh)
+    return mesh
+
+
+def make_base_mesh(case: Case) -> Mesh:
     if case.geometry_type == 'arc_profile':
         from .geometry import linearize_profile
         polygon = replace(case, profile=linearize_profile(case), geometry_type='stepped_profile',
@@ -190,3 +197,84 @@ def element_geometry(mesh):
         raise ValueError("mesh has nonpositive or nonfinite triangle Jacobian")
     grad = np.einsum("ij,tjk->tik", np.array([[-1., -1.], [1., 0.], [0., 1.]]), np.linalg.inv(jac))
     return p, det, grad
+
+
+def refine_physical_edges(case, mesh):
+    """Conforming midpoint refinement by physical edge length, without moving walls.
+
+    Mark boundary edges and edges intersecting balls around polygon turns.
+    Longest-edge closure limits skinny transition triangles. Every shared edge
+    has exactly one midpoint; two-edge transitions use their shorter diagonal.
+    """
+    corners = []
+    for a, b, c in zip(case.profile, case.profile[1:], case.profile[2:]):
+        left, right = np.subtract(b, a), np.subtract(c, b)
+        if abs(np.linalg.det(np.array([left, right]))) > 1e-12*np.linalg.norm(left)*np.linalg.norm(right):
+            corners.append(b[::-1])
+    for iteration in range(30):
+        triangles = mesh.triangles
+        edges, inverse = np.unique(np.sort(triangles[:, [[0, 1], [1, 2], [2, 0]]].reshape(-1, 2), axis=1),
+                                   axis=0, return_inverse=True)
+        cell_edges = inverse.reshape(-1, 3)
+        ends = mesh.points[edges]
+        delta = ends[:, 1]-ends[:, 0]
+        length = np.linalg.norm(delta, axis=1)
+        marked = np.zeros(len(edges), dtype=bool)
+        if case.boundary_max_edge_m is not None:
+            counts = np.bincount(inverse, minlength=len(edges))
+            # Axis is a coordinate boundary, not a physical wall.
+            boundary = (counts == 1) & ~np.all(ends[:, :, 0] == 0, axis=1)
+            marked |= boundary & (length > case.boundary_max_edge_m*(1+1e-12))
+        if case.corner_max_edge_m is not None:
+            for corner in corners:
+                fraction = np.clip(np.sum((corner-ends[:, 0])*delta, axis=1)/length**2, 0, 1)
+                distance = np.linalg.norm(ends[:, 0]+fraction[:, None]*delta-corner, axis=1)
+                marked |= (distance <= case.corner_radius_m*(1+1e-12)) & (length > case.corner_max_edge_m*(1+1e-12))
+        if not marked.any():
+            polygon = case
+            if case.geometry_type == 'arc_profile':
+                from .geometry import linearize_profile
+                polygon = replace(case, profile=linearize_profile(case), geometry_type='stepped_profile',
+                                  arcs=(), arc_chord_tolerance_m=1e-5)
+            validate_profile_mesh(polygon, mesh)
+            return mesh
+        # Splitting a short edge also splits a longest edge of its owner cells.
+        longest = cell_edges[np.arange(len(triangles)), np.argmax(length[cell_edges], axis=1)]
+        while True:
+            required = longest[marked[cell_edges].any(axis=1)]
+            if marked[required].all():
+                break
+            marked[required] = True
+        ids = np.flatnonzero(marked)
+        midpoints = np.full(len(edges), -1, dtype=int)
+        midpoints[ids] = np.arange(len(mesh.points), len(mesh.points)+len(ids))
+        points = np.concatenate((mesh.points, ends[ids].mean(axis=1)))
+        result = []
+        for tri, es in zip(triangles, cell_edges):
+            flags = marked[es]
+            count = int(flags.sum())
+            if count == 0:
+                result.append(tuple(tri))
+            elif count == 3:
+                a, b, c = tri
+                ab, bc, ca = midpoints[es]
+                result.extend(((a, ab, ca), (ab, b, bc), (ca, bc, c), (ab, bc, ca)))
+            elif count == 1:
+                i = int(np.flatnonzero(flags)[0])
+                a, b, c = np.roll(tri, -i)
+                m = midpoints[es[i]]
+                result.extend(((a, m, c), (m, b, c)))
+            else:
+                # Rotate so the unsplit edge is a--b.
+                i = int(np.flatnonzero(~flags)[0])
+                a, b, c = np.roll(tri, -i)
+                _, bc, ca = midpoints[np.roll(es, -i)]
+                result.append((ca, bc, c))
+                if np.linalg.norm(points[a]-points[bc]) <= np.linalg.norm(points[b]-points[ca]):
+                    result.extend(((a, b, bc), (a, bc, ca)))
+                else:
+                    result.extend(((a, b, ca), (b, bc, ca)))
+        axis = np.flatnonzero(points[:, 0] == 0)
+        axis = axis[np.argsort(points[axis, 1])]
+        mesh = finish_mesh(case, points, np.asarray(result, dtype=np.int64), axis)
+    raise ValueError('physical mesh refinement exceeded 30 passes; increase edge size or reduce base mesh size')

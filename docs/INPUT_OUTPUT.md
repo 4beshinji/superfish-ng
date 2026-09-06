@@ -125,3 +125,24 @@ RFキーの式はPHYSICS.md。
 
 結果の単位はキー名に含める。`q0`、`transit_time_factor_abs`、`epk_over_eacc_estimate`は無次元。
 `bpk_over_eacc_estimate_mt_per_mv_per_m`は mT/(MV/m)。インピーダンスは全長に対するΩで、Ω/mではない。
+
+## 物理長による境界・角近傍の細分化（v2、任意指定）
+
+```json
+"mesh": {
+  "nr": 96, "nz": 165,
+  "boundary_max_edge_m": 0.001,
+  "corner_max_edge_m": 0.00025,
+  "corner_radius_m": 0.01
+}
+```
+
+- `boundary_max_edge_m`: 軸を除く外周辺（PECと端面対称境界）の最大実長。斜面では軸方向投影長ではない。
+- `corner_max_edge_m` と `corner_radius_m`: 必ず組で指定。折れ線壁の内部頂点のうち方向が変わる点から、指定半径の円盤と交わる**内部辺も含む全辺**の最大長。端板との接合点は対象に含めない。半径は形状の丸め半径ではなく細分領域の大きさ。
+- 値は有限の正数。未指定なら従来メッシュをそのまま使う。JSONのnull、v1での指定、不完全な組は拒否する。
+- 基底メッシュの辺を中点分割するので、実際の辺は上限より短くなる場合がある。共有辺と所有要素の長辺も細分し、非適合接続を作らない。局所指定でも接続調整により周囲へ細分が広がる。
+- 境界長指定はprofile/stepped_profile/arc_profileに対応。円弧は元の弦誤差で線形化した輪郭を保持し、境界細分だけで円弧形状誤差は減らない。角指定はprofile/stepped_profile限定で、arc_profileには明示的なエラーを返す。
+- `triangulation` は基底の四辺形分割を選ぶ。追加細分は三角形の辺分割であり、crossed指定時にも追加メッシュの厳密な鏡映対称性は保証しない。
+
+Epkは従来と同じP1片側微分の推定値。特異角のピーク収束を保証する設定ではない。
+検証例と計算量は [PHYSICAL_MESH_REFINEMENT.md](PHYSICAL_MESH_REFINEMENT.md)。
