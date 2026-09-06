@@ -114,6 +114,10 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## Codexに引き継ぐ
 
+汎用GUI・共通入出力の開発計画は [docs/GUI_IO_PLAN.md](docs/GUI_IO_PLAN.md)。
+KEK資料の対象操作を当面の受入範囲とし、例題への作り込みを避け、全体品質への寄与で
+機能・設計を判断します。現在は計画作成段階で、GUIの実装・受入は未完了です。
+
 このディレクトリをCodexで開きます。Gitを新規に初期化する場合も、このディレクトリをルートとします。
 
 ```bash
