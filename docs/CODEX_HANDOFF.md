@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G03球形の独立電磁場参照 — 2026-09-08
+
+analytic_sphere.SphereTMで球形PECの正則l=1,m=0 TM参照を独立実装。
+DLMF R28の関数定義からPEC条件/正規化/RFを導出。中心/接線場/2Dエネルギー/有限差分curlを検証。
+validate_sphere.py: out/validation-g03-sphere-reference-20260908/comparison.json。
+弦0.8/0.2 mmはFAIL、0.05 mmはf/場/軸/RQ/G/壁損失の全ゲートPASS。
+標準230件中228合格・2 skip、既存validate PASS。次は曲線要素写像と正Jacobian/積分/場/RF/保存の設計。
+接線構築/旧形式対応と全互換目標も継続。
+
 ## G03双曲線の総合経路 — 2026-09-08
 
 双曲線例curved_hyperbola.jsonを追加。独立z積分の面積/体積、弦体積差の正符号/減少、
