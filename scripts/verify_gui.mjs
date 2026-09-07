@@ -867,6 +867,41 @@ try {
     }
 
   }
+  if (args["--curved-reflection"] === "yes") {
+    const base = JSON.parse(await readFile(resolve(args["--contour-case"]), "utf8"));
+    for (const side of ["z_min", "z_max"]) for (const tag of ["electric_symmetry", "magnetic_symmetry"]) {
+      const fixture = structuredClone(base);
+      const axis = fixture.geometry.curves.find((c,i)=>fixture.geometry.edge_tags[i]==="axis");
+      const plane = side === "z_min" ? 0 : Math.max(axis.start_zr_m[0],axis.end_zr_m[0]);
+      const edges = fixture.geometry.curves.flatMap((c,i)=>c.type==="line" && c.start_zr_m[0]===plane && c.end_zr_m[0]===plane ? [i] : []);
+      if (!edges.length) throw Error("reflection fixture needs an explicit flat end");
+      for (const i of edges) fixture.geometry.edge_tags[i]=tag;
+      fixture.mesh.geometry_order=2;
+      fixture.mesh.curved_refinement_levels=1;
+      fixture.solver.quadrature_order=12;
+      const path = out+`/reflection-${side}-${tag}.json`;
+      await writeFile(path,JSON.stringify(fixture));
+      const {root} = await call("DOM.getDocument",{},sessionId);
+      const {nodeId} = await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#open"},sessionId);
+      await call("DOM.setFileInputFiles",{nodeId,files:[path]},sessionId);
+      await wait(`document.querySelector("#${side.replace("_","-")}").value === ${JSON.stringify(tag)} && collect().case.mesh.geometry_order===2`);
+      if (await ev('document.querySelector("#reflect").checked')) throw Error("reflection unexpectedly enabled after import");
+      await click("#reflect");
+      const before = await ev('document.querySelectorAll("#jobs .job").length');
+      await click("#run");
+      await wait(`document.querySelectorAll("#jobs .job").length>${before}`);
+      await wait('document.querySelector("#jobs .job strong").textContent.startsWith("計算完了")',120000);
+      await click("#jobs .job button");
+      await wait(`currentResult?.result?.reflection?.side === ${JSON.stringify(side)} && currentResult.result.reflection.parity === ${tag==="electric_symmetry"?1:-1} && !document.querySelector("#field-image").hidden`,60000);
+      const result = await ev("currentResult.result");
+      if (result.case.rf.normalization_j !== 2*fixture.rf.normalization_j || Math.abs(result.modes[0].stored_energy_j/result.case.rf.normalization_j-1)>1e-7) throw Error("reflected GUI energy incorrect");
+      if (!await ev('document.querySelector("#rf-details").textContent.includes("部分スペクトル")')) throw Error("GUI reflection mode semantics missing");
+      report.checks.push({operation:"curved reflection checkbox, solve, saved result and plot",side,tag,passed:true});
+    }
+    await ev('document.querySelector("#rf-details").closest("details").open=true;document.querySelector("#rf-details p").scrollIntoView({block:"start",behavior:"instant"})');
+    const shot=await call("Page.captureScreenshot",{},sessionId);
+    await writeFile(out+"/curved-reflection.png",Buffer.from(shot.data,"base64"));
+  }
   await ev("document.activeElement?.blur()");
   await wait("(window.scrollTo({top:0,behavior:'instant'}), window.scrollY===0)");
   const screenshot = await call("Page.captureScreenshot", {}, sessionId);

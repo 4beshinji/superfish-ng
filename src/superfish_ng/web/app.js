@@ -1274,6 +1274,11 @@ function renderRFDetails() {
     table.append(row);
   }
   $("rf-details").replaceChildren(table);
+  if (currentResult.result.reflection || currentResult.result.reflection_source_case) {
+    const note = document.createElement("p");
+    note.textContent = "鏡映で構成した全空洞です。モード番号は対称条件で選ばれた部分スペクトルの順序で、全空洞の固有周波数順位ではありません。";
+    $("rf-details").prepend(note);
+  }
   const corners = currentResult.result.surface_corner_diagnostics;
   if (corners) {
     const note = document.createElement("p");

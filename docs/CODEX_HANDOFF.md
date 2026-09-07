@@ -1,5 +1,28 @@
 # ローカルCodexへの引継ぎ
 
+## G03曲線鏡映GUI受入 — 2026-09-08
+
+RF詳細へ鏡映結果の部分スペクトル表示を追加した。直線のreflection_source_caseと
+曲線のreflection宣言を対象に、全空洞の固有周波数順位ではないことを明示する。
+物理ピーク収束の未確認表示は保持する。
+
+verify_gui.mjsに--curved-reflection yesを追加。
+--contour-case examples/curved_hyperbola.json --contour-auto yes --curved-fem yesと併用し、
+双曲線の左右端×電気/磁気対称の4入力を検証出力先へ生成してファイル読込する。
+各入力で鏡映チェックボックスを実クリックし、計算・保存結果選択・描画まで操作する。
+保存された面と偶奇、全Caseの規格化2倍、RFの蓄積エネルギー、部分スペクトル文を検査する。
+既存の入力/往復/曲線P2/固定Study7操作に加え、計11操作がPASS。
+
+out/gui-curved-reflection-accepted-20260908/report.jsonはpassed=true、
+source_changed_during_run=false、external_requests=[]。
+curved-reflection.pngで角診断、物理ピーク未確認、部分スペクトルの日本語説明、
+U=2 J（電気/磁気各1 J）を確認した。検証後にGUIサーバーを停止。
+標準297件中295合格・2 skip。JavaScript構文検査もPASS。
+数値ソルバーや受入閾値の変更はない。
+
+次は二次曲線の幾何近似収束と接線構築の要件照合。
+曲線鏡映GUIの限定操作を受入済みとして更新するが、G03全体と全互換目標は継続する。
+
 ## G03楕円/双曲線の固定幾何FEM・双曲線鏡映/GUI — 2026-09-08
 
 scripts/validate_curved_shapes.pyを追加し、既存の合成楕円と双曲線をgeometry_order=2、
