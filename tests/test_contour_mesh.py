@@ -165,6 +165,35 @@ class InitialContourMeshTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'max_sweeps'):
             improve_contour_angles(case,original,max_sweeps=True)
 
+    def test_smoothing_escapes_stationary_neighbor_mean(self):
+        from superfish_ng.mesh_input import mesh_from_dict
+        vertices = [(float(z),0.) for z in np.linspace(0,1,21)]+[(1.,1.),(0.,1.)]
+        tags = ['axis']*20+['pec']*3
+        case = Case((),contour=Contour(tuple(vertices),tuple(tags)))
+        n = len(vertices)
+        points = np.asarray(vertices)[:,::-1]
+        center = points.mean(axis=0)
+        data = dict(schema_version=1,length_unit='m',coordinate_order='rz',index_base=0,
+                    points=points.tolist()+[center.tolist()],
+                    triangles=[[i,n,(i+1)%n] for i in range(n)],
+                    boundary_edges=[[i,(i+1)%n] for i in range(n)],boundary_tags=tags)
+        mesh = mesh_from_dict(case,data)
+        improved = smooth_contour_interior(case,mesh,1.5)
+        # Uniformly averaging the neighbors leaves this bad fan unchanged.
+        np.testing.assert_array_equal(mesh.points[-1],mesh.points[:-1].mean(axis=0))
+        self.assertGreater(contour_mesh_quality(improved)['min_quality'],
+                           2*contour_mesh_quality(mesh)['min_quality'])
+        self.assertLessEqual(contour_mesh_quality(improved)['max_edge_m'],1.5)
+        np.testing.assert_array_equal(improved.points[:-1],mesh.points[:-1])
+        for name in ('triangles','boundary_edges','boundary_tags','axis_nodes'):
+            np.testing.assert_array_equal(getattr(improved,name),getattr(mesh,name))
+        p = improved.points[improved.triangles]
+        u,v = p[:,1]-p[:,0],p[:,2]-p[:,0]
+        areas = (u[:,0]*v[:,1]-u[:,1]*v[:,0])/2
+        self.assertTrue(np.all(areas>0))
+        self.assertAlmostEqual(areas.sum(),1.)
+        self.assertAlmostEqual(np.sum(2*math.pi*areas*p[:,:,0].mean(axis=1)),math.pi)
+
     def test_smoothing_preserves_boundary_moments_and_local_sizes(self):
         contour = Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,.5),(0,.5),(0,.25)),
                           ('axis',)+('pec',)*7+('magnetic_symmetry',))

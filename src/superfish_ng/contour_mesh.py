@@ -305,8 +305,17 @@ def smooth_contour_interior(case, mesh, max_edge_m, *, sweeps=5):
             old = points[vertex].copy()
             target = points[adjacent].mean(axis=0)
             quality = minimum_quality(owners[vertex])
-            for fraction in (1.,.5,.25,.125):
-                candidate = old+fraction*(target-old)
+            candidates = [old+fraction*(target-old) for fraction in (1.,.5,.25,.125)]
+            # The neighbor mean can be stationary despite poor incident cells.
+            # A bounded directional search supplies independent feasible moves.
+            if quality < .4:
+                step = .5*np.linalg.norm(points[adjacent]-old,axis=1).min()
+                directions = np.array(((1,0),(-1,0),(0,1),(0,-1),
+                                       (1,1),(1,-1),(-1,1),(-1,-1)),dtype=float)
+                directions /= np.linalg.norm(directions,axis=1)[:,None]
+                candidates.extend(old+step*fraction*direction
+                                  for fraction in (1.,.5,.25,.125) for direction in directions)
+            for candidate in candidates:
                 delta = points[adjacent]-candidate
                 lengths = np.linalg.norm(delta,axis=1)
                 if np.any(lengths > max_edge_m*(1+1e-12)) or np.any(lengths == 0):
