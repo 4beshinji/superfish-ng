@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## N02のP2保存・明示読込 — 2026-09-08
+
+save_runでP2全係数/4空間配列/field_space宣言を保存。read_solutionの
+allow_quadratic=Trueで再構成空間との一致を検証して読める。
+162 tests中160合格・2 skip、標準validate PASS、P1のRF全量/hashは不変。
+次はsavedのprobe/比較/バンド、visualize、studiesへ空間を渡す。移行完了後に
+読込の暫定制限とplot_modeの拒否を撤去する。Case/CLI次数指定も残る。N02未完。
+
 ## N02の表示用分割・VTK — 2026-09-08
 
 display.pyへP2の4分割表示データを追加し、write_vtkに接続。

@@ -40,8 +40,8 @@ def write_vtk(path, solution, mode):
 
 def save_run(case, solution, directory):
     """Publish readiness after writing all files; never replace an existing path."""
-    if getattr(solution, 'element_order', 1) != 1:
-        raise ValueError('quadratic field export requires N02; refusing P1 output')
+    if getattr(solution, 'element_order', 1) not in (1, 2):
+        raise ValueError('unsupported field element order')
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     from .completion import digest, required_files
@@ -75,6 +75,9 @@ def _write_run(case, solution, directory):
                               "voltage": "integral Ez_quadrature(0,z) exp(+i omega z/(beta c)) dz; global -i omitted",
                               "vtk_coordinates": "x=r, y=z, z=0; scalar cylindrical components"},
               "modes": [quantities(case, solution, i) for i in range(case.modes)]}
+    if solution.element_order == 2:
+        result['field_space'] = {'element_order': 2, 'basis': 'quadratic Lagrange u=Hphi/r',
+                                 'geometry_order': 1, 'dofs': len(solution.u)}
     if solution.source_case is not None:
         result['reflection_source_case'] = solution.source_case
     if case.has_acceleration_overrides:
@@ -98,14 +101,20 @@ def _write_run(case, solution, directory):
     (directory/"case.json").write_text(json.dumps(case.to_dict(), indent=2)+"\n", encoding="utf-8")
     (directory/"results.json").write_text(json.dumps(result, indent=2, allow_nan=False)+"\n", encoding="utf-8")
     mesh = solution.mesh
+    extra = {}
+    if solution.element_order == 2:
+        extra = {name: getattr(solution.space, name) for name in
+                 ('dof_points', 'cell_dofs', 'boundary_dofs', 'axis_dofs')}
     np.savez_compressed(directory/"fields.npz", points_rz_m=mesh.points, triangles=mesh.triangles,
                         boundary_edges=mesh.boundary_edges, boundary_tags=mesh.boundary_tags,
                         boundary_cells=mesh.boundary_cells, axis_nodes=mesh.axis_nodes,
-                        u_a_per_m2=solution.u, frequencies_hz=solution.frequencies_hz)
+                        u_a_per_m2=solution.u, frequencies_hz=solution.frequencies_hz, **extra)
     for i in range(case.modes):
         write_vtk(directory/f"mode_{i+1:03d}.vtk", solution, i)
-        z = mesh.points[mesh.axis_nodes, 1]
-        ez = 2*solution.u[mesh.axis_nodes, i]/(TAU*solution.frequencies_hz[i]*EPS0)
+        axis = mesh.axis_nodes if solution.element_order == 1 else solution.space.axis_dofs
+        points = mesh.points if solution.element_order == 1 else solution.space.dof_points
+        z = points[axis, 1]
+        ez = 2*solution.u[axis, i]/(TAU*solution.frequencies_hz[i]*EPS0)
         np.savetxt(directory/f"axis_{i+1:03d}.csv", np.column_stack((z, ez)), delimiter=",",
                    header="z_m,Ez_quadrature_V_per_m", comments="")
     with (directory/"modes.csv").open("w", newline="", encoding="utf-8") as f:

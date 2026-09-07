@@ -18,6 +18,8 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     if out.exists():
         raise ValueError(f'output already exists: {out}')
     results = json.loads((run/'results.json').read_text())
+    if 'field_space' in results:
+        raise ValueError('P2 plot integration is pending N02; use explicit quadratic VTK export')
     if isinstance(mode, bool) or not isinstance(mode, int) or not 1 <= mode <= len(results['modes']):
         raise ValueError('mode must be a valid one-based mode number')
     q = results['modes'][mode-1]

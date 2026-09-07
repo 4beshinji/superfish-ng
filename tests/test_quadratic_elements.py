@@ -114,7 +114,7 @@ class QuadraticElementTests(unittest.TestCase):
         np.testing.assert_allclose(permuted.frequencies_hz,original.frequencies_hz,rtol=1e-11)
         np.testing.assert_allclose(scaled.frequencies_hz*3,original.frequencies_hz,rtol=1e-11)
 
-    def test_p1_save_and_implicit_sampler_refuse_quadratic_solution(self):
+    def test_implicit_sampler_refuse_quadratic_solution(self):
         from superfish_ng.high_order import solve_p2
         from superfish_ng.io import save_run
         from superfish_ng.sampling import FieldSampler
@@ -122,7 +122,3 @@ class QuadraticElementTests(unittest.TestCase):
         sol=solve_p2(case)
         for call in [lambda:FieldSampler(sol.mesh.points,sol.mesh.triangles,sol.u,sol.frequencies_hz)]:
             with self.assertRaisesRegex(ValueError,'P1|N02|quadratic|exactly one'):call()
-        with tempfile.TemporaryDirectory() as tmp:
-            out=Path(tmp)/'run'
-            with self.assertRaisesRegex(ValueError,'N02'):save_run(case,sol,out)
-            self.assertFalse(out.exists())

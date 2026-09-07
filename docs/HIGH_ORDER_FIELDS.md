@@ -116,3 +116,17 @@ RF計算は表示三角形を使用しない。P1の頂点・要素・場・VTK�
 ローカル証拠: out/validation-n02-display-20260908/validation.json PASS。
 161 tests中159合格・2 skip。円筒/成形セルのmode全量・hash・全VTKは直前と一致。
 保存runのP2解禁と再読込、plot_modeへの接続は未完。次はその保存契約を実装する。
+
+### 保存・明示読込 — 2026-09-08
+
+save_runはP2を保存し、results.field_spaceに次数2・幾何次数1・基底名・DOF数、
+fields.npzにdof_points/cell_dofs/boundary_dofs/axis_dofsを追加する。
+axis CSVは中点を含む全軸自由度。完了manifestは追加配列を含むNPZ全体をhash検証する。
+read_solution(..., allow_quadratic=True)は空間を再構成して4配列とDOF数を照合する。
+旧消費側の移行完了までは既定読込とplot_modeがP2を明示拒否する。これは移行途中の
+保護であり、完成仕様ではない。次は全消費側へ次数/空間を渡してこの制限を撤去する。
+
+全係数・probe場の往復一致を検査。manifestを再hashした接続/座標/軸/境界の破損も
+構造検証で拒否した。out/validation-n02-storage-20260908/validation.json PASS、
+162 tests中160合格・2 skip。円筒/成形セルのmode全量とcase hashは直前と一致。
+N02全体は未完。

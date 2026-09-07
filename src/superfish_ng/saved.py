@@ -13,7 +13,7 @@ from .modes import identify_cell_band, fit_dispersion
 from .geometry import linearize_profile
 
 
-def read_solution(directory):
+def read_solution(directory, *, allow_quadratic=False):
     directory = Path(directory)
     if (directory/'save_protocol.json').exists() and not (directory/'save_complete.json').is_file():
         raise ValueError('incomplete saved result: completion marker has not been published')
@@ -33,6 +33,18 @@ def read_solution(directory):
     )
     if hashlib.sha256(canonical.encode()).hexdigest() != results["case_sha256"]:
         raise ValueError("saved case hash differs")
+    declaration = results.get('field_space')
+    order = 1
+    if declaration is not None:
+        if (not isinstance(declaration, dict) or set(declaration) != {'element_order', 'basis', 'geometry_order', 'dofs'}
+                or type(declaration['element_order']) is not int or declaration['element_order'] != 2
+                or type(declaration['geometry_order']) is not int or declaration['geometry_order'] != 1
+                or declaration['basis'] != 'quadratic Lagrange u=Hphi/r'
+                or type(declaration['dofs']) is not int or declaration['dofs'] <= 0):
+            raise ValueError('invalid saved field space declaration')
+        order = 2
+        if not allow_quadratic:
+            raise ValueError('P2 saved fields require an explicitly high-order reader; N02 consumer migration is pending')
     with np.load(directory / "fields.npz", allow_pickle=False) as data:
         arrays = {
             key: data[key]
@@ -47,6 +59,13 @@ def read_solution(directory):
                 "axis_nodes",
             )
         }
+        extra_names = {'dof_points', 'cell_dofs', 'boundary_dofs', 'axis_dofs'}
+        if order == 2:
+            if not extra_names.issubset(data.files):
+                raise ValueError('missing saved quadratic field arrays')
+            arrays.update({key: data[key] for key in extra_names})
+        elif extra_names.intersection(data.files):
+            raise ValueError('quadratic arrays require a field space declaration')
     p, t, u, f = (
         arrays[k] for k in ("points_rz_m", "triangles", "u_a_per_m2", "frequencies_hz")
     )
@@ -59,7 +78,7 @@ def read_solution(directory):
         or not len(t)
         or t.min() < 0
         or t.max() >= len(p)
-        or u.shape != (len(p), case.modes)
+        or u.shape != (len(p) if order == 1 else declaration['dofs'], case.modes)
         or f.shape != (case.modes,)
         or len(results["modes"]) != case.modes
         or not all(np.isfinite(a).all() for a in (p, u, f))
@@ -114,11 +133,25 @@ def read_solution(directory):
         ).all()
     ):
         raise ValueError("invalid saved boundary arrays")
+    mesh.boundary_edges, mesh.boundary_tags = edges, tags
+    mesh.boundary_cells, mesh.axis_nodes = cells, axis
+    space = None
+    axis_points, field_axis = p, axis
+    if order == 2:
+        from .high_order import quadratic_space
+        space = quadratic_space(mesh)
+        for key in ('dof_points', 'cell_dofs', 'boundary_dofs', 'axis_dofs'):
+            actual, expected_array = arrays[key], getattr(space, key)
+            if (actual.dtype.kind != expected_array.dtype.kind or not np.array_equal(actual, expected_array)):
+                raise ValueError(f'saved quadratic {key} disagrees with reconstructed space')
+        if len(space.dof_points) != declaration['dofs']:
+            raise ValueError('saved quadratic DOF count differs')
+        axis_points, field_axis = space.dof_points, space.axis_dofs
     for i, q in enumerate(results["modes"]):
         axis_csv = np.loadtxt(
             directory / f"axis_{i + 1:03d}.csv", delimiter=",", skiprows=1
         )
-        expected = np.column_stack((p[axis, 1], 2 * u[axis, i] / (TAU * EPS0 * f[i])))
+        expected = np.column_stack((axis_points[field_axis, 1], 2 * u[field_axis, i] / (TAU * EPS0 * f[i])))
         if (
             q["mode_index"] != i + 1
             or q["frequency_hz"] != f[i]
@@ -128,7 +161,8 @@ def read_solution(directory):
         ):
             raise ValueError("saved axis CSV, modes, and fields disagree")
     return SimpleNamespace(
-        case=case, results=results, mesh=mesh, u=u, frequencies_hz=f, arrays=arrays
+        case=case, results=results, mesh=mesh, u=u, frequencies_hz=f, arrays=arrays,
+        element_order=order, space=space
     )
 
 
