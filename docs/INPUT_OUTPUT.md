@@ -97,6 +97,11 @@ nr/nzが同じでも自由度は増える。収束判定は別途必要で、交
 
 ## コマンド
 
+新しい計算保存はsave_protocol.jsonとsave_complete.jsonを含む。
+完了マーカーと全出力hashの検証を通った結果だけをread_solutionで読む。
+保存途中の失敗・強制終了では予約ディレクトリが残り得るため、再実行は新しい出力先を使う。
+旧結果の読込と新形式の完了検査の違いは [SAVE_COMPLETION.md](SAVE_COMPLETION.md)。
+
 ### 限定した旧AF入力から移行する
 
 `superfish-ng import-af INPUT.af --out out/imported-new --nr 32 --nz 64 --modes 1

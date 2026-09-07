@@ -32,3 +32,24 @@ hard linkが使えないファイルシステムでは保存を失敗させる�
 受入: 各出力段階と公開段階の故障注入、実プロセスの強制終了、同名保存競合、
 完了ファイル欠落/改変/パス不正、外部mesh付き取込、旧結果再読込、通常CLI/Job回帰。
 標準unittest/validateと直前の周波数/RF差を確認して受入記録を追記する。
+
+## O01.S/I/V受入 — 2026-09-08
+
+仕様コミットa5761ba。test_save_completion.pyの9テストで、初回の未完了保存の
+誤認・完了ファイル欠落を検出してから実装した。出力関数/ファイル書込みへの故障注入、
+実子プロセスへのSIGKILL、同名の2並列writer、公開前の読込、ユーザーファイルとの
+衝突、symlink/範囲外manifest、CSV改変、外部mesh付きJob取込を検証した。
+Job取込でも完了記録を最後に原子的に公開し、読込後に取込Job自体をcompleteにする。
+新形式の直接保存は「verified direct-save completion」、旧形式は元の完了証拠なしと区別する。
+
+受入記録は `out/validation-o01-accepted-20260908/validation.json`。
+137 unittest中135合格、参照環境専用2 skip。標準数値検証PASS。
+C02最終出力の円筒・非円筒を新read_solutionで再読し、同じケースの新保存出力と
+全modes辞書・case hashが完全一致した。数値・FEM/RF・既存閾値を変更していない。
+新resultsにはsave_protocol_versionのみ追加し、case/場の版を変更していない。
+
+再現: `OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate.py --out out/validation-o01-new`。
+個別検査は `.venv/bin/python -m unittest discover -s tests -p test_save_completion.py -v`。
+既存出力の再読込と不完全出力の拒否は同じAPIで行う。失敗した予約ディレクトリを
+成功結果へ昇格する回復処理は設けず、新規出力先で再実行する。
+本受入はローカルLinuxの完了管理であり、V02の他OS/配布受入や電源断耐性とは別。

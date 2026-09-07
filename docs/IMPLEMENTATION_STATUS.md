@@ -24,7 +24,7 @@ Project/Study/GUIへの保持を追加。122テスト中120合格・2 skip、標
 | RF量 | f/U/Q0/G/V/RQ/シャント/TTF、ピーク比 | peak phasor、RQ二規約。常伝導摂動損失、active lengthは全長。EpkはP1推定 | rf.py、[PHYSICS.md](PHYSICS.md) |
 | 条件群 | 独立掃引、同一形状の細分対応、条件付きバンド同定 | 形状変化の追跡とtune/最適化は未実装 | studies.py、modes.py |
 | 操作 | 共通Project/CLI/Python、ローカルGUI、保存場・図・プローブ | 外部メッシュ指定UIなし。人による使いやすさ評価は未実施 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md) |
-| 完了管理 | 管理ジョブの状態/manifest、改変検出、再開時の中断判定 | 直接save_run/CLI全体の原子的完了は未完 | jobs.py/io.py、test_jobs.py |
+| 完了管理 | 管理ジョブと直接保存の完了公開/manifest、改変・中断検出 | ローカルhard link対応FS。電源断/他OSは未保証 | [SAVE_COMPLETION.md](SAVE_COMPLETION.md)、test_save_completion.py |
 | 入出力 | NG JSON/CSV/NPZ/ASCII VTK、保存NG結果の再読込 | GUIの「旧結果取込」は以前のNG出力。旧SUPERFISH入力/バイナリ互換ではない | saved.py/cli.py、[INPUT_OUTPUT.md](INPUT_OUTPUT.md) |
 | 配布 | source/wheelのローカル受入 | hosted CI、他OS、公開リリースは未確認 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)、test_package.py |
 
