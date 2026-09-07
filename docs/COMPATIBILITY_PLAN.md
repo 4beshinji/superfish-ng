@@ -4,6 +4,10 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-08 G03途中受入: 固定二次幾何の全体空間4分割と係数移送を実装。
+写像/場/勾配、Galerkin行列エネルギー保存を確認。268件中266合格・2 skip。
+通常Case/solve/保存/Studyへの細分段数接続と物理収束は残件。[詳細](CURVED_ELEMENTS.md)。
+
 2026-09-08 G03途中受入: 曲線Studyの保存比較を接続し、球形2段階と独立RFでPASS。
 264件中262合格・2 skip、validate PASS。再メッシュで二次境界も変わり得るため、
 固定離散幾何のh細分は残件。[詳細](CURVED_ELEMENTS.md)。

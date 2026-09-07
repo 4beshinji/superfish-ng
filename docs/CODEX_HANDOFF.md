@@ -1,5 +1,29 @@
 # ローカルCodexへの引継ぎ
 
+## G03固定二次幾何の空間細分 — 2026-09-08
+
+curved_refinement.refine_curved_spaceで全参照三角形を4分割し、親写像を子へ制限する。
+共有節点は位相上の辺IDで同定し、共有点座標と親係数への補間行の一致を検査する。
+親の全P2節点は子の頂点として保持。子中点は親写像で評価し、解析曲線へ再投影しない。
+境界タグ・元曲線番号・パラメータ区間を継承し、全子Jacobian・境界・全辺を再検査。
+元曲線パラメータは祖先区間の記録であり、解析曲線上への点配置を意味しない。
+
+戻り値はCurvedRefinement(space, prolongation, parent_cells, parent_reference_vertices)。
+prolongationは親uを同一の物理場として細分空間へ移す疎行列P。
+RestrictedGeometryは元弦からの移動量を捏造せず、既存の再投影候補と別の幾何型を使う。
+このAPIは空間/行列の段階。通常Case/solve/save/read/Studyの細分段数接続は未実装。
+
+楕円360→1440要素で写像、ランダムP2場と物理勾配の一致を検証。
+境界1/4点が親の二次補間と一致し、解析曲線への再投影点とは異なることを確認。
+直線対照の2回細分では軸r=0と磁気対称拘束を厳密に保持。
+P^T K_child PとK_parentの相対行列差は積分次数8で1.85819e-11、12で2.29779e-15。
+質量行列差は各1.53e-15、1.21e-15。各ゲート1e-10でPASS。
+これは同じ場のエネルギー保存の検査であり、固有周波数やRFの離散化誤差の受入ではない。
+再現: scripts/validate_fixed_curved_refinement.py --out out/validation-g03-fixed-curved-refinement-20260908。
+validation-g03-fixed-curved-refinement-regression-20260908 PASS。
+標準268件中266合格・2 skip。通常solve/保存/Studyへの接続と独立物理収束を次に行う。
+GUI・表面ピーク・鏡映を含めG03と全互換目標は継続。
+
 ## G03曲線Studyの保存比較 — 2026-09-08
 
 compare_refinementを曲線保存解へ接続。最初のメッシュの参照重心を物理座標へ写し、
