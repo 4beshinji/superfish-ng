@@ -1,5 +1,12 @@
 # ローカルCodexへの引継ぎ
 
+## G01の変換・鏡映 — 2026-09-08
+
+Contour.from_profileとreflectedを実装。独立円錐台体積・z折返し鏡映の
+面積/体積2倍を検証。標準174件中172合格・2 skip、validate PASS。
+次はCase v3のcontour geometryを追加し、profile前提の長さ/境界/プレビュー/保存を
+移行する。一般輪郭の外部mesh検証もG01対象。自動メッシュはG02まで未対応と明示する。
+
 ## G01の一般輪郭コア — 2026-09-08
 
 GENERAL_CONTOUR.mdへ仕様を追加。contour.Contourでz折返し多角形の

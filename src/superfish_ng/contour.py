@@ -70,3 +70,54 @@ class Contour:
     def volume_m3(self):
         p=np.array(self.vertices_zr_m);b=np.roll(p,-1,axis=0)
         return float(math.pi/3*np.sum((p[:,1]+b[:,1])*(p[:,0]*b[:,1]-b[:,0]*p[:,1])))
+
+    @classmethod
+    def from_profile(cls, case):
+        """Close a legacy profile with end faces and axis.
+
+        Circular profiles use the declared chord tolerance, not exact arcs.
+        """
+        from .geometry import linearize_profile
+        wall=tuple(linearize_profile(case))
+        points=((0.,0.),(case.length,0.))+wall[::-1]
+        tags=('axis',case.z_max)+('pec',)*(len(wall)-1)+(case.z_min,)
+        return cls(points,tags)
+
+    def reflected(self):
+        """Reflect one tagged symmetry end; return a full PEC contour."""
+        points=self.vertices_zr_m
+        length=max(z for z,r in points)
+        symmetry=[i for i,tag in enumerate(self.edge_tags) if tag.endswith('_symmetry')]
+        if not symmetry:
+            raise ValueError('contour reflection requires exactly one symmetry end')
+        planes={points[i][0] for i in symmetry}
+        kinds={self.edge_tags[i] for i in symmetry}
+        if len(planes)!=1 or len(kinds)!=1:
+            raise ValueError('contour reflection requires one consistent symmetry end')
+        plane=next(iter(planes))
+        # Every radial edge at that plane must be part of the removed seam.
+        for i,tag in enumerate(self.edge_tags):
+            a,b=points[i],points[(i+1)%len(points)]
+            if a[0]==b[0]==plane and tag!='axis' and i not in symmetry:
+                raise ValueError('contour reflection plane has mixed PEC and symmetry edges')
+        def transform(point,mirror):
+            z,r=point
+            if plane==0:return (length-z if mirror else length+z,r)
+            return (2*length-z if mirror else z,r)
+        edges=[]
+        for i,tag in enumerate(self.edge_tags):
+            if i in symmetry:continue
+            a,b=points[i],points[(i+1)%len(points)]
+            edges.append((transform(a,False),transform(b,False),tag))
+            edges.append((transform(b,True),transform(a,True),tag))
+        outgoing={a:(b,tag) for a,b,tag in edges}
+        if len(outgoing)!=len(edges):
+            raise ValueError('reflected contour has ambiguous boundary connectivity')
+        start=min(outgoing);point=start;vertices=[];tags=[]
+        while point in outgoing:
+            vertices.append(point)
+            point,tag=outgoing.pop(point);tags.append(tag)
+            if point==start:break
+        if outgoing or point!=start:
+            raise ValueError('reflected contour does not form a single closed boundary')
+        return Contour(tuple(vertices),tuple(tags))

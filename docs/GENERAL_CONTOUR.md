@@ -42,3 +42,16 @@ z折返し合成例の矩形分割A=4、V=7.5π、円錐A=3、V=4πを独立に�
 標準out/validation-g01-contour-final-20260908/validation.json PASS、
 172 tests中170合格・2 skip。円筒/成形セルのmode全量/hashはN02受入基準と一致。
 Case連携・旧形状変換・鏡映・外部メッシュ検証は未完。G01全体は未受入。
+
+### profile変換と一般輪郭鏡映 — 2026-09-08
+
+Contour.from_profileは軸と両端面を補い、既存の端面タグを保持して単一輪郭へ変換する。
+arc_profileの場合は宣言した弦誤差による多角形であり、厳密円弧面積とは区別する。
+Contour.reflectedは一端の対称辺を継ぎ目として除き、反転辺を接続して全外周を構成する。
+混在PEC/対称継ぎ目・両端対称・接続不整合を拒否し、結果もContour検証を通す。
+
+円筒・円錐台・段差の変換面積と独立円錐台体積が一致。z折返し合成輪郭の
+両端×電気/磁気対称4条件で単一境界・A/V2倍・全長2倍を検証した。
+標準out/validation-g01-conversion-20260908/validation.json PASS、
+174 tests中172合格・2 skip、円筒/成形セルmode全量/hashは直前と一致。
+次はCase v3連携と外部mesh境界検証。G01全体は未完。
