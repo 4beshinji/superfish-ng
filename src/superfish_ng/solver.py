@@ -27,7 +27,7 @@ class Solution:
 
 
 def solve(case, *, mesh_data=None):
-    return _solve(case, mesh_data=mesh_data, element_order=1)
+    return _solve(case, mesh_data=mesh_data, element_order=case.element_order)
 
 
 def _solve(case, *, mesh_data=None, element_order=1):

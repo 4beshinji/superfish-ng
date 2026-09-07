@@ -165,3 +165,16 @@ read_solutionのP2既定拒否を撤去。明示allow_quadratic=Falseは拒否�
 out/validation-n02-tracking-20260908/validation.json PASS、165 tests中163合格・2 skip。
 円筒/成形セルのmode全量とcase hashは直前と一致。
 Case/Project/CLI/GUIの次数保持・再実行は未対応。総合Bessel/ピーク/DOF受入も残る。
+
+### Case/CLIの次数指定 — 2026-09-08
+
+v3のsolver.element_orderは整数1/2のみ。未指定は1、既定1はcanonical出力から省略し
+旧hashを維持する。Pythonで2を指定すると明示Model/v3へ移行し、solveがP2を選択する。
+ProjectはCaseを通じて次数を保持する。研究solve_p2を旧Caseで呼んだ保存物も
+保存時に全領域Caseとreflection_source_caseへ次数2を記録し、再実行で失わない。
+次数は物理そのものではないため、細分比較の同一物理判定から除く。
+CLI solve→保存→Case再読込→solveで周波数と全係数が完全一致。strict schemaと
+Project往復、研究P2の鏡映元/全Case次数保存も確認した。
+標準証拠out/validation-n02-order-final-20260908/validation.json PASS、
+167 tests中165合格・2 skip。P1の円筒/成形セルmode全量とhashは直前と一致。
+GUIの次数選択/保持、総合Bessel/ピーク/DOF証拠は未完。N02全体は未受入。

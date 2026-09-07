@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## N02のCase/CLI次数 — 2026-09-08
+
+v3 solver.element_orderで1/2をstrict受理。solveが次数を選択し、Project・保存・
+再読込・再実行まで保持。旧Case研究P2保存は次数2をCase/鏡映元へ明示する。
+167 tests中165合格・2 skip、標準validate PASS、P1 mode/hashは不変。
+次はGUIの次数選択と入出力保持、能力表/文書を更新し、総合Bessel場・ピーク・
+誤差対DOF/半全・Job再実行を検証する。N02全体は未完。
+
 ## N02のバンド・細分比較 — 2026-09-08
 
 analyze_bandはP2セル中心と軸停留点、compare_refinementは高次Hと

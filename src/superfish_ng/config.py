@@ -73,8 +73,11 @@ class Case:
     active_length_m: float | None = None
     voltage_interval_m: tuple[float, float] | None = None
     phase_origin_m: float | None = None
+    element_order: int = 1
 
     def __post_init__(self):
+        if type(self.element_order) is not int or self.element_order not in (1, 2):
+            raise ValueError("element_order must be integer 1 or 2")
         if self.model is not None:
             from .model import Model
             if not isinstance(self.model, Model):
@@ -124,7 +127,7 @@ class Case:
         _, interval, _ = self.acceleration_parameters
         if self.voltage_interval_m is not None:
             object.__setattr__(self, 'voltage_interval_m', interval)
-        if self.has_acceleration_overrides and self.model is None:
+        if (self.has_acceleration_overrides or self.element_order == 2) and self.model is None:
             from .model import Model
             object.__setattr__(self, 'model', Model())
         positive(self.arc_chord_tolerance_m, "arc_chord_tolerance_m")
@@ -227,7 +230,9 @@ class Case:
                 positive(mesh[k], k)
         if 'triangulation' in mesh and data['schema_version'] < 2:
             raise ValueError('explicit triangulation requires schema_version 2')
-        keys(solver, ["modes"], [], "solver")
+        keys(solver, ["modes", "element_order"], [], "solver")
+        if "element_order" in solver and data["schema_version"] != 3:
+            raise ValueError("solver.element_order requires schema_version 3")
         additions = ['active_length_m', 'voltage_interval_m', 'phase_origin_m']
         keys(rf, ["beta", "conductivity_s_per_m", "normalization_j"]+additions, [], "rf")
         for key in additions:
@@ -267,6 +272,8 @@ class Case:
             if getattr(self, key) is not None:
                 data['schema_version'] = 2
                 data['mesh'][key] = getattr(self, key)
+        if self.element_order != 1:
+            data["solver"]["element_order"] = self.element_order
         if self.model is not None:
             data.update(schema_version=3, model=self.model.to_dict())
         for key in ('active_length_m', 'voltage_interval_m', 'phase_origin_m'):

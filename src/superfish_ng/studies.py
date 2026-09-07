@@ -154,6 +154,7 @@ def _physical_spec(case):
     # alter physics. Retain the actual physics declaration in the comparison.
     raw['model'] = replace(case.model or Model(), material_id='vacuum', region_id='cavity').to_dict()
     raw.pop("mesh")
+    raw["solver"].pop("element_order", None)
     raw.pop("name")
     raw.pop("schema_version")
     raw["geometry"].pop("chord_tolerance_m", None)

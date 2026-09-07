@@ -45,6 +45,8 @@ def read_solution(directory, *, allow_quadratic=True):
         order = 2
         if not allow_quadratic:
             raise ValueError('P2 saved fields require an explicitly high-order reader; N02 consumer migration is pending')
+    if case.element_order == 2 and order != 2:
+        raise ValueError('saved case and field element orders disagree')
     with np.load(directory / "fields.npz", allow_pickle=False) as data:
         arrays = {
             key: data[key]

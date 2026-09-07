@@ -42,6 +42,12 @@ def save_run(case, solution, directory):
     """Publish readiness after writing all files; never replace an existing path."""
     if getattr(solution, 'element_order', 1) not in (1, 2):
         raise ValueError('unsupported field element order')
+    if solution.element_order != case.element_order:
+        if solution.element_order == 2 and case.element_order == 1:
+            from dataclasses import replace
+            case = replace(case, element_order=2)
+        else:
+            raise ValueError('case and solution element orders disagree')
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     from .completion import digest, required_files
@@ -80,6 +86,11 @@ def _write_run(case, solution, directory):
                                  'geometry_order': 1, 'dofs': len(solution.u)}
     if solution.source_case is not None:
         result['reflection_source_case'] = solution.source_case
+        if solution.element_order == 2:
+            from dataclasses import replace
+            from .config import Case
+            source = Case.from_dict(solution.source_case)
+            result['reflection_source_case'] = replace(source, element_order=2).to_dict()
     if case.has_acceleration_overrides:
         result['conventions'].update(
             voltage='integral over voltage_interval_m of Ez_quadrature(0,z) exp(+i omega (z-phase_origin_m)/(beta c)) dz; global -i omitted',
