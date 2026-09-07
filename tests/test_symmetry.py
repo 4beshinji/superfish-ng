@@ -125,3 +125,44 @@ class SymmetryTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class QuadraticSymmetryTests(unittest.TestCase):
+    def test_midpoint_parity_energy_rf_and_independent_full_solve(self):
+        from superfish_ng.high_order import solve_p2
+        from superfish_ng.symmetry import reflect_solution
+        from superfish_ng.sampling import FieldSampler
+        from superfish_ng.mesh_input import mesh_to_dict
+        for side in ['z_min', 'z_max']:
+            for p, boundary in enumerate(['electric_symmetry', 'magnetic_symmetry']):
+                half = Case(((0., .075), (.04, .075)), nr=8, nz=8, modes=1,
+                            normalization_j=.5, **{side: boundary})
+                sol = solve_p2(half)
+                full, reflected = reflect_solution(half, sol)
+                self.assertEqual(reflected.element_order, 2)
+                self.assertEqual(len(reflected.u), len(reflected.space.dof_points))
+                self.assertLess(max(reflected.residuals), 1e-7)
+                qh,qf=quantities(half,sol),quantities(full,reflected)
+                for key in ['stored_energy_j', 'wall_loss_w']:
+                    self.assertAlmostEqual(qf[key]/qh[key], 2., places=10)
+                self.assertAlmostEqual(qf['q0']/qh['q0'], 1., places=10)
+                # Solve the same full mesh afresh; p=1 is the second full mode.
+                direct_case=replace(full,modes=2)
+                direct=solve_p2(direct_case,mesh_data=mesh_to_dict(reflected.mesh))
+                qd=quantities(direct_case,direct,p)
+                for key in ['frequency_hz','r_over_q_accelerator_ohm','wall_loss_w']:
+                    self.assertAlmostEqual(qf[key]/qd[key], 1., places=9)
+                exact=pillbox_tm_mode(.075,.08,p=p)
+                self.assertLess(abs(qf['r_over_q_accelerator_ohm']/exact['r_over_q_accelerator_ohm']-1), .001)
+                sampler=FieldSampler.from_solution(reflected)
+                left=sampler.evaluate([[.0237,.0113],[.0513,.0263]])
+                right=sampler.evaluate([[.0237,.0687],[.0513,.0537]])
+                for key,parity in [('Hphi_A_per_m',(-1)**p),('Ez_quadrature_V_per_m',(-1)**p),('Er_quadrature_V_per_m',-(-1)**p)]:
+                    np.testing.assert_allclose(left[key],parity*right[key],rtol=1e-8,atol=1e-5)
+                if p:
+                    plane=0. if side=='z_min' else half.length
+                    plane_dofs=np.flatnonzero(sol.space.dof_points[:,1]==plane)
+                    mid=plane_dofs[plane_dofs>=len(sol.mesh.points)][0]
+                    sol.u[mid,0]=1.
+                    with self.assertRaisesRegex(ValueError,'zero u'):
+                        reflect_solution(half,sol)

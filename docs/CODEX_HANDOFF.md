@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## N02のP2鏡映 — 2026-09-08
+
+reflect_solutionを全中点の偶奇写像へ拡張。両端×電気/磁気対称について
+独立全領域solveと周波数/RQ/損失の一致、場の偶奇、U/損失2倍を確認。
+159 tests中157合格・2 skip、標準validate PASS、P1のRF全量/hashは不変。
+次はP2保存/再読込/表示/追跡とBessel場・ピーク/誤差対DOF証拠を進める。
+HIGH_ORDER_FIELDS.mdに記録。N02全体の受入とCase/CLI次数公開は未完。
+
 ## N02の表面積分とRF量 — 2026-09-08
 
 quadratic_rf.surface_integrals_p2を実装し、rf.quantities/cell_fieldsへP2を接続。

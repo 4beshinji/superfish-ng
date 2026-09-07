@@ -14,8 +14,9 @@ def reflect_solution(case, solution):
     are unchanged, so energy and loss double. The original mode indices are a
     subset of the full spectrum, not its global frequency ranks.
     """
-    if getattr(solution, 'element_order', 1) != 1:
-        raise ValueError('quadratic field reflection requires N02; refusing P1 mapping')
+    order = getattr(solution, 'element_order', 1)
+    if order not in (1, 2):
+        raise ValueError('unsupported element order for reflection')
     sides = [side for side in ('z_min', 'z_max') if getattr(case, side) != 'pec']
     if len(sides) != 1:
         raise ValueError('reflection requires exactly one symmetry end and one PEC end')
@@ -26,7 +27,9 @@ def reflect_solution(case, solution):
     mesh = solution.mesh
     plane = 0. if side == 'z_min' else case.length
     on_plane = mesh.points[:, 1] == plane
-    if parity == -1 and np.any(solution.u[on_plane] != 0.):
+    field_points = mesh.points if order == 1 else solution.space.dof_points
+    field_on_plane = field_points[:, 1] == plane
+    if parity == -1 and np.any(solution.u[field_on_plane] != 0.):
         raise ValueError('magnetic symmetry requires zero u at the reflection plane')
     original = mesh.points.copy()
     mirrored = original.copy()
@@ -54,8 +57,20 @@ def reflect_solution(case, solution):
     axis = axis[np.argsort(points[axis, 1])]
     reflected = Mesh(points, triangles, edges, tags, cells, axis)
     element_geometry(reflected)
-    u = np.vstack((solution.u, parity*solution.u[~on_plane]))
-    k, m = assemble(reflected)
+    space = None
+    if order == 1:
+        u = np.vstack((solution.u, parity*solution.u[~on_plane]))
+        k, m = assemble(reflected)
+    else:
+        from .high_order import quadratic_space, assemble_p2
+        space = quadratic_space(reflected)
+        u = np.zeros((len(space.dof_points), case.modes))
+        count = len(mesh.triangles)
+        # Reversing triangle orientation maps local edges 01/12/20 to 20/12/01.
+        source = solution.u[solution.space.cell_dofs]
+        u[space.cell_dofs[:count]] = source
+        u[space.cell_dofs[count:]] = parity*source[:, [0, 2, 1, 5, 4, 3]]
+        k, m = assemble_p2(space)
     ku, mu = k @ u, m @ u
     residuals = np.linalg.norm(ku-mu*solution.eigenvalues, axis=0)/(np.linalg.norm(ku, axis=0)+solution.eigenvalues*np.linalg.norm(mu, axis=0))
     if np.max(residuals) > 1e-7:
@@ -70,7 +85,7 @@ def reflect_solution(case, solution):
     result = Solution(reflected, k, m, solution.eigenvalues.copy(), solution.frequencies_hz.copy(),
                       u, residuals, orthogonality,
                       f'{tag} reflection at {side}; parity-filtered spectrum, indices are NOT full-spectrum ranks',
-                      case.to_dict())
+                      case.to_dict(), element_order=order, space=space)
     if solution.mesh_input is not None:
         from .mesh_input import mesh_to_dict
         result.mesh_input = mesh_to_dict(reflected)
