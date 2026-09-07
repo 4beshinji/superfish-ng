@@ -34,3 +34,41 @@ z_max鏡映では[a,L]を[a,2L-a]へ写す。対称面に接しない区間は�
 符号反転場のTTF、円筒解析とFEMの分離、半/全領域、保存・CLI・GUI往復。
 位相回転/スケーリング検査は相対1e-12、区分線形の独立積分は絶対値分母を尺度に1e-10。
 円筒FEMのf/RQ/Gは既存の個別ゲートを維持する。表面ピークの収束保証を追加しない。
+
+## R01.S/I/V受入 — 2026-09-08
+
+仕様c91d69d、実装7d621e6。test_accelerating_conventions.pyの6検査を追加。
+未実装時の4検査の失敗を先に確認し、入力・区分線形積分・解析参照・保存・GUIを実装した。
+全体位相回転と加速長スケーリング、符号反転場の任意区間積分、低β相当の大きな波数、
+円筒p=0/1/3・β=0.03の独立quadrature、CLI保存後の円筒解析比較がPASS。
+半領域鏡映は、鏡映場を使わず同じ全領域メッシュで固有値問題を解き直した結果とも一致した。
+
+初回の半/全比較で異なる対角線を持つ生成メッシュを使った際、6.30e-7の差を検出した。
+この同一離散化の検査では全領域メッシュを揃えて再計算し、許容差は維持した。
+異なるメッシュ間の収束保証をこの一致だけから主張しない。
+
+数値証拠: `out/validation-r01-final-20260908/validation.json`、PASS。
+143 unittest中141合格・NGSolve参照環境専用2 skip。
+O01の最終保存結果と円筒/非円筒の全modes辞書・case hashが完全一致。
+既存の標準検証・基準・許容差は変更していない。
+
+GUI証拠: `out/gui-r01-browser-accepted-20260908/report.json`、8操作検査PASS。
+加速長71 mm、電圧区間[13,39] mm、位相原点−8 mmを入力し、計算、解析比較、
+Project/Case書出、再読込、Study設定のSI往復を検証した。未編集値のSI精度も保持する。
+外部リクエストなし、実行中のソース変更なし。レポートhashを現製品コードと再照合した。
+
+初回 `out/gui-r01-browser-20260908/` は79 mmの区間端が40 mm掃引ケースの外に出るため拒否された。
+39 mmへ変更した検査の `out/gui-r01-browser-valid-20260908/` は数値/保存操作まで通ったが、
+撮影時のスクロール待ちでFAIL。検査スクリプトでfocusを外し、撮影位置を待機中にも指定して再検証した。
+両失敗記録を保持し、入力制約・数値ゲートを緩めていない。人による操作性評価・他OSは別受入。
+
+再現（出力は新しい名前、GUIは別端末）:
+
+```bash
+OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate.py --out out/validation-r01-new
+.venv/bin/python -m superfish_ng gui --workspace out/gui-r01-new --no-browser
+node scripts/verify_gui.mjs --url '表示されたlaunch URL' --out out/gui-r01-browser-new --acceleration yes --io yes
+```
+
+R01のnative F/I/O/N/Wを受入。C02の旧入力は依然BETA=1/KMETHOD=1/ZCTR=中央の部分集合であり、
+旧の任意ZCTRや位相指定の変換を受け入れた意味ではない。対応範囲の拡大はC02/C03/C04で別検証する。

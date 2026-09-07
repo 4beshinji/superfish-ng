@@ -1,4 +1,4 @@
-# 物理・数値仕様 — canonical specification v2（v1/v2/v3入力）
+# 物理・数値仕様 — canonical specification v3（v1/v2/v3入力）
 
 v3の明示物理モデルは [MODEL_CONTRACT.md](MODEL_CONTRACT.md)。本書の真空TM物理・
 数式は変更せず、入力の版と物理モデルの版を区別する。
@@ -138,20 +138,25 @@ Q_0=\frac{\omega U}{P},\qquad G=Q_0R_s.
 ## 7. 加速量の規約
 
 \[
-V(\beta)=\int_0^L\widetilde E_z(0,z)
-\exp\left(i\frac{\omega z}{\beta c}\right)dz,\qquad V_{acc}=|V|.
+V(\beta)=\int_a^b\widetilde E_z(0,z)
+\exp\left(i\frac{\omega (z-z_0)}{\beta c}\right)dz,\qquad V_{acc}=|V|.
 \]
 
 全体の位相因子−iを除いて複素電圧を出力する。βc一定、ビームの摂動・速度変化は無視。
 区分線形Ezと指数関数の積は解析積分し、低βでも積分点不足を起こさない。
 
 \[
-E_{acc}=V_{acc}/L,\quad
-T_{abs}=V_{acc}/\int_0^L|\widetilde E_z|dz.
+E_{acc}=V_{acc}/L_{acc},\quad
+T_{abs}=V_{acc}/\int_a^b|\widetilde E_z|dz.
 \]
 
 `Tabs`は符号反転する多セル場でも0～1になる絶対値分母の規約。
-`∫Ez dz`を分母に取る他のTTFと同一視しない。ここでLは入力の全長で、別のactive lengthはまだ指定できない。
+`∫Ez dz`を分母に取る他のTTFと同一視しない。
+既定は[a,b]=[0,L]、z0=0、Lacc=Lで従来結果を保つ。
+v3 rfでvoltage_interval_m、phase_origin_m、active_length_mを別々に指定できる。
+区間端は軸メッシュの節点に制限せず、端点補間で区分線形場を切って積分する。
+U、Q0、G、壁損失、表面ピーク自体は入力領域全体の値を保つ。
+仕様・鏡映時の写像・受入は [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)。
 
 | 名称 | 定義 |
 |---|---|
@@ -197,7 +202,8 @@ Epk/Eacc=1/T。Bpk/Eaccは `max J1/(cT)`、最大J1は側壁ではなく端板�
 電気対称ではu/Hφ/Ezは偶、Erは奇。磁気対称ではu/Hφ/Ezは奇、Erは偶。
 共有面の節点は重複させず、反射要素の向きを修正し、対称面を内部面にする。
 振幅は変えず、再構成後はUと壁損失Pが2倍、QとGは不変になる。
-Vは反射後の符号付き軸場に通過位相を掛けて全長で積分する。半領域Vの単純2倍ではない。
+Vは反射後の符号付き軸場に通過位相を掛けて積分する。既定は全長、明示区間はR01の写像に従う。
+半領域Vの単純2倍ではない。
 再構成したK/Mで残差・直交性・エネルギーを確認するが、別の固有値計算や解析補正は行わない。
 再構成出力のmode番号は選択した対称性の部分スペクトル内の順位であり、全スペクトルの順位ではない。
 鏡映はprofile/stepped_profile/arc_profileに対応する。円弧半径・短円弧の向きを保持して

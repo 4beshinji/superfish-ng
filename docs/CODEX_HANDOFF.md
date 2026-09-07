@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## R01の加速量規約 — 2026-09-08
+
+R01.S/I/Vのnative範囲を完了。ACCELERATING_CONVENTIONS.mdに仕様・再現・失敗履歴を記録。
+v3 rfのactive_length_m、voltage_interval_m、phase_origin_mを追加し、旧既定値/hashを保持。
+解析比較、鏡映写像、CLI/GUI/保存を更新。143 tests中141合格・2 skip、標準validate PASS。
+最終GUIはout/gui-r01-browser-accepted-20260908、数値はout/validation-r01-final-20260908。
+初回の区間外掃引拒否と撮影待ちFAILを保持する。旧入力の任意ZCTR等はまだ受け入れない。
+次はN01.SのP2要素/解契約→N01.I/V、N02の場/RF/保存・表示への移行を進める。
+N02受入まで高次RFを製品公開しない。C00の未確認行とC03/C04も継続対象。
+
 ## O01の保存完了管理 — 2026-09-08
 
 O01.S/I/Vのローカル契約を完了。SAVE_COMPLETION.mdに仕様と受入を記録した。

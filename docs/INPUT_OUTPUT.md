@@ -52,6 +52,15 @@ Pythonでは `superfish_ng.model.upgrade_case(data)` または
 v3へ移行したcaseのhashは版・modelを含むため変わるが、同じメッシュの解とRF量は同じ。
 Project/Study/GUI/鏡映/保存再読込は明示modelを保持する。
 
+### v3: 加速量の規約
+
+rfへ `active_length_m:0.12`、`voltage_interval_m:[0.02,0.15]`、`phase_origin_m:-0.01`
+を個別に指定できる（区間は実際の空洞内に設定）。未指定は全長・全区間・位相原点0。
+active lengthはEaccの分母だけ、位相原点は複素電圧の全体回転だけを変える。
+全蓄積エネルギーやQ0/Gは変えない。仕様・鏡映時の意味は
+[ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)。
+PythonではCaseの同名引数を使う。新規引数を指定するとModel付きv3へ移行する。
+
 ### v2: 平坦なz端面の対称条件
 
 `"schema_version":2` と `"boundaries":{"z_min":"magnetic_symmetry","z_max":"pec"}` のように指定する。
@@ -156,7 +165,7 @@ RFキーの式はPHYSICS.md。
 ゼロに近い加速電圧でピーク比が定義しづらい場合はnull。NaN/InfinityをJSONに保存しない。
 
 結果の単位はキー名に含める。`q0`、`transit_time_factor_abs`、`epk_over_eacc_estimate`は無次元。
-`bpk_over_eacc_estimate_mt_per_mv_per_m`は mT/(MV/m)。インピーダンスは全長に対するΩで、Ω/mではない。
+`bpk_over_eacc_estimate_mt_per_mv_per_m`は mT/(MV/m)。インピーダンスは電圧区間と全蓄積エネルギーに対するΩで、Ω/mではない。
 
 ## 物理長による境界・角近傍の細分化（v2、任意指定）
 

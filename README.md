@@ -103,6 +103,8 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 明示した物理・座標・単一真空材料/領域を持つ[v3入力](docs/MODEL_CONTRACT.md)を追加しました。
 `superfish-ng capabilities`で対応範囲、`migrate-case`で既存入力からの明示移行を利用できます。
 旧v1/v2のhashと数値結果を維持し、追加物理は未実装として拒否します。
+v3のrfとGUIで[加速長・電圧積分区間・位相原点](docs/ACCELERATING_CONVENTIONS.md)を指定できます。
+指定を省略した既存の周波数・RF結果は変わりません。
 `docs/VALIDATION_REPORT.md` に数値と解釈をまとめています。
 今回の環境での実行結果と配布処理の変更は [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md) に記録しています。
 
