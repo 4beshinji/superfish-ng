@@ -152,3 +152,16 @@ P2の軸場L2誤差は元の軸辺ごとに8点Gaussで高次場と独立cos場�
 ローカル証拠out/validation-n02-analysis-20260908/validation.json PASS。
 164 tests中162合格・2 skip、円筒/成形セルのRF全量とhashは直前と一致。
 次はバンド解析/studiesの高次軸評価と追跡を移行する。N02全体は未完。
+
+### バンド・細分比較と既定読込 — 2026-09-08
+
+analyze_bandはP2のセル中心と軸中点・内部停留点を直接評価する。二次辺の内部で
+2回符号反転する可能性を端点だけの検査で落とさない。既存の重なり/零点数条件を維持。
+compare_refinementは高次samplerを使い、P1/P2の混在時も元軸辺の和集合上で
+3点Gaussにより軸場差の二乗（最大4次）を積分する。同一物理/縮退時棄却条件は維持。
+read_solutionのP2既定拒否を撤去。明示allow_quadratic=Falseは拒否を保持する。
+
+円筒3モードのバンド同定、P2細分間とP1/P2間の対応、自己比較ゼロを検証。
+out/validation-n02-tracking-20260908/validation.json PASS、165 tests中163合格・2 skip。
+円筒/成形セルのmode全量とcase hashは直前と一致。
+Case/Project/CLI/GUIの次数保持・再実行は未対応。総合Bessel/ピーク/DOF受入も残る。

@@ -20,7 +20,7 @@ class QuadraticStorageTests(unittest.TestCase):
             root=Path(tmp)/'run'
             save_run(case,solution,root)
             with self.assertRaisesRegex(ValueError,'high-order reader'):
-                read_solution(root)
+                read_solution(root,allow_quadratic=False)
             saved=read_solution(root,allow_quadratic=True)
             np.testing.assert_array_equal(saved.u,solution.u)
             for name in ['dof_points','cell_dofs','boundary_dofs','axis_dofs']:
@@ -79,3 +79,25 @@ class QuadraticStorageTests(unittest.TestCase):
             self.assertEqual([row['label'] for row in report['modes']],['TM010','TM011','TM012'])
             self.assertTrue(all(row['status']=='PASS' for row in report['modes']),report)
             self.assertTrue(all(row['axis_relative_l2']<.002 for row in report['modes']),report)
+
+    def test_band_and_refinement_use_quadratic_axis_and_fields(self):
+        from dataclasses import replace
+        from superfish_ng.saved import analyze_band
+        from superfish_ng.studies import compare_refinement
+        from superfish_ng import solve
+        case=Case(((0.,.1),(.2,.1)),nr=8,nz=16,modes=3)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            save_run(case,solve_p2(case),root/'p2')
+            fine=replace(case,nr=16,nz=32)
+            save_run(fine,solve_p2(fine),root/'fine')
+            save_run(fine,solve(fine),root/'p1')
+            self.assertEqual(read_solution(root/'p2').element_order,2)
+            band=analyze_band(root/'p2',[0.,.1,.2])
+            self.assertEqual([m['mode_index'] for m in band['modes']],[1,2,3])
+            for other in ['fine','p1']:
+                comparison=compare_refinement(root/'p2',root/other)
+                self.assertTrue(all(row['pair_identified'] for row in comparison['modes']),comparison)
+                self.assertTrue(all(np.isfinite(row['axis_relative_l2']) for row in comparison['modes']))
+            same=compare_refinement(root/'p2',root/'p2')
+            self.assertTrue(all(row['axis_relative_l2']==0 for row in same['modes']))

@@ -13,7 +13,7 @@ from .modes import identify_cell_band, fit_dispersion
 from .geometry import linearize_profile
 
 
-def read_solution(directory, *, allow_quadratic=False):
+def read_solution(directory, *, allow_quadratic=True):
     directory = Path(directory)
     if (directory/'save_protocol.json').exists() and not (directory/'save_complete.json').is_file():
         raise ValueError('incomplete saved result: completion marker has not been published')
@@ -227,6 +227,23 @@ def analyze_band(directory, cell_centers_z_m):
     axis = saved.arrays["axis_nodes"]
     z = saved.mesh.points[axis, 1]
     field = 2 * saved.u[axis] / (TAU * EPS0 * saved.frequencies_hz)
+    if saved.element_order == 2:
+        from .sampling import FieldSampler
+        # Include all extrema so two zero crossings inside one quadratic edge
+        # cannot disappear between its endpoints. Centers are evaluated exactly.
+        edges = saved.space.boundary_dofs[saved.mesh.boundary_tags == 'axis']
+        ends = saved.space.dof_points[edges[:, :2], 1]
+        values = saved.u[edges]
+        linear = 4*values[:, 2]-3*values[:, 0]-values[:, 1]
+        quadratic = 2*(values[:, 0]+values[:, 1]-2*values[:, 2])
+        fraction = np.full_like(linear, np.nan)
+        np.divide(-linear, 2*quadratic, out=fraction, where=quadratic != 0)
+        valid = (fraction > 0) & (fraction < 1)
+        extrema = (ends[:, 0, None]+fraction*(ends[:, 1]-ends[:, 0])[:, None])[valid]
+        z = np.unique(np.r_[saved.space.dof_points[saved.space.axis_dofs, 1], centers, extrema])
+        sampler = FieldSampler.from_solution(saved)
+        positions = np.column_stack((np.zeros_like(z), z))
+        field = np.column_stack([sampler.evaluate(positions, i)['Ez_quadrature_V_per_m'] for i in range(saved.case.modes)])
     modes = identify_cell_band(z, field, centers)
     dispersion = fit_dispersion(
         [m["phase_rad"] for m in modes],

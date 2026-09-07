@@ -175,12 +175,7 @@ def compare_refinement(first_dir, second_dir):
     weights = det[indices] * positions[:, 0]
     sampled = []
     for solution in (first, second):
-        sampler = FieldSampler(
-            solution.mesh.points,
-            solution.mesh.triangles,
-            solution.u,
-            solution.frequencies_hz,
-        )
+        sampler = FieldSampler.from_solution(solution)
         sampled.append(
             np.column_stack(
                 [
@@ -230,9 +225,21 @@ def compare_refinement(first_dir, second_dir):
         z = np.union1d(axis[0][0], axis[1][0])
         ea = np.interp(z, *axis[0])
         eb = np.interp(z, *axis[1])
+        integration_weights = None
+        if first.element_order == 2 or second.element_order == 2:
+            # Union of original axis element endpoints; three Gauss points
+            # integrate the square of either P1/P2 difference exactly.
+            knots = z
+            qg, wg = np.polynomial.legendre.leggauss(3)
+            lo, hi = knots[:-1], knots[1:]
+            z = ((lo+hi)[:, None]/2+(hi-lo)[:, None]*qg/2).ravel()
+            integration_weights = ((hi-lo)[:, None]*wg/2).ravel()
+            positions_axis = np.column_stack((np.zeros_like(z), z))
+            ea = FieldSampler.from_solution(first).evaluate(positions_axis, int(i))['Ez_quadrature_V_per_m']
+            eb = FieldSampler.from_solution(second).evaluate(positions_axis, int(j))['Ez_quadrature_V_per_m']
         if signed[i, j] < 0:
             eb = -eb
-        integral = trapezoid
+        integral = trapezoid if integration_weights is None else lambda values, _: np.dot(integration_weights, values)
         norm = integral(ea**2, z)
         axis_error = (
             float(np.sqrt(integral((eb - ea) ** 2, z) / norm)) if norm > 0 else None

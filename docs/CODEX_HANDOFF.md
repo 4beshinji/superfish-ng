@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## N02のバンド・細分比較 — 2026-09-08
+
+analyze_bandはP2セル中心と軸停留点、compare_refinementは高次Hと
+P1/P2差の正確な軸積分を使用する。既定read_solutionでP2を読める。
+165 tests中163合格・2 skip、標準validate PASS、P1のRF全量/hashは不変。
+次はCase/Project/CLI/GUIへ次数を保持して再実行を可能にする。
+Job取込は保存P2を保持できるが、Case次数がまだ無いため再実行の次数保持は未完。
+Bessel場/ピーク/誤差対DOFの総合証拠を整え、N02全体を受入する。
+
 ## N02の保存P2解析/probe — 2026-09-08
 
 export_radial_probeとcompare_pillboxが高次reader/samplerを使用する。
