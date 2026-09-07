@@ -31,8 +31,6 @@ def mesh_from_dict(case, data):
     Positive, consistently oriented triangles form a connected topological disk
     with a single simple prescribed boundary. No reorientation or tag inference.
     """
-    if case.contour is not None:
-        raise ValueError('general contour external mesh validation is pending G01 integration')
     required = ('schema_version', 'length_unit', 'coordinate_order', 'index_base',
                 'points', 'triangles', 'boundary_edges', 'boundary_tags')
     keys(data, required, required, 'mesh input')

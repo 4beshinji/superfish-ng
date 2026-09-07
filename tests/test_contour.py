@@ -81,3 +81,48 @@ class ContourTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'G02'):solve(case)
         data['geometry']['points_zr_m']=[]
         with self.assertRaisesRegex(ValueError,'unknown'):Case.from_dict(data)
+
+    def test_external_reentrant_mesh_fem_save_and_invalid_boundary(self):
+        import tempfile
+        from pathlib import Path
+        import numpy as np
+        from superfish_ng import Case,solve
+        from superfish_ng.io import save_run
+        from superfish_ng.saved import read_solution
+        # Three rectangular pieces on a half-unit lattice; cells selected by
+        # the explicit rectangular decomposition, not a polygon mesher.
+        cells=[]
+        for iz in range(6):
+            for ir in range(4):
+                if ir==0 or iz>=4 or (iz>=2 and ir>=2):cells.append((iz,ir))
+        points=[];lookup={};triangles=[]
+        def node(z,r):
+            key=(r/2,z/2)
+            if key not in lookup:lookup[key]=len(points);points.append(list(key))
+            return lookup[key]
+        for z,r in cells:
+            a,b,c,d=node(z,r),node(z,r+1),node(z+1,r+1),node(z+1,r)
+            triangles.extend([[a,b,c],[a,c,d]])
+        incidence={}
+        for tri in triangles:
+            for a,b in zip(tri,tri[1:]+tri[:1]):
+                key=tuple(sorted((a,b)));incidence[key]=incidence.get(key,0)+1
+        edges=[list(edge) for edge,count in incidence.items() if count==1]
+        tags=['axis' if points[a][0]==points[b][0]==0 else 'pec' for a,b in edges]
+        data=dict(schema_version=1,length_unit='m',coordinate_order='rz',index_base=0,
+                  points=points,triangles=triangles,boundary_edges=edges,boundary_tags=tags)
+        contour=Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,.5),(0,.5)),('axis',)+('pec',)*7)
+        case=Case((),contour=contour,element_order=2,modes=2)
+        sol=solve(case,mesh_data=data)
+        self.assertLess(max(sol.residuals),1e-7)
+        with tempfile.TemporaryDirectory() as tmp:
+            save_run(case,sol,Path(tmp)/'run')
+            saved=read_solution(Path(tmp)/'run')
+            self.assertEqual(saved.case,case)
+            np.testing.assert_array_equal(saved.u,sol.u)
+        import copy
+        wrong=copy.deepcopy(data)
+        for point in wrong['points']:
+            if point==[2.,2.]:point[0]=2.1
+        with self.assertRaisesRegex(ValueError,'boundary|segment|area'):
+            solve(case,mesh_data=wrong)

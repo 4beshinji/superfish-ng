@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## G01の外部メッシュ接続 — 2026-09-08
+
+mesh_from_dictを一般輪郭へ対応。辺単位タグ/投影区間の完全被覆、面積/接続/軸を検査。
+矩形分割のz折返し外部meshでP2 solve→保存→読込が合格。
+176 tests中174合格・2 skip、標準validate PASS。
+次はプレビューと鏡映Case/FEMをprofile前提から移行し、局所端面タグの制限も整理する。
+自動生成はG02まで未対応。G01全体は未受入。
+
 ## G01のCase v3連携 — 2026-09-08
 
 Case((),contour=...)とv3 contour geometryを追加。profileは偽造せず空、

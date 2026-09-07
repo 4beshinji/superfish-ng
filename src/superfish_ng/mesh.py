@@ -168,23 +168,37 @@ def validate_profile_mesh(case, mesh):
     if (connected_components(graph, directed=False, return_labels=False) != 1
             or len(mesh.points)-edge_count+len(mesh.triangles) != 1):
         raise ValueError("mesh must be a connected disk without holes")
-    boundary = [(0., 0.)]+list(case.profile)+[(case.length, 0.), (0., 0.)]
+    if case.contour is None:
+        boundary = [(0., 0.)]+list(case.profile)+[(case.length, 0.), (0., 0.)]
+    else:
+        boundary = list(case.contour.vertices_zr_m)+[case.contour.vertices_zr_m[0]]
     segments = np.array(list(zip(boundary, boundary[1:])))[:, :, ::-1]
-    scale = max(case.length, max(r for _, r in case.profile))
+    scale = float(np.max(np.abs(segments)))
     tolerance = 128*np.finfo(float).eps*scale
     covered = np.zeros(len(mesh.boundary_edges), dtype=bool)
     ends = mesh.points[mesh.boundary_edges]
-    for a, b in segments:
+    for segment_index, (a, b) in enumerate(segments):
         delta = b-a
         offsets = ends-a
         cross = offsets[:, :, 0]*delta[1]-offsets[:, :, 1]*delta[0]
         fraction = offsets @ delta/(delta @ delta)
-        covered |= np.all((np.abs(cross) <= tolerance*np.linalg.norm(delta)) &
-                          (fraction >= -tolerance/np.linalg.norm(delta)) &
-                          (fraction <= 1+tolerance/np.linalg.norm(delta)), axis=1)
+        matches = np.all((np.abs(cross) <= tolerance*np.linalg.norm(delta)) &
+                         (fraction >= -tolerance/np.linalg.norm(delta)) &
+                         (fraction <= 1+tolerance/np.linalg.norm(delta)), axis=1)
+        covered |= matches
+        if case.contour is not None:
+            if not np.any(matches) or np.any(mesh.boundary_tags[matches] != case.contour.edge_tags[segment_index]):
+                raise ValueError(f'mesh contour segment {segment_index} is missing or has wrong tags')
+            spans = np.sort(fraction[matches], axis=1)
+            spans = spans[np.argsort(spans[:, 0])]
+            eps = tolerance/np.linalg.norm(delta)
+            if (abs(spans[0, 0]) > eps or abs(spans[-1, 1]-1) > eps
+                    or np.any(np.abs(spans[1:, 0]-spans[:-1, 1]) > eps)):
+                raise ValueError(f'mesh contour segment {segment_index} has gaps or overlapping coverage')
     expected_length = np.linalg.norm(segments[:, 1]-segments[:, 0], axis=1).sum()
     actual_length = np.linalg.norm(ends[:, 1]-ends[:, 0], axis=1).sum()
-    expected_area = sum((b[0]-a[0])*(a[1]+b[1])/2 for a, b in zip(case.profile, case.profile[1:]))
+    expected_area = (case.contour.area_m2 if case.contour is not None else
+                     sum((b[0]-a[0])*(a[1]+b[1])/2 for a, b in zip(case.profile, case.profile[1:])))
     _, det, _ = element_geometry(mesh)
     if (not covered.all() or abs(actual_length/expected_length-1) > 1e-10
             or abs(det.sum()/(2*expected_area)-1) > 1e-10):
