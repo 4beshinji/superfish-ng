@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## N02の保存P2描画 — 2026-09-08
+
+plot_modeを検証済みreader/display_fields/高次samplerへ移行。保存P2から
+電場・磁場・軸・radialを描画し、元解とのprobe一致と未完了拒否を検証。
+163 tests中161合格・2 skip、標準validate PASS。PNG目視証拠は
+out/p2-plot-20260908/mode2.png。次はsaved解析/probe・studiesへ高次場を渡し、
+read_solutionの既定拒否を撤去する。Case/CLI次数と総合N02検証も残る。
+
 ## N02のP2保存・明示読込 — 2026-09-08
 
 save_runでP2全係数/4空間配列/field_space宣言を保存。read_solutionの

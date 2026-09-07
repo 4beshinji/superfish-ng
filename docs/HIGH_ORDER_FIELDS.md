@@ -130,3 +130,14 @@ read_solution(..., allow_quadratic=True)は空間を再構成して4配列とDOF
 構造検証で拒否した。out/validation-n02-storage-20260908/validation.json PASS、
 162 tests中160合格・2 skip。円筒/成形セルのmode全量とcase hashは直前と一致。
 N02全体は未完。
+
+### 保存P2解の描画 — 2026-09-08
+
+plot_modeはread_solution(..., allow_quadratic=True)で完了・構造検証してから
+display_fieldsのP2表示分割とFieldSamplerの高次場を使う。軸曲線は元の軸節点と
+401点の評価を併用し、radial/quiverも元P2場を評価する。P1も完了検証を通す。
+保存前の解と描画radial値の完全一致、PNG生成、未完了run拒否を検証。
+out/p2-plot-20260908/mode2.pngを実生成して目視確認した。
+標準証拠はout/validation-n02-plot-20260908/validation.json PASS、
+163 tests中161合格・2 skip。円筒/成形セルのRF全量とhashは直前と一致。
+plotの暫定拒否は撤去済み。savedの解析/probeとstudiesの次数移行は引き続き未完。

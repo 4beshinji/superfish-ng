@@ -1,15 +1,14 @@
 # SPDX-License-Identifier: Apache-2.0
 """Optional scientific plots from saved runs; no second field solver."""
-import json
 from pathlib import Path
-from types import SimpleNamespace
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.tri import Triangulation
 from .constants import MU0
-from .rf import cell_fields
+from .display import display_fields
+from .saved import read_solution
 from .sampling import FieldSampler, radial_extent
 
 
@@ -17,29 +16,29 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     run, out = Path(run), Path(out)
     if out.exists():
         raise ValueError(f'output already exists: {out}')
-    results = json.loads((run/'results.json').read_text())
-    if 'field_space' in results:
-        raise ValueError('P2 plot integration is pending N02; use explicit quadratic VTK export')
+    solution = read_solution(run, allow_quadratic=True)
+    results = solution.results
     if isinstance(mode, bool) or not isinstance(mode, int) or not 1 <= mode <= len(results['modes']):
         raise ValueError('mode must be a valid one-based mode number')
     q = results['modes'][mode-1]
     if mode_label is not None and not isinstance(mode_label, str):
         raise ValueError('mode label must be a string')
     label = f'{mode_label} (mode {mode})' if mode_label else f'Mode {mode}'
-    with np.load(run/'fields.npz', allow_pickle=False) as data:
-        p, t, u = data['points_rz_m'], data['triangles'], data['u_a_per_m2']
-        edges, freqs = data['boundary_edges'], data['frequencies_hz']
-        tags = data['boundary_tags']
+    p, t, nodal_h, (er, ez, _) = display_fields(solution, mode-1)
+    u = solution.u
+    edges, tags = solution.mesh.boundary_edges, solution.mesh.boundary_tags
     zmin, zmax = p[:, 1].min(), p[:, 1].max()
     probe_z = zmin+(zmax-zmin)/4 if probe_z_m is None else float(probe_z_m)
     if not np.isfinite(probe_z) or not zmin <= probe_z <= zmax:
         raise ValueError('probe z must lie within the cavity in metres')
-    sampler = FieldSampler(p, t, u, freqs)
+    sampler = FieldSampler.from_solution(solution)
     radial_points = np.column_stack((np.linspace(0, radial_extent(p, edges, probe_z), 401), np.full(401, probe_z)))
     radial = sampler.evaluate(radial_points, mode-1)
     axis = np.loadtxt(run/f'axis_{mode:03d}.csv', delimiter=',', skiprows=1)
-    solution = SimpleNamespace(mesh=SimpleNamespace(points=p, triangles=t), u=u, frequencies_hz=freqs)
-    er, ez, _ = cell_fields(solution, mode-1)
+    if solution.element_order == 2:
+        z = np.unique(np.r_[axis[:, 0], np.linspace(zmin, zmax, 401)])
+        axial = sampler.evaluate(np.column_stack((np.zeros_like(z), z)), mode-1)
+        axis = np.column_stack((z, axial['Ez_quadrature_V_per_m']))
     mesh = Triangulation(p[:, 1]*1000, p[:, 0]*1000, t)
     fig, axes = plt.subplots(2, 2, figsize=(13, 8), layout='constrained')
     electric = axes[0, 0].tripcolor(mesh, facecolors=np.hypot(er, ez)/1e6, shading='flat', cmap='magma', rasterized=True)
@@ -87,6 +86,8 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     for ax in axes[1]:
         ax.grid(alpha=.25)
     domain = 'input domain only; symmetry loss excluded' if 'boundaries' in results['case'] else 'full closed PEC cavity'
+    if solution.element_order == 2:
+        domain += '; P2 field sampled on display triangles'
     if 'reflection_source_case' in results:
         domain += '; parity-filtered modes'
     fig.suptitle(f"{results['case']['name']} | {label} | {q['frequency_hz']/1e6:.6f} MHz\n"

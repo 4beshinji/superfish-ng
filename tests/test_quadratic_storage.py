@@ -41,3 +41,23 @@ class QuadraticStorageTests(unittest.TestCase):
                 (root/'save_complete.json').write_text(json.dumps(manifest))
                 with self.assertRaisesRegex(ValueError,'quadratic'):
                     read_solution(root,allow_quadratic=True)
+
+    def test_plot_uses_saved_quadratic_field_and_verifies_completion(self):
+        try:
+            from superfish_ng.visualize import plot_mode
+        except ImportError:
+            self.skipTest('optional Matplotlib unavailable')
+        case=Case(((0.,.1),(.2,.1)),nr=4,nz=6,modes=1)
+        solution=solve_p2(case)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)/'run'
+            save_run(case,solution,root)
+            image=Path(tmp)/'plot.png'
+            report=plot_mode(root,image,show_mesh=True)
+            self.assertTrue(image.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'))
+            exact=FieldSampler.from_solution(solution).evaluate(report['radial_points_rz_m'])
+            for key in exact:
+                np.testing.assert_array_equal(report['radial_fields'][key],exact[key])
+            (root/'save_complete.json').unlink()
+            with self.assertRaisesRegex(ValueError,'incomplete'):
+                plot_mode(root,Path(tmp)/'incomplete.png')
