@@ -120,7 +120,7 @@ class Project:
     def from_sections(cls, template, sections, **options):
         """Expand geometry once, then enforce the same serialized contract."""
         raw = deepcopy(template.to_dict() if isinstance(template, Case) else template)
-        raw["schema_version"] = 2
+        raw["schema_version"] = max(raw["schema_version"], 2)
         raw["geometry"] = assemble_geometry(sections)
         return cls.from_dict(
             {"project_version": 1, "case": raw, "sections": sections, **options}

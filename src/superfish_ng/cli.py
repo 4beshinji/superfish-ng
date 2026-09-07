@@ -16,6 +16,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser('capabilities', help='print currently supported physics and units as JSON')
+    migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
+    migrate.add_argument('case', type=Path)
+    migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
     run = sub.add_parser("solve", help="solve a JSON case and export RF quantities/fields")
     run.add_argument("case", type=Path)
     run.add_argument("--mesh", type=Path, help="explicit SI/rz tagged triangle JSON; replaces case mesh generation")
@@ -54,7 +58,15 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command == "gui":
+        if args.command == 'capabilities':
+            from .model import capabilities
+            print(json.dumps(capabilities(), indent=2, allow_nan=False))
+        elif args.command == 'migrate-case':
+            from .model import upgrade_case
+            data = upgrade_case(Case.load(args.case).to_dict())
+            with args.out.open('x', encoding='utf-8') as stream:
+                stream.write(json.dumps(data, indent=2, allow_nan=False) + '\n')
+        elif args.command == "gui":
             from .gui import serve
             serve(args.workspace, args.port, not args.no_browser)
         elif args.command == "study":

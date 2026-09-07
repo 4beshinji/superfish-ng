@@ -7,6 +7,7 @@ let resultRequest = 0,
   plotRequest = 0,
   geometryOriginal = null,
   geometryDirty = true,
+  explicitModel = null,
   selectedSection = null;
 let sections = [],
   assemblyActive = false,
@@ -204,6 +205,10 @@ function collect() {
     display_length_unit: "mm",
   };
   if (assemblyActive) p.sections = structuredClone(sections);
+  if (explicitModel !== null) {
+    p.case.schema_version = 3;
+    p.case.model = structuredClone(explicitModel);
+  }
   return p;
 }
 function setGeometry(g) {
@@ -229,6 +234,7 @@ function setGeometry(g) {
 }
 function applyProject(p) {
   const c = p.case;
+  explicitModel = c.model ? structuredClone(c.model) : null;
   setGeometry(c.geometry);
   $("name").value = c.name;
   for (const [id, v] of Object.entries({

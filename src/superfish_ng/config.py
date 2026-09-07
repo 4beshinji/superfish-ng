@@ -4,6 +4,10 @@ from dataclasses import dataclass
 import json
 import math
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .model import Model
 
 
 def positive(value, name):
@@ -48,8 +52,14 @@ class Case:
     boundary_max_edge_m: float | None = None
     corner_max_edge_m: float | None = None
     corner_radius_m: float | None = None
+    model: 'Model | None' = None
 
     def __post_init__(self):
+        if self.model is not None:
+            from .model import Model
+            if not isinstance(self.model, Model):
+                raise ValueError('model must be a validated Model instance or None for legacy input')
+            self.model.__post_init__()
         if not isinstance(self.name, str):
             raise ValueError("name must be a string")
         if len(self.profile) < 2:
@@ -120,10 +130,18 @@ class Case:
 
     @classmethod
     def from_dict(cls, data):
-        keys(data, ["schema_version", "name", "geometry", "mesh", "solver", "rf", "boundaries"],
+        keys(data, ["schema_version", "name", "geometry", "mesh", "solver", "rf", "boundaries", "model"],
              ["schema_version", "geometry"], "case")
-        if type(data["schema_version"]) is not int or data["schema_version"] not in (1, 2):
-            raise ValueError("only schema_version 1 and 2 are supported")
+        if type(data["schema_version"]) is not int or data["schema_version"] not in (1, 2, 3):
+            raise ValueError("only schema_version 1, 2 and 3 are supported")
+        model = None
+        if data['schema_version'] == 3:
+            from .model import Model
+            if 'model' not in data:
+                raise ValueError('schema_version 3 requires an explicit model')
+            model = Model.from_dict(data['model'])
+        elif 'model' in data:
+            raise ValueError('explicit model requires schema_version 3')
         if data["schema_version"] == 1 and "boundaries" in data:
             raise ValueError("explicit boundaries require schema_version 2")
         boundaries = data.get("boundaries", {})
@@ -136,7 +154,7 @@ class Case:
             radius = positive(g["radius_m"], "radius_m")
             profile = ((0.0, radius), (positive(g["length_m"], "length_m"), radius))
         elif g.get("type") in ("profile", "stepped_profile", "arc_profile"):
-            if g["type"] != "profile" and data["schema_version"] != 2:
+            if g["type"] != "profile" and data["schema_version"] < 2:
                 raise ValueError("stepped_profile and arc_profile require schema_version 2")
             arc_keys = ["arcs", "chord_tolerance_m"] if g["type"] == 'arc_profile' else []
             keys(g, ["type", "points_zr_m"]+arc_keys, ["type", "points_zr_m"]+arc_keys, "geometry")
@@ -155,17 +173,17 @@ class Case:
                                 'arc_chord_tolerance_m': g['chord_tolerance_m']}
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
         keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m"], [], "mesh")
-        if any(k in mesh for k in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m')) and data['schema_version'] != 2:
+        if any(k in mesh for k in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m')) and data['schema_version'] < 2:
             raise ValueError('physical mesh sizes require schema_version 2')
         for k in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m'):
             if k in mesh:
                 positive(mesh[k], k)
-        if 'triangulation' in mesh and data['schema_version'] != 2:
+        if 'triangulation' in mesh and data['schema_version'] < 2:
             raise ValueError('explicit triangulation requires schema_version 2')
         keys(solver, ["modes"], [], "solver")
         keys(rf, ["beta", "conductivity_s_per_m", "normalization_j"], [], "rf")
         return cls(profile=profile, geometry_type="profile" if g["type"] == "pillbox" else g['type'],
-                   name=data.get("name", "cavity"), **mesh, **solver, **rf, **boundaries, **geometry_options)
+                   name=data.get("name", "cavity"), model=model, **mesh, **solver, **rf, **boundaries, **geometry_options)
 
     @classmethod
     def load(cls, path):
@@ -198,4 +216,6 @@ class Case:
             if getattr(self, key) is not None:
                 data['schema_version'] = 2
                 data['mesh'][key] = getattr(self, key)
+        if self.model is not None:
+            data.update(schema_version=3, model=self.model.to_dict())
         return data

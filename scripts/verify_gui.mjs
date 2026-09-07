@@ -185,6 +185,20 @@ try {
   await call("Page.navigate", { url: args["--url"] }, sessionId);
   await wait('document.querySelector("#shape polygon")');
   report.startup_ms = performance.now() - begin;
+  let expectedModel;
+  if (args["--model-case"]) {
+    const filename = resolve(args["--model-case"]);
+    expectedModel = JSON.parse(await readFile(filename, "utf8")).model;
+    if (!expectedModel) throw Error("--model-case requires a v3 model");
+    const { root } = await call("DOM.getDocument", {}, sessionId);
+    const { nodeId } = await call("DOM.querySelector", {
+      nodeId: root.nodeId, selector: "#open",
+    }, sessionId);
+    await call("DOM.setFileInputFiles", { nodeId, files: [filename] }, sessionId);
+    await wait('collect().case.schema_version === 3');
+    if (!isDeepStrictEqual(await ev("collect().case.model"), expectedModel))
+      throw Error("GUI import lost the explicit physics model");
+  }
   await fill("#radius", 65);
   await fill("#length", 95);
   await fill("#modes", 2);
@@ -221,6 +235,14 @@ try {
   });
   await fill("#radius", 65);
   await click("#preview");
+  if (expectedModel) {
+    for (const expression of ["collect().case", "currentResult.result.case"]) {
+      const actual = await ev(expression);
+      if (actual.schema_version !== 3 || !isDeepStrictEqual(actual.model, expectedModel))
+        throw Error("GUI editing or FEM persistence lost the explicit model");
+    }
+    report.checks.push({ operation: "v3 model import, edit, FEM and result persistence", passed: true });
+  }
   if (args["--io"] === "yes") {
     const downloaded = async (name) => {
       for (let i = 0; i < 150; i++) {

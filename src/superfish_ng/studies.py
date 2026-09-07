@@ -2,7 +2,7 @@
 """Explicit parameter studies and same-geometry refinement diagnostics."""
 
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 import math
 from pathlib import Path
@@ -138,7 +138,7 @@ class Study:
                         "study parameter does not exist in the saved project"
                     ) from exc
                 if parts[0] == "sections":
-                    raw["case"]["schema_version"] = 2
+                    raw["case"]["schema_version"] = max(raw["case"]["schema_version"], 2)
                     raw["case"]["geometry"] = assemble_geometry(raw["sections"])
                 elif "sections" in raw and parts[:2] == ["case", "geometry"]:
                     # Direct geometry edits intentionally detach its editing recipe.
@@ -148,7 +148,11 @@ class Study:
 
 
 def _physical_spec(case):
+    from .model import Model
     raw = case.to_dict()
+    # Schema migration and names of the single interior/vacuum material do not
+    # alter physics. Retain the actual physics declaration in the comparison.
+    raw['model'] = replace(case.model or Model(), material_id='vacuum', region_id='cavity').to_dict()
     raw.pop("mesh")
     raw.pop("name")
     raw.pop("schema_version")
