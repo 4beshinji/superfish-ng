@@ -12,6 +12,81 @@ def _checked_evaluation(points,tangent,curvature):
 
 
 @dataclass(frozen=True)
+class LineSegment:
+    """Directed straight geometry primitive in (z,r)."""
+    start_zr_m: tuple
+    end_zr_m: tuple
+
+    def __post_init__(self):
+        for key in ('start_zr_m','end_zr_m'):
+            value = getattr(self,key)
+            if (not isinstance(value,(tuple,list)) or len(value)!=2
+                    or any(type(x) not in (int,float) or not math.isfinite(x) for x in value)):
+                raise ValueError(f'{key} requires two finite numbers')
+            object.__setattr__(self,key,tuple(float(x) for x in value))
+        delta = np.asarray(self.end_zr_m)-self.start_zr_m
+        length = math.hypot(*delta)
+        if not math.isfinite(length) or length<=0:
+            raise ValueError('line requires distinct endpoints and a finite length')
+
+    def evaluate(self,fraction):
+        raw = np.asarray(fraction)
+        if raw.dtype.kind not in 'iuf' or not np.all(np.isfinite(raw)) or np.any((raw<0)|(raw>1)):
+            raise ValueError('line parameter fraction must be finite in [0,1]')
+        delta = np.asarray(self.end_zr_m)-self.start_zr_m
+        tangent = delta/math.hypot(*delta)
+        return dict(points_zr_m=(1-raw[...,None])*self.start_zr_m+raw[...,None]*self.end_zr_m,
+                    tangent_zr=np.broadcast_to(tangent,raw.shape+(2,)),
+                    curvature_per_m=np.zeros(raw.shape))
+
+    @property
+    def minimum_radius_m(self):
+        return math.inf  # Zero curvature; this is not an unmeasured radius.
+
+    @property
+    def signed_line_area_m2(self):
+        a,b = self.start_zr_m,self.end_zr_m
+        return (a[0]*b[1]-a[1]*b[0])/2
+
+    def linearize(self,tolerance_m,*,max_segments=20000):
+        if type(tolerance_m) not in (int,float) or not math.isfinite(tolerance_m) or tolerance_m<=0:
+            raise ValueError('line chord tolerance must be finite and positive')
+        if type(max_segments) is not int or max_segments<1:
+            raise ValueError('max_segments must be a positive integer')
+        return np.asarray((self.start_zr_m,self.end_zr_m))
+
+
+def check_curve_join(first,second,*,position_tolerance_m,angle_tolerance_rad=1e-8,
+                     require_tangent=True):
+    """Check a directed end-to-start join without snapping either primitive.
+
+    Position tolerance is explicit in SI. Tangency means aligned oriented
+    unit vectors, not merely parallel lines. Curvature continuity is not implied.
+    """
+    if not isinstance(first,(LineSegment,EllipseArc,HyperbolaArc)) or not isinstance(second,(LineSegment,EllipseArc,HyperbolaArc)):
+        raise ValueError('curve join requires supported geometry primitives')
+    if (type(position_tolerance_m) not in (int,float) or not math.isfinite(position_tolerance_m)
+            or position_tolerance_m<0):
+        raise ValueError('position_tolerance_m must be finite and nonnegative')
+    if (type(angle_tolerance_rad) not in (int,float) or not math.isfinite(angle_tolerance_rad)
+            or not 0<=angle_tolerance_rad<math.pi/2):
+        raise ValueError('angle_tolerance_rad must be finite in [0, pi/2)')
+    if type(require_tangent) is not bool:
+        raise ValueError('require_tangent must be boolean')
+    a,b = first.evaluate(1.),second.evaluate(0.)
+    delta = a['points_zr_m']-b['points_zr_m']
+    gap = math.hypot(*delta)
+    u,v = a['tangent_zr'],b['tangent_zr']
+    angle = math.atan2(abs(u[0]*v[1]-u[1]*v[0]),float(np.dot(u,v)))
+    if gap>position_tolerance_m:
+        raise ValueError(f'curve endpoint gap {gap:.9g} m exceeds {position_tolerance_m:.9g} m')
+    if require_tangent and angle>angle_tolerance_rad:
+        raise ValueError(f'curve tangent angle {angle:.9g} rad exceeds {angle_tolerance_rad:.9g} rad')
+    return dict(endpoint_gap_m=gap,tangent_angle_rad=angle,
+                tangent_continuous=angle<=angle_tolerance_rad)
+
+
+@dataclass(frozen=True)
 class EllipseArc:
     """Rotated ellipse arc in (z,r), parameterized by fraction in [0,1].
 

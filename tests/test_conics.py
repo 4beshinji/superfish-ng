@@ -3,6 +3,50 @@ import math
 import unittest
 import numpy as np
 from superfish_ng.conics import EllipseArc, HyperbolaArc
+from superfish_ng.conics import LineSegment, check_curve_join
+
+
+class CurveJoinTests(unittest.TestCase):
+    def test_line_ellipse_and_hyperbola_oriented_tangency(self):
+        ellipse = EllipseArc((0,0),(3,2),0,math.pi/2)
+        incoming = LineSegment((3,-1),(3,0))
+        outgoing = LineSegment((0,2),(-1,2))
+        for first,second in ((incoming,ellipse),(ellipse,outgoing)):
+            result = check_curve_join(first,second,position_tolerance_m=1e-14)
+            self.assertTrue(result['tangent_continuous'])
+            self.assertLess(result['endpoint_gap_m'],1e-14)
+        hyperbola = HyperbolaArc((0,-1),(3,2),0,1,rotation_rad=math.pi/2)
+        self.assertTrue(check_curve_join(ellipse,hyperbola,position_tolerance_m=1e-14)['tangent_continuous'])
+        # Tangent continuity does not require matching curvature with a line.
+        self.assertTrue(math.isinf(incoming.minimum_radius_m))
+        self.assertEqual(incoming.evaluate(.5)['curvature_per_m'],0)
+
+    def test_gap_reversal_and_corner_are_distinct_without_repair(self):
+        first = LineSegment((0,0),(1,0))
+        reverse = LineSegment((1,0),(0,0))
+        with self.assertRaisesRegex(ValueError,'tangent angle'):
+            check_curve_join(first,reverse,position_tolerance_m=0)
+        gap = LineSegment((1.001,0),(2,0))
+        before = gap.start_zr_m
+        with self.assertRaisesRegex(ValueError,'endpoint gap'):
+            check_curve_join(first,gap,position_tolerance_m=1e-4)
+        check_curve_join(first,gap,position_tolerance_m=.002)
+        self.assertEqual(gap.start_zr_m,before)
+        corner = LineSegment((1,0),(1,1))
+        report = check_curve_join(first,corner,position_tolerance_m=0,require_tangent=False)
+        self.assertFalse(report['tangent_continuous'])
+        self.assertAlmostEqual(report['tangent_angle_rad'],math.pi/2)
+
+    def test_line_area_and_strict_join_controls(self):
+        points = ((0,0),(3,0),(3,2),(0,2))
+        edges = [LineSegment(a,b) for a,b in zip(points,points[1:]+points[:1])]
+        self.assertEqual(sum(e.signed_line_area_m2 for e in edges),6)
+        for bad in ((0,0),(float('nan'),1),(True,1)):
+            with self.assertRaises(ValueError):LineSegment((0,0),bad)
+        for kwargs in ({'position_tolerance_m':True},{'position_tolerance_m':-1},
+                       {'position_tolerance_m':0,'angle_tolerance_rad':math.pi},
+                       {'position_tolerance_m':0,'require_tangent':1}):
+            with self.assertRaises(ValueError):check_curve_join(edges[0],edges[1],**kwargs)
 
 
 class HyperbolaArcTests(unittest.TestCase):
