@@ -141,3 +141,14 @@ out/p2-plot-20260908/mode2.pngを実生成して目視確認した。
 標準証拠はout/validation-n02-plot-20260908/validation.json PASS、
 163 tests中161合格・2 skip。円筒/成形セルのRF全量とhashは直前と一致。
 plotの暫定拒否は撤去済み。savedの解析/probeとstudiesの次数移行は引き続き未完。
+
+### 保存済みP2のprobeと円筒解析比較 — 2026-09-08
+
+export_radial_probe/compare_pillboxを明示高次readerとfrom_solutionへ移行した。
+P2の軸場L2誤差は元の軸辺ごとに8点Gaussで高次場と独立cos場を比較する。
+頂点や中点を直線で結んだ場を誤差評価へ流用しない。P1の評価経路は保持。
+保存probe全成分が元解と完全一致。円筒3モードの場同定はTM010/011/012となり、
+周波数・軸場・RFゲートがPASS。表面ピークはこのゲートに含めない。
+ローカル証拠out/validation-n02-analysis-20260908/validation.json PASS。
+164 tests中162合格・2 skip、円筒/成形セルのRF全量とhashは直前と一致。
+次はバンド解析/studiesの高次軸評価と追跡を移行する。N02全体は未完。

@@ -246,7 +246,7 @@ def export_radial_probe(directory, out, z_m, mode=1):
     from .sampling import FieldSampler, radial_extent
     from .constants import MU0
 
-    saved = read_solution(directory)
+    saved = read_solution(directory, allow_quadratic=True)
     if type(mode) is not int or not 1 <= mode <= saved.case.modes:
         raise ValueError("probe mode must be a valid one-based integer")
     if (
@@ -257,9 +257,7 @@ def export_radial_probe(directory, out, z_m, mode=1):
         raise ValueError("probe z must lie inside the saved input domain in metres")
     radius = radial_extent(saved.mesh.points, saved.arrays["boundary_edges"], z_m)
     positions = np.column_stack((np.linspace(0, radius, 401), np.full(401, z_m)))
-    sampler = FieldSampler(
-        saved.mesh.points, saved.mesh.triangles, saved.u, saved.frequencies_hz
-    )
+    sampler = FieldSampler.from_solution(saved)
     fields = sampler.evaluate(positions, mode - 1)
     columns = np.column_stack(
         (
@@ -304,7 +302,7 @@ def compare_pillbox(directory):
     from .analytic import pillbox_spectrum, pillbox_tm_mode
     from .sampling import FieldSampler
 
-    saved = read_solution(directory)
+    saved = read_solution(directory, allow_quadratic=True)
     case = saved.case
     if (
         case.arcs
@@ -321,9 +319,7 @@ def compare_pillbox(directory):
     indices = np.linspace(0, len(vertices) - 1, min(4096, len(vertices)), dtype=int)
     points = vertices[indices].mean(axis=1)
     weights = det[indices] * points[:, 0]
-    sampler = FieldSampler(
-        saved.mesh.points, saved.mesh.triangles, saved.u, saved.frequencies_hz
-    )
+    sampler = FieldSampler.from_solution(saved)
     actual = np.column_stack(
         [sampler.evaluate(points, i)["Hphi_A_per_m"] for i in range(case.modes)]
     )
@@ -357,6 +353,14 @@ def compare_pillbox(directory):
     result = []
     axis = saved.arrays["axis_nodes"]
     z = saved.mesh.points[axis, 1]
+    axis_weights = None
+    if saved.element_order == 2:
+        # Integrate on each original axis edge, not a linear interpolation of P2 nodes.
+        qg, wg = np.polynomial.legendre.leggauss(8)
+        ends = saved.mesh.points[saved.mesh.boundary_edges[saved.mesh.boundary_tags == 'axis'], 1]
+        lo, hi = ends.min(axis=1), ends.max(axis=1)
+        z = ((lo+hi)[:, None]/2+(hi-lo)[:, None]*qg/2).ravel()
+        axis_weights = ((hi-lo)[:, None]*wg/2).ravel()
     for i, j in zip(rows, columns):
         ref = references[j]
         f, label, n, p = candidates[j]
@@ -384,14 +388,15 @@ def compare_pillbox(directory):
             for key in compare_keys
         }
         numerical = 2 * saved.u[axis, i] / (TAU * EPS0 * saved.frequencies_hz[i])
+        if saved.element_order == 2:
+            numerical = sampler.evaluate(np.column_stack((np.zeros_like(z), z)), int(i))['Ez_quadrature_V_per_m']
         reference = ref["e0_v_per_m"] * np.cos(p * np.pi * z / case.length)
         if signed[i, j] < 0:
             numerical = -numerical
-        error = float(
-            np.sqrt(
-                trapezoid((numerical - reference) ** 2, z) / trapezoid(reference**2, z)
-            )
-        )
+        if axis_weights is None:
+            error = float(np.sqrt(trapezoid((numerical-reference)**2, z)/trapezoid(reference**2, z)))
+        else:
+            error = float(np.sqrt(np.dot(axis_weights, (numerical-reference)**2)/np.dot(axis_weights, reference**2)))
         gates = {
             "frequency": errors["frequency_hz"] < 0.001,
             "axis_field": error < 0.01,
@@ -421,5 +426,5 @@ def compare_pillbox(directory):
         "reference": "independent full PEC pillbox TM0np analysis; no solver correction",
         "case_sha256": saved.results["case_sha256"],
         "modes": result,
-        "surface_field": "not included in the frequency/field/RF gates; P1 estimates remain separate",
+        "surface_field": f"not included in the frequency/field/RF gates; P{saved.element_order} estimates remain separate",
     }

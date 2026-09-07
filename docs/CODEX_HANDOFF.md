@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## N02の保存P2解析/probe — 2026-09-08
+
+export_radial_probeとcompare_pillboxが高次reader/samplerを使用する。
+円筒解析の軸L2はP2軸辺の8点Gauss評価へ対応。3モード同定・全ゲート、
+元解とのCSV場一致を検証。164 tests中162合格・2 skip、標準validate PASS。
+次はanalyze_bandとstudiesの高次場/軸評価を移行し、既定読込の暫定拒否を撤去。
+Case/CLI次数指定と総合Bessel/ピーク/DOF比較も残る。
+
 ## N02の保存P2描画 — 2026-09-08
 
 plot_modeを検証済みreader/display_fields/高次samplerへ移行。保存P2から

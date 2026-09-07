@@ -61,3 +61,21 @@ class QuadraticStorageTests(unittest.TestCase):
             (root/'save_complete.json').unlink()
             with self.assertRaisesRegex(ValueError,'incomplete'):
                 plot_mode(root,Path(tmp)/'incomplete.png')
+
+    def test_saved_probe_and_analytic_mode_comparison_use_p2(self):
+        from superfish_ng.saved import export_radial_probe, compare_pillbox
+        case=Case(((0.,.1),(.2,.1)),nr=8,nz=16,modes=3)
+        solution=solve_p2(case)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)/'run'
+            save_run(case,solution,root)
+            path=Path(tmp)/'probe.csv'
+            export_radial_probe(root,path,.073,mode=2)
+            data=np.loadtxt(path,delimiter=',',skiprows=1)
+            actual=FieldSampler.from_solution(solution).evaluate(data[:,:2],1)
+            for column,key in enumerate(['Er_quadrature_V_per_m','Ez_quadrature_V_per_m','Hphi_A_per_m'],2):
+                np.testing.assert_array_equal(data[:,column],actual[key])
+            report=compare_pillbox(root)
+            self.assertEqual([row['label'] for row in report['modes']],['TM010','TM011','TM012'])
+            self.assertTrue(all(row['status']=='PASS' for row in report['modes']),report)
+            self.assertTrue(all(row['axis_relative_l2']<.002 for row in report['modes']),report)
