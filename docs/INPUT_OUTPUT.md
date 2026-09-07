@@ -1,8 +1,8 @@
-# 入出力仕様 v1/v2
+# 入出力仕様 v1/v2/v3
 
 ## 入力
 
-UTF-8 JSON。トップレベル `schema_version`（1または2）とgeometryは必須。
+UTF-8 JSON。トップレベル `schema_version`（1、2または3）とgeometryは必須。
 未知キー・重複JSONキー・不正な数値・未対応geometryを拒否する。
 材料や境界を入力しなければ自動推定するのではなく、v1の仕様が真空/PECに固定されている。
 `epsilon_r` や `boundary:PMC` などを追加するとエラーになる。
@@ -33,6 +33,24 @@ zは0から厳密に増加し、全rは正。点間のRは線形で、両端にP
 
 極端なアスペクト比・巨大/微小寸法・過大な節点数での数値安定性は保証しない。
 v1の従来入力・既定PEC境界・canonical hashは維持する。
+
+### v3: 明示した物理・材料・領域
+
+v3では `model` が必須。形式・対応能力・移行契約は [MODEL_CONTRACT.md](MODEL_CONTRACT.md)。
+現時点で受理するのは真空・軸対称m=0 TM・単一interior領域。
+v1/v2の入力は通常の読込では移行せず、canonical hashを維持する。
+
+```bash
+superfish-ng capabilities
+superfish-ng migrate-case examples/pillbox.json --out out/pillbox-v3.json
+superfish-ng solve out/pillbox-v3.json --out out/pillbox-v3-run
+```
+
+移行先の親ディレクトリは先に用意し、新しいファイル名を指定する。
+Pythonでは `superfish_ng.model.upgrade_case(data)` または
+`Case(..., model=Model())` を用いる（Modelは `superfish_ng.model` からimport）。
+v3へ移行したcaseのhashは版・modelを含むため変わるが、同じメッシュの解とRF量は同じ。
+Project/Study/GUI/鏡映/保存再読込は明示modelを保持する。
 
 ### v2: 平坦なz端面の対称条件
 

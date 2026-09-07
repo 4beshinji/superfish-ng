@@ -1,4 +1,7 @@
-# 物理・数値仕様 — canonical specification v2（v1入力互換）
+# 物理・数値仕様 — canonical specification v2（v1/v2/v3入力）
+
+v3の明示物理モデルは [MODEL_CONTRACT.md](MODEL_CONTRACT.md)。本書の真空TM物理・
+数式は変更せず、入力の版と物理モデルの版を区別する。
 
 本ファイルの式はMaxwell方程式から今回の実装用に導出したものです。
 公開の背景資料は [R1–R5, R11](REFERENCES.md)。旧SUPERFISHのアルゴリズムの転記ではありません。

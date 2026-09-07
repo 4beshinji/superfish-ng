@@ -76,3 +76,41 @@ GUIで追加物理を編集する機能は各O02の受入対象。
 
 仕様追加は独立設計。新しい外部文献・コード・依存は使用しない。
 実行結果は本書末尾へ追記する。C00全体の調査完了とは独立したC01の受入である。
+
+## C01.S/I/V受入 — 2026-09-07
+
+仕様コミット `909e1ef`。新規8テストはtest_model_contract.py。
+初回はv3未受理・model未実装で失敗を確認し、途中で版/領域名だけの変更を
+細分比較が別物理とみなす失敗も確認した。物理種別は比較に残し、識別名を正規化して修正。
+数値許容差の緩和はない。
+
+| 軸 | 結果と証拠 |
+|---|---|
+| F | PASS: capabilitiesは実装済み真空TMのみ。異なる物理・材料・領域は拒否 |
+| I | PASS: 固定v1/v2 hash、全既存例題の移行/往復、v3冪等性、欠落/未知/重複/不正材料参照の拒否 |
+| O | PASS: v3保存再読込、外部meshと鏡映、Project/Studyでmodelを保持。元入力と既存出力は上書きしない |
+| N | PASS: 3種の端面条件で旧/新caseの固有周波数・u・全RF量が完全一致。標準解析検証PASS |
+| W | PASS: CLI移行/計算/拒否と、Chromeでv3ファイル読込→寸法編集→計算→Project/Case書出→再読込 |
+
+最終数値検証は `out/validation-c01-final-20260907/validation.json`。
+122 unittest中120合格、NGSolve参照環境専用2 skip。
+直前の `out/validation-mesh-input-20260907/` と円筒6モード・shaped_cellの
+全modes辞書が完全一致し、周波数・RQ・G・Q0の絶対差はゼロ、case hashも同じ。
+seed基準は上書きしていない。
+
+最終ブラウザー証拠は `out/gui-c01-browser-final-20260907/report.json`。
+Chrome 152.0.7977.82、8操作検査PASS、外部リクエストなし、実行中のソース変更なし。
+検証後にレポートの全source hashが現在の製品コードと一致することも確認した。
+これは自動操作の受入で、人の使いやすさ評価や他OSの実測ではない。
+
+再現手順（出力は毎回新しい名前、GUIは別端末で起動）:
+
+```bash
+OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate.py --out out/validation-c01-new
+.venv/bin/python -m superfish_ng migrate-case examples/pillbox.json --out /tmp/c01-model-new.json
+.venv/bin/python -m superfish_ng gui --workspace out/gui-c01-new --no-browser
+node scripts/verify_gui.mjs --url '表示されたlaunch URL' --out out/gui-c01-browser-new --model-case /tmp/c01-model-new.json --io yes
+```
+
+C01は後続物理を厳密に拒否する共通契約として完了。K09〜12/K24〜28の物理実装や
+旧入力互換を完了としたものではない。C00の未確認行、C02の入力変換は継続する。

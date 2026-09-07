@@ -1,5 +1,10 @@
 # 実装・検証の現状
 
+2026-09-07追記: C01の[v3モデル契約](MODEL_CONTRACT.md)を実装・受入済み。
+明示physics/座標/単一真空材料・領域、能力表、v1/v2からの移行と旧hash維持、
+Project/Study/GUIへの保持を追加。122テスト中120合格・2 skip、標準validate/GUI操作PASS。
+以下の既存物理範囲は変わらず、追加物理は未受理。
+
 確認日: 2026-09-07、製品コードの基準 `1f5cd84`。コードと受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 古い記録の `/home/sin/code/superfish` は当時の場所で、今回移動やルートの作り直しは行わない。

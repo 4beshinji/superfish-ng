@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## C01共通契約の受入 — 2026-09-07
+
+C01.S/I/V完了。仕様・実行証拠・再現はMODEL_CONTRACT.md。
+v3 modelとcapabilities/migrate-caseを実装し、v1/v2のhashと既存解を保持した。
+Project/Study/GUI/鏡映/外部meshの保存でmodelを失わず、追加物理は計算前に拒否する。
+122 unittest中120合格・参照環境専用2 skip、標準validateとChrome 8操作検査PASS。
+最終証拠はout/validation-c01-final-20260907、out/gui-c01-browser-final-20260907。
+次はC02.SでDXのNG指定への写像、FREQ等の探索指定、未指定導電率/正規化の扱いを
+明記し、確認済みAF部分集合のstrict読込と変換記録を実装する。C00調査は未完了のまま継続。
+
 ## 互換開発goal開始 — 2026-09-07
 
 ユーザーが32対応項目・33親課題の完遂をgoalに指定。作業checkoutは

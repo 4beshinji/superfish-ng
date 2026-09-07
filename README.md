@@ -98,6 +98,9 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 2026-09-07: [NGSolveとの独立照合](docs/INDEPENDENT_COMPARISON.md)を追加し、
 円筒/円錐台の両側収束と周波数・RF量・内部磁場を検証しました。
 [境界タグ付き非構造メッシュ入力](docs/MESH_INPUT.md)もCLI/APIで利用できます。
+明示した物理・座標・単一真空材料/領域を持つ[v3入力](docs/MODEL_CONTRACT.md)を追加しました。
+`superfish-ng capabilities`で対応範囲、`migrate-case`で既存入力からの明示移行を利用できます。
+旧v1/v2のhashと数値結果を維持し、追加物理は未実装として拒否します。
 `docs/VALIDATION_REPORT.md` に数値と解釈をまとめています。
 今回の環境での実行結果と配布処理の変更は [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md) に記録しています。
 

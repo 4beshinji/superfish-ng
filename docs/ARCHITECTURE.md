@@ -1,10 +1,22 @@
 # アーキテクチャと拡張判断
 
+## ADR-013: 共通物理契約は明示移行で導入する
+
+2026-09-07、C01。既存v1/v2のcanonical表現へデフォルト項目を追加すると
+保存結果のhash検証が壊れるため、model付きcaseだけをv3で保存する。
+model.pyで物理/座標/材料/領域を厳密検査し、現時点では単一真空TMのみ受理する。
+新たな物理種別を受理する変更は、そのソルバー・場復元・保存版・独立検証と同時に行う。
+材料・領域idは不変値で保持するが、細分比較では名称だけの変更を物理差と解釈しない。
+Project/Studyの幾何再生成で版を下げず、GUIの読込・編集でもmodelを保持する。
+既存Case/FEM/RFと出力場形式を継続使用し、新規外部依存は追加しない。
+仕様・再現・受入は [MODEL_CONTRACT.md](MODEL_CONTRACT.md)。
+
 ## 現在の責務
 
 | モジュール | 責務 | 依存先 |
 |---|---|---|
-| config.py | strict case v1/v2、単位/幾何/対称境界制約、canonical入力 | 標準ライブラリ |
+| config.py | strict case v1/v2/v3、単位/幾何/対称境界制約、canonical入力 | 標準ライブラリ、model.py（v3） |
+| model.py | 明示物理・単一真空材料/領域、能力表、明示v3移行 | 標準ライブラリ、config.py |
 | mesh.py | profile/段差から三角形、境界タグ、要素勾配・トポロジー検査 | NumPy、SciPy sparse |
 | fem.py | Hφ=r u のK,Mを組み立て | mesh、SciPy sparse |
 | solver.py | 平衡化、固有値、残差、直交性、エネルギー正規化 | fem、ARPACK |

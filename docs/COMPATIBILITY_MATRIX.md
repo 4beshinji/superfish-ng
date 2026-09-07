@@ -5,6 +5,8 @@
 このv0を [COMPATIBILITY_PLAN.md](COMPATIBILITY_PLAN.md) のC00で版付きの受入集合へ固定する。
 調査開始後の版・変数・全32項目の受入軸は [COMPATIBILITY_BASELINE.md](COMPATIBILITY_BASELINE.md)。
 C00.Vと全必須集合の確定は継続中。
+C01の[v3共通契約](MODEL_CONTRACT.md)は受入済み。これは下表の未実装物理や
+旧入力の互換受入を意味しない。真空TMだけを受理し、他の物理は厳密に拒否する。
 
 ## 対象版・証拠
 
