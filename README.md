@@ -179,5 +179,5 @@ P2の場・RF・保存・表示の仕様と検証は[高次場](docs/HIGH_ORDER_
 v3の一般輪郭`contour`はz折返しを含む単一外周を表せます。`mesh.contour_mesh`で
 最大辺長・品質・停止上限を明示して自動生成するか、検証済み外部メッシュを渡します。
 例は `python -m superfish_ng solve examples/contour_folded.json --out out/contour-new`。
-この粗い合成例は操作例であり精度基準ではありません。GUI設定欄の実ブラウザー検証は進行中です。仕様と制限は
+この粗い合成例は操作例であり精度基準ではありません。GUIでは設定編集・自動計算・保存結果表示に対応します。仕様と制限は
 [一般輪郭](docs/GENERAL_CONTOUR.md)を参照してください。

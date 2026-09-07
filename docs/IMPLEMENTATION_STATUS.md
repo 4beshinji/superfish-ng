@@ -18,7 +18,7 @@ Project/Study/GUIへの保持を追加。122テスト中120合格・2 skip、標
 | 分野 | 実装・入口 | 制約 | 証拠 |
 |---|---|---|---|
 | 物理 | 真空、軸連結m=0 TM、PECまたは平坦z端の電気/磁気対称 | TE、平面RF、内導体、材料領域、静的場は未実装 | [PHYSICS.md](PHYSICS.md)、config.py/solver.py/symmetry.py |
-| 幾何 | 折れ線、段差、短円弧、反復/端部組立、z折返し単一輪郭 | 一般輪郭は明示品質設定で自動meshまたは外部mesh。GUI実操作は検証中。楕円・穴・任意CADなし | GENERAL_MESH.md、geometry.py/project.py、test_contour_mesh_controls.py |
+| 幾何 | 折れ線、段差、短円弧、反復/端部組立、z折返し単一輪郭 | 一般輪郭は明示品質設定で自動meshまたは外部mesh。GUI実操作検証済み。楕円・穴・任意CADなし | GENERAL_MESH.md、geometry.py/project.py、test_contour_mesh_controls.py |
 | メッシュ | P1/P2場・直線三角形、局所実長細分、外部タグ付きJSON | 外部メッシュもCase輪郭内。外部meshのGUI/Study指定なし。P2はCLI/GUI・場/RF・保存/描画へ統合、曲線要素は未対応 | [MESH_INPUT.md](MESH_INPUT.md)、mesh.py/mesh_input.py |
 | 固有値・場 | 実FEM、複数モード、残差・直交性・エネルギー検査 | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | fem.py/solver.py、test_physics.py |
 | RF量 | f/U/Q0/G/V/RQ/シャント/TTF、ピーク比、加速長/電圧区間/位相原点指定 | peak phasor、RQ二規約。常伝導摂動損失、EpkはP1/P2片側推定 | rf.py、[PHYSICS.md](PHYSICS.md)、[R01受入](ACCELERATING_CONVENTIONS.md) |

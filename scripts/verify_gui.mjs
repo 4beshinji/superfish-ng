@@ -788,6 +788,23 @@ try {
     if (!isDeepStrictEqual(original, fixture.geometry)) throw Error("contour import changed vertices or tags");
     const count = await ev('document.querySelector("#shape polygon").points.numberOfItems');
     if (count !== fixture.geometry.vertices_zr_m.length) throw Error("contour preview added phantom vertices");
+    let contourControls;
+    if (args["--contour-auto"] === "yes") {
+      if (!isDeepStrictEqual(await ev("collect().case.mesh.contour_mesh"), fixture.mesh.contour_mesh)) throw Error("contour mesh import changed controls");
+      if (!await ev('["nr","nz","triangulation"].every(id=>document.getElementById(id).disabled)')) throw Error("unused profile mesh controls are enabled");
+      for (const [selector,value] of [["#contour-edge",10],["#contour-angle",12],["#contour-triangles",4000],["#contour-rounds",8]]) await fill(selector,value);
+      contourControls = {max_edge_m:.01,min_angle_deg:12,max_triangles:4000,max_rounds:8};
+      if (!isDeepStrictEqual(await ev("collect().case.mesh.contour_mesh"),contourControls)) throw Error("contour mesh edits lost");
+      const previous = await ev('document.querySelectorAll("#jobs .job").length');
+      await click("#run");
+      await wait(`document.querySelectorAll('#jobs .job').length>${previous}`);
+      await wait('document.querySelector("#jobs .job strong").textContent.startsWith("計算完了")',60000);
+      await click("#jobs .job button");
+      await wait('currentResult?.result?.case?.geometry?.type === "contour" && !document.querySelector("#field-image").hidden',30000);
+      if (!isDeepStrictEqual(await ev("currentResult.result.case.mesh.contour_mesh"),contourControls)) throw Error("saved contour result lost controls");
+      if (await ev("currentResult.result.field_space?.element_order") !== 2) throw Error("contour solve lost P2 order");
+      report.checks.push({operation:"contour mesh controls edited, automatic P2 solve and saved result",passed:true,controls:contourControls});
+    }
     await click("#export");
     let exported;
     for (let i=0; i<100; ++i) {
@@ -795,9 +812,11 @@ try {
       await sleep(100);
     }
     if (!exported || !isDeepStrictEqual(exported.geometry, original)) throw Error("contour export lost geometry");
+    if (contourControls && !isDeepStrictEqual(exported.mesh.contour_mesh,contourControls)) throw Error("contour export lost controls");
     await call("DOM.setFileInputFiles", { nodeId, files: [out+"/downloads/case.json"] }, sessionId);
     await wait('document.querySelector("#dirty").textContent === "入力を読込済み"');
     if (!isDeepStrictEqual(await ev("collect().case.geometry"), original)) throw Error("contour reopen changed geometry");
+    if (contourControls && !isDeepStrictEqual(await ev("collect().case.mesh.contour_mesh"),contourControls)) throw Error("contour reopen lost controls");
     if (args["--mixed-end"] === "yes") {
       if (await ev('document.querySelector("#z-min").value') !== "mixed") throw Error("mixed end summary lost");
       report.checks.push({ operation: "mixed end tags preserved in disabled summary", passed: true });

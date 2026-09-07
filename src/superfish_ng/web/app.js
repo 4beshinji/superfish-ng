@@ -136,6 +136,9 @@ function geometryChanged() {
   markDirty();
 }
 let contourMeshOriginal = null;
+function geometryLength(g) {
+  return g.type === "contour" ? Math.max(...g.vertices_zr_m.map(p=>p[0])) : g.points_zr_m.at(-1)[0];
+}
 function showGeometry() {
   const kind = $("geometry-type").value;
   $("cylinder").hidden = kind !== "pillbox";
@@ -674,7 +677,7 @@ async function openResult(id) {
     opt.textContent = `${q.mode_index} — ${(q.frequency_hz / 1e6).toFixed(6)} MHz`;
     $("mode").append(opt);
   }
-  $("probe-z").value = r.result.case.geometry.points_zr_m.at(-1)[0] * 250;
+  $("probe-z").value = geometryLength(r.result.case.geometry) * 250;
   $("conventions").replaceChildren();
   for (const [key, value] of Object.entries(r.result.conventions)) {
     const p = document.createElement("p");
@@ -814,7 +817,8 @@ bind("analyze-band", async () => {
     const n = number("band-count");
     if (!Number.isInteger(n) || n < 2)
       throw Error("セル中心数は2以上の整数です");
-    const L = currentResult.result.case.geometry.points_zr_m.at(-1)[0];
+    if (currentResult.result.case.geometry.type === "contour") throw Error("バンド解析は周期的な半径profile形状に限定しています");
+    const L = geometryLength(currentResult.result.case.geometry);
     const response = await api("band", {
       id: currentJob,
       cell_centers_z_m: Array.from({ length: n }, (_, i) => (L * i) / (n - 1)),
@@ -947,7 +951,7 @@ async function updateStudyParameters(preferred) {
     $("study-hint").textContent =
       "円弧半径とFEM設定を固定し、弦誤差を小さくします。円弧形状だけで使用できます。";
   } else {
-    p.case.geometry.points_zr_m.forEach((point, i) => {
+    (p.case.geometry.points_zr_m || []).forEach((point, i) => {
       if (i)
         add(`/case/geometry/points_zr_m/${i}/0`, `頂点 ${i} のz [mm]`, 0.001);
       add(`/case/geometry/points_zr_m/${i}/1`, `頂点 ${i} の半径 [mm]`, 0.001);
@@ -976,7 +980,7 @@ async function updateStudyParameters(preferred) {
     [...$("study-parameter").options].some((o) => o.value === preferred)
   )
     $("study-parameter").value = preferred;
-  else if (kind === "sweep" && p.case.geometry.points_zr_m.length === 2)
+  else if (kind === "sweep" && p.case.geometry.points_zr_m?.length === 2)
     $("study-parameter").value = "/case/geometry/points_zr_m/1/0";
   return p;
 }

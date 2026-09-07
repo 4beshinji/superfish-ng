@@ -115,6 +115,8 @@ class Study:
             if self.parameter == "mesh_scale":
                 raw["case"]["mesh"]["nr"] *= value
                 raw["case"]["mesh"]["nz"] *= value
+                if 'contour_mesh' in raw['case']['mesh']:
+                    raw['case']['mesh']['contour_mesh']['max_edge_m'] /= value
                 for key in ("boundary_max_edge_m", "corner_max_edge_m"):
                     if key in raw["case"]["mesh"]:
                         raw["case"]["mesh"][key] /= value

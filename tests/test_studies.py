@@ -18,6 +18,21 @@ def base():
 
 
 class StudyTests(unittest.TestCase):
+    def test_contour_refinement_changes_physical_size_and_actual_mesh(self):
+        from superfish_ng import Case
+        from superfish_ng.contour import Contour
+        from superfish_ng.mesh import make_mesh
+        from superfish_ng.mesh_controls import ContourMeshControls
+        case = Case((),contour=Contour(((0,0),(.2,0),(.2,.1),(0,.1)),('axis','pec','pec','pec')),
+                    contour_mesh=ContourMeshControls(.05),modes=1)
+        study = Study(Project.from_dict(case.to_dict()),'mesh_convergence','mesh_scale',[1,2])
+        projects = study.projects()
+        self.assertEqual([p.case.contour_mesh.max_edge_m for p in projects],[.05,.025])
+        self.assertEqual(projects[0].case.contour,projects[1].case.contour)
+        self.assertEqual(projects[0].case.contour_mesh.max_triangles,projects[1].case.contour_mesh.max_triangles)
+        meshes = [make_mesh(p.case) for p in projects]
+        self.assertGreater(len(meshes[1].triangles),len(meshes[0].triangles))
+
     def test_pillbox_length_sweep_obeys_independent_tm010_invariant(self):
         project = base().to_dict()
         project["case"]["mesh"] = {"nr": 64, "nz": 96}
