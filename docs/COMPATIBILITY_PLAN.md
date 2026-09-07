@@ -4,6 +4,10 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-07実行開始: [C00受入台帳](COMPATIBILITY_BASELINE.md)に全32項目の受入軸、
+4ツールの表示版、限定TM入力辞書、参照hash、合成受入ケースと未確認理由を記録した。
+C00.S/Iは調査継続中、C00.Vは未完了。対象版の全入力を網羅したとは扱わない。
+
 ## 作業単位と完了条件
 
 以下の親課題はそれぞれ独立した3作業へ分ける。例: N01.S → N01.I → N01.V。

@@ -3,6 +3,8 @@
 作成: 2026-09-07。製品基準1f5cd84、現状監査は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。
 実装済み機能と旧版互換を区別するための作業台帳。対象版の全入力・全ツールを列挙し終えた表ではない。
 このv0を [COMPATIBILITY_PLAN.md](COMPATIBILITY_PLAN.md) のC00で版付きの受入集合へ固定する。
+調査開始後の版・変数・全32項目の受入軸は [COMPATIBILITY_BASELINE.md](COMPATIBILITY_BASELINE.md)。
+C00.Vと全必須集合の確定は継続中。
 
 ## 対象版・証拠
 
@@ -16,6 +18,7 @@ AUTOFISH/FISH/SFO/SF7等を同じ版と推定せず、ツールごとに表示�
 | L | ローカルの既存比較記録。[SUPERFISH_COMPARISON.md](SUPERFISH_COMPARISON.md)、[MILESTONE_ACCEPTANCE.md](MILESTONE_ACCEPTANCE.md)、[SURFACE_FIELD_DIAGNOSTICS.md](SURFACE_FIELD_DIAGNOSTICS.md)。確認したケース・変数だけの証拠 |
 | H | [OECD/NEA ESTS0428/01の機能概要](https://www.oecd-nea.org/tools/abstract/detail/ests0428/)（2001年の登録）。RF/静的場・幾何・付属機能の歴史的な存在を確認。対象配布物7.xへの同一性は未確認 |
 | U | 対象版の詳細仕様未確認。NGの開発候補であり旧版に存在すると断定しない |
+| D | ローカル付属仕様書R25の入力記載。改訂日・対象実行版への適用と数値動作の検証は別途必要 |
 | X | 今回の互換必須集合に入れないNG拡張候補。対象版に必要と分かった場合は根拠付きで再分類 |
 
 Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24RohnertPark/PILA/10.pdf) の
@@ -32,7 +35,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | ID | 機能・業務 | 旧側の根拠 | NG現状 | 互換として残るもの | 優先度 / 作業ID |
 |---|---|---|---|---|---|
 | K01 | 折れ線・段差・円弧の形状 | L/H | 実装、対象形状照合 | 旧指定/既定値の読込、弦分割と原形の区別 | A / C02,G03 |
-| K02 | 楕円・双曲線・接線接続 | H（双曲線）、U（他） | 部分：短円弧のみ | 曲線パラメータ・接線・幾何誤差、対象版の曲線指定 | A / C00,G03 |
+| K02 | 楕円・双曲線・接線接続 | D（NT=2楕円/3双曲線）、U（接線操作） | 部分：短円弧のみ | 曲線パラメータ・接線・幾何誤差、対象版での実行検証 | A / C00,G03 |
 | K03 | z折返しを含む単連結輪郭 | U | 未 | R(z)制限の解消、自己交差/軸接続検査、生成メッシュ | A / G01,G02 |
 | K04 | 内導体・複数境界成分 | U | 未 | 領域位相・境界契約と対応する物理空間 | B / P03 |
 | K05 | 境界付き三角形・局所密度 | L/H | 部分：NG生成/JSON読込あり | 外部形式変換・生成機能。旧と同じ節点配置は要求しない | A / G02,O02 |
@@ -42,7 +45,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K09 | 軸対称TE | H | 未 | 別の場未知数/軸条件、TE固有値・場・損失 | B / P01 |
 | K10 | 平面2D RF | H | 未 | 単位長エネルギー/損失・偏波・境界の仕様 | B / P02 |
 | K11 | 同軸共振器/TEM系 | U | 未 | 内導体、端面、零固有値と物理共振の区別 | B / P03 |
-| K12 | 複数RF材料領域 | U | 未 | epsilon/mu界面、エネルギー、旧材料設定の実在/意味確認 | B / P04 |
+| K12 | 複数RF材料領域 | D（MAT、MT EPSILON/MU） | 未 | epsilon/mu界面、エネルギー、対象版での材料入力・実行検証 | B / P04 |
 | K13 | f/U/壁損失/Q0/G/RQ/シャント | L | 実装、対象ケース照合 | 単位/正規化/二つのRQ規約の入出力写像 | A / R01,C03,C04 |
 | K14 | 通過電圧・TTF・加速長・位相 | L（ZCTR/KMETHOD等の限定比較） | 部分：beta指定・全長積分 | active length、積分区間・位相原点・符号/複素量を明示 | A / R01,C02,C03 |
 | K15 | 表面ピークE/B | L | 部分：P1推定、角部診断 | 固定丸め半径で収束、境界評価位置/規約の一致 | A / N03 |

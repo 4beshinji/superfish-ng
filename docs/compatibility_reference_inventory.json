@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-09-07",
+  "product_commit": "e6271c2",
+  "source": "existing local input specification and numerical outputs",
+  "new_legacy_execution": false,
+  "allowed_redistribution": false,
+  "compatibility_acceptance": "UNVERIFIED",
+  "files": [
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTAUT.TXT",
+      "sha256": "7ca5c2e5c8ba9054135d1d067fee19ccd6f7c4acce5ad1805f833361e410404f",
+      "bytes": 75124,
+      "observed_version_lines": [
+        "Program Automesh  7.17  released 1-13-2006 "
+      ]
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTFIS.TXT",
+      "sha256": "0a7c7f0cc84d276dd6fabc498b5c2ef82789a4440f85c81dbc5f58074134f259",
+      "bytes": 17955,
+      "observed_version_lines": [
+        "Program Fish  7.17  released 1-13-2006 "
+      ]
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/CAVITY.SFO",
+      "sha256": "444a22f6cf0272f9c3b26113b49e69cbca3842274b3317396d83f0e4a386718d",
+      "bytes": 145337,
+      "observed_version_lines": [
+        "Program SFO  7.17  released 1-13-2006 "
+      ]
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTSF7.TXT",
+      "sha256": "49c98bfabee3da99c5555bdfb3d0a1dbf6a02ab3a5a52e9380739b2abc245e7f",
+      "bytes": 34630,
+      "observed_version_lines": [
+        "Program SF7  7.17  released 1-13-2006 "
+      ]
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/cavity.af",
+      "sha256": "68220d7c79c7aca6daad61305a60dd352b29e0b161e986f8d07679e72ec090b7",
+      "bytes": 404,
+      "observed_version_lines": []
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/SF.INI",
+      "sha256": "fc2016add84e9568117fd15c79f048bd6d3eb6b07dee282750e96d349c32c54b",
+      "bytes": 80,
+      "observed_version_lines": []
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/cavity.in7",
+      "sha256": "081a13bcc15d476d0a4ea710268bd822de133b45d9795fa608c667518fd79dc5",
+      "bytes": 944,
+      "observed_version_lines": []
+    },
+    {
+      "path": "/tmp/superfish-wine-runtime/input-spec/SFCODES.txt",
+      "sha256": "8203169713608903bcf5d4ac600efd2b98f221af9ab8856213ea306eab675627",
+      "bytes": 242458,
+      "document_revision": null,
+      "consulted_sections": [
+        "VI.1 REG variables and units",
+        "VI.2 PO boundary coordinates, Table VI-4",
+        "VI.3 material input, Table VI-5"
+      ]
+    }
+  ]
+}
