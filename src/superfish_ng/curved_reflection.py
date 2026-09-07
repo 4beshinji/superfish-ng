@@ -1,0 +1,109 @@
+# SPDX-License-Identifier: Apache-2.0
+"""Reflect fixed quadratic geometry and parity coefficients without reprojection."""
+from dataclasses import dataclass
+from types import MappingProxyType
+import numpy as np
+from scipy.sparse import coo_matrix
+from .curved_space import CurvedSpace, check_curved_edges
+from .curved_refinement import RestrictedGeometry
+from .quadratic_geometry import QuadraticTriangle
+from .quadratic_boundary import check_quadratic_boundary
+
+
+@dataclass(frozen=True)
+class CurvedReflection:
+    space: CurvedSpace
+    coefficient_map: object
+    reflected_contour: object
+    side: str
+    parity: int
+    seam_dofs: np.ndarray
+
+    def apply(self, coefficients):
+        """Transfer finite scalar/multimode coefficients with exact odd seam zeros."""
+        values = np.asarray(coefficients)
+        if (values.dtype.kind not in 'iuf' or values.ndim not in (1, 2)
+                or values.shape[0] != self.coefficient_map.shape[1]
+                or not np.isfinite(values).all()):
+            raise ValueError('reflection coefficients require finite matching node rows')
+        if self.parity == -1 and np.any(values[self.seam_dofs] != 0):
+            raise ValueError('magnetic symmetry requires zero u at the reflection plane')
+        return self.coefficient_map@values
+
+
+def reflect_curved_space(case, parent):
+    """Join a half space to its mirror, retaining every quadratic cell map.
+
+    Coefficients on a magnetic seam must be zero before applying coefficient_map.
+    Boundary primitive indices refer to reflected_contour; mirrored primitive
+    parameters reverse because the full analytic contour retains orientation.
+    This transformation does not solve or normalize an eigenmode.
+    """
+    if not isinstance(parent, CurvedSpace) or case.curved_contour is None:
+        raise ValueError('curved reflection requires a native Case and CurvedSpace')
+    sides = [side for side in ('z_min', 'z_max') if getattr(case, side) != 'pec']
+    if len(sides) != 1:
+        raise ValueError('curved reflection requires exactly one symmetry end and one PEC end')
+    side = sides[0]
+    tag = getattr(case, side)
+    parity = 1 if tag == 'electric_symmetry' else -1
+    contour = case.curved_contour
+    full_contour = contour.reflected()  # Validates a complete connected seam.
+    geometry = parent.geometry
+    plane = 0. if side == 'z_min' else case.length
+    shift = case.length if side == 'z_min' else 0.
+    points = geometry.points_rz_m
+    seam = parent.boundary_tags == tag
+    on_plane = np.zeros(len(points), dtype=bool)
+    on_plane[geometry.boundary_nodes[seam].ravel()] = True
+    tolerance = 512*np.finfo(float).eps*float(np.max(np.ptp(points, axis=0)))
+    if (not np.any(seam) or np.any(abs(points[on_plane, 1]-plane) > tolerance)
+            or np.any((points[:, 1] == plane) & ~on_plane)
+            or np.any((parent.boundary_tags != tag) & np.char.endswith(parent.boundary_tags, '_symmetry'))):
+        raise ValueError('curved space must have exactly the Case symmetry seam')
+    original = points.copy()
+    original[:, 1] += shift
+    # Fixed-map subdivision can round a constant plane by one ulp. Identify
+    # shared DOFs by boundary topology, then restore only that roundoff.
+    original[on_plane, 1] = plane+shift
+    mirrored = points.copy()
+    mirrored[:, 1] = 2*plane-points[:, 1]+shift
+    mapping = np.arange(len(points))
+    mapping[~on_plane] = np.arange(len(points), len(points)+np.count_nonzero(~on_plane))
+    joined = np.vstack((original, mirrored[~on_plane]))
+    cells = np.vstack((geometry.cell_nodes, mapping[geometry.cell_nodes][:, [0, 2, 1, 5, 4, 3]]))
+    keep = ~seam
+    boundary = np.vstack((geometry.boundary_nodes[keep], mapping[geometry.boundary_nodes[keep]][:, [1, 0, 2]]))
+    tags = np.tile(parent.boundary_tags[keep], 2)
+    # Match CurvedContour.reflected's traversal from the end of the seam.
+    symmetry = {i for i, t in enumerate(contour.edge_tags) if t.endswith('_symmetry')}
+    start = next(i for i in range(len(contour.curves)) if i not in symmetry and (i-1)%len(contour.curves) in symmetry)
+    remaining = []
+    i = start
+    while i not in symmetry:
+        remaining.append(i)
+        i = (i+1)%len(contour.curves)
+    original_indices = {owner: index for index, owner in enumerate(remaining)}
+    owners = geometry.boundary_curve_indices[keep]
+    indices = np.array([original_indices[int(owner)] for owner in owners], dtype=int)
+    indices = np.r_[indices, 2*len(remaining)-1-indices]
+    parameters = np.vstack((geometry.boundary_parameters[keep], 1-geometry.boundary_parameters[keep][:, ::-1]))
+    # Affine axis midpoint convention is exact in the RF integrator.
+    for a, b, mid in boundary[tags == 'axis']:
+        joined[mid] = (joined[a]+joined[b])/2
+    maps = tuple(QuadraticTriangle(joined[nodes]) for nodes in cells)
+    boundary_check = MappingProxyType(check_quadratic_boundary(joined, boundary))
+    edge_check = MappingProxyType(check_curved_edges(joined, cells, boundary))
+    axis = np.unique(boundary[tags == 'axis'])
+    axis = axis[np.argsort(joined[axis, 1])]
+    constrained = np.array([], dtype=int)
+    for array in (joined, cells, boundary, tags, indices, parameters, axis, constrained):
+        array.setflags(write=False)
+    full_geometry = RestrictedGeometry(joined, cells, boundary, indices, parameters, maps, boundary_check)
+    space = CurvedSpace(full_geometry, tags, axis, constrained, edge_check)
+    columns = np.r_[np.arange(len(points)), np.flatnonzero(~on_plane)]
+    values = np.r_[np.ones(len(points)), np.full(np.count_nonzero(~on_plane), parity)]
+    transfer = coo_matrix((values, (np.arange(len(joined)), columns)), shape=(len(joined), len(points))).tocsr()
+    seam_dofs = np.flatnonzero(on_plane)
+    seam_dofs.setflags(write=False)
+    return CurvedReflection(space, transfer, full_contour, side, parity, seam_dofs)
