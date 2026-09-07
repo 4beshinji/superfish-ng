@@ -173,3 +173,75 @@ def contour_mesh_quality(mesh):
                 min_angle_deg=float(np.rad2deg(np.min(angles))),
                 min_quality=float(quality.min()), median_quality=float(np.median(quality)),
                 max_edge_m=float(sides.max()))
+
+
+def improve_contour_angles(case, mesh, *, max_sweeps=100):
+    """Flip internal diagonals only when the pair's smallest angle improves.
+
+    Vertices and boundary tags stay fixed. A new diagonal must not be longer
+    than the old one and must satisfy any corner size control. This is a local
+    improvement, not a promise of a minimum angle or a Delaunay triangulation.
+    """
+    from .mesh_input import mesh_from_dict, mesh_to_dict
+    if case.contour is None:
+        raise ValueError('angle improvement requires a contour Case')
+    if type(max_sweeps) is not int or max_sweeps < 1:
+        raise ValueError('max_sweeps must be a positive integer')
+    data = mesh_to_dict(mesh)
+    mesh = mesh_from_dict(case, data)
+    points = mesh.points / np.max(mesh.points)
+    triangles = mesh.triangles.copy()
+    vertices = np.asarray(case.contour.vertices_zr_m)[:, ::-1]
+    before, after = vertices-np.roll(vertices,1,axis=0), np.roll(vertices,-1,axis=0)-vertices
+    turns = np.abs(before[:,0]*after[:,1]-before[:,1]*after[:,0])
+    corners = vertices[turns > 1e-12*np.linalg.norm(before,axis=1)*np.linalg.norm(after,axis=1)]
+
+    def minimum_angle(tris):
+        p = points[np.asarray(tris)]
+        u,v = p[:,1]-p[:,0], p[:,2]-p[:,0]
+        area = u[:,0]*v[:,1]-u[:,1]*v[:,0]
+        lengths2 = np.sum((np.roll(p,-1,axis=1)-p)**2,axis=2)
+        if np.any(area <= 128*np.finfo(float).eps*lengths2.max(axis=1)):
+            return -1.
+        return min(float(np.arctan2(area,np.sum((p[:,(i+1)%3]-p[:,i])
+                                                *(p[:,(i+2)%3]-p[:,i]),axis=1)).min())
+                   for i in range(3))
+
+    for sweep in range(max_sweeps+1):
+        incidence = {}
+        for cell, tri in enumerate(triangles):
+            for i in range(3):
+                a,b,c = map(int,np.roll(tri,-i))
+                incidence.setdefault(tuple(sorted((a,b))),[]).append((cell,a,b,c))
+        used = set()
+        changed = False
+        for edge in sorted(incidence):
+            pair = incidence[edge]
+            if len(pair) != 2:
+                continue
+            (first,a,b,c),(second,_,_,d) = pair
+            if first in used or second in used or tuple(sorted((c,d))) in incidence:
+                continue
+            old_length = np.linalg.norm(points[b]-points[a])
+            new_length = np.linalg.norm(points[d]-points[c])
+            if new_length > old_length*(1+1e-14):
+                continue
+            candidate = ((c,d,b),(d,c,a))
+            if minimum_angle(candidate) <= minimum_angle(triangles[[first,second]])+64*np.finfo(float).eps:
+                continue
+            if case.corner_max_edge_m is not None:
+                start,end = mesh.points[[c,d]]
+                delta = end-start
+                fractions = np.clip(np.sum((corners-start)*delta,axis=1)/np.dot(delta,delta),0,1)
+                distance = np.linalg.norm(start+fractions[:,None]*delta-corners,axis=1)
+                if (np.any(distance <= case.corner_radius_m*(1+1e-12))
+                        and np.linalg.norm(delta) > case.corner_max_edge_m*(1+1e-12)):
+                    continue
+            if sweep == max_sweeps:
+                raise ValueError('contour angle improvement exceeds max_sweeps; increase the explicit limit')
+            triangles[[first,second]] = candidate
+            used.update((first,second))
+            changed = True
+        if not changed:
+            data['triangles'] = triangles.tolist()
+            return mesh_from_dict(case,data)

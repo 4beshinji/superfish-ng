@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 from superfish_ng import Case
 from superfish_ng.contour import Contour
-from superfish_ng.contour_mesh import triangulate_contour, refine_contour, contour_mesh_quality
+from superfish_ng.contour_mesh import triangulate_contour, refine_contour, contour_mesh_quality, improve_contour_angles
 
 
 class InitialContourMeshTests(unittest.TestCase):
@@ -109,3 +109,31 @@ class InitialContourMeshTests(unittest.TestCase):
         self.assertAlmostEqual(quality['min_angle_deg'],45)
         self.assertAlmostEqual(quality['min_quality'],math.sqrt(3)/2)
         self.assertAlmostEqual(quality['max_edge_m'],math.sqrt(2))
+
+    def test_internal_flips_preserve_boundary_and_improve_quality(self):
+        contour = Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,.5),(0,.5),(0,.25)),
+                          ('axis',)+('pec',)*7+('magnetic_symmetry',))
+        case = Case((),contour=contour,corner_max_edge_m=.1,corner_radius_m=.12)
+        original = refine_contour(case,triangulate_contour(case),.25)
+        improved = improve_contour_angles(case,original)
+        old,new = contour_mesh_quality(original),contour_mesh_quality(improved)
+        self.assertGreater(new['median_quality'],old['median_quality'])
+        self.assertGreaterEqual(new['min_angle_deg'],old['min_angle_deg']-1e-12)
+        self.assertLessEqual(new['max_edge_m'],old['max_edge_m']*(1+1e-12))
+        for name in ('points','boundary_edges','boundary_tags','axis_nodes'):
+            np.testing.assert_array_equal(getattr(original,name),getattr(improved,name))
+        # Geometrical first moment is independent of the internal diagonal.
+        p = improved.points[improved.triangles]
+        u,v = p[:,1]-p[:,0],p[:,2]-p[:,0]
+        areas = (u[:,0]*v[:,1]-u[:,1]*v[:,0])/2
+        self.assertAlmostEqual(areas.sum(),4.,places=13)
+        self.assertAlmostEqual(np.sum(2*math.pi*areas*p[:,:,0].mean(axis=1)),7.5*math.pi,places=12)
+        # No new local-size violation, and a second improvement is a fixed point.
+        refined = refine_contour(case,improved,.25)
+        np.testing.assert_array_equal(refined.triangles,improved.triangles)
+        again = improve_contour_angles(case,improved)
+        np.testing.assert_array_equal(again.triangles,improved.triangles)
+        repeated = improve_contour_angles(case,original)
+        np.testing.assert_array_equal(repeated.triangles,improved.triangles)
+        with self.assertRaisesRegex(ValueError,'max_sweeps'):
+            improve_contour_angles(case,original,max_sweeps=True)
