@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## G03曲線物理座標プローブ — 2026-09-08
+
+curved_sampling.QuadraticLocator/CurvedFieldSamplerで物理座標から逆写像。
+減衰Newton＋参照三角形4分割のBezier包絡。外部証明時だけNone/NaN、予算不足はUNVERIFIED。
+曲線の膨らみ・境界/軸/寸法変換と楕円10要素の場一致を検証。
+out/validation-g03-curved-probe-final-20260908/comparison.jsonは球形物理点/全軸/既存RF等PASS。
+物理点H誤差6.26e-5、E誤差1.15e-3、軸Ez2.14e-4。
+標準255件中253合格・2 skip、validation-g03-probe-regression-20260908 PASS。
+次は通常Case幾何次数と入力/保存/再読込。ピーク/鏡映/Study/GUIも残り、全目標継続。
+
 ## G03曲線RF積分 — 2026-09-08
 
 curved_rfに壁H²弧長積分、軸P2電圧、Q0/G/RQ等を接続。
