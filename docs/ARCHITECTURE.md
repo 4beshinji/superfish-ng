@@ -1,5 +1,12 @@
 # アーキテクチャと拡張判断
 
+## N01の高次空間分離 — 2026-09-08
+
+high_order.pyのQuadraticSpaceは元の3頂点Meshと6自由度cell_dofsを別々に保持する。
+solver._solveはP1/P2組立後に同一の固有値計算・拘束・正規化を使用する。
+公開solveはP1のまま。P2の研究APIはhigh_order.solve_p2で、RF/保存への統合はN02。
+仕様と受入証拠は[QUADRATIC_ELEMENTS.md](QUADRATIC_ELEMENTS.md)。
+
 ## ADR-016: 加速規約はFEM場から独立した入力として保持する
 
 2026-09-08、R01。加速長、電圧区間、位相原点を独立したv3 rf入力へ追加する。

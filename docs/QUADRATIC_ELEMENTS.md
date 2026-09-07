@@ -42,3 +42,37 @@ FieldSamplerも節点数と係数行数の不一致を拒否し、中点係数�
 標準unittest/validateの既存f/RF差を確認する。周波数の改善をRF/表面精度の証拠にしない。
 本実装の根拠は既存の弱形式と一般のLagrange多項式・単項式積分からの独立導出。
 新規の外部コード・ソルバー・依存は使わない。
+
+## N01.I/V受入 — 2026-09-08
+
+`high_order.py`、`solver._solve`、7件の`test_quadratic_elements.py`で上記を実装・検証。
+テストを先に追加した時点では未実装モジュールにより6件エラー。実装後に全件合格し、
+追加の番号変更/周波数スケーリング検査も合格した。許容差は緩めていない。
+
+再現（既存出力を保護するため新しい出力先を指定）:
+
+```sh
+OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate_quadratic.py --out out/quadratic-<unique-name>
+OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate.py --out out/validation-<unique-name>
+```
+
+ローカル証拠は`out/quadratic-n01-accepted-20260908/quadratic.json`と
+`out/validation-n01-accepted-20260908/validation.json`、いずれもPASS。
+標準suiteは150件中148合格・2 skip。標準の円筒/成形セルのmode辞書全体とcase.jsonは
+直前の`out/validation-r01-final-20260908`と一致し、既存周波数・RF量を維持した。
+
+R=0.1 m、L=0.2 m、先頭3モードの周波数相対誤差:
+
+| nr×nz | P2自由度 | 第1 | 第2 | 第3 |
+|---|---:|---:|---:|---:|
+| 4×8 | 153 | 5.139e-6 | 2.695e-5 | 2.791e-4 |
+| 8×16 | 561 | 3.422e-7 | 1.928e-6 | 1.962e-5 |
+| 16×32 | 2145 | 2.183e-8 | 1.276e-7 | 1.289e-6 |
+| 32×64 | 8385 | 1.375e-9 | 8.179e-9 | 8.227e-8 |
+
+同じ2145自由度のP1（32×64）の誤差は4.264e-6 / 1.197e-4 / 4.368e-4。
+同じ基底メッシュでの比較も全4段階・全3モードでP2が改善。
+実測時間はJSONに残すが、この小規模測定を普遍的性能保証としない。
+磁気対称中点拘束、自由軸、質量直交性、独立単項式積分、番号変更、寸法3倍も合格。
+N01は受入完了。N02の高次場/RF/保存・表示、N04の適応誤差推定は未完であり、
+K06と製品高次要素全体の完了ではない。
