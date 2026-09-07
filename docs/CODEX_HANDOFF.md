@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G03メッシュ停滞の切分け — 2026-09-08
+
+対角線交換に明示max_edge_mを追加し、サイズ内の長くなる交換を許可。
+独立四角形で角度10.49→24.78、面積/体積/境界不変。品質生成へ接続。
+標準221件中219合格・2 skip、validate PASS。
+out/validation-g03-bounded-flips-20260908/summary.jsonはFEM PASS、幾何列は依然品質FAIL。
+1反復後の最悪三角形は軸上2点とr=.0002188 mの内点。次は内点移動候補を切分ける。
+G03と全互換目標は継続。
+
 ## G03の独立細分列 — 2026-09-08
 
 幾何/FEM独立列をscripts/validate_curved_refinement.pyで再現。

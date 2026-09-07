@@ -182,11 +182,12 @@ def contour_mesh_quality(mesh):
                 max_edge_m=float(sides.max()))
 
 
-def improve_contour_angles(case, mesh, *, max_sweeps=100):
+def improve_contour_angles(case, mesh, *, max_sweeps=100, max_edge_m=None):
     """Flip internal diagonals only when the pair's smallest angle improves.
 
-    Vertices and boundary tags stay fixed. A new diagonal must not be longer
-    than the old one and must satisfy any corner size control. This is a local
+    Vertices and boundary tags stay fixed. With an explicit maximum edge size,
+    a new diagonal may grow within that bound; otherwise it may not grow.
+    Corner size controls always apply. This is a local
     improvement, not a promise of a minimum angle or a Delaunay triangulation.
     """
     from .mesh_input import mesh_from_dict, mesh_to_dict
@@ -194,9 +195,12 @@ def improve_contour_angles(case, mesh, *, max_sweeps=100):
         raise ValueError('angle improvement requires a contour Case')
     if type(max_sweeps) is not int or max_sweeps < 1:
         raise ValueError('max_sweeps must be a positive integer')
+    if max_edge_m is not None and (type(max_edge_m) not in (int,float) or not np.isfinite(max_edge_m) or max_edge_m <= 0):
+        raise ValueError('max_edge_m must be finite and positive')
     data = mesh_to_dict(mesh)
     mesh = mesh_from_dict(case, data)
     points = mesh.points / np.max(mesh.points)
+    edge_limit = None if max_edge_m is None else max_edge_m / np.max(mesh.points)
     triangles = mesh.triangles.copy()
     vertices = np.asarray(case.contour.vertices_zr_m)[:, ::-1]
     before, after = vertices-np.roll(vertices,1,axis=0), np.roll(vertices,-1,axis=0)-vertices
@@ -231,7 +235,7 @@ def improve_contour_angles(case, mesh, *, max_sweeps=100):
                 continue
             old_length = np.linalg.norm(points[b]-points[a])
             new_length = np.linalg.norm(points[d]-points[c])
-            if new_length > old_length*(1+1e-14):
+            if new_length > (old_length if edge_limit is None else edge_limit)*(1+1e-14):
                 continue
             candidate = ((c,d,b),(d,c,a))
             if minimum_angle(candidate) <= minimum_angle(triangles[[first,second]])+64*np.finfo(float).eps:
@@ -345,7 +349,7 @@ def quality_contour_mesh(case, max_edge_m, *, min_angle_deg=10.,
         raise ValueError('max_rounds must be a positive integer')
     mesh = refine_contour(case,triangulate_contour(case),max_edge_m,max_triangles=max_triangles)
     for round_index in range(max_rounds+1):
-        mesh = improve_contour_angles(case,mesh)
+        mesh = improve_contour_angles(case,mesh,max_edge_m=max_edge_m)
         mesh = smooth_contour_interior(case,mesh,max_edge_m)
         p = mesh.points[mesh.triangles]
         u,v = p[:,1]-p[:,0],p[:,2]-p[:,0]

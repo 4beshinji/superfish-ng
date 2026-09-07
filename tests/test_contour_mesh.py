@@ -112,6 +112,31 @@ class InitialContourMeshTests(unittest.TestCase):
         self.assertAlmostEqual(quality['min_quality'],math.sqrt(3)/2)
         self.assertAlmostEqual(quality['max_edge_m'],math.sqrt(2))
 
+    def test_size_bounded_flip_can_improve_a_longer_diagonal(self):
+        # The 0--2 diagonal is sqrt(1.04), the alternative sqrt(1.25).
+        # Rejecting every longer diagonal traps a 10.49 degree angle.
+        contour = Contour(((0,0),(1,0),(.2,1),(0,.5)), ('axis','pec','pec','pec'))
+        case = Case((), contour=contour)
+        original = triangulate_contour(case)
+        fixed = improve_contour_angles(case,original)
+        np.testing.assert_array_equal(fixed.triangles,original.triangles)
+        limited = improve_contour_angles(case,original,max_edge_m=1.1)
+        np.testing.assert_array_equal(limited.triangles,original.triangles)
+        improved = improve_contour_angles(case,original,max_edge_m=1.3)
+        self.assertGreater(contour_mesh_quality(improved)['min_angle_deg'],24)
+        self.assertLessEqual(contour_mesh_quality(improved)['max_edge_m'],1.3)
+        for name in ('points','boundary_edges','boundary_tags','axis_nodes'):
+            np.testing.assert_array_equal(getattr(original,name),getattr(improved,name))
+        p = improved.points[improved.triangles]
+        u,v = p[:,1]-p[:,0],p[:,2]-p[:,0]
+        areas = (u[:,0]*v[:,1]-u[:,1]*v[:,0])/2
+        self.assertTrue(np.all(areas>0))
+        self.assertAlmostEqual(areas.sum(),.55)
+        self.assertAlmostEqual(np.sum(2*math.pi*areas*p[:,:,0].mean(axis=1)),23*math.pi/60)
+        for value in (True,0,-1,float('nan'),float('inf')):
+            with self.assertRaisesRegex(ValueError,'max_edge_m'):
+                improve_contour_angles(case,original,max_edge_m=value)
+
     def test_internal_flips_preserve_boundary_and_improve_quality(self):
         contour = Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,.5),(0,.5),(0,.25)),
                           ('axis',)+('pec',)*7+('magnetic_symmetry',))
