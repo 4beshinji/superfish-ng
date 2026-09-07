@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 from superfish_ng import Case
 from superfish_ng.contour import Contour
-from superfish_ng.contour_mesh import triangulate_contour
+from superfish_ng.contour_mesh import triangulate_contour, refine_contour, contour_mesh_quality
 
 
 class InitialContourMeshTests(unittest.TestCase):
@@ -54,3 +54,58 @@ class InitialContourMeshTests(unittest.TestCase):
     def test_profile_requires_explicit_conversion(self):
         with self.assertRaisesRegex(ValueError, 'contour Case'):
             triangulate_contour(Case(((0,.1),(.2,.1))))
+
+    def test_refinement_preserves_partition_and_local_tag_sizes(self):
+        contour = Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,.5),(0,.5),(0,.25)),
+                          ('axis',)+('pec',)*7+('magnetic_symmetry',))
+        case = Case((), contour=contour, boundary_max_edge_m=.2,
+                    corner_max_edge_m=.08, corner_radius_m=.12)
+        initial = triangulate_contour(case)
+        mesh = refine_contour(case, initial, .5)
+        p = mesh.points[mesh.triangles]
+        u,v = p[:,1]-p[:,0], p[:,2]-p[:,0]
+        areas = (u[:,0]*v[:,1]-u[:,1]*v[:,0])/2
+        self.assertAlmostEqual(areas.sum(),4,places=13)
+        self.assertAlmostEqual(np.sum(2*math.pi*areas*p[:,:,0].mean(axis=1)),7.5*math.pi,places=12)
+        edges = np.unique(np.sort(mesh.triangles[:,[[0,1],[1,2],[2,0]]].reshape(-1,2),axis=1),axis=0)
+        ends = mesh.points[edges]
+        delta = ends[:,1]-ends[:,0]
+        length = np.linalg.norm(delta,axis=1)
+        self.assertLessEqual(length.max(),.5*(1+1e-12))
+        boundary = mesh.points[mesh.boundary_edges[mesh.boundary_tags!='axis']]
+        self.assertLessEqual(np.linalg.norm(boundary[:,1]-boundary[:,0],axis=1).max(),.2*(1+1e-12))
+        # Independently check the reentrant corner's ball/segment intersection.
+        corner = np.array([1.,2.])
+        fraction = np.clip(np.sum((corner-ends[:,0])*delta,axis=1)/length**2,0,1)
+        distances = np.linalg.norm(ends[:,0]+fraction[:,None]*delta-corner,axis=1)
+        self.assertLessEqual(length[distances<=.12*(1+1e-12)].max(),.08*(1+1e-12))
+        magnetic = mesh.points[mesh.boundary_edges[mesh.boundary_tags=='magnetic_symmetry']]
+        self.assertTrue(np.all(magnetic[:,:,1]==0))
+        self.assertAlmostEqual(np.abs(magnetic[:,1,0]-magnetic[:,0,0]).sum(),.25)
+        again = refine_contour(case,initial,.5)
+        for name in ('points','triangles','boundary_edges','boundary_tags'):
+            np.testing.assert_array_equal(getattr(mesh,name),getattr(again,name))
+        quality = contour_mesh_quality(mesh)
+        self.assertGreater(quality['min_angle_deg'],0)
+        self.assertGreater(quality['min_quality'],0)
+        self.assertLessEqual(quality['median_quality'],1+1e-14)
+
+    def test_refinement_limits_and_strict_controls(self):
+        case = Case((),contour=Contour(((0,0),(3,0),(0,2)),('axis','pec','pec')))
+        mesh = triangulate_contour(case)
+        for size in (0,-1,True,float('nan'),float('inf'),'1'):
+            with self.subTest(size=size),self.assertRaisesRegex(ValueError,'max_edge_m'):
+                refine_contour(case,mesh,size)
+        with self.assertRaisesRegex(ValueError,'max_triangles'):
+            refine_contour(case,mesh,.01,max_triangles=5)
+        with self.assertRaisesRegex(ValueError,'max_passes'):
+            refine_contour(case,mesh,.01,max_passes=1)
+        for kwargs in ({'max_triangles':True},{'max_passes':0}):
+            with self.assertRaises(ValueError):refine_contour(case,mesh,1.,**kwargs)
+
+    def test_quality_known_right_triangle(self):
+        case = Case((),contour=Contour(((0,0),(1,0),(0,1)),('axis','pec','pec')))
+        quality = contour_mesh_quality(triangulate_contour(case))
+        self.assertAlmostEqual(quality['min_angle_deg'],45)
+        self.assertAlmostEqual(quality['min_quality'],math.sqrt(3)/2)
+        self.assertAlmostEqual(quality['max_edge_m'],math.sqrt(2))
