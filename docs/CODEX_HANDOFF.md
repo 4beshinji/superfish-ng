@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## G03二次写像と局所行列 — 2026-09-08
+
+quadratic_geometry.QuadraticTriangleで6節点写像と全域det J最小値候補を検査。
+節点だけ正の反転反例を拒否し、面積/回転体体積/物理勾配を検証。
+curved_fem.mapped_element_matricesで局所P2行列を積分、一定/線形場と直線極限を検証。
+CURVED_ELEMENTS.mdへ全体共有性/入力/保存/場/RF/Study/GUIの未接続契約を記録。
+次は元曲線パラメータ区間と共有二次幾何節点・全体適合性。
+標準237件中235合格・2 skip、validation-g03-quadratic-map-20260908 PASS。
+局所コアのみでG03/全互換目標は未完、継続。
+
 ## G03球形の独立電磁場参照 — 2026-09-08
 
 analytic_sphere.SphereTMで球形PECの正則l=1,m=0 TM参照を独立実装。
