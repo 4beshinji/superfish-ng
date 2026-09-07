@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G03の単一曲線閉輪郭 — 2026-09-08
+
+curved_contour.CurvedContourを追加。軸鎖/タグ/範囲/全辺対/正面積を検査し、
+検査用二分で軸+半楕円の2辺形状も扱う。位置許容差は軸長1e-10以下、元形状は修復しない。
+半楕円解析面積/寸法変換・分割軸混在タグ・交差/不正タグ/隙間を検証。
+標準210件中208合格・2 skip、validation-g03-closed-curves-20260908 PASS。
+次は弦近似Contour変換と幾何誤差/体積、Case元曲線保持。曲線FEM/旧入力対応も未完。
+G03・全互換目標は継続。
+
 ## G03の隣接曲線検査 — 2026-09-08
 
 directional_derivative_boundsとcertify_adjacent_curvesを追加。共有端点近傍は共通方向の
