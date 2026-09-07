@@ -54,3 +54,20 @@ out/validation-n01-accepted-20260908と一致。
 再現はOPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate.py --out out/validation-<unique-name>。
 次は二次軸電圧の安定積分、PEC辺損失と片側極値を実装し、独立積分と比較する。
 N02.V全体は未受入。
+
+### 二次軸電圧の積分 — 2026-09-08
+
+quadratic_rf.quadratic_voltageは元の軸辺の両端/中点から二次式を構成し、指定区間へ
+変数変換して積分する。中心座標xでx=P1、x²=(P0+2P2)/3を使い、
+指数関数との積分を球Bessel関数j0/j1/j2で評価する。SciPyは既存依存。
+絶対値積分は実根で区切った多項式原始関数から求める。
+accelerating_voltage_p2はP2解の軸辺とR01の区間/位相/betaを接続する。
+
+独立のSciPy重み付きQUADPACK積分で波数0/1e-10/.01/10/±3000、
+内部の符号反転2箇所、区間切断・位相回転・逆向き辺を照合した。
+P2 FEMの2モードでbeta=.03と部分区間の電圧も任意点場の独立積分に一致。
+ゼロ場と不正な辺の拒否を検証。RF quantitiesへの接続はPEC積分完成後に行う。
+
+ローカル証拠: out/validation-n02-voltage-20260908/validation.json PASS。
+155 tests中153合格・2 skip。円筒/成形セルの周波数/RF全量・case hashは直前と一致。
+次はPEC辺の損失積分・内部停留点を含む片側極値。N02全体は未受入。

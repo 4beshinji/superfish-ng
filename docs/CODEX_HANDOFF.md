@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## N02の軸電圧積分 — 2026-09-08
+
+quadratic_rf.pyへ二次軸場の複素電圧/絶対値積分とP2解アダプタを追加。
+低beta・部分区間・符号反転を独立積分で検査。155 tests中153合格・2 skip、
+標準validate PASS。HIGH_ORDER_FIELDS.mdに式と証拠を記録した。
+次はPEC表面損失/極値、quantities/cell_fields統合、その後保存/描画/鏡映/追跡。
+N02全体と継続目標は未完。
+
 ## N02の場評価を開始 — 2026-09-08
 
 HIGH_ORDER_FIELDS.mdにN02仕様と全移行箇所を記録。FieldSamplerは明示したP2空間の
