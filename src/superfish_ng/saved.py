@@ -15,10 +15,17 @@ from .geometry import linearize_profile
 
 def read_solution(directory):
     directory = Path(directory)
-    results = json.loads((directory / "results.json").read_text(encoding="utf-8"))
+    if (directory/'save_protocol.json').exists() and not (directory/'save_complete.json').is_file():
+        raise ValueError('incomplete saved result: completion marker has not been published')
+    try:
+        results = json.loads((directory / "results.json").read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise ValueError('incomplete saved result: results.json is missing') from exc
     if type(results.get("schema_version")) is not int or results["schema_version"] != 1:
         raise ValueError("only saved result schema_version 1 is supported")
     case = Case.load(directory / "case.json")
+    from .completion import verify_completion
+    verify_completion(directory, case, results)
     if Case.from_dict(results["case"]) != case:
         raise ValueError("saved case and result case differ")
     canonical = json.dumps(

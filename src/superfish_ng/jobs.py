@@ -334,16 +334,28 @@ class JobManager:
                 target = directory / "solution"
                 target.mkdir()
                 names = ["case.json", "results.json", "fields.npz", "modes.csv"]
+                if 'input_sha256' in saved.results['mesh']:
+                    names.append('mesh.json')
+                if 'save_protocol_version' in saved.results:
+                    names.append('save_protocol.json')
                 names += [
                     f"{prefix}_{i:03d}.{suffix}"
                     for i in range(1, saved.case.modes + 1)
                     for prefix, suffix in [("axis", "csv"), ("mode", "vtk")]
                 ]
+                if 'save_protocol_version' in saved.results:
+                    names.append('save_complete.json')
                 for name in names:
                     path = solution_dir / name
                     if path.is_symlink() or not path.is_file():
                         raise ValueError(f"missing or linked saved output: {name}")
-                    shutil.copyfile(path, target / name)
+                    if name == 'save_complete.json':
+                        temporary = target / '.import-completion.tmp'
+                        shutil.copyfile(path, temporary)
+                        os.link(temporary, target / name)
+                        temporary.unlink()
+                    else:
+                        shutil.copyfile(path, target / name)
                 read_solution(target)
                 files = {"project.json": _digest(directory / "project.json")}
                 files.update(
@@ -370,7 +382,8 @@ class JobManager:
                     origin="imported",
                     source_completion="verified manifest"
                     if managed
-                    else "legacy files checked; no original completion manifest",
+                    else ("verified direct-save completion" if 'save_protocol_version' in saved.results
+                          else "legacy files checked; no original completion manifest"),
                     numerical_validation="not_checked",
                 )
             except Exception as exc:

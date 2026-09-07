@@ -94,6 +94,12 @@ class JobTests(unittest.TestCase):
             source = Path(root) / "legacy"
             case = project().case
             save_run(case, solve(case), source)
+            # Exercise a genuinely historical layout, without direct-save markers.
+            old_result = json.loads((source / 'results.json').read_text())
+            old_result.pop('save_protocol_version')
+            (source / 'results.json').write_text(json.dumps(old_result))
+            (source / 'save_protocol.json').unlink()
+            (source / 'save_complete.json').unlink()
             original = (source / "fields.npz").read_bytes()
             manager = JobManager(Path(root) / "workspace")
             try:

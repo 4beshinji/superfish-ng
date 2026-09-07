@@ -4,6 +4,8 @@ import csv
 import hashlib
 import json
 import platform
+import os
+import tempfile
 from pathlib import Path
 import numpy as np
 import scipy
@@ -34,10 +36,27 @@ def write_vtk(path, solution, mode):
 
 
 def save_run(case, solution, directory):
+    """Publish readiness after writing all files; never replace an existing path."""
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
+    from .completion import digest, required_files
+    with (directory/'save_protocol.json').open('x', encoding='utf-8') as stream:
+        stream.write('{"version":1}\n')
+    with tempfile.TemporaryDirectory(prefix='.save-staging-', dir=directory) as temporary:
+        staging = Path(temporary)
+        result = _write_run(case, solution, staging)
+        for path in sorted(staging.iterdir()):
+            os.link(path, directory/path.name)
+        files = {name: digest(directory/name) for name in sorted(required_files(case, result))}
+        marker = staging/'save_complete.json'
+        marker.write_text(json.dumps({'completion_version': 1, 'files': files}, indent=2)+'\n', encoding='utf-8')
+        os.link(marker, directory/marker.name)  # Atomic no-replace publication point.
+    return result
+
+
+def _write_run(case, solution, directory):
     canonical = json.dumps(case.to_dict(), sort_keys=True, separators=(",", ":"), allow_nan=False)
-    result = {"schema_version": 1, "software_version": __version__,
+    result = {"schema_version": 1, "save_protocol_version": 1, "software_version": __version__,
               "case_sha256": hashlib.sha256(canonical.encode()).hexdigest(), "case": case.to_dict(),
               "environment": {"python": platform.python_version(), "numpy": np.__version__, "scipy": scipy.__version__, "platform": platform.platform()},
               "mesh": {"nodes": len(solution.mesh.points), "triangles": len(solution.mesh.triangles)},
