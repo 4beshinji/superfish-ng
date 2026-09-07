@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## G03曲線解と体積場 — 2026-09-08
+
+curved_solution.solve_curvedで昇順固有値・残差・質量直交性・指定Uを接続。
+fields_in_cellは参照座標を受け、曲線写像の物理勾配からH/Er/Ezを評価。
+直線3境界条件との一致、曲線上の物理線形場を検証。
+validate_curved_fields.py: out/validation-g03-curved-fields-final-20260908/comparison.json PASS。
+球形H誤差7.27e-5、E誤差1.12e-3、各エネルギー0.5 J。
+標準250件中248合格・2 skip、validation-g03-curved-solution-20260908 PASS。
+次は曲線壁/軸RF・物理座標逆写像、通常入力/保存/再読込/GUI。G03/全互換目標は継続。
+
 ## G03全体曲線空間/行列 — 2026-09-08
 
 curved_space.CurvedSpaceへ共有/向き/境界incidence/連結/Euler=1を集約。
