@@ -22,17 +22,35 @@ class Solution:
     construction: str = "direct eigensolve; mode indices within the specified boundary conditions"
     source_case: dict | None = None
     mesh_input: dict | None = None
+    element_order: int = 1
+    space: object | None = None
 
 
 def solve(case, *, mesh_data=None):
+    return _solve(case, mesh_data=mesh_data, element_order=1)
+
+
+def _solve(case, *, mesh_data=None, element_order=1):
     if mesh_data is None:
         mesh = make_mesh(case)
     else:
         from .mesh_input import mesh_from_dict
         mesh = mesh_from_dict(case, mesh_data)
-    k, m = assemble(mesh)
-    constrained = np.unique(mesh.boundary_edges[mesh.boundary_tags == "magnetic_symmetry"])
-    free = np.setdiff1d(np.arange(len(mesh.points)), constrained)
+    space = None
+    if element_order == 2:
+        from .high_order import quadratic_space, assemble_p2
+        space = quadratic_space(mesh)
+        k, m = assemble_p2(space)
+        count = len(space.dof_points)
+        boundary_dofs = space.boundary_dofs
+    elif element_order == 1:
+        k, m = assemble(mesh)
+        count = len(mesh.points)
+        boundary_dofs = mesh.boundary_edges
+    else:
+        raise ValueError('only element orders 1 and 2 are implemented')
+    constrained = np.unique(boundary_dofs[mesh.boundary_tags == "magnetic_symmetry"])
+    free = np.setdiff1d(np.arange(count), constrained)
     if case.modes >= len(free)-1:
         raise ValueError("modes must be smaller than free node count minus one")
     reduced_k, reduced_m = (mat[free][:, free] for mat in (k, m))
@@ -48,7 +66,7 @@ def solve(case, *, mesh_data=None):
         raise RuntimeError("eigensolver did not converge; refine/recondition case") from exc
     order = np.argsort(lam)
     lam = lam[order]
-    u = np.zeros((len(mesh.points), case.modes))
+    u = np.zeros((count, case.modes))
     u[free] = d[:, None]*vectors[:, order]
     if np.any(lam <= 0) or not np.all(np.isfinite(lam)):
         raise RuntimeError("nonpositive/nonfinite eigenvalue in axis-connected TM cavity")
@@ -67,7 +85,7 @@ def solve(case, *, mesh_data=None):
     # U = mu0/2 integral |H|^2 dV = mu0*pi*u^T M u.
     u *= np.sqrt(case.normalization_j/(MU0*np.pi))
     result = Solution(mesh, k, m, lam, C0*np.sqrt(lam)/TAU, u,
-                      np.array(residuals), orthogonality)
+                      np.array(residuals), orthogonality, element_order=element_order, space=space)
     if mesh_data is not None:
         from .mesh_input import mesh_to_dict
         result.mesh_input = mesh_to_dict(mesh)

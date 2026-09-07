@@ -30,6 +30,8 @@ def linear_voltage(z, field, wave_number):
 
 def cell_fields(solution, mode):
     """Cell-centre signed amplitudes (Er, Ez, Hphi); Ephasor=-i*Eamplitude."""
+    if getattr(solution, 'element_order', 1) != 1:
+        raise ValueError('P1 field reconstruction cannot evaluate quadratic fields; N02 is required')
     mesh = solution.mesh
     p, _, grad = element_geometry(mesh)
     u = solution.u[:, mode][mesh.triangles]
@@ -57,6 +59,8 @@ def accelerating_voltage(case, z, field, wave_number):
 
 
 def quantities(case, solution, mode=0):
+    if getattr(solution, 'element_order', 1) != 1:
+        raise ValueError('P1 RF integrals cannot evaluate quadratic fields; N02 is required')
     mesh, u = solution.mesh, solution.u[:, mode]
     omega = float(TAU*solution.frequencies_hz[mode])
     h2_volume = TAU*float(u @ (solution.mass @ u))

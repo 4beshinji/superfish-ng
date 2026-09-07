@@ -37,6 +37,8 @@ def write_vtk(path, solution, mode):
 
 def save_run(case, solution, directory):
     """Publish readiness after writing all files; never replace an existing path."""
+    if getattr(solution, 'element_order', 1) != 1:
+        raise ValueError('quadratic field export requires N02; refusing P1 output')
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     from .completion import digest, required_files

@@ -11,6 +11,8 @@ class FieldSampler:
     def __init__(self, points, triangles, u, frequencies_hz):
         self.points, self.triangles = np.asarray(points), np.asarray(triangles)
         self.u, self.frequencies_hz = np.asarray(u), np.asarray(frequencies_hz)
+        if self.u.ndim != 2 or self.u.shape != (len(self.points), len(self.frequencies_hz)):
+            raise ValueError('P1 sampling requires one coefficient per mesh vertex and mode; quadratic sampling requires N02')
         self.vertices, _, self.grad = element_geometry(SimpleNamespace(points=self.points, triangles=self.triangles))
         self.tree = cKDTree(self.vertices.mean(axis=1))
         self.lower, self.upper = self.vertices.min(axis=1), self.vertices.max(axis=1)
