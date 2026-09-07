@@ -5,6 +5,12 @@ import math
 import numpy as np
 
 
+def _checked_evaluation(points,tangent,curvature):
+    if not all(np.all(np.isfinite(v)) for v in (points,tangent,curvature)) or np.any(curvature<=0):
+        raise ValueError('conic evaluation exceeds floating-point range; reduce parameter or dimension extremes')
+    return dict(points_zr_m=points,tangent_zr=tangent,curvature_per_m=curvature)
+
+
 @dataclass(frozen=True)
 class EllipseArc:
     """Rotated ellipse arc in (z,r), parameterized by fraction in [0,1].
@@ -47,10 +53,10 @@ class EllipseArc:
         rotation = np.array([[c,-s],[s,c]])
         points = np.stack((a*np.cos(theta),b*np.sin(theta)),axis=-1) @ rotation.T
         derivative = np.stack((-a*np.sin(theta),b*np.cos(theta)),axis=-1) @ rotation.T
-        speed = np.linalg.norm(derivative,axis=-1)
-        return dict(points_zr_m=points+np.asarray(self.center_zr_m),
-                    tangent_zr=np.sign(self.sweep_rad)*derivative/speed[...,None],
-                    curvature_per_m=a*b/speed**3)
+        speed = np.hypot(derivative[...,0],derivative[...,1])
+        return _checked_evaluation(points+np.asarray(self.center_zr_m),
+                    np.sign(self.sweep_rad)*derivative/speed[...,None],
+                    (a/speed)*(b/speed)/speed)
 
     @property
     def minimum_radius_m(self):
@@ -83,4 +89,85 @@ class EllipseArc:
         if limit == 0 or abs(self.sweep_rad)/max_segments > limit:
             raise ValueError('ellipse chord tolerance exceeds max_segments; increase tolerance or explicit limit')
         count = max(1,math.ceil(abs(self.sweep_rad)/limit))
+        return self.evaluate(np.linspace(0,1,count+1))['points_zr_m']
+
+
+@dataclass(frozen=True)
+class HyperbolaArc:
+    """Finite arc (branch*a*cosh(u), b*sinh(u)), rotated in (z,r)."""
+    center_zr_m: tuple
+    semiaxes_m: tuple
+    start_parameter: float
+    end_parameter: float
+    branch: int = 1
+    rotation_rad: float = 0.
+
+    def __post_init__(self):
+        # Reuse only the common center/axes/rotation validation.
+        common = EllipseArc(self.center_zr_m,self.semiaxes_m,0.,1.,self.rotation_rad)
+        for key in ('center_zr_m','semiaxes_m','rotation_rad'):
+            object.__setattr__(self,key,getattr(common,key))
+        for key in ('start_parameter','end_parameter'):
+            value = getattr(self,key)
+            if type(value) not in (int,float) or not math.isfinite(value):
+                raise ValueError(f'{key} must be finite')
+        if self.branch not in (-1,1) or type(self.branch) is not int:
+            raise ValueError('hyperbola branch must be integer -1 or 1')
+        if self.start_parameter == self.end_parameter:
+            raise ValueError('hyperbola parameter interval must be nonzero')
+        try:
+            bound = math.hypot(self.semiaxes_m[0]*math.cosh(self.parameter_extent),
+                               self.semiaxes_m[1]*math.sinh(self.parameter_extent))
+        except OverflowError as error:
+            raise ValueError('hyperbola interval exceeds floating-point range') from error
+        if not math.isfinite(bound) or bound == 0:
+            raise ValueError('hyperbola interval exceeds floating-point range')
+
+    @property
+    def parameter_extent(self):
+        return max(abs(self.start_parameter),abs(self.end_parameter))
+
+    def evaluate(self,fraction):
+        raw = np.asarray(fraction)
+        if raw.dtype.kind not in 'iuf' or not np.all(np.isfinite(raw)) or np.any((raw<0)|(raw>1)):
+            raise ValueError('hyperbola parameter fraction must be finite in [0,1]')
+        u = self.start_parameter+(self.end_parameter-self.start_parameter)*raw.astype(float)
+        a,b = self.semiaxes_m
+        c,s = math.cos(self.rotation_rad),math.sin(self.rotation_rad)
+        rotation = np.array([[c,-s],[s,c]])
+        points = np.stack((self.branch*a*np.cosh(u),b*np.sinh(u)),axis=-1) @ rotation.T
+        derivative = np.stack((self.branch*a*np.sinh(u),b*np.cosh(u)),axis=-1) @ rotation.T
+        speed = np.hypot(derivative[...,0],derivative[...,1])
+        return _checked_evaluation(points+np.asarray(self.center_zr_m),
+                    np.sign(self.end_parameter-self.start_parameter)*derivative/speed[...,None],
+                    (a/speed)*(b/speed)/speed)
+
+    @property
+    def minimum_radius_m(self):
+        low,high = sorted((self.start_parameter,self.end_parameter))
+        u = min(max(0.,low),high)
+        a,b = self.semiaxes_m
+        speed = math.hypot(a*math.sinh(u),b*math.cosh(u))
+        return float((speed/a)*(speed/b)*speed)
+
+    @property
+    def signed_line_area_m2(self):
+        ends = self.evaluate([0.,1.])['points_zr_m']
+        delta = ends[1]-ends[0]
+        z,r = self.center_zr_m
+        a,b = self.semiaxes_m
+        return float((self.branch*a*b*(self.end_parameter-self.start_parameter)+z*delta[1]-r*delta[0])/2)
+
+    def linearize(self,tolerance_m,*,max_segments=20000):
+        if type(tolerance_m) not in (int,float) or not math.isfinite(tolerance_m) or tolerance_m<=0:
+            raise ValueError('hyperbola chord tolerance must be finite and positive')
+        if type(max_segments) is not int or max_segments<1:
+            raise ValueError('max_segments must be a positive integer')
+        a,b = self.semiaxes_m
+        bound = math.hypot(a*math.cosh(self.parameter_extent),b*math.sinh(self.parameter_extent))
+        limit = math.sqrt(tolerance_m/bound)*math.sqrt(8)
+        span = abs(self.end_parameter-self.start_parameter)
+        if limit == 0 or span/max_segments > limit:
+            raise ValueError('hyperbola chord tolerance exceeds max_segments; increase tolerance or explicit limit')
+        count = max(1,math.ceil(span/limit))
         return self.evaluate(np.linspace(0,1,count+1))['points_zr_m']

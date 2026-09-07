@@ -2,7 +2,53 @@
 import math
 import unittest
 import numpy as np
-from superfish_ng.conics import EllipseArc
+from superfish_ng.conics import EllipseArc, HyperbolaArc
+
+
+class HyperbolaArcTests(unittest.TestCase):
+    def test_branches_implicit_equation_tangents_and_vertex_radius(self):
+        for branch in (-1,1):
+            arc = HyperbolaArc((0,0),(3,2),-1,1,branch)
+            result = arc.evaluate(np.linspace(0,1,101))
+            z,r = result['points_zr_m'].T
+            np.testing.assert_allclose((z/3)**2-(r/2)**2,1,atol=1e-14)
+            tangent = result['tangent_zr']
+            np.testing.assert_allclose(tangent[:,0]*z/9-tangent[:,1]*r/4,0,atol=1e-14)
+            np.testing.assert_allclose(np.linalg.norm(tangent,axis=1),1,atol=1e-14)
+            self.assertAlmostEqual(arc.minimum_radius_m,4/3)
+            self.assertAlmostEqual(result['curvature_per_m'][50],3/4)
+            self.assertAlmostEqual(arc.signed_line_area_m2,branch*6.)
+
+    def test_rotation_reversal_area_and_chord_bound(self):
+        arc = HyperbolaArc((1,2),(3,2),-.7,1.2,-1,.4)
+        back = HyperbolaArc((1,2),(3,2),1.2,-.7,-1,.4)
+        t = np.linspace(0,1,101)
+        np.testing.assert_allclose(arc.evaluate(t)['points_zr_m'],back.evaluate(1-t)['points_zr_m'],atol=1e-14)
+        np.testing.assert_allclose(arc.evaluate(t)['tangent_zr'],-back.evaluate(1-t)['tangent_zr'],atol=1e-14)
+        self.assertAlmostEqual(arc.signed_line_area_m2,-back.signed_line_area_m2)
+        p = arc.linearize(1e-4)
+        n = len(p)-1
+        for fraction in (.2,.5,.8):
+            exact = arc.evaluate((np.arange(n)+fraction)/n)['points_zr_m']
+            chord = (1-fraction)*p[:-1]+fraction*p[1:]
+            self.assertLessEqual(np.linalg.norm(exact-chord,axis=1).max(),1e-4)
+        polygon_integral = np.sum(p[:-1,0]*p[1:,1]-p[1:,0]*p[:-1,1])/2
+        self.assertLess(abs(polygon_integral-arc.signed_line_area_m2),.001)
+
+    def test_scaling_and_explicit_rejection(self):
+        base = HyperbolaArc((0,0),(3,2),.2,1.)
+        for scale in (1e-6,1e6):
+            arc = HyperbolaArc((0,0),(3*scale,2*scale),.2,1.)
+            self.assertAlmostEqual(arc.minimum_radius_m/(scale*base.minimum_radius_m),1)
+            self.assertAlmostEqual(arc.signed_line_area_m2/(scale**2*base.signed_line_area_m2),1)
+        for branch in (0,True,1.):
+            with self.assertRaises(ValueError):HyperbolaArc((0,0),(1,1),0,1,branch)
+        for end in (0,float('inf'),1000):
+            with self.assertRaises(ValueError):HyperbolaArc((0,0),(1,1),0,end)
+        with self.assertRaisesRegex(ValueError,'max_segments'):base.linearize(1e-12,max_segments=10)
+        with self.assertRaises(ValueError):base.evaluate(True)
+        with self.assertRaisesRegex(ValueError,'floating-point'):
+            HyperbolaArc((0,0),(1,1),399,400).evaluate(1.)
 
 
 class EllipseArcTests(unittest.TestCase):
