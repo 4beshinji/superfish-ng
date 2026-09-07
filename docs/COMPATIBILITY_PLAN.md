@@ -4,6 +4,10 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-08 G03途中受入: 曲線境界の半径交点・保存プローブ・描画を接続。
+既知多項式交点/保存場一致・球形の実描画を確認。標準261件中259合格・2 skip、
+追加保存プローブ検査とvalidate PASS。Study/GUI・表面ピーク・鏡映は継続。
+
 2026-09-08 G03途中受入: [通常曲線Case・保存往復](CURVED_ELEMENTS.md)を接続。
 曲線配列の再構成照合、保存係数の残差/正規化/RF再確認、保存後の独立球形比較PASS。
 259 tests中257合格・2 skip、標準validate PASS。G03全体と他の未完親課題は継続。

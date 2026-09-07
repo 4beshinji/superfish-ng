@@ -94,6 +94,14 @@ class FieldSampler:
         return fields
 
 
+def solution_radial_extent(solution, z_m):
+    if solution.case.geometry_order == 2:
+        from .curved_queries import quadratic_radial_extent
+        geometry = solution.space.geometry
+        return quadratic_radial_extent(geometry.points_rz_m, geometry.boundary_nodes, z_m)
+    return radial_extent(solution.mesh.points, solution.mesh.boundary_edges, z_m)
+
+
 def radial_extent(points, edges, z_m):
     """Outer intersection with a radial line in an axis-connected cavity."""
     radii = []

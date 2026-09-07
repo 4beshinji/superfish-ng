@@ -68,6 +68,22 @@ class CurvedSavedTests(unittest.TestCase):
         self.assertNotIn('geometry_order', default.to_dict()['mesh'])
         self.assertNotIn('quadrature_order', default.to_dict()['solver'])
 
+    def test_saved_radial_probe_uses_curved_fields(self):
+        from superfish_ng.saved import export_radial_probe
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)/'run'
+            save_run(self.case, self.solution, directory)
+            path = Path(temporary)/'probe.csv'
+            export_radial_probe(directory, path, self.case.length/2)
+            data = np.genfromtxt(path, delimiter=',', names=True)
+            points = np.column_stack((data['r_m'], data['z_m']))
+            fields = FieldSampler.from_solution(self.solution).evaluate(points, outside='nan')
+            self.assertEqual(len(data), 401)
+            self.assertTrue(fields['inside'][-1])
+            np.testing.assert_allclose(data['Ez_quadrature_V_per_m'], fields['Ez_quadrature_V_per_m'], rtol=1e-12)
+            with self.assertRaises(FileExistsError):
+                export_radial_probe(directory, path, self.case.length/2)
+
     def test_reconstructed_geometry_and_coefficients_reject_tampering(self):
         # Update the manifest too: checksums alone must not authorize invalid fields.
         for name in ('points_rz_m', 'boundary_parameters', 'u_a_per_m2', 'frequencies_hz'):

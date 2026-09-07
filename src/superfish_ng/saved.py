@@ -269,7 +269,7 @@ def analyze_band(directory, cell_centers_z_m):
 
 def export_radial_probe(directory, out, z_m, mode=1):
     """Export unsmoothed saved fields on a radial line, in SI peak phasors."""
-    from .sampling import FieldSampler, radial_extent
+    from .sampling import FieldSampler, solution_radial_extent
     from .constants import MU0
 
     saved = read_solution(directory, allow_quadratic=True)
@@ -281,7 +281,7 @@ def export_radial_probe(directory, out, z_m, mode=1):
         or not 0 <= z_m <= saved.case.length
     ):
         raise ValueError("probe z must lie inside the saved input domain in metres")
-    radius = radial_extent(saved.mesh.points, saved.arrays["boundary_edges"], z_m)
+    radius = solution_radial_extent(saved, z_m)
     positions = np.column_stack((np.linspace(0, radius, 401), np.full(401, z_m)))
     sampler = FieldSampler.from_solution(saved)
     fields = sampler.evaluate(positions, mode - 1, outside="nan" if saved.case.contour is not None else "raise")

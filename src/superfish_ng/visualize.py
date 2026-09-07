@@ -9,7 +9,7 @@ from matplotlib.tri import Triangulation
 from .constants import MU0
 from .display import display_fields
 from .saved import read_solution
-from .sampling import FieldSampler, radial_extent
+from .sampling import FieldSampler, solution_radial_extent
 
 
 def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None):
@@ -17,8 +17,6 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     if out.exists():
         raise ValueError(f'output already exists: {out}')
     solution = read_solution(run, allow_quadratic=True)
-    if solution.case.geometry_order == 2:
-        raise ValueError('curved geometry plots are pending; use saved VTK display samples or CurvedFieldSampler')
     results = solution.results
     if isinstance(mode, bool) or not isinstance(mode, int) or not 1 <= mode <= len(results['modes']):
         raise ValueError('mode must be a valid one-based mode number')
@@ -28,13 +26,19 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     label = f'{mode_label} (mode {mode})' if mode_label else f'Mode {mode}'
     p, t, nodal_h, (er, ez, _) = display_fields(solution, mode-1)
     u = solution.u
-    edges, tags = solution.mesh.boundary_edges, solution.mesh.boundary_tags
+    if solution.case.geometry_order == 2:
+        from .curved_queries import boundary_polylines
+        boundary = boundary_polylines(solution.space)[:, :, [1, 0]]*1000
+        tags = solution.space.boundary_tags
+    else:
+        edges, tags = solution.mesh.boundary_edges, solution.mesh.boundary_tags
+        boundary = p[edges][:, :, [1, 0]]*1000
     zmin, zmax = p[:, 1].min(), p[:, 1].max()
-    probe_z = zmin+(zmax-zmin)/4 if probe_z_m is None else float(probe_z_m)
+    probe_z = float(zmin+(zmax-zmin)/4) if probe_z_m is None else float(probe_z_m)
     if not np.isfinite(probe_z) or not zmin <= probe_z <= zmax:
         raise ValueError('probe z must lie within the cavity in metres')
     sampler = FieldSampler.from_solution(solution)
-    radial_points = np.column_stack((np.linspace(0, radial_extent(p, edges, probe_z), 401), np.full(401, probe_z)))
+    radial_points = np.column_stack((np.linspace(0, solution_radial_extent(solution, probe_z), 401), np.full(401, probe_z)))
     radial = sampler.evaluate(radial_points, mode-1, outside="nan" if solution.case.contour is not None else "raise")
     axis = np.loadtxt(run/f'axis_{mode:03d}.csv', delimiter=',', skiprows=1)
     if solution.element_order == 2:
@@ -64,7 +68,6 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
         if show_mesh:
             ax.triplot(mesh, color='gray', lw=.2, alpha=.35)
         # One polyline collection is substantially faster than per-edge artists.
-        boundary = p[edges][:, :, [1, 0]]*1000
         from matplotlib.collections import LineCollection
         for tag, color, style in [('pec', '#444444', '-'), ('axis', '#777777', ':'),
                                   ('electric_symmetry', '#00a66c', '--'), ('magnetic_symmetry', '#d68a00', '--')]:
@@ -90,6 +93,8 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     domain = 'input domain only; symmetry loss excluded' if np.any(np.isin(tags, ['electric_symmetry', 'magnetic_symmetry'])) else 'full closed PEC cavity'
     if solution.element_order == 2:
         domain += '; P2 field sampled on display triangles'
+    if solution.case.geometry_order == 2:
+        domain += '; curved geometry shown by straight display subdivisions'
     if 'reflection_source_case' in results:
         domain += '; parity-filtered modes'
     fig.suptitle(f"{results['case']['name']} | {label} | {q['frequency_hz']/1e6:.6f} MHz\n"
