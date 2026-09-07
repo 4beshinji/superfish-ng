@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Validated axis-connected analytic curve boundary, independent of FEM order."""
-from dataclasses import dataclass,replace
+from dataclasses import dataclass,replace,asdict
 import math
 import numpy as np
 from .conics import LineSegment,EllipseArc,HyperbolaArc,check_curve_join
@@ -90,6 +90,34 @@ class CurvedContour:
     @property
     def area_m2(self):
         return math.fsum(c.signed_line_area_m2 for c in self.curves)
+
+    def to_dict(self):
+        kinds = {LineSegment:'line',EllipseArc:'ellipse_arc',HyperbolaArc:'hyperbola_arc'}
+        curves = []
+        for curve in self.curves:
+            row = asdict(curve)
+            curves.append(dict(type=kinds[type(curve)],**{k:list(v) if isinstance(v,tuple) else v for k,v in row.items()}))
+        return dict(curves=curves,edge_tags=list(self.edge_tags),join_tolerance_m=self.join_tolerance_m,
+                    minimum_gap_m=self.minimum_gap_m)
+
+    @classmethod
+    def from_dict(cls,data):
+        from .config import keys
+        keys(data,('curves','edge_tags','join_tolerance_m','minimum_gap_m'),
+             ('curves','edge_tags','join_tolerance_m'),'curved contour')
+        if not isinstance(data['curves'],list):raise ValueError('curves must be an array')
+        kinds = {'line':LineSegment,'ellipse_arc':EllipseArc,'hyperbola_arc':HyperbolaArc}
+        curves = []
+        for row in data['curves']:
+            if not isinstance(row,dict) or row.get('type') not in kinds:
+                raise ValueError('curve type must be line, ellipse_arc or hyperbola_arc')
+            kind = kinds[row['type']]
+            required = ('start_zr_m','end_zr_m') if kind is LineSegment else (
+                ('center_zr_m','semiaxes_m','start_rad','sweep_rad') if kind is EllipseArc else
+                ('center_zr_m','semiaxes_m','start_parameter','end_parameter'))
+            keys(row,('type',)+tuple(kind.__dataclass_fields__),('type',)+required,'curve')
+            curves.append(kind(**{k:v for k,v in row.items() if k!='type'}))
+        return cls(tuple(curves),data['edge_tags'],data['join_tolerance_m'],data.get('minimum_gap_m',0.))
 
     def linearize(self,tolerance_m,*,max_segments=20000):
         """Produce a tagged polygon with explicit, bounded join adjustments.

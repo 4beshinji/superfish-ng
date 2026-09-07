@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G03の元曲線Case/保存 — 2026-09-08
+
+v3 geometry.type=curved_contour、曲線列のstrict入出力と弦誤差/全体分割上限をCaseへ追加。
+Case.contourは導出、同時指定時は完全一致を要求。保存に弦表現/元曲線対応/調整/面積差を記録。
+P2再読込と再計算係数が一致。標準214件中212合格・2 skip、validation-g03-curved-case-20260908 PASS。
+解析曲線の鏡映は明示拒否。GUI/Studyは未移行なので次に元曲線/解析体積と併せて接続する。
+Case置換で弦誤差を変えるときはcontour=Noneを指定して再導出。
+曲線FEM、接線構築、旧入力対応と全互換目標は未完。
+
 ## G03の弦Contour変換 — 2026-09-08
 
 CurvedContour.linearize→ChordApproximationを追加。タグ/元曲線対応・端点調整・解析面積差を保持。

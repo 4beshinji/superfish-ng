@@ -14,6 +14,8 @@ def reflect_solution(case, solution):
     are unchanged, so energy and loss double. The original mode indices are a
     subset of the full spectrum, not its global frequency ranks.
     """
+    if case.curved_contour is not None:
+        raise ValueError('analytic curved contour reflection is not implemented; provide a validated full curved contour')
     order = getattr(solution, 'element_order', 1)
     if order not in (1, 2):
         raise ValueError('unsupported element order for reflection')

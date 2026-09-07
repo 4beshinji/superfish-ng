@@ -81,6 +81,17 @@ def _write_run(case, solution, directory):
                               "voltage": "integral Ez_quadrature(0,z) exp(+i omega z/(beta c)) dz; global -i omitted",
                               "vtk_coordinates": "x=r, y=z, z=0; scalar cylindrical components"},
               "modes": [quantities(case, solution, i) for i in range(case.modes)]}
+    if case.curved_contour is not None:
+        approximation = case.curved_contour.linearize(case.curve_chord_tolerance_m,max_segments=case.curve_chord_max_segments)
+        result['geometry_approximation'] = dict(
+            representation='straight chords of analytic primitives',geometry_order=1,
+            tolerance_m=approximation.tolerance_m,
+            primitive_chord_tolerance_m=approximation.primitive_chord_tolerance_m,
+            endpoint_adjustments_m=list(approximation.endpoint_adjustments_m),
+            segment_curve_indices=list(approximation.segment_curve_indices),
+            analytic_area_m2=approximation.analytic_area_m2,
+            chord_area_m2=approximation.contour.area_m2,
+            area_difference_m2=approximation.area_difference_m2)
     if solution.element_order == 2:
         result['field_space'] = {'element_order': 2, 'basis': 'quadratic Lagrange u=Hphi/r',
                                  'geometry_order': 1, 'dofs': len(solution.u)}

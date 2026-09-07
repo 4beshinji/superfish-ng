@@ -76,8 +76,21 @@ class Case:
     element_order: int = 1
     contour: object | None = None
     contour_mesh: object | None = None
+    curved_contour: object | None = None
+    curve_chord_tolerance_m: float | None = None
+    curve_chord_max_segments: int = 20000
 
     def __post_init__(self):
+        if self.curved_contour is not None:
+            from .curved_contour import CurvedContour
+            if not isinstance(self.curved_contour,CurvedContour) or self.profile:
+                raise ValueError('curved_contour requires a validated CurvedContour and empty profile')
+            approximation = self.curved_contour.linearize(self.curve_chord_tolerance_m,max_segments=self.curve_chord_max_segments)
+            if self.contour is not None and self.contour != approximation.contour:
+                raise ValueError('supplied contour differs from curved geometry chords; clear contour when changing chord tolerance')
+            object.__setattr__(self,'contour',approximation.contour)
+        elif self.curve_chord_tolerance_m is not None or self.curve_chord_max_segments!=20000:
+            raise ValueError('curve chord controls require curved_contour')
         if self.contour_mesh is not None:
             from .mesh_controls import ContourMeshControls
             if not isinstance(self.contour_mesh,ContourMeshControls) or self.contour is None:
@@ -96,9 +109,9 @@ class Case:
             from .contour import Contour
             if not isinstance(self.contour, Contour) or self.profile:
                 raise ValueError('contour Case requires a validated Contour and empty profile')
-            if self.geometry_type not in ('profile', 'contour'):
+            if self.geometry_type not in ('profile', 'contour', 'curved_contour'):
                 raise ValueError('contour cannot be combined with profile geometry metadata')
-            object.__setattr__(self, 'geometry_type', 'contour')
+            object.__setattr__(self, 'geometry_type', 'curved_contour' if self.curved_contour is not None else 'contour')
             for side, z in [('z_min', 0.), ('z_max', self.length)]:
                 points=self.contour.vertices_zr_m
                 tags={tag for i,tag in enumerate(self.contour.edge_tags)
@@ -235,6 +248,12 @@ class Case:
                 raise ValueError('contour requires v3 and edge_tags instead of boundaries')
             keys(g, ['type','vertices_zr_m','edge_tags'], ['type','vertices_zr_m','edge_tags'], 'geometry')
             profile = ()
+        elif g.get('type') == 'curved_contour':
+            if data['schema_version']!=3 or boundaries:
+                raise ValueError('curved_contour requires v3 and edge_tags instead of boundaries')
+            keys(g,('type','curves','edge_tags','join_tolerance_m','minimum_gap_m','chord_tolerance_m','chord_max_segments'),
+                 ('type','curves','edge_tags','join_tolerance_m','chord_tolerance_m'),'geometry')
+            profile = ()
         elif g.get("type") in ("profile", "stepped_profile", "arc_profile"):
             if g["type"] != "profile" and data["schema_version"] < 2:
                 raise ValueError("stepped_profile and arc_profile require schema_version 2")
@@ -246,6 +265,12 @@ class Case:
         else:
             raise ValueError("geometry type must be pillbox, profile, stepped_profile or arc_profile")
         geometry_options = {}
+        if g['type']=='curved_contour':
+            from .curved_contour import CurvedContour
+            geometry_options.update(curved_contour=CurvedContour.from_dict({k:v for k,v in g.items()
+                                    if k not in ('type','chord_tolerance_m','chord_max_segments')}),
+                                    curve_chord_tolerance_m=g['chord_tolerance_m'],
+                                    curve_chord_max_segments=g.get('chord_max_segments',20000))
         if g['type'] == 'contour':
             from .contour import Contour
             geometry_options['contour'] = Contour(g['vertices_zr_m'], g['edge_tags'])
@@ -326,4 +351,8 @@ class Case:
             data.pop('boundaries', None)
         if self.contour_mesh is not None:
             data['mesh']['contour_mesh'] = self.contour_mesh.to_dict()
+        if self.curved_contour is not None:
+            data['geometry'] = dict(type='curved_contour',**self.curved_contour.to_dict(),
+                                    chord_tolerance_m=self.curve_chord_tolerance_m,
+                                    chord_max_segments=self.curve_chord_max_segments)
         return data

@@ -182,3 +182,23 @@ max_segmentsは輪郭全体に対する上限で、曲線ごとに上限をリ�
 標準212件中210合格・2 skip、`out/validation-g03-chord-contour-20260908/validation.json` PASS。
 次は元曲線・弦誤差・調整記録をCase/保存へ保持し、幾何細分とFEM細分を分ける。
 解析体積の一般式、曲線FEM、接線自動構築と旧入力対応は引き続き残件。
+
+## Caseと保存で元曲線を保持 — 2026-09-08
+
+v3 `geometry.type=curved_contour` を追加。geometryはCurvedContourのcurves/edge_tags/
+join_tolerance_m/minimum_gap_mと、必須chord_tolerance_m、任意chord_max_segments（既定20000）を持つ。
+各curveはtype=line/ellipse_arc/hyperbola_arcと前節の同名パラメータを持ち、未知項目を拒否する。
+端面条件はedge_tagsを正とする。PythonではCase.curved_contourとcurve_chord_tolerance_m/
+curve_chord_max_segmentsを指定する。Case.contourは検証済みの弦多角形として導出する。
+既存contourを同時に渡す場合は導出値との完全一致が必要。dataclasses.replaceで弦誤差を
+変える際はcontour=Noneとして再導出する。元曲線を捨てて旧polygonへ偽装しない。
+
+自動メッシュはG02のcontour_mesh設定で弦多角形を処理し、現行P1/P2直線要素で解く。
+保存geometry_approximationに直線弦表現/geometry_order=1、元曲線対応、端点調整、
+弦誤差配分、解析面積/弦面積/差を記録する。保存Caseから同じ曲線/弦/係数を再生成できる。
+曲線FEM対応を意味しない。解析曲線の鏡映は未実装として明示拒否し、片側の元曲線を
+全領域の保存情報へ流用しない。GUI・曲線の幾何細分Studyは次の接続段階。
+
+半楕円CaseのJSON往復・P2保存/再読込/係数再現、未知curve項目/型・弦誤差欠落の拒否を検証。
+標準214件中212合格・2 skip、`out/validation-g03-curved-case-20260908/validation.json` PASS。
+次は解析体積・鏡映・GUI/Studyへ元曲線を接続する。曲線FEM/接線構築/旧入力対応は未完。
