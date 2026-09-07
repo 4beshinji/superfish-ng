@@ -111,6 +111,8 @@ class Project:
             raise ValueError("reflect_full must be a boolean")
         if reflect and not ((case.z_min == "pec") != (case.z_max == "pec")):
             raise ValueError("reflection requires one symmetry end and one PEC end")
+        if reflect:
+            case.reflected_acceleration_parameters('z_min' if case.z_min != 'pec' else 'z_max')
         unit = data.get("display_length_unit", "mm")
         if unit not in ("m", "mm"):
             raise ValueError("display_length_unit must be m or mm")

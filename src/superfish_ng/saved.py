@@ -302,6 +302,9 @@ def compare_pillbox(directory):
             case.beta,
             case.conductivity_s_per_m,
             case.normalization_j,
+            active_length_m=case.active_length_m,
+            voltage_interval_m=case.voltage_interval_m,
+            phase_origin_m=case.phase_origin_m,
         )
         for _, _, n, p in candidates
     ]

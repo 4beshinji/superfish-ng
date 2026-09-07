@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.special import jn_zeros, j1, jnp_zeros
 from .constants import C0, EPS0, MU0, TAU
-from .config import positive, integer
+from .config import positive, integer, acceleration_parameters
 
 
 def tm0np_frequency(radius_m, length_m, n=1, p=0):
@@ -43,7 +43,8 @@ def pillbox_tm010(radius_m, length_m, beta=1., conductivity_s_per_m=5.8e7):
 
 
 def pillbox_tm_mode(radius_m, length_m, n=1, p=0, beta=1.,
-                    conductivity_s_per_m=5.8e7, normalization_j=1.):
+                    conductivity_s_per_m=5.8e7, normalization_j=1., *,
+                    active_length_m=None, voltage_interval_m=None, phase_origin_m=None):
     """Full-cavity TM0np reference: Hphi=H0 J1(chi*r/R) cos(p*pi*z/L).
 
     Axial mean cos² is 1 for p=0, 1/2 otherwise. Both end plates contribute
@@ -67,11 +68,24 @@ def pillbox_tm_mode(radius_m, length_m, n=1, p=0, beta=1.,
         return length_m*np.exp(1j*x)*np.sinc(x/np.pi)
     voltage = e0*(exp_integral(kb+kz)+exp_integral(kb-kz))/2
     absolute = e0*length_m*(1. if p == 0 else 2/np.pi)
+    overridden = any(v is not None for v in (active_length_m, voltage_interval_m, phase_origin_m))
+    if overridden:
+        active, (a, b), origin = acceleration_parameters(length_m, active_length_m, voltage_interval_m, phase_origin_m)
+        def interval_integral(k):
+            return (b-a)*np.exp(1j*k*(a+b)/2)*np.sinc(k*(b-a)/(2*np.pi))
+        phase = kb*origin
+        if not np.isfinite(phase):
+            raise ValueError('phase_origin_m produces an unrepresentable phase')
+        voltage = e0*(interval_integral(kb+kz)+interval_integral(kb-kz))/2*np.exp(-1j*phase)
+        def absolute_cosine_primitive(t):
+            periods = np.floor((t+np.pi/2)/np.pi)
+            return 2*periods+np.sin(t-periods*np.pi)
+        absolute = e0*(b-a) if p == 0 else e0*(absolute_cosine_primitive(kz*b)-absolute_cosine_primitive(kz*a))/kz
     rs = np.sqrt(omega*MU0/(2*conductivity_s_per_m))
     loss = np.pi*rs*h0**2*j1(chi)**2*(radius_m*length_m*average+radius_m**2)
     q0 = omega*normalization_j/loss
     rq = abs(voltage)**2/(omega*normalization_j)
-    return {'frequency_hz': float(f), 'stored_energy_j': float(normalization_j),
+    result = {'frequency_hz': float(f), 'stored_energy_j': float(normalization_j),
             'surface_resistance_ohm': float(rs), 'wall_loss_w': float(loss),
             'q0': float(q0), 'geometry_factor_ohm': float(q0*rs),
             'vacc_v': float(abs(voltage)), 'transit_time_factor_abs': float(abs(voltage)/absolute),
@@ -79,3 +93,8 @@ def pillbox_tm_mode(radius_m, length_m, n=1, p=0, beta=1.,
             'r_shunt_accelerator_ohm': float(rq*q0), 'r_shunt_circuit_ohm': float(rq*q0/2),
             'h0_a_per_m': float(h0), 'e0_v_per_m': float(e0),
             'radial_wave_number_per_m': float(alpha), 'axial_wave_number_per_m': float(kz)}
+    if overridden:
+        result.update(voltage_real_v=float(voltage.real), voltage_imag_v=float(voltage.imag),
+                      active_length_m=active, eacc_v_per_m=float(abs(voltage)/active),
+                      voltage_interval_start_m=a, voltage_interval_end_m=b, phase_origin_m=origin)
+    return result

@@ -184,6 +184,16 @@
           </p>
         </details>
         <details>
+          <summary>加速量の積分・位相設定</summary>
+          <p class="hint">空欄は入力全長・全区間・位相原点0を使用します。蓄積エネルギーと壁損失は入力領域全体の値です。</p>
+          <div class="grid">
+            <label>加速長 [mm]<input id="active-length" type="number" step="any" /></label>
+            <label>電圧区間の開始 [mm]<input id="voltage-start" type="number" step="any" /></label>
+            <label>電圧区間の終了 [mm]<input id="voltage-end" type="number" step="any" /></label>
+            <label>位相原点 [mm]<input id="phase-origin" type="number" step="any" /></label>
+          </div>
+        </details>
+        <details>
           <summary>詳細なメッシュ設定</summary>
           <label
             >三角形分割<select id="triangulation">

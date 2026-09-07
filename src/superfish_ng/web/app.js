@@ -8,6 +8,7 @@ let resultRequest = 0,
   geometryOriginal = null,
   geometryDirty = true,
   explicitModel = null,
+  accelerationOriginal = {},
   selectedSection = null;
 let sections = [],
   assemblyActive = false,
@@ -209,6 +210,19 @@ function collect() {
     p.case.schema_version = 3;
     p.case.model = structuredClone(explicitModel);
   }
+  const lengthInput = (id, original) => original !== undefined && $(id).value === String(original * 1000)
+    ? original : number(id) / 1000;
+  for (const [id, key] of [["active-length", "active_length_m"], ["phase-origin", "phase_origin_m"]])
+    if ($(id).value !== "") p.case.rf[key] = lengthInput(id, accelerationOriginal[key]);
+  const hasStart = $("voltage-start").value !== "", hasEnd = $("voltage-end").value !== "";
+  if (hasStart !== hasEnd) throw Error("電圧区間は開始と終了を両方指定してください");
+  if (hasStart) p.case.rf.voltage_interval_m = [lengthInput("voltage-start", accelerationOriginal.voltage_interval_m?.[0]),
+    lengthInput("voltage-end", accelerationOriginal.voltage_interval_m?.[1])];
+  if (Object.keys(p.case.rf).length > 3 && explicitModel === null) {
+    p.case.schema_version = 3;
+    p.case.model = { physics: "rf_eigenmode", coordinates: "axisymmetric", polarization: "tm", azimuthal_index: 0,
+      materials: [{ id: "vacuum", type: "vacuum" }], regions: [{ id: "cavity", material: "vacuum", domain: "interior" }] };
+  }
   return p;
 }
 function setGeometry(g) {
@@ -235,6 +249,10 @@ function setGeometry(g) {
 function applyProject(p) {
   const c = p.case;
   explicitModel = c.model ? structuredClone(c.model) : null;
+  accelerationOriginal = structuredClone(c.rf);
+  for (const [id, value] of [["active-length", c.rf.active_length_m], ["phase-origin", c.rf.phase_origin_m],
+      ["voltage-start", c.rf.voltage_interval_m?.[0]], ["voltage-end", c.rf.voltage_interval_m?.[1]]])
+    $(id).value = value === undefined ? "" : value * 1000;
   setGeometry(c.geometry);
   $("name").value = c.name;
   for (const [id, v] of Object.entries({
@@ -1130,7 +1148,10 @@ const rfDetailNames = {
   voltage_real_v: "通過位相を含む電圧・実部 [V]",
   voltage_imag_v: "通過位相を含む電圧・虚部 [V]",
   beta: "粒子速度 β",
-  active_length_m: "加速長（入力全長）[m]",
+  active_length_m: "加速長 [m]",
+  voltage_interval_start_m: "電圧積分開始 [m]",
+  voltage_interval_end_m: "電圧積分終了 [m]",
+  phase_origin_m: "位相原点 [m]",
   eacc_v_per_m: "加速電場 Eacc [V/m]",
   r_shunt_accelerator_ohm: "シャントインピーダンス acc [Ω]",
   r_shunt_circuit_ohm: "シャントインピーダンス circuit [Ω]",

@@ -39,6 +39,23 @@ def cell_fields(solution, mode):
     return -r*du[:, 1]/(omega*EPS0), (2*uc+r*du[:, 0])/(omega*EPS0), r*uc
 
 
+def accelerating_voltage(case, z, field, wave_number):
+    """Integrate the selected axial interval and apply a global phase origin."""
+    _, (a, b), origin = case.acceleration_parameters
+    if case.voltage_interval_m is not None:
+        z, field = np.asarray(z), np.asarray(field)
+        clipped = np.concatenate(([a], z[(z > a) & (z < b)], [b]))
+        field = np.interp(clipped, z, field)
+        z = clipped
+    voltage, absolute = linear_voltage(z, field, wave_number)
+    if origin != 0:
+        phase = wave_number*origin
+        if not np.isfinite(phase):
+            raise ValueError('phase_origin_m produces an unrepresentable phase')
+        voltage *= complex(np.exp(-1j*phase))
+    return voltage, absolute
+
+
 def quantities(case, solution, mode=0):
     mesh, u = solution.mesh, solution.u[:, mode]
     omega = float(TAU*solution.frequencies_hz[mode])
@@ -60,11 +77,12 @@ def quantities(case, solution, mode=0):
     loss = rs*surface_h2/2
     z = mesh.points[mesh.axis_nodes, 1]
     ez_axis = 2*u[mesh.axis_nodes]/(omega*EPS0)
-    voltage, absolute = linear_voltage(z, ez_axis, omega/(case.beta*C0))
+    voltage, absolute = accelerating_voltage(case, z, ez_axis, omega/(case.beta*C0))
     vacc = abs(voltage)
     # Near-zero accelerating voltage makes normalized peak ratios meaningless.
     accelerating = absolute > 0 and vacc > 1e-12*absolute
-    eacc = vacc/case.length
+    active_length, interval, phase_origin = case.acceleration_parameters
+    eacc = vacc/active_length
     _, _, grad = element_geometry(mesh)
     du = np.einsum("ti,tij->tj", u[mesh.triangles], grad)[cells]
     # E is affine within each element: its norm on an edge is maximal at an end.
@@ -81,7 +99,7 @@ def quantities(case, solution, mode=0):
     hpk = float(np.max(np.abs(np.concatenate((r0*u0, (r0+dr)*(u0+delta_u), (r0+t*dr)*(u0+t*delta_u))))))
     rq = vacc**2/(omega*energy)
     q0 = omega*energy/loss
-    return {
+    result = {
         "mode_index": mode+1, "frequency_hz": float(solution.frequencies_hz[mode]),
         "relative_eigen_residual": float(solution.residuals[mode]),
         "stored_energy_j": energy, "electric_energy_j": electric, "magnetic_energy_j": magnetic,
@@ -89,7 +107,7 @@ def quantities(case, solution, mode=0):
         "surface_resistance_ohm": float(rs), "wall_loss_w": float(loss), "q0": q0,
         "geometry_factor_ohm": q0*rs,
         "voltage_real_v": voltage.real, "voltage_imag_v": voltage.imag,
-        "vacc_v": vacc, "beta": case.beta, "active_length_m": case.length,
+        "vacc_v": vacc, "beta": case.beta, "active_length_m": active_length,
         "eacc_v_per_m": eacc, "transit_time_factor_abs": vacc/absolute if absolute else None,
         "r_over_q_accelerator_ohm": rq, "r_over_q_circuit_ohm": rq/2,
         "r_shunt_accelerator_ohm": rq*q0, "r_shunt_circuit_ohm": rq*q0/2,
@@ -98,3 +116,6 @@ def quantities(case, solution, mode=0):
         "bpk_over_eacc_estimate_mt_per_mv_per_m": MU0*hpk/eacc*1e9 if accelerating else None,
         "peak_status": "P1 one-sided surface estimate; corners may be singular; no error bound",
     }
+    if case.has_acceleration_overrides:
+        result.update(voltage_interval_start_m=interval[0], voltage_interval_end_m=interval[1], phase_origin_m=phase_origin)
+    return result

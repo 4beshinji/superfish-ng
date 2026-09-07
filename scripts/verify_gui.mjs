@@ -202,6 +202,11 @@ try {
   await fill("#radius", 65);
   await fill("#length", 95);
   await fill("#modes", 2);
+  if (args["--acceleration"] === "yes") {
+    await ev('document.querySelector("#active-length").closest("details").open=true');
+    for (const [selector, value] of [["#active-length", 71], ["#voltage-start", 13],
+        ["#voltage-end", 39], ["#phase-origin", -8]]) await fill(selector, value);
+  }
   await click("#preview");
   await wait(
     'document.querySelector("#preview-note").textContent.includes("入力形状")',
@@ -235,6 +240,13 @@ try {
   });
   await fill("#radius", 65);
   await click("#preview");
+  if (args["--acceleration"] === "yes") {
+    const actual = await ev("currentResult.result.modes[0]");
+    if (actual.active_length_m !== .071 || actual.voltage_interval_start_m !== .013 ||
+        actual.voltage_interval_end_m !== .039 || actual.phase_origin_m !== -.008)
+      throw Error("Accelerating conventions were lost before computation");
+    report.checks.push({ operation: "edit acceleration length, voltage interval and phase origin, then solve", passed: true });
+  }
   if (expectedModel) {
     for (const expression of ["collect().case", "currentResult.result.case"]) {
       const actual = await ev(expression);
@@ -756,8 +768,8 @@ try {
       passed: true,
     });
   }
-  await ev("window.scrollTo({top:0,behavior:'instant'})");
-  await wait("window.scrollY===0");
+  await ev("document.activeElement?.blur()");
+  await wait("(window.scrollTo({top:0,behavior:'instant'}), window.scrollY===0)");
   const screenshot = await call("Page.captureScreenshot", {}, sessionId);
   await writeFile(
     out + "/workspace.png",

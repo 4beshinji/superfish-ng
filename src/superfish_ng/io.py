@@ -72,6 +72,10 @@ def _write_run(case, solution, directory):
               "modes": [quantities(case, solution, i) for i in range(case.modes)]}
     if solution.source_case is not None:
         result['reflection_source_case'] = solution.source_case
+    if case.has_acceleration_overrides:
+        result['conventions'].update(
+            voltage='integral over voltage_interval_m of Ez_quadrature(0,z) exp(+i omega (z-phase_origin_m)/(beta c)) dz; global -i omitted',
+            domain='energy and wall loss cover the full input domain; accelerating voltage uses its specified interval; Eacc uses active_length_m; symmetry planes have no wall loss')
     if solution.mesh_input is not None:
         from .mesh_input import mesh_digest
         result['mesh'].update(source='external tagged mesh', input_file='mesh.json',

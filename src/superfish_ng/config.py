@@ -24,6 +24,23 @@ def integer(value, name, minimum=1):
     return value
 
 
+def acceleration_parameters(length, active_length=None, interval=None, phase_origin=None):
+    def finite(value, name):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+            raise ValueError(f'{name} must be a finite number')
+        return float(value)
+    active = length if active_length is None else positive(active_length, 'active_length_m')
+    origin = 0. if phase_origin is None else finite(phase_origin, 'phase_origin_m')
+    if interval is None:
+        interval = (0., length)
+    if not isinstance(interval, (tuple, list)) or len(interval) != 2:
+        raise ValueError('voltage_interval_m must contain [start_m, end_m]')
+    a, b = (finite(x, 'voltage_interval_m') for x in interval)
+    if not 0 <= a < b <= length:
+        raise ValueError('voltage_interval_m must satisfy 0 <= start < end <= cavity length')
+    return active, (a, b), origin
+
+
 def keys(data, allowed, required, label):
     if not isinstance(data, dict):
         raise ValueError(f"{label} must be an object")
@@ -53,6 +70,9 @@ class Case:
     corner_max_edge_m: float | None = None
     corner_radius_m: float | None = None
     model: 'Model | None' = None
+    active_length_m: float | None = None
+    voltage_interval_m: tuple[float, float] | None = None
+    phase_origin_m: float | None = None
 
     def __post_init__(self):
         if self.model is not None:
@@ -101,6 +121,12 @@ class Case:
             raise ValueError("beta must be <= 1")
         positive(self.conductivity_s_per_m, "conductivity_s_per_m")
         positive(self.normalization_j, "normalization_j")
+        _, interval, _ = self.acceleration_parameters
+        if self.voltage_interval_m is not None:
+            object.__setattr__(self, 'voltage_interval_m', interval)
+        if self.has_acceleration_overrides and self.model is None:
+            from .model import Model
+            object.__setattr__(self, 'model', Model())
         positive(self.arc_chord_tolerance_m, "arc_chord_tolerance_m")
         if self.geometry_type != 'arc_profile' and (self.arcs or self.arc_chord_tolerance_m != 1e-5):
             raise ValueError('arc metadata requires arc_profile geometry')
@@ -127,6 +153,27 @@ class Case:
     @property
     def length(self):
         return self.profile[-1][0]
+
+    @property
+    def has_acceleration_overrides(self):
+        return any(v is not None for v in (self.active_length_m, self.voltage_interval_m, self.phase_origin_m))
+
+    @property
+    def acceleration_parameters(self):
+        return acceleration_parameters(self.length, self.active_length_m, self.voltage_interval_m, self.phase_origin_m)
+
+    def reflected_acceleration_parameters(self, side):
+        options = {}
+        if self.active_length_m is not None:
+            options['active_length_m'] = 2*self.active_length_m
+        if self.voltage_interval_m is not None:
+            a, b = self.voltage_interval_m
+            if (side == 'z_min' and a != 0) or (side == 'z_max' and b != self.length):
+                raise ValueError('reflection requires voltage_interval_m to touch the symmetry plane; disjoint intervals are unsupported')
+            options['voltage_interval_m'] = (self.length-b, self.length+b) if side == 'z_min' else (a, 2*self.length-a)
+        if self.phase_origin_m is not None:
+            options['phase_origin_m'] = self.phase_origin_m + (self.length if side == 'z_min' else 0.)
+        return options
 
     @classmethod
     def from_dict(cls, data):
@@ -181,7 +228,11 @@ class Case:
         if 'triangulation' in mesh and data['schema_version'] < 2:
             raise ValueError('explicit triangulation requires schema_version 2')
         keys(solver, ["modes"], [], "solver")
-        keys(rf, ["beta", "conductivity_s_per_m", "normalization_j"], [], "rf")
+        additions = ['active_length_m', 'voltage_interval_m', 'phase_origin_m']
+        keys(rf, ["beta", "conductivity_s_per_m", "normalization_j"]+additions, [], "rf")
+        for key in additions:
+            if key in rf and (data['schema_version'] != 3 or rf[key] is None):
+                raise ValueError(f'rf.{key} requires schema_version 3 and a non-null value')
         return cls(profile=profile, geometry_type="profile" if g["type"] == "pillbox" else g['type'],
                    name=data.get("name", "cavity"), model=model, **mesh, **solver, **rf, **boundaries, **geometry_options)
 
@@ -218,4 +269,8 @@ class Case:
                 data['mesh'][key] = getattr(self, key)
         if self.model is not None:
             data.update(schema_version=3, model=self.model.to_dict())
+        for key in ('active_length_m', 'voltage_interval_m', 'phase_origin_m'):
+            value = getattr(self, key)
+            if value is not None:
+                data['rf'][key] = list(value) if key == 'voltage_interval_m' else value
         return data
