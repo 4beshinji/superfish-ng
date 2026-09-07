@@ -36,6 +36,9 @@ class CurvedCaseTests(unittest.TestCase):
             self.assertEqual(report['geometry_order'],1)
             self.assertLess(report['area_difference_m2'],0)
             self.assertAlmostEqual(report['analytic_area_m2'],math.pi*.1*.08/2)
+            self.assertAlmostEqual(report['analytic_volume_m3'],4*math.pi*.1*.08**2/3)
+            self.assertLess(report['volume_difference_m3'],0)
+            self.assertEqual(report['chord_volume_m3'],case.contour.volume_m3)
             np.testing.assert_array_equal(solve(loaded.case).u,solution.u)
 
     def test_unknown_curve_fields_and_missing_tolerance_fail(self):

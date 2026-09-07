@@ -90,6 +90,9 @@ def _write_run(case, solution, directory):
             endpoint_adjustments_m=list(approximation.endpoint_adjustments_m),
             segment_curve_indices=list(approximation.segment_curve_indices),
             analytic_area_m2=approximation.analytic_area_m2,
+            analytic_volume_m3=case.curved_contour.volume_m3,
+            chord_volume_m3=approximation.contour.volume_m3,
+            volume_difference_m3=approximation.contour.volume_m3-case.curved_contour.volume_m3,
             chord_area_m2=approximation.contour.area_m2,
             area_difference_m2=approximation.area_difference_m2)
     if solution.element_order == 2:

@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## G03の解析回転体体積 — 2026-09-08
+
+curve_moments.pyで-π∮r²dzを線分/楕円/双曲線の解析指数積分として実装。
+CurvedContour.volume_m3と保存geometry_approximationに解析体積・弦体積・差を追加。
+円柱/円錐台/楕円体、双曲線の別変数積分、回転開弧の細分積分で独立検証。
+標準217件中215合格・2 skip、validation-g03-analytic-volume-20260908 PASS。
+次は元曲線の鏡映とGUI/Study連携。曲線FEM/接線構築/旧入力対応・全互換目標は未完。
+
 ## G03の元曲線Case/保存 — 2026-09-08
 
 v3 geometry.type=curved_contour、曲線列のstrict入出力と弦誤差/全体分割上限をCaseへ追加。

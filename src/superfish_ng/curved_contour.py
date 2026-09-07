@@ -91,6 +91,11 @@ class CurvedContour:
     def area_m2(self):
         return math.fsum(c.signed_line_area_m2 for c in self.curves)
 
+    @property
+    def volume_m3(self):
+        from .curve_moments import revolution_volume_contribution
+        return math.fsum(revolution_volume_contribution(c) for c in self.curves)
+
     def to_dict(self):
         kinds = {LineSegment:'line',EllipseArc:'ellipse_arc',HyperbolaArc:'hyperbola_arc'}
         curves = []

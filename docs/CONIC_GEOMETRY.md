@@ -202,3 +202,21 @@ curve_chord_max_segmentsを指定する。Case.contourは検証済みの弦多�
 半楕円CaseのJSON往復・P2保存/再読込/係数再現、未知curve項目/型・弦誤差欠落の拒否を検証。
 標準214件中212合格・2 skip、`out/validation-g03-curved-case-20260908/validation.json` PASS。
 次は解析体積・鏡映・GUI/Studyへ元曲線を接続する。曲線FEM/接線構築/旧入力対応は未完。
+
+## 解析回転体体積 — 2026-09-08
+
+`curve_moments.revolution_volume_contribution` は各有向辺の `-π∫r² dz` を返す。
+Greenの定理から、反時計回りの閉輪郭で総和すると `2π∫∫r dz dr` となる。
+CurvedContour.volume_m3はこの解析寄与の和。開いた1辺の寄与は負にもなり得る。
+線分は円錐台多項式の直接積分。楕円はexp(iθ)、双曲線はexp(u)の次数±1の座標表現から
+r² dzの次数±3までの積を作り、指数関数を解析積分する。弦近似は用いない。
+三角関数側の短区間積分は中心位相とsincで計算する。
+
+独立検証は円柱/円錐台、半楕円からの回転楕円体4πab²/3と寸法変換。
+双曲線はz=-sinh(u), r=-cosh(u)の開弧でr²=1+z²をzで直接積分して照合する。
+回転した楕円/双曲線の開弧は点座標だけを使う細分線積分とも照合した。
+
+保存geometry_approximationへanalytic_volume_m3/chord_volume_m3/volume_difference_m3を追加。
+解析面積/体積とメッシュ用多角形の幾何誤差を、FEM場の精度から分離して記録する。
+標準217件中215合格・2 skip、`out/validation-g03-analytic-volume-20260908/validation.json` PASS。
+鏡映・GUI/Study、曲線FEM/接線構築/旧入力対応は引き続き未完。
