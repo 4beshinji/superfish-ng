@@ -177,6 +177,8 @@ def analyze_band(directory, cell_centers_z_m):
     """
     saved = read_solution(directory)
     case = saved.case
+    if case.contour is not None:
+        raise ValueError('half-end band identification requires a periodic radius profile; general contour labels are unsupported')
     centers = np.asarray(cell_centers_z_m, dtype=float)
     if (
         centers.ndim != 1
@@ -277,7 +279,7 @@ def export_radial_probe(directory, out, z_m, mode=1):
     radius = radial_extent(saved.mesh.points, saved.arrays["boundary_edges"], z_m)
     positions = np.column_stack((np.linspace(0, radius, 401), np.full(401, z_m)))
     sampler = FieldSampler.from_solution(saved)
-    fields = sampler.evaluate(positions, mode - 1)
+    fields = sampler.evaluate(positions, mode - 1, outside="nan" if saved.case.contour is not None else "raise")
     columns = np.column_stack(
         (
             positions,
@@ -300,12 +302,18 @@ def export_radial_probe(directory, out, z_m, mode=1):
         "stored_energy_j": saved.results["modes"][mode - 1]["stored_energy_j"],
         "phasor": saved.results["conventions"]["phasor"],
     }
+    header = "r_m,z_m,Er_quadrature_V_per_m,Ez_quadrature_V_per_m,Hphi_A_per_m,Bphi_T"
+    if saved.case.contour is not None:
+        columns = np.column_stack((columns, fields['inside'].astype(int)))
+        header += ',inside'
+        metadata.update(outside_policy='NaN fields with inside=0 in radial gaps',
+                        outside_samples=int(np.count_nonzero(~fields['inside'])))
     with out.open("x", encoding="utf-8") as stream:
         np.savetxt(
             stream,
             columns,
             delimiter=",",
-            header="r_m,z_m,Er_quadrature_V_per_m,Ez_quadrature_V_per_m,Hphi_A_per_m,Bphi_T",
+            header=header,
             comments="",
         )
     with metadata_path.open("x", encoding="utf-8") as stream:
@@ -323,6 +331,8 @@ def compare_pillbox(directory):
 
     saved = read_solution(directory, allow_quadratic=True)
     case = saved.case
+    if case.contour is not None:
+        raise ValueError('pillbox reference requires a constant-radius profile; general contours need a separate reference')
     if (
         case.arcs
         or case.z_min != "pec"

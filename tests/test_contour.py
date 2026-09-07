@@ -120,6 +120,24 @@ class ContourTests(unittest.TestCase):
             saved=read_solution(Path(tmp)/'run')
             self.assertEqual(saved.case,case)
             np.testing.assert_array_equal(saved.u,sol.u)
+            from superfish_ng.saved import export_radial_probe,compare_pillbox,analyze_band
+            probe=Path(tmp)/'probe.csv'
+            metadata=export_radial_probe(Path(tmp)/'run',probe,1.5)
+            values=np.loadtxt(probe,delimiter=',',skiprows=1)
+            gap=(values[:,0]>.5)&(values[:,0]<1.)
+            self.assertTrue(np.any(gap))
+            self.assertTrue(np.isnan(values[gap,2:6]).all())
+            np.testing.assert_array_equal(values[gap,6],0)
+            self.assertEqual(metadata['outside_samples'],np.count_nonzero(gap))
+            for call in [lambda:compare_pillbox(Path(tmp)/'run'),lambda:analyze_band(Path(tmp)/'run',[0,1.5,3])]:
+                with self.assertRaisesRegex(ValueError,'profile'):call()
+            try:
+                from superfish_ng.visualize import plot_mode
+            except ImportError:
+                pass
+            else:
+                report=plot_mode(Path(tmp)/'run',Path(tmp)/'plot.png',probe_z_m=1.5)
+                self.assertTrue(np.any(~report['radial_fields']['inside']))
         import copy
         from dataclasses import replace
         from superfish_ng.symmetry import reflect_solution

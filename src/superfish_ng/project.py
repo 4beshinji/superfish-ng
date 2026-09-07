@@ -41,6 +41,8 @@ def assemble_geometry(sections):
     offset = 0.0
     for section in sections:
         keys(section, ["geometry", "count"], ["geometry", "count"], "section")
+        if isinstance(section["geometry"], dict) and section["geometry"].get("type") == "contour":
+            raise ValueError("section assembly requires radius profiles; supply an already assembled general contour")
         count = integer(section["count"], "section.count")
         local = Case.from_dict({"schema_version": 2, "geometry": section["geometry"]})
         if local.arcs:

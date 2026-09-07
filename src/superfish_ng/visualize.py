@@ -33,7 +33,7 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
         raise ValueError('probe z must lie within the cavity in metres')
     sampler = FieldSampler.from_solution(solution)
     radial_points = np.column_stack((np.linspace(0, radial_extent(p, edges, probe_z), 401), np.full(401, probe_z)))
-    radial = sampler.evaluate(radial_points, mode-1)
+    radial = sampler.evaluate(radial_points, mode-1, outside="nan" if solution.case.contour is not None else "raise")
     axis = np.loadtxt(run/f'axis_{mode:03d}.csv', delimiter=',', skiprows=1)
     if solution.element_order == 2:
         z = np.unique(np.r_[axis[:, 0], np.linspace(zmin, zmax, 401)])
@@ -85,7 +85,7 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     second.legend(loc='upper right', fontsize=8)
     for ax in axes[1]:
         ax.grid(alpha=.25)
-    domain = 'input domain only; symmetry loss excluded' if 'boundaries' in results['case'] else 'full closed PEC cavity'
+    domain = 'input domain only; symmetry loss excluded' if np.any(np.isin(tags, ['electric_symmetry', 'magnetic_symmetry'])) else 'full closed PEC cavity'
     if solution.element_order == 2:
         domain += '; P2 field sampled on display triangles'
     if 'reflection_source_case' in results:
