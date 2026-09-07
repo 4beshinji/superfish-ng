@@ -1,5 +1,35 @@
 # ローカルCodexへの引継ぎ
 
+## G03楕円/双曲線の固定幾何FEM・双曲線鏡映/GUI — 2026-09-08
+
+scripts/validate_curved_shapes.pyを追加し、既存の合成楕円と双曲線をgeometry_order=2、
+quadrature_order=12で通常Studyへ渡す。固定二次幾何の細分段数0→1を比較し、
+周波数、磁場の同定、軸場L2、RFを既存閾値で評価する。
+out/validation-g03-additional-native-shapes-20260908/comparison.jsonはPASS。
+楕円は周波数相対差9.2214e-7、軸場L2差1.0679e-4、R/Q相対差4.8770e-4。
+双曲線は周波数相対差1.9776e-6、軸場L2差2.7972e-4、R/Q相対差4.3213e-4。
+磁場重なりはそれぞれ0.9999999980と0.9999999887。同定/周波数/軸場/RF全ゲートPASS。
+これは固定二次境界に対するFEM細分の比較であり、元解析曲線への幾何近似収束は評価しない。
+
+双曲線の左右端をそれぞれ電気/磁気対称として、通常solve→reflect_solution→save→readを実行。
+4条件すべてで全領域残差・場の偶奇性・エネルギー/壁損失2倍の不変量がPASS。
+最大残差5.1186e-14、場の偶奇相対差6.1084e-12、2倍からの相対差5.3291e-15。
+端で鏡映した双曲線の壁には元の曲線接線に応じた角があり、保存した角診断を保持する。
+物理ピークの収束はUNVERIFIED。有限の離散極値や小さな残差を物理ピーク認証に読み替えない。
+
+実ブラウザーはverify_gui.mjs --contour-case examples/curved_hyperbola.json
+--contour-auto yes --curved-fem yesで7操作PASS。
+out/gui-curved-hyperbola-native-accepted-20260908/report.jsonは
+source_changed_during_run=false、external_requests=[]。
+双曲線の入力/自動メッシュ/保存往復、二次幾何・積分次数12・細分段数1、
+固定幾何Study 0→1とその場の表示を操作した。GUIでの鏡映チェックボックスは今回の7操作には含まない。
+curved-controls.pngとfixed-study.pngで設定値とStudy PASS/結果表を画像確認。
+検証後にローカルGUIサーバーを停止。標準297件中295合格・2 skip。
+今回の変更は検証スクリプトと文書であり、数値ソルバーの変更や閾値緩和はない。
+
+次は二次曲線の幾何近似収束、曲線鏡映のGUI操作、接線構築の要件照合。
+G03全体の受入は未完で、全32項目/33親課題の目標を維持する。
+
 ## G03曲線鏡映の通常API・保存・CLI接続 — 2026-09-08
 
 reflect_solutionはgeometry_order=2の曲線解を固定写像で鏡映する。
