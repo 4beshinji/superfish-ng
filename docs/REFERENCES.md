@@ -145,6 +145,17 @@ AutomeshのPO入力欄NT/RADIUSで円弧方向の指定（NT=4/5）を確認し�
 全域Jacobian・Bezier下界の数学的背景を既存実装後に確認。
 コード/図/アルゴリズム本文は転記しない。全体位相検査の代替証拠にはしない。
 
+**R30. Relation between conic and dual conic（CVUT掲載の幾何チュートリアル）.**
+[大学講義資料](https://cmp.felk.cvut.cz/cmp/courses/dzo/resources/tutorial-pollefeys-eccv/node19.html)
+— 2026-09-08閲覧。非特異円錐曲線の双対接線条件を確認。本文/画像/コードは転載しない。
+共通接線の四次消去式は本実装用に独自導出した。
+
+**R31. Philippe Pébay, J. Maurice Rojas, David C. Thompson, Sturm’s Theorem with Endpoints (2022).**
+[著者公開論文](https://arxiv.org/abs/2208.07904)、[PDF](https://arxiv.org/pdf/2208.07904)
+— 2026-09-08閲覧。Sturm列、端点を含む根数、重根端点の注意と平方因子除去を確認。
+実装は有理数多項式演算から独立に記述し、論文本文/コードを転記していない。
+なお[MIT 6.972 Lecture 5](https://ocw.mit.edu/courses/6-972-algebraic-techniques-and-semidefinite-optimization-spring-2006/260460cc36cd5c2c78b0b04f9b3fe7bd_lecture_05.pdf)も確認したが、Sturm節が未完成のため根数実装の根拠には使わない。
+
 ## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、
