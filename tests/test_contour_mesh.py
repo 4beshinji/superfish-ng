@@ -5,6 +5,7 @@ import numpy as np
 from superfish_ng import Case
 from superfish_ng.contour import Contour
 from superfish_ng.contour_mesh import triangulate_contour, refine_contour, contour_mesh_quality, improve_contour_angles
+from superfish_ng.contour_mesh import smooth_contour_interior
 
 
 class InitialContourMeshTests(unittest.TestCase):
@@ -137,3 +138,33 @@ class InitialContourMeshTests(unittest.TestCase):
         np.testing.assert_array_equal(repeated.triangles,improved.triangles)
         with self.assertRaisesRegex(ValueError,'max_sweeps'):
             improve_contour_angles(case,original,max_sweeps=True)
+
+    def test_smoothing_preserves_boundary_moments_and_local_sizes(self):
+        contour = Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,.5),(0,.5),(0,.25)),
+                          ('axis',)+('pec',)*7+('magnetic_symmetry',))
+        case = Case((),contour=contour,corner_max_edge_m=.1,corner_radius_m=.12)
+        original = improve_contour_angles(case,refine_contour(case,triangulate_contour(case),.25))
+        moved = smooth_contour_interior(case,original,.25)
+        old,new = contour_mesh_quality(original),contour_mesh_quality(moved)
+        self.assertGreater(new['min_quality'],old['min_quality'])
+        self.assertLessEqual(new['max_edge_m'],.25*(1+1e-12))
+        for name in ('triangles','boundary_edges','boundary_tags','axis_nodes'):
+            np.testing.assert_array_equal(getattr(original,name),getattr(moved,name))
+        np.testing.assert_array_equal(original.points[original.boundary_edges],moved.points[moved.boundary_edges])
+        p = moved.points[moved.triangles]
+        u,v = p[:,1]-p[:,0],p[:,2]-p[:,0]
+        areas = (u[:,0]*v[:,1]-u[:,1]*v[:,0])/2
+        self.assertTrue(np.all(areas>0))
+        self.assertAlmostEqual(areas.sum(),4.,places=13)
+        self.assertAlmostEqual(np.sum(2*math.pi*areas*p[:,:,0].mean(axis=1)),7.5*math.pi,places=12)
+        refined = refine_contour(case,moved,.25)
+        np.testing.assert_array_equal(refined.points,moved.points)
+        repeated = smooth_contour_interior(case,original,.25)
+        np.testing.assert_array_equal(repeated.points,moved.points)
+        with self.assertRaisesRegex(ValueError,'refine it first'):
+            smooth_contour_interior(case,original,.1)
+        for size in (False,0,float('nan')):
+            with self.assertRaisesRegex(ValueError,'max_edge_m'):
+                smooth_contour_interior(case,original,size)
+        with self.assertRaisesRegex(ValueError,'sweeps'):
+            smooth_contour_interior(case,original,.25,sweeps=True)

@@ -245,3 +245,79 @@ def improve_contour_angles(case, mesh, *, max_sweeps=100):
         if not changed:
             data['triangles'] = triangles.tolist()
             return mesh_from_dict(case,data)
+
+
+def smooth_contour_interior(case, mesh, max_edge_m, *, sweeps=5):
+    """Try bounded interior-vertex moves that improve incident minimum quality.
+
+    Boundary vertices stay fixed. Every accepted move preserves positive
+    orientation and the supplied global/Case corner size limits. The sweep
+    count is an optimization budget, not a convergence or quality guarantee.
+    """
+    from .mesh_input import mesh_from_dict, mesh_to_dict
+    if case.contour is None:
+        raise ValueError('interior smoothing requires a contour Case')
+    if type(max_edge_m) not in (int,float) or not np.isfinite(max_edge_m) or max_edge_m <= 0:
+        raise ValueError('max_edge_m must be finite and positive')
+    if type(sweeps) is not int or sweeps < 1:
+        raise ValueError('sweeps must be a positive integer')
+    data = mesh_to_dict(mesh)
+    mesh = mesh_from_dict(case,data)
+    if contour_mesh_quality(mesh)['max_edge_m'] > max_edge_m*(1+1e-12):
+        raise ValueError('smooth input exceeds max_edge_m; refine it first')
+    points = mesh.points.copy()
+    fixed = set(map(int,mesh.boundary_edges.ravel()))
+    owners = [[] for _ in points]
+    neighbors = [set() for _ in points]
+    for cell,tri in enumerate(mesh.triangles):
+        for vertex in tri:
+            owners[vertex].append(cell)
+            neighbors[vertex].update(int(v) for v in tri if v != vertex)
+    vertices = np.asarray(case.contour.vertices_zr_m)[:,::-1]
+    before,after = vertices-np.roll(vertices,1,axis=0),np.roll(vertices,-1,axis=0)-vertices
+    turns = np.abs(before[:,0]*after[:,1]-before[:,1]*after[:,0])
+    corners = vertices[turns > 1e-12*np.linalg.norm(before,axis=1)*np.linalg.norm(after,axis=1)]
+    scale = np.max(points)
+
+    def minimum_quality(cells):
+        p = points[mesh.triangles[cells]]/scale
+        u,v = p[:,1]-p[:,0],p[:,2]-p[:,0]
+        area = u[:,0]*v[:,1]-u[:,1]*v[:,0]
+        return float(np.min(2*np.sqrt(3)*area/np.sum((np.roll(p,-1,axis=1)-p)**2,axis=(1,2))))
+
+    for _ in range(sweeps):
+        changed = False
+        for vertex in range(len(points)):
+            if vertex in fixed:
+                continue
+            adjacent = np.asarray(sorted(neighbors[vertex]))
+            old = points[vertex].copy()
+            target = points[adjacent].mean(axis=0)
+            quality = minimum_quality(owners[vertex])
+            for fraction in (1.,.5,.25,.125):
+                candidate = old+fraction*(target-old)
+                delta = points[adjacent]-candidate
+                lengths = np.linalg.norm(delta,axis=1)
+                if np.any(lengths > max_edge_m*(1+1e-12)) or np.any(lengths == 0):
+                    continue
+                violates_corner = False
+                if case.corner_max_edge_m is not None:
+                    for corner in corners:
+                        projection = np.clip(np.sum((corner-candidate)*delta,axis=1)/lengths**2,0,1)
+                        distance = np.linalg.norm(candidate+projection[:,None]*delta-corner,axis=1)
+                        if np.any((distance <= case.corner_radius_m*(1+1e-12))
+                                  & (lengths > case.corner_max_edge_m*(1+1e-12))):
+                            violates_corner = True
+                            break
+                if violates_corner:
+                    continue
+                points[vertex] = candidate
+                improved = minimum_quality(owners[vertex])
+                if improved > max(quality,0.)+64*np.finfo(float).eps:
+                    changed = True
+                    break
+                points[vertex] = old
+        if not changed:
+            break
+    data['points'] = points.tolist()
+    return mesh_from_dict(case,data)

@@ -10,6 +10,7 @@ from pathlib import Path
 from superfish_ng import Case
 from superfish_ng.contour import Contour
 from superfish_ng.contour_mesh import triangulate_contour, refine_contour, contour_mesh_quality, improve_contour_angles
+from superfish_ng.contour_mesh import smooth_contour_interior
 
 
 def main():
@@ -29,12 +30,15 @@ def main():
             mesh = refine_contour(case,initial,edge_size)
             refined_seconds = time.perf_counter()-start
             improved = improve_contour_angles(case,mesh)
+            flipped_seconds = time.perf_counter()-start
+            smoothed = smooth_contour_interior(case,improved,edge_size)
             seconds = time.perf_counter()-start
             _, peak = tracemalloc.get_traced_memory()
             tracemalloc.stop()
             rows.append(dict(channel_width_m=width, requested_max_edge_m=edge_size,
                              initial=contour_mesh_quality(initial), refined=contour_mesh_quality(mesh),
                              improved=contour_mesh_quality(improved), refinement_seconds=refined_seconds,
+                             smoothed=contour_mesh_quality(smoothed), through_flips_seconds=flipped_seconds,
                              elapsed_seconds=seconds, python_traced_peak_bytes=peak))
     report = dict(scope='geometric measurements only; no RF accuracy or minimum-angle acceptance',
                   memory_scope='tracemalloc peak, not process RSS or all native allocations', measurements=rows)
