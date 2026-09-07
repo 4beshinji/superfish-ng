@@ -1,5 +1,24 @@
 # ローカルCodexへの引継ぎ
 
+## G03有限弧数値判定と明示選択G1接続 — 2026-09-08
+
+arc_tangents.pyへ有限有向弧の区間/枝判定、方向記録、明示選択の切詰め・局所G1接続APIを追加。
+既存の支持曲線列挙を保持し、候補を勝手に選ばず、元曲線の中心/半軸/回転/枝を変えない。
+弧端はガード付き未確認。fractionは数値推定であり、厳密な接点区間包囲ではない。
+仕様・独立9検査と初回期待値の訂正理由は[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md)。
+
+開始時310件中308合格・2 skip。追加後の独立全テストは、実行中にmodule docstringを
+編集してStudyのソース変更検査1件が作動した。数値実装の変更ではないが失敗を保持する。
+標準validate内の最終全319件中317合格・2 skip（85.826秒）、標準数値回帰PASS。
+出力はout/validation-g03-finite-arcs-20260908、初回失敗はinitial_parallel_tests_source_changed.log。
+seed_comparison.jsonで円筒6/成形セル3モードのcase hash一致、周波数差ゼロ、
+RF/エネルギー相対差最大8.882e-16。ベンチマークは変更していない。GUI/Wineの新規実行なし。
+
+次は構築要求/選択結果の保存・Case/CLI/GUI・閉輪郭検証への接続。
+厳密な接点区間/弧端の認証、直線と弧の接線、フィレット、G03全要件照合は残る。
+全33親課題の継続目標は未完。新規外部資料/コード/依存/旧資産の参照なし。
+
+
 ## 主要文書の現状同期 — 2026-09-08
 
 製品基準e68002fにREADME・IMPLEMENTATION_STATUS・COMPATIBILITY_MATRIX/PLAN・BACKLOGと
