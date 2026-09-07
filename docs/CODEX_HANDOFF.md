@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G03の幾何/FEM Study分離 — 2026-09-08
+
+curved_contourのgeometry_convergenceを追加。弦誤差だけを変更し元曲線/FEM設定を保持。
+mesh_scaleは弦Contourを保持し最大辺長を変更。Study各点へ幾何誤差記録を転記、P2表示修正。
+標準219件中217合格・2 skip、validation-g03-curved-study-20260908 PASS。
+examples/curved_ellipse.jsonを追加。study-g03-ellipse-geometry-20260908は操作成功だが数値判定FAIL。
+弦体積誤差は減少。次はGUI元曲線/弦誤差/表示接続と、G03総合の幾何/FEM収束を続ける。
+曲線FEM/接線構築/旧入力対応も残り、全互換目標は継続。
+
 ## G03の曲線鏡映/FEM — 2026-09-08
 
 CurvedContour.reflectedで元曲線を鏡映/逆順接続し、全閉輪郭を再検証。

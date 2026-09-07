@@ -18,6 +18,34 @@ def base():
 
 
 class StudyTests(unittest.TestCase):
+    def test_curved_geometry_and_fem_refinement_are_separate(self):
+        import math
+        from superfish_ng import Case
+        from superfish_ng.conics import LineSegment,EllipseArc
+        from superfish_ng.curved_contour import CurvedContour
+        from superfish_ng.mesh_controls import ContourMeshControls
+        curved = CurvedContour((LineSegment((0,0),(.2,0)),EllipseArc((.1,0),(.1,.08),0,math.pi)),('axis','pec'),1e-14)
+        case = Case((),curved_contour=curved,curve_chord_tolerance_m=.002,
+                    contour_mesh=ContourMeshControls(.02),modes=1,element_order=2)
+        project = Project.from_dict(case.to_dict())
+        geometry = Study(project,'geometry_convergence','/case/geometry/chord_tolerance_m',[.002,.001,.0005])
+        cases = [p.case for p in geometry.projects()]
+        self.assertTrue(all(c.curved_contour==curved and c.contour_mesh==case.contour_mesh for c in cases))
+        self.assertTrue(len(cases[0].contour.vertices_zr_m)<len(cases[-1].contour.vertices_zr_m))
+        mesh = Study(project,'mesh_convergence','mesh_scale',[1,2])
+        mesh_cases = [p.case for p in mesh.projects()]
+        self.assertEqual(mesh_cases[0].contour,mesh_cases[1].contour)
+        self.assertEqual([c.contour_mesh.max_edge_m for c in mesh_cases],[.02,.01])
+        with tempfile.TemporaryDirectory() as tmp:
+            report = execute_study(geometry,Path(tmp)/'geometry')
+            self.assertEqual(len(report['comparisons']),2)
+            moments = [p['geometry_approximation'] for p in report['points']]
+            self.assertTrue(all(abs(m['analytic_volume_m3']/(4*math.pi*.1*.08**2/3)-1)<1e-12 for m in moments))
+            errors = [abs(m['volume_difference_m3']) for m in moments]
+            self.assertGreater(errors[0],errors[1])
+            self.assertGreater(errors[1],errors[2])
+            self.assertIn('element orders [2]',report['surface_field'])
+
     def test_contour_refinement_changes_physical_size_and_actual_mesh(self):
         from superfish_ng import Case
         from superfish_ng.contour import Contour

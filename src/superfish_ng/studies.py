@@ -63,12 +63,12 @@ class Study:
         elif self.kind == "geometry_convergence":
             if (
                 self.parameter != "/case/geometry/chord_tolerance_m"
-                or self.project.case.geometry_type != "arc_profile"
+                or self.project.case.geometry_type not in ("arc_profile","curved_contour")
                 or any(v <= 0 for v in self.values)
                 or any(b >= a for a, b in zip(self.values, self.values[1:]))
             ):
                 raise ValueError(
-                    "geometry convergence requires decreasing positive arc chord tolerances"
+                    "geometry convergence requires decreasing positive arc/curved-contour chord tolerances"
                 )
         elif not self.parameter.startswith(("/case/", "/sections/")):
             raise ValueError(
@@ -160,6 +160,7 @@ def _physical_spec(case):
     raw.pop("name")
     raw.pop("schema_version")
     raw["geometry"].pop("chord_tolerance_m", None)
+    raw["geometry"].pop("chord_max_segments", None)
     return raw
 
 
@@ -330,6 +331,8 @@ def execute_study(study, directory, prepared=False):
                     "modes": result["modes"],
                 }
             )
+            if 'geometry_approximation' in result:
+                points[-1]['geometry_approximation'] = result['geometry_approximation']
             if i and study.kind != "sweep":
                 comparisons.append(
                     compare_refinement(
@@ -345,7 +348,9 @@ def execute_study(study, directory, prepared=False):
             "numerical_status": comparisons[-1]["status"]
             if comparisons
             else "UNVERIFIED",
-            "surface_field": "P1 estimates; not certified",
+            "surface_field": ("P1 estimates; not certified" if all(p.case.element_order==1 for p in projects)
+                              else "finite-element boundary estimates; not certified; element orders "
+                              +str(sorted({p.case.element_order for p in projects}))),
         }
         if implementation != _implementation_hashes():
             raise RuntimeError(

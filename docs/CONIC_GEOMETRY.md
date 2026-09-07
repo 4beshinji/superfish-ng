@@ -239,3 +239,34 @@ CurvedContour.reflectedは1つの直線端面が同じ対称タグで完全に�
 鏡映されたモード番号は全領域のモード順位ではなく、既存の部分スペクトル規約を保つ。
 標準218件中216合格・2 skip、`out/validation-g03-curve-reflection-20260908/validation.json` PASS。
 GUI/Study、双曲線を含む追加の総合受入、曲線FEM/接線構築/旧入力対応は未完。
+
+## 幾何細分とFEM細分のStudy — 2026-09-08
+
+geometry_convergenceはcurved_contourの `/case/geometry/chord_tolerance_m` に対応。
+元曲線・FEM最大辺長・次数を固定して弦誤差だけを減らす。mesh_convergenceは元曲線と
+弦Contourを固定し、G02と同じく最大辺長を細分倍率で除算する。
+物理形状照合では弦誤差と分割上限を離散化制御として除外するが、元曲線パラメータは保持する。
+Studyの各点に保存済みgeometry_approximationを転記し、解析面積/体積と弦との差を追跡する。
+P2を含むStudy結果をP1と表記していた箇所も修正した。表面ピークの精度認定は行わない。
+
+半楕円で両細分の設定独立性、3段階の実行・保存・比較、楕円体解析体積と誤差減少を検証。
+標準219件中217合格・2 skip、`out/validation-g03-curved-study-20260908/validation.json` PASS。
+例 `examples/curved_ellipse.json` は弦誤差0.002 m、FEM最大辺0.02 mの粗い操作用入力。
+弦誤差0.002/0.001/0.0005 mのStudy結果は
+`out/study-g03-ellipse-geometry-20260908/study-results.json`。
+体積誤差絶対値は1.02033e-4/4.56735e-5/2.57557e-5 m³へ減少したが、数値収束はFAIL。
+処理完了を精度受入へ読み替えず、G03全体の収束検証ではさらに細分して確認する。
+
+再現はインストール済み環境で次のAPIを使用し、未使用の出力先を指定する。
+
+```python
+from superfish_ng import Case
+from superfish_ng.project import Project
+from superfish_ng.studies import Study, execute_study
+case = Case.load('examples/curved_ellipse.json')
+study = Study(Project.from_dict(case.to_dict()), 'geometry_convergence',
+              '/case/geometry/chord_tolerance_m', [.002, .001, .0005])
+execute_study(study, 'out/ellipse-geometry-new')
+```
+
+次はGUIの元曲線読込・弦誤差編集・表示と、独立した幾何/FEM収束の総合受入を進める。
