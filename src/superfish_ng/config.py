@@ -97,9 +97,7 @@ class Case:
                 points=self.contour.vertices_zr_m
                 tags={tag for i,tag in enumerate(self.contour.edge_tags)
                       if points[i][0]==points[(i+1)%len(points)][0]==z and tag!='axis'}
-                if len(tags)>1:
-                    raise ValueError('mixed end tags require a future local-boundary Case contract')
-                value=next(iter(tags), 'pec')
+                value='mixed' if len(tags)>1 else next(iter(tags), 'pec')
                 if getattr(self,side) not in ('pec',value):
                     raise ValueError('contour tags disagree with Case end boundary')
                 object.__setattr__(self,side,value)
@@ -169,6 +167,8 @@ class Case:
             linearize_profile(self)  # validate radius, monotonicity and positive r before meshing
         for side in ("z_min", "z_max"):
             value = getattr(self, side)
+            if self.contour is not None and value == "mixed":
+                continue
             if not isinstance(value, str) or value not in ("pec", "electric_symmetry", "magnetic_symmetry"):
                 raise ValueError(f"{side} must be pec, electric_symmetry or magnetic_symmetry")
 
@@ -185,6 +185,8 @@ class Case:
         return acceleration_parameters(self.length, self.active_length_m, self.voltage_interval_m, self.phase_origin_m)
 
     def reflected_acceleration_parameters(self, side):
+        if "mixed" in (self.z_min, self.z_max):
+            raise ValueError("reflection requires a complete symmetry end; mixed end tags cannot be mirrored")
         options = {}
         if self.active_length_m is not None:
             options['active_length_m'] = 2*self.active_length_m

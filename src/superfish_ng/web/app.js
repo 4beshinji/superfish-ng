@@ -141,6 +141,10 @@ function showGeometry() {
   $("profile-editor").hidden = kind === "pillbox" || kind === "contour";
   $("contour-note").hidden = kind !== "contour";
   $("z-min").disabled = $("z-max").disabled = kind === "contour";
+  if (kind !== "contour") for (const id of ["z-min", "z-max"]) {
+    if ($(id).value === "mixed") $(id).value = "pec";
+    $(id).querySelector('option[value="mixed"]')?.remove();
+  }
   $("arc-editor").hidden = kind !== "arc_profile";
 }
 function geometry() {
@@ -281,7 +285,9 @@ function applyProject(p) {
     const length = Math.max(...points.map(p => p[0]));
     for (const [id, z] of [["z-min", 0], ["z-max", length]]) {
       const index = points.findIndex((p, i) => p[0] === z && points[(i+1)%points.length][0] === z && c.geometry.edge_tags[i] !== "axis");
-      $(id).value = index < 0 ? "pec" : c.geometry.edge_tags[index];
+      const tags = new Set(points.flatMap((p,i) => p[0]===z && points[(i+1)%points.length][0]===z && c.geometry.edge_tags[i]!=="axis" ? [c.geometry.edge_tags[i]] : []));
+      if (!$(id).querySelector('option[value="mixed"]')) $(id).add(new Option("辺ごとに異なる境界", "mixed"));
+      $(id).value = tags.size > 1 ? "mixed" : index < 0 ? "pec" : c.geometry.edge_tags[index];
     }
   }
   $("reflect").checked = p.reflect_full;

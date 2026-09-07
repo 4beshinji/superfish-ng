@@ -166,3 +166,33 @@ class ContourTests(unittest.TestCase):
         self.assertEqual(result['area_m2'],4.)
         self.assertAlmostEqual(result['volume_m3'],7.5*math.pi)
         self.assertEqual(Project.from_dict(result['project']).case,case)
+
+    def test_local_magnetic_end_constraints_and_variational_bounds(self):
+        from dataclasses import replace
+        import numpy as np
+        from superfish_ng import Case,solve,make_mesh
+        from superfish_ng.mesh_input import mesh_to_dict
+        from superfish_ng.symmetry import reflect_solution
+        base=Case(((0.,.1),(.2,.1)),nr=4,nz=6,modes=1,element_order=2)
+        contour=Contour(((0,0),(.2,0),(.2,.1),(0,.1),(0,.05)),
+                        ('axis','pec','pec','pec','magnetic_symmetry'))
+        case=Case((),contour=contour,nr=4,nz=6,modes=1,element_order=2)
+        self.assertEqual(case.z_min,'mixed')
+        self.assertEqual(Case.from_dict(case.to_dict()),case)
+        data=mesh_to_dict(make_mesh(base))
+        points=np.array(data['points'])
+        for i,edge in enumerate(data['boundary_edges']):
+            ends=points[edge]
+            if np.all(ends[:,1]==0) and max(ends[:,0])<=.05:
+                data['boundary_tags'][i]='magnetic_symmetry'
+        sol=solve(case,mesh_data=data)
+        dofs=sol.space.boundary_dofs[sol.mesh.boundary_tags=='magnetic_symmetry']
+        np.testing.assert_array_equal(sol.u[np.unique(dofs)],0.)
+        free_end=(sol.space.dof_points[:,1]==0)&(sol.space.dof_points[:,0]>.05)
+        self.assertTrue(np.any(abs(sol.u[free_end])>1))
+        low=solve(base).frequencies_hz[0]
+        high=solve(replace(base,z_min='magnetic_symmetry')).frequencies_hz[0]
+        self.assertLess(low,sol.frequencies_hz[0])
+        self.assertLess(sol.frequencies_hz[0],high)
+        with self.assertRaisesRegex(ValueError,'mixed'):
+            reflect_solution(case,sol)

@@ -91,6 +91,9 @@ def mesh_from_dict(case, data):
         if np.all(ends[:, 0] == 0):
             expected_tag = 'axis'
             axis_edges.append(edge)
+        elif case.contour is not None:
+            # Exact segment coverage and tag matching below is authoritative.
+            expected_tag = tag
         elif np.all(ends[:, 1] == 0):
             expected_tag = case.z_min
         elif np.all(ends[:, 1] == case.length):
