@@ -1,5 +1,12 @@
 # ローカルCodexへの引継ぎ
 
+## G03の解析曲線GUI — 2026-09-08
+
+元曲線保持・弦誤差/分割上限編集・幾何誤差表示・P2計算/保存再読込を接続。
+実ブラウザー5検査PASS: out/gui-g03-curves-browser-20260908/report.json。
+標準220件中218合格・2 skip。次は独立した幾何/FEM収束と双曲線等の総合受入。
+曲線FEM/接線構築/旧入力対応を含むG03と全互換目標は継続。
+
 ## G03の幾何/FEM Study分離 — 2026-09-08
 
 curved_contourのgeometry_convergenceを追加。弦誤差だけを変更し元曲線/FEM設定を保持。

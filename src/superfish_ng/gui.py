@@ -28,6 +28,15 @@ def preview_document(project):
     if contour is not None:
         result.update(outline_closed=True, outline_edge_tags=list(contour.edge_tags),
                       area_m2=contour.area_m2, volume_m3=contour.volume_m3)
+    if project.case.curved_contour is not None:
+        curve = project.case.curved_contour
+        result["geometry_approximation"] = {
+            "tolerance_m": project.case.curve_chord_tolerance_m,
+            "analytic_area_m2": curve.area_m2,
+            "analytic_volume_m3": curve.volume_m3,
+            "area_difference_m2": contour.area_m2 - curve.area_m2,
+            "volume_difference_m3": contour.volume_m3 - curve.volume_m3,
+        }
     return result
 
 

@@ -136,28 +136,38 @@ function geometryChanged() {
   markDirty();
 }
 let contourMeshOriginal = null;
+function isContour(kind) { return ["contour", "curved_contour"].includes(kind); }
 function geometryLength(g) {
+  if (g.type === "curved_contour") return Math.max(...g.curves.filter((c,i)=>g.edge_tags[i]==="axis").flatMap(c=>[c.start_zr_m[0],c.end_zr_m[0]]));
   return g.type === "contour" ? Math.max(...g.vertices_zr_m.map(p=>p[0])) : g.points_zr_m.at(-1)[0];
 }
 function showGeometry() {
   const kind = $("geometry-type").value;
   $("cylinder").hidden = kind !== "pillbox";
-  $("profile-editor").hidden = kind === "pillbox" || kind === "contour";
-  $("contour-note").hidden = kind !== "contour";
-  $("contour-mesh-controls").hidden = kind !== "contour";
-  for (const id of ["nr", "nz", "triangulation"]) $(id).disabled = kind === "contour";
-  $("z-min").disabled = $("z-max").disabled = kind === "contour";
-  if (kind !== "contour") for (const id of ["z-min", "z-max"]) {
+  $("profile-editor").hidden = kind === "pillbox" || isContour(kind);
+  $("contour-note").hidden = !isContour(kind);
+  $("contour-mesh-controls").hidden = !isContour(kind);
+  for (const id of ["nr", "nz", "triangulation"]) $(id).disabled = isContour(kind);
+  $("z-min").disabled = $("z-max").disabled = isContour(kind);
+  if (!isContour(kind)) for (const id of ["z-min", "z-max"]) {
     if ($(id).value === "mixed") $(id).value = "pec";
     $(id).querySelector('option[value="mixed"]')?.remove();
   }
+  $("curve-editor").hidden = kind !== "curved_contour";
   $("arc-editor").hidden = kind !== "arc_profile";
 }
 function geometry() {
+  if ($("geometry-type").value === "curved_contour") {
+    if (geometryOriginal?.type !== "curved_contour") throw Error("解析曲線のファイルを読み込んでください");
+    const g = structuredClone(geometryOriginal);
+    g.chord_tolerance_m = $("curve-chord").value === String(g.chord_tolerance_m * 1000) ? g.chord_tolerance_m : number("curve-chord") / 1000;
+    g.chord_max_segments = number("curve-segments");
+    return g;
+  }
   if (!geometryDirty && geometryOriginal)
     return structuredClone(geometryOriginal);
   const kind = $("geometry-type").value;
-  if (kind === "contour") {
+  if (isContour(kind)) {
     if (geometryOriginal?.type !== "contour") throw Error("一般輪郭のファイルを読み込んでください");
     return structuredClone(geometryOriginal);
   }
@@ -197,7 +207,7 @@ function collect() {
     nz: number("nz"),
     triangulation: $("triangulation").value,
   };
-  if ($("geometry-type").value === "contour" && $("contour-edge").value !== "") {
+  if (isContour($("geometry-type").value) && $("contour-edge").value !== "") {
     const original = contourMeshOriginal?.max_edge_m;
     mesh.contour_mesh = {
       max_edge_m: original !== undefined && $("contour-edge").value === String(original * 1000)
@@ -232,7 +242,7 @@ function collect() {
     display_length_unit: "mm",
   };
   if (number("element-order") === 2) p.case.solver.element_order = 2;
-  if (p.case.geometry.type === "contour") delete p.case.boundaries;
+  if (isContour(p.case.geometry.type)) delete p.case.boundaries;
   if (assemblyActive) p.sections = structuredClone(sections);
   if (explicitModel !== null) {
     p.case.schema_version = 3;
@@ -256,7 +266,12 @@ function collect() {
 function setGeometry(g) {
   geometryOriginal = structuredClone(g);
   geometryDirty = false;
-  if (g.type === "contour") { $("geometry-type").value = "contour"; showGeometry(); return; }
+  if (isContour(g.type)) {
+    $("geometry-type").value = g.type;
+    $("curve-chord").value = (g.chord_tolerance_m ?? 0.001) * 1000;
+    $("curve-segments").value = g.chord_max_segments ?? 20000;
+    showGeometry(); return;
+  }
   const pts = g.points_zr_m;
   const cylinder =
     g.type === "pillbox" ||
@@ -301,14 +316,15 @@ function applyProject(p) {
     $(id).value = v;
   $("z-min").value = c.boundaries?.z_min || "pec";
   $("z-max").value = c.boundaries?.z_max || "pec";
-  if (c.geometry.type === "contour") {
-    const points = c.geometry.vertices_zr_m;
-    const length = Math.max(...points.map(p => p[0]));
+  if (isContour(c.geometry.type)) {
+    const edges = c.geometry.type === "contour"
+      ? c.geometry.vertices_zr_m.map((p,i,pts)=>[p,pts[(i+1)%pts.length]])
+      : c.geometry.curves.map(c=>c.type === "line" ? [c.start_zr_m,c.end_zr_m] : null);
+    const length = geometryLength(c.geometry);
     for (const [id, z] of [["z-min", 0], ["z-max", length]]) {
-      const index = points.findIndex((p, i) => p[0] === z && points[(i+1)%points.length][0] === z && c.geometry.edge_tags[i] !== "axis");
-      const tags = new Set(points.flatMap((p,i) => p[0]===z && points[(i+1)%points.length][0]===z && c.geometry.edge_tags[i]!=="axis" ? [c.geometry.edge_tags[i]] : []));
+      const tags = new Set(edges.flatMap((e,i) => e && e[0][0]===z && e[1][0]===z && c.geometry.edge_tags[i]!=="axis" ? [c.geometry.edge_tags[i]] : []));
       if (!$(id).querySelector('option[value="mixed"]')) $(id).add(new Option("辺ごとに異なる境界", "mixed"));
-      $(id).value = tags.size > 1 ? "mixed" : index < 0 ? "pec" : c.geometry.edge_tags[index];
+      $(id).value = tags.size > 1 ? "mixed" : tags.size === 0 ? "pec" : [...tags][0];
     }
   }
   $("reflect").checked = p.reflect_full;
@@ -397,7 +413,7 @@ function renderSections() {
     $("sections").append(div);
   });
 }
-function drawOutline(points, closed = false) {
+function drawOutline(points, closed = false, approximation = null) {
   const svg = $("shape");
   svg.replaceChildren();
   const ns = "http://www.w3.org/2000/svg";
@@ -434,7 +450,9 @@ function drawOutline(points, closed = false) {
   el("text", { x: 55, y: 18 }, `r ↑  最大半径 ${(R * 1000).toPrecision(6)} mm`);
   $("shape-info").textContent = `${points.length} 輪郭点`;
   if (closed) {
-    $("preview-note").textContent = "入力形状：閉じた一般輪郭（辺タグは読込ファイルで指定）";
+    $("preview-note").textContent = approximation
+      ? `入力形状：解析曲線の弦近似（曲線FEMではありません）。指定弦誤差 ${approximation.tolerance_m * 1000} mm / 面積差 ${approximation.area_difference_m2.toExponential(4)} m² / 体積差 ${approximation.volume_difference_m3.toExponential(4)} m³（弦 − 解析）`
+      : "入力形状：閉じた一般輪郭（辺タグは読込ファイルで指定）";
     return;
   }
   const boundaryNames = {
@@ -467,7 +485,7 @@ function drawOutline(points, closed = false) {
 }
 async function preview() {
   const r = await api("normalize", { document: collect() });
-  drawOutline(r.outline_zr_m, r.outline_closed);
+  drawOutline(r.outline_zr_m, r.outline_closed, r.geometry_approximation);
   return r.project;
 }
 bind("preview", preview);
@@ -481,7 +499,7 @@ bind("new", async () => {
     },
   });
   applyProject(r.project);
-  drawOutline(r.outline_zr_m, r.outline_closed);
+  drawOutline(r.outline_zr_m, r.outline_closed, r.geometry_approximation);
 });
 $("open").onchange = async (e) => {
   try {
@@ -490,7 +508,7 @@ $("open").onchange = async (e) => {
       document: await e.target.files[0].text(),
     });
     applyProject(r.project);
-    drawOutline(r.outline_zr_m, r.outline_closed);
+    drawOutline(r.outline_zr_m, r.outline_closed, r.geometry_approximation);
     $("error").hidden = true;
   } catch (err) {
     failure(err);
@@ -545,7 +563,7 @@ bind("assemble", async () => {
     reflect_full: p.reflect_full,
   });
   applyProject(r.project);
-  drawOutline(r.outline_zr_m, r.outline_closed);
+  drawOutline(r.outline_zr_m, r.outline_closed, r.geometry_approximation);
   dirty = true;
   $("dirty").textContent = "組立を展開済み — 未保存";
 });
@@ -817,7 +835,7 @@ bind("analyze-band", async () => {
     const n = number("band-count");
     if (!Number.isInteger(n) || n < 2)
       throw Error("セル中心数は2以上の整数です");
-    if (currentResult.result.case.geometry.type === "contour") throw Error("バンド解析は周期的な半径profile形状に限定しています");
+    if (isContour(currentResult.result.case.geometry.type)) throw Error("バンド解析は周期的な半径profile形状に限定しています");
     const L = geometryLength(currentResult.result.case.geometry);
     const response = await api("band", {
       id: currentJob,
@@ -945,11 +963,11 @@ async function updateStudyParameters(preferred) {
   if (kind === "mesh_convergence") {
     add("mesh_scale", "基準メッシュに対する細分倍率");
     $("study-hint").textContent =
-      "nr/nzを倍率倍し、指定された最大辺長を倍率で割ります。円弧の弦誤差は固定。周波数・RF・軸場を別々に判定します。";
+      "nr/nzを倍率倍し、指定された最大辺長を倍率で割ります。元曲線と弦誤差は固定。周波数・RF・軸場を別々に判定します。";
   } else if (kind === "geometry_convergence") {
-    add("/case/geometry/chord_tolerance_m", "円弧の最大弦誤差 [mm]", 0.001);
+    add("/case/geometry/chord_tolerance_m", "曲線の最大弦誤差 [mm]", 0.001);
     $("study-hint").textContent =
-      "円弧半径とFEM設定を固定し、弦誤差を小さくします。円弧形状だけで使用できます。";
+      "元曲線とFEM設定を固定し、弦誤差を小さくします。arc_profile / curved_contourで使用できます。";
   } else {
     (p.case.geometry.points_zr_m || []).forEach((point, i) => {
       if (i)

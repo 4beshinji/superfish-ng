@@ -779,15 +779,24 @@ try {
   if (args["--contour-case"]) {
     const filename = resolve(args["--contour-case"]);
     const fixture = JSON.parse(await readFile(filename, "utf8"));
+    const curved = fixture.geometry.type === "curved_contour";
     const { root } = await call("DOM.getDocument", {}, sessionId);
     const { nodeId } = await call("DOM.querySelector", { nodeId: root.nodeId, selector: "#open" }, sessionId);
     await call("DOM.setFileInputFiles", { nodeId, files: [filename] }, sessionId);
-    await wait('document.querySelector("#geometry-type").value === "contour" && document.querySelector("#preview-note").textContent.includes("閉じた一般輪郭")');
+    await wait(`document.querySelector("#geometry-type").value === ${JSON.stringify(fixture.geometry.type)} && document.querySelector("#preview-note").textContent.includes(${JSON.stringify(curved ? "解析曲線の弦近似" : "閉じた一般輪郭")})`);
     if (!await ev('document.querySelector("#z-min").disabled && document.querySelector("#z-max").disabled')) throw Error("contour end tags must not expose ignored edits");
     const original = await ev("collect().case.geometry");
     if (!isDeepStrictEqual(original, fixture.geometry)) throw Error("contour import changed vertices or tags");
     const count = await ev('document.querySelector("#shape polygon").points.numberOfItems');
-    if (count !== fixture.geometry.vertices_zr_m.length) throw Error("contour preview added phantom vertices");
+    if (!curved && count !== fixture.geometry.vertices_zr_m.length) throw Error("contour preview added phantom vertices");
+    if (curved) {
+      await fill("#curve-chord", fixture.geometry.chord_tolerance_m * 500);
+      original.chord_tolerance_m = fixture.geometry.chord_tolerance_m / 2;
+      if (!isDeepStrictEqual(await ev("collect().case.geometry"), original)) throw Error("curve edit changed source primitives");
+      await click("#preview");
+      await wait(`document.querySelector("#shape polygon").points.numberOfItems > ${count}`);
+      if (!await ev('document.querySelector("#preview-note").textContent.includes("体積差")')) throw Error("curve preview lacks geometry error");
+    }
     let contourControls;
     if (args["--contour-auto"] === "yes") {
       if (!isDeepStrictEqual(await ev("collect().case.mesh.contour_mesh"), fixture.mesh.contour_mesh)) throw Error("contour mesh import changed controls");
@@ -800,7 +809,7 @@ try {
       await wait(`document.querySelectorAll('#jobs .job').length>${previous}`);
       await wait('document.querySelector("#jobs .job strong").textContent.startsWith("計算完了")',60000);
       await click("#jobs .job button");
-      await wait('currentResult?.result?.case?.geometry?.type === "contour" && !document.querySelector("#field-image").hidden',30000);
+      await wait(`currentResult?.result?.case?.geometry?.type === ${JSON.stringify(fixture.geometry.type)} && !document.querySelector("#field-image").hidden`,30000);
       if (!isDeepStrictEqual(await ev("currentResult.result.case.mesh.contour_mesh"),contourControls)) throw Error("saved contour result lost controls");
       if (await ev("currentResult.result.field_space?.element_order") !== 2) throw Error("contour solve lost P2 order");
       report.checks.push({operation:"contour mesh controls edited, automatic P2 solve and saved result",passed:true,controls:contourControls});

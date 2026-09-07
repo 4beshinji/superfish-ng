@@ -41,6 +41,7 @@
             <option value="profile">折れ線 — 頂点を編集</option>
             <option value="stepped_profile">段差 — 同じzの頂点を許可</option>
             <option value="arc_profile">円弧 — 半径と向きを指定</option>
+            <option value="curved_contour">解析曲線 — ファイル読込</option>
             <option value="contour">一般輪郭 — ファイル読込</option>
           </select></label
         >
@@ -61,7 +62,7 @@
               min="0.001"
           /></label>
         </div>
-        <p id="contour-note" hidden>一般輪郭の頂点・辺タグは読込ファイルの値を保持します。形状の変更はファイルで行ってください。</p>
+        <p id="contour-note" hidden>一般輪郭の頂点・解析曲線・辺タグは読込ファイルの値を保持します。形状の変更はファイルで行ってください。</p>
         <div id="profile-editor" hidden>
           <p class="hint">zは左から右、rは軸から壁までの半径です。</p>
           <table id="points">
@@ -76,6 +77,11 @@
             <tbody></tbody>
           </table>
           <button id="add-point">頂点を追加</button>
+        </div>
+        <div id="curve-editor" hidden>
+          <label>最大弦誤差 [mm]<input id="curve-chord" type="number" step="any" /></label>
+          <label>弦分割数の上限<input id="curve-segments" type="number" step="1" value="20000" /></label>
+          <p>元曲線を保持し、計算用の直線輪郭を生成します。FEMの最大辺長は別に指定します。</p>
         </div>
         <div id="arc-editor" hidden>
           <p class="hint">

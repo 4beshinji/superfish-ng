@@ -53,6 +53,20 @@ class CurvedCaseTests(unittest.TestCase):
         return Case((),curved_contour=curved,curve_chord_tolerance_m=.002,
                     contour_mesh=ContourMeshControls(.03),modes=1,element_order=2)
 
+    def test_preview_preserves_curve_and_reports_geometric_error(self):
+        from superfish_ng.gui import preview_document
+        from superfish_ng.project import Project
+        case = self.case()
+        preview = preview_document(Project.from_dict(case.to_dict()))
+        self.assertEqual(preview["project"]["case"]["geometry"], case.to_dict()["geometry"])
+        self.assertTrue(preview["outline_closed"])
+        self.assertEqual(preview["outline_zr_m"], [list(p) for p in case.contour.vertices_zr_m])
+        error = preview["geometry_approximation"]
+        exact_volume = 4 * math.pi * .1 * .08**2 / 3
+        self.assertAlmostEqual(error["analytic_volume_m3"], exact_volume)
+        self.assertAlmostEqual(error["volume_difference_m3"], case.contour.volume_m3 - exact_volume)
+        self.assertLess(error["volume_difference_m3"], 0)
+
     def test_original_curves_and_chords_survive_save_reload(self):
         case = self.case()
         raw = case.to_dict()
