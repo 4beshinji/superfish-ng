@@ -16,19 +16,22 @@ from .rf import cell_fields, quantities
 
 def write_vtk(path, solution, mode):
     """2D meridian embedded at x=r,y=z,z=0. Cylindrical components are scalars."""
-    mesh = solution.mesh
-    er, ez, h = cell_fields(solution, mode)
+    from .display import display_fields
+    points, triangles, nodal_h, (er, ez, h) = display_fields(solution, mode)
+    title = 'Superfish-NG meridian x=r y=z; peak phasors'
+    if getattr(solution, 'element_order', 1) == 2:
+        title += '; P2 sampled on four display triangles per element'
     with Path(path).open("w", encoding="ascii") as f:
-        f.write("# vtk DataFile Version 3.0\nSuperfish-NG meridian x=r y=z; peak phasors\nASCII\nDATASET UNSTRUCTURED_GRID\n")
-        f.write(f"POINTS {len(mesh.points)} double\n")
-        np.savetxt(f, np.column_stack((mesh.points, np.zeros(len(mesh.points)))), fmt="%.16e")
-        f.write(f"CELLS {len(mesh.triangles)} {len(mesh.triangles)*4}\n")
-        np.savetxt(f, np.column_stack((np.full(len(mesh.triangles), 3), mesh.triangles)), fmt="%d")
-        f.write(f"CELL_TYPES {len(mesh.triangles)}\n")
-        np.savetxt(f, np.full(len(mesh.triangles), 5), fmt="%d")
-        f.write(f"POINT_DATA {len(mesh.points)}\nSCALARS Hphi_A_per_m double 1\nLOOKUP_TABLE default\n")
-        np.savetxt(f, mesh.points[:, 0]*solution.u[:, mode], fmt="%.16e")
-        f.write(f"CELL_DATA {len(mesh.triangles)}\n")
+        f.write(f"# vtk DataFile Version 3.0\n{title}\nASCII\nDATASET UNSTRUCTURED_GRID\n")
+        f.write(f"POINTS {len(points)} double\n")
+        np.savetxt(f, np.column_stack((points, np.zeros(len(points)))), fmt="%.16e")
+        f.write(f"CELLS {len(triangles)} {len(triangles)*4}\n")
+        np.savetxt(f, np.column_stack((np.full(len(triangles), 3), triangles)), fmt="%d")
+        f.write(f"CELL_TYPES {len(triangles)}\n")
+        np.savetxt(f, np.full(len(triangles), 5), fmt="%d")
+        f.write(f"POINT_DATA {len(points)}\nSCALARS Hphi_A_per_m double 1\nLOOKUP_TABLE default\n")
+        np.savetxt(f, nodal_h, fmt="%.16e")
+        f.write(f"CELL_DATA {len(triangles)}\n")
         for name, values in (("Er_quadrature_V_per_m", er), ("Ez_quadrature_V_per_m", ez),
                              ("E_abs_V_per_m", np.hypot(er, ez)), ("Hphi_center_A_per_m", h)):
             f.write(f"SCALARS {name} double 1\nLOOKUP_TABLE default\n")

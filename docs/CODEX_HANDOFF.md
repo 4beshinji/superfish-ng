@@ -1,5 +1,12 @@
 # ローカルCodexへの引継ぎ
 
+## N02の表示用分割・VTK — 2026-09-08
+
+display.pyへP2の4分割表示データを追加し、write_vtkに接続。
+二次多項式の場・面積・VTK値を検証。161 tests中159合格・2 skip、標準validate PASS。
+P1のRF全量/hash/VTKバイト列は不変。次はsave_run/read_solutionへ次数・全係数・
+接続情報を保持して移行し、plot_modeと追跡へつなぐ。N02全体は未完。
+
 ## N02のP2鏡映 — 2026-09-08
 
 reflect_solutionを全中点の偶奇写像へ拡張。両端×電気/磁気対称について

@@ -106,3 +106,13 @@ reflect_solutionは幾何メッシュの鏡映後に全領域QuadraticSpaceを�
 ローカル証拠はout/validation-n02-reflection-20260908/validation.json PASS。
 159 tests中157合格・2 skip、円筒/成形セルのmode辞書全量とhashは直前と一致。
 次はP2保存・再読込・表示/追跡統合とBessel場/ピークの収束証拠。N02全体は未受入。
+
+### 表示用分割とVTK — 2026-09-08
+
+display.display_fieldsは各P2三角形を中点で4分割し、元のP2係数から表示点のHと
+表示三角形中心のE/Hを評価する。write_vtkへ接続し、タイトルに表示用分割を明記。
+RF計算は表示三角形を使用しない。P1の頂点・要素・場・VTKバイト列は維持する。
+独立二次多項式で中心場、分割の正向きと面積保存、VTKの点/要素数・保存場を検証。
+ローカル証拠: out/validation-n02-display-20260908/validation.json PASS。
+161 tests中159合格・2 skip。円筒/成形セルのmode全量・hash・全VTKは直前と一致。
+保存runのP2解禁と再読込、plot_modeへの接続は未完。次はその保存契約を実装する。
