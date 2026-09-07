@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G02の方式判断とCase制御契約 — 2026-09-08
+
+ADR-017で測定に基づき自前品質判定方式を選択。ContourMeshControlsとv3
+mesh.contour_meshへ最大長/最小角/要素・反復上限を追加しstrict解析・保存往復を検証。
+標準191件中189合格・2 skip、validation-g02-controls-20260908 PASS。
+次はmake_meshが設定から自動生成する接続とCLI/保存再実行、GUIの欄/読込保持/実操作。
+現時点make_meshのcontourはまだ拒否する。新設定をGUIcollectはまだ保持しないので要対応。
+G02全体・全互換目標は未完。
+
 ## G02の非円筒独立照合 — 2026-09-08
 
 compare_contour_ngsolve.pyを追加。円錐台はPASS、折返しの初回周波数未収束FAILを残し、

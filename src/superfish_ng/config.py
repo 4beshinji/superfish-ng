@@ -75,8 +75,14 @@ class Case:
     phase_origin_m: float | None = None
     element_order: int = 1
     contour: object | None = None
+    contour_mesh: object | None = None
 
     def __post_init__(self):
+        if self.contour_mesh is not None:
+            from .mesh_controls import ContourMeshControls
+            if not isinstance(self.contour_mesh,ContourMeshControls) or self.contour is None:
+                raise ValueError('contour_mesh requires validated ContourMeshControls and contour geometry')
+            self.contour_mesh.__post_init__()
         if type(self.element_order) is not int or self.element_order not in (1, 2):
             raise ValueError("element_order must be integer 1 or 2")
         if self.model is not None:
@@ -251,7 +257,12 @@ class Case:
             geometry_options = {'arcs': tuple((a['end_index'], a['radius_m'], a['direction']) for a in g['arcs']),
                                 'arc_chord_tolerance_m': g['chord_tolerance_m']}
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
-        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m"], [], "mesh")
+        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m", "contour_mesh"], [], "mesh")
+        if 'contour_mesh' in mesh:
+            from .mesh_controls import ContourMeshControls
+            if data['schema_version'] != 3:
+                raise ValueError('mesh.contour_mesh requires schema_version 3')
+            mesh = dict(mesh,contour_mesh=ContourMeshControls.from_dict(mesh['contour_mesh']))
         if any(k in mesh for k in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m')) and data['schema_version'] < 2:
             raise ValueError('physical mesh sizes require schema_version 2')
         for k in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m'):
@@ -313,4 +324,6 @@ class Case:
             data['geometry'] = {'type':'contour', 'vertices_zr_m':[list(p) for p in self.contour.vertices_zr_m],
                                 'edge_tags':list(self.contour.edge_tags)}
             data.pop('boundaries', None)
+        if self.contour_mesh is not None:
+            data['mesh']['contour_mesh'] = self.contour_mesh.to_dict()
         return data

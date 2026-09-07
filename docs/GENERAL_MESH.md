@@ -162,3 +162,24 @@ Netgen/P3 Hphiの別メッシュ・別組立・別RF積分と両側3段階で比
 標準189件中187合格・2 skip、独立参照専用7件PASS。
 次はこの品質/時間/精度の証拠から方式判断を記録し、製品サイズ/品質/停止上限の契約と
 Case・保存・CLI・GUI経路を接続する。G02全体は未受入。
+
+## Caseの明示制御契約 — 2026-09-08
+
+v3 contour Caseの `mesh.contour_mesh` を追加。Pythonでは
+`mesh_controls.ContourMeshControls` を `Case.contour_mesh` へ渡す。
+
+```json
+{"max_edge_m": 0.003, "min_angle_deg": 10.0, "max_triangles": 250000, "max_rounds": 12}
+```
+
+max_edge_mは必須の正の有限SI長。残り3項目は上記の既定値で、省略時も正規化出力には
+全値を明記する。角度は0度超60度未満、上限は正整数でboolを拒否する。
+未知項目・null・非有限・profile形状への指定・v1/v2指定を拒否する。
+既存nr/nz/triangulationは旧profileメッシュ契約のまま保持し、この専用設定へ変換しない。
+全域サイズは明示値からだけ決め、境界/角近傍の既存サイズ指定を追加制約とする。
+
+Case往復と生成メッシュを使うP2保存/再読込で4設定の保持を検証。
+設定未指定の一般輪郭と既存の外部メッシュ経路は従来の契約を維持する。
+この段階ではmake_mesh自動経路・GUI編集欄への接続は未実装で、一般輪郭の
+自動solveはまだ明示拒否する。設定が存在するだけで公開済みとは扱わない。
+標準191件中189合格・2 skip、`out/validation-g02-controls-20260908/validation.json` PASS。
