@@ -58,3 +58,18 @@ class CurvedRFTests(unittest.TestCase):
         solution.space=replace(solution.space,geometry=replace(original,points_rz_m=shifted))
         with self.assertRaisesRegex(ValueError,'affine'):
             accelerating_voltage_curved(solution)
+
+    def test_discrete_peak_normalization_and_cancelled_voltage(self):
+        from superfish_ng.constants import C0
+        solution = solve_curved(self.case())
+        original = quantities_curved(solution)
+        scaled = replace(solution, case=replace(solution.case, normalization_j=4*solution.case.normalization_j), u=2*solution.u)
+        actual = quantities_curved(scaled)
+        self.assertAlmostEqual(actual['epk_surface_estimate_v_per_m']/original['epk_surface_estimate_v_per_m'], 2.)
+        self.assertAlmostEqual(actual['hpk_discrete_upper_bound_a_per_m']/original['hpk_discrete_upper_bound_a_per_m'], 2.)
+        self.assertAlmostEqual(actual['epk_over_eacc_estimate']/original['epk_over_eacc_estimate'], 1.)
+        beta = float(solution.frequencies_hz[0]*solution.case.length/C0)
+        cancelled = replace(solution, case=replace(solution.case, beta=beta), u=np.ones_like(solution.u))
+        q = quantities_curved(cancelled)
+        self.assertIsNone(q['epk_over_eacc_estimate'])
+        self.assertIsNone(q['bpk_over_eacc_estimate_mt_per_mv_per_m'])

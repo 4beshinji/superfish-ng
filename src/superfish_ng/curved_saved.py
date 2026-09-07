@@ -11,7 +11,7 @@ from .constants import C0, EPS0, MU0, TAU
 from .curved_solution import CurvedSolution
 from .curved_space import case_curved_space
 from .curved_fem import assemble_curved
-from .curved_rf import quantities_curved
+from .curved_rf import quantities_curved, surface_peak_contract
 from .mesh_input import mesh_from_dict, mesh_digest
 
 
@@ -40,7 +40,7 @@ def write_curved_run(case, solution, directory):
                   case=case.to_dict(), case_sha256=hashlib.sha256(canonical.encode()).hexdigest(),
                   environment=dict(python=platform.python_version(), numpy=np.__version__,
                                    scipy=scipy.__version__, platform=platform.platform()),
-                  field_space=field_space(solution),
+                  field_space=field_space(solution), surface_extrema=surface_peak_contract(),
                   field_construction='direct curved P2 eigensolve; indices within specified boundary conditions',
                   mesh=dict(nodes=len(solution.u), triangles=len(solution.space.geometry.cell_nodes),
                             source='saved source chord mesh for curved reconstruction', input_file='mesh.json',
@@ -137,6 +137,9 @@ def read_curved_run(directory, case, results):
         residuals.append(np.linalg.norm(ku-value*mu)/(np.linalg.norm(ku)+value*np.linalg.norm(mu)))
     if not np.isfinite(residuals).all() or max(residuals) > 1e-7:
         raise ValueError('saved curved eigenpair residual exceeds 1e-7')
+    peak_declaration = results.get('surface_extrema')
+    if 'surface_extrema' in results and json.dumps(peak_declaration, sort_keys=True, allow_nan=False) != json.dumps(surface_peak_contract(), sort_keys=True, allow_nan=False):
+        raise ValueError('invalid saved curved surface extrema declaration')
     solution = CurvedSolution(case, space, k, m, values, frequencies, u,
                               np.asarray(residuals), error, case.quadrature_order, mesh_data)
     if results.get('field_space') != field_space(solution):
@@ -144,7 +147,7 @@ def read_curved_run(directory, case, results):
     if len(results.get('modes', [])) != case.modes:
         raise ValueError('invalid saved curved mode count')
     for i, saved in enumerate(results['modes']):
-        expected_mode = quantities_curved(solution, i)
+        expected_mode = quantities_curved(solution, i, include_surface_peaks=peak_declaration is not None)
         if set(saved) != set(expected_mode):
             raise ValueError('saved curved RF keys differ')
         for name, value in expected_mode.items():

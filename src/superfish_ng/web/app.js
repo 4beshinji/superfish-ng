@@ -1244,9 +1244,13 @@ const rfDetailNames = {
   eacc_v_per_m: "加速電場 Eacc [V/m]",
   r_shunt_accelerator_ohm: "シャントインピーダンス acc [Ω]",
   r_shunt_circuit_ohm: "シャントインピーダンス circuit [Ω]",
-  epk_surface_estimate_v_per_m: "最大表面電場（P1推定）[V/m]",
+  epk_surface_estimate_v_per_m: "最大表面電場（推定）[V/m]",
   bpk_surface_estimate_t: "最大表面磁束密度（推定）[T]",
   bpk_over_eacc_estimate_mt_per_mv_per_m: "Bpk/Eacc [mT/(MV/m)]",
+  epk_discrete_lower_bound_v_per_m: "離散電場の連続最大・下界 [V/m]",
+  epk_discrete_upper_bound_v_per_m: "離散電場の連続最大・上界 [V/m]",
+  hpk_discrete_lower_bound_a_per_m: "離散磁場の連続最大・下界 [A/m]",
+  hpk_discrete_upper_bound_a_per_m: "離散磁場の連続最大・上界 [A/m]",
   peak_status: "表面ピーク比の状態",
 };
 function renderRFDetails() {

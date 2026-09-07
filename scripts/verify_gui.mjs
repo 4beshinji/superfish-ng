@@ -841,7 +841,8 @@ try {
       const controls = await ev("({geometry:collect().case.mesh.geometry_order,levels:collect().case.mesh.curved_refinement_levels,quadrature:collect().case.solver.quadrature_order})");
       if (!isDeepStrictEqual(controls,{geometry:2,levels:1,quadrature:12})) throw Error("curved controls lost on export/reopen");
       if (await ev("currentResult.result.field_space.geometry_order") !== 2 || await ev("currentResult.result.field_space.curved_refinement_levels") !== 1) throw Error("saved curved field declaration lost");
-      if (!await ev('document.querySelector("#rf-table").textContent.includes("未評価") && !document.querySelector("#rf-table").textContent.includes("NaN")')) throw Error("missing curved peaks displayed as numbers");
+      if (!await ev('currentResult.result.surface_extrema?.version === 1 && Number.isFinite(currentResult.result.modes[0].epk_over_eacc_estimate) && !document.querySelector("#rf-table").textContent.includes("NaN")')) throw Error("curved peak bounds not exposed in RF output");
+      if (!await ev('currentResult.result.modes[0].peak_status.includes("not certified")')) throw Error("discrete extrema presented as physical certification");
       report.checks.push({operation:"curved geometry, quadrature and refinement controls; solve, plot and roundtrip",passed:true,controls});
       await ev('document.querySelector("#study-kind").value="fixed_geometry_convergence"; document.querySelector("#study-kind").dispatchEvent(new Event("change", {bubbles:true}))');
       await fill("#study-values", "0, 1");

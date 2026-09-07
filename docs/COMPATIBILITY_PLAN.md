@@ -4,6 +4,10 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-08 G03途中受入: 連続離散ピークをRF/保存/GUIへ版付きで接続。
+旧形式の再読込、改変拒否、正規化不変量、独立球形と実ブラウザー7検査PASS。
+285件中283合格・2 skip、validate PASS。物理的な角/鏡映等は継続。[詳細](CURVED_ELEMENTS.md)。
+
 2026-09-08 G03途中受入: 離散曲線場の連続極値を厳密有理数Bernstein境界で囲む。
 狭いピーク・予算不足・有理式と物理場の一致・独立球形でPASS。
 282件中280合格・2 skip、validate PASS。通常RF/保存/GUI接続は未完。[詳細](CURVED_ELEMENTS.md)。

@@ -33,7 +33,7 @@ class CurvedStudyTests(unittest.TestCase):
             self.assertEqual(read_job(directory)['status'], 'complete')
             self.assertEqual(report['comparisons'][0]['status'], 'PASS')
             self.assertIn('not a fixed-discrete-geometry', report['geometry_refinement'])
-            self.assertIn('not evaluated', report['surface_field'])
+            self.assertIn('not assessed', report['surface_field'])
             for point in report['points']:
                 mode = point['modes'][0]
                 self.assertLess(abs(mode['frequency_hz']/expected.frequency_hz-1), .001)

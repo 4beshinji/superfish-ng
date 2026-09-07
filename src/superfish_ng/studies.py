@@ -319,7 +319,7 @@ def compare_refinement(first_dir, second_dir):
             "pair_margin": 0.02,
         },
         "modes": records,
-        "surface_field": ("not evaluated; curved surface peak validation pending"
+        "surface_field": ("physical surface-peak convergence not assessed by this Study"
                           if first.case.geometry_order == 2 or second.case.geometry_order == 2 else
                           "finite-element boundary estimates; not certified; element orders "
                           + str(sorted({first.element_order, second.element_order}))),
@@ -378,7 +378,7 @@ def execute_study(study, directory, prepared=False):
                               +str(sorted({p.case.element_order for p in projects}))),
         }
         if any(p.case.geometry_order == 2 for p in projects):
-            report['surface_field'] = 'not evaluated; curved surface peak validation pending'
+            report['surface_field'] = 'physical surface-peak convergence not assessed by this Study'
             report['geometry_refinement'] = (
                 'boundary nodes are interpolated from analytic primitives at each mesh; '
                 'mesh refinement may also change the quadratic geometry; '

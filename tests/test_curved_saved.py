@@ -124,3 +124,37 @@ class CurvedSavedTests(unittest.TestCase):
         marker = json.loads(path.read_text())
         marker['files'][name] = digest(directory/name)
         path.write_text(json.dumps(marker))
+
+    def test_old_curved_rf_format_remains_readable(self):
+        import csv
+        from superfish_ng.curved_rf import quantities_curved
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)/'run'
+            result = save_run(self.case, self.solution, directory)
+            del result['surface_extrema']
+            result['modes'] = [quantities_curved(self.solution, i, include_surface_peaks=False) for i in range(self.case.modes)]
+            (directory/'results.json').write_text(json.dumps(result))
+            with (directory/'modes.csv').open('w', newline='') as stream:
+                writer = csv.DictWriter(stream, fieldnames=list(result['modes'][0]))
+                writer.writeheader(); writer.writerows(result['modes'])
+            for name in ('results.json', 'modes.csv'):
+                self.refresh(directory, name)
+            old = read_solution(directory)
+            np.testing.assert_array_equal(old.u, self.solution.u)
+            self.assertNotIn('epk_discrete_upper_bound_v_per_m', old.results['modes'][0])
+
+    def test_surface_extrema_contract_and_values_are_revalidated(self):
+        for change in ('version', 'remove', 'value'):
+            with tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)/'run'
+                result = save_run(self.case, self.solution, directory)
+                if change == 'version':
+                    result['surface_extrema']['version'] = True
+                elif change == 'remove':
+                    del result['surface_extrema']
+                else:
+                    result['modes'][0]['epk_discrete_upper_bound_v_per_m'] *= 1.01
+                (directory/'results.json').write_text(json.dumps(result))
+                self.refresh(directory, 'results.json')
+                with self.assertRaisesRegex(ValueError, 'surface extrema|RF'):
+                    read_solution(directory)

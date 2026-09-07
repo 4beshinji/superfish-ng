@@ -52,8 +52,17 @@ def accelerating_voltage_curved(solution,mode=0):
                              interval=interval,phase_origin=origin)
 
 
-def quantities_curved(solution,mode=0,*,wall_quadrature_order=8):
-    """RF integrals only: surface peaks are explicitly not evaluated here."""
+def surface_peak_contract():
+    return dict(version=1, method='exact rational Bernstein bounds of continuous discrete fields',
+                relative_tolerance=1e-6, max_boxes_per_edge=10000,
+                domain='closed PEC edges with one-sided cell derivatives',
+                estimate='upper bound; physical corner regularity and mesh convergence not certified')
+
+
+def quantities_curved(solution,mode=0,*,wall_quadrature_order=8,include_surface_peaks=True):
+    """RF integrals and discrete extrema; optional old-format replay for readers."""
+    if type(include_surface_peaks) is not bool:
+        raise ValueError('include_surface_peaks must be boolean')
     _check(solution,mode)
     case=solution.case
     omega=float(TAU*solution.frequencies_hz[mode])
@@ -71,7 +80,7 @@ def quantities_curved(solution,mode=0,*,wall_quadrature_order=8):
     active,interval,origin=case.acceleration_parameters
     rq=vacc**2/(omega*energy)
     q0=omega*energy/loss
-    return dict(mode_index=mode+1,frequency_hz=float(solution.frequencies_hz[mode]),
+    result = dict(mode_index=mode+1,frequency_hz=float(solution.frequencies_hz[mode]),
                 stored_energy_j=energy,electric_energy_j=electric,magnetic_energy_j=magnetic,
                 energy_balance_relative=abs(electric-magnetic)/energy,
                 surface_resistance_ohm=rs,wall_loss_w=loss,q0=q0,geometry_factor_ohm=q0*rs,
@@ -83,3 +92,22 @@ def quantities_curved(solution,mode=0,*,wall_quadrature_order=8):
                 r_shunt_accelerator_ohm=rq*q0,r_shunt_circuit_ohm=rq*q0/2,
                 wall_quadrature_order=wall_quadrature_order,
                 peak_status='not evaluated; curved surface peak validation pending')
+
+    if include_surface_peaks:
+        from .curved_extrema import bound_surface_peaks
+        contract = surface_peak_contract()
+        bounds = bound_surface_peaks(solution, mode, relative_tolerance=contract['relative_tolerance'],
+                                     max_boxes_per_edge=contract['max_boxes_per_edge'])
+        electric_bounds, magnetic_bounds = bounds['electric_v_per_m'], bounds['magnetic_a_per_m']
+        epeak, hpeak = electric_bounds['upper_bound'], magnetic_bounds['upper_bound']
+        eacc = vacc/active
+        accelerating = absolute > 0 and vacc > 1e-12*absolute
+        result.update(epk_surface_estimate_v_per_m=epeak, bpk_surface_estimate_t=MU0*hpeak,
+                      epk_discrete_lower_bound_v_per_m=electric_bounds['lower_bound'],
+                      epk_discrete_upper_bound_v_per_m=epeak,
+                      hpk_discrete_lower_bound_a_per_m=magnetic_bounds['lower_bound'],
+                      hpk_discrete_upper_bound_a_per_m=hpeak,
+                      epk_over_eacc_estimate=epeak/eacc if accelerating else None,
+                      bpk_over_eacc_estimate_mt_per_mv_per_m=MU0*hpeak/eacc*1e9 if accelerating else None,
+                      peak_status='bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified')
+    return result

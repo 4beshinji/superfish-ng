@@ -69,7 +69,7 @@ def main():
                   reference_peaks=dict(electric_v_per_m=exact_epeak, magnetic_a_per_m=exact_hpeak),
                   relative_limit=.01, levels=reports,
                   scope='sphere boundary traces, PEC tangent and bounded discrete extrema; independent of volume/RF gates',
-                  pending='general physical corner policy and peak/RF/save/GUI integration')
+                  pending='general physical corner policy, curved reflection and broader shape acceptance')
     (args.out/'comparison.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     print(json.dumps(report, indent=2), flush=True)
     return 0 if report['status'] == 'PASS' else 1
