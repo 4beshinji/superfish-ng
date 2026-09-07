@@ -5,6 +5,14 @@ import math
 import numpy as np
 
 
+
+def rotation_cos_sin(angle):
+    """Exact signed permutations for cardinal rotations, without tolerance snapping."""
+    cardinal = {0.: (1.,0.), math.pi/2: (0.,1.), -math.pi/2: (0.,-1.),
+                math.pi: (-1.,0.), -math.pi: (-1.,0.)}
+    return cardinal[angle] if angle in cardinal else (math.cos(angle),math.sin(angle))
+
+
 def _checked_evaluation(points,tangent,curvature):
     if not all(np.all(np.isfinite(v)) for v in (points,tangent,curvature)) or np.any(curvature<=0):
         raise ValueError('conic evaluation exceeds floating-point range; reduce parameter or dimension extremes')
@@ -124,7 +132,7 @@ class EllipseArc:
             raise ValueError('ellipse parameter must be finite in [0,1]')
         theta = self.start_rad+raw.astype(float)*self.sweep_rad
         a,b = self.semiaxes_m
-        c,s = math.cos(self.rotation_rad),math.sin(self.rotation_rad)
+        c,s = rotation_cos_sin(self.rotation_rad)
         rotation = np.array([[c,-s],[s,c]])
         points = np.stack((a*np.cos(theta),b*np.sin(theta)),axis=-1) @ rotation.T
         derivative = np.stack((-a*np.sin(theta),b*np.cos(theta)),axis=-1) @ rotation.T
@@ -208,7 +216,7 @@ class HyperbolaArc:
             raise ValueError('hyperbola parameter fraction must be finite in [0,1]')
         u = self.start_parameter+(self.end_parameter-self.start_parameter)*raw.astype(float)
         a,b = self.semiaxes_m
-        c,s = math.cos(self.rotation_rad),math.sin(self.rotation_rad)
+        c,s = rotation_cos_sin(self.rotation_rad)
         rotation = np.array([[c,-s],[s,c]])
         points = np.stack((self.branch*a*np.cosh(u),b*np.sinh(u)),axis=-1) @ rotation.T
         derivative = np.stack((self.branch*a*np.sinh(u),b*np.cosh(u)),axis=-1) @ rotation.T

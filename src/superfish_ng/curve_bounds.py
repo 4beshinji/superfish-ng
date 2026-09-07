@@ -3,6 +3,7 @@
 import math
 import numpy as np
 from .conics import LineSegment, EllipseArc, HyperbolaArc
+from .conics import rotation_cos_sin
 
 
 def curve_bounds(curve,first=0.,last=1.):
@@ -18,7 +19,7 @@ def curve_bounds(curve,first=0.,last=1.):
     fractions = [first,last]
     if not isinstance(curve,LineSegment):
         a,b = curve.semiaxes_m
-        c,s = math.cos(curve.rotation_rad),math.sin(curve.rotation_rad)
+        c,s = rotation_cos_sin(curve.rotation_rad)
         if isinstance(curve,EllipseArc):
             start,span = curve.start_rad,curve.sweep_rad
             coefficients = ((a*c,-b*s),(a*s,b*c))
@@ -105,7 +106,7 @@ def directional_derivative_bounds(curve,direction,first=0.,last=1.):
         pad = 128*np.finfo(float).eps*math.hypot(*(np.asarray(curve.end_zr_m)-curve.start_zr_m))
         return value-pad,value+pad
     a,b = curve.semiaxes_m
-    c,s = math.cos(curve.rotation_rad),math.sin(curve.rotation_rad)
+    c,s = rotation_cos_sin(curve.rotation_rad)
     first_axis = float(np.dot(direction,[c,s]))
     second_axis = float(np.dot(direction,[-s,c]))
     if isinstance(curve,EllipseArc):

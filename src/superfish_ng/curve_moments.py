@@ -4,6 +4,7 @@ import cmath
 import math
 import numpy as np
 from .conics import LineSegment,EllipseArc,HyperbolaArc
+from .conics import rotation_cos_sin
 
 
 def revolution_volume_contribution(curve):
@@ -22,7 +23,7 @@ def revolution_volume_contribution(curve):
     if not isinstance(curve,(EllipseArc,HyperbolaArc)):
         raise ValueError('volume requires a supported curve primitive')
     a,b = curve.semiaxes_m
-    c,s = math.cos(curve.rotation_rad),math.sin(curve.rotation_rad)
+    c,s = rotation_cos_sin(curve.rotation_rad)
     branch = curve.branch if isinstance(curve,HyperbolaArc) else 1
     def coefficients(offset,A,B):
         if isinstance(curve,EllipseArc):

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Run separate geometry and FEM studies of the synthetic ellipsoid."""
+"""Run separate geometry and FEM studies of a native curved contour."""
 import argparse
 from dataclasses import replace
 import json
@@ -14,10 +14,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", required=True)
     parser.add_argument("--max-rounds", type=int, default=12)
+    parser.add_argument("--case", type=Path, default=Path(__file__).resolve().parents[1] / "examples/curved_ellipse.json")
     args = parser.parse_args()
     root = Path(args.out)
     root.mkdir(parents=True, exist_ok=False)
-    case = Case.load(Path(__file__).resolve().parents[1] / "examples/curved_ellipse.json")
+    case = Case.load(args.case)
     case = replace(case, contour_mesh=replace(case.contour_mesh, max_rounds=args.max_rounds))
     geometry_case = replace(case, contour_mesh=replace(case.contour_mesh, max_edge_m=.005))
     fem_case = replace(case, contour=None, curve_chord_tolerance_m=.00003125)
@@ -43,7 +44,8 @@ def main():
         }
         print(f'{name}: {report["numerical_status"]}', flush=True)
     result = {
-        "scope": "synthetic ellipsoid, fundamental mode, straight P2 elements",
+        "scope": {"case_name": case.name, "element_order": case.element_order, "modes": case.modes,
+                  "geometry": "straight chords of native analytic primitives"},
         "reference": "successive discretizations; analytic area and revolution volume only",
         "surface_field": "not certified",
         "studies": reports,

@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## G03双曲線の総合経路 — 2026-09-08
+
+双曲線例curved_hyperbola.jsonを追加。独立z積分の面積/体積、弦体積差の正符号/減少、
+両端×電気/磁気4鏡映・別全領域solve・保存再読込、寸法3倍のf/RQ/G/TTF不変量を検証。
+直角rotationを完全一致時のみ座標入替えとして扱い、接続の丸め誤差を修正。
+幾何/FEM最終比較PASS: out/validation-g03-hyperbola-refinement-20260908/summary.json。
+実ブラウザー5検査PASS: out/gui-g03-hyperbola-browser-20260908/report.json。
+標準226件中224合格・2 skip、validate PASS。
+次は独立の電磁場参照と曲線FEM設計/実装。接線構築/旧形式対応と全互換目標も継続。
+
 ## G03メッシュ停滞解消と独立細分 — 2026-09-08
 
 低品質内点に8方向×4段階の候補を追加し、平均位置で停滞する独立矩形扇を検証。
