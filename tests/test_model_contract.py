@@ -153,6 +153,8 @@ class ModelContractTests(unittest.TestCase):
             capabilities = json.loads(captured.getvalue())
             self.assertEqual(capabilities['supported_models'][0]['polarization'], 'tm')
             self.assertEqual(capabilities['case_schema_versions'], [1, 2, 3])
+            self.assertEqual(capabilities['element_orders'], [1, 2])
+            self.assertEqual(capabilities['default_element_order'], 1)
 
     def test_duplicate_model_keys_fail_at_file_boundary(self):
         with tempfile.TemporaryDirectory() as tmp:

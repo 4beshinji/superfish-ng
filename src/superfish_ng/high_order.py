@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Research P2 TM core. RF/export integration is tracked separately by N02."""
+"""Quadratic TM space and exact assembly on affine triangular geometry."""
 from dataclasses import dataclass
 import numpy as np
 from scipy.sparse import coo_matrix
@@ -62,6 +62,6 @@ def assemble_p2(space):
 
 
 def solve_p2(case, *, mesh_data=None):
-    """Research eigensolve only; P1 RF and save routines reject this solution."""
+    """Explicit P2 eigensolve; normal solve also supports Case(element_order=2)."""
     from .solver import _solve
     return _solve(case, mesh_data=mesh_data, element_order=2)

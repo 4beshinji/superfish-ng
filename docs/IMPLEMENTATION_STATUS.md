@@ -19,9 +19,9 @@ Project/Study/GUIへの保持を追加。122テスト中120合格・2 skip、標
 |---|---|---|---|
 | 物理 | 真空、軸連結m=0 TM、PECまたは平坦z端の電気/磁気対称 | TE、平面RF、内導体、材料領域、静的場は未実装 | [PHYSICS.md](PHYSICS.md)、config.py/solver.py/symmetry.py |
 | 幾何 | 折れ線、段差、z非減少の短円弧、部分の反復/端部組立 | 楕円・折返し・穴・任意CADなし | geometry.py/project.py、test_arcs.py/test_stepped_mesh.py/test_project.py |
-| メッシュ | P1三角形、局所実長細分、外部タグ付きJSON | 外部メッシュもCase輪郭内。GUI/Study指定なし。P2固有値コアは開発APIのみ、場/RF統合はN02 | [MESH_INPUT.md](MESH_INPUT.md)、mesh.py/mesh_input.py |
+| メッシュ | P1/P2場・直線三角形、局所実長細分、外部タグ付きJSON | 外部メッシュもCase輪郭内。外部meshのGUI/Study指定なし。P2はCLI/GUI・場/RF・保存/描画へ統合、曲線要素は未対応 | [MESH_INPUT.md](MESH_INPUT.md)、mesh.py/mesh_input.py |
 | 固有値・場 | 実FEM、複数モード、残差・直交性・エネルギー検査 | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | fem.py/solver.py、test_physics.py |
-| RF量 | f/U/Q0/G/V/RQ/シャント/TTF、ピーク比、加速長/電圧区間/位相原点指定 | peak phasor、RQ二規約。常伝導摂動損失、EpkはP1推定 | rf.py、[PHYSICS.md](PHYSICS.md)、[R01受入](ACCELERATING_CONVENTIONS.md) |
+| RF量 | f/U/Q0/G/V/RQ/シャント/TTF、ピーク比、加速長/電圧区間/位相原点指定 | peak phasor、RQ二規約。常伝導摂動損失、EpkはP1/P2片側推定 | rf.py、[PHYSICS.md](PHYSICS.md)、[R01受入](ACCELERATING_CONVENTIONS.md) |
 | 条件群 | 独立掃引、同一形状の細分対応、条件付きバンド同定 | 形状変化の追跡とtune/最適化は未実装 | studies.py、modes.py |
 | 操作 | 共通Project/CLI/Python、ローカルGUI、保存場・図・プローブ | 外部メッシュ指定UIなし。人による使いやすさ評価は未実施 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md) |
 | 完了管理 | 管理ジョブと直接保存の完了公開/manifest、改変・中断検出 | ローカルhard link対応FS。電源断/他OSは未保証 | [SAVE_COMPLETION.md](SAVE_COMPLETION.md)、test_save_completion.py |

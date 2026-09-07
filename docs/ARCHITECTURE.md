@@ -4,7 +4,8 @@
 
 high_order.pyのQuadraticSpaceは元の3頂点Meshと6自由度cell_dofsを別々に保持する。
 solver._solveはP1/P2組立後に同一の固有値計算・拘束・正規化を使用する。
-公開solveはP1のまま。P2の研究APIはhigh_order.solve_p2で、RF/保存への統合はN02。
+公開solveはCase.element_orderでP1/P2を選択する。RF・保存・再読込・表示は
+同じ空間情報を保持する。高次場の契約と受入証拠はHIGH_ORDER_FIELDS.md。
 仕様と受入証拠は[QUADRATIC_ELEMENTS.md](QUADRATIC_ELEMENTS.md)。
 
 ## ADR-016: 加速規約はFEM場から独立した入力として保持する

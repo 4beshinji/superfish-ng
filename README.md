@@ -169,3 +169,9 @@ python scripts/package.py --out /tmp/superfish-ng-dev.zip
 | [docs/INPUT_OUTPUT.md](docs/INPUT_OUTPUT.md) | 入力と出力の仕様 |
 
 ライセンスは [Apache-2.0](LICENSE)。第三者文献や依存ライブラリは各自の条件に従います。
+
+要素次数は既定P1とP2を選択できます。Pythonでは`Case(..., element_order=2)`、
+v3 JSONでは`"solver": {"modes": 3, "element_order": 2}`を指定します。
+v3には明示modelが必要です（[モデル契約](docs/MODEL_CONTRACT.md)）。GUIにも次数選択があります。
+P2の場・RF・保存・表示の仕様と検証は[高次場](docs/HIGH_ORDER_FIELDS.md)を参照してください。
+幾何は直線三角形のままで、曲線要素・適応誤差推定は未対応です。

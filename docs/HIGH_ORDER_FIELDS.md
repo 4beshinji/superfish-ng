@@ -1,7 +1,7 @@
 # N02: P2の場・RF・保存契約
 
 2026-09-08。N01の直線三角形P2 u空間を製品経路へ統合する。
-本書は仕様と進行記録であり、N02全体の受入宣言ではない。
+N02.S/I/Vは2026-09-08に受入。末尾に要件別証拠を記録する。途中の未完表記は実装履歴。
 
 ## 場評価
 
@@ -205,3 +205,30 @@ f→f/3、V→V/sqrt(3)、損失→損失/3^1.5、Q0→sqrt(3)Q0、RQ/G不変も
 標準証拠out/validation-n02-integrated-20260908/validation.json PASS、
 169 tests中167合格・2 skip。P1の円筒/成形セルmode全量・hashは不変。
 能力表/現在仕様の古いP1限定記述を整理し、N02の全要件と証拠を最終照合して受入する。
+
+## N02.S/I/V受入 — 2026-09-08
+
+直線三角形のP2 u場を通常Case/CLI/GUIから計算し、RF・保存・再読込・描画・
+鏡映・同形状モード比較まで保持する範囲を受入した。旧P1既定とhashを維持する。
+
+| 要件 | 実装・独立証拠 |
+|---|---|
+| 全E/H成分・軸極限 | sampling、cell_fields。test_samplingの独立二次式、総合J0/J1/cos/sin場 |
+| 軸電圧・低beta・部分区間・絶対値 | quadratic_rf。test_quadratic_rfの重み付き独立積分、符号反転/位相/逆向き辺 |
+| U/RQ/G・表面損失/極値 | 高次K/Mと辺7次積分、内部停留点。独立多項式・円筒3モード・寸法/Uスケーリング |
+| 保存・移行・破損拒否 | io/saved。全係数/probe往復、4空間配列の故障注入、P1旧形式/完了検証 |
+| 表示と描画 | display/VTK/visualize。4分割の面積/場不変量、PNG目視、保存場のradial一致 |
+| 半/全領域 | symmetry。両端×電気/磁気、全中点偶奇、別の全領域solve、U/損失2倍 |
+| バンド/細分追跡 | saved/studies。P2極値・中心評価、P1/P2混在の軸差積分、同形状対応/自己比較 |
+| 次数入力/能力表・再実行 | Case/Project/CLI/Job、test_element_order。strict v3、取込再実行係数/RF一致 |
+| GUI | gui-n02-order-browser-final-20260908/report.json。実Chrome選択/計算/表示/Project往復 |
+| 収束・同DOF比較 | scripts/validate_quadratic_fields.py。153/561/2145 DOFでf/軸/RQ/E/Hを個別比較 |
+
+最終標準証拠: out/validation-n02-accepted-20260908/validation.json PASS、
+169 tests中167合格・2 skip。N01受入基準の円筒/成形セルmode辞書全量とcase hashが一致。
+最終高次証拠: out/quadratic-fields-n02-accepted-20260908/fields.json、13チェックPASS。
+ブラウザの機能証拠は直前GUIコミット時のもの。今回の能力表/説明更新でブラウザを再実行したとは扱わない。
+
+円筒のピーク合格は一般角部の収束保証ではない。曲線要素/一般輪郭はG01〜G03、
+表面収束診断はN03、適応誤差推定はN04、一般形状変更の追跡はD01、追加物理は別親課題。
+K06全体と全互換目標は未完。次はG01の一般単一輪郭を仕様化する。

@@ -69,6 +69,7 @@ def capabilities():
             'field_units': {'Er': 'V/m', 'Ez': 'V/m', 'Hphi': 'A/m'},
             'energy_unit': 'J', 'wall_loss_unit': 'W',
             'volume_measure': '2*pi*r*dr*dz', 'phasor': 'peak; exp(+i*omega*t)',
-            'solution_space': 'P1 scalar u=Hphi/r',
+            'solution_space': 'P1/P2 scalar u=Hphi/r on affine triangles',
+            'element_orders': [1, 2], 'default_element_order': 1,
             'rq_definitions': {'accelerator': '|Vacc|^2/(omega*U)',
                                'circuit': '|Vacc|^2/(2*omega*U)'}}

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Evaluate P1 fields without smoothing, with explicit outside handling."""
+"""Evaluate P1/P2 fields without smoothing, with explicit outside handling."""
 from types import SimpleNamespace
 import numpy as np
 from scipy.spatial import cKDTree
@@ -22,7 +22,7 @@ class FieldSampler:
                 raise ValueError('quadratic space has inconsistent midpoint connectivity')
             count = len(space.dof_points)
         if self.u.ndim != 2 or self.u.shape != (count, len(self.frequencies_hz)):
-            raise ValueError('P1 sampling requires one coefficient per mesh vertex and mode; quadratic sampling requires N02')
+            raise ValueError('P1 sampling requires one coefficient per mesh vertex and mode; P2 requires an explicit matching space')
         self.vertices, _, self.grad = element_geometry(SimpleNamespace(points=self.points, triangles=self.triangles))
         self.tree = cKDTree(self.vertices.mean(axis=1))
         self.lower, self.upper = self.vertices.min(axis=1), self.vertices.max(axis=1)
