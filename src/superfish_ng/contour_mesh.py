@@ -112,48 +112,55 @@ def refine_contour(case, mesh, max_edge_m, *, max_triangles=250000, max_passes=3
             if marked[required].all():
                 break
             marked[required] = True
-        predicted = len(mesh.triangles)+int(marked[cell_edges].sum())
-        if predicted > max_triangles:
-            raise ValueError('contour refinement exceeds max_triangles; increase requested edge sizes or the explicit limit')
-        ids = np.flatnonzero(marked)
-        midpoint = np.full(len(edges), -1, dtype=int)
-        midpoint[ids] = np.arange(len(mesh.points), len(mesh.points)+len(ids))
-        points = np.concatenate((mesh.points, ends[ids].mean(axis=1)))
-        triangles = []
-        for tri, es in zip(mesh.triangles, cell_edges):
-            flags = marked[es]
-            count = int(flags.sum())
-            if count == 0:
-                triangles.append(tuple(tri))
-            elif count == 3:
-                a,b,c = tri
-                ab,bc,ca = midpoint[es]
-                triangles.extend(((a,ab,ca),(ab,b,bc),(ca,bc,c),(ab,bc,ca)))
-            elif count == 1:
-                i = int(np.flatnonzero(flags)[0])
-                a,b,c = np.roll(tri,-i)
-                m = midpoint[es[i]]
-                triangles.extend(((a,m,c),(m,b,c)))
+        mesh = _split_marked_edges(case, mesh, edges, cell_edges, marked, max_triangles)
+
+
+def _split_marked_edges(case, mesh, edges, cell_edges, marked, max_triangles):
+    """Split shared edges once and inherit each boundary parent tag."""
+    from .mesh_input import mesh_from_dict
+    ends = mesh.points[edges]
+    predicted = len(mesh.triangles)+int(marked[cell_edges].sum())
+    if predicted > max_triangles:
+        raise ValueError('contour refinement exceeds max_triangles; increase requested edge sizes or the explicit limit')
+    ids = np.flatnonzero(marked)
+    midpoint = np.full(len(edges), -1, dtype=int)
+    midpoint[ids] = np.arange(len(mesh.points), len(mesh.points)+len(ids))
+    points = np.concatenate((mesh.points, ends[ids].mean(axis=1)))
+    triangles = []
+    for tri, es in zip(mesh.triangles, cell_edges):
+        flags = marked[es]
+        count = int(flags.sum())
+        if count == 0:
+            triangles.append(tuple(tri))
+        elif count == 3:
+            a,b,c = tri
+            ab,bc,ca = midpoint[es]
+            triangles.extend(((a,ab,ca),(ab,b,bc),(ca,bc,c),(ab,bc,ca)))
+        elif count == 1:
+            i = int(np.flatnonzero(flags)[0])
+            a,b,c = np.roll(tri,-i)
+            m = midpoint[es[i]]
+            triangles.extend(((a,m,c),(m,b,c)))
+        else:
+            i = int(np.flatnonzero(~flags)[0])
+            a,b,c = np.roll(tri,-i)
+            _,bc,ca = midpoint[np.roll(es,-i)]
+            triangles.append((ca,bc,c))
+            if np.linalg.norm(points[a]-points[bc]) <= np.linalg.norm(points[b]-points[ca]):
+                triangles.extend(((a,b,bc),(a,bc,ca)))
             else:
-                i = int(np.flatnonzero(~flags)[0])
-                a,b,c = np.roll(tri,-i)
-                _,bc,ca = midpoint[np.roll(es,-i)]
-                triangles.append((ca,bc,c))
-                if np.linalg.norm(points[a]-points[bc]) <= np.linalg.norm(points[b]-points[ca]):
-                    triangles.extend(((a,b,bc),(a,bc,ca)))
-                else:
-                    triangles.extend(((a,b,ca),(b,bc,ca)))
-        edge_lookup = {tuple(e): i for i,e in enumerate(edges)}
-        boundary, tags = [], []
-        for (a,b), tag in zip(mesh.boundary_edges, mesh.boundary_tags):
-            m = midpoint[edge_lookup[tuple(sorted((a,b)))]]
-            children = [(a,b)] if m < 0 else [(a,m),(m,b)]
-            boundary.extend(children)
-            tags.extend([str(tag)]*len(children))
-        mesh = mesh_from_dict(case, dict(
-            schema_version=1, length_unit='m', coordinate_order='rz', index_base=0,
-            points=points.tolist(), triangles=np.asarray(triangles).tolist(),
-            boundary_edges=np.asarray(boundary).tolist(), boundary_tags=tags))
+                triangles.extend(((a,b,ca),(b,bc,ca)))
+    edge_lookup = {tuple(e): i for i,e in enumerate(edges)}
+    boundary, tags = [], []
+    for (a,b), tag in zip(mesh.boundary_edges, mesh.boundary_tags):
+        m = midpoint[edge_lookup[tuple(sorted((a,b)))]]
+        children = [(a,b)] if m < 0 else [(a,m),(m,b)]
+        boundary.extend(children)
+        tags.extend([str(tag)]*len(children))
+    return mesh_from_dict(case, dict(
+        schema_version=1, length_unit='m', coordinate_order='rz', index_base=0,
+        points=points.tolist(), triangles=np.asarray(triangles).tolist(),
+        boundary_edges=np.asarray(boundary).tolist(), boundary_tags=tags))
 
 
 def contour_mesh_quality(mesh):
@@ -321,3 +328,50 @@ def smooth_contour_interior(case, mesh, max_edge_m, *, sweeps=5):
             break
     data['points'] = points.tolist()
     return mesh_from_dict(case,data)
+
+
+def quality_contour_mesh(case, max_edge_m, *, min_angle_deg=10.,
+                         max_triangles=250000, max_rounds=12):
+    """Generate, improve, and measure a contour mesh; reject unmet quality.
+
+    Insert midpoints on the longest sides of poor elements, including boundary
+    sides. This heuristic has no general termination/angle existence theorem.
+    Only a measured successful mesh is returned, never the last failed iterate.
+    """
+    if (type(min_angle_deg) not in (int,float) or not np.isfinite(min_angle_deg)
+            or not 0 < min_angle_deg < 60):
+        raise ValueError('min_angle_deg must be finite and strictly between 0 and 60')
+    if type(max_rounds) is not int or max_rounds < 1:
+        raise ValueError('max_rounds must be a positive integer')
+    mesh = refine_contour(case,triangulate_contour(case),max_edge_m,max_triangles=max_triangles)
+    for round_index in range(max_rounds+1):
+        mesh = improve_contour_angles(case,mesh)
+        mesh = smooth_contour_interior(case,mesh,max_edge_m)
+        p = mesh.points[mesh.triangles]
+        u,v = p[:,1]-p[:,0],p[:,2]-p[:,0]
+        area = u[:,0]*v[:,1]-u[:,1]*v[:,0]
+        angles = [np.arctan2(area,np.sum((p[:,(i+1)%3]-p[:,i])*(p[:,(i+2)%3]-p[:,i]),axis=1))
+                  for i in range(3)]
+        minimum = np.rad2deg(np.min(angles,axis=0))
+        bad = minimum < min_angle_deg
+        if not bad.any():
+            return mesh
+        if round_index == max_rounds:
+            raise ValueError(f'contour quality unmet: min angle {minimum.min():.9g} deg < '
+                             f'{min_angle_deg:g} deg after {max_rounds} insertion rounds; '
+                             'increase limits or supply a validated external mesh')
+        edges, inverse = np.unique(np.sort(mesh.triangles[:,[[0,1],[1,2],[2,0]]].reshape(-1,2),axis=1),
+                                   axis=0,return_inverse=True)
+        cell_edges = inverse.reshape(-1,3)
+        lengths = np.linalg.norm(mesh.points[edges[:,1]]-mesh.points[edges[:,0]],axis=1)
+        longest = cell_edges[np.arange(len(cell_edges)),np.argmax(lengths[cell_edges],axis=1)]
+        marked = np.zeros(len(edges),dtype=bool)
+        marked[longest[bad]] = True
+        while True:
+            required = longest[marked[cell_edges].any(axis=1)]
+            if marked[required].all():
+                break
+            marked[required] = True
+        mesh = _split_marked_edges(case,mesh,edges,cell_edges,marked,max_triangles)
+        # New diagonals can intersect a corner ball: re-enforce local sizes.
+        mesh = refine_contour(case,mesh,max_edge_m,max_triangles=max_triangles)

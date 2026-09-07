@@ -6,6 +6,7 @@ from superfish_ng import Case
 from superfish_ng.contour import Contour
 from superfish_ng.contour_mesh import triangulate_contour, refine_contour, contour_mesh_quality, improve_contour_angles
 from superfish_ng.contour_mesh import smooth_contour_interior
+from superfish_ng.contour_mesh import quality_contour_mesh
 
 
 class InitialContourMeshTests(unittest.TestCase):
@@ -168,3 +169,26 @@ class InitialContourMeshTests(unittest.TestCase):
                 smooth_contour_interior(case,original,size)
         with self.assertRaisesRegex(ValueError,'sweeps'):
             smooth_contour_interior(case,original,.25,sweeps=True)
+
+    def test_quality_insertion_narrow_channel_and_rejection(self):
+        width = .05
+        contour = Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,width),(0,width)),
+                          ('axis',)+('pec',)*7)
+        case = Case((),contour=contour)
+        mesh = quality_contour_mesh(case,.25,max_triangles=4000,max_rounds=8)
+        quality = contour_mesh_quality(mesh)
+        self.assertGreaterEqual(quality['min_angle_deg'],10.)
+        self.assertLessEqual(quality['max_edge_m'],.25*(1+1e-12))
+        p = mesh.points[mesh.triangles]
+        u,v = p[:,1]-p[:,0],p[:,2]-p[:,0]
+        areas = (u[:,0]*v[:,1]-u[:,1]*v[:,0])/2
+        self.assertAlmostEqual(areas.sum(),3+2*width,places=12)
+        self.assertAlmostEqual(np.sum(2*math.pi*areas*p[:,:,0].mean(axis=1)),math.pi*(7+2*width**2),places=11)
+        self.assertGreater(len(mesh.boundary_edges),len(contour.edge_tags))
+        with self.assertRaisesRegex(ValueError,'quality unmet'):
+            quality_contour_mesh(case,.25,max_triangles=4000,max_rounds=1)
+        with self.assertRaisesRegex(ValueError,'max_triangles'):
+            quality_contour_mesh(case,.25,max_triangles=500,max_rounds=8)
+        for angle in (0,60,True,float('nan')):
+            with self.assertRaisesRegex(ValueError,'min_angle_deg'):
+                quality_contour_mesh(case,.25,min_angle_deg=angle)
