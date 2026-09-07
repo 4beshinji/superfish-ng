@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## G02の非円筒独立照合 — 2026-09-08
+
+compare_contour_ngsolve.pyを追加。円錐台はPASS、折返しの初回周波数未収束FAILを残し、
+.0015/.00075/.000375の双方追加細分でPASS。CONTOUR_RF_COMPARISON.mdに閾値/数値/費用を記録。
+最終差f1.34e-5/RQ1.56e-5/G1.54e-5、内部H/EもPASS。最細NG36万DOF/84秒。
+標準189件中187合格・2 skip、参照専用7件PASS。全ジョブ完了。
+検証環境/tmp/superfish-g02-reference（隔離、NGSolve6.2.2606/NumPy2.5.3/SciPy1.18.1）。
+次は方式ADRと製品のサイズ/品質/停止上限のCase契約、保存/CLI/GUI接続へ進む。
+一般輪郭make_meshはまだ明示拒否。表面角ピークは未受入、G02・全互換目標は継続。
+
 ## G02の点追加と品質判定 — 2026-09-08
 
 quality_contour_meshで悪い要素の最長辺へ境界を含む点追加、組替え/移動を反復。

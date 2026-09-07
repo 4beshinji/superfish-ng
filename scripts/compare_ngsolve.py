@@ -35,7 +35,7 @@ def probe_points(case):
     return np.column_stack((radius*np.tile([.2, .5, .8], 4), z))
 
 
-def reference(case, maxh, order=3):
+def reference(case, maxh, order=3, probes=None):
     """Solve r[(h_r+h/r)(v_r+v/r)+h_z*v_z] = k²*r*h*v.
 
     h=Hphi vanishes on the axis; PEC is natural. Netgen meshes the polygon
@@ -43,9 +43,18 @@ def reference(case, maxh, order=3):
     Volume and wall integrals use NGSolve; voltage uses independent Gauss
     quadrature on its axis edges, evaluating the volume gradient trace.
     """
-    if (case.geometry_type != "profile" or case.z_min != "pec"
+    if (case.geometry_type not in ("profile", "contour") or case.z_min != "pec"
             or case.z_max != "pec" or case.modes != 1):
-        raise ValueError("reference requires a profile, two PEC ends and modes=1")
+        raise ValueError("reference requires a profile/contour, two PEC ends and modes=1")
+    if case.contour is not None and any(tag not in ('axis','pec') for tag in case.contour.edge_tags):
+        raise ValueError('reference requires full PEC contour walls')
+    if probes is None:
+        if case.contour is not None:
+            raise ValueError('contour reference requires explicit interior probes')
+        probes = probe_points(case)
+    probes = np.asarray(probes,dtype=float)
+    if probes.ndim != 2 or probes.shape[1] != 2 or not len(probes) or not np.all(np.isfinite(probes)) or np.any(probes[:,0] <= 0):
+        raise ValueError('reference probes require finite positive-radius [r,z] pairs')
     if not np.isfinite(maxh) or maxh <= 0 or type(order) is not int or order < 2:
         raise ValueError("maxh must be positive and order an integer >= 2")
     import ngsolve as ng
@@ -53,11 +62,18 @@ def reference(case, maxh, order=3):
 
     start = time.perf_counter()
     geo = SplineGeometry()
-    coords = [(0., 0.)] + [(r, z) for z, r in case.profile] + [(0., case.length)]
+    if case.contour is None:
+        coords = [(0., 0.)] + [(r, z) for z, r in case.profile] + [(0., case.length)]
+        tags = ['pec']*(len(coords)-1)+['axis']
+    else:
+        # Canonical contour is CCW in (z,r), so reverse it for Netgen (r,z).
+        indices = list(range(len(case.contour.vertices_zr_m)-1,-1,-1))
+        coords = [case.contour.vertices_zr_m[i][::-1] for i in indices]
+        tags = [case.contour.edge_tags[(i-1)%len(indices)] for i in indices]
     vertices = [geo.AppendPoint(*point) for point in coords]
     for i in range(len(vertices)):
         geo.Append(["line", vertices[i], vertices[(i+1) % len(vertices)]],
-                   bc="axis" if i == len(vertices)-1 else "pec")
+                   bc=tags[i])
     mesh = ng.Mesh(geo.GenerateMesh(maxh=maxh))
     space = ng.H1(mesh, order=order, dirichlet="axis")
     h, v = space.TnT()
@@ -128,7 +144,10 @@ def reference(case, maxh, order=3):
         raise RuntimeError("nonfinite reference result")
     if result["energy_balance_relative"] > 1e-7:
         raise RuntimeError("independent electric/magnetic energy check failed")
-    result["hphi_probes_a_per_m"] = [float(field(mesh(*point))) for point in probe_points(case)]
+    result["hphi_probes_a_per_m"] = [float(field(mesh(*point))) for point in probes]
+    ez = (ng.grad(field)[0]+field/r)/(omega*EPS)
+    er = -ng.grad(field)[1]/(omega*EPS)
+    result['electric_probes_v_per_m'] = [[float(er(mesh(*point))),float(ez(mesh(*point)))] for point in probes]
     return result
 
 

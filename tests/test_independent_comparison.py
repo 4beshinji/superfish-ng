@@ -12,6 +12,7 @@ from scipy.special import j1, jn_zeros
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/"scripts"))
 from compare_ngsolve import Case, LIMITS, acceptance, probe_points, reference
 from superfish_ng.analytic import pillbox_tm010, pillbox_tm_mode
+from compare_contour_ngsolve import electric_difference
 
 
 class ComparisonGateTests(unittest.TestCase):
@@ -44,6 +45,14 @@ class ComparisonGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "three"):
             acceptance(self.rows[:2], self.rows)
 
+    def test_electric_comparison_uses_magnetic_sign_without_amplitude_fit(self):
+        exact = dict(hphi_probes_a_per_m=[1.,2.],electric_probes_v_per_m=[[0.,3.],[2.,4.]])
+        opposite = dict(hphi_probes_a_per_m=[-1.,-2.],electric_probes_v_per_m=[[0.,-3.],[-2.,-4.]])
+        self.assertEqual(electric_difference(exact,opposite),0.)
+        wrong = deepcopy(exact)
+        wrong['electric_probes_v_per_m'] = (2*np.asarray(exact['electric_probes_v_per_m'])).tolist()
+        self.assertAlmostEqual(electric_difference(wrong,exact),1.)
+
 
 @unittest.skipUnless(importlib.util.find_spec("ngsolve"), "optional NGSolve reference environment")
 class ReferencePhysicsTests(unittest.TestCase):
@@ -58,6 +67,12 @@ class ReferencePhysicsTests(unittest.TestCase):
         actual = np.asarray(row["hphi_probes_a_per_m"])
         error = min(np.linalg.norm(actual-field), np.linalg.norm(actual+field))/np.linalg.norm(field)
         self.assertLess(error, 1e-4)
+        from scipy.special import j0
+        exact_e = pillbox_tm_mode(.08,.12)['e0_v_per_m']*j0(jn_zeros(0,1)[0]*probe_points(case)[:,0]/.08)
+        sign = 1 if np.dot(actual,field)>=0 else -1
+        actual_e = sign*np.asarray(row['electric_probes_v_per_m'])
+        self.assertLess(np.linalg.norm(actual_e[:,1]-exact_e)/np.linalg.norm(exact_e),.001)
+        self.assertLess(np.linalg.norm(actual_e[:,0])/np.linalg.norm(exact_e),.001)
 
     def test_reference_rejects_unsupported_physics(self):
         with self.assertRaisesRegex(ValueError, "PEC"):

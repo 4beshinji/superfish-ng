@@ -1,5 +1,14 @@
 # 依存関係と配布方針
 
+## G02の独立照合環境 — 2026-09-08
+
+既存ADR-011のNGSolve参照を一般輪郭へ拡張。検証専用
+`/tmp/superfish-g02-reference` にngsolve/netgen-mesher 6.2.2606、
+ngsolve-openblas 0.3.33、netgen-occt 7.8.1、NumPy 2.5.3、SciPy 1.18.1を導入。
+最初に継承したシステムSciPyとNumPyが不整合だったため、system-site-packagesを
+無効化し、上記の既存参照実測版で隔離した。通常製品の依存・既定環境は変更していない。
+パッケージの既存ライセンス記録は以下。生成メッシュは自前方式を使い、Netgenは独立参照のみ。
+
 ## P0-01の検証専用環境 — 2026-09-07
 
 ADR-011によりNGSolve独立照合だけに導入。製品依存・配布物には追加しない。
