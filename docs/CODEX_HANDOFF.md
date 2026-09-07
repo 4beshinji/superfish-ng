@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## G03全体曲線空間/行列 — 2026-09-08
+
+curved_space.CurvedSpaceへ共有/向き/境界incidence/連結/Euler=1を集約。
+内部を含む全二次辺の交差を凸包候補＋既存離隔検査で確認。
+assemble_curvedで局所行列をCSR化。直線P2との一致・破損/内部交差拒否を検証。
+validate_curved_space.py: out/validation-g03-global-curved-space-20260908/comparison.json PASS。
+球形周波数誤差9.33e-7、積分次数8/12差約6e-15。場/RF精度とは別の限定受入。
+標準248件中246合格・2 skip、validation-g03-space-regression-20260908 PASS。
+次は曲線解の正規化・場・RFと入力/保存/再読込。G03/全互換目標は継続。
+
 ## G03二次境界の検査 — 2026-09-08
 
 quadratic_boundaryで二次Bezier境界の単一閉サイクル・折返し・全辺対離隔を検査。

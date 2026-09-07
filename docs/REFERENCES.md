@@ -139,6 +139,12 @@ AutomeshのPO入力欄NT/RADIUSで円弧方向の指定（NT=4/5）を確認し�
 球形PECの独立参照に特殊関数の定義を使用。空洞のPEC条件・エネルギー/RF積分は独自導出。
 本文・画像・コードは転載していない。
 
+**R29. A. Johnen, J.-F. Remacle, C. Geuzaine, Geometrical validity of curvilinear finite elements.**
+[著者所属機関の公開稿](https://orbi.uliege.be/bitstream/2268/128340/1/jcp.pdf)、
+[書誌情報](https://orbi.uliege.be/handle/2268/128340) — 2026-09-08閲覧。
+全域Jacobian・Bezier下界の数学的背景を既存実装後に確認。
+コード/図/アルゴリズム本文は転記しない。全体位相検査の代替証拠にはしない。
+
 ## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、
