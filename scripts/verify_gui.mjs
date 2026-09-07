@@ -798,6 +798,10 @@ try {
     await call("DOM.setFileInputFiles", { nodeId, files: [out+"/downloads/case.json"] }, sessionId);
     await wait('document.querySelector("#dirty").textContent === "入力を読込済み"');
     if (!isDeepStrictEqual(await ev("collect().case.geometry"), original)) throw Error("contour reopen changed geometry");
+    if (args["--mixed-end"] === "yes") {
+      if (await ev('document.querySelector("#z-min").value') !== "mixed") throw Error("mixed end summary lost");
+      report.checks.push({ operation: "mixed end tags preserved in disabled summary", passed: true });
+    }
     report.checks.push({ operation: "contour file import, closed preview, export and reopen", passed: true, vertices: count });
   }
   await ev("document.activeElement?.blur()");

@@ -63,7 +63,9 @@ def capabilities():
     """Machine-readable capabilities of this implementation, not its roadmap."""
     return {'capabilities_version': 1, 'case_schema_versions': [1, 2, 3],
             'supported_models': [Model().to_dict()],
-            'geometry_types': ['pillbox', 'profile', 'stepped_profile', 'arc_profile'],
+            'geometry_types': ['pillbox', 'profile', 'stepped_profile', 'arc_profile', 'contour'],
+            'automatic_mesh_geometry_types': ['pillbox', 'profile', 'stepped_profile', 'arc_profile'],
+            'contour_mesh_requirement': 'explicit validated external tagged mesh',
             'end_boundaries': ['pec', 'electric_symmetry', 'magnetic_symmetry'],
             'wall_boundary': 'pec', 'axis_condition': 'regular Hphi=r*u; finite u',
             'field_units': {'Er': 'V/m', 'Ez': 'V/m', 'Hphi': 'A/m'},

@@ -175,3 +175,7 @@ v3 JSONでは`"solver": {"modes": 3, "element_order": 2}`を指定します。
 v3には明示modelが必要です（[モデル契約](docs/MODEL_CONTRACT.md)）。GUIにも次数選択があります。
 P2の場・RF・保存・表示の仕様と検証は[高次場](docs/HIGH_ORDER_FIELDS.md)を参照してください。
 幾何は直線三角形のままで、曲線要素・適応誤差推定は未対応です。
+
+v3の一般輪郭`contour`はz折返しを含む単一外周を表せます。計算には検証済み外部メッシュが
+必要です。GUIではファイル読込・プレビュー・出力に対応します。仕様と制限は
+[一般輪郭](docs/GENERAL_CONTOUR.md)を参照してください。
