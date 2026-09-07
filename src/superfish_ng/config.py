@@ -74,6 +74,7 @@ class Case:
     voltage_interval_m: tuple[float, float] | None = None
     phase_origin_m: float | None = None
     element_order: int = 1
+    contour: object | None = None
 
     def __post_init__(self):
         if type(self.element_order) is not int or self.element_order not in (1, 2):
@@ -85,28 +86,46 @@ class Case:
             self.model.__post_init__()
         if not isinstance(self.name, str):
             raise ValueError("name must be a string")
-        if len(self.profile) < 2:
-            raise ValueError("profile requires at least two [z_m, radius_m] points")
-        converted = []
-        for point in self.profile:
-            if not isinstance(point, (list, tuple)) or len(point) != 2:
-                raise ValueError("profile points must be [z_m, radius_m]")
-            z, r = point
-            if isinstance(z, bool) or not isinstance(z, (int, float)) or not math.isfinite(z):
-                raise ValueError("profile z must be finite")
-            converted.append((float(z), positive(r, "profile radius")))
-        object.__setattr__(self, "profile", tuple(converted))
-        if self.geometry_type not in ("profile", "stepped_profile", "arc_profile"):
-            raise ValueError("geometry_type must be profile, stepped_profile or arc_profile")
-        if self.geometry_type == "profile":
-            if self.profile[0][0] != 0 or any(b[0] <= a[0] for a, b in zip(self.profile, self.profile[1:])):
-                raise ValueError("profile must start at z=0 and have strictly increasing z")
+        if self.contour is not None:
+            from .contour import Contour
+            if not isinstance(self.contour, Contour) or self.profile:
+                raise ValueError('contour Case requires a validated Contour and empty profile')
+            if self.geometry_type not in ('profile', 'contour'):
+                raise ValueError('contour cannot be combined with profile geometry metadata')
+            object.__setattr__(self, 'geometry_type', 'contour')
+            for side, z in [('z_min', 0.), ('z_max', self.length)]:
+                points=self.contour.vertices_zr_m
+                tags={tag for i,tag in enumerate(self.contour.edge_tags)
+                      if points[i][0]==points[(i+1)%len(points)][0]==z and tag!='axis'}
+                if len(tags)>1:
+                    raise ValueError('mixed end tags require a future local-boundary Case contract')
+                value=next(iter(tags), 'pec')
+                if getattr(self,side) not in ('pec',value):
+                    raise ValueError('contour tags disagree with Case end boundary')
+                object.__setattr__(self,side,value)
         else:
-            if (self.profile[0][0] != 0 or self.profile[-1][0] <= 0
-                    or any(b[0] < a[0] or b == a for a, b in zip(self.profile, self.profile[1:]))
-                    or self.profile[1][0] == 0 or self.profile[-2][0] == self.profile[-1][0]
-                    or any(a[0] == b[0] == c[0] for a, b, c in zip(self.profile, self.profile[1:], self.profile[2:]))):
-                raise ValueError("stepped_profile requires nondecreasing z from zero, isolated nonzero vertical steps, and nonvertical first/last segments")
+            if len(self.profile) < 2:
+                raise ValueError("profile requires at least two [z_m, radius_m] points")
+            converted = []
+            for point in self.profile:
+                if not isinstance(point, (list, tuple)) or len(point) != 2:
+                    raise ValueError("profile points must be [z_m, radius_m]")
+                z, r = point
+                if isinstance(z, bool) or not isinstance(z, (int, float)) or not math.isfinite(z):
+                    raise ValueError("profile z must be finite")
+                converted.append((float(z), positive(r, "profile radius")))
+            object.__setattr__(self, "profile", tuple(converted))
+            if self.geometry_type not in ("profile", "stepped_profile", "arc_profile"):
+                raise ValueError("geometry_type must be profile, stepped_profile or arc_profile")
+            if self.geometry_type == "profile":
+                if self.profile[0][0] != 0 or any(b[0] <= a[0] for a, b in zip(self.profile, self.profile[1:])):
+                    raise ValueError("profile must start at z=0 and have strictly increasing z")
+            else:
+                if (self.profile[0][0] != 0 or self.profile[-1][0] <= 0
+                        or any(b[0] < a[0] or b == a for a, b in zip(self.profile, self.profile[1:]))
+                        or self.profile[1][0] == 0 or self.profile[-2][0] == self.profile[-1][0]
+                        or any(a[0] == b[0] == c[0] for a, b, c in zip(self.profile, self.profile[1:], self.profile[2:]))):
+                    raise ValueError("stepped_profile requires nondecreasing z from zero, isolated nonzero vertical steps, and nonvertical first/last segments")
         for name in ('boundary_max_edge_m', 'corner_max_edge_m', 'corner_radius_m'):
             if getattr(self, name) is not None:
                 positive(getattr(self, name), name)
@@ -127,7 +146,7 @@ class Case:
         _, interval, _ = self.acceleration_parameters
         if self.voltage_interval_m is not None:
             object.__setattr__(self, 'voltage_interval_m', interval)
-        if (self.has_acceleration_overrides or self.element_order == 2) and self.model is None:
+        if (self.has_acceleration_overrides or self.element_order == 2 or self.contour is not None) and self.model is None:
             from .model import Model
             object.__setattr__(self, 'model', Model())
         positive(self.arc_chord_tolerance_m, "arc_chord_tolerance_m")
@@ -155,7 +174,7 @@ class Case:
 
     @property
     def length(self):
-        return self.profile[-1][0]
+        return max(z for z,r in self.contour.vertices_zr_m) if self.contour is not None else self.profile[-1][0]
 
     @property
     def has_acceleration_overrides(self):
@@ -203,6 +222,11 @@ class Case:
             keys(g, ["type", "radius_m", "length_m"], ["type", "radius_m", "length_m"], "geometry")
             radius = positive(g["radius_m"], "radius_m")
             profile = ((0.0, radius), (positive(g["length_m"], "length_m"), radius))
+        elif g.get("type") == 'contour':
+            if data['schema_version'] != 3 or boundaries:
+                raise ValueError('contour requires v3 and edge_tags instead of boundaries')
+            keys(g, ['type','vertices_zr_m','edge_tags'], ['type','vertices_zr_m','edge_tags'], 'geometry')
+            profile = ()
         elif g.get("type") in ("profile", "stepped_profile", "arc_profile"):
             if g["type"] != "profile" and data["schema_version"] < 2:
                 raise ValueError("stepped_profile and arc_profile require schema_version 2")
@@ -214,6 +238,9 @@ class Case:
         else:
             raise ValueError("geometry type must be pillbox, profile, stepped_profile or arc_profile")
         geometry_options = {}
+        if g['type'] == 'contour':
+            from .contour import Contour
+            geometry_options['contour'] = Contour(g['vertices_zr_m'], g['edge_tags'])
         if g['type'] == 'arc_profile':
             if not isinstance(g['arcs'], list):
                 raise ValueError('geometry.arcs must be an array')
@@ -280,4 +307,8 @@ class Case:
             value = getattr(self, key)
             if value is not None:
                 data['rf'][key] = list(value) if key == 'voltage_interval_m' else value
+        if self.contour is not None:
+            data['geometry'] = {'type':'contour', 'vertices_zr_m':[list(p) for p in self.contour.vertices_zr_m],
+                                'edge_tags':list(self.contour.edge_tags)}
+            data.pop('boundaries', None)
         return data

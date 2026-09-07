@@ -55,3 +55,18 @@ Contour.reflectedは一端の対称辺を継ぎ目として除き、反転辺を
 標準out/validation-g01-conversion-20260908/validation.json PASS、
 174 tests中172合格・2 skip、円筒/成形セルmode全量/hashは直前と一致。
 次はCase v3連携と外部mesh境界検証。G01全体は未完。
+
+### Case v3連携 — 2026-09-08
+
+PythonはCase((), contour=Contour(...))、JSONはv3 geometry.type=contour、
+vertices_zr_m/edge_tagsを使用する。profileを偽の外半径へ変換せず空に保ち、
+lengthは輪郭z最大値、profile_areaは多角形面積から取得する。明示Model/v3を保持。
+端面タグからCaseの既存z_min/z_maxを導くため、現段階のCaseは同端面内の混在タグを
+明示拒否する（Contourコアの混在表現は保持）。JSONのboundaries併記も拒否する。
+
+Caseのstrict往復・未知旧profileフィールド拒否・長さ/面積を検証。
+make_meshはG02未実装を明示拒否し、外部meshもG01境界検証の移行まで暫定拒否。
+これらは計算機能の完成仕様ではなく、途中の誤ったR(z)解釈を防ぐ境界。
+標準out/validation-g01-case-20260908/validation.json PASS、
+175 tests中173合格・2 skip。円筒/成形セルのmode全量/hashは直前と一致。
+次は外部meshの一般輪郭検証、プレビュー/鏡映Case/保存の移行を進める。G01未完。

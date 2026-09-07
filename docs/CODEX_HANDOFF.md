@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## G01のCase v3連携 — 2026-09-08
+
+Case((),contour=...)とv3 contour geometryを追加。profileは偽造せず空、
+length/areaは輪郭から取得。175 tests中173合格・2 skip、標準validate PASS。
+make_meshはG02、mesh_from_dictはG01検証移行待ちとして明示拒否中。
+次は外部meshの境界検証・プレビュー・鏡映Case/保存を移行する。
+同端面内の混在タグはCaseで暫定拒否。局所タグ契約も移行時に解決する。G01未完。
+
 ## G01の変換・鏡映 — 2026-09-08
 
 Contour.from_profileとreflectedを実装。独立円錐台体積・z折返し鏡映の

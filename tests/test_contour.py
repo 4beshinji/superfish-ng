@@ -65,3 +65,19 @@ class ContourTests(unittest.TestCase):
         with self.assertRaises(ValueError):Contour(points,('axis',)+('pec',)*7).reflected()
         tags=['axis']+['pec']*7;tags[1]=tags[7]='electric_symmetry'
         with self.assertRaises(ValueError):Contour(points,tuple(tags)).reflected()
+
+    def test_case_v3_roundtrip_and_explicit_mesher_refusal(self):
+        from superfish_ng import Case,solve
+        from superfish_ng.geometry import profile_area
+        contour=Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,.5),(0,.5)),
+                        ('axis',)+('pec',)*7)
+        case=Case((),contour=contour,element_order=2)
+        self.assertEqual(case.length,3)
+        self.assertEqual(profile_area(case),4)
+        data=case.to_dict()
+        self.assertEqual(data['schema_version'],3)
+        self.assertNotIn('points_zr_m',data['geometry'])
+        self.assertEqual(Case.from_dict(data),case)
+        with self.assertRaisesRegex(ValueError,'G02'):solve(case)
+        data['geometry']['points_zr_m']=[]
+        with self.assertRaisesRegex(ValueError,'unknown'):Case.from_dict(data)

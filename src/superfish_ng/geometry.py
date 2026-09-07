@@ -5,6 +5,8 @@ import numpy as np
 
 def profile_area(case):
     """Exact meridian area for lines and specified circular minor arcs."""
+    if case.contour is not None:
+        return case.contour.area_m2
     area = sum((b[0]-a[0])*(a[1]+b[1])/2 for a, b in zip(case.profile, case.profile[1:]))
     for index, radius, direction in case.arcs:
         _, _, sweep = arc_geometry(case.profile[index-1], case.profile[index], radius, direction)
@@ -34,6 +36,8 @@ def linearize_profile(case):
     Only z-monotone minor arcs staying at positive r are admitted. The original
     radius/direction remain in Case; this function produces the meshing polygon.
     """
+    if case.contour is not None:
+        raise ValueError('general contour is not a single-valued radius profile')
     if case.geometry_type != 'arc_profile':
         return case.profile
     arcs = {index: (radius, direction) for index, radius, direction in case.arcs}
