@@ -1,5 +1,25 @@
 # 依存関係と配布方針
 
+## P0-01の検証専用環境 — 2026-09-07
+
+ADR-011によりNGSolve独立照合だけに導入。製品依存・配布物には追加しない。
+Python 3.12.3/Linux、`/tmp/superfish-ng-independent-20260907`、OPENBLAS_NUM_THREADS=1。
+初回sandbox内のPyPI接続はDNS失敗、ネットワーク許可で再試行して導入した。
+実行中の通信なし。パッケージmetadataと添付LICENSEから確認した情報:
+
+| パッケージ | 実測版 | metadata/添付条件 |
+|---|---|---|
+| ngsolve | 6.2.2606 | LGPL-2.1-only、添付LICENSE確認 |
+| netgen-mesher | 6.2.2606 | LGPL-2.1-only |
+| ngsolve-openblas | 0.3.33 | BSD-3-Clause |
+| netgen-occt | 7.8.1 | 添付LICENSE_LGPL_21.txtあり。バイナリ全体の再配布監査は未実施 |
+| numpy | 2.5.3 | metadata: BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0 |
+| scipy | 1.18.1 | BSD、wheelにはBLAS等の別条件を含む |
+
+参照: [NGSolve公式LICENSE](https://github.com/NGSolve/ngsolve/blob/master/LICENSE)。
+製品への採用や再配布を決定したものではない。API参照・実測精度/自由度/時間は
+INDEPENDENT_COMPARISON.mdを参照。
+
 ## 0.1.0で実際に使用するもの
 
 | 依存 | pyprojectの範囲 | 納品時実行版 | ライセンス/同梱 |
