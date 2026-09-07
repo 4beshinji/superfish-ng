@@ -12,6 +12,7 @@ from superfish_ng.curved_contour import CurvedContour
 from superfish_ng.mesh_controls import ContourMeshControls
 from superfish_ng.analytic_sphere import SphereTM
 from superfish_ng.curved_surface import CurvedSurfaceSampler, sampled_surface_summary
+from superfish_ng.curved_extrema import bound_surface_peaks
 from superfish_ng.io import save_run
 from superfish_ng.saved import read_solution
 
@@ -59,13 +60,16 @@ def main():
         errors['sampled_epeak'] = abs(summary['E_abs_V_per_m']['value']/exact_epeak-1)
         errors['sampled_hpeak'] = abs(summary['Hphi_A_per_m']['value']/exact_hpeak-1)
         errors['pec_tangent_over_reference_epeak'] = summary['Et_quadrature_V_per_m']['value']/exact_epeak
-        reports.append(dict(refinement_level=level, relative_errors=errors, samples=summary,
+        continuous = bound_surface_peaks(solution)
+        for key, exact in (('electric_v_per_m', exact_epeak), ('magnetic_a_per_m', exact_hpeak)):
+            errors['continuous_'+key] = max(abs(continuous[key][side]/exact-1) for side in ('lower_bound', 'upper_bound'))
+        reports.append(dict(refinement_level=level, relative_errors=errors, samples=summary, continuous=continuous,
                             status='PASS' if all(value < .01 for value in errors.values()) else 'FAIL'))
     report = dict(status='PASS' if all(item['status'] == 'PASS' for item in reports) else 'FAIL',
                   reference_peaks=dict(electric_v_per_m=exact_epeak, magnetic_a_per_m=exact_hpeak),
                   relative_limit=.01, levels=reports,
-                  scope='sphere boundary traces, PEC tangent, sampled maxima; independent of volume/RF gates',
-                  pending='continuous boundary extrema bounds, general corner policy and peak/RF/GUI integration')
+                  scope='sphere boundary traces, PEC tangent and bounded discrete extrema; independent of volume/RF gates',
+                  pending='general physical corner policy and peak/RF/save/GUI integration')
     (args.out/'comparison.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     print(json.dumps(report, indent=2), flush=True)
     return 0 if report['status'] == 'PASS' else 1

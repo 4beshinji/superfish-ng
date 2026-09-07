@@ -4,6 +4,10 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-08 G03途中受入: 離散曲線場の連続極値を厳密有理数Bernstein境界で囲む。
+狭いピーク・予算不足・有理式と物理場の一致・独立球形でPASS。
+282件中280合格・2 skip、validate PASS。通常RF/保存/GUI接続は未完。[詳細](CURVED_ELEMENTS.md)。
+
 2026-09-08 G03途中受入: 曲線境界の片側場/法線/接線と有限サンプル最大を実装。
 保存後の球形表面L2・PEC接線・サンプル最大の独立比較が段数0/1でPASS。
 275件中273合格・2 skip、validate PASS。連続極値/通常RF接続は未完。[詳細](CURVED_ELEMENTS.md)。
