@@ -535,3 +535,38 @@ out/gui-curved-peak-accepted-20260908/report.jsonは実ブラウザー7検査PAS
 評価版・有限なピーク比・物理未認証表示を確認。外部通信0、実行中ソース変更なし。
 ブラウザーとGUIサーバーは終了済み。
 次は物理的な角の扱い、曲線鏡映、追加形状の総合受入。G03と全互換目標は継続。
+
+## G03元曲線の角診断と保存第2版 — 2026-09-08
+
+curved_corners.classify_curve_joinsは元の解析曲線の接続点を対象とし、メッシュ細分の
+継ぎ目を角に数えない。正向き(z,r)輪郭の接線から符号付き旋回角を求め、
+軸外のPEC同士では真空内角=π−旋回角として凸角/再入角を分類する。
+軸接続、異種境界接続、非PEC同士は分け、平面の角として物理性を推定しない。
+角度許容差は1e-8 rad。許容差内の接線一致は厳密な滑らかさの証明ではない。
+端点位置と接続隙間、曲線番号、タグ、角度、分類を保持する。
+この診断は幾何学的な注意箇所の識別であり、モード固有の発散/有限性を断定しない。
+physical_peak_statusはUNVERIFIED。再入角は専用のピーク収束評価を必要とする。
+
+新規results.surface_extremaはversion=2、corner_diagnostics_version=1を持ち、
+surface_corner_diagnosticsを必須とする。読込時は元Caseから再計算して照合する。
+第1版と宣言なしの旧結果を保持。旧版に後付けした診断も、存在するなら常に再検証する。
+診断欠落や物理ピーク状態をPASSへ変えたデータは、hash更新後も拒否する。
+第1版の実保存結果validation-g03-peak-rf-surface-final-20260908/level-1も再読込確認。
+GUIのRF詳細へ分類数と物理ピーク収束未確認を追加。旧結果の未提供欄は未評価と表示する。
+
+独立検査は段差の270度再入角・凸角数、1e-5/1/1e5寸法倍率、曲線分割による角数不変、
+球の軸接続と異種境界接続。最初の混合タグfixtureは内側の線へ対称タグを指定して拒否されたため、
+既存契約どおり端面のタグへ修正した。境界契約の緩和はない。
+scripts/validate_curved_corners.py --out out/validation-g03-native-corner-diagnostics-20260908
+は同じ段差の段数0/1をsolve/save/readし、各270度診断と保存整合がPASS。
+周波数相対変化1.00935e-3、離散Eピーク比1.0735116を観測。
+これは周波数/物理ピークの収束PASSではなく、physical_peak_status=UNVERIFIEDを保持する。
+標準289件中287合格・2 skip、validation-g03-corner-diagnostics-regression-20260908 PASS。
+最終の旧版後付け診断の検証強化は保存関連8件で確認。
+次は曲線鏡映と追加形状の総合受入。物理的な角の有限ピークを認証したとは扱わない。
+
+最終GUI検証out/gui-curved-corners-final-20260908/report.jsonは7項目PASS、
+source_changed_during_run=false、external_requests=[]。
+RF詳細の角診断文はDOM検査で確認した。corner-diagnostics.pngは詳細表の中央を撮影しており、
+診断文自体は画面外のため、その文の視覚確認証拠には使わない。
+画像ではRF値と未評価表示を確認。検証後にローカルGUIサーバーを停止した。

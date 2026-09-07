@@ -1263,7 +1263,9 @@ function renderRFDetails() {
       td = document.createElement("td");
     th.textContent = label;
     td.textContent =
-      q[key] === null
+      q[key] === undefined
+        ? "未評価"
+        : q[key] === null
         ? "未定義"
         : typeof q[key] === "number"
           ? q[key].toPrecision(8)
@@ -1272,6 +1274,13 @@ function renderRFDetails() {
     table.append(row);
   }
   $("rf-details").replaceChildren(table);
+  const corners = currentResult.result.surface_corner_diagnostics;
+  if (corners) {
+    const note = document.createElement("p");
+    const c = corners.counts;
+    note.textContent = `元の解析曲線の接続点：再入角 ${c.reentrant_pec_corner}、凸角 ${c.convex_pec_corner}、軸接続 ${c.axis_join}、異種境界接続 ${c.mixed_boundary_join}。物理ピークの収束は未確認です。`;
+    $("rf-details").prepend(note);
+  }
 }
 $("mode").addEventListener("change", () => {
   renderRFDetails();

@@ -841,8 +841,10 @@ try {
       const controls = await ev("({geometry:collect().case.mesh.geometry_order,levels:collect().case.mesh.curved_refinement_levels,quadrature:collect().case.solver.quadrature_order})");
       if (!isDeepStrictEqual(controls,{geometry:2,levels:1,quadrature:12})) throw Error("curved controls lost on export/reopen");
       if (await ev("currentResult.result.field_space.geometry_order") !== 2 || await ev("currentResult.result.field_space.curved_refinement_levels") !== 1) throw Error("saved curved field declaration lost");
-      if (!await ev('currentResult.result.surface_extrema?.version === 1 && Number.isFinite(currentResult.result.modes[0].epk_over_eacc_estimate) && !document.querySelector("#rf-table").textContent.includes("NaN")')) throw Error("curved peak bounds not exposed in RF output");
+      if (!await ev('currentResult.result.surface_extrema?.version === 2 && Number.isFinite(currentResult.result.modes[0].epk_over_eacc_estimate) && !document.querySelector("#rf-table").textContent.includes("NaN")')) throw Error("curved peak bounds not exposed in RF output");
       if (!await ev('currentResult.result.modes[0].peak_status.includes("not certified")')) throw Error("discrete extrema presented as physical certification");
+      if (!await ev('currentResult.result.surface_corner_diagnostics?.physical_peak_status === "UNVERIFIED" && document.querySelector("#rf-details").textContent.includes("物理ピークの収束は未確認")')) throw Error("analytic corner diagnostics lost in GUI");
+
       report.checks.push({operation:"curved geometry, quadrature and refinement controls; solve, plot and roundtrip",passed:true,controls});
       await ev('document.querySelector("#study-kind").value="fixed_geometry_convergence"; document.querySelector("#study-kind").dispatchEvent(new Event("change", {bubbles:true}))');
       await fill("#study-values", "0, 1");
@@ -855,7 +857,8 @@ try {
       await wait('activeStudy?.study?.kind === "fixed_geometry_convergence"');
       if (await ev("activeStudy.numerical_status") !== "PASS") throw Error("fixed curved GUI Study failed numerical gates");
       report.checks.push({operation:"fixed curved geometry Study from GUI",passed:true,status:await ev("activeStudy.numerical_status")});
-      for (const [selector, filename] of [["#curved-fem-controls","curved-controls.png"],["#study-report","fixed-study.png"]]) {
+      await ev('document.querySelector("#rf-details").closest("details").open=true');
+      for (const [selector, filename] of [["#curved-fem-controls","curved-controls.png"],["#study-report","fixed-study.png"],["#rf-details","corner-diagnostics.png"]]) {
         await ev(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:"center",behavior:"instant"})`);
         const shot = await call("Page.captureScreenshot", {}, sessionId);
         await writeFile(out+"/"+filename, Buffer.from(shot.data,"base64"));

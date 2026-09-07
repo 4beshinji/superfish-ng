@@ -132,6 +132,7 @@ class CurvedSavedTests(unittest.TestCase):
             directory = Path(temporary)/'run'
             result = save_run(self.case, self.solution, directory)
             del result['surface_extrema']
+            del result['surface_corner_diagnostics']
             result['modes'] = [quantities_curved(self.solution, i, include_surface_peaks=False) for i in range(self.case.modes)]
             (directory/'results.json').write_text(json.dumps(result))
             with (directory/'modes.csv').open('w', newline='') as stream:
@@ -158,3 +159,27 @@ class CurvedSavedTests(unittest.TestCase):
                 self.refresh(directory, 'results.json')
                 with self.assertRaisesRegex(ValueError, 'surface extrema|RF'):
                     read_solution(directory)
+
+    def test_corner_diagnostics_and_version_one_compatibility(self):
+        from superfish_ng.curved_rf import surface_peak_contract
+        for change in ('version_one', 'missing', 'tampered', 'version_one_tampered'):
+            with tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)/'run'
+                result = save_run(self.case, self.solution, directory)
+                if change == 'version_one':
+                    result['surface_extrema'] = surface_peak_contract(1)
+                    del result['surface_corner_diagnostics']
+                elif change == 'missing':
+                    del result['surface_corner_diagnostics']
+                else:
+                    result['surface_corner_diagnostics']['physical_peak_status'] = 'PASS'
+                    if change == 'version_one_tampered':
+                        result['surface_extrema'] = surface_peak_contract(1)
+                (directory/'results.json').write_text(json.dumps(result))
+                self.refresh(directory, 'results.json')
+                if change == 'version_one':
+                    old = read_solution(directory)
+                    np.testing.assert_array_equal(old.u, self.solution.u)
+                else:
+                    with self.assertRaisesRegex(ValueError, 'corner diagnostics'):
+                        read_solution(directory)

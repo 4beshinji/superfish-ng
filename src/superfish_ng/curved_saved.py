@@ -13,6 +13,7 @@ from .curved_space import case_curved_space
 from .curved_fem import assemble_curved
 from .curved_rf import quantities_curved, surface_peak_contract
 from .mesh_input import mesh_from_dict, mesh_digest
+from .curved_corners import classify_curve_joins
 
 
 def geometry_arrays(space):
@@ -41,6 +42,7 @@ def write_curved_run(case, solution, directory):
                   environment=dict(python=platform.python_version(), numpy=np.__version__,
                                    scipy=scipy.__version__, platform=platform.platform()),
                   field_space=field_space(solution), surface_extrema=surface_peak_contract(),
+                  surface_corner_diagnostics=classify_curve_joins(case.curved_contour),
                   field_construction='direct curved P2 eigensolve; indices within specified boundary conditions',
                   mesh=dict(nodes=len(solution.u), triangles=len(solution.space.geometry.cell_nodes),
                             source='saved source chord mesh for curved reconstruction', input_file='mesh.json',
@@ -138,8 +140,15 @@ def read_curved_run(directory, case, results):
     if not np.isfinite(residuals).all() or max(residuals) > 1e-7:
         raise ValueError('saved curved eigenpair residual exceeds 1e-7')
     peak_declaration = results.get('surface_extrema')
-    if 'surface_extrema' in results and json.dumps(peak_declaration, sort_keys=True, allow_nan=False) != json.dumps(surface_peak_contract(), sort_keys=True, allow_nan=False):
-        raise ValueError('invalid saved curved surface extrema declaration')
+    if 'surface_extrema' in results:
+        if not isinstance(peak_declaration, dict):
+            raise ValueError('invalid saved curved surface extrema declaration')
+        contract = surface_peak_contract(peak_declaration.get('version'))
+        if json.dumps(peak_declaration, sort_keys=True, allow_nan=False) != json.dumps(contract, sort_keys=True, allow_nan=False):
+            raise ValueError('invalid saved curved surface extrema declaration')
+    if 'surface_corner_diagnostics' in results or (peak_declaration is not None and peak_declaration.get('version') == 2):
+        if json.dumps(results.get('surface_corner_diagnostics'), sort_keys=True, allow_nan=False) != json.dumps(classify_curve_joins(case.curved_contour), sort_keys=True, allow_nan=False):
+            raise ValueError('invalid saved analytic corner diagnostics')
     solution = CurvedSolution(case, space, k, m, values, frequencies, u,
                               np.asarray(residuals), error, case.quadrature_order, mesh_data)
     if results.get('field_space') != field_space(solution):

@@ -4,6 +4,10 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-08 G03途中受入: 元解析曲線の角診断を保存第2版へ接続。
+既知270度角・尺度/分割不変、旧版互換と改変拒否を確認。289件中287合格・2 skip、validate PASS。
+幾何診断PASSを物理ピーク収束へ読み替えない。[詳細](CURVED_ELEMENTS.md)。
+
 2026-09-08 G03途中受入: 連続離散ピークをRF/保存/GUIへ版付きで接続。
 旧形式の再読込、改変拒否、正規化不変量、独立球形と実ブラウザー7検査PASS。
 285件中283合格・2 skip、validate PASS。物理的な角/鏡映等は継続。[詳細](CURVED_ELEMENTS.md)。

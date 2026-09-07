@@ -52,11 +52,16 @@ def accelerating_voltage_curved(solution,mode=0):
                              interval=interval,phase_origin=origin)
 
 
-def surface_peak_contract():
-    return dict(version=1, method='exact rational Bernstein bounds of continuous discrete fields',
+def surface_peak_contract(version=2):
+    if type(version) is not int or version not in (1, 2):
+        raise ValueError('unsupported saved curved surface extrema version')
+    result = dict(version=version, method='exact rational Bernstein bounds of continuous discrete fields',
                 relative_tolerance=1e-6, max_boxes_per_edge=10000,
                 domain='closed PEC edges with one-sided cell derivatives',
                 estimate='upper bound; physical corner regularity and mesh convergence not certified')
+    if version == 2:
+        result['corner_diagnostics_version'] = 1
+    return result
 
 
 def quantities_curved(solution,mode=0,*,wall_quadrature_order=8,include_surface_peaks=True):
