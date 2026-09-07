@@ -121,6 +121,31 @@ class ContourTests(unittest.TestCase):
             self.assertEqual(saved.case,case)
             np.testing.assert_array_equal(saved.u,sol.u)
         import copy
+        from dataclasses import replace
+        from superfish_ng.symmetry import reflect_solution
+        from superfish_ng.mesh_input import mesh_to_dict
+        from superfish_ng.rf import quantities
+        for side,plane,index in [('z_min',0.,7),('z_max',3.,1)]:
+            for boundary in ['electric_symmetry','magnetic_symmetry']:
+                half_tags=list(contour.edge_tags);half_tags[index]=boundary
+                half=replace(case,contour=Contour(contour.vertices_zr_m,tuple(half_tags)),modes=1)
+                half_data=copy.deepcopy(data)
+                for i,(a,b) in enumerate(edges):
+                    if points[a][1]==points[b][1]==plane:
+                        half_data['boundary_tags'][i]=boundary
+                hs=solve(half,mesh_data=half_data)
+                full,fs=reflect_solution(half,hs)
+                self.assertAlmostEqual(full.contour.area_m2,2*half.contour.area_m2)
+                self.assertAlmostEqual(full.contour.volume_m3,2*half.contour.volume_m3)
+                hq,fq=quantities(half,hs),quantities(full,fs)
+                for key in ['stored_energy_j','wall_loss_w']:
+                    self.assertAlmostEqual(fq[key]/hq[key],2.,places=10)
+                direct_case=replace(full,modes=4)
+                direct=solve(direct_case,mesh_data=mesh_to_dict(fs.mesh))
+                mode=int(np.argmin(abs(direct.frequencies_hz/fs.frequencies_hz[0]-1)))
+                dq=quantities(direct_case,direct,mode)
+                for key in ['frequency_hz','r_over_q_accelerator_ohm','wall_loss_w']:
+                    self.assertAlmostEqual(dq[key]/fq[key],1.,places=8,msg=f'{side}/{boundary}/{key}')
         wrong=copy.deepcopy(data)
         for point in wrong['points']:
             if point==[2.,2.]:point[0]=2.1

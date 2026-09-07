@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## G01のCase/FEM鏡映 — 2026-09-08
+
+reflect_solutionでContour.reflectedを全Caseへ渡し、P2外部meshの
+全領域再計算とf/RQ/損失を比較した。z折返しの両端×電気/磁気4条件PASS。
+標準176件中174合格・2 skip、validate PASS。
+次はgui.pyの/api/preview付近のlinearize_profile前提とweb/app.jsの形状保持を
+一般輪郭へ移行する。局所端面タグの暫定制限も整理し、G01受入へ進む。
+
 ## G01の外部メッシュ接続 — 2026-09-08
 
 mesh_from_dictを一般輪郭へ対応。辺単位タグ/投影区間の完全被覆、面積/接続/軸を検査。

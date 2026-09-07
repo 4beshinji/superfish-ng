@@ -80,7 +80,8 @@ def reflect_solution(case, solution):
     orthogonality = float(np.max(np.abs(gram/np.outer(norms, norms)-np.eye(case.modes))))
     # Reflection reverses orientation, as does traversing the mirrored wall in
     # increasing z; together they preserve each minor arc's cw/ccw direction.
-    full = replace(case, profile=profile, arcs=arcs, z_min='pec', z_max='pec', nz=2*case.nz,
+    contour = case.contour.reflected() if case.contour is not None else None
+    full = replace(case, profile=profile, arcs=arcs, contour=contour, z_min='pec', z_max='pec', nz=2*case.nz,
                    normalization_j=2*case.normalization_j, name=case.name+' [reflected full cavity]', **acceleration)
     result = Solution(reflected, k, m, solution.eigenvalues.copy(), solution.frequencies_hz.copy(),
                       u, residuals, orthogonality,
