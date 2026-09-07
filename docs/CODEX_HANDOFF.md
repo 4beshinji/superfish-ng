@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## G03共有二次幾何候補 — 2026-09-08
+
+弦ごとの元曲線fraction区間を追加し始点回転/保存へ保持。
+curved_mesh.curve_geometry_candidateで境界頂点/共有辺中点を元曲線へ移動。
+内部点保持、共有整合/軸固定、全要素Jacobian/半径検査。独立面積/体積が弦誤差の1/10未満。
+双曲線の粗い弦4 mm/細かい辺5 mmは要素89で曲線化反転を拒否し、元メッシュ不変。
+JacobianはBernstein下界で先に判定し、下界不十分時だけ極値候補を検査。
+次は全体二次境界の交差/適合性と全体空間/行列。候補型はsolve/保存済み解へ未接続。
+標準240件中238合格・2 skip、validation-g03-shared-geometry-20260908 PASS。
+G03と全互換目標は継続。
+
 ## G03二次写像と局所行列 — 2026-09-08
 
 quadratic_geometry.QuadraticTriangleで6節点写像と全域det J最小値候補を検査。

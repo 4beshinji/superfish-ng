@@ -197,7 +197,7 @@ class CurvedContour:
         if maximum_shift>=tolerance_m:
             raise ValueError('curve join adjustment consumes chord error budget; use a larger tolerance')
         chord_tolerance = tolerance_m-maximum_shift
-        vertices,tags,owners = [],[],[]
+        vertices,tags,owners,intervals = [],[],[],[]
         for i,(curve,tag) in enumerate(zip(self.curves,self.edge_tags)):
             remaining = max_segments-len(vertices)
             if remaining<1:
@@ -207,6 +207,8 @@ class CurvedContour:
             vertices.extend(tuple(map(float,p)) for p in points[:-1])
             tags.extend([tag]*(len(points)-1))
             owners.extend([i]*(len(points)-1))
+            parameters = np.linspace(0.,1.,len(points))
+            intervals.extend(zip(parameters[:-1].tolist(),parameters[1:].tolist()))
         polygon = Contour(tuple(vertices),tuple(tags))  # Recheck chords, gaps, tags and axis.
         # The validated analytic curve runs CCW. Reject a topology-changing
         # approximation instead of accepting Contour's orientation repair.
@@ -216,7 +218,8 @@ class CurvedContour:
             raise ValueError('chord polygon reverses orientation; reduce tolerance')
         offset = vertices.index(polygon.vertices_zr_m[0])
         owners = owners[offset:]+owners[:offset]
-        return ChordApproximation(polygon,tolerance_m,chord_tolerance,tuple(shifts),tuple(owners),self.area_m2)
+        intervals = intervals[offset:]+intervals[:offset]
+        return ChordApproximation(polygon,tolerance_m,chord_tolerance,tuple(shifts),tuple(owners),self.area_m2,tuple(intervals))
 
 
 @dataclass(frozen=True)
@@ -227,6 +230,7 @@ class ChordApproximation:
     endpoint_adjustments_m: tuple
     segment_curve_indices: tuple
     analytic_area_m2: float
+    segment_parameter_intervals: tuple
 
     @property
     def area_difference_m2(self):

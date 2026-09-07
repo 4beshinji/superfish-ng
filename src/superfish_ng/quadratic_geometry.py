@@ -62,15 +62,21 @@ class QuadraticTriangle:
         dx = np.array((coefficients[1],2*coefficients[3],coefficients[4]))
         dy = np.array((coefficients[2],coefficients[4],2*coefficients[5]))
         determinant = _product_linear(dx[:,0],dy[:,1])-_product_linear(dx[:,1],dy[:,0])
-        minimum,location = quadratic_minimum(determinant)
         padding = 512*np.finfo(float).eps*max(1.,np.sum(abs(determinant)))
+        c,a,b,d,e,f = determinant
+        # Convex-hull bound in the quadratic Bernstein basis also handles
+        # nearly affine maps with roundoff-sized, ill-conditioned Hessians.
+        minimum = min(c,c+a+d,c+b+f,c+a/2,c+b/2,c+(a+b+e)/2)
+        location = None
+        if minimum<=padding:
+            minimum,location = quadratic_minimum(determinant)
         if minimum<=padding:
             raise ValueError('quadratic Jacobian nonpositive or UNVERIFIED over reference triangle')
         if not np.isfinite(scale*scale) or scale*scale==0:
             raise ValueError('quadratic geometry determinant exceeds floating-point range')
         points.setflags(write=False)
         object.__setattr__(self,'points_rz_m',points)
-        object.__setattr__(self,'minimum_determinant_m2',minimum*scale*scale)
+        object.__setattr__(self,'determinant_lower_bound_m2',(minimum-padding)*scale*scale)
         object.__setattr__(self,'minimum_location',location)
 
     def evaluate(self, reference_points):

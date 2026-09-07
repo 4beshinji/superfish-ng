@@ -89,6 +89,7 @@ def _write_run(case, solution, directory):
             primitive_chord_tolerance_m=approximation.primitive_chord_tolerance_m,
             endpoint_adjustments_m=list(approximation.endpoint_adjustments_m),
             segment_curve_indices=list(approximation.segment_curve_indices),
+            segment_parameter_intervals=[list(p) for p in approximation.segment_parameter_intervals],
             analytic_area_m2=approximation.analytic_area_m2,
             analytic_volume_m3=case.curved_contour.volume_m3,
             chord_volume_m3=approximation.contour.volume_m3,

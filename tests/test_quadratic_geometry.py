@@ -16,7 +16,7 @@ class QuadraticGeometryTests(unittest.TestCase):
         result = geometry.evaluate(NODES)
         np.testing.assert_allclose(result['points_rz_m'],points,atol=1e-14)
         np.testing.assert_allclose(result['determinant_m2'],np.linalg.det(matrix))
-        self.assertAlmostEqual(geometry.minimum_determinant_m2,np.linalg.det(matrix))
+        self.assertAlmostEqual(geometry.determinant_lower_bound_m2,np.linalg.det(matrix))
         np.testing.assert_allclose(result['basis_values'].sum(axis=1),1)
         np.testing.assert_allclose(result['basis_gradients'].sum(axis=1),0,atol=1e-14)
         gradients = np.einsum('ia,qib->qab',points,result['basis_gradients'])
@@ -29,7 +29,7 @@ class QuadraticGeometryTests(unittest.TestCase):
         a = .4
         points = np.column_stack((x,y*(1+a*x)))
         geometry = QuadraticTriangle(points)
-        self.assertAlmostEqual(geometry.minimum_determinant_m2,1)
+        self.assertAlmostEqual(geometry.determinant_lower_bound_m2,1)
         area,volume = 0.,0.
         for barycentric,weight in triangle_quadrature(order=5):
             result = geometry.evaluate([barycentric[1:]])
@@ -40,7 +40,7 @@ class QuadraticGeometryTests(unittest.TestCase):
         self.assertAlmostEqual(area,.5+a/6)
         self.assertAlmostEqual(volume,2*math.pi*(1/6+a/12))
         scaled = QuadraticTriangle(points*3)
-        self.assertAlmostEqual(scaled.minimum_determinant_m2,9)
+        self.assertAlmostEqual(scaled.determinant_lower_bound_m2,9)
 
     def test_fold_between_positive_nodal_jacobians_is_rejected(self):
         x,y = NODES.T
