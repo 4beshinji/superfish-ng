@@ -14,6 +14,8 @@ from .curved_fem import assemble_curved
 from .curved_rf import quantities_curved, surface_peak_contract
 from .mesh_input import mesh_from_dict, mesh_digest
 from .curved_corners import classify_curve_joins
+from .curved_reflection import (reflect_curved_space, reflected_case, reflection_contract,
+                                DIRECT_CONSTRUCTION, REFLECTED_CONSTRUCTION)
 
 
 def geometry_arrays(space):
@@ -43,7 +45,7 @@ def write_curved_run(case, solution, directory):
                                    scipy=scipy.__version__, platform=platform.platform()),
                   field_space=field_space(solution), surface_extrema=surface_peak_contract(),
                   surface_corner_diagnostics=classify_curve_joins(case.curved_contour),
-                  field_construction='direct curved P2 eigensolve; indices within specified boundary conditions',
+                  field_construction=DIRECT_CONSTRUCTION,
                   mesh=dict(nodes=len(solution.u), triangles=len(solution.space.geometry.cell_nodes),
                             source='saved source chord mesh for curved reconstruction', input_file='mesh.json',
                             input_sha256=mesh_digest(solution.source_mesh_data)),
@@ -65,6 +67,16 @@ def write_curved_run(case, solution, directory):
             representation='restrictions of the initial quadratic geometry; no analytic curve reprojection',
             curved_refinement_levels=case.curved_refinement_levels,
             curve_parameters='ancestral intervals only; refined points lie on the initial quadratic boundary')
+    if solution.reflection_source_case is not None:
+        source = solution.reflection_source_case
+        parent = case_curved_space(source, mesh_from_dict(source, solution.source_mesh_data))
+        reflection = reflect_curved_space(source, parent)
+        if reflected_case(source, reflection).to_dict() != case.to_dict():
+            raise ValueError('reflected curved Case differs from source reconstruction')
+        result['reflection'] = reflection_contract(source, reflection)
+        result['field_construction'] = REFLECTED_CONSTRUCTION
+        result['mesh']['source'] = 'saved half-domain source chord mesh for curved reflection reconstruction'
+        result['geometry_approximation']['representation'] = 'reflection of the reconstructed half-domain quadratic geometry; no reprojection'
     for filename, document in (('case.json', case.to_dict()), ('results.json', result),
                                ('mesh.json', solution.source_mesh_data)):
         (directory/filename).write_text(json.dumps(document, indent=2, allow_nan=False)+'\n', encoding='utf-8')
@@ -107,7 +119,28 @@ def read_curved_run(directory, case, results):
     mesh_data = parse_json((directory/'mesh.json').read_text(encoding='utf-8'))
     if mesh_digest(mesh_data) != results['mesh'].get('input_sha256'):
         raise ValueError('saved curved source mesh hash differs')
-    space = case_curved_space(case, mesh_from_dict(case, mesh_data))
+    source = None
+    reflection = None
+    if 'reflection' in results:
+        from .config import Case
+        declaration = results['reflection']
+        if not isinstance(declaration, dict) or not isinstance(declaration.get('source_case'), dict):
+            raise ValueError('invalid saved curved reflection declaration')
+        source = Case.from_dict(declaration['source_case'])
+        if source.geometry_order != 2:
+            raise ValueError('saved curved reflection requires quadratic source geometry')
+        parent = case_curved_space(source, mesh_from_dict(source, mesh_data))
+        reflection = reflect_curved_space(source, parent)
+        if json.dumps(declaration, sort_keys=True, allow_nan=False) != json.dumps(reflection_contract(source, reflection), sort_keys=True, allow_nan=False):
+            raise ValueError('invalid saved curved reflection declaration')
+        if reflected_case(source, reflection).to_dict() != case.to_dict():
+            raise ValueError('saved reflected curved Case differs from source reconstruction')
+        space = reflection.space
+    else:
+        space = case_curved_space(case, mesh_from_dict(case, mesh_data))
+    construction = REFLECTED_CONSTRUCTION if reflection is not None else DIRECT_CONSTRUCTION
+    if results.get('field_construction') != construction:
+        raise ValueError('invalid saved curved field construction')
     if (results['mesh'].get('nodes') != len(space.geometry.points_rz_m)
             or results['mesh'].get('triangles') != len(space.geometry.cell_nodes)):
         raise ValueError('saved curved mesh counts differ')
@@ -126,6 +159,10 @@ def read_curved_run(directory, case, results):
             or not np.isfinite(frequencies).all() or np.any(frequencies <= 0)
             or np.any(np.diff(frequencies) < 0) or np.any(u[space.constrained_dofs] != 0)):
         raise ValueError('invalid saved curved coefficients, constraints or frequencies')
+    if reflection is not None:
+        half_u = u[:reflection.coefficient_map.shape[1]]
+        if not np.array_equal(u, reflection.apply(half_u)):
+            raise ValueError('saved curved coefficients violate reflection parity')
     k, m = assemble_curved(space, quadrature_order=case.quadrature_order)
     values = (TAU*frequencies/C0)**2
     gram = (MU0*np.pi/case.normalization_j)*(u.T@(m@u))
@@ -150,7 +187,7 @@ def read_curved_run(directory, case, results):
         if json.dumps(results.get('surface_corner_diagnostics'), sort_keys=True, allow_nan=False) != json.dumps(classify_curve_joins(case.curved_contour), sort_keys=True, allow_nan=False):
             raise ValueError('invalid saved analytic corner diagnostics')
     solution = CurvedSolution(case, space, k, m, values, frequencies, u,
-                              np.asarray(residuals), error, case.quadrature_order, mesh_data)
+                              np.asarray(residuals), error, case.quadrature_order, mesh_data, source)
     if results.get('field_space') != field_space(solution):
         raise ValueError('invalid saved curved field space declaration')
     if len(results.get('modes', [])) != case.modes:

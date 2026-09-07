@@ -107,3 +107,47 @@ def reflect_curved_space(case, parent):
     seam_dofs = np.flatnonzero(on_plane)
     seam_dofs.setflags(write=False)
     return CurvedReflection(space, transfer, full_contour, side, parity, seam_dofs)
+
+
+DIRECT_CONSTRUCTION = 'direct curved P2 eigensolve; indices within specified boundary conditions'
+REFLECTED_CONSTRUCTION = 'curved P2 symmetry reflection; parity-filtered spectrum, indices are NOT full-spectrum ranks'
+
+
+def reflected_case(case, reflection):
+    from dataclasses import replace
+    return replace(case, contour=None, curved_contour=reflection.reflected_contour,
+                   z_min='pec', z_max='pec', nz=2*case.nz,
+                   normalization_j=2*case.normalization_j,
+                   name=case.name+' [reflected full cavity]',
+                   **case.reflected_acceleration_parameters(reflection.side))
+
+
+def reflection_contract(case, reflection):
+    return dict(version=1, side=reflection.side, parity=reflection.parity,
+                source_case=case.to_dict(),
+                geometry='reflect the reconstructed half-domain quadratic maps after fixed refinement',
+                coefficients='unchanged amplitude with declared parity; full-domain energy is twice source energy')
+
+
+def reflect_curved_solution(case, solution):
+    from .curved_solution import CurvedSolution
+    from .curved_fem import assemble_curved
+    if not isinstance(solution, CurvedSolution) or solution.case != case or case.geometry_order != 2:
+        raise ValueError('curved reflection requires the matching solved native Case')
+    reflection = reflect_curved_space(case, solution.space)
+    full = reflected_case(case, reflection)
+    u = reflection.apply(solution.u)
+    k, m = assemble_curved(reflection.space, quadrature_order=case.quadrature_order)
+    ku, mu = k@u, m@u
+    residuals = np.linalg.norm(ku-mu*solution.eigenvalues, axis=0)/(np.linalg.norm(ku, axis=0)+solution.eigenvalues*np.linalg.norm(mu, axis=0))
+    if not np.isfinite(residuals).all() or np.max(residuals) > 1e-7:
+        raise ValueError('reflected curved field fails the full-domain residual check')
+    from .constants import MU0
+    gram = (MU0*np.pi/full.normalization_j)*(u.T@mu)
+    error = float(np.max(abs(gram-np.eye(case.modes))))
+    if not np.isfinite(error) or error > 1e-7:
+        raise ValueError('reflected curved normalization or orthogonality differs')
+    result = CurvedSolution(full, reflection.space, k, m, solution.eigenvalues.copy(),
+                            solution.frequencies_hz.copy(), u, residuals, error,
+                            case.quadrature_order, solution.source_mesh_data, case)
+    return full, result

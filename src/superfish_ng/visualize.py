@@ -95,8 +95,8 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
         domain += '; P2 field sampled on display triangles'
     if solution.case.geometry_order == 2:
         domain += '; curved geometry shown by straight display subdivisions'
-    if 'reflection_source_case' in results:
-        domain += '; parity-filtered modes'
+    if 'reflection_source_case' in results or 'reflection' in results:
+        domain += '\nparity-filtered modes; indices are not full-spectrum ranks'
     fig.suptitle(f"{results['case']['name']} | {label} | {q['frequency_hz']/1e6:.6f} MHz\n"
                  f"Q0={q['q0']:.2f} | R/Q(acc)={q['r_over_q_accelerator_ohm']:.4f} ohm | U={q['stored_energy_j']:.4g} J | peak phasors\n{domain}")
     out.parent.mkdir(parents=True, exist_ok=True)

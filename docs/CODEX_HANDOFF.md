@@ -1,5 +1,40 @@
 # ローカルCodexへの引継ぎ
 
+## G03曲線鏡映の通常API・保存・CLI接続 — 2026-09-08
+
+reflect_solutionはgeometry_order=2の曲線解を固定写像で鏡映する。
+入力Caseと解の一致を要求し、全領域の残差と正規化/直交性を再確認する。
+固有値の再計算や振幅再調整はない。元の半領域係数を偶奇に従って移し、
+全領域Caseのnormalization_jは2倍。mode indexは偶奇部分スペクトルの順序である。
+既存のreflected_acceleration_parametersによりユーザー指定の加速長、電圧積分区間、
+位相原点も変換する。両端面と両対称タグの保存往復で非既定値を検証した。
+
+保存results.reflection第1版は元Case、面、偶奇、固定写像再構成と振幅の契約を保持する。
+mesh.jsonは半領域の元弦メッシュであり、results.mesh.sourceにその用途を明記する。
+再読込は元Case+弦メッシュから二次写像と固定細分を再構成した後に鏡映し、
+導出した全Caseと保存Caseを照合する。幾何配列の完全照合、係数の偶奇完全照合、
+全領域残差、エネルギー規格化、全RF値の再検査を実施する。
+直解と鏡映のfield_constructionも厳密照合する。未知の版、面/偶奇/元Case改変、
+宣言削除、構成表示の偽装、係数改変はhash更新後も拒否する。
+再読込した鏡映解の再保存も可能。既存の直解の保存形式は維持する。
+
+新規tests/test_curved_reflection_saved.pyの4検査は左右×電気/磁気対称の保存/再保存、
+再固有値計算の禁止、正規化/場の一致、7種の改変拒否、CLI --reflect-full、
+Case不一致と二重鏡映の拒否を含む。
+標準297件中295合格・2 skip、validation-g03-reflection-integration-regression-20260908 PASS。
+scripts/validate_curved_reflection.pyは通常APIの鏡映をsave/readした結果で物理不変量を検証する形へ更新。
+out/validation-g03-curved-reflection-storage-20260908/comparison.jsonの合成半球4ケースはPASS。
+最大残差8.695e-14、場の偶奇相対差1.350e-12、エネルギー/壁損失の2倍からの相対差1.433e-14。
+周波数値を移したことと全方程式の残差は確認したが、これを物理的な離散化誤差の認証とは扱わない。
+
+保存結果のplot CLIも実行。初回画像は曲線鏡映の部分スペクトル注記が欠けていたため、
+visualizeの既存直線鏡映判定を曲線のreflection宣言にも対応させた。
+同じ保存結果からreflected-plot-final.pngを出力し、全曲線形状・場・軸/半径プローブ、
+U=2 J、部分スペクトルで全固有値順位ではない注記を画像で確認した。
+図の修正は標準検査後であり、最終plot CLI実行と画像で確認した。
+GUIブラウザー操作は今回未実行。追加形状、GUIを含むG03全要件の照合は次の作業。
+物理的な角ピークの収束は引き続きUNVERIFIED。G03全体と全互換目標は継続。
+
 ## G03固定二次空間の鏡映核 — 2026-09-08
 
 curved_reflection.reflect_curved_spaceは元の二次写像を鏡映し、対称面の節点を

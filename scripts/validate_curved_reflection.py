@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Validate fixed curved mirror maps against parity and energy invariants."""
 import argparse
-from dataclasses import replace
 import json
 import math
 from pathlib import Path
@@ -10,10 +9,12 @@ from superfish_ng import Case
 from superfish_ng.conics import LineSegment, EllipseArc
 from superfish_ng.curved_contour import CurvedContour
 from superfish_ng.mesh_controls import ContourMeshControls
-from superfish_ng.curved_solution import CurvedSolution, solve_curved
+from superfish_ng.curved_solution import solve_curved
 from superfish_ng.curved_reflection import reflect_curved_space
-from superfish_ng.curved_fem import assemble_curved
 from superfish_ng.curved_rf import quantities_curved
+from superfish_ng.symmetry import reflect_solution
+from superfish_ng.io import save_run
+from superfish_ng.saved import read_solution
 
 
 def main():
@@ -36,15 +37,11 @@ def main():
                         element_order=2, geometry_order=2, quadrature_order=12, curved_refinement_levels=1, modes=1)
             half = solve_curved(case)
             reflection = reflect_curved_space(case, half.space)
-            full_case = replace(case, contour=None, curved_contour=reflection.reflected_contour,
-                                z_min='pec', z_max='pec', normalization_j=2*case.normalization_j,
-                                **case.reflected_acceleration_parameters(side))
-            u = reflection.apply(half.u)
-            k, m = assemble_curved(reflection.space, quadrature_order=12)
-            ku, mu = k@u, m@u
-            residual = float(np.linalg.norm(ku-mu*half.eigenvalues)/(np.linalg.norm(ku)+half.eigenvalues[0]*np.linalg.norm(mu)))
-            full = CurvedSolution(full_case, reflection.space, k, m, half.eigenvalues, half.frequencies_hz,
-                                  u, np.array([residual]), 0., 12, None)
+            full_case, transformed = reflect_solution(case, half)
+            directory = args.out/f'{side}-{tag}'
+            save_run(full_case, transformed, directory)
+            full = read_solution(directory)
+            residual = float(max(full.residuals))
             a, b = quantities_curved(half, include_surface_peaks=False), quantities_curved(full, include_surface_peaks=False)
             ratios = {key: b[key]/a[key] for key in ('stored_energy_j', 'electric_energy_j', 'magnetic_energy_j', 'wall_loss_w')}
             field_error = 0.
@@ -60,7 +57,7 @@ def main():
                                 energy_and_loss_ratios=ratios, field_parity_relative_error=field_error,
                                 half_cells=len(half.space.geometry.cell_nodes), full_cells=len(reflection.space.geometry.cell_nodes)))
     report = dict(status='PASS' if all(r['status']=='PASS' for r in records) else 'FAIL', records=records,
-                  scope='fixed curved space reflection and field/RF invariants; public solve/save/CLI reflection integration pending')
+                  scope='public curved reflection, portable reconstruction, full-domain residual, field parity and RF energy/loss invariants')
     (args.out/'comparison.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     print(json.dumps(report, indent=2), flush=True)
     return 0 if report['status']=='PASS' else 1

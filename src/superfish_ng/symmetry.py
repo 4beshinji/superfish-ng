@@ -16,7 +16,8 @@ def reflect_solution(case, solution):
     """
     order = getattr(solution, 'element_order', 1)
     if case.geometry_order == 2:
-        raise ValueError('curved solution reflection is pending; supply and solve the full curved cavity')
+        from .curved_reflection import reflect_curved_solution
+        return reflect_curved_solution(case, solution)
     if order not in (1, 2):
         raise ValueError('unsupported element order for reflection')
     sides = [side for side in ('z_min', 'z_max') if getattr(case, side) != 'pec']

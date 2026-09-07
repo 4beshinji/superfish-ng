@@ -24,6 +24,7 @@ class CurvedSolution:
     orthogonality_error: float
     quadrature_order: int
     source_mesh_data: object
+    reflection_source_case: object = None
 
     @property
     def element_order(self):
