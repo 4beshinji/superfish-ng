@@ -4,6 +4,10 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-08 G03途中受入: 曲線GUIの幾何/積分次数・細分段数と固定幾何Studyを接続。
+合成楕円の実ブラウザー7操作PASS（入力・計算・描画・往復・Study）、外部通信0。
+標準271件中269合格・2 skip。表面ピーク・鏡映等は継続。[詳細](CURVED_ELEMENTS.md)。
+
 2026-09-08 G03途中受入: 固定二次幾何細分段数を通常Case/solve/保存/Studyへ接続。
 球形段数0→1の保存後比較と独立周波数/RF PASS。271件中269合格・2 skip、validate PASS。
 曲線GUI実操作・表面ピーク・鏡映は残件。[詳細](CURVED_ELEMENTS.md)。

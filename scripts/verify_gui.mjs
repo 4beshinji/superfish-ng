@@ -801,8 +801,14 @@ try {
     if (args["--contour-auto"] === "yes") {
       if (!isDeepStrictEqual(await ev("collect().case.mesh.contour_mesh"), fixture.mesh.contour_mesh)) throw Error("contour mesh import changed controls");
       if (!await ev('["nr","nz","triangulation"].every(id=>document.getElementById(id).disabled)')) throw Error("unused profile mesh controls are enabled");
-      for (const [selector,value] of [["#contour-edge",10],["#contour-angle",12],["#contour-triangles",4000],["#contour-rounds",8]]) await fill(selector,value);
-      contourControls = {max_edge_m:.01,min_angle_deg:12,max_triangles:4000,max_rounds:8};
+      if (args["--curved-fem"] === "yes") {
+        await ev('document.querySelector("#geometry-order").value="2"; document.querySelector("#geometry-order").dispatchEvent(new Event("change", {bubbles:true}))');
+        await fill("#quadrature-order", 12);
+        await fill("#curved-refinement-levels", 1);
+      }
+      const curvedFEM = args["--curved-fem"] === "yes";
+      for (const [selector,value] of [["#contour-edge",curvedFEM?20:10],["#contour-angle",curvedFEM?10:12],["#contour-triangles",curvedFEM?8000:4000],["#contour-rounds",curvedFEM?12:8]]) await fill(selector,value);
+      contourControls = {max_edge_m:curvedFEM ? .02 : .01,min_angle_deg:curvedFEM?10:12,max_triangles:curvedFEM?8000:4000,max_rounds:curvedFEM?12:8};
       if (!isDeepStrictEqual(await ev("collect().case.mesh.contour_mesh"),contourControls)) throw Error("contour mesh edits lost");
       const previous = await ev('document.querySelectorAll("#jobs .job").length');
       await click("#run");
@@ -831,6 +837,31 @@ try {
       report.checks.push({ operation: "mixed end tags preserved in disabled summary", passed: true });
     }
     report.checks.push({ operation: "contour file import, closed preview, export and reopen", passed: true, vertices: count });
+    if (args["--curved-fem"] === "yes") {
+      const controls = await ev("({geometry:collect().case.mesh.geometry_order,levels:collect().case.mesh.curved_refinement_levels,quadrature:collect().case.solver.quadrature_order})");
+      if (!isDeepStrictEqual(controls,{geometry:2,levels:1,quadrature:12})) throw Error("curved controls lost on export/reopen");
+      if (await ev("currentResult.result.field_space.geometry_order") !== 2 || await ev("currentResult.result.field_space.curved_refinement_levels") !== 1) throw Error("saved curved field declaration lost");
+      if (!await ev('document.querySelector("#rf-table").textContent.includes("未評価") && !document.querySelector("#rf-table").textContent.includes("NaN")')) throw Error("missing curved peaks displayed as numbers");
+      report.checks.push({operation:"curved geometry, quadrature and refinement controls; solve, plot and roundtrip",passed:true,controls});
+      await ev('document.querySelector("#study-kind").value="fixed_geometry_convergence"; document.querySelector("#study-kind").dispatchEvent(new Event("change", {bubbles:true}))');
+      await fill("#study-values", "0, 1");
+      await wait('document.querySelector("#study-parameter").value === "/case/mesh/curved_refinement_levels"');
+      const before = await ev('document.querySelectorAll("#jobs .job").length');
+      await click("#start-study");
+      await wait(`document.querySelectorAll('#jobs .job').length>${before}`);
+      await wait('document.querySelector("#jobs .job strong").textContent.startsWith("計算完了")',120000);
+      await click("#jobs .job button");
+      await wait('activeStudy?.study?.kind === "fixed_geometry_convergence"');
+      if (await ev("activeStudy.numerical_status") !== "PASS") throw Error("fixed curved GUI Study failed numerical gates");
+      report.checks.push({operation:"fixed curved geometry Study from GUI",passed:true,status:await ev("activeStudy.numerical_status")});
+      for (const [selector, filename] of [["#curved-fem-controls","curved-controls.png"],["#study-report","fixed-study.png"]]) {
+        await ev(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:"center",behavior:"instant"})`);
+        const shot = await call("Page.captureScreenshot", {}, sessionId);
+        await writeFile(out+"/"+filename, Buffer.from(shot.data,"base64"));
+      }
+
+    }
+
   }
   await ev("document.activeElement?.blur()");
   await wait("(window.scrollTo({top:0,behavior:'instant'}), window.scrollY===0)");

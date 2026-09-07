@@ -8,9 +8,6 @@ let resultRequest = 0,
   geometryOriginal = null,
   geometryDirty = true,
   explicitModel = null,
-  geometryOrderOriginal = 1,
-  curvedRefinementOriginal = 0,
-  quadratureOrderOriginal = 8,
   accelerationOriginal = {},
   selectedSection = null;
 let sections = [],
@@ -144,7 +141,15 @@ function geometryLength(g) {
   if (g.type === "curved_contour") return Math.max(...g.curves.filter((c,i)=>g.edge_tags[i]==="axis").flatMap(c=>[c.start_zr_m[0],c.end_zr_m[0]]));
   return g.type === "contour" ? Math.max(...g.vertices_zr_m.map(p=>p[0])) : g.points_zr_m.at(-1)[0];
 }
+function updateCurvedControls() {
+  const curved = $("geometry-order").value === "2";
+  $("quadrature-order").disabled = !curved;
+  $("curved-refinement-levels").disabled = !curved;
+}
+$("geometry-order").addEventListener("change", updateCurvedControls);
 function showGeometry() {
+  updateCurvedControls();
+  $("curved-fem-controls").hidden = $("geometry-type").value !== "curved_contour";
   const kind = $("geometry-type").value;
   $("cylinder").hidden = kind !== "pillbox";
   $("profile-editor").hidden = kind === "pillbox" || isContour(kind);
@@ -245,10 +250,10 @@ function collect() {
     display_length_unit: "mm",
   };
   if (number("element-order") === 2) p.case.solver.element_order = 2;
-  if (geometryOrderOriginal === 2) {
+  if (number("geometry-order") === 2) {
     p.case.mesh.geometry_order = 2;
-    if (curvedRefinementOriginal) p.case.mesh.curved_refinement_levels = curvedRefinementOriginal;
-    p.case.solver.quadrature_order = quadratureOrderOriginal;
+    p.case.mesh.curved_refinement_levels = number("curved-refinement-levels");
+    p.case.solver.quadrature_order = number("quadrature-order");
   }
   if (isContour(p.case.geometry.type)) delete p.case.boundaries;
   if (assemblyActive) p.sections = structuredClone(sections);
@@ -300,9 +305,9 @@ function setGeometry(g) {
 }
 function applyProject(p) {
   const c = p.case;
-  geometryOrderOriginal = c.mesh.geometry_order ?? 1;
-  curvedRefinementOriginal = c.mesh.curved_refinement_levels ?? 0;
-  quadratureOrderOriginal = c.solver.quadrature_order ?? 8;
+  $("geometry-order").value = c.mesh.geometry_order ?? 1;
+  $("curved-refinement-levels").value = c.mesh.curved_refinement_levels ?? 0;
+  $("quadrature-order").value = c.solver.quadrature_order ?? 8;
   contourMeshOriginal = c.mesh.contour_mesh ? structuredClone(c.mesh.contour_mesh) : null;
   $("contour-edge").value = contourMeshOriginal ? contourMeshOriginal.max_edge_m * 1000 : "";
   $("contour-angle").value = contourMeshOriginal?.min_angle_deg ?? 10;
@@ -462,7 +467,7 @@ function drawOutline(points, closed = false, approximation = null) {
   $("shape-info").textContent = `${points.length} 輪郭点`;
   if (closed) {
     $("preview-note").textContent = approximation
-      ? `入力形状：解析曲線の弦近似（曲線FEMではありません）。指定弦誤差 ${approximation.tolerance_m * 1000} mm / 面積差 ${approximation.area_difference_m2.toExponential(4)} m² / 体積差 ${approximation.volume_difference_m3.toExponential(4)} m³（弦 − 解析）`
+      ? `入力形状：解析曲線の弦近似をプレビュー。二次曲線要素を選択した場合、計算時に二次形状を構成します。指定弦誤差 ${approximation.tolerance_m * 1000} mm / 面積差 ${approximation.area_difference_m2.toExponential(4)} m² / 体積差 ${approximation.volume_difference_m3.toExponential(4)} m³（弦 − 解析）`
       : "入力形状：閉じた一般輪郭（辺タグは読込ファイルで指定）";
     return;
   }
@@ -741,7 +746,7 @@ function renderRF() {
     for (const [key] of rfColumns) {
       const td = document.createElement("td");
       td.textContent =
-        q[key] === null ? "未定義" : Number(q[key]).toPrecision(7);
+        q[key] === undefined ? "未評価" : q[key] === null ? "未定義" : Number(q[key]).toPrecision(7);
       row.append(td);
     }
     table.append(row);
@@ -974,7 +979,10 @@ async function updateStudyParameters(preferred) {
   if (kind === "mesh_convergence") {
     add("mesh_scale", "基準メッシュに対する細分倍率");
     $("study-hint").textContent =
-      "nr/nzを倍率倍し、指定された最大辺長を倍率で割ります。元曲線と弦誤差は固定。周波数・RF・軸場を別々に判定します。";
+      "nr/nzを倍率倍し、指定された最大辺長を倍率で割ります。元曲線と弦誤差は固定ですが、二次境界は変わることがあります。周波数・RF・軸場を別々に判定します。";
+  } else if (kind === "fixed_geometry_convergence") {
+    add("/case/mesh/curved_refinement_levels", "二次形状を保つ細分段数");
+    $("study-hint").textContent = "二次曲線要素で使用します。元メッシュと二次形状を固定し、0, 1, 2などの段数を比較します。1段で要素数は4倍になります。";
   } else if (kind === "geometry_convergence") {
     add("/case/geometry/chord_tolerance_m", "曲線の最大弦誤差 [mm]", 0.001);
     $("study-hint").textContent =
@@ -1037,6 +1045,8 @@ bind("study-parameters", () => updateStudyParameters());
 $("study-kind").onchange = () => {
   if ($("study-kind").value === "mesh_convergence")
     $("study-values").value = "1, 2, 4";
+  else if ($("study-kind").value === "fixed_geometry_convergence")
+    $("study-values").value = "0, 1";
   else if ($("study-kind").value === "geometry_convergence")
     $("study-values").value = "0.01, 0.0025, 0.000625";
   updateStudyParameters().catch(failure);

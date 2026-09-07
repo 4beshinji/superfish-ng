@@ -81,7 +81,7 @@
         <div id="curve-editor" hidden>
           <label>最大弦誤差 [mm]<input id="curve-chord" type="number" step="any" /></label>
           <label>弦分割数の上限<input id="curve-segments" type="number" step="1" value="20000" /></label>
-          <p>元曲線を保持し、計算用の直線輪郭を生成します。FEMの最大辺長は別に指定します。</p>
+          <p>元曲線を保持し、初期分割用の直線輪郭を生成します。二次曲線要素の選択は下の計算設定で行います。FEMの最大辺長は別に指定します。</p>
         </div>
         <div id="arc-editor" hidden>
           <p class="hint">
@@ -159,6 +159,14 @@
           /></label>
         </div>
         <label>要素次数<select id="element-order"><option value="1">P1（一次）</option><option value="2">P2（二次）</option></select></label>
+        <div id="curved-fem-controls" hidden>
+          <label>曲線の計算形状<select id="geometry-order"><option value="1">直線の弦近似</option><option value="2">二次曲線要素（P2が必要）</option></select></label>
+          <div class="grid">
+            <label>体積積分次数<input id="quadrature-order" type="number" min="2" step="1" value="8" /></label>
+            <label>形状を保つ細分段数<input id="curved-refinement-levels" type="number" min="0" step="1" value="0" /></label>
+          </div>
+          <p>段数を1増やすと要素数は4倍になります。初期の二次形状を保持し、解析曲線へ点を置き直しません。</p>
+        </div>
         <details open>
           <summary>メッシュと正規化</summary>
           <div id="contour-mesh-controls" hidden>
@@ -290,7 +298,8 @@
               >操作<select id="study-kind">
                 <option value="sweep">パラメータ掃引</option>
                 <option value="mesh_convergence">メッシュ収束確認</option>
-                <option value="geometry_convergence">円弧の形状近似確認</option>
+                <option value="geometry_convergence">曲線の形状近似確認</option>
+                <option value="fixed_geometry_convergence">二次形状を固定した細分比較</option>
               </select></label
             ><label>変更する値<select id="study-parameter"></select></label>
           </div>

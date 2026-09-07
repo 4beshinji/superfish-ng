@@ -409,3 +409,25 @@ scripts/validate_curved_study.py --fixed-geometry --out out/validation-g03-fixed
 これは当該2段階の検証であり任意形状/任意段数の収束を保証しない。
 標準271件中269合格・2 skip、validation-g03-fixed-native-regression-20260908 PASS。
 次は曲線GUIの入力/Study/表示の実操作、表面ピークと鏡映。G03と全互換目標は継続。
+
+## G03曲線計算設定と固定幾何StudyのGUI — 2026-09-08
+
+曲線入力に計算形状（弦/二次）、体積積分次数、固定幾何の細分段数を追加。
+弦を選択中は積分次数/段数を無効化し、二次を選択すると通常Caseへ明示する。
+固定幾何Studyを操作一覧へ追加し、既定の比較段数は0,1。
+通常のメッシュ細分では二次境界も変わり得ることを説明する。
+曲線ピーク未計算の表セルはNaNではなく未評価と表示する。
+プレビューは初期分割用の弦であり、選択した二次計算形状とは区別して説明する。
+
+verify_gui.mjs --contour-case examples/curved_ellipse.json --contour-auto yes --curved-fem yes
+で通常の入力・エラー保持、曲線設定編集、計算/描画、書出し往復、固定幾何Studyを検査。
+対象は合成楕円、幾何次数2、体積積分12、段数1、元メッシュ最大辺長.02 m。
+最初の検証は追加ヘルパーのスコープ不具合で停止。修正後の7検査はPASS。
+その画面で見つけた旧説明「曲線FEMではありません」を修正。
+out/gui-curved-native-accepted-20260908/report.jsonの最終7検査もPASS。
+外部通信0、実行中のソース変更なし。curved-controls.png / fixed-study.pngを目視確認。
+GUIで実行した固定幾何Studyは520→2080要素、周波数/軸/RF比較PASS。
+ブラウザーとローカルGUIサーバーは終了済み。
+最初の失敗/中間成功の記録はgui-curved-native-check-20260908 / gui-curved-native-check-final-20260908に保持。
+標準271件中269合格・2 skip。今回はUIと検証スクリプトの変更でFEM/RF数式の変更なし。
+曲線表面ピーク・鏡映・追加形状を含む総合受入は継続。
