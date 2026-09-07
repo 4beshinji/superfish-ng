@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## G03曲線RF積分 — 2026-09-08
+
+curved_rfに壁H²弧長積分、軸P2電圧、Q0/G/RQ等を接続。
+PECのみ損失、R01 overrides保持。軸中点は端点平均との完全一致を要求。
+直線3境界条件と部分電圧/位相設定、独立円柱壁積分を検証。
+out/validation-g03-curved-rf-final-20260908/comparison.jsonは球形全RFゲートPASS。
+R/Q誤差2.01e-4、壁損失7.19e-6、壁積分8/12差2.22e-16。
+標準252件中250合格・2 skip、validate PASS。
+次は物理座標逆写像/プローブと通常入力/保存/再読込。ピーク/鏡映/Study/GUIも残る。
+G03と全互換目標は継続。
+
 ## G03曲線解と体積場 — 2026-09-08
 
 curved_solution.solve_curvedで昇順固有値・残差・質量直交性・指定Uを接続。

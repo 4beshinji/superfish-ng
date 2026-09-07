@@ -11,6 +11,7 @@ from superfish_ng.curved_contour import CurvedContour
 from superfish_ng.mesh_controls import ContourMeshControls
 from superfish_ng.curved_solution import solve_curved
 from superfish_ng.analytic_sphere import SphereTM
+from superfish_ng.curved_rf import quantities_curved
 from superfish_ng.fem import triangle_quadrature
 from superfish_ng.constants import MU0,EPS0
 
@@ -55,13 +56,23 @@ def main():
     gates=dict(frequency=errors['frequency']<.001,magnetic=errors['magnetic']<.01,
                electric=errors['electric']<.01,
                normalization=all(abs(v-.5)<1e-8 for v in energies.values()))
+    rf=quantities_curved(solution,wall_quadrature_order=8)
+    finer_rf=quantities_curved(solution,wall_quadrature_order=12)
+    expected_rf=reference.quantities()
+    rf_errors={key:abs(rf[key]/expected_rf[key]-1) for key in
+               ('r_over_q_accelerator_ohm','r_over_q_circuit_ohm','geometry_factor_ohm',
+                'wall_loss_w','q0','transit_time_factor_abs')}
+    wall_change=abs(finer_rf['wall_loss_w']/rf['wall_loss_w']-1)
+    gates.update({key:value<.01 for key,value in rf_errors.items()})
+    gates['wall_quadrature']=wall_change<1e-8
     gates={key:bool(value) for key,value in gates.items()}
-    report=dict(scope='experimental curved sphere frequency, normalization and volume fields only',
+    report=dict(scope='experimental curved sphere frequency, volume fields and RF integrals',
                 quadrature_order=8,geometry_order=2,element_order=2,
-                relative_errors=errors,energy_j=energies,frequency_hz=float(solution.frequencies_hz[0]),
+                relative_errors=errors,rf_relative_errors=rf_errors,rf=rf,
+                wall_quadrature_relative_change=wall_change,energy_j=energies,frequency_hz=float(solution.frequencies_hz[0]),
                 residual=float(solution.residuals[0]),gates=gates,
                 status='PASS' if all(gates.values()) else 'FAIL',
-                pending='physical-coordinate probe, axis/surface RF, native input/save/reload')
+                pending='physical-coordinate probe, surface peaks, native input/save/reload')
     (out/'comparison.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     print(json.dumps(report,indent=2),flush=True)
     return 0 if report['status']=='PASS' else 1

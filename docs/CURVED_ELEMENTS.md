@@ -7,7 +7,8 @@
 現在は局所写像/行列と、元曲線の区間を保持した共有二次幾何候補まで実装。
 共有候補の全要素Jacobianと二次境界の閉鎖/交差を検査。
 全体空間/疎行列と明示的な実験solve・参照座標での場評価は実装済み。
-通常のCase solve/保存・物理座標プローブ・RF経路へはまだ未接続。
+壁/軸RF積分も実験APIへ接続済み。
+通常のCase solve/保存・物理座標プローブ・表面ピークへはまだ未接続。
 Case/全体メッシュ/solve/保存/読込/サンプリング/GUIはまだ直線要素のまま。
 新しい局所関数が存在することを、曲線FEMの製品受入とは扱わない。
 
@@ -207,3 +208,41 @@ OPENBLAS_NUM_THREADS=1 python scripts/validate_curved_fields.py --out out/curved
 標準250件中248合格・2 skip、validation-g03-curved-solution-20260908 PASS。
 次は写像に一致した壁・軸のRF積分と物理座標の逆写像、
 通常入力/保存/再読込/GUIへ接続する。実験CurvedSolutionを直線Solutionとして保存しない。
+
+## 曲線壁・軸のRF積分 — 2026-09-08
+
+curved_rf.quantities_curvedは曲線解からエネルギー、PEC壁損失、Q₀/G、
+加速電圧・TTF・二つのR/Qとshunt impedanceを求める。
+壁上で二次のr(t)・u(t)と幾何接線X'(t)を評価し、
+∫wall H²dS=∫2π r(t)[r(t)u(t)]²|X'(t)|dtを積分する。
+PECタグだけを損失へ含め、対称面を導体損失へ加えない。
+壁積分次数を独立指定でき、既定8。曲線弧長の平方根を含むため厳密多項式積分とは呼ばない。
+
+軸はr=0かつ幾何中点が端点平均に完全一致することを確認してから、
+既存quadratic_voltageの振動多項式積分を使う。
+1e-15 mの中点ずれでも非アフィンな軸を黙って受け入れない。
+active length・部分電圧区間・phase originをCaseから引き継ぎ、
+R/Q accelerator=|V|²/(ωU)、circuitはその1/2を維持する。
+表面ピークは計算せずpeak_statusに未評価と明記し、推定値を捏造しない。
+
+直線矩形のPEC/電気対称/磁気対称で、β=0.13、active length=0.06 m、
+電圧区間[0.02,0.08] m、phase origin=0.03 mのRFが既存P2結果に8桁一致。
+一定u=1の円柱の独立壁積分2πR³L+πR⁴と、辺向き反転の不変も検証した。
+
+球形の独立参照:
+out/validation-g03-curved-rf-final-20260908/comparison.jsonは
+周波数・体積場・エネルギーに加え全RFゲートPASS。
+
+| RF量 | 相対誤差 |
+|---|---:|
+| R/Q accelerator / circuit | 2.01474e-4 |
+| G | 5.79121e-6 |
+| 壁損失 | 7.19077e-6 |
+| Q₀ | 6.25771e-6 |
+| TTF | 4.34793e-5 |
+
+壁積分次数8→12の相対差は2.22e-16。全RFの基準は各1%、壁積分次数差1e-8。
+標準252件中250合格・2 skip、validation-g03-curved-rf-regression-20260908 PASS。
+最終の軸アフィン厳密チェックは該当2テストと球形再実行で確認。
+次は物理座標の逆写像/プローブと、通常入力/保存/再読込へ接続する。
+表面ピーク・鏡映・Study/GUIの曲線解対応も引き続き受入対象として残る。
