@@ -122,7 +122,7 @@ class QuadraticElementTests(unittest.TestCase):
         from superfish_ng.sampling import FieldSampler
         case=Case(((0.,.1),(.2,.1)),nr=4,nz=4,modes=1)
         sol=solve_p2(case)
-        for call in [lambda:quantities(case,sol),lambda:cell_fields(sol,0),lambda:reflect_solution(case,sol),
+        for call in [lambda:reflect_solution(case,sol),
                      lambda:FieldSampler(sol.mesh.points,sol.mesh.triangles,sol.u,sol.frequencies_hz)]:
             with self.assertRaisesRegex(ValueError,'P1|N02|quadratic'):call()
         with tempfile.TemporaryDirectory() as tmp:

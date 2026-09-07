@@ -30,8 +30,13 @@ def linear_voltage(z, field, wave_number):
 
 def cell_fields(solution, mode):
     """Cell-centre signed amplitudes (Er, Ez, Hphi); Ephasor=-i*Eamplitude."""
+    if getattr(solution, 'element_order', 1) == 2:
+        from .sampling import FieldSampler
+        centers = solution.mesh.points[solution.mesh.triangles].mean(axis=1)
+        fields = FieldSampler.from_solution(solution).evaluate(centers, mode)
+        return tuple(fields[key] for key in ('Er_quadrature_V_per_m', 'Ez_quadrature_V_per_m', 'Hphi_A_per_m'))
     if getattr(solution, 'element_order', 1) != 1:
-        raise ValueError('P1 field reconstruction cannot evaluate quadratic fields; N02 is required')
+        raise ValueError('unsupported element order for cell fields')
     mesh = solution.mesh
     p, _, grad = element_geometry(mesh)
     u = solution.u[:, mode][mesh.triangles]
@@ -59,48 +64,57 @@ def accelerating_voltage(case, z, field, wave_number):
 
 
 def quantities(case, solution, mode=0):
-    if getattr(solution, 'element_order', 1) != 1:
-        raise ValueError('P1 RF integrals cannot evaluate quadratic fields; N02 is required')
+    order = getattr(solution, 'element_order', 1)
+    if order not in (1, 2):
+        raise ValueError('unsupported element order for RF integrals')
     mesh, u = solution.mesh, solution.u[:, mode]
     omega = float(TAU*solution.frequencies_hz[mode])
     h2_volume = TAU*float(u @ (solution.mass @ u))
     e2_volume = TAU*float(u @ (solution.stiffness @ u))/(omega*EPS0)**2
     magnetic, electric = MU0*h2_volume/4, EPS0*e2_volume/4
     energy = magnetic+electric
-    pec = mesh.boundary_tags == "pec"
-    edges, cells = mesh.boundary_edges[pec], mesh.boundary_cells[pec]
-    ends, values = mesh.points[edges], u[edges]
-    ds = np.linalg.norm(ends[:, 1]-ends[:, 0], axis=1)
-    q, w = np.polynomial.legendre.leggauss(4)
-    surface_h2 = 0.
-    for t, weight in zip((q+1)/2, w/2):
-        r = (1-t)*ends[:, 0, 0]+t*ends[:, 1, 0]
-        h = r*((1-t)*values[:, 0]+t*values[:, 1])
-        surface_h2 += float(np.sum(weight*ds*TAU*r*h*h))
+    if order == 2:
+        from .quadratic_rf import surface_integrals_p2, accelerating_voltage_p2
+        surface_h2, epk, hpk = surface_integrals_p2(solution, mode)
+    else:
+        pec = mesh.boundary_tags == "pec"
+        edges, cells = mesh.boundary_edges[pec], mesh.boundary_cells[pec]
+        ends, values = mesh.points[edges], u[edges]
+        ds = np.linalg.norm(ends[:, 1]-ends[:, 0], axis=1)
+        q, w = np.polynomial.legendre.leggauss(4)
+        surface_h2 = 0.
+        for t, weight in zip((q+1)/2, w/2):
+            r = (1-t)*ends[:, 0, 0]+t*ends[:, 1, 0]
+            h = r*((1-t)*values[:, 0]+t*values[:, 1])
+            surface_h2 += float(np.sum(weight*ds*TAU*r*h*h))
     rs = float(np.sqrt(omega*MU0/(2*case.conductivity_s_per_m)))
     loss = rs*surface_h2/2
-    z = mesh.points[mesh.axis_nodes, 1]
-    ez_axis = 2*u[mesh.axis_nodes]/(omega*EPS0)
-    voltage, absolute = accelerating_voltage(case, z, ez_axis, omega/(case.beta*C0))
+    if order == 2:
+        voltage, absolute = accelerating_voltage_p2(case, solution, mode)
+    else:
+        z = mesh.points[mesh.axis_nodes, 1]
+        ez_axis = 2*u[mesh.axis_nodes]/(omega*EPS0)
+        voltage, absolute = accelerating_voltage(case, z, ez_axis, omega/(case.beta*C0))
     vacc = abs(voltage)
     # Near-zero accelerating voltage makes normalized peak ratios meaningless.
     accelerating = absolute > 0 and vacc > 1e-12*absolute
     active_length, interval, phase_origin = case.acceleration_parameters
     eacc = vacc/active_length
-    _, _, grad = element_geometry(mesh)
-    du = np.einsum("ti,tij->tj", u[mesh.triangles], grad)[cells]
-    # E is affine within each element: its norm on an edge is maximal at an end.
-    er = -ends[:, :, 0]*du[:, None, 1]/(omega*EPS0)
-    ez = (2*values+ends[:, :, 0]*du[:, None, 0])/(omega*EPS0)
-    epk = float(np.max(np.hypot(er, ez)))
-    # H=r*u is quadratic on each straight edge; include stationary points.
-    r0, dr = ends[:, 0, 0], ends[:, 1, 0]-ends[:, 0, 0]
-    u0, delta_u = values[:, 0], values[:, 1]-values[:, 0]
-    a, b = dr*delta_u, r0*delta_u+dr*u0
-    t = np.zeros_like(a)
-    np.divide(-b, 2*a, out=t, where=a != 0)
-    t = np.clip(t, 0, 1)
-    hpk = float(np.max(np.abs(np.concatenate((r0*u0, (r0+dr)*(u0+delta_u), (r0+t*dr)*(u0+t*delta_u))))))
+    if order == 1:
+        _, _, grad = element_geometry(mesh)
+        du = np.einsum("ti,tij->tj", u[mesh.triangles], grad)[cells]
+        # E is affine within each element: its norm on an edge is maximal at an end.
+        er = -ends[:, :, 0]*du[:, None, 1]/(omega*EPS0)
+        ez = (2*values+ends[:, :, 0]*du[:, None, 0])/(omega*EPS0)
+        epk = float(np.max(np.hypot(er, ez)))
+        # H=r*u is quadratic on each straight edge; include stationary points.
+        r0, dr = ends[:, 0, 0], ends[:, 1, 0]-ends[:, 0, 0]
+        u0, delta_u = values[:, 0], values[:, 1]-values[:, 0]
+        a, b = dr*delta_u, r0*delta_u+dr*u0
+        t = np.zeros_like(a)
+        np.divide(-b, 2*a, out=t, where=a != 0)
+        t = np.clip(t, 0, 1)
+        hpk = float(np.max(np.abs(np.concatenate((r0*u0, (r0+dr)*(u0+delta_u), (r0+t*dr)*(u0+t*delta_u))))))
     rq = vacc**2/(omega*energy)
     q0 = omega*energy/loss
     result = {
@@ -118,7 +132,7 @@ def quantities(case, solution, mode=0):
         "epk_surface_estimate_v_per_m": epk, "bpk_surface_estimate_t": MU0*hpk,
         "epk_over_eacc_estimate": epk/eacc if accelerating else None,
         "bpk_over_eacc_estimate_mt_per_mv_per_m": MU0*hpk/eacc*1e9 if accelerating else None,
-        "peak_status": "P1 one-sided surface estimate; corners may be singular; no error bound",
+        "peak_status": f"P{order} one-sided surface estimate; corners may be singular; no error bound",
     }
     if case.has_acceleration_overrides:
         result.update(voltage_interval_start_m=interval[0], voltage_interval_end_m=interval[1], phase_origin_m=phase_origin)

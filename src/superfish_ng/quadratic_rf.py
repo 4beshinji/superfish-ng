@@ -67,3 +67,52 @@ def accelerating_voltage_p2(case, solution, mode=0):
     field = 2*solution.u[edges, mode]/(omega*EPS0)
     _, interval, origin = case.acceleration_parameters
     return quadratic_voltage(z, field, omega/(case.beta*C0), interval=interval, phase_origin=origin)
+
+
+def polynomial_peak_squared(components):
+    """Maximum squared vector norm on t in [0,1], including stationary points."""
+    from numpy.polynomial import polynomial as poly
+    squared = np.zeros(1)
+    for component in components:
+        squared = poly.polyadd(squared, poly.polymul(component, component))
+    roots = poly.polyroots(poly.polyder(squared))
+    candidates = [0., 1.] + [float(x.real) for x in roots if abs(x.imag) < 1e-10 and 0 < x.real < 1]
+    return max(0., float(np.max(poly.polyval(candidates, squared))))
+
+
+def surface_integrals_p2(solution, mode=0):
+    """PEC integral |H|² dS and one-sided electric/magnetic peak estimates."""
+    from numpy.polynomial import polynomial as poly
+    from .mesh import element_geometry
+    from .high_order import basis_p2
+    if solution.element_order != 2 or solution.space is None:
+        raise ValueError('quadratic surface evaluation requires a P2 solution')
+    mesh, space = solution.mesh, solution.space
+    vertices, _, gradients = element_geometry(mesh)
+    omega = TAU*solution.frequencies_hz[mode]
+    total, emax2, hmax2 = 0., 0., 0.
+    # Four Gauss points integrate r³*u² (degree seven) on straight edges exactly.
+    q, w = np.polynomial.legendre.leggauss(4)
+    for edge, cell in zip(space.boundary_dofs[mesh.boundary_tags == 'pec'], mesh.boundary_cells[mesh.boundary_tags == 'pec']):
+        ends = space.dof_points[edge[:2]]
+        length = np.linalg.norm(ends[1]-ends[0])
+        left, right, mid = solution.u[edge, mode]
+        uc = np.array([left, 4*mid-3*left-right, 2*(left+right-2*mid)])
+        rc = np.array([ends[0, 0], ends[1, 0]-ends[0, 0]])
+        hc = poly.polymul(rc, uc)
+        t = (q+1)/2
+        total += TAU*length*np.dot(w/2, poly.polyval(t, rc)*poly.polyval(t, hc)**2)
+        electric = []
+        for t in [0., 1., .5]:
+            point = (1-t)*ends[0]+t*ends[1]
+            bary = gradients[cell] @ (point-vertices[cell, 0])
+            bary[0] += 1
+            basis, derivative = basis_p2(bary, gradients[cell])
+            coefficients = solution.u[space.cell_dofs[cell], mode]
+            value, du = basis @ coefficients, coefficients @ derivative
+            electric.append([-point[0]*du[1]/(omega*EPS0), (2*value+point[0]*du[0])/(omega*EPS0)])
+        left_e, right_e, mid_e = np.array(electric)
+        ec = np.stack((left_e, 4*mid_e-3*left_e-right_e, 2*(left_e+right_e-2*mid_e)), axis=1)
+        emax2 = max(emax2, polynomial_peak_squared(ec))
+        hmax2 = max(hmax2, polynomial_peak_squared([hc]))
+    return float(total), float(np.sqrt(emax2)), float(np.sqrt(hmax2))

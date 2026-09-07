@@ -51,3 +51,66 @@ class QuadraticVoltageTests(unittest.TestCase):
             expected = complex(real, imag)*np.exp(-1j*k*.071)
             actual, _ = accelerating_voltage_p2(case, sol, mode)
             self.assertLess(abs(actual-expected)/max(abs(expected), 1), 1e-10)
+
+
+class QuadraticSurfaceTests(unittest.TestCase):
+    def test_interior_stationary_points_and_constant_field(self):
+        from superfish_ng.quadratic_rf import polynomial_peak_squared
+        self.assertAlmostEqual(polynomial_peak_squared([[0, 4, -4], [0]]), 1.)
+        self.assertAlmostEqual(polynomial_peak_squared([[3], [4]]), 25.)
+        self.assertEqual(polynomial_peak_squared([[0]]), 0.)
+        # Cubic H=t-t³ peaks at 1/sqrt(3), not an endpoint.
+        self.assertAlmostEqual(polynomial_peak_squared([[0, 1, 0, -1]]), 4/27)
+
+    def test_manufactured_surface_integral_and_one_sided_peaks(self):
+        from superfish_ng.quadratic_rf import surface_integrals_p2
+        from superfish_ng.constants import EPS0, TAU
+        from scipy.optimize import minimize_scalar
+        case = Case(((0., .1), (.2, .1)), nr=3, nz=4, modes=1)
+        sol = solve_p2(case)
+        r,z = sol.space.dof_points.T
+        sol.u[:,0] = 1+2*r+3*z+4*r*r+5*r*z-6*z*z
+        omega = TAU*sol.frequencies_hz[0]
+        exact_integral, exact_e, exact_h = 0., 0., 0.
+        for ends in sol.mesh.points[sol.mesh.boundary_edges[sol.mesh.boundary_tags == 'pec']]:
+            length = np.linalg.norm(ends[1]-ends[0])
+            def fields(t):
+                r,z = ends[0]*(1-t)+ends[1]*t
+                u = 1+2*r+3*z+4*r*r+5*r*z-6*z*z
+                er = -r*(3+5*r-12*z)/(omega*EPS0)
+                ez = (2*u+r*(2+8*r+5*z))/(omega*EPS0)
+                return r, r*u, np.hypot(er,ez)
+            exact_integral += quad(lambda t: TAU*length*fields(t)[0]*fields(t)[1]**2, 0, 1, epsabs=1e-13)[0]
+            for index in [1,2]:
+                value = max(abs(fields(0)[index]), abs(fields(1)[index]),
+                            -minimize_scalar(lambda t: -abs(fields(t)[index]), bounds=(0,1), method='bounded').fun)
+                if index == 1: exact_h=max(exact_h,value)
+                else: exact_e=max(exact_e,value)
+        np.testing.assert_allclose(surface_integrals_p2(sol), [exact_integral, exact_e, exact_h], rtol=2e-12)
+
+    def test_multimode_rf_convergence_and_normalization(self):
+        from dataclasses import replace
+        from superfish_ng.rf import quantities, cell_fields
+        from superfish_ng.analytic import pillbox_tm_mode
+        errors=[]
+        for n in [4,8,16]:
+            case=Case(((0.,.1),(.2,.1)),nr=n,nz=2*n,modes=3)
+            sol=solve_p2(case)
+            level=[]
+            for mode in range(3):
+                result=quantities(case,sol,mode)
+                exact=pillbox_tm_mode(.1,.2,p=mode)
+                level.append([abs(result[k]/exact[k]-1) for k in ['r_over_q_accelerator_ohm','geometry_factor_ohm']])
+                self.assertLess(result['energy_balance_relative'],1e-10)
+                self.assertAlmostEqual(result['stored_energy_j'],1.,places=10)
+                self.assertTrue(all(np.isfinite(x).all() for x in cell_fields(sol,mode)))
+            errors.append(level)
+        self.assertTrue(np.all(np.array(errors[-1]) < 1e-4),errors)
+        self.assertTrue(np.all(np.array(errors[-1])/errors[-2] < .15),errors)
+        scaled=replace(case,normalization_j=4.)
+        sr=quantities(scaled,solve_p2(scaled))
+        original=quantities(case,sol)
+        for key in ['r_over_q_accelerator_ohm','geometry_factor_ohm','q0']:
+            self.assertAlmostEqual(sr[key]/original[key],1.,places=10)
+        self.assertAlmostEqual(sr['vacc_v']/original['vacc_v'],2.,places=10)
+        self.assertAlmostEqual(sr['wall_loss_w']/original['wall_loss_w'],4.,places=10)

@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## N02の表面積分とRF量 — 2026-09-08
+
+quadratic_rf.surface_integrals_p2を実装し、rf.quantities/cell_fieldsへP2を接続。
+既知多項式の損失/内部極値、3モードのRQ/G収束・Uスケーリングを検証。
+158 tests中156合格・2 skip、標準validate PASS。P1 mode全量とhashは不変。
+次はBessel全場/ピーク/誤差対DOFの証拠とP2保存・再読込・鏡映/描画/追跡統合。
+HIGH_ORDER_FIELDS.mdを参照。Case/CLIのP2指定はまだ未公開でN02は未完。
+
 ## N02の軸電圧積分 — 2026-09-08
 
 quadratic_rf.pyへ二次軸場の複素電圧/絶対値積分とP2解アダプタを追加。
