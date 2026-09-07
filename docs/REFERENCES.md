@@ -120,7 +120,20 @@ RFのNeumann主部への対応はSURFACE_FIELD_DIAGNOSTICS.mdで別途導出し�
 AutomeshのPO入力欄NT/RADIUSで円弧方向の指定（NT=4/5）を確認した。
 文書はローカルの外部参照であり、実装・配布へ同梱しない。ソースコードの参照・転用なし。
 
-## 読む順番
+## 互換計画の機能調査
+
+**R26. OECD/NEA, ESTS0428/01 POISSON, SUPERFISH program abstract.**
+[公式配布機関の機能概要](https://www.oecd-nea.org/tools/abstract/detail/ests0428/)
+— 2026-09-07閲覧。登録更新日は2001-05-03。RF/静的場・座標系・幾何・周辺機能の分類に使用。
+対象7.xの詳細仕様と同一とはしない。概要には数値法の説明も表示されるが今回の実装へ転用しない。
+ソース・実行形式・配布アーカイブのリンクには進んでいない。
+
+**R27. USPAS 2024, PILA lecture 10, p.44.**
+[Fermilab/USPAS公開講義](https://uspas.fnal.gov/materials/24RohnertPark/PILA/10.pdf)
+— 2026-09-07閲覧。Poisson/Superfishの平面/軸対称RF・静電・静磁場、メッシュ・後処理の概要を確認。
+マニュアル本文・旧ソースの代替仕様には使わない。PDFや図は同梱しない。
+
+## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、
 バックエンド選定はR11→R17→R12、メッシュはR9→R10、大規模固有値はR15→R16。

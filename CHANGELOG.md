@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Reconcile completed and partial milestones with implementation evidence; add a version-aware compatibility matrix and specification/implementation/validation work packages without changing solver behavior.
+
 - Validate two synthetic TM cavities against independently meshed, high-order NGSolve Hphi fields and RF integrals; keep the reference dependency outside the production environment.
 - Accept explicit SI/rz tagged triangle meshes through `solve --mesh` and the Python API, validate topology and Case boundaries, and preserve mesh hashes through saving, reading and reflection. Verify RF invariance under renumbering and convergence on unstructured meshes.
 

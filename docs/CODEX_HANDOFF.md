@@ -3,6 +3,10 @@
 ## 現在の入口 — 2026-09-07 計画整備
 
 最新指示は「実態に合わせて計画更新→互換対応表→作業分割」。このターンは計画を整備する。
+計画整備v0を完了。[COMPATIBILITY_MATRIX.md](COMPATIBILITY_MATRIX.md)のK01〜K32と
+[COMPATIBILITY_PLAN.md](COMPATIBILITY_PLAN.md)の.S/.I/.Vを次の作業単位とする。
+次はC00の版・入力集合の確定→C01.Sの共通契約。高次要素へ直ちに飛ばない。
+表のH/Uは対象版未確認、Xは互換必須集合外。仕様調査未完を互換完成と混同しない。
 [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)と[BACKLOG.md](BACKLOG.md)を正本とし、
 以下の履歴内の「次は…」やseed開始プロンプトより優先する。
 製品基準1f5cd84で114テスト中112合格・2 skipを再確認。物理範囲や製品コードの変更はない。

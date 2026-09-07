@@ -9,7 +9,7 @@
 | 分野 | 実装・入口 | 制約 | 証拠 |
 |---|---|---|---|
 | 物理 | 真空、軸連結m=0 TM、PECまたは平坦z端の電気/磁気対称 | TE、平面RF、内導体、材料領域、静的場は未実装 | [PHYSICS.md](PHYSICS.md)、config.py/solver.py/symmetry.py |
-| 幾何 | 折れ線、段差、z非減少の短円弧、部分の反復/端部組立 | 楕円・折返し・穴・任意CADなし | geometry.py/project.py、test_arcs/steps/project.py |
+| 幾何 | 折れ線、段差、z非減少の短円弧、部分の反復/端部組立 | 楕円・折返し・穴・任意CADなし | geometry.py/project.py、test_arcs.py/test_stepped_mesh.py/test_project.py |
 | メッシュ | P1三角形、局所実長細分、外部タグ付きJSON | 外部メッシュもCase輪郭内。GUI/Study指定なし、高次要素なし | [MESH_INPUT.md](MESH_INPUT.md)、mesh.py/mesh_input.py |
 | 固有値・場 | 実FEM、複数モード、残差・直交性・エネルギー検査 | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | fem.py/solver.py、test_physics.py |
 | RF量 | f/U/Q0/G/V/RQ/シャント/TTF、ピーク比 | peak phasor、RQ二規約。常伝導摂動損失、active lengthは全長。EpkはP1推定 | rf.py、[PHYSICS.md](PHYSICS.md) |

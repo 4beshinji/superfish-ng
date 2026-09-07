@@ -117,6 +117,10 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## Codexに引き継ぐ
 
+現在の開発計画は[実装の現状](docs/IMPLEMENTATION_STATUS.md)→
+[互換対応表](docs/COMPATIBILITY_MATRIX.md)→[仕様・実装・検証への分割](docs/COMPATIBILITY_PLAN.md)。
+既存課題の状態は[バックログ](docs/BACKLOG.md)を参照。計画の記載は対応機能の完成を意味しません。
+
 汎用GUIは `superfish-ng gui --workspace out/gui-workspace` で起動します。
 形状・円弧・繰り返し部分の編集、計算と中止、保存場・RF量の表示、
 寸法掃引・収束比較を、CLI/Pythonと共通の入力・計算機能で扱えます。
