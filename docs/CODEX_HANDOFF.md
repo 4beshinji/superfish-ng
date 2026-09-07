@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## N02の総合数値検証 — 2026-09-08
+
+validate_quadratic_fields.pyで独立J0/J1/cos/sin場・ピーク・RF・同DOF比較を検証。
+13チェックPASS、証拠quadratic-fields-n02-final-20260908/fields.json。
+Job取込再実行の係数/RF一致と寸法スケーリングも追加。標準169 tests中167合格・2 skip。
+次は能力表・PHYSICS/README/進捗のP1限定記述を現実装へ整え、N02.Sの全移行箇所・
+受入条件と証拠を照合してN02を受入する。全32項目・33親課題の目標は引き続き未完。
+
 ## N02のGUI次数選択 — 2026-09-08
 
 P1/P2選択、v3/model生成、Project読込往復を接続。実Chromeの4操作と

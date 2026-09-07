@@ -45,3 +45,24 @@ class ElementOrderTests(unittest.TestCase):
             repeated=solve(saved.case)
             np.testing.assert_array_equal(repeated.frequencies_hz,saved.frequencies_hz)
             np.testing.assert_array_equal(repeated.u,saved.u)
+
+    def test_imported_job_rerun_retains_quadratic_order(self):
+        from superfish_ng.jobs import execute_project, JobManager
+        from superfish_ng.io import save_run
+        case=Case(((0.,.1),(.2,.1)),nr=4,nz=6,modes=2,element_order=2)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            save_run(case,solve(case),root/'source')
+            manager=JobManager(root/'history')
+            try:
+                identifier=manager.import_result(root/'source')
+                directory=manager.directory(identifier)
+                project=Project.load(directory/'project.json')
+                self.assertEqual(project.case.element_order,2)
+                execute_project(project,root/'rerun')
+                imported=read_solution(directory/'solution')
+                repeated=read_solution(root/'rerun'/'solution')
+                np.testing.assert_array_equal(imported.u,repeated.u)
+                self.assertEqual(imported.results['modes'],repeated.results['modes'])
+            finally:
+                manager.close()

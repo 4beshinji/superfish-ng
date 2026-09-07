@@ -187,3 +187,21 @@ Project読込時も保持する。既定P1は次数を省略する。
 out/gui-n02-order-browser-final-20260908/report.jsonの4操作がPASS、外部要求0。
 標準out/validation-n02-gui-order-20260908/validation.jsonもPASS（167件、2 skip）。
 検証サーバーは停止済み。総合Bessel/ピーク/DOF比較とN02文書の最終整合は残る。
+
+### 総合場・RF・ピークと自由度比較 — 2026-09-08
+
+再現: OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate_quadratic_fields.py --out out/quadratic-fields-<unique-name>。
+独立円筒J0/J1・cos/sin場を固定Gauss標本で比較し、符号だけをH重なりで対応させる。
+振幅は保存Uから独立算出し、場のフィット/補正を行わない。
+P1/P2を4/8/16/32径方向分割で比較し、153/561/2145の同じ自由度でP2が
+f・軸Ez・RQ・E/H場誤差の全3モードで改善することを確認。
+32×64のP2（8385自由度）最大相対誤差は、E L2=4.373e-4、H L2=6.538e-6、
+軸Ez L2=1.615e-5、RQ=5.590e-6、G=4.065e-7、Epk=6.354e-6、Bpk=1.843e-6。
+ピークは円筒の独立最大値と比較。特異角の有限ピークを受入するものではない。
+全13チェックPASS: out/quadratic-fields-n02-final-20260908/fields.json。
+
+Job取込Projectから再実行した係数/RF全量が一致。寸法3倍について
+f→f/3、V→V/sqrt(3)、損失→損失/3^1.5、Q0→sqrt(3)Q0、RQ/G不変も合格。
+標準証拠out/validation-n02-integrated-20260908/validation.json PASS、
+169 tests中167合格・2 skip。P1の円筒/成形セルmode全量・hashは不変。
+能力表/現在仕様の古いP1限定記述を整理し、N02の全要件と証拠を最終照合して受入する。

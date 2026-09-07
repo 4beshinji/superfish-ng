@@ -114,3 +114,15 @@ class QuadraticSurfaceTests(unittest.TestCase):
             self.assertAlmostEqual(sr[key]/original[key],1.,places=10)
         self.assertAlmostEqual(sr['vacc_v']/original['vacc_v'],2.,places=10)
         self.assertAlmostEqual(sr['wall_loss_w']/original['wall_loss_w'],4.,places=10)
+
+    def test_length_scaling_of_quadratic_rf(self):
+        from dataclasses import replace
+        from superfish_ng.rf import quantities
+        case=Case(((0.,.1),(.2,.1)),nr=5,nz=10,modes=1,element_order=2)
+        scaled=replace(case,profile=((0.,.3),(.6,.3)))
+        a,b=quantities(case,solve_p2(case)),quantities(scaled,solve_p2(scaled))
+        for key,ratio in [('frequency_hz',1/3),('stored_energy_j',1),('vacc_v',3**-.5),
+                          ('wall_loss_w',3**-1.5),('q0',3**.5),('geometry_factor_ohm',1),
+                          ('r_over_q_accelerator_ohm',1),('epk_surface_estimate_v_per_m',3**-1.5),
+                          ('bpk_surface_estimate_t',3**-1.5)]:
+            self.assertAlmostEqual(b[key]/a[key],ratio,places=9,msg=key)
