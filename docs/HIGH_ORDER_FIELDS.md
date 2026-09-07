@@ -178,3 +178,12 @@ Project往復、研究P2の鏡映元/全Case次数保存も確認した。
 標準証拠out/validation-n02-order-final-20260908/validation.json PASS、
 167 tests中165合格・2 skip。P1の円筒/成形セルmode全量とhashは直前と一致。
 GUIの次数選択/保持、総合Bessel/ピーク/DOF証拠は未完。N02全体は未受入。
+
+### GUIの次数選択 — 2026-09-08
+
+GUIにP1/P2選択を追加。P2はv3/model付きsolver.element_orderとして収集し、
+Project読込時も保持する。既定P1は次数を省略する。
+実ChromeでP2選択→FEM→保存高次空間→場表示、Projectのcollect/apply往復を検証。
+out/gui-n02-order-browser-final-20260908/report.jsonの4操作がPASS、外部要求0。
+標準out/validation-n02-gui-order-20260908/validation.jsonもPASS（167件、2 skip）。
+検証サーバーは停止済み。総合Bessel/ピーク/DOF比較とN02文書の最終整合は残る。

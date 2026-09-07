@@ -202,6 +202,7 @@ try {
   await fill("#radius", 65);
   await fill("#length", 95);
   await fill("#modes", 2);
+  if (args["--quadratic"] === "yes") await ev('document.querySelector("#element-order").value="2"; document.querySelector("#element-order").dispatchEvent(new Event("change", {bubbles:true}))');
   if (args["--acceleration"] === "yes") {
     await ev('document.querySelector("#active-length").closest("details").open=true');
     for (const [selector, value] of [["#active-length", 71], ["#voltage-start", 13],
@@ -240,6 +241,13 @@ try {
   });
   await fill("#radius", 65);
   await click("#preview");
+  if (args["--quadratic"] === "yes") {
+    const order = await ev("currentResult.result.field_space?.element_order");
+    if (order !== 2) throw Error("GUI solve lost P2 element order");
+    const roundtrip = await ev('(() => { const p = collect(); applyProject(p); return collect().case.solver.element_order; })()');
+    if (roundtrip !== 2) throw Error("GUI Project roundtrip lost P2 element order");
+    report.checks.push({ operation: "select P2 and solve with saved quadratic space", passed: true });
+  }
   if (args["--acceleration"] === "yes") {
     const actual = await ev("currentResult.result.modes[0]");
     if (actual.active_length_m !== .071 || actual.voltage_interval_start_m !== .013 ||

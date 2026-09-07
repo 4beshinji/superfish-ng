@@ -205,6 +205,7 @@ function collect() {
     reflect_full: $("reflect").checked,
     display_length_unit: "mm",
   };
+  if (number("element-order") === 2) p.case.solver.element_order = 2;
   if (assemblyActive) p.sections = structuredClone(sections);
   if (explicitModel !== null) {
     p.case.schema_version = 3;
@@ -218,7 +219,7 @@ function collect() {
   if (hasStart !== hasEnd) throw Error("電圧区間は開始と終了を両方指定してください");
   if (hasStart) p.case.rf.voltage_interval_m = [lengthInput("voltage-start", accelerationOriginal.voltage_interval_m?.[0]),
     lengthInput("voltage-end", accelerationOriginal.voltage_interval_m?.[1])];
-  if (Object.keys(p.case.rf).length > 3 && explicitModel === null) {
+  if ((Object.keys(p.case.rf).length > 3 || p.case.solver.element_order === 2) && explicitModel === null) {
     p.case.schema_version = 3;
     p.case.model = { physics: "rf_eigenmode", coordinates: "axisymmetric", polarization: "tm", azimuthal_index: 0,
       materials: [{ id: "vacuum", type: "vacuum" }], regions: [{ id: "cavity", material: "vacuum", domain: "interior" }] };
@@ -259,6 +260,7 @@ function applyProject(p) {
     nr: c.mesh.nr,
     nz: c.mesh.nz,
     modes: c.solver.modes,
+    "element-order": c.solver.element_order ?? 1,
     beta: c.rf.beta,
     conductivity: c.rf.conductivity_s_per_m,
     energy: c.rf.normalization_j,

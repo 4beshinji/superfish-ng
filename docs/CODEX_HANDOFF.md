@@ -1,5 +1,12 @@
 # ローカルCodexへの引継ぎ
 
+## N02のGUI次数選択 — 2026-09-08
+
+P1/P2選択、v3/model生成、Project読込往復を接続。実Chromeの4操作と
+標準validate PASS。証拠はgui-n02-order-browser-final-20260908/report.json。
+今回のGUIサーバー停止済み。次は能力表・現在仕様の記述を更新し、
+Bessel全場/ピーク/誤差対DOF/Job再実行を総合検証してN02全体を受入する。
+
 ## N02のCase/CLI次数 — 2026-09-08
 
 v3 solver.element_orderで1/2をstrict受理。solveが次数を選択し、Project・保存・
