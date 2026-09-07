@@ -74,6 +74,8 @@ class Case:
     voltage_interval_m: tuple[float, float] | None = None
     phase_origin_m: float | None = None
     element_order: int = 1
+    geometry_order: int = 1
+    quadrature_order: int = 8
     contour: object | None = None
     contour_mesh: object | None = None
     curved_contour: object | None = None
@@ -98,6 +100,14 @@ class Case:
             self.contour_mesh.__post_init__()
         if type(self.element_order) is not int or self.element_order not in (1, 2):
             raise ValueError("element_order must be integer 1 or 2")
+        if type(self.geometry_order) is not int or self.geometry_order not in (1,2):
+            raise ValueError('geometry_order must be integer 1 or 2')
+        if type(self.quadrature_order) is not int or self.quadrature_order<2:
+            raise ValueError('quadrature_order must be integer >= 2')
+        if self.geometry_order==2 and (self.curved_contour is None or self.element_order!=2):
+            raise ValueError('geometry_order=2 requires curved_contour and element_order=2')
+        if self.geometry_order==1 and self.quadrature_order!=8:
+            raise ValueError('quadrature_order requires geometry_order=2')
         if self.model is not None:
             from .model import Model
             if not isinstance(self.model, Model):
@@ -282,7 +292,7 @@ class Case:
             geometry_options = {'arcs': tuple((a['end_index'], a['radius_m'], a['direction']) for a in g['arcs']),
                                 'arc_chord_tolerance_m': g['chord_tolerance_m']}
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
-        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m", "contour_mesh"], [], "mesh")
+        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m", "contour_mesh", "geometry_order"], [], "mesh")
         if 'contour_mesh' in mesh:
             from .mesh_controls import ContourMeshControls
             if data['schema_version'] != 3:
@@ -295,7 +305,11 @@ class Case:
                 positive(mesh[k], k)
         if 'triangulation' in mesh and data['schema_version'] < 2:
             raise ValueError('explicit triangulation requires schema_version 2')
-        keys(solver, ["modes", "element_order"], [], "solver")
+        if "geometry_order" in mesh and data["schema_version"]!=3:
+            raise ValueError('mesh.geometry_order requires schema_version 3')
+        keys(solver, ["modes", "element_order", "quadrature_order"], [], "solver")
+        if "quadrature_order" in solver and (data["schema_version"]!=3 or mesh.get("geometry_order",1)!=2):
+            raise ValueError('solver.quadrature_order requires v3 geometry_order=2')
         if "element_order" in solver and data["schema_version"] != 3:
             raise ValueError("solver.element_order requires schema_version 3")
         additions = ['active_length_m', 'voltage_interval_m', 'phase_origin_m']
@@ -337,6 +351,9 @@ class Case:
             if getattr(self, key) is not None:
                 data['schema_version'] = 2
                 data['mesh'][key] = getattr(self, key)
+        if self.geometry_order==2:
+            data["mesh"]["geometry_order"]=2
+            data["solver"]["quadrature_order"]=self.quadrature_order
         if self.element_order != 1:
             data["solver"]["element_order"] = self.element_order
         if self.model is not None:

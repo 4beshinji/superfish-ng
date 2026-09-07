@@ -29,6 +29,10 @@ class FieldSampler:
 
     @classmethod
     def from_solution(cls, solution):
+        from .curved_solution import CurvedSolution
+        if isinstance(solution,CurvedSolution):
+            from .curved_sampling import CurvedFieldSampler
+            return CurvedFieldSampler(solution)
         order = getattr(solution, 'element_order', 1)
         space = getattr(solution, 'space', None)
         if order not in (1, 2) or (order == 2) != (space is not None):

@@ -40,6 +40,16 @@ def write_vtk(path, solution, mode):
 
 def save_run(case, solution, directory):
     """Publish readiness after writing all files; never replace an existing path."""
+    from .curved_solution import CurvedSolution
+    if isinstance(solution, CurvedSolution):
+        from dataclasses import replace
+        expected_case = (case if case.geometry_order == 2 else
+                         replace(case, geometry_order=2, quadrature_order=solution.quadrature_order))
+        if expected_case != solution.case:
+            raise ValueError('case and curved solution disagree')
+        case = solution.case
+    elif case.geometry_order == 2:
+        raise ValueError('geometry_order=2 requires a curved solution')
     if getattr(solution, 'element_order', 1) not in (1, 2):
         raise ValueError('unsupported field element order')
     if solution.element_order != case.element_order:
@@ -66,6 +76,10 @@ def save_run(case, solution, directory):
 
 
 def _write_run(case, solution, directory):
+    from .curved_solution import CurvedSolution
+    if isinstance(solution, CurvedSolution):
+        from .curved_saved import write_curved_run
+        return write_curved_run(case, solution, directory)
     canonical = json.dumps(case.to_dict(), sort_keys=True, separators=(",", ":"), allow_nan=False)
     result = {"schema_version": 1, "save_protocol_version": 1, "software_version": __version__,
               "case_sha256": hashlib.sha256(canonical.encode()).hexdigest(), "case": case.to_dict(),

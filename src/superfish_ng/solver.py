@@ -27,6 +27,9 @@ class Solution:
 
 
 def solve(case, *, mesh_data=None):
+    if case.geometry_order==2:
+        from .curved_solution import solve_curved
+        return solve_curved(case,mesh_data=mesh_data)
     return _solve(case, mesh_data=mesh_data, element_order=case.element_order)
 
 

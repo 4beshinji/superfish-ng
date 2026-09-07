@@ -8,6 +8,8 @@ let resultRequest = 0,
   geometryOriginal = null,
   geometryDirty = true,
   explicitModel = null,
+  geometryOrderOriginal = 1,
+  quadratureOrderOriginal = 8,
   accelerationOriginal = {},
   selectedSection = null;
 let sections = [],
@@ -242,6 +244,10 @@ function collect() {
     display_length_unit: "mm",
   };
   if (number("element-order") === 2) p.case.solver.element_order = 2;
+  if (geometryOrderOriginal === 2) {
+    p.case.mesh.geometry_order = 2;
+    p.case.solver.quadrature_order = quadratureOrderOriginal;
+  }
   if (isContour(p.case.geometry.type)) delete p.case.boundaries;
   if (assemblyActive) p.sections = structuredClone(sections);
   if (explicitModel !== null) {
@@ -292,6 +298,8 @@ function setGeometry(g) {
 }
 function applyProject(p) {
   const c = p.case;
+  geometryOrderOriginal = c.mesh.geometry_order ?? 1;
+  quadratureOrderOriginal = c.solver.quadrature_order ?? 8;
   contourMeshOriginal = c.mesh.contour_mesh ? structuredClone(c.mesh.contour_mesh) : null;
   $("contour-edge").value = contourMeshOriginal ? contourMeshOriginal.max_edge_m * 1000 : "";
   $("contour-angle").value = contourMeshOriginal?.min_angle_deg ?? 10;

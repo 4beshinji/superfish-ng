@@ -11,6 +11,17 @@ def display_fields(solution, mode=0):
     are sampled at their centres; these samples are not a new FEM solution.
     """
     order = getattr(solution, 'element_order', 1)
+    from .curved_solution import CurvedSolution
+    if isinstance(solution, CurvedSolution):
+        geometry = solution.space.geometry
+        split = np.array([[0, 3, 5], [3, 1, 4], [5, 4, 2], [3, 4, 5]])
+        reference_nodes = np.array([[0, 0], [1, 0], [0, 1], [.5, 0], [.5, .5], [0, .5]])
+        centres = reference_nodes[split].mean(axis=1)
+        sampled = [solution.fields_in_cell(i, centres, mode) for i in range(len(geometry.cell_nodes))]
+        components = tuple(np.concatenate([field[key] for field in sampled]) for key in
+                           ('Er_quadrature_V_per_m', 'Ez_quadrature_V_per_m', 'Hphi_A_per_m'))
+        points = geometry.points_rz_m
+        return points, geometry.cell_nodes[:, split].reshape(-1, 3), points[:, 0]*solution.u[:, mode], components
     if order == 1:
         from .rf import cell_fields
         mesh = solution.mesh

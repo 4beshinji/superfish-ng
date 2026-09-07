@@ -17,6 +17,8 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     if out.exists():
         raise ValueError(f'output already exists: {out}')
     solution = read_solution(run, allow_quadratic=True)
+    if solution.case.geometry_order == 2:
+        raise ValueError('curved geometry plots are pending; use saved VTK display samples or CurvedFieldSampler')
     results = solution.results
     if isinstance(mode, bool) or not isinstance(mode, int) or not 1 <= mode <= len(results['modes']):
         raise ValueError('mode must be a valid one-based mode number')

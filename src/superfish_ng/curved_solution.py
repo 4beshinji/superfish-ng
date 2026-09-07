@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Explicit experimental curved-P2 solve and mapped-cell field evaluation."""
-from dataclasses import dataclass
+"""Curved-P2 solve and mapped-cell field evaluation."""
+from dataclasses import dataclass,replace
 import numpy as np
 from scipy.sparse import diags
 from scipy.sparse.linalg import eigsh,ArpackNoConvergence
@@ -8,7 +8,7 @@ from .constants import C0,MU0,EPS0,TAU
 from .curved_space import curved_space
 from .curved_fem import assemble_curved
 from .mesh import make_mesh
-from .mesh_input import mesh_from_dict
+from .mesh_input import mesh_from_dict,mesh_to_dict
 
 
 @dataclass
@@ -23,6 +23,11 @@ class CurvedSolution:
     residuals: np.ndarray
     orthogonality_error: float
     quadrature_order: int
+    source_mesh_data: object
+
+    @property
+    def element_order(self):
+        return 2
 
     def fields_in_cell(self,cell,reference_points,mode=0):
         """Evaluate the physical fields at supplied reference coordinates."""
@@ -43,10 +48,12 @@ class CurvedSolution:
                     Ez_quadrature_V_per_m=(2*value+radius*gradient[:,0])/(omega*EPS0))
 
 
-def solve_curved(case,*,quadrature_order=8,mesh_data=None):
-    """Solve on a validated curved space; ordinary Case solve/save remain separate."""
+def solve_curved(case,*,quadrature_order=None,mesh_data=None):
+    """Solve on a validated curved space, promoting an explicit experimental call."""
     if case.element_order!=2:
         raise ValueError('experimental curved solve requires element_order=2')
+    quadrature_order=case.quadrature_order if quadrature_order is None else quadrature_order
+    case=replace(case,geometry_order=2,quadrature_order=quadrature_order)
     mesh = make_mesh(case) if mesh_data is None else mesh_from_dict(case,mesh_data)
     space = curved_space(case,mesh)
     k,m = assemble_curved(space,quadrature_order=quadrature_order)
@@ -81,4 +88,4 @@ def solve_curved(case,*,quadrature_order=8,mesh_data=None):
         raise RuntimeError('curved eigenpair residual exceeds 1e-7')
     u *= np.sqrt(case.normalization_j/(MU0*np.pi))
     return CurvedSolution(case,space,k,m,values,C0*np.sqrt(values)/TAU,u,
-                          np.asarray(residuals),orthogonality,quadrature_order)
+                          np.asarray(residuals),orthogonality,quadrature_order,mesh_to_dict(mesh))

@@ -4,6 +4,11 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-08 G03途中受入: [通常曲線Case・保存往復](CURVED_ELEMENTS.md)を接続。
+曲線配列の再構成照合、保存係数の残差/正規化/RF再確認、保存後の独立球形比較PASS。
+259 tests中257合格・2 skip、標準validate PASS。G03全体と他の未完親課題は継続。
+
+
 2026-09-07実行開始: [C00受入台帳](COMPATIBILITY_BASELINE.md)に全32項目の受入軸、
 4ツールの表示版、限定TM入力辞書、参照hash、合成受入ケースと未確認理由を記録した。
 C00.S/Iは調査継続中、C00.Vは未完了。対象版の全入力を網羅したとは扱わない。

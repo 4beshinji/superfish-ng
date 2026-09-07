@@ -33,6 +33,11 @@ def read_solution(directory, *, allow_quadratic=True):
     )
     if hashlib.sha256(canonical.encode()).hexdigest() != results["case_sha256"]:
         raise ValueError("saved case hash differs")
+    if case.geometry_order == 2:
+        if not allow_quadratic:
+            raise ValueError('curved P2 fields require a high-order reader')
+        from .curved_saved import read_curved_run
+        return read_curved_run(directory, case, results)
     declaration = results.get('field_space')
     order = 1
     if declaration is not None:

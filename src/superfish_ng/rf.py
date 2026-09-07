@@ -64,6 +64,12 @@ def accelerating_voltage(case, z, field, wave_number):
 
 
 def quantities(case, solution, mode=0):
+    from .curved_solution import CurvedSolution
+    if isinstance(solution,CurvedSolution):
+        from .curved_rf import quantities_curved
+        if case!=solution.case:
+            raise ValueError("curved RF case differs from solution case")
+        return quantities_curved(solution,mode)
     order = getattr(solution, 'element_order', 1)
     if order not in (1, 2):
         raise ValueError('unsupported element order for RF integrals')

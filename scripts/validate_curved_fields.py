@@ -5,11 +5,12 @@ import json
 import math
 from pathlib import Path
 import numpy as np
-from superfish_ng import Case
+from superfish_ng import Case, solve
+from superfish_ng.io import save_run
+from superfish_ng.saved import read_solution
 from superfish_ng.conics import LineSegment,EllipseArc
 from superfish_ng.curved_contour import CurvedContour
 from superfish_ng.mesh_controls import ContourMeshControls
-from superfish_ng.curved_solution import solve_curved
 from superfish_ng.analytic_sphere import SphereTM
 from superfish_ng.curved_rf import quantities_curved
 from superfish_ng.curved_sampling import CurvedFieldSampler
@@ -26,8 +27,11 @@ def main():
     contour=CurvedContour((LineSegment((0,0),(2*radius,0)),
                           EllipseArc((radius,0),(radius,radius),0,math.pi)),('axis','pec'),1e-14)
     case=Case((),name='synthetic_curved_sphere',curved_contour=contour,curve_chord_tolerance_m=.0008,
-              contour_mesh=ContourMeshControls(.02),element_order=2,modes=1)
-    solution=solve_curved(case,quadrature_order=8)
+              contour_mesh=ContourMeshControls(.02),element_order=2,geometry_order=2,modes=1)
+    case=Case.from_dict(case.to_dict())
+    solution=solve(case)
+    save_run(case,solution,out/'run')
+    solution=read_solution(out/'run')
     reference=SphereTM(radius)
     rule=list(triangle_quadrature(order=8))
     positions=[b[1:] for b,w in rule]
@@ -95,7 +99,8 @@ def main():
                 wall_quadrature_relative_change=wall_change,energy_j=energies,frequency_hz=float(solution.frequencies_hz[0]),
                 residual=float(solution.residuals[0]),gates=gates,
                 status='PASS' if all(gates.values()) else 'FAIL',
-                pending='surface peaks, native input/save/reload')
+                storage='native Case solve, completed save, validated reload; comparisons use reloaded fields',
+                pending='surface peaks, curved reflection, Study/GUI acceptance')
     (out/'comparison.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     print(json.dumps(report,indent=2),flush=True)
     return 0 if report['status']=='PASS' else 1

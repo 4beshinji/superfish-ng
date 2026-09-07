@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## G03通常曲線Caseと保存往復 — 2026-09-08
+
+v3 mesh.geometry_order=2 / solver.element_order=2 / quadrature_order既定8を追加。
+通常solve・RF・FieldSamplerへ接続。curved_saved.pyで元メッシュ/全曲線配列保存と
+空間再構成・幾何照合・K/M再組立て・正規化/残差/RF照合。固有値再計算なし。
+VTKは4直線表示三角形、計算用曲線幾何はNPZ。保存完了/上書き禁止を継承。
+GUIフォーム次数保持のみ追加、実ブラウザー未検証。plot/鏡映は明示的に未対応拒否。
+標準259件中257合格・2 skip、validation-g03-native-storage-regression-20260908 PASS。
+validation-g03-native-storage-20260908/comparison.jsonは保存後の球形全ゲートPASS。
+次は曲線解の描画/保存プローブ/Study/GUIと表面ピーク・鏡映。G03/全目標継続。
+
 ## G03曲線物理座標プローブ — 2026-09-08
 
 curved_sampling.QuadraticLocator/CurvedFieldSamplerで物理座標から逆写像。
