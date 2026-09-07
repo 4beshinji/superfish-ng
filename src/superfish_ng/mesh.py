@@ -17,7 +17,11 @@ class Mesh:
 
 def make_mesh(case: Case) -> Mesh:
     if case.contour is not None:
-        raise ValueError("general contour mesh generation requires G02; profile mesher cannot process reentrant boundaries")
+        if case.contour_mesh is None:
+            raise ValueError('G02 contour auto mesh requires mesh.contour_mesh.max_edge_m; '
+                             'specify controls or supply a validated external tagged mesh')
+        from .contour_mesh import quality_contour_mesh
+        return quality_contour_mesh(case,**case.contour_mesh.to_dict())
     mesh = make_base_mesh(case)
     if case.boundary_max_edge_m is not None or case.corner_max_edge_m is not None:
         mesh = refine_physical_edges(case, mesh)

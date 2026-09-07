@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G02の自動solve/CLIとGUI欄 — 2026-09-08
+
+make_meshをCase.contour_meshへ接続、未指定時は明示拒否を維持。自動/明示mesh一致、
+保存Case再計算係数一致を検証。実CLIの合成folded例も全RF/hash/係数完全一致。
+GUIに4設定欄とSI保持を実装し、contourでnr/nz/triangulationを無効化。
+標準191件中189合格・2 skip、validation-g02-auto-20260908 PASS、JS構文PASS。
+次は実Chromeでcontour読込→設定編集→solve→出力/再読込を検証し、G02全要件を照合。
+examples/contour_folded.jsonは粗い操作例。全互換目標とG02は継続。
+
 ## G02の方式判断とCase制御契約 — 2026-09-08
 
 ADR-017で測定に基づき自前品質判定方式を選択。ContourMeshControlsとv3

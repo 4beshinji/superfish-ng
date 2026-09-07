@@ -49,6 +49,10 @@ Case/タグ/外部mesh検証/鏡映/保存/プレビューを実装し、独立�
 
 ## 作業単位と完了条件
 
+2026-09-08 G02継続: 自動solve/CLI保存再計算を接続・検証、GUIの4設定欄を追加。
+191件中189合格・2 skip、validateとJS構文PASS。実CLIは係数/全RF/hash完全一致。
+次は実ブラウザーと全受入照合。G02全体は未受入。
+
 2026-09-08 G02継続: ADR-017で自前品質判定方式を選び、v3 mesh.contour_meshの
 型・strict解析・保存往復を追加。191件中189合格・2 skip、validate PASS。
 自動solve/CLI/GUI接続と最終受入は残る。

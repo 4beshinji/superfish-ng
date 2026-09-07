@@ -183,3 +183,18 @@ Case往復と生成メッシュを使うP2保存/再読込で4設定の保持を
 この段階ではmake_mesh自動経路・GUI編集欄への接続は未実装で、一般輪郭の
 自動solveはまだ明示拒否する。設定が存在するだけで公開済みとは扱わない。
 標準191件中189合格・2 skip、`out/validation-g02-controls-20260908/validation.json` PASS。
+
+## 自動solve・CLI・GUI接続 — 2026-09-08
+
+make_meshはcontour_meshがある場合だけ品質判定付き生成へ進む。未指定なら必要な設定名と
+外部メッシュ経路を案内する。CLIの既存 `--mesh` は生成を置換する従来の明示指定のまま。
+Case設定だけの自動solveと明示生成メッシュのsolveが頂点・接続・周波数で一致し、
+保存Caseの再計算で係数まで一致することをテストした。
+実CLIは `examples/contour_folded.json` → `out/cli-g02-auto-20260908`、その保存Caseから
+`out/cli-g02-auto-reload-20260908` へ再実行し、係数・全RF・Case hashが完全一致。
+例は粗い操作用の合成形状であり、独立比較の収束済みメッシュとは別。
+
+GUIに最大辺長mm・角度・要素数・反復数の欄を追加し、読込設定を復元/収集する。
+未編集のSI最大辺長を保持し、一般輪郭で使わないnr/nz/分割方式は無効化する。
+JS構文と標準191件中189合格・2 skipはPASS（validation-g02-auto-20260908）。
+GUIの実ブラウザーによる編集・solve・保存往復は次の検証段階。G02全体は未受入。

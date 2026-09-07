@@ -135,11 +135,14 @@ function geometryChanged() {
   assemblyActive = false;
   markDirty();
 }
+let contourMeshOriginal = null;
 function showGeometry() {
   const kind = $("geometry-type").value;
   $("cylinder").hidden = kind !== "pillbox";
   $("profile-editor").hidden = kind === "pillbox" || kind === "contour";
   $("contour-note").hidden = kind !== "contour";
+  $("contour-mesh-controls").hidden = kind !== "contour";
+  for (const id of ["nr", "nz", "triangulation"]) $(id).disabled = kind === "contour";
   $("z-min").disabled = $("z-max").disabled = kind === "contour";
   if (kind !== "contour") for (const id of ["z-min", "z-max"]) {
     if ($(id).value === "mixed") $(id).value = "pec";
@@ -191,6 +194,16 @@ function collect() {
     nz: number("nz"),
     triangulation: $("triangulation").value,
   };
+  if ($("geometry-type").value === "contour" && $("contour-edge").value !== "") {
+    const original = contourMeshOriginal?.max_edge_m;
+    mesh.contour_mesh = {
+      max_edge_m: original !== undefined && $("contour-edge").value === String(original * 1000)
+        ? original : number("contour-edge") / 1000,
+      min_angle_deg: number("contour-angle"),
+      max_triangles: number("contour-triangles"),
+      max_rounds: number("contour-rounds"),
+    };
+  }
   for (const [id, key] of [
     ["boundary-size", "boundary_max_edge_m"],
     ["corner-size", "corner_max_edge_m"],
@@ -261,6 +274,11 @@ function setGeometry(g) {
 }
 function applyProject(p) {
   const c = p.case;
+  contourMeshOriginal = c.mesh.contour_mesh ? structuredClone(c.mesh.contour_mesh) : null;
+  $("contour-edge").value = contourMeshOriginal ? contourMeshOriginal.max_edge_m * 1000 : "";
+  $("contour-angle").value = contourMeshOriginal?.min_angle_deg ?? 10;
+  $("contour-triangles").value = contourMeshOriginal?.max_triangles ?? 250000;
+  $("contour-rounds").value = contourMeshOriginal?.max_rounds ?? 12;
   explicitModel = c.model ? structuredClone(c.model) : null;
   accelerationOriginal = structuredClone(c.rf);
   for (const [id, value] of [["active-length", c.rf.active_length_m], ["phase-origin", c.rf.phase_origin_m],

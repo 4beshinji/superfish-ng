@@ -25,11 +25,18 @@ class ContourMeshControlTests(unittest.TestCase):
         controls = case.contour_mesh.to_dict()
         mesh = quality_contour_mesh(case,**controls)
         sol = solve(case,mesh_data=mesh_to_dict(mesh))
+        automatic = solve(case)
+        import numpy as np
+        np.testing.assert_array_equal(automatic.mesh.points,sol.mesh.points)
+        np.testing.assert_array_equal(automatic.mesh.triangles,sol.mesh.triangles)
+        np.testing.assert_array_equal(automatic.frequencies_hz,sol.frequencies_hz)
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)/'run'
             save_run(case,sol,out)
             self.assertEqual(Case.load(out/'case.json').contour_mesh,case.contour_mesh)
             self.assertEqual(read_solution(out).case.contour_mesh,case.contour_mesh)
+            repeated = solve(Case.load(out/'case.json'))
+            np.testing.assert_array_equal(repeated.u,automatic.u)
         self.assertEqual(data,case.to_dict())
 
     def test_strict_values_geometry_and_versions(self):

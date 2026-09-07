@@ -1,0 +1,89 @@
+{
+  "schema_version": 3,
+  "name": "synthetic_folded_contour",
+  "geometry": {
+    "type": "contour",
+    "vertices_zr_m": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.09,
+        0.0
+      ],
+      [
+        0.09,
+        0.06
+      ],
+      [
+        0.03,
+        0.06
+      ],
+      [
+        0.03,
+        0.03
+      ],
+      [
+        0.06,
+        0.03
+      ],
+      [
+        0.06,
+        0.015
+      ],
+      [
+        0.0,
+        0.015
+      ]
+    ],
+    "edge_tags": [
+      "axis",
+      "pec",
+      "pec",
+      "pec",
+      "pec",
+      "pec",
+      "pec",
+      "pec"
+    ]
+  },
+  "mesh": {
+    "nr": 24,
+    "nz": 32,
+    "contour_mesh": {
+      "max_edge_m": 0.012,
+      "min_angle_deg": 10.0,
+      "max_triangles": 250000,
+      "max_rounds": 12
+    }
+  },
+  "solver": {
+    "modes": 1,
+    "element_order": 2
+  },
+  "rf": {
+    "beta": 1.0,
+    "conductivity_s_per_m": 58000000.0,
+    "normalization_j": 1.0
+  },
+  "model": {
+    "physics": "rf_eigenmode",
+    "coordinates": "axisymmetric",
+    "polarization": "tm",
+    "azimuthal_index": 0,
+    "materials": [
+      {
+        "id": "vacuum",
+        "type": "vacuum"
+      }
+    ],
+    "regions": [
+      {
+        "id": "cavity",
+        "material": "vacuum",
+        "domain": "interior"
+      }
+    ]
+  }
+}

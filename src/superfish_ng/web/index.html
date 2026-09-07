@@ -155,6 +155,15 @@
         <label>要素次数<select id="element-order"><option value="1">P1（一次）</option><option value="2">P2（二次）</option></select></label>
         <details open>
           <summary>メッシュと正規化</summary>
+          <div id="contour-mesh-controls" hidden>
+            <p>一般輪郭は最大辺長を指定して自動生成します。品質または資源上限を満たさない場合は停止します。空欄は自動生成を指定しません。</p>
+            <div class="grid">
+              <label>最大辺長 [mm]<input id="contour-edge" type="number" step="any" /></label>
+              <label>目標最小角 [度]<input id="contour-angle" type="number" step="any" value="10" /></label>
+              <label>最大要素数<input id="contour-triangles" type="number" step="1" value="250000" /></label>
+              <label>点追加の反復上限<input id="contour-rounds" type="number" step="1" value="12" /></label>
+            </div>
+          </div>
           <div class="grid">
             <label
               >半径方向分割 nr<input
