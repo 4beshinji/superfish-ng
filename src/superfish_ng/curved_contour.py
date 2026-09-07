@@ -96,6 +96,49 @@ class CurvedContour:
         from .curve_moments import revolution_volume_contribution
         return math.fsum(revolution_volume_contribution(c) for c in self.curves)
 
+    def reflected(self):
+        """Reflect one entire flat symmetry end, retaining analytic primitives."""
+        symmetry = [i for i,tag in enumerate(self.edge_tags) if tag.endswith('_symmetry')]
+        if not symmetry:
+            raise ValueError('curved reflection requires one symmetry end')
+        planes = {self.curves[i].start_zr_m[0] for i in symmetry}
+        tags = {self.edge_tags[i] for i in symmetry}
+        if len(planes)!=1 or len(tags)!=1:
+            raise ValueError('curved reflection requires one consistent symmetry end')
+        plane = next(iter(planes))
+        for i,curve in enumerate(self.curves):
+            if isinstance(curve,LineSegment) and curve.start_zr_m[0]==curve.end_zr_m[0]==plane and i not in symmetry:
+                raise ValueError('curved reflection plane has mixed wall and symmetry tags')
+        n = len(self.curves)
+        starts = [i for i in range(n) if i not in symmetry and (i-1)%n in symmetry]
+        if len(starts)!=1:
+            raise ValueError('curved reflection requires a connected seam')
+        remaining = []
+        index = starts[0]
+        while index not in symmetry:
+            remaining.append(index)
+            index = (index+1)%n
+        if len(remaining)+len(symmetry)!=n:
+            raise ValueError('curved reflection has disconnected boundary pieces')
+        length = max(max(c.start_zr_m[0],c.end_zr_m[0]) for c,t in zip(self.curves,self.edge_tags) if t=='axis')
+        shift = length if plane==0 else 0.
+        def transformed(curve,mirror):
+            def point(p):return (float(2*plane-p[0]+shift if mirror else p[0]+shift),float(p[1]))
+            if isinstance(curve,LineSegment):
+                a,b = (curve.end_zr_m,curve.start_zr_m) if mirror else (curve.start_zr_m,curve.end_zr_m)
+                return LineSegment(point(a),point(b))
+            changes = dict(center_zr_m=point(curve.center_zr_m))
+            if mirror:
+                changes['rotation_rad'] = -curve.rotation_rad
+                if isinstance(curve,EllipseArc):
+                    changes['start_rad'] = math.pi-(curve.start_rad+curve.sweep_rad)
+                else:
+                    changes.update(branch=-curve.branch,start_parameter=curve.end_parameter,end_parameter=curve.start_parameter)
+            return replace(curve,**changes)
+        curves = tuple(transformed(self.curves[i],False) for i in remaining)+tuple(transformed(self.curves[i],True) for i in reversed(remaining))
+        tags = tuple(self.edge_tags[i] for i in remaining)+tuple(self.edge_tags[i] for i in reversed(remaining))
+        return CurvedContour(curves,tags,self.join_tolerance_m,self.minimum_gap_m)
+
     def to_dict(self):
         kinds = {LineSegment:'line',EllipseArc:'ellipse_arc',HyperbolaArc:'hyperbola_arc'}
         curves = []

@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G03の曲線鏡映/FEM — 2026-09-08
+
+CurvedContour.reflectedで元曲線を鏡映/逆順接続し、全閉輪郭を再検証。
+reflect_solutionへ接続して全Caseの弦Contourを再導出。楕円の両端×電気/磁気4条件で
+解析面積/体積/U2倍、全メッシュ別solveのf/RQ/G一致、保存再読込を検証。
+標準218件中216合格・2 skip、validation-g03-curve-reflection-20260908 PASS。
+次はGUI/Studyへcurved_contourと幾何/FEM細分を接続、双曲線等の追加総合受入も残る。
+曲線FEM/接線構築/旧入力対応と全互換目標は継続。
+
 ## G03の解析回転体体積 — 2026-09-08
 
 curve_moments.pyで-π∮r²dzを線分/楕円/双曲線の解析指数積分として実装。

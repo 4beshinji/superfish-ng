@@ -14,8 +14,6 @@ def reflect_solution(case, solution):
     are unchanged, so energy and loss double. The original mode indices are a
     subset of the full spectrum, not its global frequency ranks.
     """
-    if case.curved_contour is not None:
-        raise ValueError('analytic curved contour reflection is not implemented; provide a validated full curved contour')
     order = getattr(solution, 'element_order', 1)
     if order not in (1, 2):
         raise ValueError('unsupported element order for reflection')
@@ -83,8 +81,11 @@ def reflect_solution(case, solution):
     # Reflection reverses orientation, as does traversing the mirrored wall in
     # increasing z; together they preserve each minor arc's cw/ccw direction.
     contour = case.contour.reflected() if case.contour is not None else None
+    curved = case.curved_contour.reflected() if case.curved_contour is not None else None
+    if curved is not None:
+        contour = None  # Derive the full polygon from retained full analytic curves.
     full = replace(case, profile=profile, arcs=arcs, contour=contour, z_min='pec', z_max='pec', nz=2*case.nz,
-                   normalization_j=2*case.normalization_j, name=case.name+' [reflected full cavity]', **acceleration)
+                   curved_contour=curved,normalization_j=2*case.normalization_j, name=case.name+' [reflected full cavity]', **acceleration)
     result = Solution(reflected, k, m, solution.eigenvalues.copy(), solution.frequencies_hz.copy(),
                       u, residuals, orthogonality,
                       f'{tag} reflection at {side}; parity-filtered spectrum, indices are NOT full-spectrum ranks',
