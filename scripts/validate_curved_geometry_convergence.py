@@ -40,7 +40,8 @@ def mapped_moments(space):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', required=True, type=Path)
-    parser.add_argument('--factors', type=float, nargs=3, default=[1., .25, .0625])
+    parser.add_argument('--factors', type=float, nargs=3, default=[1., .0625, .015625],
+                        help='three decreasing chord-tolerance factors; use 1 .25 .0625 to reproduce the initial failed series')
     args = parser.parse_args()
     if not all(math.isfinite(v) and v>0 for v in args.factors) or not all(a>b for a,b in zip(args.factors,args.factors[1:])):
         parser.error('--factors must be three finite positive decreasing values')
@@ -62,6 +63,7 @@ def main():
                           '/case/mesh/curved_refinement_levels', [0, 1])
             result = execute_study(study, directory)
             current = directory/'point-002'/'solution'
+            print(name, i, 'revalidating saved fine space', flush=True)
             saved = read_solution(current)
             actual = mapped_moments(saved.space)
             errors = dict(zip(('area', 'volume'), (abs(a/b-1) for a,b in zip(actual,reference))))
@@ -70,6 +72,7 @@ def main():
                                relative_moment_errors=errors, fem_comparisons=result['comparisons'],
                                fem_status=result['numerical_status']))
             if previous is not None:
+                print(name, i, 'comparing adjacent geometry approximations', flush=True)
                 comparisons.append(compare_refinement(previous, current))
             previous = current
             print(name, i, result['numerical_status'], errors, flush=True)
