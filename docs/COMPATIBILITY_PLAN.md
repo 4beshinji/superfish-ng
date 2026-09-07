@@ -4,6 +4,10 @@
 実態は [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)。この文書は計画であり新機能の完成記録ではない。
 旧P番号は [BACKLOG.md](BACKLOG.md) の履歴・親要件として維持する。
 
+2026-09-08 G03途中受入: 曲線境界の片側場/法線/接線と有限サンプル最大を実装。
+保存後の球形表面L2・PEC接線・サンプル最大の独立比較が段数0/1でPASS。
+275件中273合格・2 skip、validate PASS。連続極値/通常RF接続は未完。[詳細](CURVED_ELEMENTS.md)。
+
 2026-09-08 G03途中受入: 曲線GUIの幾何/積分次数・細分段数と固定幾何Studyを接続。
 合成楕円の実ブラウザー7操作PASS（入力・計算・描画・往復・Study）、外部通信0。
 標準271件中269合格・2 skip。表面ピーク・鏡映等は継続。[詳細](CURVED_ELEMENTS.md)。
