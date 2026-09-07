@@ -28,7 +28,8 @@ PillboxのTM010/TM011・長さ掃引・電磁場の図は [演習ガイド](docs
 
 ## ローカルで開始する
 
-本PJのルートは `/home/sin/code/superfish` です。`superfish-ng/` を追加で挟まず、以下の構造で開発します。
+現在の作業checkoutは `/home/sin/code/agent/reserch/superfish-ng` です。
+過去の記録にある `/home/sin/code/superfish` は当時の配置です。既存checkoutを移動せず、以下の構造で開発します。
 
 ```text
 superfish/
@@ -47,7 +48,7 @@ superfish/
 この環境では `.venv` を構築済みです。以下で例題を実行できます。
 
 ```bash
-cd /home/sin/code/superfish
+cd /home/sin/code/agent/reserch/superfish-ng
 source .venv/bin/activate
 superfish-ng solve examples/pillbox.json --out out/pillbox-new
 ```
@@ -84,17 +85,19 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-| 分野 | 0.1.0 の内容 |
+2026-09-08、製品基準 `e68002f`。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+
+| 分野 | 現在の内容 |
 |---|---|
-| 形状 | pillbox、折れ線 `R(z)`、垂直段差、半径を保持した短円弧の直線近似。各断面は軸から壁まで真空 |
-| メッシュ | 形状に沿った2D三角形、一次要素、軸・PEC・電気/磁気対称境界のタグ |
+| 形状 | pillbox、折れ線、段差、短円弧、z折返し単一輪郭、native円/楕円/双曲線弧。軸接続・単一真空領域 |
+| メッシュ | タグ付き三角形、自動生成/JSON読込、P1/P2場。曲線輪郭は二次幾何写像と固定幾何細分に対応 |
 | 物理 | 真空、回転対称、m=0 TM系、PEC外壁、平坦z端の対称条件と鏡映 |
 | 固有値 | 一般化対称固有値問題、SciPy/ARPACKのshift-invert、複数モード |
 | 数値検査 | 固有値残差、質量内積での直交性、電気・磁気エネルギー整合 |
 | RF量 | f、U、表面抵抗、壁損失、Q0、G、通過位相を含むVacc、R/Q、シャントインピーダンス、TTF |
-| 表面電磁場 | Epk/Eacc、Bpk/Eaccの一次要素推定値。角部では収束保証なし |
+| 表面電磁場 | P1/P2片側場、曲線離散場の連続極値の囲い込みと角診断。物理ピークの収束保証とは区別 |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 82テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧・交差分割、バンド同定、表面電場診断。生成HTMLはheadless操作も検証 |
+| 検証 | 標準310件中308合格・2 skip。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 2026-09-07: [NGSolveとの独立照合](docs/INDEPENDENT_COMPARISON.md)を追加し、
@@ -114,7 +117,7 @@ v3のrfとGUIで[加速長・電圧積分区間・位相原点](docs/ACCELERATIN
 ## 重要な制約
 
 - m=0のTEモード、m>0の双極・四重極モード、同軸TEM、静電場、静磁場、非線形材料は未実装。
-- `R(z)>0` が必要です。穴・内導体・z方向に折返す輪郭・任意CAD・RFQを扱えません。円弧はz非減少の短円弧のみです。
+- profile系は `R(z)>0`、arc_profileはz非減少の短円弧に限定します。v3 contour/curved_contourはz折返しを許しますが、軸接続の単一外周に限定し、穴・内導体・任意CAD・RFQは扱いません。
 - 両端は既定で金属板、v2入力で電気/磁気対称面を指定できます。細い首は開放ビームポートではありません。
 - Q0は理想PEC固有場に常伝導表面抵抗を適用する摂動推定です。複素固有周波数、超伝導BCS損失、放射損失は計算しません。
 - 電磁場はピークphasorです。既定で全蓄積エネルギー1 Jに正規化します。運転電力1 Wの指定ではありません。
@@ -174,7 +177,10 @@ python scripts/package.py --out /tmp/superfish-ng-dev.zip
 v3 JSONでは`"solver": {"modes": 3, "element_order": 2}`を指定します。
 v3には明示modelが必要です（[モデル契約](docs/MODEL_CONTRACT.md)）。GUIにも次数選択があります。
 P2の場・RF・保存・表示の仕様と検証は[高次場](docs/HIGH_ORDER_FIELDS.md)を参照してください。
-幾何は直線三角形のままで、曲線要素・適応誤差推定は未対応です。
+直線幾何のP2はN01/N02として受入済みです。v3 curved_contourでは
+`mesh.geometry_order=2` と `solver.element_order=2` による曲線FEMも利用できます。
+場/RF・保存・描画・Study・鏡映・GUIまで接続済みです（[曲線要素](docs/CURVED_ELEMENTS.md)）。
+G03全体は部分対応で、有限弧の接線自動構築と全要件照合が残ります。適応誤差推定は未対応です。
 
 v3の一般輪郭`contour`はz折返しを含む単一外周を表せます。`mesh.contour_mesh`で
 最大辺長・品質・停止上限を明示して自動生成するか、検証済み外部メッシュを渡します。

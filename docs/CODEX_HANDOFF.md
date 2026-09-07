@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## 主要文書の現状同期 — 2026-09-08
+
+製品基準e68002fにREADME・IMPLEMENTATION_STATUS・COMPATIBILITY_MATRIX/PLAN・BACKLOGと
+曲線要素/物理仕様の入口を同期。現在の8親課題の限定受入とG03残件を冒頭に集約した。
+以下の実装履歴は当時の記録として保持する。文書のみの変更で製品状態は変わらない。
+標準310件中308合格・2 skip（85.808秒）を再確認。validate/GUI/Wineの新規実行なし。
+次の実装は下節の有限弧制限・G1接続。全互換目標の新規開始/完了を意味しない。
+
+
 ## G03共通接線の四次式と接点再構成 — 2026-09-08
 
 conic_tangents.supporting_conic_tangentsを追加し、[接線構築仕様](TANGENT_CONSTRUCTION.md)の
