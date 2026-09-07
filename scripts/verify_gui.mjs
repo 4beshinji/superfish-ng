@@ -776,6 +776,30 @@ try {
       passed: true,
     });
   }
+  if (args["--contour-case"]) {
+    const filename = resolve(args["--contour-case"]);
+    const fixture = JSON.parse(await readFile(filename, "utf8"));
+    const { root } = await call("DOM.getDocument", {}, sessionId);
+    const { nodeId } = await call("DOM.querySelector", { nodeId: root.nodeId, selector: "#open" }, sessionId);
+    await call("DOM.setFileInputFiles", { nodeId, files: [filename] }, sessionId);
+    await wait('document.querySelector("#geometry-type").value === "contour" && document.querySelector("#preview-note").textContent.includes("閉じた一般輪郭")');
+    if (!await ev('document.querySelector("#z-min").disabled && document.querySelector("#z-max").disabled')) throw Error("contour end tags must not expose ignored edits");
+    const original = await ev("collect().case.geometry");
+    if (!isDeepStrictEqual(original, fixture.geometry)) throw Error("contour import changed vertices or tags");
+    const count = await ev('document.querySelector("#shape polygon").points.numberOfItems');
+    if (count !== fixture.geometry.vertices_zr_m.length) throw Error("contour preview added phantom vertices");
+    await click("#export");
+    let exported;
+    for (let i=0; i<100; ++i) {
+      try { exported=JSON.parse(await readFile(out+"/downloads/case.json", "utf8")); break; } catch {}
+      await sleep(100);
+    }
+    if (!exported || !isDeepStrictEqual(exported.geometry, original)) throw Error("contour export lost geometry");
+    await call("DOM.setFileInputFiles", { nodeId, files: [out+"/downloads/case.json"] }, sessionId);
+    await wait('document.querySelector("#dirty").textContent === "入力を読込済み"');
+    if (!isDeepStrictEqual(await ev("collect().case.geometry"), original)) throw Error("contour reopen changed geometry");
+    report.checks.push({ operation: "contour file import, closed preview, export and reopen", passed: true, vertices: count });
+  }
   await ev("document.activeElement?.blur()");
   await wait("(window.scrollTo({top:0,behavior:'instant'}), window.scrollY===0)");
   const screenshot = await call("Page.captureScreenshot", {}, sessionId);

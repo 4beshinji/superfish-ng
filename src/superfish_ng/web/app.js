@@ -140,6 +140,7 @@ function showGeometry() {
   $("cylinder").hidden = kind !== "pillbox";
   $("profile-editor").hidden = kind === "pillbox" || kind === "contour";
   $("contour-note").hidden = kind !== "contour";
+  $("z-min").disabled = $("z-max").disabled = kind === "contour";
   $("arc-editor").hidden = kind !== "arc_profile";
 }
 function geometry() {
@@ -275,6 +276,14 @@ function applyProject(p) {
     $(id).value = v;
   $("z-min").value = c.boundaries?.z_min || "pec";
   $("z-max").value = c.boundaries?.z_max || "pec";
+  if (c.geometry.type === "contour") {
+    const points = c.geometry.vertices_zr_m;
+    const length = Math.max(...points.map(p => p[0]));
+    for (const [id, z] of [["z-min", 0], ["z-max", length]]) {
+      const index = points.findIndex((p, i) => p[0] === z && points[(i+1)%points.length][0] === z && c.geometry.edge_tags[i] !== "axis");
+      $(id).value = index < 0 ? "pec" : c.geometry.edge_tags[index];
+    }
+  }
   $("reflect").checked = p.reflect_full;
   $("triangulation").value = c.mesh.triangulation || "diagonal";
   for (const [id, key] of [
