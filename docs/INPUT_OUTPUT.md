@@ -97,6 +97,15 @@ nr/nzが同じでも自由度は増える。収束判定は別途必要で、交
 
 ## コマンド
 
+### 限定した旧AF入力から移行する
+
+`superfish-ng import-af INPUT.af --out out/imported-new --nr 32 --nz 64 --modes 1
+--conductivity-s-per-m 58000000 --normalization-j 1`。
+単一真空・軸接続・全PECの直線/段差/短円弧を受理し、未対応指定は行/列付きで拒否する。
+変換後は `superfish-ng solve out/imported-new/case.json --out out/solved-new`。
+NGの設定を明示し、旧探索やメッシュの差を変換診断へ保存する。
+詳しい変数・文法・制限・受入は [LEGACY_INPUT.md](LEGACY_INPUT.md)。
+
 - `superfish-ng solve CASE --out NEW_DIRECTORY`
 - `superfish-ng solve HALF_CASE --reflect-full --out NEW_DIRECTORY`（一端対称・他端PECのみ。鏡映後の全空洞を保存）
 - `superfish-ng plot RUN --mode 1 --mesh --probe-z-m 0.02 --out NEW_PNG`（plot依存が必要）

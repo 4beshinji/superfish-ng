@@ -1,5 +1,9 @@
 # 実装・検証の現状
 
+2026-09-08追記: [限定AF読込](LEGACY_INPUT.md)を追加。単一真空/全PEC/軸接続TMを
+明示NG設定で変換し、原入力・位置・hash・意味の差を保存する。汎用旧入力互換は未完。
+128テスト中126合格・2 skip、標準validateと保存AF2形状の周波数/RF照合PASS。
+
 2026-09-07追記: C01の[v3モデル契約](MODEL_CONTRACT.md)を実装・受入済み。
 明示physics/座標/単一真空材料・領域、能力表、v1/v2からの移行と旧hash維持、
 Project/Study/GUIへの保持を追加。122テスト中120合格・2 skip、標準validate/GUI操作PASS。
