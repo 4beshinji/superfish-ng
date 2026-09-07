@@ -1,5 +1,12 @@
 # ローカルCodexへの引継ぎ
 
+## G01の一般輪郭プレビュー接続 — 2026-09-08
+
+gui.preview_documentを追加し、閉輪郭/タグ/面積/体積を返す。web/app.jsは
+読込contourを保持し閉多角形として描画。ファイルによる形状編集を画面で説明する。
+API往復・解析モーメントとJS構文は合格。次は実Chromeでcontourファイル読込・
+プレビュー・Project/Case出力・再読込を検証する。局所タグ制限整理も残る。G01未完。
+
 ## G01のCase/FEM鏡映 — 2026-09-08
 
 reflect_solutionでContour.reflectedを全Caseへ渡し、P2外部meshの

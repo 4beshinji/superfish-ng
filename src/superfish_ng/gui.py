@@ -20,6 +20,17 @@ from .project import Project, load_document, parse_json
 ASSETS = Path(__file__).with_name("web")
 
 
+def preview_document(project):
+    """Preserve a closed contour distinctly from an open radius profile."""
+    contour = project.case.contour
+    result = {"project": project.to_dict(), "outline_zr_m":
+              [list(p) for p in (contour.vertices_zr_m if contour is not None else linearize_profile(project.case))]}
+    if contour is not None:
+        result.update(outline_closed=True, outline_edge_tags=list(contour.edge_tags),
+                      area_m2=contour.area_m2, volume_m3=contour.volume_m3)
+    return result
+
+
 def create_server(workspace, port=0):
     from importlib.util import find_spec
 
@@ -324,14 +335,7 @@ def create_server(workspace, port=0):
                                 },
                             )
                         return self.reply(image.read_bytes(), content_type="image/png")
-                return self.reply(
-                    {
-                        "project": project.to_dict(),
-                        "outline_zr_m": [
-                            list(p) for p in linearize_profile(project.case)
-                        ],
-                    }
-                )
+                return self.reply(preview_document(project))
             except (
                 ValueError,
                 KeyError,

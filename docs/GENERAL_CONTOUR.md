@@ -93,3 +93,13 @@ z折返し合成例の両端×電気/磁気対称で、面積/体積・U/損失2
 標準out/validation-g01-reflection-20260908/validation.json PASS、
 176 tests中174合格・2 skip。既存の円筒/成形セルmode全量/hashは直前と一致。
 次はGUIプレビュー・Projectの一般輪郭保持、局所タグ制限の整理。G01未完。
+
+### 一般輪郭プレビューの接続 — 2026-09-08
+
+gui.preview_documentは一般輪郭でoutline_closed/outline_edge_tagsと面積/体積を返す。
+GUIはファイル読込のcontourを元の頂点/タグのまま保持し、閉多角形として描画する。
+長さは最終頂点ではなく全z最大値を使い、軸への架空の閉鎖辺を付け足さない。
+一般輪郭のGUI頂点編集は未対応と画面に表示する。
+プレビューAPIの頂点/タグ/解析モーメント/Project往復とJS構文を検査した。
+実ブラウザでの一般輪郭読込・表示・再出力は次の検証対象で、まだ受入証拠はない。
+標準証拠out/validation-g01-preview-20260908/validation.json。G01全体は未完。

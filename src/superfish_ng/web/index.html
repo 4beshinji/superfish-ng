@@ -41,6 +41,7 @@
             <option value="profile">折れ線 — 頂点を編集</option>
             <option value="stepped_profile">段差 — 同じzの頂点を許可</option>
             <option value="arc_profile">円弧 — 半径と向きを指定</option>
+            <option value="contour">一般輪郭 — ファイル読込</option>
           </select></label
         >
         <div id="cylinder" class="grid">
@@ -60,6 +61,7 @@
               min="0.001"
           /></label>
         </div>
+        <p id="contour-note" hidden>一般輪郭の頂点・辺タグは読込ファイルの値を保持します。形状の変更はファイルで行ってください。</p>
         <div id="profile-editor" hidden>
           <p class="hint">zは左から右、rは軸から壁までの半径です。</p>
           <table id="points">

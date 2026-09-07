@@ -151,3 +151,18 @@ class ContourTests(unittest.TestCase):
             if point==[2.,2.]:point[0]=2.1
         with self.assertRaisesRegex(ValueError,'boundary|segment|area'):
             solve(case,mesh_data=wrong)
+
+    def test_preview_keeps_closed_loop_tags_and_exact_moments(self):
+        from superfish_ng import Case
+        from superfish_ng.project import Project
+        from superfish_ng.gui import preview_document
+        contour=Contour(((0,0),(3,0),(3,2),(1,2),(1,1),(2,1),(2,.5),(0,.5)),('axis',)+('pec',)*7)
+        case=Case((),contour=contour)
+        project=Project.from_dict({'project_version':1,'case':case.to_dict()})
+        result=preview_document(project)
+        self.assertTrue(result['outline_closed'])
+        self.assertEqual(result['outline_zr_m'],list(map(list,contour.vertices_zr_m)))
+        self.assertEqual(result['outline_edge_tags'],list(contour.edge_tags))
+        self.assertEqual(result['area_m2'],4.)
+        self.assertAlmostEqual(result['volume_m3'],7.5*math.pi)
+        self.assertEqual(Project.from_dict(result['project']).case,case)

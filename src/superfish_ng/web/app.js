@@ -138,13 +138,18 @@ function geometryChanged() {
 function showGeometry() {
   const kind = $("geometry-type").value;
   $("cylinder").hidden = kind !== "pillbox";
-  $("profile-editor").hidden = kind === "pillbox";
+  $("profile-editor").hidden = kind === "pillbox" || kind === "contour";
+  $("contour-note").hidden = kind !== "contour";
   $("arc-editor").hidden = kind !== "arc_profile";
 }
 function geometry() {
   if (!geometryDirty && geometryOriginal)
     return structuredClone(geometryOriginal);
   const kind = $("geometry-type").value;
+  if (kind === "contour") {
+    if (geometryOriginal?.type !== "contour") throw Error("一般輪郭のファイルを読み込んでください");
+    return structuredClone(geometryOriginal);
+  }
   if (kind === "pillbox")
     return {
       type: kind,
@@ -206,6 +211,7 @@ function collect() {
     display_length_unit: "mm",
   };
   if (number("element-order") === 2) p.case.solver.element_order = 2;
+  if (p.case.geometry.type === "contour") delete p.case.boundaries;
   if (assemblyActive) p.sections = structuredClone(sections);
   if (explicitModel !== null) {
     p.case.schema_version = 3;
@@ -229,6 +235,7 @@ function collect() {
 function setGeometry(g) {
   geometryOriginal = structuredClone(g);
   geometryDirty = false;
+  if (g.type === "contour") { $("geometry-type").value = "contour"; showGeometry(); return; }
   const pts = g.points_zr_m;
   const cylinder =
     g.type === "pillbox" ||
@@ -354,11 +361,11 @@ function renderSections() {
     $("sections").append(div);
   });
 }
-function drawOutline(points) {
+function drawOutline(points, closed = false) {
   const svg = $("shape");
   svg.replaceChildren();
   const ns = "http://www.w3.org/2000/svg";
-  const L = points.at(-1)[0],
+  const L = closed ? Math.max(...points.map(p => p[0])) : points.at(-1)[0],
     R = Math.max(...points.map((p) => p[1])),
     scale = Math.min(700 / L, 210 / R),
     x = (z) => 55 + z * scale,
@@ -371,7 +378,7 @@ function drawOutline(points) {
     return e;
   };
   el("polygon", {
-    points: [[0, 0], ...points, [L, 0]]
+    points: (closed ? points : [[0, 0], ...points, [L, 0]])
       .map(([z, r]) => `${x(z)},${y(r)}`)
       .join(" "),
     fill: "#d7e9f8",
@@ -390,6 +397,10 @@ function drawOutline(points) {
   el("text", { x: 360, y: 263 }, `z →  全長 ${(L * 1000).toPrecision(6)} mm`);
   el("text", { x: 55, y: 18 }, `r ↑  最大半径 ${(R * 1000).toPrecision(6)} mm`);
   $("shape-info").textContent = `${points.length} 輪郭点`;
+  if (closed) {
+    $("preview-note").textContent = "入力形状：閉じた一般輪郭（辺タグは読込ファイルで指定）";
+    return;
+  }
   const boundaryNames = {
     pec: "金属端板",
     electric_symmetry: "電気対称",
@@ -420,7 +431,7 @@ function drawOutline(points) {
 }
 async function preview() {
   const r = await api("normalize", { document: collect() });
-  drawOutline(r.outline_zr_m);
+  drawOutline(r.outline_zr_m, r.outline_closed);
   return r.project;
 }
 bind("preview", preview);
@@ -434,7 +445,7 @@ bind("new", async () => {
     },
   });
   applyProject(r.project);
-  drawOutline(r.outline_zr_m);
+  drawOutline(r.outline_zr_m, r.outline_closed);
 });
 $("open").onchange = async (e) => {
   try {
@@ -443,7 +454,7 @@ $("open").onchange = async (e) => {
       document: await e.target.files[0].text(),
     });
     applyProject(r.project);
-    drawOutline(r.outline_zr_m);
+    drawOutline(r.outline_zr_m, r.outline_closed);
     $("error").hidden = true;
   } catch (err) {
     failure(err);
@@ -498,7 +509,7 @@ bind("assemble", async () => {
     reflect_full: p.reflect_full,
   });
   applyProject(r.project);
-  drawOutline(r.outline_zr_m);
+  drawOutline(r.outline_zr_m, r.outline_closed);
   dirty = true;
   $("dirty").textContent = "組立を展開済み — 未保存";
 });
