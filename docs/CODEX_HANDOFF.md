@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G03の弦Contour変換 — 2026-09-08
+
+CurvedContour.linearize→ChordApproximationを追加。タグ/元曲線対応・端点調整・解析面積差を保持。
+端点調整を誤差予算から差引き、全体分割数上限とContour再検証・向き検査を行う。
+半楕円の面積/独立楕円体体積収束、タグと元曲線不変を検証。
+標準212件中210合格・2 skip、validation-g03-chord-contour-20260908 PASS。
+次はCaseへ元曲線/弦誤差を保持する契約と保存、一般の解析体積。曲線FEM等は未完。
+G03と全互換目標は継続。
+
 ## G03の単一曲線閉輪郭 — 2026-09-08
 
 curved_contour.CurvedContourを追加。軸鎖/タグ/範囲/全辺対/正面積を検査し、

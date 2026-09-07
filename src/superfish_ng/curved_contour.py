@@ -90,3 +90,68 @@ class CurvedContour:
     @property
     def area_m2(self):
         return math.fsum(c.signed_line_area_m2 for c in self.curves)
+
+    def linearize(self,tolerance_m,*,max_segments=20000):
+        """Produce a tagged polygon with explicit, bounded join adjustments.
+
+        Original primitives remain unchanged. Any endpoint displacement is
+        charged to the error budget before choosing the curve's chord size.
+        max_segments limits the entire polygon, not each individual primitive.
+        """
+        from .contour import Contour
+        if type(tolerance_m) not in (int,float) or not math.isfinite(tolerance_m) or tolerance_m<=0:
+            raise ValueError('curve linearization tolerance must be finite and positive')
+        if type(max_segments) is not int or max_segments<3:
+            raise ValueError('max_segments must be an integer >= 3')
+        joins = []
+        for i,current in enumerate(self.curves):
+            previous = self.curves[i-1]
+            start = current.evaluate(0.)['points_zr_m']
+            end = previous.evaluate(1.)['points_zr_m']
+            # Keep exact axis/end-plane coordinates of straight primitives.
+            if isinstance(current,LineSegment):point = start
+            elif isinstance(previous,LineSegment):point = end
+            else:point = start+(end-start)/2
+            joins.append(point)
+        shifts = []
+        for i,curve in enumerate(self.curves):
+            ends = curve.evaluate([0.,1.])['points_zr_m']
+            shifts.append(float(np.max(np.linalg.norm(ends-np.asarray((joins[i],joins[(i+1)%len(joins)])),axis=1))))
+        maximum_shift = max(shifts)
+        if maximum_shift>=tolerance_m:
+            raise ValueError('curve join adjustment consumes chord error budget; use a larger tolerance')
+        chord_tolerance = tolerance_m-maximum_shift
+        vertices,tags,owners = [],[],[]
+        for i,(curve,tag) in enumerate(zip(self.curves,self.edge_tags)):
+            remaining = max_segments-len(vertices)
+            if remaining<1:
+                raise ValueError('curve linearization exceeds total max_segments')
+            points = curve.linearize(chord_tolerance,max_segments=remaining).copy()
+            points[0],points[-1] = joins[i],joins[(i+1)%len(joins)]
+            vertices.extend(tuple(map(float,p)) for p in points[:-1])
+            tags.extend([tag]*(len(points)-1))
+            owners.extend([i]*(len(points)-1))
+        polygon = Contour(tuple(vertices),tuple(tags))  # Recheck chords, gaps, tags and axis.
+        # The validated analytic curve runs CCW. Reject a topology-changing
+        # approximation instead of accepting Contour's orientation repair.
+        p = np.asarray(vertices)
+        q = np.roll(p,-1,axis=0)
+        if np.sum(p[:,0]*q[:,1]-p[:,1]*q[:,0])<=0:
+            raise ValueError('chord polygon reverses orientation; reduce tolerance')
+        offset = vertices.index(polygon.vertices_zr_m[0])
+        owners = owners[offset:]+owners[:offset]
+        return ChordApproximation(polygon,tolerance_m,chord_tolerance,tuple(shifts),tuple(owners),self.area_m2)
+
+
+@dataclass(frozen=True)
+class ChordApproximation:
+    contour: object
+    tolerance_m: float
+    primitive_chord_tolerance_m: float
+    endpoint_adjustments_m: tuple
+    segment_curve_indices: tuple
+    analytic_area_m2: float
+
+    @property
+    def area_difference_m2(self):
+        return self.contour.area_m2-self.analytic_area_m2
