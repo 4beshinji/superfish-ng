@@ -258,3 +258,9 @@ Case hash、配列寸法・有限性・境界、周波数と軸CSVの対応を�
 プローブには場hashと実装hash・位置・モードを含め、別条件の結果を再利用しない。
 GUIは読込直後のSI輪郭を保持し、実際の形状編集時だけmmから再構成する。
 表示単位の往復丸めで組立定義とcanonical Caseの厳密一致を壊さないためである。
+
+## 外部メッシュ入力の追加 — 2026-09-07
+
+CLI `solve --mesh mesh.json` とPython `solve(case, mesh_data=...)` を追加。
+明示SI/rz・0始まり・全境界タグ付きの三角形JSON。Case schemaは変更しない。
+入力検査、生成設定の扱い、保存mesh.jsonとhash、鏡映の仕様は [MESH_INPUT.md](MESH_INPUT.md)。

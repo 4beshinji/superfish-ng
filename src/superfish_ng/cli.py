@@ -18,6 +18,7 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command", required=True)
     run = sub.add_parser("solve", help="solve a JSON case and export RF quantities/fields")
     run.add_argument("case", type=Path)
+    run.add_argument("--mesh", type=Path, help="explicit SI/rz tagged triangle JSON; replaces case mesh generation")
     run.add_argument("--out", required=True, type=Path, help="new output directory; must not exist")
     run.add_argument("--reflect-full", action="store_true", help="reflect a single symmetry end; export the full cavity at twice the input energy")
     check = sub.add_parser("converge", help="TM010 pillbox refinement benchmark, with exit-code gate")
@@ -88,7 +89,11 @@ def main(argv=None):
             if args.out.exists():
                 raise ValueError(f"output already exists: {args.out}; choose a new directory")
             case = Case.load(args.case)
-            solution = solve(case)
+            mesh_data = None
+            if args.mesh is not None:
+                from .project import parse_json
+                mesh_data = parse_json(args.mesh.read_text(encoding='utf-8'))
+            solution = solve(case, mesh_data=mesh_data)
             if args.reflect_full:
                 from .symmetry import reflect_solution
                 case, solution = reflect_solution(case, solution)

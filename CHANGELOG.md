@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Validate two synthetic TM cavities against independently meshed, high-order NGSolve Hphi fields and RF integrals; keep the reference dependency outside the production environment.
+- Accept explicit SI/rz tagged triangle meshes through `solve --mesh` and the Python API, validate topology and Case boundaries, and preserve mesh hashes through saving, reading and reflection. Verify RF invariance under renumbering and convergence on unstructured meshes.
+
 - Complete the four-document seminar milestone: fresh native calculations, 17 direct Wine mode comparisons, 9 numerical jobs, 69 tests and 7 headless page checks pass with unchanged source hashes.
 - Resolve the seven-cell pi reference-refinement gate using an additional DX=0.01 cm Wine run with local disk scratch configuration; retain failed RAM runs and prior numerical failures, without relaxing thresholds.
 

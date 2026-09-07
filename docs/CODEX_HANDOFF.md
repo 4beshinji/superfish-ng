@@ -8,6 +8,11 @@ P0-01のNGSolve独立照合を完了。仕様と再現はINDEPENDENT_COMPARISON.
 `/tmp/superfish-ng-independent-20260907`。本体の依存・FEM・RFは変更していない。
 次はP0-02のタグ付き非構造メッシュ。旧入力互換や物理範囲拡張の完了ではない。
 
+同日P0-02/P0-03も完了。`solve case.json --mesh mesh.json --out ...` と
+`solve(case, mesh_data=...)` を追加。仕様・受入はMESH_INPUT.md。
+114件中112件合格・参照環境専用2件skip、標準数値検証PASS、既存周波数差ゼロ。
+次の数値拡張候補はP1-01。メッシュの読込で対応物理範囲は増えない。
+
 ## 汎用GUI・共通入出力の計画 — 2026-09-06
 
 ユーザー依頼に基づき [GUI_IO_PLAN.md](GUI_IO_PLAN.md) を作成した。

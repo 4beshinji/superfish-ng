@@ -95,6 +95,9 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | 検証 | 82テスト、pillbox収束、Bessel場、RF量、対称境界、段差/円弧・交差分割、バンド同定、表面電場診断。生成HTMLはheadless操作も検証 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
+2026-09-07: [NGSolveとの独立照合](docs/INDEPENDENT_COMPARISON.md)を追加し、
+円筒/円錐台の両側収束と周波数・RF量・内部磁場を検証しました。
+[境界タグ付き非構造メッシュ入力](docs/MESH_INPUT.md)もCLI/APIで利用できます。
 `docs/VALIDATION_REPORT.md` に数値と解釈をまとめています。
 今回の環境での実行結果と配布処理の変更は [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md) に記録しています。
 

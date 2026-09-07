@@ -21,10 +21,15 @@ class Solution:
     orthogonality_error: float
     construction: str = "direct eigensolve; mode indices within the specified boundary conditions"
     source_case: dict | None = None
+    mesh_input: dict | None = None
 
 
-def solve(case):
-    mesh = make_mesh(case)
+def solve(case, *, mesh_data=None):
+    if mesh_data is None:
+        mesh = make_mesh(case)
+    else:
+        from .mesh_input import mesh_from_dict
+        mesh = mesh_from_dict(case, mesh_data)
     k, m = assemble(mesh)
     constrained = np.unique(mesh.boundary_edges[mesh.boundary_tags == "magnetic_symmetry"])
     free = np.setdiff1d(np.arange(len(mesh.points)), constrained)
@@ -61,5 +66,10 @@ def solve(case):
         raise RuntimeError(f"eigenpair residual too large: {max(residuals):.3g}")
     # U = mu0/2 integral |H|^2 dV = mu0*pi*u^T M u.
     u *= np.sqrt(case.normalization_j/(MU0*np.pi))
-    return Solution(mesh, k, m, lam, C0*np.sqrt(lam)/TAU, u,
-                    np.array(residuals), orthogonality)
+    result = Solution(mesh, k, m, lam, C0*np.sqrt(lam)/TAU, u,
+                      np.array(residuals), orthogonality)
+    if mesh_data is not None:
+        from .mesh_input import mesh_to_dict
+        result.mesh_input = mesh_to_dict(mesh)
+        result.construction = 'direct eigensolve on validated external tagged mesh; mode indices within specified boundary conditions'
+    return result

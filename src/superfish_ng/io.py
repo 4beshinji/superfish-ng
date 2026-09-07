@@ -53,6 +53,12 @@ def save_run(case, solution, directory):
               "modes": [quantities(case, solution, i) for i in range(case.modes)]}
     if solution.source_case is not None:
         result['reflection_source_case'] = solution.source_case
+    if solution.mesh_input is not None:
+        from .mesh_input import mesh_digest
+        result['mesh'].update(source='external tagged mesh', input_file='mesh.json',
+                              input_sha256=mesh_digest(solution.mesh_input),
+                              generation_parameters_applied=False)
+        (directory/'mesh.json').write_text(json.dumps(solution.mesh_input, indent=2, allow_nan=False)+'\n', encoding='utf-8')
     if case.geometry_type == 'arc_profile':
         from .geometry import linearize_profile
         polygon = linearize_profile(case)

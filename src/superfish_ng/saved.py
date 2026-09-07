@@ -62,6 +62,20 @@ def read_solution(directory):
         raise ValueError("invalid saved field dimensions, topology, or frequencies")
     mesh = SimpleNamespace(points=p, triangles=t)
     element_geometry(mesh)
+    if 'input_sha256' in results['mesh']:
+        from .mesh_input import mesh_digest, mesh_from_dict
+        from .project import parse_json
+        mesh_data = parse_json((directory/'mesh.json').read_text(encoding='utf-8'))
+        if mesh_digest(mesh_data) != results['mesh']['input_sha256']:
+            raise ValueError('saved external mesh hash differs')
+        imported = mesh_from_dict(case, mesh_data)
+        for name, actual in (('points', p), ('triangles', t),
+                             ('boundary_edges', arrays['boundary_edges']),
+                             ('boundary_tags', arrays['boundary_tags']),
+                             ('boundary_cells', arrays['boundary_cells']),
+                             ('axis_nodes', arrays['axis_nodes'])):
+            if not np.array_equal(getattr(imported, name), actual):
+                raise ValueError(f'saved external mesh {name} differs from fields')
     axis = arrays["axis_nodes"]
     if (
         axis.ndim != 1

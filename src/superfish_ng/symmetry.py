@@ -68,4 +68,7 @@ def reflect_solution(case, solution):
                       u, residuals, orthogonality,
                       f'{tag} reflection at {side}; parity-filtered spectrum, indices are NOT full-spectrum ranks',
                       case.to_dict())
+    if solution.mesh_input is not None:
+        from .mesh_input import mesh_to_dict
+        result.mesh_input = mesh_to_dict(reflected)
     return full, result
