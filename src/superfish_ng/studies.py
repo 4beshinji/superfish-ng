@@ -297,7 +297,8 @@ def compare_refinement(first_dir, second_dir):
             "pair_margin": 0.02,
         },
         "modes": records,
-        "surface_field": "not certified; P1 peak estimates retained",
+        "surface_field": "finite-element boundary estimates; not certified; element orders "
+        + str(sorted({first.element_order, second.element_order})),
     }
 
 

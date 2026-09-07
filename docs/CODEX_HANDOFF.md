@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## G03の独立細分列 — 2026-09-08
+
+幾何/FEM独立列をscripts/validate_curved_refinement.pyで再現。
+24反復の幾何列は0.125 mmで最小角7.60043279度のまま品質FAIL、数値UNVERIFIED。
+FEM列は弦0.03125 mm固定で20/10/5 mmの両比較PASS。
+out/validation-g03-separated-refinement-round24-20260908/summary.jsonに保存。
+次は幾何列のメッシュ品質停滞を再現し、独立幾何不変量を保って修正する。
+標準220件中218合格・2 skip、validate PASS。G03全体/全互換目標は継続。
+
 ## G03の解析曲線GUI — 2026-09-08
 
 元曲線保持・弦誤差/分割上限編集・幾何誤差表示・P2計算/保存再読込を接続。

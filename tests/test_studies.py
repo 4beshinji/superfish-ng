@@ -45,6 +45,7 @@ class StudyTests(unittest.TestCase):
             self.assertGreater(errors[0],errors[1])
             self.assertGreater(errors[1],errors[2])
             self.assertIn('element orders [2]',report['surface_field'])
+            self.assertTrue(all('element orders [2]' in c['surface_field'] for c in report['comparisons']))
 
     def test_contour_refinement_changes_physical_size_and_actual_mesh(self):
         from superfish_ng import Case
@@ -107,5 +108,5 @@ class StudyTests(unittest.TestCase):
             self.assertIn("axis_field", c["modes"][0]["gates"])
             self.assertIn("rf", c["modes"][0]["gates"])
             self.assertEqual(
-                c["surface_field"], "not certified; P1 peak estimates retained"
+                c["surface_field"], "finite-element boundary estimates; not certified; element orders [1]"
             )
