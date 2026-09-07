@@ -75,6 +75,7 @@ class Case:
     phase_origin_m: float | None = None
     element_order: int = 1
     geometry_order: int = 1
+    curved_refinement_levels: int = 0
     quadrature_order: int = 8
     contour: object | None = None
     contour_mesh: object | None = None
@@ -108,6 +109,10 @@ class Case:
             raise ValueError('geometry_order=2 requires curved_contour and element_order=2')
         if self.geometry_order==1 and self.quadrature_order!=8:
             raise ValueError('quadrature_order requires geometry_order=2')
+        if type(self.curved_refinement_levels) is not int or self.curved_refinement_levels < 0:
+            raise ValueError('curved_refinement_levels must be a nonnegative integer')
+        if self.curved_refinement_levels and self.geometry_order != 2:
+            raise ValueError('curved_refinement_levels requires geometry_order=2')
         if self.model is not None:
             from .model import Model
             if not isinstance(self.model, Model):
@@ -292,7 +297,7 @@ class Case:
             geometry_options = {'arcs': tuple((a['end_index'], a['radius_m'], a['direction']) for a in g['arcs']),
                                 'arc_chord_tolerance_m': g['chord_tolerance_m']}
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
-        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m", "contour_mesh", "geometry_order"], [], "mesh")
+        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m", "contour_mesh", "geometry_order", "curved_refinement_levels"], [], "mesh")
         if 'contour_mesh' in mesh:
             from .mesh_controls import ContourMeshControls
             if data['schema_version'] != 3:
@@ -307,6 +312,8 @@ class Case:
             raise ValueError('explicit triangulation requires schema_version 2')
         if "geometry_order" in mesh and data["schema_version"]!=3:
             raise ValueError('mesh.geometry_order requires schema_version 3')
+        if 'curved_refinement_levels' in mesh and (data['schema_version'] != 3 or mesh.get('geometry_order') != 2):
+            raise ValueError('mesh.curved_refinement_levels requires v3 geometry_order=2')
         keys(solver, ["modes", "element_order", "quadrature_order"], [], "solver")
         if "quadrature_order" in solver and (data["schema_version"]!=3 or mesh.get("geometry_order",1)!=2):
             raise ValueError('solver.quadrature_order requires v3 geometry_order=2')
@@ -354,6 +361,8 @@ class Case:
         if self.geometry_order==2:
             data["mesh"]["geometry_order"]=2
             data["solver"]["quadrature_order"]=self.quadrature_order
+        if self.curved_refinement_levels:
+            data["mesh"]["curved_refinement_levels"] = self.curved_refinement_levels
         if self.element_order != 1:
             data["solver"]["element_order"] = self.element_order
         if self.model is not None:

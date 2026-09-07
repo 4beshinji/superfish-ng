@@ -381,3 +381,31 @@ P^T K_child PとK_parentの相対行列差は積分次数8で1.85819e-11、12で
 validation-g03-fixed-curved-refinement-regression-20260908 PASS。
 標準268件中266合格・2 skip。通常solve/保存/Studyへの接続と独立物理収束を次に行う。
 GUI・表面ピーク・鏡映を含めG03と全互換目標は継続。
+
+## G03固定幾何細分の通常経路 — 2026-09-08
+
+v3 mesh.curved_refinement_levelsを追加。非負整数、既定0、省略時は従来JSONを保持。
+明示JSON指定はgeometry_order=2のみ。case_curved_spaceをsolveとreadで共用し、
+元メッシュから初期二次幾何を作って指定回数の制限細分を行う。
+各段の生成前に4倍後の要素数をcontour_mesh.max_trianglesで検査する。
+外部元メッシュでcontour_meshなしの場合の上限は250000。超過は拒否し自動変更しない。
+軸子中点は端点平均で表現し、RFの厳密なアフィン軸条件を保持する。
+
+保存は細分段数をCase/field_spaceへ記録し、元弦メッシュを保持する。
+readは同じ段数を再構成して全配列・残差/正規化/RFを照合する。
+細分後は元弦からの移動量配列を出さず、元曲線パラメータを祖先区間と明記。
+段数0の既存保存形式と読込を維持する。
+
+Studyの新種別fixed_geometry_convergenceは
+parameter=/case/mesh/curved_refinement_levels、values=[0,1]などの増加非負整数を受け取る。
+元メッシュを再読込して点間の完全一致を検査し、固定した二次幾何の比較と記録する。
+従来mesh_convergenceの境界再投影を含む比較とは区別する。
+GUIフォームは段数を保持するが、選択UIと実ブラウザー受入は次段階。
+
+scripts/validate_curved_study.py --fixed-geometry --out out/validation-g03-fixed-native-study-20260908
+で球形段数0→1の保存後比較PASS。元メッシュhash一致、周波数1.6363983269→1.6363973727 GHz。
+独立球形参照への相対誤差は周波数9.33016e-7→3.49885e-7、R/Q 2.01474e-4→2.33410e-5。
+磁場重なり0.9999999975、軸差2.14213e-4、RFと周波数の全ゲートPASS。
+これは当該2段階の検証であり任意形状/任意段数の収束を保証しない。
+標準271件中269合格・2 skip、validation-g03-fixed-native-regression-20260908 PASS。
+次は曲線GUIの入力/Study/表示の実操作、表面ピークと鏡映。G03と全互換目標は継続。

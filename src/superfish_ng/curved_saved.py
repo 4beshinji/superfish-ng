@@ -9,7 +9,7 @@ import scipy
 from . import __version__
 from .constants import C0, EPS0, MU0, TAU
 from .curved_solution import CurvedSolution
-from .curved_space import curved_space
+from .curved_space import case_curved_space
 from .curved_fem import assemble_curved
 from .curved_rf import quantities_curved
 from .mesh_input import mesh_from_dict, mesh_digest
@@ -17,16 +17,20 @@ from .mesh_input import mesh_from_dict, mesh_digest
 
 def geometry_arrays(space):
     geometry = space.geometry
-    return {**{name: getattr(geometry, name) for name in
-               ('points_rz_m', 'cell_nodes', 'boundary_nodes', 'boundary_curve_indices',
-                'boundary_parameters', 'node_displacements_m')},
+    names = ['points_rz_m', 'cell_nodes', 'boundary_nodes', 'boundary_curve_indices', 'boundary_parameters']
+    if hasattr(geometry, 'node_displacements_m'):
+        names.append('node_displacements_m')
+    return {**{name: getattr(geometry, name) for name in names},
             **{name: getattr(space, name) for name in
                ('boundary_tags', 'axis_dofs', 'constrained_dofs')}}
 
 
 def field_space(solution):
-    return dict(element_order=2, geometry_order=2, basis='quadratic Lagrange u=Hphi/r',
+    result = dict(element_order=2, geometry_order=2, basis='quadratic Lagrange u=Hphi/r',
                 dofs=len(solution.u), quadrature_order=solution.quadrature_order)
+    if solution.case.curved_refinement_levels:
+        result["curved_refinement_levels"] = solution.case.curved_refinement_levels
+    return result
 
 
 def write_curved_run(case, solution, directory):
@@ -54,6 +58,11 @@ def write_curved_run(case, solution, directory):
                                    voltage='Ez_quadrature axis integral over specified interval with exp(+i omega (z-phase_origin)/(beta c)); global -i omitted',
                                    vtk_coordinates='x=r, y=z, z=0; four straight display triangles per curved element; fields sampled at mapped reference subtriangle centres'),
                   modes=[quantities_curved(solution, i) for i in range(case.modes)])
+    if case.curved_refinement_levels:
+        result['geometry_approximation'].update(
+            representation='restrictions of the initial quadratic geometry; no analytic curve reprojection',
+            curved_refinement_levels=case.curved_refinement_levels,
+            curve_parameters='ancestral intervals only; refined points lie on the initial quadratic boundary')
     for filename, document in (('case.json', case.to_dict()), ('results.json', result),
                                ('mesh.json', solution.source_mesh_data)):
         (directory/filename).write_text(json.dumps(document, indent=2, allow_nan=False)+'\n', encoding='utf-8')
@@ -79,8 +88,14 @@ def read_curved_run(directory, case, results):
     if not (directory/'save_protocol.json').is_file() or results.get('save_protocol_version') != 1:
         raise ValueError('curved fields require the save completion protocol')
     declaration = results.get('field_space')
+    required = {'element_order', 'geometry_order', 'basis', 'dofs', 'quadrature_order'}
+    if case.curved_refinement_levels:
+        required.add('curved_refinement_levels')
+        if (not isinstance(declaration, dict) or type(declaration.get('curved_refinement_levels')) is not int
+                or declaration['curved_refinement_levels'] != case.curved_refinement_levels):
+            raise ValueError('invalid saved curved refinement declaration')
     if (not isinstance(declaration, dict)
-            or set(declaration) != {'element_order', 'geometry_order', 'basis', 'dofs', 'quadrature_order'}
+            or set(declaration) != required
             or any(type(declaration[key]) is not int for key in
                    ('element_order', 'geometry_order', 'dofs', 'quadrature_order'))
             or declaration['element_order'] != 2 or declaration['geometry_order'] != 2
@@ -90,7 +105,7 @@ def read_curved_run(directory, case, results):
     mesh_data = parse_json((directory/'mesh.json').read_text(encoding='utf-8'))
     if mesh_digest(mesh_data) != results['mesh'].get('input_sha256'):
         raise ValueError('saved curved source mesh hash differs')
-    space = curved_space(case, mesh_from_dict(case, mesh_data))
+    space = case_curved_space(case, mesh_from_dict(case, mesh_data))
     if (results['mesh'].get('nodes') != len(space.geometry.points_rz_m)
             or results['mesh'].get('triangles') != len(space.geometry.cell_nodes)):
         raise ValueError('saved curved mesh counts differ')

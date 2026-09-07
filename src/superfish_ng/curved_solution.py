@@ -5,7 +5,7 @@ import numpy as np
 from scipy.sparse import diags
 from scipy.sparse.linalg import eigsh,ArpackNoConvergence
 from .constants import C0,MU0,EPS0,TAU
-from .curved_space import curved_space
+from .curved_space import case_curved_space
 from .curved_fem import assemble_curved
 from .mesh import make_mesh
 from .mesh_input import mesh_from_dict,mesh_to_dict
@@ -55,7 +55,7 @@ def solve_curved(case,*,quadrature_order=None,mesh_data=None):
     quadrature_order=case.quadrature_order if quadrature_order is None else quadrature_order
     case=replace(case,geometry_order=2,quadrature_order=quadrature_order)
     mesh = make_mesh(case) if mesh_data is None else mesh_from_dict(case,mesh_data)
-    space = curved_space(case,mesh)
+    space = case_curved_space(case,mesh)
     k,m = assemble_curved(space,quadrature_order=quadrature_order)
     count = k.shape[0]
     free = np.setdiff1d(np.arange(count),space.constrained_dofs)

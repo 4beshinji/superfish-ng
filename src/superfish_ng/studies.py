@@ -37,9 +37,9 @@ class Study:
     values: list
 
     def __post_init__(self):
-        if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence"):
+        if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence", "fixed_geometry_convergence"):
             raise ValueError(
-                "study kind must be sweep, mesh_convergence or geometry_convergence"
+                "study kind must be sweep, mesh_convergence, geometry_convergence or fixed_geometry_convergence"
             )
         if (
             not isinstance(self.values, list)
@@ -60,6 +60,12 @@ class Study:
                 raise ValueError(
                     "mesh convergence requires increasing positive integer mesh_scale values"
                 )
+        elif self.kind == "fixed_geometry_convergence":
+            if (self.parameter != "/case/mesh/curved_refinement_levels"
+                    or self.project.case.geometry_order != 2
+                    or any(type(v) is not int or v < 0 for v in self.values)
+                    or any(b <= a for a, b in zip(self.values, self.values[1:]))):
+                raise ValueError('fixed geometry convergence requires geometry_order=2 and increasing nonnegative integer curved_refinement_levels')
         elif self.kind == "geometry_convergence":
             if (
                 self.parameter != "/case/geometry/chord_tolerance_m"
@@ -112,7 +118,9 @@ class Study:
         projects = []
         for value in self.values:
             raw = deepcopy(self.project.to_dict())
-            if self.parameter == "mesh_scale":
+            if self.kind == "fixed_geometry_convergence":
+                raw['case']['mesh']['curved_refinement_levels'] = value
+            elif self.parameter == "mesh_scale":
                 raw["case"]["mesh"]["nr"] *= value
                 raw["case"]["mesh"]["nz"] *= value
                 if 'contour_mesh' in raw['case']['mesh']:
@@ -375,6 +383,11 @@ def execute_study(study, directory, prepared=False):
                 'boundary nodes are interpolated from analytic primitives at each mesh; '
                 'mesh refinement may also change the quadratic geometry; '
                 'this is not a fixed-discrete-geometry FEM error estimate')
+        if study.kind == 'fixed_geometry_convergence':
+            sources = [read_solution(directory/p['directory']/'solution').source_mesh_data for p in points]
+            if any(source != sources[0] for source in sources[1:]):
+                raise ValueError('fixed geometry Study source meshes differ')
+            report['geometry_refinement'] = 'same verified source mesh and initial quadratic maps; uniform restrictions without curve reprojection'
         if implementation != _implementation_hashes():
             raise RuntimeError(
                 "implementation changed during study; retry with stable source"

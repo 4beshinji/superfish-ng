@@ -32,7 +32,7 @@ def main():
                   parent_cells=len(parent.geometry.cell_nodes), refined_cells=len(result.space.geometry.cell_nodes),
                   edge_check=dict(result.space.edge_check),
                   meaning='P transpose K_refined P = K_parent and same for mass; fixed quadratic geometry',
-                  pending='native solve/save/reload/Study refinement-level integration and physical convergence')
+                  pending='curved GUI acceptance, surface peaks and reflection')
     (args.out/'comparison.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     print(json.dumps(report, indent=2), flush=True)
     return 0 if passed else 1

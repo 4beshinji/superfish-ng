@@ -103,3 +103,15 @@ def curved_space(case,mesh):
     for array in (tags,axis,constrained):
         array.setflags(write=False)
     return CurvedSpace(geometry,tags,axis,constrained,MappingProxyType(report))
+
+
+def case_curved_space(case, mesh):
+    """Reconstruct the base geometry, then restrict its maps at each level."""
+    space = curved_space(case, mesh)
+    limit = case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000
+    for level in range(case.curved_refinement_levels):
+        if 4*len(space.geometry.cell_nodes) > limit:
+            raise ValueError(f'curved refinement level {level+1} exceeds max_triangles={limit}; reduce levels or explicitly increase the mesh limit')
+        from .curved_refinement import refine_curved_space
+        space = refine_curved_space(space).space
+    return space

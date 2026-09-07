@@ -38,7 +38,7 @@ def refine_curved_space(parent):
     in the refined P2 space. Shared nodes are keyed by topology, never rounded
     physical coordinates. Boundary curve intervals record ancestry only: new
     points lie on the parent's quadratic edge, not on its analytic primitive.
-    This space-level API does not yet participate in native solve/save/Study.
+    Native Case refinement levels use this deterministic reconstruction.
     """
     if not isinstance(parent, CurvedSpace):
         raise ValueError('curved refinement requires a validated CurvedSpace')
@@ -58,6 +58,9 @@ def refine_curved_space(parent):
                 reference = (_REFERENCE[child[a]]+_REFERENCE[child[b]])/2
                 evaluated = mapping.evaluate([reference])
                 proposal = evaluated['points_rz_m'][0]
+                if points[key[0]][0] == 0 and points[key[1]][0] == 0 and proposal[0] == 0:
+                    # Preserve the exact affine-axis midpoint convention used by RF.
+                    proposal = (points[key[0]]+points[key[1]])/2
                 row = {int(n): float(v) for n, v in zip(nodes, evaluated['basis_values'][0]) if v != 0}
                 if key in midpoints:
                     index = midpoints[key]

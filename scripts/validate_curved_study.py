@@ -16,6 +16,7 @@ from superfish_ng.analytic_sphere import SphereTM
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--fixed-geometry', action='store_true')
     args = parser.parse_args()
     radius = .08
     case = Case((), name='synthetic_curved_sphere_study',
@@ -24,7 +25,9 @@ def main():
                 curve_chord_tolerance_m=.0008, contour_mesh=ContourMeshControls(.02),
                 element_order=2, geometry_order=2, modes=1)
     args.out.mkdir(parents=True, exist_ok=False)
-    study = Study(Project.from_dict(case.to_dict()), 'mesh_convergence', 'mesh_scale', [1, 2])
+    study = (Study(Project.from_dict(case.to_dict()), 'fixed_geometry_convergence',
+                   '/case/mesh/curved_refinement_levels', [0, 1]) if args.fixed_geometry else
+             Study(Project.from_dict(case.to_dict()), 'mesh_convergence', 'mesh_scale', [1, 2]))
     report = execute_study(study, args.out/'study')
     reference = SphereTM(radius)
     expected = reference.quantities()
@@ -38,7 +41,7 @@ def main():
         value < (.001 if key == 'frequency_hz' else .01) for error in errors for key, value in error.items())
     result = dict(status='PASS' if passed else 'FAIL', relative_errors=errors,
                   refinement=report['comparisons'], geometry_refinement=report['geometry_refinement'],
-                  pending='fixed discrete geometry h-refinement, curved surface peaks, reflection and GUI acceptance')
+                  pending='curved surface peaks, reflection and GUI acceptance')
     (args.out/'comparison.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
     print(json.dumps(result, indent=2), flush=True)
     return 0 if passed else 1
