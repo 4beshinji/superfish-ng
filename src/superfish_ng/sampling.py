@@ -8,14 +8,33 @@ from .mesh import element_geometry
 
 
 class FieldSampler:
-    def __init__(self, points, triangles, u, frequencies_hz):
+    def __init__(self, points, triangles, u, frequencies_hz, *, space=None):
         self.points, self.triangles = np.asarray(points), np.asarray(triangles)
         self.u, self.frequencies_hz = np.asarray(u), np.asarray(frequencies_hz)
-        if self.u.ndim != 2 or self.u.shape != (len(self.points), len(self.frequencies_hz)):
+        self.space = space
+        count = len(self.points)
+        if space is not None:
+            from .high_order import quadratic_space
+            if not np.array_equal(space.mesh.points, self.points) or not np.array_equal(space.mesh.triangles, self.triangles):
+                raise ValueError('quadratic space must belong to the sampling mesh')
+            expected = quadratic_space(space.mesh)
+            if not np.array_equal(space.cell_dofs, expected.cell_dofs) or not np.array_equal(space.dof_points, expected.dof_points):
+                raise ValueError('quadratic space has inconsistent midpoint connectivity')
+            count = len(space.dof_points)
+        if self.u.ndim != 2 or self.u.shape != (count, len(self.frequencies_hz)):
             raise ValueError('P1 sampling requires one coefficient per mesh vertex and mode; quadratic sampling requires N02')
         self.vertices, _, self.grad = element_geometry(SimpleNamespace(points=self.points, triangles=self.triangles))
         self.tree = cKDTree(self.vertices.mean(axis=1))
         self.lower, self.upper = self.vertices.min(axis=1), self.vertices.max(axis=1)
+
+    @classmethod
+    def from_solution(cls, solution):
+        order = getattr(solution, 'element_order', 1)
+        space = getattr(solution, 'space', None)
+        if order not in (1, 2) or (order == 2) != (space is not None):
+            raise ValueError('solution element order and field space are inconsistent')
+        return cls(solution.mesh.points, solution.mesh.triangles, solution.u,
+                   solution.frequencies_hz, space=space)
 
     def _weights(self, point, cells):
         delta = point-self.vertices[cells, 0]
@@ -47,9 +66,20 @@ class FieldSampler:
                 cells[i], found[i] = boxes[good[0]], True
         if outside == 'raise' and not found.all():
             raise ValueError(f'{np.count_nonzero(~found)} probe points lie outside the mesh')
-        nodal = self.u[self.triangles[cells], mode]
-        value = np.sum(self._weights(points, cells)*nodal, axis=1)
-        du = np.einsum('ni,nij->nj', nodal, self.grad[cells])
+        bary = self._weights(points, cells)
+        if self.space is None:
+            nodal = self.u[self.triangles[cells], mode]
+            value = np.sum(bary*nodal, axis=1)
+            du = np.einsum('ni,nij->nj', nodal, self.grad[cells])
+        else:
+            nodal = self.u[self.space.cell_dofs[cells], mode]
+            values = [bary[:, i]*(2*bary[:, i]-1) for i in range(3)]
+            derivatives = [(4*bary[:, i]-1)[:, None]*self.grad[cells, i] for i in range(3)]
+            for i, j in [(0, 1), (1, 2), (2, 0)]:
+                values.append(4*bary[:, i]*bary[:, j])
+                derivatives.append(4*(bary[:, i, None]*self.grad[cells, j]+bary[:, j, None]*self.grad[cells, i]))
+            value = np.sum(np.stack(values, axis=1)*nodal, axis=1)
+            du = np.einsum('ni,nij->nj', nodal, np.stack(derivatives, axis=1))
         omega, r = TAU*self.frequencies_hz[mode], points[:, 0]
         fields = {'Er_quadrature_V_per_m': -r*du[:, 1]/(omega*EPS0),
                   'Ez_quadrature_V_per_m': (2*value+r*du[:, 0])/(omega*EPS0),

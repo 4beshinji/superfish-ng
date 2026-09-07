@@ -40,3 +40,17 @@ P1/P2の誤差対自由度を周波数・軸Ez・RQについて別に記録す�
 低beta・部分区間の電圧を独立積分と比較し、位相/寸法/正規化不変量を検証する。
 半/全領域、保存再読込、probe、表示、追跡、CLI/GUIの次数保持を検査する。
 N01の周波数合格だけではN02を完了しない。
+
+## N02.I進行記録 — 2026-09-08
+
+FieldSamplerの明示space指定とfrom_solutionを実装。元の三角形で探索した後、
+6係数と二次基底の勾配から場を評価する。接続/中点座標/係数形状の不一致を拒否する。
+独立二次多項式の全成分・軸極限・領域外処理、TM010の軸Ez一定形状を検査した。
+保存、cell_fields、RF積分、鏡映、表示、追跡の製品統合は引き続き未実装。
+
+ローカル検証: out/validation-n02-sampling-20260908/validation.json PASS。
+152 tests中150合格・2 skip。円筒/成形セルのmode辞書全量とcase_sha256は
+out/validation-n01-accepted-20260908と一致。
+再現はOPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate.py --out out/validation-<unique-name>。
+次は二次軸電圧の安定積分、PEC辺損失と片側極値を実装し、独立積分と比較する。
+N02.V全体は未受入。

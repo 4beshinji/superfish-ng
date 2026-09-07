@@ -40,3 +40,45 @@ class SamplingTests(unittest.TestCase):
     def test_radial_probe_preserves_boundary_profile(self):
         for z, expected in [(0, .07), (.03, .09), (.10, .065), (.17, .04)]:
             self.assertAlmostEqual(radial_extent(self.mesh.points, self.mesh.boundary_edges, z), expected)
+
+
+class QuadraticSamplingTests(unittest.TestCase):
+    def test_quadratic_polynomial_fields_axis_and_outside(self):
+        from superfish_ng.high_order import quadratic_space
+        mesh = make_mesh(Case(((0., .1), (.2, .1)), nr=4, nz=5))
+        space = quadratic_space(mesh)
+        r, z = space.dof_points.T
+        u = (2+3*r-7*z+5*r*r+11*r*z-13*z*z)[:, None]
+        sampler = FieldSampler(mesh.points, mesh.triangles, u, [1e9], space=space)
+        probes = np.array([[0, .073], [.017, .034], [.083, .191], [.1, .13]])
+        r, z = probes.T
+        value = 2+3*r-7*z+5*r*r+11*r*z-13*z*z
+        dr, dz = 3+10*r+11*z, -7+11*r-26*z
+        fields = sampler.evaluate(probes)
+        assert_allclose(fields['Hphi_A_per_m'], r*value, atol=1e-14)
+        assert_allclose(fields['Er_quadrature_V_per_m'], -r*dz/(TAU*1e9*EPS0), atol=1e-12)
+        assert_allclose(fields['Ez_quadrature_V_per_m'], (2*value+r*dr)/(TAU*1e9*EPS0), atol=1e-12)
+        outside = sampler.evaluate([[.2, .1]], outside='nan')
+        self.assertFalse(outside['inside'][0])
+        self.assertTrue(np.isnan(outside['Hphi_A_per_m'][0]))
+        with self.assertRaises(ValueError):
+            FieldSampler(mesh.points, mesh.triangles, u, [1e9])
+        space.cell_dofs[0, 3] = space.cell_dofs[0, 4]
+        with self.assertRaisesRegex(ValueError, 'connectivity'):
+            FieldSampler(mesh.points, mesh.triangles, u, [1e9], space=space)
+
+    def test_solution_factory_and_axis_bessel_limit(self):
+        from superfish_ng.high_order import solve_p2
+        case = Case(((0., .1), (.2, .1)), nr=12, nz=24, modes=1)
+        solution = solve_p2(case)
+        sampler = FieldSampler.from_solution(solution)
+        z = np.linspace(.003, .197, 31)
+        fields = sampler.evaluate(np.column_stack((np.zeros_like(z), z)))
+        # TM010 has constant axial Ez; compare shape independently of amplitude/sign.
+        ez = fields['Ez_quadrature_V_per_m']
+        self.assertLess(np.max(abs(ez/ez.mean()-1)), .001)
+        assert_allclose(fields['Hphi_A_per_m'], 0)
+        assert_allclose(fields['Er_quadrature_V_per_m'], 0)
+        solution.space = None
+        with self.assertRaisesRegex(ValueError, 'inconsistent'):
+            FieldSampler.from_solution(solution)
