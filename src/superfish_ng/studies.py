@@ -157,6 +157,7 @@ def _physical_spec(case):
     raw['model'] = replace(case.model or Model(), material_id='vacuum', region_id='cavity').to_dict()
     raw.pop("mesh")
     raw["solver"].pop("element_order", None)
+    raw["solver"].pop("quadrature_order", None)
     raw.pop("name")
     raw.pop("schema_version")
     raw["geometry"].pop("chord_tolerance_m", None)
@@ -173,10 +174,17 @@ def compare_refinement(first_dir, second_dir):
     first, second = read_solution(first_dir), read_solution(second_dir)
     if _physical_spec(first.case) != _physical_spec(second.case):
         raise ValueError("refinement comparison requires identical physical cases")
-    vertices, det, _ = element_geometry(first.mesh)
-    indices = np.linspace(0, len(vertices) - 1, min(4096, len(vertices)), dtype=int)
-    positions = vertices[indices].mean(axis=1)
-    weights = det[indices] * positions[:, 0]
+    if first.case.geometry_order == 2:
+        maps = first.space.geometry.local_maps
+        indices = np.linspace(0, len(maps)-1, min(4096, len(maps)), dtype=int)
+        samples = [maps[i].evaluate([[1/3, 1/3]]) for i in indices]
+        positions = np.concatenate([s['points_rz_m'] for s in samples])
+        weights = np.concatenate([s['determinant_m2'] for s in samples])*positions[:, 0]
+    else:
+        vertices, det, _ = element_geometry(first.mesh)
+        indices = np.linspace(0, len(vertices) - 1, min(4096, len(vertices)), dtype=int)
+        positions = vertices[indices].mean(axis=1)
+        weights = det[indices] * positions[:, 0]
     sampled = []
     for solution in (first, second):
         sampler = FieldSampler.from_solution(solution)
@@ -217,10 +225,15 @@ def compare_refinement(first_dir, second_dir):
         }
         axis = []
         for solution, k in [(first, i), (second, j)]:
-            nodes = solution.arrays["axis_nodes"]
+            if solution.case.geometry_order == 2:
+                nodes = solution.space.axis_dofs
+                points = solution.space.geometry.points_rz_m
+            else:
+                nodes = solution.arrays["axis_nodes"]
+                points = solution.mesh.points
             axis.append(
                 (
-                    solution.mesh.points[nodes, 1],
+                    points[nodes, 1],
                     2
                     * solution.u[nodes, k]
                     / (TAU * EPS0 * solution.frequencies_hz[k]),
@@ -289,6 +302,7 @@ def compare_refinement(first_dir, second_dir):
         "status": status,
         "pairing": "same geometry; sampled magnetic-field overlap",
         "samples": int(common.sum()),
+        "sampling": "first mesh reference centroids mapped to physical points; Jacobian times radius weights; common domain only",
         "limits": {
             "frequency": 0.001,
             "rf": 0.01,
@@ -297,8 +311,10 @@ def compare_refinement(first_dir, second_dir):
             "pair_margin": 0.02,
         },
         "modes": records,
-        "surface_field": "finite-element boundary estimates; not certified; element orders "
-        + str(sorted({first.element_order, second.element_order})),
+        "surface_field": ("not evaluated; curved surface peak validation pending"
+                          if first.case.geometry_order == 2 or second.case.geometry_order == 2 else
+                          "finite-element boundary estimates; not certified; element orders "
+                          + str(sorted({first.element_order, second.element_order}))),
     }
 
 
@@ -353,6 +369,12 @@ def execute_study(study, directory, prepared=False):
                               else "finite-element boundary estimates; not certified; element orders "
                               +str(sorted({p.case.element_order for p in projects}))),
         }
+        if any(p.case.geometry_order == 2 for p in projects):
+            report['surface_field'] = 'not evaluated; curved surface peak validation pending'
+            report['geometry_refinement'] = (
+                'boundary nodes are interpolated from analytic primitives at each mesh; '
+                'mesh refinement may also change the quadratic geometry; '
+                'this is not a fixed-discrete-geometry FEM error estimate')
         if implementation != _implementation_hashes():
             raise RuntimeError(
                 "implementation changed during study; retry with stable source"
