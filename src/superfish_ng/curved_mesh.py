@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Shared curved geometry candidates; global curved-boundary validation is pending."""
+"""Shared curved geometry candidates with local maps and simple boundary checks."""
 from dataclasses import dataclass
 import numpy as np
 from .conics import LineSegment
@@ -17,13 +17,14 @@ class CurvedGeometryCandidate:
     boundary_parameters: np.ndarray
     local_maps: tuple
     node_displacements_m: np.ndarray
+    boundary_check: object
 
 
 def curve_geometry_candidate(case, mesh):
     """Lift chord boundary vertices/midpoints while retaining shared connectivity.
 
-    Reject local folds. This is not yet a global injectivity/boundary certificate
-    and is deliberately not accepted by solve or saved-result APIs.
+    Reject local folds and invalid quadratic boundary cycles. Global curved
+    space/assembly integration is pending; solve/saved APIs do not accept this type.
     """
     if case.curved_contour is None:
         raise ValueError('curved geometry requires native curved_contour')
@@ -92,4 +93,7 @@ def curve_geometry_candidate(case, mesh):
               np.linalg.norm(points-space.dof_points,axis=1)]
     for array in arrays:
         array.setflags(write=False)
-    return CurvedGeometryCandidate(*arrays[:5],tuple(maps),arrays[5])
+    from .quadratic_boundary import check_quadratic_boundary
+    from types import MappingProxyType
+    boundary = check_quadratic_boundary(points,space.boundary_dofs)
+    return CurvedGeometryCandidate(*arrays[:5],tuple(maps),arrays[5],MappingProxyType(boundary))

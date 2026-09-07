@@ -53,6 +53,7 @@ class CurvedMeshTests(unittest.TestCase):
             mesh = make_mesh(case)
             original_points = mesh.points.copy()
             candidate = curve_geometry_candidate(case,mesh)
+            self.assertEqual(candidate.boundary_check["status"],"PASS")
             np.testing.assert_array_equal(mesh.points,original_points)
             self.assertTrue(all(m.determinant_lower_bound_m2>0 for m in candidate.local_maps))
             area,volume = 0.,0.
