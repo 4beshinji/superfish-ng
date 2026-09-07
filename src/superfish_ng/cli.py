@@ -16,6 +16,15 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    legacy = sub.add_parser('import-af', help='convert the supported closed-vacuum AF subset to an NG case')
+    legacy.add_argument('source', type=Path)
+    legacy.add_argument('--out', type=Path, required=True, help='new directory for case, source and conversion report')
+    for key in ('nr', 'nz', 'modes'):
+        legacy.add_argument('--'+key, type=int, required=True)
+    legacy.add_argument('--conductivity-s-per-m', type=float, required=True)
+    legacy.add_argument('--normalization-j', type=float, required=True)
+    legacy.add_argument('--arc-chord-tolerance-m', type=float, default=1e-5)
+    legacy.add_argument('--encoding', choices=['utf-8', 'latin-1'], default='utf-8')
     sub.add_parser('capabilities', help='print currently supported physics and units as JSON')
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
@@ -58,7 +67,16 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command == 'capabilities':
+        if args.command == 'import-af':
+            from .legacy_input import import_af
+            _, report = import_af(args.source, args.out, encoding=args.encoding, nr=args.nr, nz=args.nz,
+                                  modes=args.modes, conductivity_s_per_m=args.conductivity_s_per_m,
+                                  normalization_j=args.normalization_j,
+                                  arc_chord_tolerance_m=args.arc_chord_tolerance_m)
+            print(f'Imported case: {args.out / "case.json"}')
+            for diagnostic in report['diagnostics']:
+                print(diagnostic)
+        elif args.command == 'capabilities':
             from .model import capabilities
             print(json.dumps(capabilities(), indent=2, allow_nan=False))
         elif args.command == 'migrate-case':
