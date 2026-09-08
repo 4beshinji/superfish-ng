@@ -35,7 +35,7 @@ def assess_affine_surface_convergence(checkpoint,mode_id):
         rows.append(dict(run=run,mode_index=index,refinement_level=level['index'],refinement_kind=level.get('refinement_kind','initial' if level['index']==0 else 'residual'),
             triangles=level['triangles'],degrees_of_freedom=level['dofs'],intervals=intervals,peaks=peaks))
     diagnostic=_evaluate_rows(rows)
-    confirmation_required=checkpoint['request']['schema_version']==2
+    confirmation_required=checkpoint['request']['schema_version']>=2
     confirmed=not confirmation_required or all(l['refinement_kind']=='uniform_confirmation' for l in levels[-2:])
     status=diagnostic['status']
     if status=='TARGETS_MET' and not confirmed:status='CONFIRMATION_PENDING'

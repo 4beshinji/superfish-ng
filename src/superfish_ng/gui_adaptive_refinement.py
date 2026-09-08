@@ -7,6 +7,11 @@ from .project import parse_json
 from .adaptive_refinement import read_adaptive_refinement,replay_adaptive_refinement
 
 
+def _supported_request(request):
+    if isinstance(request,dict) and request.get('schema_version')==3:
+        raise ValueError('adaptive refinement version 3 is currently supported through CLI/API and JobManager; GUI refinement controls support versions 1 and 2')
+
+
 def adaptive_refinement_response(manager,action,data):
     fields={'start-adaptive-refinement':(('request','max_new_levels'),('request',)),
         'resume-adaptive-refinement':(('document','max_new_levels'),('document',)),
@@ -17,6 +22,7 @@ def adaptive_refinement_response(manager,action,data):
     if action=='start-adaptive-refinement':
         request=data['request']
         if isinstance(request,str):request=parse_json(request)
+        _supported_request(request)
         return dict(id=manager.start_adaptive_refinement(request,max_new_levels=data.get('max_new_levels')))
     if action=='adaptive-refinement-result':
         directory=manager.directory(data['id']);state=read_job(directory)
@@ -26,7 +32,9 @@ def adaptive_refinement_response(manager,action,data):
     else:
         document=data['document']
         if isinstance(document,str):document=parse_json(document)
+        if isinstance(document,dict):_supported_request(document.get('request'))
         result=replay_adaptive_refinement(document)
         if action=='resume-adaptive-refinement':
             return dict(id=manager.start_adaptive_refinement(result['request'],checkpoint=result,max_new_levels=data.get('max_new_levels')))
+    _supported_request(result['request'])
     return dict(document=result,serialized=json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False)+'\n')
