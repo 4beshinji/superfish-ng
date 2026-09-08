@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Weighted strong/flux residual indicators for affine P1/P2 TM fields.
+"""Weighted strong/flux residual indicators for affine and curved TM fields.
 
 These are refinement priorities, not certified bounds on any physical error.
 See docs/RESIDUAL_INDICATOR.md for the axis weight and boundary derivation.
@@ -65,6 +65,9 @@ def residual_indicator(case, solution, *, mode=0):
     Mode rank is not a persistent mode identity. Track modes across solves before
     using this function in a multi-mode adaptive workflow.
     """
+    if case.geometry_order == 2:
+        from .curved_residual_indicator import curved_residual_indicator
+        return curved_residual_indicator(case, solution, mode=mode)
     if case.geometry_order!=1 or solution.element_order!=case.element_order:
         raise ValueError('residual indicator requires matching straight P1/P2 case and solution')
     if type(mode) is not int or not 0<=mode<len(solution.eigenvalues):

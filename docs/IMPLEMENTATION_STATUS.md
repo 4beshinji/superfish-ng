@@ -1,12 +1,14 @@
 # 実装・検証の現状
 
+[二次曲線FEMの残差指標](CURVED_RESIDUAL_INDICATOR.md)を追加。物理座標の二階微分・曲線流束を評価し、既存の選択APIとCase局所履歴で実細分できる。指標は物理誤差上界ではなく、曲線の追跡付き適応停止/GUIは残る。
+
 [曲線要素の局所適合細分](CURVED_MARKED_REFINEMENT.md)を[Caseの順序付き履歴・native保存再構築](CURVED_REFINEMENT_HISTORY.md)へ接続。通常FEM/CLIと半領域鏡映の保存再検証を確認した。履歴対応Study・GUI編集・曲線適応停止は未接続。
 
 [通常RF結果の連続離散ピーク評価](RF_DISCRETE_PEAKS.md)をAPI/保存/CLI/GUIへ追加。直線P1/P2・二次曲線P2の上下界、元RF推定値、規格化、角診断を同じ画面で確認できる。単一メッシュの物理収束合格ではない。
 
 [版3の表面量を含む適応停止](ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 
-確認日: 2026-09-08。N04曲線局所履歴のnative統合後（直前製品基準 `84a49e4`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-08。N04曲線残差指標追加後（直前製品基準 `6261292`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -25,7 +27,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 物理 | 真空、軸接続m=0 TM、PEC・平坦z端の電気/磁気対称 | TE、平面RF、内導体、複数材料、静的場は未実装 | [PHYSICS.md](PHYSICS.md)、solver.py |
 | 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否 | 追加物理を受理する契約ではない | [MODEL_CONTRACT.md](MODEL_CONTRACT.md) |
 | 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 穴・内導体・任意CADなし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
-| メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLI/JobManager/GUIあり。版3の表面量停止はAPI/CLI/JobManager/GUIへ接続。曲線局所細分の空間/係数移送APIあり。曲線局所履歴の保存/CLIあり。物理誤差上界・曲線適応接続は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |
+| メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLI/JobManager/GUIあり。版3の表面量停止はAPI/CLI/JobManager/GUIへ接続。曲線局所細分の空間/係数移送APIあり。曲線局所履歴の保存/CLI・曲線残差指標あり。物理誤差上界・曲線の追跡付き適応停止は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |
 | 固有値・場 | 実FEM、複数モード、残差/直交性/エネルギー検査、物理座標プローブ | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | solver.py、curved_solution.py、curved_sampling.py |
 | RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、直線/曲線の連続離散極値の囲い込み、曲線角診断 | peak phasor・RQ二規約。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 表面収束評価 | 固定曲線P2の3水準・追跡ID・ピーク上下界によるf/RQ/G/ピーク比判定API/CLI/GUI、元多角形角診断・追跡済み直線P1/P2の表面評価API/保存/CLI/GUI | 幾何近似誤差/一般形状の精度・効率は残件。物理誤差上界ではない | [SURFACE_CONVERGENCE.md](SURFACE_CONVERGENCE.md) |
@@ -42,8 +44,9 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 632件中630合格・NGSolve参照環境専用2件skip。N04曲線局所履歴のnative統合後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | N04曲線局所履歴のnative統合後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-curved-native-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 637件中635合格・NGSolve参照環境専用2件skip。N04曲線残差指標追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | N04曲線残差指標追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-curved-indicator-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| N04曲線残差指標 | 追加5検査、独立積分・直線極限・両対称変換則PASS。18 native結果の局所選択2回、積分比較・Ritz・円筒五量・相似則PASS。初回順位一致FAILも保持。追跡付き曲線停止/一般精度・効率は未受入 | out/curved-indicator-selection-set-20260908、[仕様](CURVED_RESIDUAL_INDICATOR.md) |
 | N04曲線局所履歴のnative統合 | 追加4検査、CLI実計算と6 native保存再読込、手動幾何完全一致・独立密行列FEM・円筒五量・相似則PASS。曲線適応停止/GUI履歴編集は未接続 | out/curved-native-initial-20260908、[仕様](CURVED_REFINEMENT_HISTORY.md) |
 | N04曲線局所細分基盤 | 追加5検査PASS。幾何/場/勾配・Galerkin・境界制限・全域細分との一致。円筒/楕円/双曲線の局所実FEM・RF移送・Ritz/相似則もPASS。当時は保存/適応経路未接続（保存は後続で統合） | out/curved-local-residual-metadata-20260908、[仕様](CURVED_MARKED_REFINEMENT.md) |
 | N03通常RFピーク統合 | 追加5検査・実Chrome13検査PASS。直線/曲線の保存再検証、元RF保持、規格化、別順位/改変拒否、遅延応答の破棄。独立円筒解析五量/相似則・曲線U規格化PASS | out/browser-rf-peaks-expanded-20260908、out/rf-peaks-physics-initial-20260908、[仕様](RF_DISCRETE_PEAKS.md) |

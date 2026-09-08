@@ -85,7 +85,9 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、N04曲線局所履歴のnative統合後（直前基準 `84a49e4`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-08、N04曲線残差指標追加後（直前基準 `6261292`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+
+[二次曲線FEMの残差指標](docs/CURVED_RESIDUAL_INDICATOR.md)を追加。物理座標の二階微分・曲線流束を評価し、既存の選択APIとCase局所履歴で実細分できる。指標は物理誤差上界ではなく、曲線の追跡付き適応停止/GUIは残る。
 
 [曲線要素の局所適合細分](docs/CURVED_MARKED_REFINEMENT.md)を[Caseの順序付き履歴・native保存再構築](docs/CURVED_REFINEMENT_HISTORY.md)へ接続。通常FEM/CLIと半領域鏡映の保存再検証を確認した。履歴対応Study・GUI編集・曲線適応停止は未接続。
 

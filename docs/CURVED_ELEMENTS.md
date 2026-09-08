@@ -1,5 +1,7 @@
 # G03 二次幾何写像と曲線FEM
 
+2026-09-08追記: [曲線残差指標](CURVED_RESIDUAL_INDICATOR.md)で、物理二階微分・曲線流束を局所選択へ接続。曲線の追跡付き適応停止と一般精度/効率は残る。
+
 2026-09-08追記: [選択曲線要素の適合細分](CURVED_MARKED_REFINEMENT.md)を空間/係数移送APIとして追加。親二次写像を制限し、再投影しない。[Case局所履歴・native保存/CLI](CURVED_REFINEMENT_HISTORY.md)も接続。曲線適応停止・GUI履歴編集は次段階。既存の全域細分と保存再構築は維持する。
 
 ## 対象と現在の到達点
