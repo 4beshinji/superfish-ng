@@ -1,5 +1,20 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 構築診断の表示・保存・再検証 — 2026-09-08
+
+out/gui-construction-diagnosis-browser-20260908/report.jsonでChrome11操作PASS、外部要求0、
+実行中ソース変更なし。版6フィレットの既存8操作に診断表示・ダウンロード/再読込、
+診断改変拒否、証明した弧端接触でも未確認構築の適用不可を維持する3操作を追加した。
+tangent-degenerate.pngの状態・ボタン表示を視認し、元プロジェクトの不変も確認。
+検証用GUIは停止済み。保存診断のPython再読込と版1〜6の構築再読込も確認した。
+
+```bash
+node scripts/verify_gui.mjs --url '起動URL' --out out/gui-construction-diagnosis-NEW --tangent-request examples/construction/line_conic_fillet_request.json --tangent-degenerate-request examples/construction/degenerate_fillet_request.json
+```
+
+診断の証明、構築の閉輪郭検査、FEM精度の受入を分離する。一般の重解分類は追加していない。
+
+
 ## 版6直線・有限弧フィレット — 2026-09-08
 
 out/gui-line-conic-fillet-browser-20260908/report.jsonでChrome8操作PASS。

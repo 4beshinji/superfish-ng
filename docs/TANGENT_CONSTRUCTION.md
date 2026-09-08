@@ -678,3 +678,8 @@ superfish-ng solve out/line-conic-fillet-case.json --out out/line-conic-fillet-s
 `diagnose-offsets` は独立した診断要求/出力であり、構築要求版1〜6の保存や候補選択を変えない。
 共有パラメータの証拠、円の接触/潰れ、直線の接触/重複を確認し、有限弧所属までの完全分類と
 支持曲線または共有部分だけの証拠を分ける。一般の弧端/重解・構築/GUI接続は継続する。
+
+構築診断接続（2026-09-08）: 版5/6の実探索区間から特殊ケース診断を作り、
+構築込みの別文書としてCLI/GUI保存・再構築照合へ接続した。元構築版1〜6の形式は維持する。
+診断のCERTIFIED/UNVERIFIEDを候補選択・閉輪郭検査・FEM精度の判定へ読み替えない。
+[構築診断の契約](OFFSET_DEGENERACIES.md)と[GUI手順](GUI_GUIDE.md)を参照。

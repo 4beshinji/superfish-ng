@@ -1,6 +1,6 @@
 # G03 要件と受入証拠の照合
 
-2026-09-08、弧端・退化診断追加時。G03は**部分受入**。
+2026-09-08、構築診断の保存・GUI接続時。G03は**部分受入**。
 本表は[計画](COMPATIBILITY_PLAN.md)のG03行と[幾何仕様](CONIC_GEOMETRY.md)の
 番号付き5段階を照合する。実装の存在、限定検証、全要件の完了を区別する。
 過去のout/は実行記録として読み直したもので、今回同じ比較を再実行したという意味ではない。
@@ -17,16 +17,16 @@
 | 固定直線と有限弧 | line_arc_tangent、版3、test_line_arc_tangent.py、既存Chrome8操作 | 支持直線を固定する限定接続を受入。非接線の自動補正とは区別 |
 | 指定半径の線分間フィレット | line_fillet、版4、test_line_fillet.py、out/gui-line-fillet-browser-20260908/report.jsonのpassed=true/8操作を再確認 | 有向小円弧を限定受入。接点/有限範囲/G1は数値検査 |
 | 円錐曲線弧を含むフィレット | normal_offsets.pyで法線方向の中心軌跡/導関数を有理数区間で囲み、正則/反転/潰れ/未確認を全有限区間に保持。offset_intersections.pyの孤立交点認証からconic_fillet.pyで接点/切詰め/位置上界付き構築へ接続。版5保存/Case/CLI/GUIとtest_conic_fillet.py、Chrome8操作PASS | 版6の直線と弧もtest_line_conic_fillet.py/Chrome8操作で部分受入。弧端/重解/無限解の追加分類と各形状の物理精度収束は未完 |
-| 弧端・退化の分類 | offset_degeneracies.py、test_offset_degeneracies.pyの追加9検査とdiagnose-offsets CLI。共有パラメータ、円の外接/内接/潰れ、直線の接触/重複を有限範囲と区別 | 特殊ケースを部分受入。[診断仕様](OFFSET_DEGENERACIES.md)。一般の重解/全弧端・構築/GUIへの診断接続は未完 |
+| 弧端・退化の分類 | offset_degeneracies.py、test_offset_degeneracies.pyの追加9検査とdiagnose-offsets CLI。共有パラメータ、円の外接/内接/潰れ、直線の接触/重複を有限範囲と区別 | 特殊ケースを部分受入。[診断仕様](OFFSET_DEGENERACIES.md)。構築版5/6の実探索区間から別保存/CLI/GUIへ接続し、追加5検査/Chrome11操作PASS。一般の重解/全弧端と退化候補構築は未完 |
 | 旧曲線指定との対応 | COMPATIBILITY_BASELINE.md、LEGACY_INPUT.md。現在は限定AF部分集合のみ | **未完**。旧仕様・対象版・変数別の確認と入力/数値出力比較が必要。native表現で代替して完了にはしない |
 | 物理的な表面ピークの収束 | 曲線場の連続離散極値・元曲線角診断は実装済み | **未完**。離散場の囲い込み/小残差を物理ピーク収束へ読み替えない。N03の独立細分証拠も必要 |
 
 ソース名はsrc/superfish_ng/、テスト名はtests/に対する表記。
 版6GUIはout/gui-line-conic-fillet-browser-20260908/report.jsonのChrome8操作で版6統合時に確認した。
-今回の診断追加ではGUIを変更・再実行していない。
+今回の構築診断はout/gui-construction-diagnosis-browser-20260908/report.jsonのChrome11操作で確認。
 既存版1〜5の記録と再読込も確認した。標準回帰の最新件数は
 [実装状況](IMPLEMENTATION_STATUS.md)と[引継ぎ](CODEX_HANDOFF.md)に保持する。
 
-版5/6で根箱からの有限接点と有向フィレットを製品操作へ接続。特殊ケースの診断を追加した。次は一般の弧端/重解分類と診断の構築接続。
+版5/6で根箱からの有限接点と有向フィレットを製品操作へ接続。特殊ケースの診断を追加した。診断の構築保存/CLI/GUI接続まで実施し、次は一般の弧端/重解分類。
 単一の初期値から収束した根を全候補列挙と扱わず、予算不足・接触/重根・潰れを残す。
 部分受入を全フィレット・旧入力・物理収束の証拠へ拡張しない。G03全体と全計画の完了判定は保留する。

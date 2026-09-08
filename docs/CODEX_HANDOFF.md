@@ -1,5 +1,45 @@
 # ローカルCodexへの引継ぎ
 
+## G03構築診断の保存・CLI/GUI接続 — 2026-09-08
+
+construction_diagnostics.pyを追加し、版5/6構築の実探索証明から区間・符号付き距離を
+有理数で取り出して既存の特殊ケース診断へ渡す。延長線分も実際の探索区間を使う。
+元構築全体・parameter_domain_box・診断を別の版1文書として保存する。
+文書型はconstruction_offset_diagnosis。再読込は元構築と診断を再計算し全体照合する。
+既存構築版1〜6の保存内容は変えない。診断CERTIFIEDとCASE_VALIDATEDは別判定。
+通常交点の診断がUNVERIFIEDでも、認証候補/閉輪郭検査に合格したCaseを取り消さない。
+
+GUIは診断/全領域分類の状態を別欄に表示し、「中心軌跡の診断を保存」で元構築ごと保存。
+同じ構築ファイル入力で再検証して開ける。要求/候補の変更、改変拒否で診断保存も無効化。
+CLI diagnose-constructionは保存構築または保存診断を受け、既存出力へは上書きしない。
+診断用の要求から元の計算プロジェクトへ自動適用しない。
+
+追加5テストは弧端接触の証明と未完成Caseの分離、明示延長の実探索範囲、通常合格と
+特殊ケース未分類の両立、旧版維持、改変拒否、CLI保存再実行/上書き拒否。
+実装前のModuleNotFoundErrorを確認。変更前397件中395合格・2 skip（121.122秒）。
+最終402件中400合格・2 skip（121.903秒）、out/validation-g03-construction-diagnosis-20260908 PASS。
+同所seed_comparison.jsonでcase hash一致、周波数差0、RF/エネルギー差最大8.882e-16。
+FEM本体/数学分類核/許容差/数値基準変更なし。検証中ソース変更なし、最終fingerprint一致。
+同所construction_replay.jsonに版1〜6の既存実保存ファイル再読込CASE_VALIDATEDを保存。
+
+out/gui-construction-diagnosis-browser-20260908/report.jsonはChrome11操作PASS、外部要求0、
+実行中ソース変更なし。元の8操作に診断表示/ダウンロード/再読込、診断改変拒否、
+弧端接触を証明しても未確認構築の適用を許可しない3操作を追加した。
+tangent-degenerate.pngで診断表示と適用不可を視認。元プロジェクト不変も確認。
+ダウンロードした診断はPythonでも再読込し、診断UNVERIFIED/構築CASE_VALIDATEDを確認。
+検証用GUIは停止済み。今回Wine新規実行なし。
+
+例examples/construction/degenerate_fillet_request.jsonを実CLIで構築するとUNVERIFIED（exit 1）。
+out/g03-degenerate-fillet-construction-20260908.jsonへ保存し、diagnose-constructionで
+out/g03-construction-diagnosis-20260908.jsonへSINGLE_TANGENCY / finite_domain_complete=trueを保存。
+診断はexit 0でも構築はUNVERIFIED、Caseなしのまま。例は未完成の編集/診断要求であり測定空洞ではない。
+
+README・対応表・計画・実装状況・G03照合表・診断/GUI仕様を同期。
+既存核の製品接続で、新規外部資料/コード/依存/旧資産参照なし。
+次は一般の弧端/重解と退化候補構築、最小半径契約、旧入力/物理収束の残件。
+8親課題の限定受入を維持し、G03全体と全計画目標は未完了。
+
+
 ## G03弧端・退化の厳密特殊ケース診断 — 2026-09-08
 
 offset_degeneracies.pyとdiagnose-offsets CLIを追加。元パラメータが一致する円/楕円/双曲線の

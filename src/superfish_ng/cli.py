@@ -23,6 +23,9 @@ def main(argv=None):
     diagnosis = sub.add_parser('diagnose-offsets', help='diagnose exact finite normal-offset degeneracies without constructing a case')
     diagnosis.add_argument('request', type=Path)
     diagnosis.add_argument('--out', type=Path, required=True, help='new diagnosis JSON, including unknown cases')
+    construction_diagnosis = sub.add_parser('diagnose-construction', help='replay a saved fillet construction or its offset diagnosis and save the diagnosis')
+    construction_diagnosis.add_argument('source',type=Path)
+    construction_diagnosis.add_argument('--out',type=Path,required=True)
     constructed = sub.add_parser('export-constructed-case', help='replay a tangent construction and export its validated case')
     constructed.add_argument('construction', type=Path)
     constructed.add_argument('--out', type=Path, required=True)
@@ -84,6 +87,16 @@ def main(argv=None):
                                          args.out, candidate_index=args.candidate_index)
             print(f"{document['status']}: {args.out}")
             return 1 if document['status'] == 'UNVERIFIED' else 0
+        elif args.command == 'diagnose-construction':
+            from .construction_diagnostics import diagnose_construction,replay_construction_diagnosis
+            from .project import parse_json
+            source=parse_json(args.source.read_text(encoding='utf-8'))
+            document=(replay_construction_diagnosis(source) if isinstance(source,dict) and source.get('document_type')=='construction_offset_diagnosis' else diagnose_construction(source))
+            with args.out.open('x',encoding='utf-8') as stream:
+                stream.write(json.dumps(document,indent=2,allow_nan=False)+'\n')
+            result=document['diagnosis']
+            print(f"{result['classification']}: finite_domain_complete={result['finite_domain_complete']}; construction={document['construction']['status']}; {args.out}")
+            return 1 if result['status']=='UNVERIFIED' else 0
         elif args.command == 'diagnose-offsets':
             from .offset_degeneracies import diagnose_offsets_document
             from .project import parse_json

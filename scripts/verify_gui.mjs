@@ -946,7 +946,7 @@ try {
     }
     if (!isDeepStrictEqual(saved,built)) throw Error("saved tangent document differs from displayed construction");
     await fill("#tangent-request",JSON.stringify(built.request));
-    if (!await ev('!tangentResult && document.querySelector("#tangent-apply").disabled && document.querySelector("#tangent-save").disabled')) throw Error("request edit retained stale construction");
+    if (!await ev('!tangentResult && document.querySelector("#tangent-apply").disabled && document.querySelector("#tangent-save").disabled && document.querySelector("#tangent-diagnosis-save").disabled')) throw Error("request edit retained stale construction");
     report.checks.push({operation:"explicit tangent selection, closure check, download and edit invalidation",passed:true});
     await loadFile("#tangent-open",out+"/downloads/tangent-construction.json");
     await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
@@ -974,6 +974,44 @@ try {
     await ev('document.querySelector("#error").hidden=true;document.querySelector("#tangent-panel").scrollIntoView({block:"start",behavior:"instant"})');
     const shot=await call("Page.captureScreenshot",{},sessionId);
     await writeFile(out+"/tangent-construction.png",Buffer.from(shot.data,"base64"));
+    if ([5,6].includes(built.schema_version)) {
+      const diagnosis=await ev("tangentResult.offset_diagnosis");
+      if (!diagnosis || !isDeepStrictEqual(diagnosis.construction,built)) throw Error("offset diagnosis lost original construction");
+      if (!await ev('!document.querySelector("#tangent-offset-status").hidden && !document.querySelector("#tangent-diagnosis-save").disabled')) throw Error("offset diagnosis is not displayed or downloadable");
+      await click("#tangent-diagnosis-save");
+      let savedDiagnosis;
+      for (let n=0;n<100;n++) {
+        try {savedDiagnosis=JSON.parse(await readFile(out+"/downloads/construction-offset-diagnosis.json","utf8"));break;} catch {}
+        await sleep(100);
+      }
+      if (!isDeepStrictEqual(savedDiagnosis,diagnosis)) throw Error("downloaded diagnosis differs from displayed evidence");
+      await loadFile("#tangent-open",out+"/downloads/construction-offset-diagnosis.json");
+      await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
+      if (!isDeepStrictEqual(await ev("tangentResult.offset_diagnosis"),diagnosis)) throw Error("diagnosis replay differs");
+      report.checks.push({operation:"offset diagnosis display, download and replay preserve construction",classification:diagnosis.diagnosis.classification,passed:true});
+      const tampered=structuredClone(diagnosis);tampered.diagnosis.finite_center_count=17;
+      await writeFile(out+"/corrupt-diagnosis.json",JSON.stringify(tampered));
+      await loadFile("#tangent-open",out+"/corrupt-diagnosis.json");
+      await wait('!document.querySelector("#error").hidden && document.querySelector("#error").textContent.includes("replay")');
+      if (!await ev('document.querySelector("#tangent-apply").disabled && document.querySelector("#tangent-diagnosis-save").disabled')) throw Error("tampered diagnosis left controls enabled");
+      report.checks.push({operation:"modified offset diagnosis rejected with apply and save disabled",passed:true});
+      if (args["--tangent-degenerate-request"]) {
+        const before=await ev("collect().case");
+        await loadFile("#tangent-open",args["--tangent-degenerate-request"]);
+        await wait('tangentResult?.construction.status === "UNVERIFIED"');
+        const d=await ev("tangentResult.offset_diagnosis.diagnosis");
+        if (d.classification!=="SINGLE_TANGENCY" || !d.finite_domain_complete || d.finite_center_count!==1) throw Error("known degenerate offset was not diagnosed");
+        if (!await ev('!tangentResult.preview && document.querySelector("#tangent-apply").disabled && document.querySelector("#tangent-build").disabled && !document.querySelector("#tangent-diagnosis-save").disabled && document.querySelector("#tangent-offset-status").textContent.includes("1点で接触")')) throw Error("diagnosis changed construction eligibility or lost its display");
+        if (!isDeepStrictEqual(before,await ev("collect().case"))) throw Error("degenerate preview changed current project");
+        report.checks.push({operation:"certified endpoint tangency remains an unverified construction",passed:true});
+        await ev('document.querySelector("#error").hidden=true;document.querySelector("#tangent-panel").scrollIntoView({block:"start",behavior:"instant"})');
+        const degenerateShot=await call("Page.captureScreenshot",{},sessionId);
+        await writeFile(out+"/tangent-degenerate.png",Buffer.from(degenerateShot.data,"base64"));
+      }
+      await loadFile("#tangent-open",out+"/downloads/tangent-construction.json");
+      await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
+      await ev('document.querySelector("#error").hidden=true');
+    }
   }
   await ev("document.activeElement?.blur()");
   await wait("(window.scrollTo({top:0,behavior:'instant'}), window.scrollY===0)");

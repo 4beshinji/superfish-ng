@@ -80,6 +80,42 @@ software_version、診断結果と有理数証拠を保存する。保存要求�
 標準回帰と実行記録は[引継ぎ](CODEX_HANDOFF.md)を参照。
 
 構築版1〜6の再構築結果を変えないよう、診断を既存の交点列挙・候補選択へ暗黙適用しない。
-GUI診断表示や退化候補の構築操作への接続、一般の楕円/双曲線オフセットの重解・自己交差、
+GUI診断表示と構築保存への接続は次節で実装。退化候補の構築、一般の楕円/双曲線オフセットの重解・自己交差、
 全弧端での隔離証明は残件。G03全体、旧入力互換、物理ピーク収束は未完了である。
 新しい外部資料・依存は使わず、既存の区間演算と初等円幾何・線形代数から独立実装した。
+
+## 保存済み構築・GUIへの接続 — 2026-09-08
+
+`construction_diagnostics` は版5/6の構築を再実行・照合した後、保存された交点探索証明の
+domain_boxと符号付き距離を厳密な有理数として診断へ渡す。延長が許可された線分も、
+実際の探索区間を使う。診断のために元の[0,1]へ縮めたり、区間端をfloatへ丸めたりしない。
+
+```bash
+superfish-ng construct-tangent examples/construction/degenerate_fillet_request.json --out out/degenerate-construction-new.json
+superfish-ng diagnose-construction out/degenerate-construction-new.json --out out/construction-diagnosis-new.json
+superfish-ng diagnose-construction out/construction-diagnosis-new.json --out out/construction-diagnosis-replayed-new.json
+```
+
+この例の最初の構築はUNVERIFIEDを保存して終了コード1になる。診断は有限範囲で唯一の
+接触を証明しても、元の構築状態を変更しない。第2/3コマンドは診断の証明で終了コード0、
+出力のconstruction.statusはUNVERIFIEDのままである。FEMへ渡せるCaseは生成していない。
+
+診断文書はschema_version=1 / document_type=construction_offset_diagnosisで、
+元のconstruction全体、parameter_domain_box、diagnosisを保存する。構築文書自体の版や
+内容は変えない。再読込は元の構築要求から再構築し、診断も再計算して文書全体を照合する。
+診断、探索区間、構築内容、文書版の改変は拒否する。これは署名ではなく現在の実装での再現照合である。
+Pythonではdiagnose_construction / replay_construction_diagnosisを使える。
+CLIは保存構築または保存診断を受け取り、新規ファイルだけへ出力する。
+診断UNVERIFIEDは終了コード1だが、元の構築がCASE_VALIDATEDである場合もある。
+通常の横断交点はこの特殊ケース診断の対象外であり、構築の合格を取り消す根拠にはしない。
+
+GUIは版5/6構築の候補表示・選択後検査・再読込時に同じ診断を別欄へ表示する。
+「中心軌跡の診断を保存」からサーバーの直列化文字列を保存でき、構築ファイルと同じ入力欄で
+再検証して開ける。要求/候補の編集や改変拒否では診断保存も無効化する。
+元の構築ファイル保存と適用条件は維持し、診断がCERTIFIEDという理由で適用を許可しない。
+版1〜4にはこのオフセット診断を付けず、従来の保存/再構築を維持する。
+
+追加5テストは端点接触診断と未完成Caseの分離、延長区間の一致、通常の構築合格と
+特殊ケース未分類の両立、旧構築版の維持、改変拒否、CLI保存再実行/上書き拒否。
+Chrome11操作で診断表示・ダウンロード・再読込・改変拒否と未確認構築の適用不可まで確認。
+数学的な診断対象は前節と同じであり、一般重解や退化からの新しい構築候補生成は未実装である。

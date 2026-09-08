@@ -1397,7 +1397,9 @@ function clearTangent() {
   tangentResult = null;
   $("tangent-candidate").replaceChildren(new Option("候補を選択してください", ""));
   $("tangent-table").tBodies[0].replaceChildren();
-  for (const id of ["tangent-candidate", "tangent-build", "tangent-save", "tangent-apply"]) $(id).disabled = true;
+  for (const id of ["tangent-candidate", "tangent-build", "tangent-save", "tangent-apply", "tangent-diagnosis-save"]) $(id).disabled = true;
+  $("tangent-offset-status").hidden = true;
+  $("tangent-offset-status").textContent = "";
   $("tangent-status").textContent = "要求を変更しました。接線候補を調べ直してください。";
   $("tangent-diagnostics").textContent = "";
 }
@@ -1444,13 +1446,23 @@ function showTangent(response) {
   if ([5,6].includes(c.schema_version)) {
     $("tangent-status").textContent += ` 指定半径${(report.radius_m*1000).toPrecision(7)} mm、${report.turn_direction === 1 ? "反時計回り" : "時計回り"}の弧フィレットです。長さは円弧長です。`;
   }
-  $("tangent-diagnostics").textContent = JSON.stringify({status:c.status, scope:c.scope, enumeration:report, joins:c.joins},null,2);
+  const diagnosis = response.offset_diagnosis?.diagnosis;
+  $("tangent-diagnosis-save").disabled = !diagnosis;
+  $("tangent-offset-status").hidden = !diagnosis;
+  if (diagnosis) {
+    const names = {DISJOINT:"共有する中心点なし", SINGLE_TANGENCY:"1点で接触", INFINITE_PARAMETER_PAIRS:"対応するパラメータ対が無限個", SHARED_PARAMETER_ENDPOINT:"共有端点あり", COINCIDENT_SUPPORTING_CIRCLES:"支持円が一致"};
+    $("tangent-offset-status").textContent = diagnosis.status === "UNVERIFIED"
+      ? "中心軌跡の特殊ケース診断: 対象外または未確認です。構築の可否は上の検査結果を参照してください。"
+      : `中心軌跡の特殊ケース診断: ${names[diagnosis.classification] ?? diagnosis.classification}。${diagnosis.finite_domain_complete ? "指定範囲全体を分類済みです。" : "この事実を確認しました。指定範囲全体の分類は未完了です。"} 構築の可否は上の検査結果を参照してください。`;
+  }
+  $("tangent-diagnostics").textContent = JSON.stringify({status:c.status, scope:c.scope, enumeration:report, joins:c.joins, offset_diagnosis:diagnosis ?? null},null,2);
 }
 async function requestTangent(candidate = null) {
   const source = $("tangent-request").value;
   const generation = ++tangentGeneration;
   tangentResult = null;
-  for (const id of ["tangent-build", "tangent-save", "tangent-apply"]) $(id).disabled = true;
+  for (const id of ["tangent-build", "tangent-save", "tangent-apply", "tangent-diagnosis-save"]) $(id).disabled = true;
+  $("tangent-offset-status").hidden = true;
   let response;
   try { response = await api("tangent", {document:source, candidate_index:candidate}); }
   catch (error) { if (generation === tangentGeneration) throw error; else return; }
@@ -1462,6 +1474,8 @@ $("tangent-candidate").addEventListener("change", () => {
   tangentGeneration++;
   if (tangentResult) tangentResult = null;
   $("tangent-save").disabled = $("tangent-apply").disabled = true;
+  $("tangent-diagnosis-save").disabled = true;
+  $("tangent-offset-status").hidden = true;
   $("tangent-build").disabled = $("tangent-candidate").value === "";
   $("tangent-status").textContent = "候補を変更しました。選択した接線で閉輪郭を検査してください。";
 });
@@ -1477,7 +1491,7 @@ $("tangent-open").addEventListener("change", async event => {
     const source = await file.text();
     if (generation !== tangentGeneration) return;
     const parsed = JSON.parse(source);
-    if (Object.hasOwn(parsed, "request_sha256")) {
+    if (Object.hasOwn(parsed, "request_sha256") || parsed.document_type === "construction_offset_diagnosis") {
       const response = await api("replay-tangent", {document:source});
       if (generation !== tangentGeneration) return;
       $("tangent-request").value = JSON.stringify(response.construction.request,null,2);
@@ -1492,6 +1506,10 @@ $("tangent-open").addEventListener("change", async event => {
 bind("tangent-save", () => {
   if (!tangentResult) throw Error("構築要求を調べ直してください");
   download("tangent-construction.json", tangentResult.serialized);
+});
+bind("tangent-diagnosis-save", () => {
+  if (!tangentResult?.diagnosis_serialized) throw Error("構築要求を調べ直してください");
+  download("construction-offset-diagnosis.json", tangentResult.diagnosis_serialized);
 });
 bind("tangent-apply", () => {
   if (!tangentResult?.preview || tangentResult.construction.status !== "CASE_VALIDATED") throw Error("閉輪郭の検査が必要です");

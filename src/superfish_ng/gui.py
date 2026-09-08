@@ -43,12 +43,20 @@ def preview_document(project):
 def tangent_document(document, *, candidate_index=None, replay=False):
     """Shared GUI response; never apply an unfinished template to a project."""
     from .tangent_construction import construct_tangent_case, replay_construction
+    from .construction_diagnostics import _from_replayed_construction, replay_construction_diagnosis
     document = parse_json(document) if isinstance(document, str) else document
-    construction = (replay_construction(document) if replay else
-                    construct_tangent_case(document, candidate_index=candidate_index))
+    if replay and isinstance(document,dict) and document.get('document_type')=='construction_offset_diagnosis':
+        diagnosis=replay_construction_diagnosis(document)
+        construction=diagnosis['construction']
+    else:
+        construction = (replay_construction(document) if replay else
+                        construct_tangent_case(document, candidate_index=candidate_index))
+        diagnosis=_from_replayed_construction(construction)
     preview = (preview_document(Project.from_dict(construction["case"]))
                if construction["case"] is not None else None)
     return {"construction": construction, "preview": preview,
+            "offset_diagnosis": diagnosis,
+            "diagnosis_serialized": json.dumps(diagnosis,indent=2,ensure_ascii=False,allow_nan=False)+"\n" if diagnosis is not None else None,
             "serialized": json.dumps(construction, indent=2, ensure_ascii=False, allow_nan=False)+"\n"}
 
 
