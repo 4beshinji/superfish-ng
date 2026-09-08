@@ -1,5 +1,7 @@
 # N04 曲線の追跡付き適応計算・五量停止・保存再開
 
+[一様細分との対照](CURVED_REFINEMENT_EFFICIENCY.md)を追加した。球形例では両者とも五量を確認したが、適応側の効率優位は得られなかった。
+
 2026-09-09、直前基準ba36a86。
 要求版4は[曲線残差指標](CURVED_RESIDUAL_INDICATOR.md)、[native局所履歴](CURVED_REFINEMENT_HISTORY.md)、
 [親子質量内積追跡](NESTED_CURVED_TRACKING.md)を適応計算へ接続する。

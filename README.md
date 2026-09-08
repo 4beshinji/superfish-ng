@@ -87,6 +87,8 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 2026-09-09、N04曲線適応版4のGUI接続後（直前基準 `3671707`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
 
+[曲線適応と一様細分の対照](docs/CURVED_REFINEMENT_EFFICIENCY.md)を追加。同じ初期二次写像の球形で、独立解析五量・追跡・積分・二区間確認と誤差対DOF/時間を実測した。一様3水準/1201自由度に対し適応5水準/2661自由度を要し、この例で効率優位は得られなかった。一般精度/効率の受入は継続する。
+
 [曲線の適応計算版4](docs/CURVED_ADAPTIVE_REFINEMENT.md)をAPI/CLI/JobManagerへ接続。残差選択・native履歴・質量内積追跡、高次積分比較、五量の区間判定、全域確認2回、保存再開を統合する。滑らかさを確認した閉PEC曲線が対象。版4のGUI入力・五量/高次積分表示・保存再開も接続した。一般精度/効率・幾何誤差の受入は残る。
 
 [曲線の親子空間の質量内積追跡](docs/NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ追加。局所・全域の複数段階履歴、両対称と鏡映の偶奇部分空間を検証し、係数移送からモードID/部分空間を対応付ける。版4の適応停止とGUIへ接続した。一般精度・効率は残る。

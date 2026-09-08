@@ -1,5 +1,8 @@
 # 互換開発の作業分割 v0
 
+[曲線適応と一様細分の対照](CURVED_REFINEMENT_EFFICIENCY.md)を追加。同じ初期二次写像の球形で、独立解析五量・追跡・積分・二区間確認と誤差対DOF/時間を実測した。一様3水準/1201自由度に対し適応5水準/2661自由度を要し、この例で効率優位は得られなかった。一般精度/効率の受入は継続する。
+
+
 [曲線の適応計算版4](CURVED_ADAPTIVE_REFINEMENT.md)をAPI/CLI/JobManagerへ接続。残差選択・native履歴・質量内積追跡、高次積分比較、五量の区間判定、全域確認2回、保存再開を統合する。滑らかさを確認した閉PEC曲線が対象。版4のGUI入力・五量/高次積分表示・保存再開も接続した。一般精度/効率・幾何誤差の受入は残る。
 
 [曲線の親子空間の質量内積追跡](NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ追加。局所・全域の複数段階履歴、両対称と鏡映の偶奇部分空間を検証し、係数移送からモードID/部分空間を対応付ける。版4の適応停止とGUIへ接続した。一般精度・効率は残る。
@@ -50,7 +53,7 @@ GUIの開始/中止/結果/保存/再開と最終対象モードの場表示も�
 第2版の長さ/無次元変数と明示倍率/オフセットで複数profile座標を同時更新する調整も追加。
 一般形状の自動写像、RF制約付き最適化は未完。詳細は[TUNING.md](TUNING.md)。
 N03の[表面収束評価](SURFACE_CONVERGENCE.md)は固定曲線幾何の3水準と追跡IDを検証し、f/RQ/G/ピーク比を別判定する。保存履歴/追跡済みStudyからのGUI評価・保存/再検証も追加。[直線P1/P2の連続離散ピーク囲い込み](AFFINE_SURFACE_EXTREMA.md)をAPI/保存/CLIへ追加。[直線表面収束評価](AFFINE_SURFACE_CONVERGENCE.md)と元多角形の角診断もAPI/保存/CLIへ追加。[直線評価GUI](GUI_AFFINE_SURFACE_CONVERGENCE.md)の評価/保存/再検証・別IDの対象場表示も追加。一般形状・幾何誤差は未完。直線の版3適応停止はAPI/CLI/JobManager/GUIへ統合。
-N04は[選択要素の適合細分](MARKED_REFINEMENT.md)を追加。既存辺分割を再利用し、品質上限とP1/P2移送・親対応を確認する。[残差指標と対象選択](RESIDUAL_INDICATOR.md)も追加。[追跡付きf/RQ/G適応停止・保存再開API/CLI](ADAPTIVE_REFINEMENT.md)を追加。版2全域確認と親子メッシュ内積追跡、[JobManager実行/取消し/再開](ADAPTIVE_REFINEMENT_JOBS.md)を追加し、独立円筒P1のRF改善検査はPASS。一般形状/効率受入は残る。[GUI](GUI_ADAPTIVE_REFINEMENT.md)の開始/中止・保存再開・個別差表示・対象場表示も追加。曲線局所細分のCase履歴とnative保存/CLIを追加。適応接続・一般精度/効率は未完。
+N04は[選択要素の適合細分](MARKED_REFINEMENT.md)を追加。既存辺分割を再利用し、品質上限とP1/P2移送・親対応を確認する。[残差指標と対象選択](RESIDUAL_INDICATOR.md)も追加。[追跡付きf/RQ/G適応停止・保存再開API/CLI](ADAPTIVE_REFINEMENT.md)を追加。版2全域確認と親子メッシュ内積追跡、[JobManager実行/取消し/再開](ADAPTIVE_REFINEMENT_JOBS.md)を追加し、独立円筒P1のRF改善検査はPASS。一般形状/効率受入は残る。[GUI](GUI_ADAPTIVE_REFINEMENT.md)の開始/中止・保存再開・個別差表示・対象場表示も追加。曲線局所細分のCase履歴とnative保存/CLIを追加。版4の五量停止・高次積分比較・保存再開をGUIまで接続した。一様細分との球形対照では適応優位は得られず、一般精度/効率は未完。
 詳細は [最新引継ぎ](CODEX_HANDOFF.md)、[曲線要素](CURVED_ELEMENTS.md)、[接線構築](TANGENT_CONSTRUCTION.md)。
 
 最新の標準テスト件数・数値回帰は[実装状況](IMPLEMENTATION_STATUS.md)を参照。通常RFピークGUIのChrome13検査PASS。

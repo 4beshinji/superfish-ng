@@ -1,5 +1,8 @@
 # 実装・検証の現状
 
+[曲線適応と一様細分の対照](CURVED_REFINEMENT_EFFICIENCY.md)を追加。同じ初期二次写像の球形で、独立解析五量・追跡・積分・二区間確認と誤差対DOF/時間を実測した。一様3水準/1201自由度に対し適応5水準/2661自由度を要し、この例で効率優位は得られなかった。一般精度/効率の受入は継続する。
+
+
 [曲線の適応計算版4](CURVED_ADAPTIVE_REFINEMENT.md)をAPI/CLI/JobManagerへ接続。残差選択・native履歴・質量内積追跡、高次積分比較、五量の区間判定、全域確認2回、保存再開を統合する。滑らかさを確認した閉PEC曲線が対象。版4のGUI入力・五量/高次積分表示・保存再開も接続した。一般精度/効率・幾何誤差の受入は残る。
 
 [曲線の親子空間の質量内積追跡](NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ追加。局所・全域の複数段階履歴、両対称と鏡映の偶奇部分空間を検証し、係数移送からモードID/部分空間を対応付ける。版4の適応停止とGUIへ接続した。一般精度・効率は残る。
@@ -48,13 +51,14 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 647件中645合格・NGSolve参照環境専用2件skip。N04曲線適応GUI接続後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | N04曲線適応GUI接続後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-gui-curved-adaptive-20260909、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 647件中645合格・NGSolve参照環境専用2件skip。N04曲線効率対照追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | N04曲線効率対照追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-curved-efficiency-20260909、[引継ぎ](CODEX_HANDOFF.md) |
+| N04曲線の効率対照 | 同一二次写像の球形で解析五量/追跡/積分/二区間停止・Ritz・誤差対DOF/時間を確認。一様1201自由度に対し適応2661自由度。この例で適応優位なし、一般効率は未受入 | [比較仕様](CURVED_REFINEMENT_EFFICIENCY.md) |
 | N04曲線適応GUI | 版4の実Chrome11項目・旧版15項目PASS。GUI実計算の独立球形五量もPASS。全ジョブ終了・検証サーバー停止済み | [GUI仕様](GUI_CURVED_ADAPTIVE_REFINEMENT.md) |
 | N04曲線適応版4 | 追加5検査PASS。五量/全域確認/高次積分ゲート・4水準からの再開・改変拒否・CLI/JobManager。独立球形の両尺度で五量両端点・全域2回・相似則PASS。旧版1/2/3保存も完全一致。最終回帰は最新引継ぎを参照 | [仕様](CURVED_ADAPTIVE_REFINEMENT.md) |
 | D01/N04曲線親子追跡 | 追加5検査初回PASS。複数履歴・質量積分・縮退/順位・両対称/鏡映・保存再検証を確認。既存18 native場の12組でCLI/ID/Galerkin/相似則PASS。適応停止/GUIは後続の版4で接続済み | out/nested-curved-initial-20260908、[仕様](NESTED_CURVED_TRACKING.md) |
 | N04曲線残差指標 | 追加5検査、独立積分・直線極限・両対称変換則PASS。18 native結果の局所選択2回、積分比較・Ritz・円筒五量・相似則PASS。初回順位一致FAILも保持。追跡付き曲線停止/GUIは後続の版4で接続済み。一般精度・効率は未受入 | out/curved-indicator-selection-set-20260908、[仕様](CURVED_RESIDUAL_INDICATOR.md) |
-| N04曲線局所履歴のnative統合 | 追加4検査、CLI実計算と6 native保存再読込、手動幾何完全一致・独立密行列FEM・円筒五量・相似則PASS。曲線適応停止/GUI履歴編集は未接続 | out/curved-native-initial-20260908、[仕様](CURVED_REFINEMENT_HISTORY.md) |
+| N04曲線局所履歴のnative統合 | 追加4検査、CLI実計算と6 native保存再読込、手動幾何完全一致・独立密行列FEM・円筒五量・相似則PASS。曲線適応停止は後続の版4で接続済み。GUI履歴編集は未接続 | out/curved-native-initial-20260908、[仕様](CURVED_REFINEMENT_HISTORY.md) |
 | N04曲線局所細分基盤 | 追加5検査PASS。幾何/場/勾配・Galerkin・境界制限・全域細分との一致。円筒/楕円/双曲線の局所実FEM・RF移送・Ritz/相似則もPASS。当時は保存/適応経路未接続（保存は後続で統合） | out/curved-local-residual-metadata-20260908、[仕様](CURVED_MARKED_REFINEMENT.md) |
 | N03通常RFピーク統合 | 追加5検査・実Chrome13検査PASS。直線/曲線の保存再検証、元RF保持、規格化、別順位/改変拒否、遅延応答の破棄。独立円筒解析五量/相似則・曲線U規格化PASS | out/browser-rf-peaks-expanded-20260908、out/rf-peaks-physics-initial-20260908、[仕様](RF_DISCRETE_PEAKS.md) |
 | N04版3適応GUI | 通信5検査と実Chrome15操作が初回PASS。五量/上下界/全域確認/上限未達、保存再開・改変拒否・対象順位2・版1/版2切替 | out/browser-n04-surface-stop-initial-20260908、[仕様](GUI_ADAPTIVE_SURFACE_STOPPING.md) |

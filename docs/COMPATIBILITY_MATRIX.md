@@ -1,5 +1,8 @@
 # 互換対応表 v0
 
+[曲線適応と一様細分の対照](CURVED_REFINEMENT_EFFICIENCY.md)を追加。同じ初期二次写像の球形で、独立解析五量・追跡・積分・二区間確認と誤差対DOF/時間を実測した。一様3水準/1201自由度に対し適応5水準/2661自由度を要し、この例で効率優位は得られなかった。一般精度/効率の受入は継続する。
+
+
 [曲線の適応計算版4](CURVED_ADAPTIVE_REFINEMENT.md)をAPI/CLI/JobManagerへ接続。残差選択・native履歴・質量内積追跡、高次積分比較、五量の区間判定、全域確認2回、保存再開を統合する。滑らかさを確認した閉PEC曲線が対象。版4のGUI入力・五量/高次積分表示・保存再開も接続した。一般精度/効率・幾何誤差の受入は残る。
 
 [曲線の親子空間の質量内積追跡](NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ追加。局所・全域の複数段階履歴、両対称と鏡映の偶奇部分空間を検証し、係数移送からモードID/部分空間を対応付ける。版4の適応停止とGUIへ接続した。一般精度・効率は残る。
@@ -58,7 +61,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K03 | z折返しを含む単連結輪郭 | U | NG範囲受入：[輪郭](GENERAL_CONTOUR.md)・[品質付き生成](GENERAL_MESH.md) | 軸接続単一外周。旧版全仕様はC00未確認、曲線はG03 | A / G01,G02 |
 | K04 | 内導体・複数境界成分 | U | 未 | 領域位相・境界契約と対応する物理空間 | B / P03 |
 | K05 | 境界付き三角形・局所密度 | L/H | 部分：品質条件付き一般輪郭生成/JSON読込あり | 外部形式変換・生成対象の拡張。旧と同じ節点配置は要求しない | A / G02,O02 |
-| K06 | 高次要素・誤差推定・適応細分 | U | 部分：P1と実長細分、[P2場/RF/保存・表示](HIGH_ORDER_FIELDS.md) | P2場/RFは受入済み。[選択直線要素の細分・係数移送API](MARKED_REFINEMENT.md)を追加。[残差指標と割合による選択](RESIDUAL_INDICATOR.md)を追加。[追跡付きf/RQ/G停止・保存再開API/CLI](ADAPTIVE_REFINEMENT.md)を追加。版2全域確認で円筒P1のRF改善検査はPASS。JobManager実行/取消し/再開と[GUI](GUI_ADAPTIVE_REFINEMENT.md)も接続。[版3](ADAPTIVE_SURFACE_STOPPING.md)でピーク比を含む停止をAPI/CLI/JobManagerへ追加（版3 GUIも接続）。一般形状/効率・誤差上界は未完。曲線局所細分のCase履歴・native保存/CLI、曲線残差指標、親子質量内積追跡を追加。版4の滑らかな閉PEC曲線の五量停止・保存再開はAPI/CLI/JobManagerへ接続、GUI・一般精度/効率は未完。旧アルゴリズムの再現要件ではない | A / N01,N02,N04 |
+| K06 | 高次要素・誤差推定・適応細分 | U | 部分：P1と実長細分、[P2場/RF/保存・表示](HIGH_ORDER_FIELDS.md) | P2場/RFは受入済み。[選択直線要素の細分・係数移送API](MARKED_REFINEMENT.md)を追加。[残差指標と割合による選択](RESIDUAL_INDICATOR.md)を追加。[追跡付きf/RQ/G停止・保存再開API/CLI](ADAPTIVE_REFINEMENT.md)を追加。版2全域確認で円筒P1のRF改善検査はPASS。JobManager実行/取消し/再開と[GUI](GUI_ADAPTIVE_REFINEMENT.md)も接続。[版3](ADAPTIVE_SURFACE_STOPPING.md)でピーク比を含む停止をAPI/CLI/JobManagerへ追加（版3 GUIも接続）。一般形状/効率・誤差上界は未完。曲線局所細分のCase履歴・native保存/CLI、曲線残差指標、親子質量内積追跡を追加。版4の滑らかな閉PEC曲線の五量停止・保存再開はAPI/CLI/JobManager/GUIへ接続。一様細分との球形対照では適応優位は得られず、一般精度/効率は未完。旧アルゴリズムの再現要件ではない | A / N01,N02,N04 |
 | K07 | 軸対称m=0 TM基本/高次モード | L/H | 実装、演習17対象モード照合 | 形状/周波数範囲・探索条件の網羅、対応モードの判定 | A / C04,D01 |
 | K08 | 電気/磁気対称・PEC | L（全領域比較）、U（旧半領域詳細） | 部分：平坦z端・鏡映 | 旧タグ写像、任意境界への拡張要否。旧半領域を直接照合済みとはしない | A / C02,G01 |
 | K09 | 軸対称TE | H | 未 | 別の場未知数/軸条件、TE固有値・場・損失 | B / P01 |
