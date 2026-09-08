@@ -330,7 +330,7 @@
             <p>逆方向へ継続する場合は、比較する結果も逆に選んでください。入力欄の旧・新だけを入れ替え、メッシュの妥当性は比較時に検証します。標本次数を上げた確認も必要です。</p>
           </div>
           <div id="tracking-affine" hidden>
-            <p>旧結果から新結果への変換: r′ = a r、z′ = b r + c z。正の倍率で軸と原点を保ちます。直線境界の全体が対応する必要があります。</p>
+            <p>旧結果から新結果への変換: r′ = a r、z′ = b r + c z。正の倍率で軸と原点を保ち、境界全体が対応する必要があります。二次曲線では、同じ番号・パラメータの曲線を対応付け、変換後の近似境界全体を照合します。再近似で境界が変わった場合は比較できません。</p>
             <div class="grid">
               <label>半径倍率 a<input id="tracking-affine-radial" type="number" value="1" step="any" /></label>
               <label>軸方向倍率 c<input id="tracking-affine-axial" type="number" value="1" step="any" /></label>

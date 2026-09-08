@@ -139,7 +139,7 @@ try {
   };
   const click = async (selector) => {
     const rect = await ev(
-      `(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`,
+      `(async()=>{const e=document.querySelector(${JSON.stringify(selector)});e.scrollIntoView({block:'center',behavior:'instant'});await new Promise(done=>requestAnimationFrame(()=>requestAnimationFrame(done)));const r=e.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;if(!e.contains(document.elementFromPoint(x,y)))throw Error('click target is obscured');return {x,y}})()`,
     );
     for (const type of ["mousePressed", "mouseReleased"])
       await call(
@@ -373,6 +373,33 @@ try {
     await ev('document.querySelector("#mode-tracking").scrollIntoView({behavior:"instant",block:"start"})');
     const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
     await writeFile(out+"/curved-history.png",Buffer.from(capture.data,"base64"));
+  }
+  if (args["--curved-affine"]) {
+    await click("#tracking-reset");await loadFile(resolve(args["--curved-affine"],"ellipsoid-1-3-pair.json"));
+    await wait('trackingResult?.document.request?.controls.mapping==="affine_remesh" && !trackingBusy',30000);
+    await check("curved affine controls restore coefficients and boundary requirement",'document.querySelector("#tracking-affine-radial").value==="1.2" && document.querySelector("#tracking-affine-axial").value==="0.8" && document.querySelector("#tracking-affine").textContent.includes("二次曲線")');
+    const ids=[];
+    for (const stage of [0,1]) {
+      const before=await ev('[...document.querySelector("#tracking-current").options].map(x=>x.value)');
+      await fill("#import-path",resolve(args["--curved-affine"],`ellipsoid-1-${stage}`));await click("#import-result");
+      await wait(`document.querySelector("#tracking-current").options.length===${before.length+1}`,30000);
+      ids.push(await ev(`[...document.querySelector("#tracking-current").options].map(x=>x.value).find(x=>!${JSON.stringify(before)}.includes(x))`));
+    }
+    await click("#tracking-reset");await select("tracking-previous",ids[0]);await select("tracking-current",ids[1]);
+    await click("#tracking-compare");await wait('trackingResult?.document.document_type==="saved_mode_tracking" && !trackingBusy',30000);
+    await check("curved affine native comparison retains full-boundary and volume evidence",'trackingResult.document.status==="PASS" && trackingResult.document.tracking.physical_mapping.triangle_counts[0]!==trackingResult.document.tracking.physical_mapping.triangle_counts[1] && trackingResult.document.tracking.physical_mapping.boundary_coincidence.maximum_coefficient_distance_m<=trackingResult.document.tracking.physical_mapping.boundary_coincidence.roundoff_tolerance_m && Math.abs(trackingResult.document.tracking.physical_mapping.physical_volume_ratio-1.152)<1e-14');
+    await click("#tracking-start");await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy',30000);
+    await select("tracking-current",ids[0]);await click("#tracking-extend");await wait('!document.querySelector("#error").hidden && !trackingBusy',30000);
+    await check("curved reverse continuation rejects the forward map without changing history",'trackingResult.document.steps.length===1 && document.querySelector("#error").textContent.includes("quadratic boundary")');
+    await click("#tracking-affine-invert");await click("#tracking-extend");await wait('trackingResult?.document.steps?.length===2 && !trackingBusy',30000);
+    await check("curved affine inverse preserves the fundamental identity",'trackingResult.document.status==="PASS" && trackingResult.document.current_mode_ids[0]==="fundamental"');
+    const expected=await ev('trackingResult.document');await click("#tracking-save");let saved;
+    for (let n=0;n<100;n++) {try {const candidate=JSON.parse(await readFile(out+"/downloads/mode-tracking-history.json","utf8"));if(isDeepStrictEqual(candidate,expected)){saved=candidate;break;}} catch {} await sleep(100);}
+    if(!saved)throw Error("curved affine history download differs from verified data");
+    report.checks.push({operation:"curved affine history download preserves the verified map and boundary",passed:true});
+    await ev('document.querySelector("#mode-tracking").scrollIntoView({behavior:"instant",block:"start"})');
+    const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
+    await writeFile(out+"/curved-affine-history.png",Buffer.from(capture.data,"base64"));
   }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);

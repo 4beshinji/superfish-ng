@@ -15,6 +15,23 @@ def _restricted_controls(edge,lo,hi):
 
 
 def compare_quadratic_boundaries(previous,current):
+    """Require identical native declarations and coincident whole quadratic edges."""
+    return _compare_quadratic_boundaries(previous,current)
+
+
+def _affine_points(points,affine,inverse=False):
+    a,b,c=affine
+    result=np.empty_like(points)
+    with np.errstate(over='ignore',invalid='ignore',divide='ignore'):
+        if inverse:
+            result[:,0]=points[:,0]/a;result[:,1]=(points[:,1]-b*result[:,0])/c
+        else:
+            result[:,0]=a*points[:,0];result[:,1]=b*points[:,0]+c*points[:,1]
+    if not np.isfinite(result).all():raise ValueError('affine map produces nonfinite curved coordinates')
+    return result
+
+
+def _compare_quadratic_boundaries(previous,current,affine=None):
     """Compare Bernstein coefficients on every common primitive-parameter interval.
 
     The maximum norm of coefficient differences bounds positional difference
@@ -23,17 +40,21 @@ def compare_quadratic_boundaries(previous,current):
     """
     solutions=(previous,current)
     if any(not isinstance(s,CurvedSolution) for s in solutions):raise ValueError('curved_same_domain requires native curved solutions on both sides')
-    if previous.case.curved_contour.to_dict()!=current.case.curved_contour.to_dict():
+    if affine is None and previous.case.curved_contour.to_dict()!=current.case.curved_contour.to_dict():
         raise ValueError('curved_same_domain requires identical native curve declarations and parameterization')
+    if len(previous.case.curved_contour.curves)!=len(current.case.curved_contour.curves):
+        raise ValueError('affine quadratic boundary comparison requires corresponding native primitive indices and parameters')
     for s in solutions:
         if any(tag not in ('axis','pec') for tag in s.space.boundary_tags):raise ValueError('curved_same_domain requires closed PEC and axis boundaries')
-    scale=max(float(np.max(np.abs(s.space.geometry.points_rz_m))) for s in solutions)
+    coordinates=[s.space.geometry.points_rz_m for s in solutions]
+    if affine is not None:coordinates[1]=_affine_points(coordinates[1],affine,inverse=True)
+    scale=max(float(np.max(np.abs(p))) for p in coordinates)
     tolerance=512*np.finfo(float).eps*scale;parameter_tolerance=512*np.finfo(float).eps
     partitions=[]
-    for solution in solutions:
+    for solution,points in zip(solutions,coordinates):
         geometry=solution.space.geometry;curves=[[] for _ in solution.case.curved_contour.curves]
         for nodes,owner,parameters,tag in zip(geometry.boundary_nodes,geometry.boundary_curve_indices,geometry.boundary_parameters,solution.space.boundary_tags):
-            lo,hi=map(float,parameters);a,b,mid=geometry.points_rz_m[nodes]
+            lo,hi=map(float,parameters);a,b,mid=points[nodes]
             if hi<lo:lo,hi=hi,lo;a,b=b,a
             if not hi-lo>parameter_tolerance:raise ValueError('quadratic boundary parameter interval is unresolved at roundoff scale')
             curves[int(owner)].append((lo,hi,QuadraticEdge.from_nodes(a,b,mid),str(tag)))
@@ -53,7 +74,9 @@ def compare_quadratic_boundaries(previous,current):
                 first=_restricted_controls(a[2],(lo-a[0])/(a[1]-a[0]),(hi-a[0])/(a[1]-a[0]))
                 second=_restricted_controls(b[2],(lo-b[0])/(b[1]-b[0]),(hi-b[0])/(b[1]-b[0]))
                 difference=float(np.max(np.linalg.norm(first-second,axis=1)));maximum=max(maximum,difference);count+=1
-                if difference>tolerance:raise ValueError('quadratic boundary differs despite common analytic curves; preserve the represented boundary or declare another mapping')
+                if difference>tolerance:
+                    if affine is not None:raise ValueError('affine_map quadratic boundary differs after pullback; check the map, primitive parameters and represented boundary')
+                    raise ValueError('quadratic boundary differs despite common analytic curves; preserve the represented boundary or declare another mapping')
             old_end,new_end=a[1],b[1]
             if old_end<=new_end+parameter_tolerance:i+=1
             if new_end<=old_end+parameter_tolerance:j+=1
@@ -63,8 +86,12 @@ def compare_quadratic_boundaries(previous,current):
 
 def track_curved_same_domain_modes(previous,current,previous_ids,*,mapping,sample_order,**controls):
     if mapping!='curved_same_domain':raise ValueError('explicit mapping must be curved_same_domain')
+    return _track_curved_modes(previous,current,previous_ids,sample_order=sample_order,**controls)
+
+
+def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None,**controls):
     if type(sample_order) is not int or not 2<=sample_order<=32:raise ValueError('curved_same_domain sample_order must be an integer from 2 to 32')
-    boundary=compare_quadratic_boundaries(previous,current);solutions=(previous,current)
+    boundary=_compare_quadratic_boundaries(previous,current,affine);solutions=(previous,current)
     counts=[len(s.space.geometry.cell_nodes) for s in solutions];count=sum(counts)*sample_order**2
     if count>262144:raise ValueError('curved_same_domain exceeds 262144 samples; reduce sample_order or mesh size')
     rule=list(triangle_quadrature(order=sample_order));q=np.array([b[1:] for b,_ in rule]);reference=np.array([w for _,w in rule])
@@ -76,11 +103,18 @@ def track_curved_same_domain_modes(previous,current,previous_ids,*,mapping,sampl
             points.append(data['points_rz_m']);own.append(r[:,None]*(data['basis_values']@solution.u[g.cell_nodes[cell]]));measure.append(r*det*reference)
         points=np.concatenate(points);measure=np.concatenate(measure)
         if not np.isfinite(measure).all() or np.any(measure<=0):raise ValueError('curved comparison requires positive finite volume weights')
-        values[side].append(np.concatenate(own));other=1-side
-        values[other].append(np.column_stack([samplers[other].evaluate(points,i,outside='raise')['Hphi_A_per_m'] for i in range(len(solutions[other].frequencies_hz))]))
+        own=np.concatenate(own)
+        if affine is not None:
+            a,b,c=affine;points=_affine_points(points,affine,inverse=side==1)
+            if side==1:own=own/a;measure=measure/(a*a*c)
+            if not np.isfinite(measure).all() or np.any(measure<=0):raise ValueError('affine curved comparison requires positive finite reference volume weights')
+        values[side].append(own);other=1-side
+        sampled=np.column_stack([samplers[other].evaluate(points,i,outside='raise')['Hphi_A_per_m'] for i in range(len(solutions[other].frequencies_hz))])
+        if affine is not None and other==1:sampled=sampled/affine[0]
+        values[other].append(sampled)
         weights.append(measure/2);volumes.append(float(2*np.pi*np.sum(measure)))
     report=track_sampled_mode_subspaces(*[np.concatenate(v) for v in values],np.concatenate(weights),previous.frequencies_hz,current.frequencies_hz,previous_ids,
         comparison_description='same represented quadratic boundary; physical Hphi at both curved meshes quadrature points; half-sum physical r dr dz measure',**controls)
-    report['physical_mapping']=dict(name=mapping,sample_order=sample_order,sample_count=count,triangle_counts=counts,axisymmetric_volumes_m3=volumes,
+    report['physical_mapping']=dict(name='curved_same_domain',sample_order=sample_order,sample_count=count,triangle_counts=counts,axisymmetric_volumes_m3=volumes,
         boundary_coincidence=boundary,field='Hphi_A_per_m',scope='identical native curve parameterization and coincident represented quadratic boundary; independent curved P2 connectivity; sample-order convergence required; not equality of distinct curve approximations or physical convergence acceptance')
     return report

@@ -30,7 +30,15 @@ def track_affine_remesh_modes(previous,current,previous_ids,*,mapping,sample_ord
     if mapping!='affine_remesh':raise ValueError('explicit mapping must be affine_remesh')
     a,b,c=validate_affine_map(affine_map)
     if any(isinstance(s,CurvedSolution) for s in (previous,current)):
-        raise ValueError('affine_remesh requires straight geometric triangles; curved boundary correspondence is not implemented')
+        from .curved_same_domain_tracking import _track_curved_modes
+        report=_track_curved_modes(previous,current,previous_ids,sample_order=sample_order,affine=(a,b,c),**controls)
+        physical=report['physical_mapping'];volumes=physical.pop('axisymmetric_volumes_m3')
+        report['comparison_description']='declared r_new=a*r_old, z_new=b*r_old+c*z_old; whole quadratic boundary coincidence after pullback; Hphi_new/a; symmetric independent curved-mesh quadrature in old physical volume'
+        physical.update(name=mapping,affine_map=dict(radial_scale=a,axial_scale=c,axial_shear=b),physical_volume_ratio=a*a*c,
+            reference_axisymmetric_volumes_m3=volumes,physical_axisymmetric_volumes_m3=[volumes[0],volumes[1]*a*a*c],
+            current_field_multiplier='1/radial_scale, constant removed by subspace normalization',
+            scope='declared origin/axis-preserving affine map; corresponding native primitive indices and parameters; coincident pulled-back quadratic boundary; independent curved P2 connectivity; not inferred or non-affine correspondence, reprojected boundary equality, or physical convergence acceptance')
+        return report
     points=np.empty_like(current.mesh.points)
     with np.errstate(over='ignore',invalid='ignore',divide='ignore'):
         points[:,0]=current.mesh.points[:,0]/a
