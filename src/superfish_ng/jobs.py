@@ -73,6 +73,10 @@ def read_job(directory, verify=True):
                 raise ValueError("tracked Study job kind differs from completion manifest")
             prefix = "adaptive-study" if manifest["kind"] == "adaptive_study" else "tracked-study"
             required = {prefix + "-request.json", prefix + "-results.json"}
+        if manifest.get("kind") == "tune" or state.get("kind") == "tune":
+            if manifest.get("kind") != state.get("kind"):
+                raise ValueError("tune job kind differs from completion manifest")
+            required = {"tune-request.json", "tune-results.json"}
         if not required.issubset(files):
             raise ValueError("completion manifest missing required output")
         for name, digest in files.items():
@@ -85,6 +89,9 @@ def read_job(directory, verify=True):
                 raise ValueError("invalid completion manifest path")
             if not path.is_file() or _digest(path) != digest:
                 raise ValueError(f"output integrity failure or missing file: {name}")
+        if manifest.get("kind") == "tune":
+            from .tuning_jobs import verify_tune_job
+            verify_tune_job(directory, state, manifest)
         if manifest.get("kind") in ("tracked_study", "adaptive_study"):
             from .tracked_study import read_tracked_study
             from .adaptive_study import read_adaptive_study
@@ -258,6 +265,11 @@ class JobManager:
         """Run adaptive tracked FEM sweeps in an isolated local worker."""
         from .adaptive_study_jobs import start_adaptive_study
         return start_adaptive_study(self, request, max_new_attempts=max_new_attempts, checkpoint=checkpoint)
+
+    def start_tune(self, request, *, max_new_trials=None, checkpoint=None):
+        """Run tracked frequency tuning in an isolated local worker."""
+        from .tuning_jobs import start_tune
+        return start_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
 
     def start_tracked_study(self, request, *, max_new_points=None, checkpoint=None):
         """Run sequential tracked FEM points in an isolated local worker."""

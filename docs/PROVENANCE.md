@@ -1,5 +1,38 @@
 # 独立実装・情報来歴
 
+## D02周波数調整のJobManager接続 — 2026-09-08
+
+直前基準5f280cb。JobManager.start_tuneとtuning_jobsの実workerを追加。
+別プロセスFEM、取消し、PAUSED再開、管理器再起動へ接続した。
+job status=completeとtuning_statusのTUNED/PAUSED/UNVERIFIED/細分未達/探索限界を分離。
+通常のnumerical_validationはnot_checkedを維持し、全般的な精度保証へ読み替えない。
+
+完了時はrequest/results・全executionのhashを公開する。read_job(verify=True)で
+保存場と探索判断を再検証し、再開元hash・Job種類/要約・試行上限・今回の保存先・
+必須checkpoint/試行ファイルを照合する。実行中の入力/実装変更は完了公開前に拒否。
+実行失敗と数値未達を区別し、完全保存済みのcheckpointを再検証して別Jobへ再開する。
+取消し中の書きかけJSONを確認済みとは扱わない。
+
+着手前542件中540合格・2 skip（162.734秒）。未実装import失敗を確認後、
+追加7検査PASS（5.483秒）。実workerの停止/再開、順位交換、祖先改変、取消し後の再開、
+再起動、厳密入力、要約/種類/上限/manifest欠落、実行失敗、実行中入力変更を確認した。
+既存JobManagerの専有workspace・プロセス取消しと既存tuning APIを再利用。
+FEM・RF・追跡・探索核と許容差/seed変更なし。新規外部資料・依存・legacy参照なし。
+
+out/d02-tune-jobs-20260908のvalidate_tuning.py --backgroundはPASS。
+尺度1/2それぞれ管理器を再起動して2試行から再開し、17試行でTUNED。
+長さ相対差5.88291e-6、最終形状の解析周波数差最大1.14697e-7、
+f/RQ/G相似則差最大4.64074e-14。初期順位3→最終2、元2試行hash不変。
+独立検証source_sha256は最終ソースと一致。全workerは管理器closeで回収済み。
+
+GUI・曲線/折返し/連動変数・細分失敗後の自動再探索・制約付き最適化は残る。
+親課題8受入・4進行中・20未受入・X01候補を維持。D01/D02親課題全体は未受入。
+再現手順・Job状態の意味は[TUNING.md](TUNING.md)を参照。
+
+最終out/validation-d02-tune-jobs-20260908はPASS。549件中547合格・2 skip（168.758秒）。
+seed周波数差ゼロ、RF/エネルギー相対差最大8.881784197001252e-16。
+標準・独立検証のsource_sha256は最終ソースと一致。FEM/RF核・基準・許容差変更なし。
+
 ## D02追跡付き1変数tune初期実装 — 2026-09-08
 
 直前基準64a086f。tuning.pyに明示円筒/profile写像の二分探索、保存場による個別ID確認、

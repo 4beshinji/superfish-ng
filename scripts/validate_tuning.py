@@ -7,6 +7,7 @@ import math
 import os
 from pathlib import Path
 import sys
+import time
 os.environ.setdefault('OPENBLAS_NUM_THREADS','1')
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'src'))
 from superfish_ng import Case
@@ -22,7 +23,9 @@ def hashes():
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,required=True)
+    parser.add_argument('--background',action='store_true',help='exercise JobManager workers, restart and verified resume')
+    args=parser.parse_args()
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False);before=hashes();rows=[]
     for scale in (1.,2.):
         radius=.1*scale;length=.083*scale
@@ -35,8 +38,32 @@ def main():
             controls=dict(mapping='normalized_cylinder',sample_order=16,minimum_overlap=.98,minimum_assignment_margin=.05,
                 relative_cluster_gap=1e-6,minimum_relative_singular_value=1e-8),refinement_scale=2,mesh_frequency_tolerance_hz=1e4/scale)
         name=f'scale-{int(scale)}';(out/f'{name}-request.json').write_text(json.dumps(request,indent=2)+'\n')
-        first=execute_tune(request,out/f'{name}-initial',max_new_trials=2)
-        result=execute_tune(request,out/f'{name}-resumed',checkpoint=read_tune(out/f'{name}-initial/checkpoint-002.json'))
+        if args.background:
+            from superfish_ng.jobs import JobManager
+            manager=JobManager(out/f'{name}-jobs')
+            def finished(identifier):
+                deadline=time.monotonic()+120
+                while time.monotonic()<deadline:
+                    state=manager.status(identifier)
+                    if state['status'] not in ('queued','running'):
+                        state=manager.status(identifier,verify=True)
+                        if state['status']!='complete':raise RuntimeError(f'tuning worker failed: {state}')
+                        return state
+                    time.sleep(.05)
+                raise RuntimeError('tuning worker timeout')
+            try:
+                first_id=manager.start_tune(request,max_new_trials=2);first_state=finished(first_id)
+                first=read_tune(manager.directory(first_id)/'tune-results.json')
+                assert first_state['tuning_status']=='PAUSED' and first_state['computed_trials']==2
+                manager.close();manager=JobManager(out/f'{name}-jobs')
+                assert manager.status(first_id,verify=True)['tuning_status']=='PAUSED'
+                second_id=manager.start_tune(request,checkpoint=first);final_state=finished(second_id)
+                result=read_tune(manager.directory(second_id)/'tune-results.json')
+                assert final_state['tuning_status']==result['status'] and final_state['numerical_validation']=='not_checked'
+            finally:manager.close()
+        else:
+            first=execute_tune(request,out/f'{name}-initial',max_new_trials=2)
+            result=execute_tune(request,out/f'{name}-resumed',checkpoint=read_tune(out/f'{name}-initial/checkpoint-002.json'))
         last=result['trials'][-1];rank=last['current_mode_ids'].index('TM011')
         q=json.loads((Path(result['trial_runs'][-1])/'solution/results.json').read_text())['modes'][rank]
         exact_at_final=C0/(2*math.pi)*math.hypot(2.404825557695773/radius,math.pi/last['value'])
@@ -50,7 +77,7 @@ def main():
     passed=(all(r['status']=='TUNED' and r['trial_count']>5 and r['parameter_relative_error']<2e-5 and r['frequency_analytical_relative_error']<2e-6
         and r['initial_rank']==3 and r['final_rank']==2 and r['old_sources_preserved'] for r in rows)
         and max(similarity.values())<2e-9 and before==hashes())
-    report=dict(passed=passed,rows=rows,similarity_relative_errors=similarity,source_sha256=before,source_changed_during_run=before!=hashes(),
+    report=dict(passed=passed,backend='JobManager' if args.background else 'direct',rows=rows,similarity_relative_errors=similarity,source_sha256=before,source_changed_during_run=before!=hashes(),
         scope='native P2 cylinder TM011 length tuning, analytic Bessel dispersion and uniform-scale f/RQ/G invariants; sampled rank crossing and immutable resume; not arbitrary-shape or RF-convergence acceptance')
     (out/'validation.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     print(f'Tuning {"PASS" if passed else "FAIL"}: {out}');return 0 if passed else 1

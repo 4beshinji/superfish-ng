@@ -14,7 +14,7 @@ OPENBLAS_NUM_THREADS=1 python -m superfish_ng resume-tune out/tune-new/checkpoin
 
 出力は毎回新しいディレクトリを指定する。Python APIは`tuning.execute_tune`、
 `read_tune`、`replay_tune`。CLI終了値はTUNED/PAUSEDが0、検査未達・探索停止が1、
-入力/実行エラーが2。PAUSEDは調整成功を意味しない。GUI/JobManager接続は未実装。
+入力/実行エラーが2。PAUSEDは調整成功を意味しない。JobManager接続も追加済み。GUI接続は未実装。
 
 例は半径100 mmの合成円筒で、長さ60–100 mmからTM011の目標周波数を探す。
 初期順位のIDはTM010、TM020、TM011と明示し、長さ変更後の順位交換を場で追跡する。
@@ -86,7 +86,7 @@ L=83.00048828125 mm（2倍形はその2倍）、目標長相対差5.88291e-6、�
 別々の10000 Hz条件を満たす。f/RQ/G相似則相対差最大4.64074e-14。
 初期順位3→最終順位2、初期2試行のhash不変、保存再検証を確認した。
 
-一般写像・追跡の枝回復、GUI/JobManager、曲線・組立・連動変数、細分失敗後の自動再探索、
+一般写像・追跡の枝回復、GUI、曲線・組立・連動変数、細分失敗後の自動再探索、
 RF/ピーク制約付き最適化は残る。D01/D02/D03全体や旧tuner互換を完了としない。
 
 最初の標準回帰では調整requestの例を通常Case用examples直下へ置いて2件失敗。
@@ -97,3 +97,57 @@ out/validation-d02-tuning-20260908に保持する。
 （163.391秒）。seed周波数差ゼロ、RF/エネルギー相対差最大8.881784197001252e-16。
 標準・独立検証のsource_sha256は最終ソースと一致。追加11検査PASS。
 数値基準・FEM核・RF核変更なし。新規依存と外部サービスなし。
+
+
+## JobManagerによる別プロセス実行
+
+2026-09-08。`JobManager.start_tune(request, max_new_trials=None, checkpoint=None)`を追加。
+通常のJobManagerと同じ専有workspace内で、FEM調整用の子プロセスを起動する。
+
+```python
+import json
+from pathlib import Path
+from superfish_ng.jobs import JobManager
+from superfish_ng.tuning import read_tune
+
+request = json.loads(Path("examples/tuning/pillbox_length.json").read_text())
+manager = JobManager("out/tune-workspace-new")
+identifier = manager.start_tune(request, max_new_trials=2)
+# manager.status(identifier)でqueued/running/complete/failed/cancelledを確認する。
+# completeになったらmanager.status(identifier, verify=True)で保存内容も検証する。
+# PAUSEDの結果から続ける場合:
+# checkpoint = read_tune(manager.directory(identifier) / "tune-results.json")
+# continued = manager.start_tune(request, checkpoint=checkpoint)
+# 取消しはmanager.cancel(identifier)。全処理を終えたらmanager.close()。
+```
+
+この例のstartは非同期で、戻り値は調整結果でなくJob ID。実行直後にcloseすると
+管理中のworkerを取り消す。再開は常に新しいJobを作り、古い試行を上書き/再計算しない。
+
+`kind=tune`。status=completeは要求された処理が終了したことを表す。
+`tuning_status`がTUNED/PAUSED/UNVERIFIED/REFINEMENT_FAILED/各探索限界を区別する。
+`computed_trials`は再開元を含む総試行数。`can_resume`は確認済みPAUSEDのみtrue。
+通常Jobの`numerical_validation`はnot_checkedのまま保持し、全般的な精度検証済みとは表示しない。
+TUNEDの二つの判定はtune-results.jsonのdecisionに保持する。
+
+完了公開前に入力/実装の変更を拒否し、request/resultsとexecution以下をmanifestへhash保存する。
+verify=Trueは保存場から探索・細分判断を再計算し、再開元の全native試行も再検証する。
+Job種類・要約・依頼の試行上限・今回の保存先・manifestの必須checkpoint/試行ファイルを照合する。
+処理が失敗した場合はfailedとログを保持する。取消し後は、すでに完全に保存され再検証できる
+execution/checkpoint-NNN.jsonから別Jobへ再開できる。書込み途中のJSONを確認済みとは扱わない。
+管理器の再起動は旧queued/runningをinterruptedにし、tune種類を保持する。
+
+追加7検査では実workerのPAUSED→TUNEDと順位交差、再起動、祖先改変、実取消し後の再開、
+入力/要約/種類/試行上限/manifest欠落、数値未達と実行失敗、実行中入力変更を確認した。
+GUI操作・電源断・他OSの受入はここに含めない。
+
+`python scripts/validate_tuning.py --background --out out/tuning-worker-validation-new`は
+円筒の独立解析・相似則を実workerの開始/再開と管理器再起動を通して検査する。
+
+今回の独立結果はout/d02-tune-jobs-20260908/validation.json（backend=JobManager）でPASS。
+尺度1/2とも17試行でTUNED、解析周波数差最大1.14697e-7、f/RQ/G相似則差最大4.64074e-14。
+管理器再起動後に初期2試行を再計算せず再開し、hash不変を確認した。
+
+最終out/validation-d02-tune-jobs-20260908はPASS。549件中547合格・2 skip（168.758秒）。
+seed周波数差ゼロ、RF/エネルギー相対差最大8.881784197001252e-16。
+標準・独立検証のsource_sha256は最終ソースと一致。FEM/RF核・基準・許容差変更なし。
