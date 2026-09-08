@@ -42,7 +42,7 @@ GUIは `out/browser-curved-symmetry-accepted-20260909` で2項目PASS。
 
 磁気対称の実適応2水準も `out/curved-adaptive-magnetic-prefix-20260909` でPASS。
 PAUSEDを維持し、追跡・積分・固有値再計算禁止下の全保存文書一致を確認した。
-磁気対称の最終収束まで確認したとはしない。
+後続の[磁気対称の両尺度最終検証](CURVED_MAGNETIC_ADAPTIVE.md)で6水準の停止と追加一様対照を確認した。
 `out/curved-adaptive-symmetry-energy-20260909` で左右/両対称の質量・剛性二次形式を直接比較し、
 電磁エネルギーの2倍則も確認した。正規化メタデータだけの照合ではない。
 既存全PEC版4の最終球形checkpointは `out/curved-adaptive-symmetry-old-replay-20260909` で

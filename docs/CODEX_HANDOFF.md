@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## 磁気対称の最終適応確認 — 2026-09-09
+
+[磁気対称の両尺度](CURVED_MAGNETIC_ADAPTIVE.md)も6水準TARGETS_MET、
+6272要素の追加一様対照と全水準Maxwell相似がPASS。初回15790・最終2121とも終了0。
+新規validate_curved_magnetic_adaptive.pyの入力条件を厳密化し、形状/モード/許容差の拒否も確認。
+初回と最終の数値報告は完全一致。磁気対称の最終停止未検証は解消したが、絶対RF解析誤差は主張しない。
+数値コア/既存検査/例題はbfa48f4から不変で、全既存661検査の対象hashと一致。
+新規検証スクリプトのみを実行して確認し、標準全件を再実行したとは記録しない。
+最終出力 out/curved-magnetic-adaptive-accepted-20260909、補助拒否検査 out/curved-magnetic-verifier-rejections-20260909。
+全実行終了済み。次はN04一般精度/効率・一般接続/幾何誤差等の残件。
+
 ## 曲線適応の単一対称半領域 — 2026-09-09
 
 [鏡映による表面前提](CURVED_ADAPTIVE_SYMMETRY.md)を版4に追加した。
