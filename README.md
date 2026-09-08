@@ -1,5 +1,7 @@
 # Superfish-NG — 0.1.0 research seed
 
+[RFの角周波数偏微分](docs/CURVED_RF_FREQUENCY_SENSITIVITY.md)を追加。位相・電場・電磁エネルギーの周波数依存を解析的に微分し、係数随伴との結合を検査した。親子残差と細分選択・効率受入は残る。
+
 [固定周波数のRF随伴](docs/CURVED_RF_ADJOINT.md)を追加。振幅方向を除いた疎連立系と全固有モード展開・行列摂動の照合を実装した。周波数全微分、細分選択器への接続と効率受入は残る。
 
 [固定周波数のRF係数感度](docs/CURVED_RF_SENSITIVITY.md)を追加。複素加速電圧のP2係数ベクトルと両R/Q勾配を、解析積分・有限差分・振幅/位相・Maxwell尺度則、実native場で確認した。適応選択器への接続と効率受入は残る。
