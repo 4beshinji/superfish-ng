@@ -214,3 +214,42 @@ python -m superfish_ng replay-mode-history out/profile-tracking-new/history.json
 実FEM相似則と標本次数、保存/履歴、円筒極限で従来写像との一致を確認する。
 試験場の積分検査と、実FEM固有モードの検証を分離する。
 折返し・曲線等への一般写像、合流/分裂の解決、適応的ステップ、GUI/Study/tuneは残件。
+
+## 明示頂点対応による折返し・曲線メッシュの比較
+
+`paired_mesh_tracking.track_paired_mesh_modes`、保存request、履歴、CLIで
+mapping="paired_mesh" を明示すると、同じ三角形接続構造を持つ保存メッシュを比較できる。
+controlsは従来6項目にvertex_pairsを必須追加する。各組は `[旧頂点番号, 新頂点番号]` の
+0始まり整数で、両方の全幾何頂点を重複なく覆う。頂点番号の一致を暗黙の対応として扱わない。
+二次幾何ではcell_nodesの先頭3節点に現れる頂点だけを指定し、辺中点の対応は対応辺から決まる。
+中点を含む全DOF番号の対応表ではない。
+
+全三角形の全単射と、軸/PEC境界辺・タグの一致を検査する。要素順・局所頂点順・頂点番号は
+一致しなくてよい。対称境界は拒否する。メッシュが別の接続構造を持つ場合の自動対応は行わない。
+各保存メッシュは既存のnative読込検証を通す。三角形の参照重心座標を頂点対応で並べ替え、
+各側の直線/二次幾何写像とP1/P2場から直接Hphiを評価する。実FEM場を解析場に置き換えない。
+曲線要素を弦へ置換せず、要素内の実際の二次Jacobianを使う。
+
+共通参照三角形上で体積要素は2π r detJ d_xi d_etaとなる。
+場標本にsqrt(r/max(r))*sqrt(detJ/max(detJ))を掛け、Duffy積Gaussの正重みで比較する。
+各側の一定因子2π max(r) max(detJ)は正規化から消える。物理体積の変動部分は残る。
+半径・Jacobian・倍率の非正/非有限値、underflowを黙って進めない。
+次数は各三角形2〜32、総標本262144以下。メッシュ節点対応、要素対応、局所順序、
+参照点・重み・倍率の定義を保存し、履歴再開時も次のvertex_pairsを明示する。
+
+```bash
+OPENBLAS_NUM_THREADS=1 python scripts/validate_paired_mesh_tracking.py --out out/paired-tracking-new
+python -m superfish_ng track-modes out/paired-tracking-new/folded-request.json --out out/paired-cli-new.json
+python -m superfish_ng replay-mode-history out/paired-tracking-new/ellipse-history.json
+```
+
+独立検証は合成折返し輪郭とnative楕円曲線のP2 FEMで、2倍相似に加えて頂点番号を逆順、
+要素順を逆順、局所頂点順を巡回置換する。利用者指定に相当する対応表を明示生成し、
+f→f/2、R/QとGの不変性、次数3/5の対応、保存・履歴の往復を確認する。
+これらは同じ接続構造に対する写像の検証であり、独立に再メッシュした形状の対応推定ではない。
+
+追加5テストは曲線写像r=xi,z=eta(1+a xi)、正則試験場Hphi=rの独立積分、
+厳密全単射/境界/接続/予算検査、折返し相似・番号置換、native二次曲線相似、保存/履歴を確認。
+曲線試験場の重なりは独立1次元積分を、各側の二乗積分1/20と1/20+a/30で正規化して照合する。
+この対応指定は位相的に整合する写像を与えるが、物理モード枝の唯一性や連続追跡の証明ではない。
+接続が変わる再メッシュ間の写像、合流/分裂解決、適応的ステップ、GUI/Study/tuneは残件。

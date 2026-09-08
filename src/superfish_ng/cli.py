@@ -23,7 +23,7 @@ def main(argv=None):
         history.add_argument('document',type=Path)
         if command=='extend-mode-history':history.add_argument('request',type=Path)
         if command!='replay-mode-history':history.add_argument('--out',type=Path,required=True)
-    tracking=sub.add_parser('track-modes',help='track modes from saved PEC cylinders or radius profiles using an explicit request')
+    tracking=sub.add_parser('track-modes',help='track saved PEC modes using an explicit physical or paired-mesh mapping')
     tracking.add_argument('request',type=Path)
     tracking.add_argument('--out',type=Path,required=True)
     tracking_replay=sub.add_parser('replay-mode-tracking',help='recompute and verify saved mode correspondence and source identities')

@@ -1,5 +1,38 @@
 # ローカルCodexへの引継ぎ
 
+## D01明示メッシュ対応による折返し/曲線場の追跡 — 2026-09-08
+
+直前基準3e0d6a3。`paired_mesh_tracking.track_paired_mesh_modes` と保存/履歴/CLIへ
+mapping=paired_meshを追加。controls.vertex_pairsで全幾何頂点の0始まり全単射を必須指定する。
+三角形接続と軸/PEC境界を保存する対応だけを受け付け、番号の一致から対応を推測しない。
+三角形重心座標を局所頂点対応で並べ替え、直線/二次幾何とP1/P2係数から直接場を評価する。
+体積要素2π r detJから、Hphiに正規化したsqrt(r detJ)を掛けて共通参照積分で比較する。
+曲線を弦へ置換せず、実二次Jacobianを使用。次数2〜32、総標本262144以下。
+
+着手前444件中442合格・2 skip（127.977秒）。新API未実装を確認後、5検査を追加。
+初回FEM fixtureはgeometry_orderをsolverに置いたため厳密入力で失敗し、正しいmesh項目へ修正。
+変動曲線Jacobianの独立積分、全単射/境界/接続/予算、折返し相似と番号置換、
+native曲線相似、保存履歴がPASS。
+最終449件中447合格・2 skip（128.227秒）、`out/validation-d01-paired-mesh-20260908` PASS。
+seed周波数差0、RF/エネルギー相対差最大8.881784197001248e-16。
+同ディレクトリseed_comparison.jsonに内訳。FEM・基準値・許容差を変更していない。
+
+`python scripts/validate_paired_mesh_tracking.py --out out/d01-paired-mesh-20260908` PASS。
+合成折返し/楕円曲線のP2 FEM、2倍相似、頂点逆順・要素逆順・局所巡回置換を明示対応で比較した。
+相似則の相対差（f/RQ/G）は、折返し7.438494264988549e-15 / 1.4210854715202004e-14 / 9.2148511043888e-15、
+楕円2.220446049250313e-16 / 3.375077994860476e-14 / 2.55351295663786e-15。
+両形状とも次数3/5の最小主角重なりは丸め上1.0。同じID対応と保存後の履歴往復を確認。
+同出力のfolded-requestから `out/d01-paired-mesh-cli-20260908.json` をCLI保存/再検証PASS。
+ellipse-history.jsonもCLI再検証PASS。標準/独立検証のsource hashは最終コードと一致。
+GUI・Wine・hosted CIは今回未実行。
+
+判断: 一般輪郭で番号だけを一致とみなさず、明示的な位相対応と体積整合を契約にする。
+変数変換から独立導出し、新規外部資料・依存・legacy参照なし。
+接続が変わる再メッシュ間の写像、合流/分裂解決、適応的ステップ、GUI/Study/tuneが残る。
+親課題は8受入、C00/G03/D01の3進行中、他21未受入、X01拡張候補1で変わらず。
+全計画は未完了。[仕様と操作](MODE_TRACKING.md)。
+
+
 ## D01半径可変profileの体積整合写像 — 2026-09-08
 
 直前基準fd1d4ed。`profile_mode_tracking.track_profile_modes` と保存/履歴/CLIへ

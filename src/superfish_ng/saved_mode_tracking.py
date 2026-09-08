@@ -37,6 +37,7 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     _canonical(request)
     controls=request['controls']
     names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
+    if isinstance(controls,dict) and controls.get('mapping')=='paired_mesh':names+=('vertex_pairs',)
     keys(controls,names,names,'mode tracking controls')
     normalized=deepcopy(request);root=Path.cwd() if base_directory is None else Path(base_directory)
     directories=[]
@@ -51,6 +52,9 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     if controls['mapping']=='normalized_profile':
         from .profile_mode_tracking import track_profile_modes
         tracker=track_profile_modes
+    elif controls['mapping']=='paired_mesh':
+        from .paired_mesh_tracking import track_paired_mesh_modes
+        tracker=track_paired_mesh_modes
     report=tracker(*solutions,request.get('previous_ids'),**controls,
         **({'previous_identity_groups':request['previous_groups']} if version==2 else {}))
     if before!=[_snapshot(path) for path in directories]:
