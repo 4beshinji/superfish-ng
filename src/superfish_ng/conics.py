@@ -19,6 +19,24 @@ def _checked_evaluation(points,tangent,curvature):
     return dict(points_zr_m=points,tangent_zr=tangent,curvature_per_m=curvature)
 
 
+def _positive_product_ratio(numerators,denominators):
+    """Combine exponents before rounding, avoiding spurious intermediate range loss."""
+    mantissa=1.;exponent=0
+    for values,inverse in ((numerators,False),(denominators,True)):
+        for value in values:
+            value=np.asarray(value,dtype=float)
+            if np.any(~np.isfinite(value)) or np.any(value<=0):
+                raise ValueError('conic evaluation exceeds floating-point range; rescale geometry or parameters')
+            m,e=np.frexp(value)
+            mantissa=mantissa/m if inverse else mantissa*m
+            exponent=exponent-e if inverse else exponent+e
+    with np.errstate(over='ignore',under='ignore'):
+        result=np.ldexp(mantissa,exponent)
+    if np.any(~np.isfinite(result)) or np.any(result<=0):
+        raise ValueError('conic evaluation exceeds floating-point range; rescale geometry or parameters')
+    return result
+
+
 @dataclass(frozen=True)
 class LineSegment:
     """Directed straight geometry primitive in (z,r)."""
@@ -139,7 +157,7 @@ class EllipseArc:
         speed = np.hypot(derivative[...,0],derivative[...,1])
         return _checked_evaluation(points+np.asarray(self.center_zr_m),
                     np.sign(self.sweep_rad)*derivative/speed[...,None],
-                    (a/speed)*(b/speed)/speed)
+                    _positive_product_ratio((a,b,c*c+s*s),(speed,speed,speed)))
 
     @property
     def minimum_radius_m(self):
@@ -148,7 +166,9 @@ class EllipseArc:
         theta = np.concatenate(([low,high],critical))
         a,b = self.semiaxes_m
         speed = np.hypot(a*np.sin(theta),b*np.cos(theta))
-        return float(np.min(speed**3/(a*b)))
+        minimum_speed=float(np.min(speed))
+        c,s=rotation_cos_sin(self.rotation_rad)
+        return float(_positive_product_ratio((minimum_speed,minimum_speed,minimum_speed,math.hypot(c,s)),(a,b)))
 
     @property
     def signed_line_area_m2(self):
@@ -223,7 +243,7 @@ class HyperbolaArc:
         speed = np.hypot(derivative[...,0],derivative[...,1])
         return _checked_evaluation(points+np.asarray(self.center_zr_m),
                     np.sign(self.end_parameter-self.start_parameter)*derivative/speed[...,None],
-                    (a/speed)*(b/speed)/speed)
+                    _positive_product_ratio((a,b,c*c+s*s),(speed,speed,speed)))
 
     @property
     def minimum_radius_m(self):
@@ -231,7 +251,8 @@ class HyperbolaArc:
         u = min(max(0.,low),high)
         a,b = self.semiaxes_m
         speed = math.hypot(a*math.sinh(u),b*math.cosh(u))
-        return float((speed/a)*(speed/b)*speed)
+        c,s=rotation_cos_sin(self.rotation_rad)
+        return float(_positive_product_ratio((speed,speed,speed,math.hypot(c,s)),(a,b)))
 
     @property
     def signed_line_area_m2(self):

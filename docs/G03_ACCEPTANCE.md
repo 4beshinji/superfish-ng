@@ -1,6 +1,6 @@
 # G03 要件と受入証拠の照合
 
-2026-09-08、最小子午面半径制約追加時。G03は**部分受入**。
+2026-09-08、極端な尺度の曲率評価修正時。G03は**部分受入**。
 本表は[計画](COMPATIBILITY_PLAN.md)のG03行と[幾何仕様](CONIC_GEOMETRY.md)の
 番号付き5段階を照合する。実装の存在、限定検証、全要件の完了を区別する。
 過去のout/は実行記録として読み直したもので、今回同じ比較を再実行したという意味ではない。
@@ -12,7 +12,7 @@
 | 3. 元曲線/弦許容差のCase・保存・GUI | test_curved_case.py、test_curved_saved.pyの保存往復/改変拒否、GUI_ACCEPTANCE.mdの曲線入力/保存操作 | 通常経路を限定受入。版5で有限弧同士のフィレットも接続。版6で直線と弧のフィレット・明示延長も接続 |
 | 4. 曲線写像、正Jacobian、整合FEM/場/RF/保存 | curved_fem/space/solution/rf/sampling/saved。test_curved_fem.pyの物理線形場、test_curved_solution.pyのエネルギー、test_curved_rf.pyの独立円柱壁積分、test_curved_saved.py | 二次写像/二次場を限定受入。解析楕円そのものを厳密表現するという主張ではない |
 | 5. 幾何/FEM別細分の周波数/場/RF | test_curved_refinement.pyの写像/勾配制限とGalerkinエネルギー同一性。out/validation-g03-native-geometry-separated-20260908/comparison.jsonを読み直しstatus=PASSを確認 | 球形独立参照と記録済み楕円/双曲線系列を限定受入。全新規構築形状の収束や物理ピーク保証へ一般化しない |
-| 曲率・最小丸め半径 | 各プリミティブminimum_radius_m、版4の指定半径/1/R曲率/過大半径拒否、test_line_fillet.py | [minimum_meridional_radius_m](MERIDIONAL_RADIUS.md)でPEC曲線内部の区間上界とPEC-PECのG1数値検査を課す。追加6検査、Case/保存/鏡映/構築/Chrome11操作を部分受入。周方向主曲率・物理ピーク保証ではない |
+| 曲率・最小丸め半径 | 各プリミティブminimum_radius_m、test_conic_scale.pyの極端な尺度/Decimal参照4検査、版4の指定半径/1/R曲率/過大半径拒否、test_line_fillet.py | [minimum_meridional_radius_m](MERIDIONAL_RADIUS.md)でPEC曲線内部の区間上界とPEC-PECのG1数値検査を課す。追加6検査、Case/保存/鏡映/構築/Chrome11操作を部分受入。周方向主曲率・物理ピーク保証ではない |
 | 有限弧同士の共通接線 | conic_tangents/certified_arcs/certified_construction、版2保存/CLI/GUI。test_certified_construction.py | 所属/fraction/位置誤差上界を受入。G1角度は数値検査 |
 | 固定直線と有限弧 | line_arc_tangent、版3、test_line_arc_tangent.py、既存Chrome8操作 | 支持直線を固定する限定接続を受入。非接線の自動補正とは区別 |
 | 指定半径の線分間フィレット | line_fillet、版4、test_line_fillet.py、out/gui-line-fillet-browser-20260908/report.jsonのpassed=true/8操作を再確認 | 有向小円弧を限定受入。接点/有限範囲/G1は数値検査 |
