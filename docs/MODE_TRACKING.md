@@ -589,8 +589,10 @@ API/CLIのcontrolsに `cluster_transition_policy="retain_connected_subspace"` �
 連結和を選ぶことで保持する情報は粗くなるため、このpolicyは明示指定に限定する。
 旧 `retain_subspace` の条件・保存文書の再検証結果は変更しない。
 
-2時点保存・履歴とStudyのcontrols JSONに指定できる。GUIの個別比較設定欄には
-新policyの選択操作をまだ追加していない。再検証済み文書の集合継承は個別枝回復を意味しない。
+2時点保存・履歴とStudyのcontrols JSONに指定できる。GUIでは「モード群をID集合として
+継続する」を有効にし、「集合継承の方式」で1対多/多対1または多対多を含む方式を選ぶ。
+保存文書を再検証すると方式も復元する。無効化するとpolicy/linkを送らない。
+再検証済み文書の集合継承は個別枝回復を意味しない。
 
 `tests/test_cluster_repartition.py` は重み付き直交部分空間の分割変更、
 基底回転/符号/倍率不変性、非連続順位、方向喪失・ランク不足・次元不一致の拒否を検査する。

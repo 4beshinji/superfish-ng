@@ -1555,6 +1555,7 @@ function trackingButtons() {
   $("tracking-origin").hidden = !history;
   $("tracking-origin").textContent = history ? `履歴末尾の基準結果: ${study ? d.history.current_run : d.current_run}` : "";
   $("tracking-pairs-label").hidden = $("tracking-mapping").value !== "paired_mesh";
+  $("tracking-policy-label").hidden = !$("tracking-retain").checked;
   $("tracking-link-label").hidden = !$("tracking-retain").checked;
 }
 function trackingControls() {
@@ -1562,7 +1563,7 @@ function trackingControls() {
     minimum_overlap: number("tracking-overlap"), minimum_assignment_margin: number("tracking-margin"),
     relative_cluster_gap: number("tracking-gap"), minimum_relative_singular_value: number("tracking-rank")};
   if (controls.mapping === "paired_mesh") controls.vertex_pairs = JSON.parse($("tracking-pairs").value);
-  if ($("tracking-retain").checked) Object.assign(controls, {cluster_transition_policy: "retain_subspace", minimum_cluster_link: number("tracking-link")});
+  if ($("tracking-retain").checked) Object.assign(controls, {cluster_transition_policy: $("tracking-policy").value, minimum_cluster_link: number("tracking-link")});
   return controls;
 }
 function showTracking(response) {
@@ -1587,7 +1588,8 @@ function showTracking(response) {
   $("tracking-mapping").value = controls.mapping;
   for (const [id,key] of [["order","sample_order"],["overlap","minimum_overlap"],["margin","minimum_assignment_margin"],["gap","relative_cluster_gap"],["rank","minimum_relative_singular_value"]])
     $(`tracking-${id}`).value = controls[key];
-  $("tracking-retain").checked = controls.cluster_transition_policy === "retain_subspace";
+  $("tracking-retain").checked = controls.cluster_transition_policy !== undefined;
+  $("tracking-policy").value = controls.cluster_transition_policy ?? "retain_subspace";
   if (controls.minimum_cluster_link !== undefined) $("tracking-link").value = controls.minimum_cluster_link;
   if (controls.vertex_pairs) $("tracking-pairs").value = JSON.stringify(controls.vertex_pairs);
 

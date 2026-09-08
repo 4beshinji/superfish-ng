@@ -85,8 +85,8 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、D01多対多の集合継承追加後（直前基準 `7eedad8`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
-明示policyによる多対多のID集合継承を追加。条件と残件は [追跡仕様](docs/MODE_TRACKING.md#複数クラスタ間の保守的な集合継承2026-09-08)。
+2026-09-08、D01多対多集合継承のGUI接続後（直前基準 `6f011b7`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+明示policyによる多対多のID集合継承とGUIでの方式選択・復元を追加。条件と残件は [追跡仕様](docs/MODE_TRACKING.md#複数クラスタ間の保守的な集合継承2026-09-08)。
 
 | 分野 | 現在の内容 |
 |---|---|

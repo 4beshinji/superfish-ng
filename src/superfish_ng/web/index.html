@@ -327,7 +327,11 @@
             <label>相対周波数クラスタ幅<input id="tracking-gap" type="number" value="0.001" step="any" /></label>
             <label>相対ランク下限<input id="tracking-rank" type="number" value="0.00000001" step="any" /></label>
           </div>
-          <label><input id="tracking-retain" type="checkbox" /> 合流・分裂をID集合として継続する</label>
+          <label><input id="tracking-retain" type="checkbox" /> モード群をID集合として継続する</label>
+          <label id="tracking-policy-label" hidden>集合継承の方式<select id="tracking-policy">
+            <option value="retain_subspace">合流・分裂（1対多・多対1）</option>
+            <option value="retain_connected_subspace">合流・分裂と多対多（両側に多次元群が必要）</option>
+          </select><small>集合内の個別IDは未確定のままです。多対多ではより大きな集合を保持します。</small></label>
           <label id="tracking-link-label" hidden>集合候補の最小リンク<input id="tracking-link" type="number" value="0.2" step="any" /></label>
           <div class="actions">
             <button id="tracking-compare">2つの結果を比較</button>

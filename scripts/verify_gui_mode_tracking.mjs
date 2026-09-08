@@ -232,6 +232,28 @@ try {
   await fill("#tracking-overlap",1);await click("#tracking-compare");await wait('trackingResult?.document.status==="UNVERIFIED" && !trackingBusy');
   await click("#tracking-start");await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy');
   await check("unverified history remains downloadable but cannot extend",'document.querySelector("#tracking-extend").disabled && !document.querySelector("#tracking-save").disabled && document.querySelector("#tracking-status").textContent.includes("継続はできません")');
+  if (args["--repartition"]) {
+    await click("#tracking-reset");
+    await loadFile(resolve(args["--repartition"],"pair-12.json"));
+    await wait('trackingResult?.document.tracking?.cluster_transitions?.events[0]?.kind==="REPARTITION" && !trackingBusy');
+    await check("repartition replay restores the explicit connected policy",'document.querySelector("#tracking-retain").checked && document.querySelector("#tracking-policy")?.value==="retain_connected_subspace" && !document.querySelector("#tracking-policy-label").hidden');
+    await check("repartition shows an ID set and preserves the unrelated individual",'trackingResult.document.tracking.current_mode_ids[0]==="fundamental" && trackingResult.document.tracking.current_mode_ids.slice(1).every(x=>x===null) && document.querySelector("#tracking-status").textContent.includes("個別IDは未確定")');
+    await select("tracking-policy","retain_subspace");
+    await check("one-to-many policy remains explicitly selectable",'trackingControls().cluster_transition_policy==="retain_subspace"');
+    await click("#tracking-retain");
+    await check("disabling union omits both optional controls",'!("cluster_transition_policy" in trackingControls()) && !("minimum_cluster_link" in trackingControls()) && document.querySelector("#tracking-policy-label").hidden');
+    await click("#tracking-retain");await select("tracking-policy","retain_connected_subspace");
+    await fill("#import-path",resolve(args["--repartition"],"native"));await click("#import-result");
+    await wait(`document.querySelector("#tracking-current").options.length===${known.size+2}`);
+    const nativeId=await ev(`[...document.querySelector("#tracking-current").options].map(x=>x.value).find(x=>x && !${JSON.stringify([...known])}.includes(x))`);
+    await click("#tracking-start");await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy');
+    await select("tracking-current",nativeId);await click("#tracking-extend");
+    await wait('trackingResult?.document.steps?.length===2 && !trackingBusy');
+    await check("GUI history extension preserves the connected policy and ID union",'trackingResult.document.status==="PASS" && trackingResult.document.steps.at(-1).request.controls.cluster_transition_policy==="retain_connected_subspace" && trackingResult.document.current_identity_groups[1].ids.join(",")==="A,B,C,D"');
+    await ev('document.querySelector("#mode-tracking").scrollIntoView({behavior:"instant",block:"start"})');
+    const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
+    await writeFile(out+"/connected-policy.png",Buffer.from(capture.data,"base64"));
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if (!report.passed) throw Error("mode tracking GUI checks failed");

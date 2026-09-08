@@ -365,3 +365,21 @@ seed shaped_cellとの比較は周波数差ゼロ、RF相対差最大6.67e-16。
 画面は`gui-browser-accepted-retry-20260906/workspace.png`。表示の目視確認を実施した。
 ユーザーへの初期画面提示と任意の意見募集は行ったが、本人による操作評価の回答は
 得ていない。初心者の主観的な使いやすさの評価や実機設計認証を、この受入PASSに含めない。
+
+## D01多対多集合継承のGUI方式選択 — 2026-09-08
+
+直前基準6f011b7。「モード群をID集合として継続する」の有効時に方式選択を表示。
+従来の合流/分裂を既定とし、多対多を含む方式は明示選択する。
+保存対応/履歴の再検証で方式を復元し、履歴継続のcontrolsへ反映する。
+無効化するとpolicyとlinkを要求から省略。部分空間を個別ID確定と表示しない。
+
+実Chrome `out/browser-connected-policy-final-20260908` の13項目PASS、外部要求0。
+既存8項目と、新方式復元・集合/単一IDの区別・従来方式選択・無効化・履歴継続の5項目。
+connected-policy.pngの方式選択と注意書きを画像確認した。
+再現は専用の空GUIワークスペースで、従来のverify_gui_mode_tracking.mjsに
+`--repartition out/d01-cluster-repartition-20260908` を追加する。
+
+変更前 `out/browser-connected-policy-red-20260908` は新policy復元で想定どおりFAIL。
+修正直後 `out/browser-connected-policy-20260908` は検証ワークスペースを再利用して
+インポート済み件数が初期条件と異なりFAIL。専用の空ワークスペースで再実行した。
+旧失敗出力を保持。今回ブラウザー検証は集合継承の操作受入であり、一般枝回復の受入ではない。
