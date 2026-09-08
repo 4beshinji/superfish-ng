@@ -17,7 +17,7 @@ from superfish_ng.adaptive_study import execute_adaptive_study,read_adaptive_stu
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,required=True);parser.add_argument('--pause-and-resume',action='store_true');args=parser.parse_args()
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     files=[p for folder in ('src','tests','scripts','examples') for p in sorted((ROOT/folder).rglob('*')) if p.is_file() and '__pycache__' not in p.parts]
     def hashes():return {str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
@@ -30,7 +30,17 @@ def main():
         request=dict(schema_version=1,study=study.to_dict(),initial_ids=['fundamental'],step_controls=[dict(controls)],
             adaptive=dict(max_depth=4,max_attempts=16,minimum_parameter_step=scale*1e-6))
         (out/f'{name}-request.json').write_text(json.dumps(request,indent=2)+'\n')
-        report=execute_adaptive_study(request,out/name);assert read_adaptive_study(out/name/'adaptive-study-results.json')==report
+        if args.pause_and_resume:
+            first=execute_adaptive_study(request,out/(name+'-first'),max_new_attempts=1)
+            checkpoint=out/(name+'-first')/'checkpoint-001.json';original=checkpoint.read_bytes()
+            assert first['status']=='PAUSED' and first['attempts'][0]['decision']=='BISECT' and first['history'] is None
+            middle=execute_adaptive_study(request,out/(name+'-middle'),max_new_attempts=1,checkpoint=read_adaptive_study(checkpoint))
+            assert middle['status']=='PAUSED' and middle['accepted_point_indices']==[0,2]
+            report=execute_adaptive_study(request,out/name,checkpoint=middle)
+            assert checkpoint.read_bytes()==original and read_adaptive_study(checkpoint)==first
+            assert not list((out/name).glob('point-*'))
+        else:report=execute_adaptive_study(request,out/name)
+        assert read_adaptive_study(out/name/'adaptive-study-results.json')==report
         reports.append(report)
     similarity={key:0. for key in ('frequency_hz','r_over_q_accelerator_ohm','geometry_factor_ohm')}
     for a,b in zip(reports[0]['points'],reports[1]['points'],strict=True):
@@ -48,7 +58,7 @@ def main():
         and decisions==[['BISECT','ACCEPT','ACCEPT']]*2 and max(similarity.values())<2e-10
         and max(abs(a-b) for a,b in zip(*overlaps))<2e-10
         and cylinder_result['status']=='COMPLETE' and len(cylinder_result['points'])==2 and max(cylinder_errors)<.002 and before==hashes())
-    result=dict(passed=passed,similarity_relative_errors=similarity,overlaps=overlaps,decisions=decisions,cylinder_frequency_relative_errors=cylinder_errors,
+    result=dict(passed=passed,execution_mode='pause_resume' if args.pause_and_resume else 'uninterrupted',similarity_relative_errors=similarity,overlaps=overlaps,decisions=decisions,cylinder_frequency_relative_errors=cylinder_errors,
         source_sha256=before,source_changed_during_run=before!=hashes(),scope='real P2 FEM fundamental modes; Maxwell scale invariance of frequency/RQ/G and subdivision decisions; cylindrical Bessel reference; not physical convergence acceptance')
     (out/'validation.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
     print(f'Adaptive Study {"PASS" if passed else "FAIL"}: {out}');return 0 if passed else 1

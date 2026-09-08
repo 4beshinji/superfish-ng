@@ -1,5 +1,41 @@
 # 独立実装・情報来歴
 
+## D01適応二分の途中保存・再開 — 2026-09-08
+
+直前基準8184770。適応実行の保存版2へPAUSED/can_resume/pending_targetsを追加し、
+各比較後のcheckpoint-NNN.json保存とresume-adaptive-study CLIを接続。
+max_new_attemptsは今回の新規比較上限。元requestの総比較回数/深さ/最小幅は維持する。
+二分待ちの失敗比較と確認済みID履歴、全保存場を再検証して新出力先へ再開する。
+過去点を再計算せず、過去文書も変更しない。COMPLETE/UNVERIFIEDからの再開は拒否。
+
+版1の再検証意味を維持し、新規文書は版2。requestのschema_versionは1のまま。
+再開時は保存場だけで過去判断と待ち列を復元し、元チェックポイントとの一致を確認する。
+新たな計算が失敗しても、それ以前の有効なPAUSED文書から別出力先へ再開可能。
+書込み途中の破損文書は再開対象とせず、電源断回復/実行中プロセス再接続は保証しない。
+
+着手前489件中487合格・2 skip（141.634秒）。新テスト5件の未実装失敗を確認後、
+二分待ち→中点→保存端点の再開、総上限維持、request/待ち列/過去ソース改変拒否、
+中点計算失敗からの再開、版1互換/CLIを追加。既存6件と併せ11件PASS（5.051秒）。
+中点再開は1点だけを計算し、最後の再開はFEM呼出しを禁止して保存端点だけで完了を確認。
+最終494件中492合格・2 skip（144.445秒）。
+`out/validation-d01-adaptive-resume-20260908` PASS。seed周波数差ゼロ、
+RF/エネルギー相対差最大8.881784197001248e-16。FEM・基準・許容差変更なし。
+
+`python scripts/validate_adaptive_study.py --out out/d01-adaptive-resume-20260908 --pause-and-resume` PASS。
+合成profileの半径掃引0.055→0.08 m、P2/12×20/基本モードを比較1回ずつで一時停止・再開。
+粗い未確認比較を保持し、中点だけを追加して、最後は既計算端点を使いCOMPLETE。
+全寸法2倍でも判断はBISECT→ACCEPT→ACCEPT、相似則の最大相対差f 9.104e-15、
+R/Q 4.174e-14、G 1.221e-14。円筒Bessel周波数差最大6.911e-8。元文書不変を確認。
+標準/独立検証のsource hashは最終コードと一致。GUI・Wine・hosted CIは今回未実行。
+
+`out/d01-adaptive-resume-legacy-20260908/checks.json`に、前回の実保存版1の5文書
+（profile/相似拡大/円筒/複数目標完走/未到達停止）の再検証PASSを記録。
+新規外部資料・依存・legacyソルバー参照なし。ここでの旧版は本実装の保存schema_version 1。
+
+適応実行のJobManager/GUI、非幾何/非単調掃引、一般再メッシュ写像・多対多/個別枝回復・tuneが残る。
+標本対応を連続枝/物理収束の保証にしない。親課題区分は8受入・3進行中・21未受入・拡張候補1のまま。
+計画全体は継続する。
+
 ## D01幾何掃引の適応二分API/CLI — 2026-09-08
 
 直前基準710cdd8。adaptive_study.pyとexecute-adaptive-study/replay-adaptive-studyを追加。

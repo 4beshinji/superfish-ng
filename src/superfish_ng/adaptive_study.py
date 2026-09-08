@@ -41,7 +41,7 @@ def _project(study,value):
     return Study(study.project,'sweep',study.parameter,[value,value]).projects()[0]
 
 
-def _run(request,obtain_point):
+def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_checkpoint=None):
     study,limits=_request(request)
     points=[];attempts=[];accepted=[];history=None;reached=[0];stop=None
     def point(value):
@@ -55,6 +55,19 @@ def _run(request,obtain_point):
         return len(points)-1
     accepted.append(point(study.values[0]))
     pending=[dict(value=study.values[i],target_index=i,depth=0) for i in reversed(range(1,len(study.values)))]
+    def snapshot():
+        for record in points:
+            if record['sources_sha256']!=_point_sources(Path(record['run']),_project(study,record['value'])):
+                raise ValueError('adaptive Study point sources changed during execution or replay')
+        result=dict(schema_version=schema_version,document_type='adaptive_tracked_study',request=deepcopy(request),points=points,attempts=attempts,
+            accepted_point_indices=accepted,reached_target_indices=reached,unreached_target_indices=[i for i in range(len(study.values)) if i not in reached],
+            history=history,status='UNVERIFIED' if stop else 'PAUSED' if pending else 'COMPLETE',stop_reason=stop,
+            scope='bounded midpoint subdivision of sampled geometry correspondence; rejected comparisons retained; no threshold relaxation, individual branch recovery or physical convergence certificate')
+
+        if schema_version==2:
+            result.update(can_resume=result['status']=='PAUSED',pending_targets=list(reversed(pending)))
+        return deepcopy(result)
+
     while pending:
         if len(attempts)>=limits['max_attempts']:
             stop='maximum_attempts';break
@@ -86,31 +99,55 @@ def _run(request,obtain_point):
                 pending.append(dict(target,depth=target['depth']+1))
                 pending.append(dict(value=middle,target_index=target['target_index'],depth=target['depth']+1))
         attempts.append(attempt)
-        if stop:break
-    for record in points:
-        if record['sources_sha256']!=_point_sources(Path(record['run']),_project(study,record['value'])):
-            raise ValueError('adaptive Study point sources changed during execution or replay')
-    return dict(schema_version=1,document_type='adaptive_tracked_study',request=deepcopy(request),points=points,attempts=attempts,
-        accepted_point_indices=accepted,reached_target_indices=reached,unreached_target_indices=[i for i in range(len(study.values)) if i not in reached],
-        history=history,status='COMPLETE' if stop is None else 'UNVERIFIED',stop_reason=stop,
-        scope='bounded midpoint subdivision of sampled geometry correspondence; rejected comparisons retained; no threshold relaxation, individual branch recovery or physical convergence certificate')
+        if pending and not stop and len(attempts)>=limits['max_attempts']:stop='maximum_attempts'
+        if on_checkpoint is not None:on_checkpoint(snapshot())
+        if stop or (pause_after_attempts is not None and len(attempts)>=pause_after_attempts):break
+    return snapshot()
 
 
-def execute_adaptive_study(request,directory):
+def _save_document(result,path):
+    with Path(path).open('x',encoding='utf-8') as stream:
+        stream.write(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False)+'\n')
+
+
+def execute_adaptive_study(request,directory,*,max_new_attempts=None,checkpoint=None):
+    """Execute into new output, retaining an immutable checkpoint after each attempt."""
     request=deepcopy(request);_request(request)
+    if max_new_attempts is not None and (type(max_new_attempts) is not int or max_new_attempts<1):
+        raise ValueError('max_new_attempts must be a positive integer')
+    previous=None;records=[];completed_attempts=0
+    if checkpoint is not None:
+        previous=replay_adaptive_study(checkpoint)
+        if not previous.get('can_resume',False):raise ValueError('only a verified PAUSED adaptive Study can resume')
+        if _canonical(previous['request'])!=_canonical(request):raise ValueError('adaptive resume request differs from checkpoint; limits, thresholds and IDs cannot change')
+        records=previous['points'];completed_attempts=len(previous['attempts'])
     directory=Path(directory).resolve();directory.mkdir(parents=True,exist_ok=False)
     implementation=_implementation_hashes()
     def obtain(index,value,project):
+        if index<len(records):
+            record=records[index]
+            if _canonical(value)!=_canonical(record['value']) or record['sources_sha256']!=_point_sources(Path(record['run']),project):
+                raise ValueError('adaptive resume point sequence or prior sources changed')
+            return record['run']
         run=directory/f'point-{index+1:03d}';execute_project(project,run);return str(run)
-    result=_run(request,obtain)
+    def publish(result):
+        if implementation!=_implementation_hashes():raise RuntimeError('implementation changed during adaptive Study execution')
+        count=len(result['attempts'])
+        if previous is not None and count==completed_attempts and _canonical(result)!=_canonical(previous):
+            raise ValueError('adaptive resume prefix differs from verified checkpoint')
+        if count>completed_attempts:_save_document(result,directory/f'checkpoint-{count:03d}.json')
+    limit=None if max_new_attempts is None else completed_attempts+max_new_attempts
+    result=_run(request,obtain,schema_version=2,pause_after_attempts=limit,on_checkpoint=publish)
     if implementation!=_implementation_hashes():raise RuntimeError('implementation changed during adaptive Study execution')
-    with (directory/'adaptive-study-results.json').open('x',encoding='utf-8') as stream:
-        stream.write(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False)+'\n')
+    _save_document(result,directory/'adaptive-study-results.json')
     return result
 
 
 def replay_adaptive_study(document):
+    version=document.get('schema_version') if isinstance(document,dict) else None
+    if type(version) is not int or version not in (1,2):raise ValueError('adaptive Study document requires schema_version 1 or 2')
     fields=('schema_version','document_type','request','points','attempts','accepted_point_indices','reached_target_indices','unreached_target_indices','history','status','stop_reason','scope')
+    if version==2:fields+=('can_resume','pending_targets')
     keys(document,fields,fields,'saved adaptive Study')
     records=document['points']
     if type(records) is not list or not records:raise ValueError('adaptive Study requires saved points')
@@ -118,7 +155,9 @@ def replay_adaptive_study(document):
         if index>=len(records) or not isinstance(records[index],dict) or _canonical(records[index].get('value'))!=_canonical(value):
             raise ValueError('adaptive point sequence differs from deterministic subdivision')
         return records[index].get('run')
-    expected=_run(document['request'],obtain)
+    paused=version==2 and document['status']=='PAUSED'
+    if paused and (type(document['attempts']) is not list or not document['attempts']):raise ValueError('paused adaptive Study requires completed comparison attempts')
+    expected=_run(document['request'],obtain,schema_version=version,pause_after_attempts=len(document['attempts']) if paused else None)
     if _canonical(expected)!=_canonical(document):raise ValueError('adaptive Study replay differs from saved decisions or sources')
     return expected
 

@@ -500,6 +500,36 @@ python -m superfish_ng replay-adaptive-study out/adaptive-NEW/adaptive-study-res
 COMPLETEは全元目標への標本対応の確認であり、連続枝や物理的収束の保証ではない。
 細分で避けた区間内の縮退・未観測の交差を否定するものではない。
 
-この段階はAPI/CLI。適応実行の途中チェックポイント再開、JobManager/GUIへの組込、
+この段階はAPI/CLI。途中保存・再開は以下の保存版2で接続する。JobManager/GUIへの組込、
 非幾何/非単調掃引、一般の再メッシュ写像・多対多/個別枝回復は残る。
 通常の指定点列による逐次実行/再開と、そのGUIは従来の契約を維持する。
+
+## 適応二分の途中チェックポイントと再開（保存版2）
+
+新しい適応実行は保存文書schema_version 2を出力する。requestのschema_versionは1のまま。
+旧保存版1のCOMPLETE/UNVERIFIED文書も同じ数値・二分判断で再検証できる。
+
+```bash
+python -m superfish_ng execute-adaptive-study request.json --out out/adaptive-first-NEW --max-new-attempts 1
+python -m superfish_ng resume-adaptive-study out/adaptive-first-NEW/checkpoint-001.json --out out/adaptive-next-NEW
+```
+
+`--max-new-attempts`は今回新たに行う比較回数の上限。省略すると完了または本来の停止条件まで進む。
+元requestのmax_attemptsは全実行を通じた上限として保持し、再開してもリセットしない。
+深さ・最小幅・閾値・ID・目標点も変更しない。
+
+各比較後に入力・保存場の安定性を確認してcheckpoint-NNN.jsonを新規保存する。
+NNNは1始まりの全比較通し番号で、点の番号ではない。
+版2はPAUSEDとcan_resume、次に比較する順のpending_targetsを持つ。
+比較が未確認でも二分が可能なら、その失敗証拠と中点待ち状態をPAUSEDとして保存できる。
+上限に達したUNVERIFIEDや全目標に到達したCOMPLETEからは再開できない。
+PAUSED/COMPLETEのCLI終了値は0、UNVERIFIEDは1、入力/実行エラーは2。
+
+再開は元文書の全比較を保存場から再検証し、同じ二分待ち列を復元してから新しい処理へ進む。
+新しい出力先へ必要な点だけを計算し、すでに計算した端点・中点は元の絶対パスの場を再利用する。
+過去の比較を再検証することはFEMの再計算ではない。新しい点が不要で比較だけで完了する場合もある。
+元の出力先が失われたり変更された場合は再開・再検証できない。
+
+中点の計算等で失敗しても、先に保存した有効なPAUSEDチェックポイントは残り、別出力先で再開できる。
+書込み中断で壊れたファイルを有効な再開点に扱わない。電源断回復や実行中プロセスの再接続は保証しない。
+適応実行のJobManager/GUI接続は残件。通常の指定点列の再開文書とは別形式である。

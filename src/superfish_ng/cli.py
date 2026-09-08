@@ -16,10 +16,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
-    for command in ('execute-adaptive-study','replay-adaptive-study'):
+    for command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
         adaptive=sub.add_parser(command,help='bisect unverified geometry sweep intervals with explicit limits, or replay all decisions')
         adaptive.add_argument('document',type=Path)
-        if command=='execute-adaptive-study':adaptive.add_argument('--out',type=Path,required=True)
+        if command!='replay-adaptive-study':
+            adaptive.add_argument('--out',type=Path,required=True)
+            adaptive.add_argument('--max-new-attempts',type=int)
     for command in ('execute-tracked-study','resume-tracked-study','replay-tracked-study'):
         tracked=sub.add_parser(command,help='execute or verify sequential FEM Study tracking checkpoints')
         tracked.add_argument('document',type=Path)
@@ -107,13 +109,17 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command in ('execute-adaptive-study','replay-adaptive-study'):
+        if args.command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
             from .adaptive_study import execute_adaptive_study,read_adaptive_study
             from .project import parse_json
-            result=(execute_adaptive_study(parse_json(args.document.read_text(encoding='utf-8')),args.out)
-                    if args.command=='execute-adaptive-study' else read_adaptive_study(args.document))
+            if args.command=='execute-adaptive-study':
+                result=execute_adaptive_study(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_attempts=args.max_new_attempts)
+            else:
+                result=read_adaptive_study(args.document)
+                if args.command=='resume-adaptive-study':
+                    result=execute_adaptive_study(result['request'],args.out,max_new_attempts=args.max_new_attempts,checkpoint=result)
             print(f"{result['status']}: {args.document if args.command=='replay-adaptive-study' else args.out}")
-            return 0 if result['status']=='COMPLETE' else 1
+            return 1 if result['status']=='UNVERIFIED' else 0
         elif args.command in ('execute-tracked-study','resume-tracked-study','replay-tracked-study'):
             from .tracked_study import execute_tracked_study,read_tracked_study
             from .project import parse_json
