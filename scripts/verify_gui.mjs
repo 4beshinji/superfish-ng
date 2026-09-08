@@ -924,6 +924,14 @@ try {
     await click("#tangent-build");
     await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
     const built=await ev("tangentResult.construction");
+    if (built.request.schema_version === 2) {
+      if (built.schema_version !== 2 || built.enumeration.arc_filter_status !== "CERTIFIED_MEMBERSHIP_AND_FRACTIONS") throw Error("GUI lost certified construction version");
+      const selected=built.enumeration.candidates[built.candidate_index];
+      if (!selected.trim_contact_error_bounds_m.every(x=>x<=built.request.controls.position_tolerance_m)) throw Error("GUI trim contact error exceeds request");
+      if (!await ev('document.querySelector("#tangent-status").textContent.includes("接点誤差上界")')) throw Error("GUI does not display contact error bound");
+      report.checks.push({operation:"version 2 certificate and contact error bound display",passed:true});
+    }
+
     await click("#tangent-save");
     let saved;
     for (let n=0;n<100;n++) {

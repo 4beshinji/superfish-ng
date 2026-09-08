@@ -29,8 +29,8 @@ def _canonical(value):
 def _request(request):
     keys(request, ('schema_version', 'case_template', 'pair_start', 'controls'),
          ('schema_version', 'case_template', 'pair_start', 'controls'), 'tangent construction request')
-    if type(request['schema_version']) is not int or request['schema_version'] != 1:
-        raise ValueError('tangent construction request requires schema_version 1')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2):
+        raise ValueError('tangent construction request requires schema_version 1 or 2')
     _canonical(request)  # Reject nonfinite JSON values even in the unfinished template.
     template = request['case_template']
     keys(template, ('schema_version', 'name', 'geometry', 'mesh', 'solver', 'rf', 'model', 'boundaries'),
@@ -60,6 +60,10 @@ def _request(request):
     controls = request['controls']
     allowed = ('position_tolerance_m', 'angle_tolerance_rad', 'parameter_guard', 'normal_width',
                'max_boxes', 'residual_tolerance')
+    if request['schema_version'] == 2:
+        allowed = ('position_tolerance_m', 'angle_tolerance_rad', 'normal_width', 'max_boxes',
+                   'residual_tolerance', 'max_contact_width_m', 'endpoint_width', 'max_series_terms',
+                   'fraction_width', 'max_fraction_steps')
     keys(controls, allowed, allowed, 'tangent controls')
     return template, geometry, curves, index, controls
 
@@ -73,12 +77,16 @@ def construct_tangent_case(request, *, candidate_index=None):
     """
     template, geometry, curves, index, controls = _request(request)
     first, second = curves[index:index+2]
+    enumerate_candidates, connect = finite_arc_tangents, connect_finite_arcs
+    if request['schema_version'] == 2:
+        from .certified_construction import certified_construction_candidates, connect_certified_arcs
+        enumerate_candidates, connect = certified_construction_candidates, connect_certified_arcs
     if candidate_index is None:
-        enumeration = finite_arc_tangents(first, second, **controls)
+        enumeration = enumerate_candidates(first, second, **controls)
         case, joins = None, None
         status = 'CANDIDATES' if enumeration['status'] == 'PASS' else 'UNVERIFIED'
     else:
-        construction = connect_finite_arcs(first, second, candidate_index=candidate_index, **controls)
+        construction = connect(first, second, candidate_index=candidate_index, **controls)
         enumeration, joins = construction['enumeration'], construction['joins']
         selected = deepcopy(template)
         selected['geometry']['curves'] = [curve_to_dict(curve) for curve in
@@ -86,11 +94,13 @@ def construct_tangent_case(request, *, candidate_index=None):
         selected['geometry']['edge_tags'] = geometry['edge_tags'][:index]+['pec']*3+geometry['edge_tags'][index+2:]
         case = Case.from_dict(selected).to_dict()
         status = 'CASE_VALIDATED'
-    return _json_value(dict(schema_version=1, software_version=__version__, request=deepcopy(request),
+    return _json_value(dict(schema_version=request['schema_version'], software_version=__version__, request=deepcopy(request),
                            request_sha256=hashlib.sha256(_canonical(request).encode()).hexdigest(),
                            candidate_index=candidate_index, enumeration=enumeration, joins=joins,
                            case=case, status=status,
-                           scope='guarded numerical tangent construction; preview template is not a validated case; no FEM solve'))
+                           scope=('guarded numerical tangent construction; preview template is not a validated case; no FEM solve'
+                                  if request['schema_version'] == 1 else
+                                  'certified binary-model membership/fractions and trim contact error; floating G1; canonical case validation; no FEM solve')))
 
 
 def save_construction(request, path, *, candidate_index=None):

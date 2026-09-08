@@ -1405,7 +1405,7 @@ $("tangent-request").addEventListener("input", clearTangent);
 function showTangent(response) {
   tangentResult = response;
   const c = response.construction, report = c.enumeration;
-  const labels = {FORWARD:"順方向", OPPOSED:"逆向き（接続不可）", ZERO_LENGTH:"ゼロ長（接続不可）"};
+  const labels = {FORWARD:"順方向", OPPOSED:"逆向き（接続不可）", ZERO_LENGTH:"ゼロ長（接続不可）", EMPTY_ARC:"空の弧（接続不可）", UNVERIFIED:"未確認（接続不可）"};
   $("tangent-table").tBodies[0].replaceChildren();
   $("tangent-candidate").replaceChildren(new Option("候補を選択してください", ""));
   report.candidates.forEach((candidate, index) => {
@@ -1426,6 +1426,12 @@ function showTangent(response) {
   $("tangent-status").textContent = c.status === "CASE_VALIDATED"
     ? "閉輪郭と計算条件の検査に合格しました。編集画面へ適用できます。FEM精度は別途検証が必要です。"
     : `${c.status === "UNVERIFIED" ? "未確認" : "候補表示"}: ${report.candidates.length}候補、${report.unresolved.length}件未確認。候補表示だけでは計算できません。`;
+  if (c.schema_version === 2) {
+    const selected = c.candidate_index === null ? null : report.candidates[c.candidate_index];
+    $("tangent-status").textContent += selected?.trim_contact_error_bounds_m
+      ? ` 接点誤差上界は最大${(Math.max(...selected.trim_contact_error_bounds_m)*1000).toExponential(3)} mmです。接線角度は数値検査です。`
+      : " 弧の所属と位置区間を検査する版2の構築要求です。";
+  }
   $("tangent-diagnostics").textContent = JSON.stringify({status:c.status, scope:c.scope, enumeration:report, joins:c.joins},null,2);
 }
 async function requestTangent(candidate = null) {

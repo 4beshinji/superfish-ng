@@ -1,5 +1,35 @@
 # ローカルCodexへの引継ぎ
 
+## G03版2区間付き構築・保存・CLI/GUI統合 — 2026-09-08
+
+certified_constructionと構築schema_version=2を追加。確定fraction区間内のfloat位置を選び、
+生成弧の数学的端点と出力floatを囲むboxから、厳密接点への距離上界を検査する。
+外側の保持端点も誤差上界を確認する。G1角度は生成プリミティブの数値検査として区別。
+第1弧END/第2弧STARTは元弧を再利用し、空弧・零長・逆向き・未達は候補と理由を残して選択不可。
+版1の従来経路と保存文書の実再読込を維持。版2は同じCLI/GUIで保存/再構築/Case/FEMまで接続した。
+
+最終標準349件中347合格・2 skip（91.637秒）、標準数値回帰PASS。
+out/validation-g03-certified-construction-20260908のseed_comparison.jsonでcase hash一致、
+周波数差ゼロ、RF/エネルギー相対差最大8.882e-16。基準更新なし。
+Chrome8操作はout/gui-certified-construction-browser-20260908/report.jsonでPASS。
+外部要求0・実行中ソース変更なし、tangent-construction.pngの誤差上界表示を確認。
+検証用GUIサーバーは停止済み。Wine新規計算なし。
+
+追加5テストは区間内切詰め/誤差上界、端点再利用/空弧拒否、版2保存/版1継続、
+不正指定/位置未達、GUI応答と合成カプセルの解析面積/体積・実FEM相似則。
+例題はexamples/construction/capsule_certified_request.json。
+実CLIの構築/Case/solveはout/g03-certified-capsule-construction-20260908.json、
+out/g03-certified-capsule-case-20260908.json、out/g03-certified-capsule-solve-20260908。
+
+版1/2カプセル比較はcapsule_v1_v2_comparison.json。617節点/1152三角形は同数だが
+メッシュ座標/接続は異なり、f差1.41259e-8、RQ差0.312004%、TTF差0.154291%を記録した。
+接点位置誤差の保証をRF精度保証にせず、この形状のRF収束は未検証。補正/閾値変更なし。
+仕様・再現・初期版との区別はTANGENT_CONSTRUCTION.mdとGUI_ACCEPTANCE.md。
+新規外部資料/コード/依存/旧資産参照なし。
+
+次は直線と弧の接線/フィレットとG03全要件照合。G03全体と全互換目標は未完了。
+
+
 ## G03有限弧所属とfractionの有理数区間 — 2026-09-08
 
 certified_arcs.certified_finite_arc_tangentsを追加。支持曲線の接点boxから有限弧の

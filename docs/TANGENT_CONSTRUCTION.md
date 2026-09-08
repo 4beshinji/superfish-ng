@@ -326,3 +326,57 @@ out/validation-g03-certified-arcs-20260908/capsule_membership.jsonへ有理数�
 
 有限弧所属/fraction APIの標準344件中342合格・2 skip、out/validation-g03-certified-arcs-20260908 PASS。
 seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。基準更新なし。GUI/Wineは今回未実行。
+
+## 版2の区間付き切詰めと製品接続 — 2026-09-08
+
+構築要求/保存文書のschema_version=2を追加した。Case自体は既存のv3。
+版1は従来のガード付き数値判定と同じ再構築結果を維持し、保存済みGUI文書の実再読込も確認した。
+版2は`certified_construction`を使い、所属/fraction/接点区間を構築へ接続する。
+CLIのconstruct-tangent/export-constructed-case、GUIの構築欄は要求版を保持して同じ経路を使う。
+
+版2のcontrolsは全て明示必須:
+position_tolerance_m、angle_tolerance_rad、normal_width、max_boxes、residual_tolerance、
+max_contact_width_m、endpoint_width、max_series_terms、fraction_width、max_fraction_steps。
+版1のparameter_guardは版2では未知キーとして拒否する。閾値を自動で緩めない。
+
+切詰め位置は確定したfraction閉区間の中点をfloatへ変換し、変換後も有理数比較で区間内かを検査する。
+内部接点で空/表現不能な弧が生じる場合は拒否する。第1弧のENDと第2弧のSTARTは元プリミティブを再利用。
+第1弧START/第2弧ENDは保持弧が空になるためEMPTY_ARCとし、元の弧を自動削除しない。
+零長・逆向き・位置/角度の未達も候補と理由を残し、選択不可にする。
+
+生成した弧の数学的端点を、その新しい二進パラメータからsin/cos/sinhの区間で再評価する。
+coshは正のsqrt(1+sinh²)から囲む。中心・半軸・二進回転を有理数演算し、実装が返すfloat座標もboxへ含める。
+この端点boxと厳密接点boxの各座標差の最大二乗和からEuclid誤差上界を得て、明示位置許容差を検査する。
+従って表示floatだけが接点へ近いことを数学的端点の誤差保証へ読み替えない。
+保持する外側終点についても元/生成弧の端点boxから誤差上界を検査する。
+実線分は生成弧のfloat端点から作り、既存check_curve_joinで両接合の位置とG1角度を数値検査する。
+**接点誤差/所属/fractionは区間検査、G1角度は浮動小数点検査**である。厳密な角度区間保証とは呼ばない。
+
+探索statusは証拠の探索完了性。候補ごとの切詰め未達はUNVERIFIEDと理由付きで残す。
+別候補の切詰め未達だけで、所属探索が完了した選択可能候補を消さない。
+最終の明示選択には探索PASSと選択候補FORWARDを要求し、続いて既存Caseの閉輪郭/全設定検査を適用する。
+保存には証拠、fraction、生成曲線、接点/外端誤差上界と数値G1結果を保持し、再読込で全体を再構築照合する。
+GUIは版2の最大接点誤差上界と角度が数値検査であることを表示する。
+
+例はexamples/construction/capsule_certified_request.json。許容差1e-12 mに対し、
+生成接点の誤差上界は約8.94e-15/8.92e-15 m。測定形状ではなく合成カプセルである。
+
+```bash
+superfish-ng construct-tangent examples/construction/capsule_certified_request.json --candidate-index 0 --out out/capsule-v2-construction.json
+superfish-ng export-constructed-case out/capsule-v2-construction.json --out out/capsule-v2-case.json
+superfish-ng solve out/capsule-v2-case.json --out out/capsule-v2-solve
+```
+
+追加5テスト: 区間内の選択位置と位置上界、厳密端点再利用/空弧拒否、版2保存/版1継続、
+位置許容差未達・未知設定・不正選択、GUI応答/再構築、解析面積/体積と実FEM相似則(f半減・両RQ/G/TTF不変)。
+版2の切詰めも微小な位置誤差を持ち、メッシュ細分・RF精度収束を代替しない。
+次は直線と弧の接線・フィレットとG03全要件照合。G03全体/全互換の完成はまだ宣言しない。
+
+版1/2の合成カプセル比較はout/validation-g03-certified-construction-20260908/capsule_v1_v2_comparison.json。
+双方617節点/1152三角形だが座標・接続は異なり、周波数相対差1.41259e-8、
+R/Q相対差0.00312004、G相対差6.77706e-8、TTF相対差0.00154291がある。
+接点位置の微小差に加え、生成メッシュが変わった計算同士の比較であり、純粋な幾何誤差と分離していない。
+この差を隠す補正や閾値変更は行わず、カプセルのRF精度収束は未検証として保持する。
+
+版2統合の標準349件中347合格・2 skip、out/validation-g03-certified-construction-20260908 PASS。
+Chrome8操作PASS、seed周波数差ゼロ、RF/エネルギー差最大8.882e-16、基準更新なし。検証用GUIは停止済み。

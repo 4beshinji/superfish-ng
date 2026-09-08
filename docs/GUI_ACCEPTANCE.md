@@ -1,5 +1,19 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 版2区間付き接線構築 — 2026-09-08
+
+out/gui-certified-construction-browser-20260908/report.jsonで8操作PASS。
+外部要求0、実行中ソース変更なし。tangent-construction.pngの誤差上界表示も確認した。
+版2の証拠・接点誤差上界に加え、明示選択、保存/再読込、Case適用、FEM/場表示、
+改変拒否を実Chromeで検査。起動には通常のGUI、検証には次を使う。
+
+```bash
+node scripts/verify_gui.mjs --url '起動URL' --out out/gui-certified-NEW --tangent-request examples/construction/capsule_certified_request.json
+```
+
+UI検査をRF収束や物理ピーク精度へ読み替えない。版1との合成例のRF差は接線構築記録に保持する。
+
+
 ## G03接線構築GUI追加 — 2026-09-08
 
 out/gui-tangent-browser-final-20260908/report.jsonで7操作PASS、外部要求0、実行中ソース変更なし。
