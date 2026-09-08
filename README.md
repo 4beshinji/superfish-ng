@@ -85,7 +85,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、N03直線離散ピーク囲い込み追加後（直前基準 `972f46e`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-08、N03直線表面収束評価追加後（直前基準 `395e6de`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
 同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。明示policyによる多対多のID集合継承とGUIでの方式選択・復元を追加。条件と残件は [追跡仕様](docs/MODE_TRACKING.md)。
 
 | 分野 | 現在の内容 |
@@ -213,3 +213,7 @@ v3の一般輪郭`contour`はz折返しを含む単一外周を表せます。`m
 [直線P1/P2の連続離散ピーク囲い込み](docs/AFFINE_SURFACE_EXTREMA.md)をAPI/保存/CLIへ追加しました。
 `bound-affine-peaks`で既存native場のPECピークを上下から囲み、`replay-affine-peaks`で再検証できます。
 物理ピークの収束保証や適応の表面量停止は未対応です。
+
+[追跡済み直線要素の表面収束評価](docs/AFFINE_SURFACE_CONVERGENCE.md)をAPI/保存/CLIへ追加しました。
+元多角形の角と、f/RQ/G・ピーク比の直近2区間を別判定し、全域確認不足を保持します。
+元の適応停止や表面未評価状態は変更しません。

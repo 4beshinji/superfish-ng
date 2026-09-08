@@ -92,3 +92,6 @@ GUI接続は `out/browser-n03-surface-20260908/report.json` の実Chrome51項目
 
 直線要素の統合に向けて、[P1/P2連続離散ピークの囲い込み](AFFINE_SURFACE_EXTREMA.md)を追加した。
 この段階では独立したAPI/保存/CLIであり、本評価の履歴・幾何判定契約は変更しない。
+
+[直線P1/P2の表面収束評価](AFFINE_SURFACE_CONVERGENCE.md)を、元多角形の角診断と保存適応チェックポイントへ接続した。
+独立した版1文書/API/保存/CLIであり、上記の曲線履歴評価契約は維持する。

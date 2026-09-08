@@ -65,6 +65,12 @@ def main(argv=None):
     affine_peaks.add_argument('--out',type=Path,required=True)
     affine_peak_replay=sub.add_parser('replay-affine-peaks',help='revalidate native affine fields and recompute their saved discrete peak bounds')
     affine_peak_replay.add_argument('document',type=Path)
+    affine_surface=sub.add_parser('assess-affine-surface-convergence',help='assess tracked affine refinement peak intervals and polygon corner diagnostics')
+    affine_surface.add_argument('checkpoint',type=Path)
+    affine_surface.add_argument('--mode-id',required=True)
+    affine_surface.add_argument('--out',type=Path,required=True)
+    affine_surface_replay=sub.add_parser('replay-affine-surface-convergence',help='revalidate saved affine surface convergence and all native sources')
+    affine_surface_replay.add_argument('document',type=Path)
     surface=sub.add_parser('assess-surface-convergence',help='assess tracked fixed-geometry frequency, RF and peak refinement changes')
     surface.add_argument('history',type=Path)
     surface.add_argument('--mode-id',required=True)
@@ -224,6 +230,17 @@ def main(argv=None):
             result=read_affine_peaks(args.document)
             print(f"REPLAYED {result['peaks']['status']}: {args.document}; discrete field enclosure only")
             return 0
+        elif args.command == 'assess-affine-surface-convergence':
+            from .affine_surface_convergence import save_affine_surface_convergence
+            from .adaptive_refinement import read_adaptive_refinement
+            result=save_affine_surface_convergence(read_adaptive_refinement(args.checkpoint),args.mode_id,args.out)
+            print(f"{result['status']}: {args.out}; empirical refinement assessment only")
+            return 0 if result['status']=='TARGETS_MET' else 1
+        elif args.command == 'replay-affine-surface-convergence':
+            from .affine_surface_convergence import read_affine_surface_convergence
+            result=read_affine_surface_convergence(args.document)
+            print(f"REPLAYED {result['status']}: {args.document}")
+            return 0 if result['status']=='TARGETS_MET' else 1
         elif args.command == 'assess-surface-convergence':
             from .surface_convergence import save_surface_convergence
             from .mode_tracking_history import read_mode_history
