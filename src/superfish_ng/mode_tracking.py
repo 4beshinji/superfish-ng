@@ -55,10 +55,10 @@ def _identity_groups(groups,count):
         keys(group,('indices','ids'),('indices','ids'),'identity group')
         ranks=group['indices'];ids=group['ids']
         if (type(ranks) is not list or not ranks or any(type(i) is not int for i in ranks)
-                or ranks!=list(range(ranks[0],ranks[0]+len(ranks)))
+                or ranks!=sorted(set(ranks))
                 or type(ids) is not list or len(ids)!=len(ranks)
                 or any(type(x) is not str or not x.strip() for x in ids)):
-            raise ValueError('identity group requires contiguous frequency indices and one nonempty ID per dimension')
+            raise ValueError('identity group requires increasing distinct frequency indices and one nonempty ID per dimension')
         indices.extend(ranks);identities.extend(ids)
         normalized.append(dict(indices=list(ranks),ids=sorted(ids)))
     if sorted(indices)!=list(range(1,count+1)) or len(set(identities))!=len(identities):
@@ -68,12 +68,14 @@ def _identity_groups(groups,count):
 
 def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous_frequencies_hz,current_frequencies_hz,
                                  previous_ids,*,comparison_description,minimum_overlap,minimum_assignment_margin,
-                                 relative_cluster_gap,minimum_relative_singular_value=1e-8,previous_identity_groups=None):
+                                 relative_cluster_gap,minimum_relative_singular_value=1e-8,previous_identity_groups=None,
+                                 cluster_transition_policy=None,minimum_cluster_link=None):
     """Match equal-dimensional frequency clusters by their worst principal overlap.
 
     PASS means all previous and current clusters have unambiguous matches.
     A multidimensional match identifies only a subspace, never its basis modes.
-    Cluster births, losses, merges and splits remain unresolved in this API.
+    Births/losses remain unresolved. Explicit retain_subspace policy can
+    continue dimension-preserving one-to-many cluster transitions as ID sets.
     """
     a=_real_array(previous_fields,'previous_fields',2);b=_real_array(current_fields,'current_fields',2)
     w=_real_array(weights,'weights',1)
@@ -96,9 +98,19 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
     margin=_control(minimum_assignment_margin,'minimum_assignment_margin',zero=True)
     gap=_control(relative_cluster_gap,'relative_cluster_gap',zero=True,one=False)
     rank_threshold=_control(minimum_relative_singular_value,'minimum_relative_singular_value')
+    if cluster_transition_policy is None:
+        if minimum_cluster_link is not None:raise ValueError('minimum_cluster_link requires an explicit cluster_transition_policy')
+    elif cluster_transition_policy!='retain_subspace':raise ValueError('cluster_transition_policy must be retain_subspace')
+    else:minimum_cluster_link=_control(minimum_cluster_link,'minimum_cluster_link')
     effective_margin=max(margin,32*np.finfo(float).eps*max(len(w),len(f),len(g)))
     old=_clusters(f,gap) if groups is None else [[k-1 for k in c['indices']] for c in groups];new=_clusters(g,gap)
     left=[_basis(a,w,c,rank_threshold) for c in old];right=[_basis(b,w,c,rank_threshold) for c in new]
+    identities=[sorted(previous_ids[k] for k in c) for c in old] if groups is None else [c['ids'] for c in groups]
+    transitions=None
+    if cluster_transition_policy is not None:
+        from .cluster_transitions import transition_partition
+        old,new,identities,transitions=transition_partition(old,new,identities,left,right,minimum_cluster_link)
+        left=[_basis(a,w,c,rank_threshold) for c in old];right=[_basis(b,w,c,rank_threshold) for c in new]
     scores=np.full((len(old),len(new)),np.nan)
     singular={}
     for i,u in enumerate(left):
@@ -120,7 +132,7 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
             unresolved.append(dict(previous_indices=[k+1 for k in old[i]],current_indices=[k+1 for k in new[j]],
                                    reason='overlap or assignment separation is insufficient',overlap=float(value),
                                    row_margin=row_margin,column_margin=column_margin));continue
-        ids=sorted(previous_ids[k] for k in old[i]) if groups is None else groups[i]['ids'];dimension=len(ids)
+        ids=identities[i];dimension=len(ids)
         match=dict(previous_ids=ids,previous_indices=[k+1 for k in old[i]],current_indices=[k+1 for k in new[j]],
                    dimension=dimension,kind='MODE' if dimension==1 else 'SUBSPACE',principal_overlaps=singular[i,j],
                    minimum_principal_overlap=float(value),row_margin=row_margin,column_margin=column_margin,
@@ -141,6 +153,11 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
                 scope='numerical weighted sample/subspace correspondence; mode_index remains frequency rank; no proof of continuous-path identity, mapping accuracy or FEM convergence')
 
     if groups is not None:result['previous_identity_groups']=groups
+    if transitions is not None:
+        for event in transitions['events']:
+            event['status']='PASS' if any(m['previous_indices']==event['previous_indices'] and m['current_indices']==event['current_indices'] for m in matches) else 'UNVERIFIED'
+        result['cluster_transitions']=transitions
+        result['controls'].update(cluster_transition_policy=cluster_transition_policy,minimum_cluster_link=minimum_cluster_link)
     return result
 
 

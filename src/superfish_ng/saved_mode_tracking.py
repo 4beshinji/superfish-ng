@@ -38,6 +38,9 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     controls=request['controls']
     names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
     if isinstance(controls,dict) and controls.get('mapping')=='paired_mesh':names+=('vertex_pairs',)
+    if isinstance(controls,dict) and ('cluster_transition_policy' in controls or 'minimum_cluster_link' in controls):
+        names+=('cluster_transition_policy','minimum_cluster_link')
+        if controls.get('cluster_transition_policy')!='retain_subspace':raise ValueError('cluster_transition_policy must be retain_subspace')
     keys(controls,names,names,'mode tracking controls')
     normalized=deepcopy(request);root=Path.cwd() if base_directory is None else Path(base_directory)
     directories=[]
