@@ -458,3 +458,48 @@ JSON入力欄の編集で保存ID・閾値が変わることはない。変更�
 中止/失敗Jobの途中チェックポイントは、再検証できる保存ファイルを別途開ける。
 計算一覧から途中ファイルを自動選択する操作は未実装。元の保存先が再検証に必要。
 画面に残る結果は最後に検証した結果であり、入力編集や新規Job開始でその証拠を差し替えない。
+
+## 未確認区間の適応的な二分
+
+`execute-adaptive-study`は、対応がUNVERIFIEDになった幾何掃引区間へ中点を追加し、
+実FEMで計算して再比較する。閾値は変更しない。確認できた点だけをID履歴へ追加し、
+失敗した比較もattemptsに保持する。すでに計算した同じパラメータ値の端点は保存場を再利用する。
+
+requestはschema_version 1、study、initial_ids、step_controls、adaptiveの5項目。
+studyは厳密に増加または減少する数値の`/case/geometry/` sweepに限定する。
+全元点と元区間の中点のProjectを事前検査し、追加候補も計算前に検査する。離散項目・未対応指定を黙って受理しない。
+step_controlsは元の隣接目標点ごとの設定で、その区間に追加する点にも同じ設定を使う。
+
+```json
+"adaptive": {
+  "max_depth": 4,
+  "max_attempts": 16,
+  "minimum_parameter_step": 0.000001
+}
+```
+
+深さは元の区間を0として数える。max_depthは0〜20、max_attemptsは全体の比較回数上限。
+minimum_parameter_stepは変更するパラメータと同じ単位で、二分して作る両区間の最小幅。
+元の指定点の間隔を変更する制限ではない。中点が端点と浮動小数点で区別できない場合も停止する。
+上限に達した場合はUNVERIFIEDと未到達の元目標点を記録し、後続目標を飛ばさない。
+写像非対応・入力不正・FEM計算失敗は例外として停止し、自動細分で隠さない。
+
+```bash
+python -m superfish_ng execute-adaptive-study request.json --out out/adaptive-NEW
+python -m superfish_ng replay-adaptive-study out/adaptive-NEW/adaptive-study-results.json
+```
+
+出力先は新規限定。`points`は計算順の全点で、未確認だった端点も含む。
+`accepted_point_indices`はその配列への0始まりの参照をパラメータ順に並べるため、
+番号順とは限らない。例えば初点→端点失敗→中点成功→保存端点成功なら`[0,2,1]`。
+`reached_target_indices`と`unreached_target_indices`は元Studyの目標点番号。
+`attempts`は全比較、採否、二分点、元目標番号、深さ、停止理由を持つ。
+
+再読込は保存場から同じ二分判断を再実行し、全点の入力/hash、失敗した比較、
+確認済みID履歴、停止理由を照合する。FEMを再計算しない。
+COMPLETEは全元目標への標本対応の確認であり、連続枝や物理的収束の保証ではない。
+細分で避けた区間内の縮退・未観測の交差を否定するものではない。
+
+この段階はAPI/CLI。適応実行の途中チェックポイント再開、JobManager/GUIへの組込、
+非幾何/非単調掃引、一般の再メッシュ写像・多対多/個別枝回復は残る。
+通常の指定点列による逐次実行/再開と、そのGUIは従来の契約を維持する。
