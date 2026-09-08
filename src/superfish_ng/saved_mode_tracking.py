@@ -1,0 +1,79 @@
+# SPDX-License-Identifier: Apache-2.0
+"""Recompute saved mode correspondences from byte-identified native FEM results."""
+from copy import deepcopy
+import hashlib
+import json
+from pathlib import Path
+from . import __version__
+from .config import keys
+from .completion import digest
+from .project import parse_json
+from .saved import read_solution
+from .mode_tracking import track_cylindrical_modes
+
+
+def _canonical(value):
+    return json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False)
+
+
+def _snapshot(directory):
+    required=('case.json','results.json','fields.npz')
+    optional=('mesh.json','save_protocol.json','save_complete.json')
+    result={}
+    for name in required+tuple(n for n in optional if (directory/n).exists()):
+        path=directory/name
+        if not path.is_file() or path.is_symlink():raise ValueError(f'tracking source requires a regular native result file: {path}')
+        result[name]=digest(path)
+    return dict(directory=str(directory),sha256=result)
+
+
+def build_saved_mode_tracking(request,*,base_directory=None):
+    fields=('schema_version','previous_run','current_run','previous_ids','controls')
+    keys(request,fields,fields,'mode tracking request')
+    if type(request['schema_version']) is not int or request['schema_version']!=1:
+        raise ValueError('mode tracking request requires schema_version 1')
+    _canonical(request)
+    controls=request['controls']
+    names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
+    keys(controls,names,names,'mode tracking controls')
+    normalized=deepcopy(request);root=Path.cwd() if base_directory is None else Path(base_directory)
+    directories=[]
+    for name in ('previous_run','current_run'):
+        value=request[name]
+        if type(value) is not str or not value.strip():raise ValueError(f'{name} requires a nonempty native saved-result directory')
+        path=Path(value);path=(path if path.is_absolute() else root/path).resolve()
+        directories.append(path);normalized[name]=str(path)
+    before=[_snapshot(path) for path in directories]
+    solutions=[read_solution(path) for path in directories]
+    report=track_cylindrical_modes(*solutions,request['previous_ids'],**controls)
+    if before!=[_snapshot(path) for path in directories]:
+        raise ValueError('tracking source changed during field sampling; use stable saved results and retry')
+    return dict(schema_version=1,document_type='saved_mode_tracking',software_version=__version__,
+                request=normalized,request_sha256=hashlib.sha256(_canonical(normalized).encode()).hexdigest(),
+                sources=before,tracking=report,status=report['status'],
+                scope='replayed native saved-field correspondence; source byte identities required; not a continuous tracking history or FEM convergence certificate')
+
+
+def save_mode_tracking(request,path,*,base_directory=None):
+    document=build_saved_mode_tracking(request,base_directory=base_directory)
+    text=json.dumps(document,indent=2,allow_nan=False)+'\n'
+    with Path(path).open('x',encoding='utf-8') as stream:stream.write(text)
+    return document
+
+
+def replay_mode_tracking(document):
+    fields=('schema_version','document_type','software_version','request','request_sha256','sources','tracking','status','scope')
+    keys(document,fields,fields,'saved mode tracking')
+    request=document['request']
+    if not isinstance(request,dict):raise ValueError('saved tracking request must be an object')
+    for key in ('previous_run','current_run'):
+        if type(request.get(key)) is not str or not Path(request[key]).is_absolute():
+            raise ValueError('saved mode tracking requires absolute source paths; regenerate from the request')
+    expected=build_saved_mode_tracking(request)
+    if _canonical(document)!=_canonical(expected):
+        raise ValueError('mode tracking replay differs from saved data or source identities; regenerate from the source request')
+    return expected
+
+
+def read_mode_tracking(path):
+    return replay_mode_tracking(parse_json(Path(path).read_text(encoding='utf-8')))

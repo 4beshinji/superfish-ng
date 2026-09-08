@@ -16,6 +16,11 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    tracking=sub.add_parser('track-modes',help='track modes from two saved PEC cylinders using an explicit request')
+    tracking.add_argument('request',type=Path)
+    tracking.add_argument('--out',type=Path,required=True)
+    tracking_replay=sub.add_parser('replay-mode-tracking',help='recompute and verify saved mode correspondence and source identities')
+    tracking_replay.add_argument('tracking',type=Path)
     tangent = sub.add_parser('construct-tangent', help='preview or explicitly select a tangent in an unfinished curved case')
     tangent.add_argument('request', type=Path)
     tangent.add_argument('--candidate-index', type=int)
@@ -80,7 +85,18 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command == 'construct-tangent':
+        if args.command == 'track-modes':
+            from .saved_mode_tracking import save_mode_tracking
+            from .project import parse_json
+            result=save_mode_tracking(parse_json(args.request.read_text(encoding='utf-8')),args.out,base_directory=args.request.resolve().parent)
+            print(f"{result['status']}: {args.out}")
+            return 0 if result['status']=='PASS' else 1
+        elif args.command == 'replay-mode-tracking':
+            from .saved_mode_tracking import read_mode_tracking
+            result=read_mode_tracking(args.tracking)
+            print(f"REPLAYED {result['status']}: {args.tracking}")
+            return 0 if result['status']=='PASS' else 1
+        elif args.command == 'construct-tangent':
             from .tangent_construction import save_construction
             from .project import parse_json
             document = save_construction(parse_json(args.request.read_text(encoding='utf-8')),

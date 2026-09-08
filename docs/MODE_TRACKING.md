@@ -76,6 +76,48 @@ Bessel零点からの周波数で旧順位TM010/TM020/TM011、新順位TM010/TM0
 標準周波数/RF回帰と独立実行の数値は[引継ぎ](CODEX_HANDOFF.md)に記録する。
 
 一般形状の比較写像・写像精度、クラスタ合流/分裂、連続した追跡履歴と安定IDの保存/再開、
-CLI/GUI・Study/tuneへの統合は未完了。D01親課題全体やD02を完了とは扱わない。
+GUI・Study/tuneへの統合は未完了。2時点の保存とCLIは以下の範囲で実装した。D01親課題全体やD02を完了とは扱わない。
 既存の同一形状細分比較・条件付きバンド同定は従来どおり利用できる。
 重み付き内積の直交基底とSVDの基底不変性から独立実装し、新規外部資料・依存は追加していない。
+
+## 2時点の保存・再検証とCLI
+
+`track-modes REQUEST --out NEW.json` はnative保存場2組から対応を計算する。
+request版1は次の全項目を必須とし、未知項目を拒否する。相対パスはrequestファイルの所在を基準に解決する。
+
+```json
+{
+  "schema_version": 1,
+  "previous_run": "mode-tracking-new/cylinder-0",
+  "current_run": "mode-tracking-new/cylinder-1",
+  "previous_ids": ["TM010", "TM020", "TM011"],
+  "controls": {
+    "mapping": "normalized_cylinder",
+    "sample_order": 12,
+    "minimum_overlap": 0.98,
+    "minimum_assignment_margin": 0.05,
+    "relative_cluster_gap": 0.000001,
+    "minimum_relative_singular_value": 0.00000001
+  }
+}
+```
+
+上の独立検証コマンドで保存場を作り、このrequestを `out/tracking-request.json` に置く。
+
+```bash
+OPENBLAS_NUM_THREADS=1 python -m superfish_ng track-modes out/tracking-request.json --out out/tracking-new.json
+OPENBLAS_NUM_THREADS=1 python -m superfish_ng replay-mode-tracking out/tracking-new.json
+```
+
+新規ファイルだけに保存し、UNVERIFIEDも理由と部分対応を保持する。
+終了コードはPASSが0、UNVERIFIEDが1、入力/再検証エラーが2。
+Python APIは `saved_mode_tracking.save_mode_tracking` / `read_mode_tracking`。
+保存文書には絶対入力パス、requestのSHA256、元case/results/fieldsと存在するmesh・保存protocol・完了markerの
+SHA256、写像/重み/閾値/対応を記録する。比較前後で入力のバイト同一性を検査する。
+再検証はnative保存の整合性検査と実場からの対応再計算を行い、文書全体と照合する。固有値問題は解き直さない。
+元ファイル・保存先パス・数値環境が必要であり、移動後の透過的再開や署名による真正性を保証しない。
+入力の空白だけの変更でもバイト同一性は失われる。移動や変更後はrequestから新しい文書を生成する。
+これは2時点の対応記録であり、多段階の連続履歴・安定ID再開やFEM収束証明ではない。
+
+追加6テストで実FEM交差の保存/再検証、改変拒否、比較中の入力変更、入力バイト同一性、
+UNVERIFIEDの往復、CLIと厳密requestを確認した。
