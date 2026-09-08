@@ -68,10 +68,11 @@ def read_job(directory, verify=True):
                 "solution/modes.csv",
             }
         )
-        if manifest.get("kind") == "tracked_study" or state.get("kind") == "tracked_study":
+        if manifest.get("kind") in ("tracked_study", "adaptive_study") or state.get("kind") in ("tracked_study", "adaptive_study"):
             if manifest.get("kind") != state.get("kind"):
                 raise ValueError("tracked Study job kind differs from completion manifest")
-            required = {"tracked-study-request.json", "tracked-study-results.json"}
+            prefix = "adaptive-study" if manifest["kind"] == "adaptive_study" else "tracked-study"
+            required = {prefix + "-request.json", prefix + "-results.json"}
         if not required.issubset(files):
             raise ValueError("completion manifest missing required output")
         for name, digest in files.items():
@@ -84,15 +85,22 @@ def read_job(directory, verify=True):
                 raise ValueError("invalid completion manifest path")
             if not path.is_file() or _digest(path) != digest:
                 raise ValueError(f"output integrity failure or missing file: {name}")
-        if manifest.get("kind") == "tracked_study":
+        if manifest.get("kind") in ("tracked_study", "adaptive_study"):
             from .tracked_study import read_tracked_study
+            from .adaptive_study import read_adaptive_study
             from .saved_mode_tracking import _canonical
-            result = read_tracked_study(directory / "tracked-study-results.json")
-            request = json.loads((directory / "tracked-study-request.json").read_text())
+            adaptive = manifest["kind"] == "adaptive_study"
+            reader = read_adaptive_study if adaptive else read_tracked_study
+            result = reader(directory / (prefix + "-results.json"))
+            request = json.loads((directory / (prefix + "-request.json")).read_text())
+            if adaptive and (state.get("accepted_points") != len(result["accepted_point_indices"])
+                    or state.get("completed_attempts") != len(result["attempts"])
+                    or state.get("unreached_target_indices") != result["unreached_target_indices"]):
+                raise ValueError("adaptive Study job summary differs from verified checkpoint")
             if (_canonical(request.get("request")) != _canonical(result["request"])
                     or state.get("tracking_status") != result["status"]
                     or state.get("can_resume") is not result["can_resume"]
-                    or state.get("computed_points") != len(result["point_runs"])
+                    or state.get("computed_points") != len(result["points" if adaptive else "point_runs"])
                     or state.get("numerical_validation") != "not_checked"):
                 raise ValueError("tracked Study job summary differs from verified checkpoint")
     return state
@@ -245,6 +253,11 @@ class JobManager:
                 _state(directory, "failed", error=str(exc))
                 raise
             return identifier
+
+    def start_adaptive_study(self, request, *, max_new_attempts=None, checkpoint=None):
+        """Run adaptive tracked FEM sweeps in an isolated local worker."""
+        from .adaptive_study_jobs import start_adaptive_study
+        return start_adaptive_study(self, request, max_new_attempts=max_new_attempts, checkpoint=checkpoint)
 
     def start_tracked_study(self, request, *, max_new_points=None, checkpoint=None):
         """Run sequential tracked FEM points in an isolated local worker."""

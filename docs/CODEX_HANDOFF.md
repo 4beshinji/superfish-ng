@@ -1,5 +1,36 @@
 # ローカルCodexへの引継ぎ
 
+## D01適応二分のJobManager接続 — 2026-09-08
+
+直前基準9245529。JobManager.start_adaptive_studyとadaptive_study_jobs.pyを追加。
+共通の適応FEM/保存場追跡APIを別プロセスで実行し、status/cancel/list/closeへ接続。
+入力・制限値・再開文書を事前検査し、二分待ちのPAUSEDから新しいJobへ再開する。
+
+Job種別adaptive_study、request/結果/manifestをルートへ、点とチェックポイントをexecution/へ保存。
+計算済み点数・採用点数・比較回数・未到達目標を区別する。Job completeと追跡状態を分け、
+numerical_validation=not_checkedを保持。verify=Trueは前のJobの保存場、失敗比較、
+二分判断も再検証し、要約の改変を拒否する。中止・異常終了で成功を公開しない。
+
+着手前494件中492合格・2 skip（143.847秒）。未実装メソッドによる追加5件の失敗を確認後、
+実ワーカーの二分待ち再開/過去端点変更検出、上限停止、中止/再起動、事前検査/要約改変、
+非対応写像での失敗処理がPASS。既存追跡Job5件と併せ10件PASS（5.430秒）。
+最終499件中497合格・2 skip（146.928秒）。
+`out/validation-d01-adaptive-jobs-20260908` PASS。seed周波数差ゼロ、
+RF/エネルギー相対差最大8.881784197001248e-16。FEM・基準・許容差変更なし。
+
+`python scripts/validate_adaptive_study_jobs.py --out out/d01-adaptive-jobs-20260908` PASS。
+合成profile局所半径0.055→0.08 m、P2/12×20/基本モードを3つのJobで実行。
+最初は粗い比較失敗を保存して二分待ち、次は中点のみ計算、最後は保存済み端点だけで完了。
+元文書不変と最後のJobに点ディレクトリがないことを確認。全寸法2倍でも同じ判断となり、
+Maxwell相似則の最大相対差f 9.104e-15、R/Q 4.174e-14、G 1.221e-14。
+max_depth=0の別Jobは未到達[1]・計算済み2点/採用1点でUNVERIFIEDとして終了。
+標準/独立検証のsource hashは最終コードと一致。検証用JobManagerはclose済み。
+GUI・Wine・hosted CIは今回未実行。新規外部資料・依存・legacy参照なし。
+
+適応GUIの開始/中止/結果/再開操作は次段階。非幾何/非単調掃引、一般再メッシュ写像、
+多対多/個別枝回復・tune・電源断回復保証も残る。標本対応を連続枝/物理収束の保証にしない。
+親課題区分は8受入・3進行中・21未受入・拡張候補1のまま。計画全体は継続する。
+
 ## D01適応二分の途中保存・再開 — 2026-09-08
 
 直前基準8184770。適応実行の保存版2へPAUSED/can_resume/pending_targetsを追加し、

@@ -533,3 +533,24 @@ PAUSED/COMPLETEのCLI終了値は0、UNVERIFIEDは1、入力/実行エラーは2
 中点の計算等で失敗しても、先に保存した有効なPAUSEDチェックポイントは残り、別出力先で再開できる。
 書込み中断で壊れたファイルを有効な再開点に扱わない。電源断回復や実行中プロセスの再接続は保証しない。
 適応実行のJobManager/GUI接続は残件。通常の指定点列の再開文書とは別形式である。
+
+## 適応二分のJobManager接続
+
+`JobManager.start_adaptive_study(request, max_new_attempts=None, checkpoint=None)`は
+適応実行APIを別プロセスで動かし、既存のstatus/cancel/list/closeを共用する。
+再開は版2の有効なPAUSED文書に限り、新しいJobへ必要な点だけを計算する。
+request・制限値・再開文書はJobの作成前に検査する。
+
+Job種別はadaptive_study。ルートにadaptive-study-request.json、adaptive-study-results.json、
+manifest.jsonを保存し、点と比較ごとのチェックポイントはexecution/以下へ置く。
+Job status=completeと追跡状態PAUSED/COMPLETE/UNVERIFIEDを分け、
+numerical_validation=not_checkedを維持する。
+
+computed_pointsは失敗した比較の端点を含む計算済み点数、accepted_pointsは採用した点数、
+completed_attemptsは比較回数。unreached_target_indicesは未到達の元目標番号を示す。
+`status(id, verify=True)`はこれらの要約と文書を照合し、以前のJobから継承した保存場・
+全失敗比較と二分判断も再検証する。要約だけを変更して完走や確認済みに見せることはできない。
+
+共通中止処理を使い、中止・ワーカー失敗を成功へ移さない。再起動後もJob種別を保持する。
+この段階はJobManagerのPython API。適応実行用のブラウザー開始/中止/結果/再開操作は次段階。
+指定点列の通常追跡GUIや保存文書の契約を、適応実行の受入へ読み替えない。
