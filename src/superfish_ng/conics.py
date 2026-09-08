@@ -254,3 +254,28 @@ class HyperbolaArc:
             raise ValueError('hyperbola chord tolerance exceeds max_segments; increase tolerance or explicit limit')
         count = max(1,math.ceil(span/limit))
         return self.evaluate(np.linspace(0,1,count+1))['points_zr_m']
+
+
+def curve_to_dict(curve):
+    """Serialize one native primitive without implying a valid closed contour."""
+    from dataclasses import asdict
+    kinds = {LineSegment: 'line', EllipseArc: 'ellipse_arc', HyperbolaArc: 'hyperbola_arc'}
+    if type(curve) not in kinds:
+        raise ValueError('unsupported curve primitive')
+    return dict(type=kinds[type(curve)], **{
+        key: list(value) if isinstance(value, tuple) else value
+        for key, value in asdict(curve).items()})
+
+
+def curve_from_dict(row):
+    """Strict primitive reader shared by contours and construction requests."""
+    from .config import keys
+    kinds = {'line': LineSegment, 'ellipse_arc': EllipseArc, 'hyperbola_arc': HyperbolaArc}
+    if not isinstance(row, dict) or not isinstance(row.get('type'), str) or row['type'] not in kinds:
+        raise ValueError('curve type must be line, ellipse_arc or hyperbola_arc')
+    kind = kinds[row['type']]
+    required = ('start_zr_m', 'end_zr_m') if kind is LineSegment else (
+        ('center_zr_m', 'semiaxes_m', 'start_rad', 'sweep_rad') if kind is EllipseArc else
+        ('center_zr_m', 'semiaxes_m', 'start_parameter', 'end_parameter'))
+    keys(row, ('type',)+tuple(kind.__dataclass_fields__), ('type',)+required, 'curve')
+    return kind(**{key: value for key, value in row.items() if key != 'type'})

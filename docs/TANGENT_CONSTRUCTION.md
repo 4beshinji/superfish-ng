@@ -148,3 +148,55 @@ coincident_contacts_at_output_precisionを立て、厳密実数での零長証�
 
 標準319件中317合格・2 skip、out/validation-g03-finite-arcs-20260908がPASS。
 seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。実行中docstring変更で失敗した別テストログも保持する。
+
+## 構築文書・閉輪郭・CLI — 2026-09-08
+
+`tangent_construction.construct_tangent_case`は版1の要求を受ける。
+`case_template`はv3 curved_contourの**未完成の編集文書**であり、選択前はCaseとして有効とは限らない。
+`pair_start`は配列内で連続する2つのPEC円錐曲線弧を指す0始まりindex。末尾から先頭への巡回は対象外。
+`controls`にはposition_tolerance_m、angle_tolerance_rad、parameter_guard、normal_width、
+max_boxes、residual_toleranceを全て明示する。primitiveのstrict読書きを既存輪郭と共通化した。
+候補表示時も要求の未知キー・曲線・モデルを検査する。輪郭全体とmesh/solver/rf等の
+計算設定の完全検査は選択後のCase.from_dictで行い、未完成templateをそのままsolveへ渡さない。
+
+候補未選択ではCANDIDATESまたはUNVERIFIEDを返し、caseはnull。
+候補indexを明示すると第1弧/接線/第2弧へ置換し、3辺へPECタグを渡す。
+残る曲線と全計算設定を維持して既存Case.from_dictへ渡す。閉輪郭の接合・向き・軸接続・
+領域範囲・交差/離隔と全入力が合格した場合だけCASE_VALIDATEDとcanonical caseを返す。
+これは幾何・入力の検査であり、メッシュ生成・FEM収束の受入を表すステータスではない。
+
+保存文書には元要求、要求SHA256、候補index、全列挙診断、接合残差、生成Case、
+schema/software版と適用範囲を含める。有理根区間は分子/分母の10進文字列で保持する。
+`read_construction`は要求から再構築し、保存JSON全体と一致を検査する。
+単なるhash一致ではなく候補/Caseの対応を検査するが、署名や改ざん防止認証ではない。
+再計算の厳密JSON一致は同じ実装/環境を対象とする。別環境で丸めが異なる場合や版変更時は
+元要求から再生成する。単一JSONを排他新規作成し、途中ファイルは読込/再構築検査に通らない。
+既存ファイルは上書きしない。失敗した新規ファイルを自動削除しない。
+
+合成例（実測・旧デッキ由来ではない）:
+
+```bash
+superfish-ng construct-tangent examples/construction/capsule_request.json --out out/capsule-candidates.json
+# 候補のcontacts_zr_m / connection_directionを確認して選択する。この例の0は上側の接線。
+superfish-ng construct-tangent examples/construction/capsule_request.json --candidate-index 0 --out out/capsule-construction.json
+superfish-ng export-constructed-case out/capsule-construction.json --out out/capsule-case.json
+superfish-ng solve out/capsule-case.json --out out/capsule-solve
+```
+
+construct-tangentはUNVERIFIEDを診断付き保存して終了1、入力/構築/保存エラーは終了2。
+export-constructed-caseは保存文書の再構築とCASE_VALIDATEDを確認してCase単独を出力する。
+CLI/Pythonとも同じ構築・FEMを使う。GUIはまだ構築操作へ接続していない。
+
+独立検査はカプセル断面積`dR+πR²/2`、回転体積`πR²d+4πR³/3`、
+全寸法2倍の実FEM周波数1/2・両R/Q/G/TTF不変、元要求不変、保存再構築・変更検出、
+未知指定/不正pair/全体接合失敗、CLI出力/上書き拒否、未確認候補からのCase出力拒否。
+初回カプセル入力は長さ0.2 mの既存例のjoin_tolerance=1e-14 mを流用し、
+長さ0.6 mで曲線境界boxの丸めpaddingに足りず拒否された。合成入力を1e-12 mへ明示設定した。
+既存の1e-10 L上限制約・境界判定・数値受入閾値は変更していない。
+
+次はGUIからの候補表示/選択/保存/ケース適用、厳密な接点区間/弧端認証、
+直線と弧の接線・フィレット、G03全要件照合。今回の相似則は離散FEMの不変量であり、
+このカプセルの実周波数/RFの収束や旧版照合を証明しない。
+
+本段階の最終標準326件中324合格・2 skip、out/validation-g03-construction-cli-20260908 PASS。
+seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。実装を固定して検証し、基準データの更新なし。

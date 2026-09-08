@@ -1,5 +1,34 @@
 # 独立実装・情報来歴
 
+## G03接線構築の保存・Case・CLI — 2026-09-08
+
+tangent_construction.pyに版1の構築要求/結果と保存後の再構築照合を追加した。
+case_templateは未完成の編集文書、候補未選択のcaseはnullと明示する。
+連続する2つのPEC弧を明示選択で弧/線/弧へ置換し、既存Caseで閉輪郭と全設定を検査する。
+construct-tangent/export-constructed-caseを追加し、既存solveまで接続。
+primitiveのstrict読書きを既存CurvedContourと共通化。計算式と依存は変更していない。
+
+最終標準326件中324合格・2 skip（86.428秒）、標準数値回帰PASS。
+out/validation-g03-construction-cli-20260908にtests.log/validation.json/seed_comparison.jsonを保存。
+seedのcase hash一致、周波数差ゼロ、RF/エネルギー相対差最大8.882e-16。基準更新なし。
+検証実行中のsrc/tests/scripts/examples変更なし。GUI/Wineの新規実行なし。
+
+合成カプセルの解析面積/回転体積、実FEMの寸法2倍でf半減・両RQ/G/TTF不変、
+保存再構築/改変検出・未確認出力・不正設定/上書き拒否など追加7検査を実装した。
+初回例題は長さ0.2 mから0.6 mへ変えた際のjoin_toleranceを流用して境界padding検査に失敗。
+入力の許容差を1e-12 mと明示し、既存の許容差上限や判定は変更しなかった。
+詳細と再現コマンドは[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md)。
+
+例題はexamples/construction/capsule_request.json。実CLIの構築/書出/solveは
+out/g03-capsule-construction-20260908.json、out/g03-capsule-case-20260908.json、
+out/g03-capsule-solve-20260908。基本モード1170.098360 MHz。
+これは合成例の動作/相似則検証であり、この形状の物理精度収束・旧版照合ではない。
+
+次はGUIの候補表示/明示選択/保存/Case適用。厳密接点区間/弧端認証、直線と弧の接線、
+フィレット、G03全要件照合は継続。全計画目標は未完了。
+新規外部資料/コード/依存/旧資産の参照なし。
+
+
 ## G03有限弧数値判定と明示選択G1接続 — 2026-09-08
 
 arc_tangents.pyへ有限有向弧の区間/枝判定、方向記録、明示選択の切詰め・局所G1接続APIを追加。

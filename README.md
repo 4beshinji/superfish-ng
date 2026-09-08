@@ -85,7 +85,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、有限弧接線API追加後（直前基準 `e68002f`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-08、接線構築Case/CLI追加後（直前基準 `afd92e9`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
 
 | 分野 | 現在の内容 |
 |---|---|
@@ -97,7 +97,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | RF量 | f、U、表面抵抗、壁損失、Q0、G、通過位相を含むVacc、R/Q、シャントインピーダンス、TTF |
 | 表面電磁場 | P1/P2片側場、曲線離散場の連続極値の囲い込みと角診断。物理ピークの収束保証とは区別 |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 標準319件中317合格・2 skip。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
+| 検証 | 標準326件中324合格・2 skip。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 2026-09-07: [NGSolveとの独立照合](docs/INDEPENDENT_COMPARISON.md)を追加し、
@@ -181,7 +181,9 @@ P2の場・RF・保存・表示の仕様と検証は[高次場](docs/HIGH_ORDER_
 `mesh.geometry_order=2` と `solver.element_order=2` による曲線FEMも利用できます。
 場/RF・保存・描画・Study・鏡映・GUIまで接続済みです（[曲線要素](docs/CURVED_ELEMENTS.md)）。
 G03全体は部分対応です。有限弧の接線数値判定と明示選択G1接続APIを追加しましたが、
-弧端認証・構築保存/Case/CLI/GUI・全要件照合が残ります。適応誤差推定は未対応です。
+弧端認証・構築GUI・全要件照合が残ります。適応誤差推定は未対応です。
+接線構築は `construct-tangent` → `export-constructed-case` → `solve` で実行できます。
+合成例と保存・再構築の仕様は [接線構築](docs/TANGENT_CONSTRUCTION.md) を参照してください。
 
 v3の一般輪郭`contour`はz折返しを含む単一外周を表せます。`mesh.contour_mesh`で
 最大辺長・品質・停止上限を明示して自動生成するか、検証済み外部メッシュを渡します。

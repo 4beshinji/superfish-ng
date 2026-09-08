@@ -16,6 +16,13 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    tangent = sub.add_parser('construct-tangent', help='preview or explicitly select a tangent in an unfinished curved case')
+    tangent.add_argument('request', type=Path)
+    tangent.add_argument('--candidate-index', type=int)
+    tangent.add_argument('--out', type=Path, required=True, help='new replayable construction JSON')
+    constructed = sub.add_parser('export-constructed-case', help='replay a tangent construction and export its validated case')
+    constructed.add_argument('construction', type=Path)
+    constructed.add_argument('--out', type=Path, required=True)
     legacy = sub.add_parser('import-af', help='convert the supported closed-vacuum AF subset to an NG case')
     legacy.add_argument('source', type=Path)
     legacy.add_argument('--out', type=Path, required=True, help='new directory for case, source and conversion report')
@@ -67,7 +74,17 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command == 'import-af':
+        if args.command == 'construct-tangent':
+            from .tangent_construction import save_construction
+            from .project import parse_json
+            document = save_construction(parse_json(args.request.read_text(encoding='utf-8')),
+                                         args.out, candidate_index=args.candidate_index)
+            print(f"{document['status']}: {args.out}")
+            return 1 if document['status'] == 'UNVERIFIED' else 0
+        elif args.command == 'export-constructed-case':
+            from .tangent_construction import export_constructed_case
+            export_constructed_case(args.construction, args.out)
+        elif args.command == 'import-af':
             from .legacy_input import import_af
             _, report = import_af(args.source, args.out, encoding=args.encoding, nr=args.nr, nz=args.nz,
                                   modes=args.modes, conductivity_s_per_m=args.conductivity_s_per_m,
