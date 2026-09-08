@@ -156,6 +156,14 @@ AutomeshのPO入力欄NT/RADIUSで円弧方向の指定（NT=4/5）を確認し�
 実装は有理数多項式演算から独立に記述し、論文本文/コードを転記していない。
 なお[MIT 6.972 Lecture 5](https://ocw.mit.edu/courses/6-972-algebraic-techniques-and-semidefinite-optimization-spring-2006/260460cc36cd5c2c78b0b04f9b3fe7bd_lecture_05.pdf)も確認したが、Sturm節が未完成のため根数実装の根拠には使わない。
 
+**R32. Siegfried M. Rump, Verification methods: Rigorous results using floating-point arithmetic (2010).**
+Acta Numerica 19, pp.287–449、DOI 10.1017/S096249291000005X。
+[著者所属機関の公開原稿](https://www.tuhh.de/ti3/rump/intlab/ActaNumerica2010.pdf)、
+[出版社書誌](https://www.cambridge.org/core/journals/acta-numerica/article/abs/verification-methods-rigorous-results-using-floatingpoint-arithmetic/770FE58E5293985CCAB770AF09C4F3FF)
+— 2026-09-08閲覧。Theorem 13.3の内部包含と存在/一意性、§13.1–13.2の除外/重根の注意を確認。
+法線オフセット交点の数学的条件を参照し、Fraction区間・探索・証拠の実装は独立に記述。
+論文本文/掲載コードを転記せず、第三者PDF・INTLABコード/実行形式を同梱しない。
+
 ## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、
