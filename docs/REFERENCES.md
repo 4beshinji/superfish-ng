@@ -164,6 +164,12 @@ Acta Numerica 19, pp.287–449、DOI 10.1017/S096249291000005X。
 法線オフセット交点の数学的条件を参照し、Fraction区間・探索・証拠の実装は独立に記述。
 論文本文/掲載コードを転記せず、第三者PDF・INTLABコード/実行形式を同梱しない。
 
+**R33. R. H. Nochetto, K. G. Siebert, A. Veeser, Theory of Adaptive Finite Element Methods: An Introduction.**
+[著者所属機関の公開原稿](https://math.umd.edu/~rhn/lectures/adaptivity.pdf)
+— 2026-09-08閲覧。第6章の要素内/内部辺残差への分解、式(76)付近を確認。
+本PJのTM強形式に基づく残差指標の背景。軸で退化する重み付き固有値問題への
+誤差上界・最適性の証明としては使用しない。コード・本文・PDFの転載なし。
+
 ## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、
