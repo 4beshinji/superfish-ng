@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "project": {
+    "project_version": 1,
+    "case": {
+      "schema_version": 3,
+      "name": "cavity",
+      "geometry": {
+        "type": "profile",
+        "points_zr_m": [
+          [
+            0.0,
+            0.1
+          ],
+          [
+            0.06,
+            0.1
+          ]
+        ]
+      },
+      "mesh": {
+        "nr": 12,
+        "nz": 16
+      },
+      "solver": {
+        "modes": 3,
+        "element_order": 2
+      },
+      "rf": {
+        "beta": 1.0,
+        "conductivity_s_per_m": 58000000.0,
+        "normalization_j": 1.0
+      },
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "axisymmetric",
+        "polarization": "tm",
+        "azimuthal_index": 0,
+        "materials": [
+          {
+            "id": "vacuum",
+            "type": "vacuum"
+          }
+        ],
+        "regions": [
+          {
+            "id": "cavity",
+            "material": "vacuum",
+            "domain": "interior"
+          }
+        ]
+      }
+    },
+    "reflect_full": false,
+    "display_length_unit": "mm"
+  },
+  "parameter": "/case/geometry/points_zr_m/1/0",
+  "bounds": [
+    0.06,
+    0.1
+  ],
+  "target_hz": 2139659715.7844172,
+  "frequency_tolerance_hz": 10000.0,
+  "parameter_tolerance": 1e-09,
+  "max_trials": 24,
+  "initial_ids": [
+    "TM010",
+    "TM020",
+    "TM011"
+  ],
+  "mode_id": "TM011",
+  "controls": {
+    "mapping": "normalized_cylinder",
+    "sample_order": 16,
+    "minimum_overlap": 0.98,
+    "minimum_assignment_margin": 0.05,
+    "relative_cluster_gap": 1e-06,
+    "minimum_relative_singular_value": 1e-08
+  },
+  "refinement_scale": 2,
+  "mesh_frequency_tolerance_hz": 10000.0
+}

@@ -16,6 +16,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    for command in ('tune','resume-tune','replay-tune'):
+        tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
+        tuning.add_argument('document',type=Path)
+        if command!='replay-tune':
+            tuning.add_argument('--out',type=Path,required=True)
+            tuning.add_argument('--max-new-trials',type=int)
     for command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
         adaptive=sub.add_parser(command,help='bisect unverified geometry sweep intervals with explicit limits, or replay all decisions')
         adaptive.add_argument('document',type=Path)
@@ -120,6 +126,17 @@ def main(argv=None):
                     result=execute_adaptive_study(result['request'],args.out,max_new_attempts=args.max_new_attempts,checkpoint=result)
             print(f"{result['status']}: {args.document if args.command=='replay-adaptive-study' else args.out}")
             return 1 if result['status']=='UNVERIFIED' else 0
+        elif args.command in ('tune','resume-tune','replay-tune'):
+            from .tuning import execute_tune,read_tune
+            from .project import parse_json
+            if args.command=='tune':
+                result=execute_tune(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_trials=args.max_new_trials)
+            else:
+                result=read_tune(args.document)
+                if args.command=='resume-tune':
+                    result=execute_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
+            print(f"{result['status']}: {args.document if args.command=='replay-tune' else args.out}")
+            return 0 if result['status'] in ('TUNED','PAUSED') else 1
         elif args.command in ('execute-tracked-study','resume-tracked-study','replay-tracked-study'):
             from .tracked_study import execute_tracked_study,read_tracked_study
             from .project import parse_json
