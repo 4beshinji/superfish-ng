@@ -85,7 +85,9 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、N04曲線残差指標追加後（直前基準 `6261292`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-08、D01/N04曲線親子追跡追加後（直前基準 `8ae8037`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+
+[曲線の親子空間の質量内積追跡](docs/NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ追加。局所・全域の複数段階履歴、両対称と鏡映の偶奇部分空間を検証し、係数移送からモードID/部分空間を対応付ける。曲線の適応停止/GUIと一般精度・効率は残る。
 
 [二次曲線FEMの残差指標](docs/CURVED_RESIDUAL_INDICATOR.md)を追加。物理座標の二階微分・曲線流束を評価し、既存の選択APIとCase局所履歴で実細分できる。指標は物理誤差上界ではなく、曲線の追跡付き適応停止/GUIは残る。
 

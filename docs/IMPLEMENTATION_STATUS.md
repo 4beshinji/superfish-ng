@@ -1,5 +1,7 @@
 # 実装・検証の現状
 
+[曲線の親子空間の質量内積追跡](NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ追加。局所・全域の複数段階履歴、両対称と鏡映の偶奇部分空間を検証し、係数移送からモードID/部分空間を対応付ける。曲線の適応停止/GUIと一般精度・効率は残る。
+
 [二次曲線FEMの残差指標](CURVED_RESIDUAL_INDICATOR.md)を追加。物理座標の二階微分・曲線流束を評価し、既存の選択APIとCase局所履歴で実細分できる。指標は物理誤差上界ではなく、曲線の追跡付き適応停止/GUIは残る。
 
 [曲線要素の局所適合細分](CURVED_MARKED_REFINEMENT.md)を[Caseの順序付き履歴・native保存再構築](CURVED_REFINEMENT_HISTORY.md)へ接続。通常FEM/CLIと半領域鏡映の保存再検証を確認した。履歴対応Study・GUI編集・曲線適応停止は未接続。
@@ -8,7 +10,7 @@
 
 [版3の表面量を含む適応停止](ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 
-確認日: 2026-09-08。N04曲線残差指標追加後（直前製品基準 `6261292`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-08。D01/N04曲線親子追跡追加後（直前製品基準 `8ae8037`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -44,8 +46,9 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 637件中635合格・NGSolve参照環境専用2件skip。N04曲線残差指標追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | N04曲線残差指標追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-curved-indicator-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 642件中640合格・NGSolve参照環境専用2件skip。D01/N04曲線親子追跡追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | D01/N04曲線親子追跡追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-nested-curved-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| D01/N04曲線親子追跡 | 追加5検査初回PASS。複数履歴・質量積分・縮退/順位・両対称/鏡映・保存再検証を確認。既存18 native場の12組でCLI/ID/Galerkin/相似則PASS。適応停止/GUIは未接続 | out/nested-curved-initial-20260908、[仕様](NESTED_CURVED_TRACKING.md) |
 | N04曲線残差指標 | 追加5検査、独立積分・直線極限・両対称変換則PASS。18 native結果の局所選択2回、積分比較・Ritz・円筒五量・相似則PASS。初回順位一致FAILも保持。追跡付き曲線停止/一般精度・効率は未受入 | out/curved-indicator-selection-set-20260908、[仕様](CURVED_RESIDUAL_INDICATOR.md) |
 | N04曲線局所履歴のnative統合 | 追加4検査、CLI実計算と6 native保存再読込、手動幾何完全一致・独立密行列FEM・円筒五量・相似則PASS。曲線適応停止/GUI履歴編集は未接続 | out/curved-native-initial-20260908、[仕様](CURVED_REFINEMENT_HISTORY.md) |
 | N04曲線局所細分基盤 | 追加5検査PASS。幾何/場/勾配・Galerkin・境界制限・全域細分との一致。円筒/楕円/双曲線の局所実FEM・RF移送・Ritz/相似則もPASS。当時は保存/適応経路未接続（保存は後続で統合） | out/curved-local-residual-metadata-20260908、[仕様](CURVED_MARKED_REFINEMENT.md) |

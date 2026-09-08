@@ -16,13 +16,8 @@ def _mass_features(coefficients,mass):
     Do not factor the potentially rank-deficient column Gram matrix directly.
     Even dependent columns retain their dependence in the triangular factor R.
     """
-    q,r=np.linalg.qr(coefficients,mode='reduced')
-    gram=q.T@(mass@q);scale=float(np.max(np.diag(gram)))
-    if not np.isfinite(gram).all() or not scale>0:raise ValueError('nested affine mass projection is not finite positive')
-    gram=(gram/scale+gram.T/scale)/2
-    try:lower=np.linalg.cholesky(gram)
-    except np.linalg.LinAlgError as exc:raise ValueError('nested affine mass projection lost positive definiteness') from exc
-    return lower.T@r,scale
+    from .mass_tracking import mass_inner_product_features
+    return mass_inner_product_features(coefficients,mass,label='nested affine')
 
 
 def track_nested_affine_modes(previous,current,previous_ids,*,mapping,marked_cells,**controls):

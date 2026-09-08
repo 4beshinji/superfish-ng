@@ -32,6 +32,8 @@ def validate_tracking_controls(controls):
     names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
     if isinstance(controls,dict) and controls.get('mapping')=='nested_affine':
         names=tuple(name for name in names if name!='sample_order')+('marked_cells',)
+    if isinstance(controls,dict) and controls.get('mapping')=='nested_curved':
+        names=tuple(name for name in names if name!='sample_order')
     if isinstance(controls,dict) and controls.get('mapping')=='piecewise_remesh':names+=('comparison_meshes',)
     if isinstance(controls,dict) and controls.get('mapping')=='affine_remesh':names+=('affine_map',)
     if isinstance(controls,dict) and controls.get('mapping')=='paired_mesh':names+=('vertex_pairs',)
@@ -41,12 +43,12 @@ def validate_tracking_controls(controls):
     keys(controls,names,names,'mode tracking controls')
     from .mode_tracking import _control
     mapping=controls['mapping']
-    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh','same_domain','affine_remesh','piecewise_remesh','curved_same_domain','nested_affine'):raise ValueError('mapping must name a supported cylinder/profile, paired, same-domain, affine/piecewise, curved or nested_affine correspondence')
+    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh','same_domain','affine_remesh','piecewise_remesh','curved_same_domain','nested_affine','nested_curved'):raise ValueError('mapping must name a supported cylinder/profile, paired, same-domain, affine/piecewise, curved or nested_affine/nested_curved correspondence')
     if mapping=='nested_affine':
         marked=controls['marked_cells']
         if type(marked) is not list or not marked or any(type(i) is not int or i<0 for i in marked) or len(set(marked))!=len(marked):
             raise ValueError('nested_affine marked_cells requires distinct nonnegative integer cell indices')
-    else:
+    elif mapping!='nested_curved':
         order=controls['sample_order'];limit=32 if mapping in ('paired_mesh','same_domain','affine_remesh','piecewise_remesh','curved_same_domain') else 256
         if type(order) is not int or not 2<=order<=limit:raise ValueError(f'sample_order must be an integer from 2 to {limit}')
     _control(controls['minimum_overlap'],'minimum_overlap')
@@ -107,6 +109,9 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     elif controls['mapping']=='nested_affine':
         from .nested_affine_tracking import track_nested_affine_modes
         tracker=track_nested_affine_modes
+    elif controls['mapping']=='nested_curved':
+        from .nested_curved_tracking import track_nested_curved_modes
+        tracker=track_nested_curved_modes
     report=tracker(*solutions,request.get('previous_ids'),**controls,
         **({'previous_identity_groups':request['previous_groups']} if version==2 else {}))
     if before!=[_snapshot(path) for path in directories]:
