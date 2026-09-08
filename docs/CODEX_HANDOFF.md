@@ -1,5 +1,36 @@
 # ローカルCodexへの引継ぎ
 
+## G03弧端・退化の厳密特殊ケース診断 — 2026-09-08
+
+offset_degeneracies.pyとdiagnose-offsets CLIを追加。元パラメータが一致する円/楕円/双曲線の
+オフセットについて、方向補正した距離を照合し、共通区間の無限対/共有端点を証明する。
+この証拠を別パラメータの交差まで含む全解数へ拡張しない。
+有理数で表せる円のオフセットと直線では、外接/内接/離隔、潰れ、平行重複を分類。
+支持接点を元の有限範囲へ戻し、円弧は既存の区間所属検査を使う。
+中心点の個数とパラメータ対の無限性、証明した事実とfinite_domain_completeを区別する。
+一般二進回転/直線長の平方根を1や有理数近似へ置換しない。未対応/予算不足はUNVERIFIED。
+
+追加9テストは独立円の外接/内接と1 ULP差、有限弧端点/外部/予算不足、潰れと無限対、
+楕円/双曲線の共有区間/方向反転/共有端点、直線と円/平行直線、尺度/交換、
+支持円一致と有限所属の区別、厳密入力とCLI保存再実行・未確認出力・上書き拒否。
+実装前のModuleNotFoundErrorを確認。変更前388件中386合格・2 skip（121.553秒）。
+最終397件中395合格・2 skip（121.847秒）、out/validation-g03-offset-degeneracy-20260908 PASS。
+同所seed_comparison.jsonでcase hash一致、周波数差0、RF/エネルギー差最大8.882e-16。
+FEM・許容差・数値基準変更なし。検証中の実装変更なし、最終source fingerprint一致。
+
+例はexamples/construction/offset_tangency_diagnosis_request.json。弧の始点で接する円の中心軌跡を
+out/g03-offset-tangency-diagnosis-20260908.jsonへ実CLI保存し、SINGLE_TANGENCY / 完全分類を確認。
+診断要求版1は構築要求版1やCase版1とは別契約。出力にdocument_type・要求/hash・software版を保持する。
+validation内diagnostic_examples.jsonに反転円オフセット、直線上への潰れ、共有端点の追加実行を保存。
+同所construction_replay.jsonに版1〜6の実保存ファイル再読込CASE_VALIDATEDを保存した。
+GUI新規実行なし、Wine新規実行なし。既存構築の候補/保存結果へ診断を暗黙に適用しない。
+
+[診断仕様](OFFSET_DEGENERACIES.md)を追加し、README・対応表・計画・実装状況・G03照合表を同期。
+既存区間演算と初等円幾何/線形代数から独立実装。新規外部資料/コード/依存/旧資産参照なし。
+次は一般の弧端/重解、診断の構築/GUI接続、最小半径契約、旧入力と物理収束の残件。
+8親課題の限定受入を維持し、G03全体と全計画目標は未完了。
+
+
 ## G03版6直線・有限弧フィレット — 2026-09-08
 
 normal_offsets / offset_intersectionsを線分の支持直線へ拡張し、conic_filletと

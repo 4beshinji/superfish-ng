@@ -20,6 +20,9 @@ def main(argv=None):
     tangent.add_argument('request', type=Path)
     tangent.add_argument('--candidate-index', type=int)
     tangent.add_argument('--out', type=Path, required=True, help='new replayable construction JSON')
+    diagnosis = sub.add_parser('diagnose-offsets', help='diagnose exact finite normal-offset degeneracies without constructing a case')
+    diagnosis.add_argument('request', type=Path)
+    diagnosis.add_argument('--out', type=Path, required=True, help='new diagnosis JSON, including unknown cases')
     constructed = sub.add_parser('export-constructed-case', help='replay a tangent construction and export its validated case')
     constructed.add_argument('construction', type=Path)
     constructed.add_argument('--out', type=Path, required=True)
@@ -81,6 +84,15 @@ def main(argv=None):
                                          args.out, candidate_index=args.candidate_index)
             print(f"{document['status']}: {args.out}")
             return 1 if document['status'] == 'UNVERIFIED' else 0
+        elif args.command == 'diagnose-offsets':
+            from .offset_degeneracies import diagnose_offsets_document
+            from .project import parse_json
+            document=diagnose_offsets_document(parse_json(args.request.read_text(encoding='utf-8')))
+            with args.out.open('x',encoding='utf-8') as stream:
+                stream.write(json.dumps(document,indent=2,allow_nan=False)+'\n')
+            result=document['diagnosis']
+            print(f"{result['classification']}: finite_domain_complete={result['finite_domain_complete']}; {args.out}")
+            return 1 if result['status']=='UNVERIFIED' else 0
         elif args.command == 'export-constructed-case':
             from .tangent_construction import export_constructed_case
             export_constructed_case(args.construction, args.out)
