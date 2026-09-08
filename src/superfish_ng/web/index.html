@@ -319,6 +319,7 @@
             <option value="normalized_profile">連続した可変半径profile</option>
             <option value="piecewise_remesh">比較用メッシュによる局所変形</option>
             <option value="affine_remesh">軸を保つアフィン変形（異なるメッシュ）</option>
+            <option value="curved_same_domain">同じ二次曲線境界の領域（異なるメッシュ）</option>
             <option value="same_domain">同じ直線境界の領域（異なるメッシュ）</option>
             <option value="paired_mesh">明示頂点対応（折返し・曲線を含む）</option>
           </select></label>
@@ -338,6 +339,7 @@
             <button id="tracking-affine-invert" type="button">入力した変換を逆変換にする</button>
             <p>逆方向へ継続する場合は、比較する結果も逆方向に選んでください。係数は 1/a、1/c、−b/(a c) に変換されます。</p>
           </div>
+          <p id="tracking-curved-note" hidden>同じ曲線定義・パラメータ付けと、同じ二次近似境界が必要です。解析曲線が同じでも、再近似で境界が変わった場合は比較できません。標本次数を変えて対応を確認してください。</p>
           <p id="tracking-domain-note" hidden>直線境界とPEC/axisタグが一致する領域に限ります。標本次数を上げて対応を確認してください。対応PASSはRF量の収束を保証しません。</p>
           <label id="tracking-pairs-label" hidden>頂点対応（0始まりの旧・新番号のJSON配列）<textarea id="tracking-pairs" rows="3">[]</textarea></label>
           <div class="grid">

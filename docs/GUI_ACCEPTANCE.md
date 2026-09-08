@@ -428,3 +428,19 @@ Chromeのダウンロード設定が同名ファイルを上書きする一方�
 piecewise-history.pngで入力・交換操作を画像確認した。空の専用GUIワークスペースで
 verify_gui_mode_tracking.mjsへ既存オプションと
 `--piecewise out/d01-piecewise-remesh-20260908` を渡して再現する。
+
+## D01同じ二次曲線領域のGUI接続 — 2026-09-08
+
+直前基準a38f83a。写像選択・保存復元、同じ曲線宣言/パラメータ付け/二次境界の条件表示を追加。
+比較診断にphysical_mappingを表示し、境界照合の共通区間数・係数距離・丸め幅等を確認できる。
+曲線再メッシュの比較/履歴継続ができ、再投影で変わった境界は拒否して確認済み履歴を保持。
+保存には境界照合の証拠も含まれる。
+
+out/browser-curved-domain-final-20260908は実Chrome35項目PASS（追加5/既存30）、外部要求0。
+curved-history.pngの写像・条件・履歴保持を画像確認。変更前out/browser-curved-domain-red-20260908は
+写像復元で想定どおりFAIL。失敗出力を保持。
+空の専用GUIワークスペースでverify_gui_mode_tracking.mjsへ既存オプションと
+`--curved out/d01-curved-same-domain-final-20260908 --reprojected out/curved-gui-reprojected-20260908`
+を追加して再現する。再投影例はellipsoid-1-0/case.jsonを読み、contourをNone、
+curve_chord_tolerance_mを1/4、curved_refinement_levelsを0にして実solve/save_runした156三角形の結果。
+解析曲線を変えず、二次近似境界だけを変えている。

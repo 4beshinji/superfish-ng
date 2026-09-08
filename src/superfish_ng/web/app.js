@@ -1558,6 +1558,7 @@ function trackingButtons() {
   $("tracking-comparison-swap").disabled = trackingBusy;
   $("tracking-affine").hidden = $("tracking-mapping").value !== "affine_remesh";
   $("tracking-affine-invert").disabled = trackingBusy;
+  $("tracking-curved-note").hidden = $("tracking-mapping").value !== "curved_same_domain";
   $("tracking-domain-note").hidden = $("tracking-mapping").value !== "same_domain";
   $("tracking-pairs-label").hidden = $("tracking-mapping").value !== "paired_mesh";
   $("tracking-policy-label").hidden = !$("tracking-retain").checked;
@@ -1614,6 +1615,7 @@ function showTracking(response) {
   }
   $("tracking-diagnostics").textContent = JSON.stringify({previous_run: pair.request.previous_run, current_run: pair.request.current_run,
     study_run: study ? d.request.study_run : null, unvisited_point_indices: study ? d.unvisited_point_indices : [],
+    physical_mapping: r.physical_mapping ?? null,
     stop_reason: sequence.stop_reason ?? null, unmatched_previous: r.unmatched_previous, unmatched_current: r.unmatched_current,
     unresolved: r.unresolved, cluster_transitions: r.cluster_transitions ?? null, controls: pair.request.controls,
     scope: d.scope}, null, 2);

@@ -346,6 +346,34 @@ try {
     await fill("#tracking-comparison-json",'[{}]');await click("#tracking-comparison-swap");await wait('!document.querySelector("#error").hidden');
     await check("invalid comparison input is not partly swapped or committed",'document.querySelector("#tracking-comparison-json").value==="[{}]" && trackingResult.document.steps.length===2');
   }
+  if (args["--curved"]) {
+    if (!args["--reprojected"]) throw Error("--curved requires --reprojected native result directory");
+    await click("#tracking-reset");await loadFile(resolve(args["--curved"],"ellipsoid-1-3-pair.json"));
+    await wait('trackingResult?.document.request?.controls.mapping==="curved_same_domain" && !trackingBusy',30000);
+    await check("saved curved mapping restores the discrete-boundary condition",'document.querySelector("#tracking-mapping").value==="curved_same_domain" && !document.querySelector("#tracking-curved-note").hidden && document.querySelector("#tracking-comparison").hidden && document.querySelector("#tracking-affine").hidden');
+    const curvedIds=[];
+    for (const directory of [resolve(args["--curved"],"ellipsoid-1-0"),resolve(args["--curved"],"ellipsoid-1-1"),resolve(args["--reprojected"])]) {
+      const beforeIds=await ev('[...document.querySelector("#tracking-current").options].map(x=>x.value)');
+      await fill("#import-path",directory);await click("#import-result");
+      await wait(`document.querySelector("#tracking-current").options.length===${beforeIds.length+1}`,30000);
+      curvedIds.push(await ev(`[...document.querySelector("#tracking-current").options].map(x=>x.value).find(x=>!${JSON.stringify(beforeIds)}.includes(x))`));
+    }
+    await click("#tracking-reset");await select("tracking-previous",curvedIds[0]);await select("tracking-current",curvedIds[1]);
+    await fill("#tracking-ids",'["fundamental"]');await click("#tracking-compare");await wait('trackingResult?.document.status==="PASS" && !trackingBusy',30000);
+    await check("GUI compares fixed-boundary curved remeshes with full-edge evidence",'trackingResult.document.tracking.physical_mapping.triangle_counts.join(",")==="90,360" && trackingResult.document.tracking.physical_mapping.boundary_coincidence.maximum_coefficient_distance_m<=trackingResult.document.tracking.physical_mapping.boundary_coincidence.roundoff_tolerance_m && document.querySelector("#tracking-diagnostics").textContent.includes("boundary_coincidence")');
+    await click("#tracking-start");await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy',30000);
+    await select("tracking-current",curvedIds[0]);await click("#tracking-extend");await wait('trackingResult?.document.steps?.length===2 && !trackingBusy',30000);
+    await check("curved remesh history preserves the fundamental identity",'trackingResult.document.status==="PASS" && trackingResult.document.current_mode_ids[0]==="fundamental" && trackingResult.document.steps[1].request.controls.mapping==="curved_same_domain"');
+    await select("tracking-current",curvedIds[2]);await click("#tracking-extend");await wait('!document.querySelector("#error").hidden && !trackingBusy',30000);
+    await check("analytic reprojection changes the boundary and cannot overwrite history",'document.querySelector("#error").textContent.includes("quadratic boundary differs") && trackingResult.document.steps.length===2');
+    const expected=await ev('trackingResult.document');await click("#tracking-save");let saved;
+    for (let n=0;n<100;n++) {try {const candidate=JSON.parse(await readFile(out+"/downloads/mode-tracking-history.json","utf8"));if(isDeepStrictEqual(candidate,expected)){saved=candidate;break;}} catch {} await sleep(100);}
+    if(!saved)throw Error("curved history download differs from verified data");
+    report.checks.push({operation:"curved history download retains boundary evidence",passed:true});
+    await ev('document.querySelector("#mode-tracking").scrollIntoView({behavior:"instant",block:"start"})');
+    const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
+    await writeFile(out+"/curved-history.png",Buffer.from(capture.data,"base64"));
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if (!report.passed) throw Error("mode tracking GUI checks failed");
