@@ -87,6 +87,8 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 2026-09-09、N04曲線辺候補検索追加後（直前基準 `942860b`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
 
+[3386a5fのローカル配布確認](docs/LOCAL_DISTRIBUTION_20260909.md)で、同一ZIP・wheel内容・CLI/曲線native計算を確認。全機能/GUI・別OS・公開リリースの受入は残る。
+
 [曲線辺の候補検索](docs/CURVED_EDGE_SEARCH.md)を空間木へ変更。従来の比較候補・順序・幾何検査報告と拒否条件を維持し、全辺同士の候補検索を削減する。旧保存版1〜4と球形五量は完全一致し、標準656件中654合格・2 skip。非球形の両尺度対照と一般精度/効率は継続する。
 
 [曲線要素の順序付き組立](docs/CURVED_ORDERED_ASSEMBLY.md)を追加。基底・積分寄与を配列化し、従来の加算順序と保存再検証の整合性を維持する。[非球形対照](docs/CURVED_NONSPHERE_COMPARISON.md)は初回の予算不足を記録し、予算拡大後の両尺度検証を進めている。N04全体の精度・効率は未受入。

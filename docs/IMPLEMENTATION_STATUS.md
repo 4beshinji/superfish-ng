@@ -49,7 +49,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 周波数調整 | 単一/連動profile座標・明示円筒/profile写像の1変数二分探索・停止・再開・最終細メッシュ判定API/CLI・JobManager・GUI、対象の場表示 | 全個別ID確認が前提。二水準差は誤差上界でない。曲線/非線形変数/最適化は未実装 | [TUNING.md](TUNING.md) |
 | 操作・保存 | 共通CLI/Python/GUI、曲線計算・描画・鏡映、完了公開/hash、再読込 | 外部メッシュ指定UIなし。人による使いやすさ評価、電源断/他OSは未保証 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)、[SAVE_COMPLETION.md](SAVE_COMPLETION.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 旧入力・出力 | 限定AF読込、原入力/hash/変換診断、NG JSON/CSV/NPZ/ASCII VTK | AFは単一真空/全PEC/軸接続TM。汎用旧入力、製品用旧テキスト変換、旧バイナリ互換は未実装 | [LEGACY_INPUT.md](LEGACY_INPUT.md)、C03/C04 |
-| 配布 | source/wheelの過去のローカル受入 | 最新全機能の配布再受入はV02。hosted CI、他OS、公開リリースは未確認 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md) |
+| 配布 | 3386a5fの決定的ZIP・wheel内容/資源・CLI/曲線native計算のローカル確認 | wheelの全機能/GUI再受入はV02。hosted CI、他OS、公開リリースは未確認 | [ローカル配布確認](LOCAL_DISTRIBUTION_20260909.md) |
 
 ソース名は `src/superfish_ng/` に対する表記。
 GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナリの読込ではない。
