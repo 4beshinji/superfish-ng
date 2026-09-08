@@ -85,7 +85,7 @@ max_new_levelsは再開後に追加する計算数の上限で、過去の水準
 
 LEVEL_LIMIT、REFINEMENT_LIMIT、TRACKING_BUDGET、ZERO_INDICATORを合格として扱わない。
 実行中の失敗は直前のチェックポイントとfailure記録を残し、既存出力を上書きしない。
-[GUIの版4入力・表示・保存再開](GUI_CURVED_ADAPTIVE_REFINEMENT.md)も接続した。任意履歴の直接編集は残る。
+[GUIの版4入力・表示・保存再開](GUI_CURVED_ADAPTIVE_REFINEMENT.md)も接続した。[番号指定による履歴編集](GUI_CURVED_REFINEMENT_HISTORY.md)と[履歴を保持する固定形状Study](CURVED_HISTORY_STUDY.md)も接続した。図上の要素選択は残る。
 
 ## 実行証拠
 

@@ -447,3 +447,5 @@ N04曲線履歴GUIの今回の受入条件（2026-09-09）: native Caseを開い
 N04履歴対応Studyの受入条件（2026-09-09）: fixed_geometry_convergenceで既存局所履歴を保持し、additional_uniform_refinementsの0以上の整数を末尾へ追加する。変更後メッシュへの要素番号流用は引き続き拒否。保存往復、実Studyの固定体積・Ritz単調性・元メッシュ一致、GUI生成/保存/実行、標準f/RF回帰を検査する。
 
 受入結果: 履歴対応の固定形状Studyは追加2検査、Chrome23項目、CLI/GUI報告一致、標準658件中656合格・2 skipがPASS。粗い2水準のRF収束FAILとCLI終了1は維持。seed周波数差ゼロ/RF最大8.882e-16、最終hash一致。[記録](CURVED_HISTORY_STUDY.md)。
+
+N04要件の再照合: [受入照合表](N04_ACCEPTANCE.md)に原要件・数値/GUI証拠・残件を集約した。対応済みの履歴編集/固定形状Studyを残件とする現状説明を修正。親N04全体は未受入を維持する。

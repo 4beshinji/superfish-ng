@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## N04要件の照合 — 2026-09-09
+
+[N04_ACCEPTANCE.md](N04_ACCEPTANCE.md)に原要件・実証・限界・次の残件を集約した。
+現状欄のGUI履歴編集/固定形状Studyの古い未対応表記を修正。
+親N04と計画全体は未受入を維持。実装ソースはfae2bc4から変更していない。
+非球形96442は最終追加一様水準5で実行中。終了の確認までは同じhandleを追跡する。
+尺度1は旧/新報告の時間以外の全項目一致を
+専用worktree出力のscale-1-prechange-comparison.jsonへ保存済み。
+
 ## 履歴対応の固定形状Study — 2026-09-09
 
 [履歴を保持する収束Study](CURVED_HISTORY_STUDY.md)を追加。
