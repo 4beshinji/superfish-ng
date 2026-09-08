@@ -276,3 +276,53 @@ out/validation-g03-contact-enclosures-20260908/local_inverse_invariant.jsonに�
 
 接点区間APIの最終標準336件中334合格・2 skip、out/validation-g03-contact-enclosures-20260908 PASS。
 seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。基準更新なし。GUI/Wineは今回未実行。
+
+## 有限弧の所属とfraction区間 — 2026-09-08
+
+`certified_arcs.certified_finite_arc_tangents`は支持曲線の接点boxから、有限弧の
+INTERIOR/EXTERIOR/START/END/UNVERIFIEDを判定し、受理候補のfractionも閉有理数区間で返す。
+対象は保存された二進パラメータを厳密値とする曲線。楕円の終角はstart+sweepの有理数和、
+回転・半軸は支持円錐曲線の二進係数契約を使う。元の実数入力の丸め前の形状まで認証しない。
+既存の版1構築・保存・CLI/GUIは数値ガード判定のまま維持し、このAPIの結果へ置換しない。
+
+端点のsin/cos/sinhは`transcendental_interval`で有理数Taylor和と剰余から囲む。
+sin/cosは導関数絶対値<=1のLagrange剰余を使い、次の非零項の絶対値を上下へ加減する。
+sinhは|x|で全項正の部分和を下界とし、次項以降の比の上界q<1が得られた場合に
+次項/(1-q)を残尾上界とする。負入力は奇偶性を使って区間を反転する。
+libmの近似sin/cos/asinhや固定の経験的epsilonを端点証明には使わない。
+既定endpoint_width=2^-100、max_series_terms=96。幅未達/残尾未評価で予算を使い切ると未確認。
+予算は項数であって演算時間上限ではない。
+
+双曲線はまず局所x区間で指定枝を検査し、局所yとsinh(start/end)を単調比較する。
+楕円は有向弧の像を長さ2 rad以下（π未満）のCCW sectorへ分割する。
+各sectorの両端方向との外積の区間符号を調べ、全sectorの和集合として内外を判断する。
+逆向きやatanの±π境界を特例の角度丸めへ変換しない。
+内部sectorの境界上でも、元の両弧端との分離と非負の両外積で内部所属を証明できる。
+START/ENDは接点と端点boxの両座標が厳密一点として等しい場合だけ認める。
+端点boxが重なるだけでは一致とはしない。有限弧に属さないことも証明が必要で、未確認を除外へ変換しない。
+
+fractionは元弧の始点から候補までの単調な進行率。元弧のprefixへの所属を二分して
+区間を狭めるため、float atan/asinhの逆評価は不要。
+既定fraction_width=2^-32、max_fraction_steps=64。START/ENDは厳密な0/1、
+二分点との厳密一致はその有理数一点を返す。比較未分離/級数予算不足/二分予算不足は
+最後の有効な閉区間を保持してUNVERIFIED。内部所属自体が未確認の場合はfraction区間なし。
+全体PASSには支持曲線の探索/接点box幅・有限弧所属・fraction幅の全達成が必要。
+所属が確定してもfraction未達なら候補と区間を残し、全体は未確認にする。
+
+独立8検査は、級数の厳密0・奇偶性、Decimal.expを用いるsinhの別計算、
+角度0の既知点と±10^-20 radの内外/端点、長い有向弧・反転・周期境界・内部sector境界、
+双曲線の有限区間/枝/端点、支持曲線候補からの接続、根/級数予算不足と端点をまたぐbox、
+既知fractionの1/2・1/3・2/3と10^-20近傍、fraction予算不足でも真値を保持すること。
+API追加前のImportErrorを先に確認した。式・実装は既存接点区間と初等解析から独立導出し、外部コード参照なし。
+
+次は区間から選んだ浮動小数点の切詰め位置を、接点boxへの距離上界と明示した位置許容差で検査し、
+版付き構築要求/保存/CLI/GUIへ接続する。空になる弧・零長接続・端点を再利用する場合の操作契約も必要。
+直線と弧の接線/フィレット、G03全要件照合は継続する。
+
+既存合成カプセルの2弧にも実行し、候補1件・両接点INTERIOR・fraction幅2^-32でPASS。
+out/validation-g03-certified-arcs-20260908/capsule_membership.jsonへ有理数区間を保存した。
+この例でもfractionを厳密な1/2へ丸めない。証拠の区間は[1/2,2147483649/4294967296]。
+独立テストは `.venv/bin/python -m unittest discover -s tests -p test_certified_arcs.py -v` で再現する。
+
+有限弧所属/fraction APIの標準344件中342合格・2 skip、out/validation-g03-certified-arcs-20260908 PASS。
+seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。基準更新なし。GUI/Wineは今回未実行。

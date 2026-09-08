@@ -1,5 +1,30 @@
 # 独立実装・情報来歴
 
+## G03有限弧所属とfractionの有理数区間 — 2026-09-08
+
+certified_arcs.certified_finite_arc_tangentsを追加。支持曲線の接点boxから有限弧の
+INTERIOR/EXTERIOR/START/END/UNVERIFIEDを判定し、fractionを有理数の閉区間で返す。
+楕円は2 rad以下のsectorの和集合、双曲線は枝とsinhの単調性を使う。
+端点sin/cosはTaylorのLagrange剰余、sinhは正項級数の幾何残尾で囲む。
+float atan/asinhや経験的epsilonは判定根拠にしない。厳密な一点一致だけをSTART/ENDにする。
+fractionはprefix所属の二分で囲み、未分離/予算不足では最後の有効区間を保持する。
+
+最終標準344件中342合格・2 skip（86.157秒）、標準数値回帰PASS。
+out/validation-g03-certified-arcs-20260908のseed_comparison.jsonでcase hash一致、
+周波数差ゼロ、RF/エネルギー相対差最大8.882e-16。基準更新なし。GUI/Wineは今回未実行。
+
+対象は保存された二進パラメータと支持係数。元の実数入力の丸め前まで認証しない。
+独立8検査で10^-20 rad端点近傍、周期/逆向き/内部sector境界、双曲線枝/端点、
+Decimal.expによる独立sinh照合、既知fractionの1/2・1/3・2/3、各予算不足を確認。
+元の合成カプセル候補1件も両点INTERIORとfraction幅2^-32でPASS。
+有理数レポートはout/validation-g03-certified-arcs-20260908/capsule_membership.json。
+仕様と式は[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md)。新規外部コード/資料/依存/旧資産参照なし。
+
+次は区間から選んだ切詰め位置の接点誤差上界と明示位置許容差の検査、空弧/端点再利用の操作契約、
+版付き構築・保存・CLI/GUIへの統合。既存の版1構築/GUIは数値ガード判定のまま保持する。
+直線と弧の接線・フィレット・G03全要件照合は継続。全互換目標は未完了。
+
+
 ## G03支持曲線の接点座標区間 — 2026-09-08
 
 contact_enclosures.supporting_contact_enclosuresを追加した。既存の孤立法線根区間から、
