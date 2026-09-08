@@ -85,8 +85,8 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、D01同一領域再メッシュのGUI接続後（直前基準 `aac49fc`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
-同一多角形領域の独立再メッシュ比較API/CLI/GUIを追加。明示policyによる多対多のID集合継承とGUIでの方式選択・復元を追加。条件と残件は [追跡仕様](docs/MODE_TRACKING.md#複数クラスタ間の保守的な集合継承2026-09-08)。
+2026-09-08、D01アフィン変形の独立再メッシュ比較追加後（直前基準 `9635929`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLIを追加。明示policyによる多対多のID集合継承とGUIでの方式選択・復元を追加。条件と残件は [追跡仕様](docs/MODE_TRACKING.md)。
 
 | 分野 | 現在の内容 |
 |---|---|
@@ -99,7 +99,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | 表面電磁場 | P1/P2片側場、曲線離散場の連続極値の囲い込みと角診断。物理ピークの収束保証とは区別 |
 | モード追跡 | [重み付き部分空間・円筒/profile写像・明示メッシュ対応](docs/MODE_TRACKING.md)、2時点対応の保存・再検証CLI/GUI。個別ID履歴・再開に対応。部分空間ID集合も継承。合流/分裂の集合継続と完了Studyの順序追跡、逐次計算・停止・チェックポイント再開CLI・JobManager・GUIに対応。幾何掃引の適応二分・途中再開API/CLI・JobManager・GUIあり。一般写像・個別枝回復は未完 |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 標準514件中512合格・2 skip。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
+| 検証 | 標準520件中518合格・2 skip。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 2026-09-07: [NGSolveとの独立照合](docs/INDEPENDENT_COMPARISON.md)を追加し、

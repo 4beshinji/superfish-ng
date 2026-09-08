@@ -30,6 +30,7 @@ def _snapshot(directory):
 def validate_tracking_controls(controls):
     """Validate every step configuration before a Study may stop early."""
     names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
+    if isinstance(controls,dict) and controls.get('mapping')=='affine_remesh':names+=('affine_map',)
     if isinstance(controls,dict) and controls.get('mapping')=='paired_mesh':names+=('vertex_pairs',)
     if isinstance(controls,dict) and ('cluster_transition_policy' in controls or 'minimum_cluster_link' in controls):
         names+=('cluster_transition_policy','minimum_cluster_link')
@@ -37,14 +38,17 @@ def validate_tracking_controls(controls):
     keys(controls,names,names,'mode tracking controls')
     from .mode_tracking import _control
     mapping=controls['mapping']
-    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh','same_domain'):raise ValueError('mapping must be normalized_cylinder, normalized_profile, paired_mesh or same_domain')
-    order=controls['sample_order'];limit=32 if mapping in ('paired_mesh','same_domain') else 256
+    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh','same_domain','affine_remesh'):raise ValueError('mapping must be normalized_cylinder, normalized_profile, paired_mesh, same_domain or affine_remesh')
+    order=controls['sample_order'];limit=32 if mapping in ('paired_mesh','same_domain','affine_remesh') else 256
     if type(order) is not int or not 2<=order<=limit:raise ValueError(f'sample_order must be an integer from 2 to {limit}')
     _control(controls['minimum_overlap'],'minimum_overlap')
     _control(controls['minimum_assignment_margin'],'minimum_assignment_margin',zero=True)
     _control(controls['relative_cluster_gap'],'relative_cluster_gap',zero=True,one=False)
     _control(controls['minimum_relative_singular_value'],'minimum_relative_singular_value')
     if 'minimum_cluster_link' in controls:_control(controls['minimum_cluster_link'],'minimum_cluster_link')
+    if mapping=='affine_remesh':
+        from .affine_remesh_tracking import validate_affine_map
+        validate_affine_map(controls['affine_map'])
     if mapping=='paired_mesh':
         pairs=controls['vertex_pairs']
         if type(pairs) is not list or any(type(p) is not list or len(p)!=2 or any(type(i) is not int or i<0 for i in p) for p in pairs):
@@ -80,6 +84,9 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     elif controls['mapping']=='same_domain':
         from .same_domain_tracking import track_same_domain_modes
         tracker=track_same_domain_modes
+    elif controls['mapping']=='affine_remesh':
+        from .affine_remesh_tracking import track_affine_remesh_modes
+        tracker=track_affine_remesh_modes
     report=tracker(*solutions,request.get('previous_ids'),**controls,
         **({'previous_identity_groups':request['previous_groups']} if version==2 else {}))
     if before!=[_snapshot(path) for path in directories]:
