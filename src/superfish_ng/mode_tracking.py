@@ -100,7 +100,7 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
     rank_threshold=_control(minimum_relative_singular_value,'minimum_relative_singular_value')
     if cluster_transition_policy is None:
         if minimum_cluster_link is not None:raise ValueError('minimum_cluster_link requires an explicit cluster_transition_policy')
-    elif cluster_transition_policy!='retain_subspace':raise ValueError('cluster_transition_policy must be retain_subspace')
+    elif cluster_transition_policy not in ('retain_subspace','retain_connected_subspace'):raise ValueError('cluster_transition_policy must be retain_subspace or retain_connected_subspace')
     else:minimum_cluster_link=_control(minimum_cluster_link,'minimum_cluster_link')
     effective_margin=max(margin,32*np.finfo(float).eps*max(len(w),len(f),len(g)))
     old=_clusters(f,gap) if groups is None else [[k-1 for k in c['indices']] for c in groups];new=_clusters(g,gap)
@@ -109,7 +109,8 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
     transitions=None
     if cluster_transition_policy is not None:
         from .cluster_transitions import transition_partition
-        old,new,identities,transitions=transition_partition(old,new,identities,left,right,minimum_cluster_link)
+        old,new,identities,transitions=transition_partition(old,new,identities,left,right,minimum_cluster_link,
+            allow_repartition=cluster_transition_policy=='retain_connected_subspace')
         left=[_basis(a,w,c,rank_threshold) for c in old];right=[_basis(b,w,c,rank_threshold) for c in new]
     scores=np.full((len(old),len(new)),np.nan)
     singular={}

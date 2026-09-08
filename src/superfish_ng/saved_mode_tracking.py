@@ -33,7 +33,7 @@ def validate_tracking_controls(controls):
     if isinstance(controls,dict) and controls.get('mapping')=='paired_mesh':names+=('vertex_pairs',)
     if isinstance(controls,dict) and ('cluster_transition_policy' in controls or 'minimum_cluster_link' in controls):
         names+=('cluster_transition_policy','minimum_cluster_link')
-        if controls.get('cluster_transition_policy')!='retain_subspace':raise ValueError('cluster_transition_policy must be retain_subspace')
+        if controls.get('cluster_transition_policy') not in ('retain_subspace','retain_connected_subspace'):raise ValueError('cluster_transition_policy must be retain_subspace or retain_connected_subspace')
     keys(controls,names,names,'mode tracking controls')
     from .mode_tracking import _control
     mapping=controls['mapping']
