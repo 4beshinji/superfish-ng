@@ -1,6 +1,6 @@
 # RF選択を使う自動適応の状態遷移と受入条件
 
-2026-09-09。決定記録と実装状況。現在は[版5のAPI/CLI/JobManager](CURVED_RF_ADAPTIVE_REFINEMENT.md)を部分受入した。
+2026-09-09。決定記録と実装状況。現在は[版5のAPI/CLI/JobManager](CURVED_RF_ADAPTIVE_REFINEMENT.md)と[GUI](GUI_RF_ADAPTIVE.md)の基本経路を部分受入した。
 [既存版4](CURVED_ADAPTIVE_REFINEMENT.md)と[RF親要素選択](CURVED_RF_GOAL_INDICATOR.md)を照合した。
 版4は常に直前の採用解から履歴を延長する。RF選択では、一様確認から得た指標を使って
 元の親へ戻り局所細分するため、確認解と局所解は同じ親から分岐する。
@@ -67,7 +67,8 @@ RF指標の大きさ・ゼロや代数残差からTARGETS_METへ遷移しない�
 | RFA-6 | 反復・独立精度と費用 | 球形の解析五量、非球形の追加一様対照、尺度則、全solve/指標/保存費用を含む比較 |
 
 RFA-1〜4は版5の入力/イベント実行/五量停止/中断再開・改変拒否と版4文書完全一致を確認した。
-RFA-5はCLI・JobManagerの実行/中断再開まで部分受入し、GUI・取消し検証は残る。
+RFA-5はCLI・JobManagerに加え、GUI入力・親/採用表示・場選択・保存・取消し後の実再開を確認した。
+全再開履歴の累積費用の専用表示は残る。
 RFA-6は電気対称半球1尺度の停止と独立解析五量まで確認。非球形・両尺度・総費用比較は残る。
 詳細は[実装と検証](CURVED_RF_ADAPTIVE_REFINEMENT.md)。
 一様確認の費用と再構築の重複を含めて測定し、一般精度/効率の親N04を先に受入しない。

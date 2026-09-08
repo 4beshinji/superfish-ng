@@ -2032,13 +2032,17 @@ function refinementButtons() {
   for (const id of ['prepare','start','open']) $(`refine-${id}`).disabled=refinementBusy;
   $('refine-resume').disabled=refinementBusy || !refinementResult?.document.can_resume;
   $('refine-save').disabled=refinementBusy || !refinementResult;
-  $('refine-open-field').disabled=refinementBusy || !refinementResult?.document.levels.at(-1)?.quantities;
+  $('refine-open-field').disabled=refinementBusy || !refinementResult?.document.levels[Number($('refine-field-event').value)]?.quantities;
 }
 function refinementVersion() {
   const version=Number($('refine-version').value);$('refine-order').disabled=version!==1;
+  $('refine-bulk-label').textContent=version===5 ? 'RF寄与の選択割合（0より大きく1以下）':'残差指標の選択割合（0より大きく1以下）';
+  $('refine-max-levels-label').textContent=version===5 ? '全計算回数の上限（初期・未採用の確認・局所を含む）':'水準上限（初回を含む）';
+  $('refine-limit-label').textContent=version===5 ? '今回追加する計算回数（確認も含む。空欄なら停止判断まで）':'今回追加する水準の上限（空欄なら停止判断まで）';
+  $('refine-max-levels').min=version>=2 ? 5:3;
   for(const [, ,id] of refinementPeaks)$(`refine-${id}`).disabled=version<3;
-  for(const id of ['quadrature-order','quadrature-tolerance'])$(`refine-${id}`).disabled=version!==4;
-  $('refine-angle-label').textContent=version===4 ? '曲線写像の頂点接線間の最小角 [度]（内部の条件数は未評価）':'直線三角形の最小角 [度]';
+  for(const id of ['quadrature-order','quadrature-tolerance'])$(`refine-${id}`).disabled=version<4;
+  $('refine-angle-label').textContent=version>=4 ? '曲線写像の頂点接線間の最小角 [度]（内部の条件数は未評価）':'直線三角形の最小角 [度]';
 }
 function refinementLimit() {
   if(!$('refine-limit').value.trim())return {};
@@ -2046,11 +2050,30 @@ function refinementLimit() {
   return {max_new_levels:n};
 }
 function showRefinement(response) {
-  refinementResult=response;const d=response.document,r=d.request;
+  refinementResult=response;const d=response.document,r=d.request,branched=r.schema_version===5;
   const names={QUADRATURE_UNVERIFIED:'高次積分との比較を確認できず停止',PAUSED:'一時停止・再開可能',TARGETS_MET:'指定した細分差を達成',UNVERIFIED:'個別ID未確認で停止',QUANTITY_UNVERIFIED:'正の有限な判定量を確認できず停止',LEVEL_LIMIT:'水準上限で停止',REFINEMENT_LIMIT:'要素数または最小角の制約で停止',TRACKING_BUDGET:'追跡の作業量上限で停止',ZERO_INDICATOR:'選択可能な残差指標がなく停止'};
-  $('refine-status').textContent=`${d.status} — ${names[d.status]}。計算済み ${d.levels.length} 水準。対象ID: ${r.mode_id}`;
-  const phase={initial:'初期',residual:'局所細分',uniform_confirmation:'全域確認'};
+  $('refine-status').textContent=`${d.status} — ${names[d.status]}。計算済み ${d.levels.length} ${branched ? '回（未採用の確認も含む）':'水準'}。対象ID: ${r.mode_id}`;
+  const phase={initial:'初期',residual:'局所細分',uniform_confirmation:'全域確認',uniform_probe:'RF確認',rf_local:'RF局所細分'};
   $('refine-confirmation').textContent=`版${r.schema_version}: ${r.schema_version>=2 ? '全域確認 '+d.levels.filter(l=>l.refinement_kind==='uniform_confirmation').length+' 回（最低2回）' : '局所差のみ・全域確認なし'}。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'。' : ''} 表面ピーク: ${{UNASSESSED:'未評価',NOT_CONFIRMED:'全条件の確認未完',UNVERIFIED:'未確認',TARGETS_MET:'指定した区間変化を達成'}[d.surface_status]} (${d.surface_status})。物理誤差上界: なし。`;
+  const accepted=branched ? d.decision.accepted_event_indices : d.levels.map(l=>l.index);
+  let gateChanges=d.decision.changes ?? [],peakGateChanges=d.decision.surface_changes ?? [];
+  if(branched) {
+    const probe=[...d.levels].reverse().find(l=>l.refinement_kind==='uniform_probe');
+    const parent=probe ? d.levels[probe.parent_event_index]:null;
+    const previous=parent?.refinement_kind==='uniform_probe' && parent.accepted ? parent.confirmation_comparison:null;
+    gateChanges=[previous?.changes,probe?.confirmation_comparison?.changes];
+    peakGateChanges=[previous?.surface_changes,probe?.confirmation_comparison?.surface_changes];
+    $('refine-confirmation').textContent=`版5: 採用列 ${accepted.map(i=>i+1).join(' → ') || 'なし'}。確認 ${d.levels.filter(l=>l.refinement_kind==='uniform_probe').length} 回、局所 ${d.levels.filter(l=>l.refinement_kind==='rf_local').length} 回。最終連続確認 ${d.levels[accepted.at(-1)]?.uniform_confirmations ?? 0} 回（必要2回）。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'、親計算 '+(d.decision.parent_event_index+1)+'。':''} 表面ピーク: ${d.surface_status}。物理誤差上界: なし。`;
+    $('refine-gate-context').textContent=probe ? `最後の比較: 親計算 ${probe.parent_event_index+1} → 確認計算 ${probe.index+1}（${probe.accepted ? '採用':'未採用'}）。局所細分の後は新しい確認が必要です。`:'一様確認はまだありません。';
+  } else $('refine-gate-context').textContent='';
+  for(const element of document.querySelectorAll('[data-refine-branch]'))element.hidden=!branched;
+  const field=$('refine-field-event');field.replaceChildren();
+  for(const level of d.levels) {
+    const option=document.createElement('option');option.value=level.index;
+    option.textContent=`計算 ${level.index+1}: ${phase[level.refinement_kind] ?? '局所細分'}${branched ? level.accepted ? '（採用）':'（未採用）':''}`;
+    option.disabled=!level.quantities;field.append(option);
+  }
+  field.value=accepted.at(-1) ?? d.levels.at(-1)?.index ?? '';
   const display=v=>Number.isFinite(v) ? Number(v.toPrecision(9)) : '—';
   const row=(body,values)=>{const tr=document.createElement('tr');for(const value of values){const td=document.createElement('td');td.textContent=value;tr.append(td);}body.append(tr);};
   const body=$('refine-levels').querySelector('tbody');body.replaceChildren();
@@ -2058,18 +2081,18 @@ function showRefinement(response) {
     const q=level.quantities;
     row(body,[level.index+1,phase[level.refinement_kind ?? (level.index===0 ? 'initial':'residual')],level.triangles,level.dofs,
       {INITIAL:'初期ID',PASS:'確認済み',UNVERIFIED:'未確認'}[level.status],level.mode_index===null ? '—':level.mode_index+1,
-      q ? display(q.frequency_hz/1e6):'評価不可',q ? display(q.r_over_q_accelerator_ohm):'評価不可',q ? display(q.geometry_factor_ohm):'評価不可']);
+      q ? display(q.frequency_hz/1e6):'評価不可',q ? display(q.r_over_q_accelerator_ohm):'評価不可',q ? display(q.geometry_factor_ohm):'評価不可',...(branched ? [level.parent_event_index===null ? '—':level.parent_event_index+1,level.accepted ? '採用':'未採用']:[])]);
   }
   const gates=$('refine-gates').querySelector('tbody');gates.replaceChildren();
   for(const [key,label,id] of refinementQuantities) {
-    const changes=d.decision.changes ?? [],a=changes[0]?.[key],b=changes[1]?.[key];
+    const a=gateChanges[0]?.[key],b=gateChanges[1]?.[key];
     row(gates,[label,display(a?.relative_change),display(b?.relative_change),r.relative_tolerances[key],!a||!b ? '未評価' : a.passed&&b.passed ? '条件内':'未達']);
     $(`refine-${id}`).value=r.relative_tolerances[key];
   }
   const peakBody=$('refine-peaks').querySelector('tbody');peakBody.replaceChildren();$('refine-peaks').hidden=r.schema_version<3;
   if(r.schema_version>=3) {
     for(const [key,label,id] of refinementPeaks) {
-      const changes=d.decision.surface_changes ?? [],a=changes[0]?.[key],b=changes[1]?.[key];
+      const a=peakGateChanges[0]?.[key],b=peakGateChanges[1]?.[key];
       row(gates,[label,display(a?.relative_change_upper_bound),display(b?.relative_change_upper_bound),r.surface_relative_tolerances[key],!a||!b ? '未評価' : a.passed&&b.passed ? '条件内':'未達']);
       $(`refine-${id}`).value=r.surface_relative_tolerances[key];
     }
@@ -2079,8 +2102,8 @@ function showRefinement(response) {
     }
   }
   const quadratureBody=$('refine-quadrature').querySelector('tbody');quadratureBody.replaceChildren();
-  for(const id of ['quadrature','quadrature-note'])$(`refine-${id}`).hidden=r.schema_version!==4;
-  if(r.schema_version===4)for(const level of d.levels) {
+  for(const id of ['quadrature','quadrature-note'])$(`refine-${id}`).hidden=r.schema_version<4;
+  if(r.schema_version>=4)for(const level of d.levels) {
     const q=level.quadrature_check;
     row(quadratureBody,[level.index+1,q?.base_order ?? '—',q?.check_order ?? '—',
       ...['volume_relative_squared','interior_relative_squared','boundary_relative_squared','rayleigh_frequency','mass_form'].map(key=>display(q?.relative_differences[key])),
@@ -2089,7 +2112,7 @@ function showRefinement(response) {
   $('refine-quadrature-order').value=r.quadrature_check_order ?? 24;
   $('refine-quadrature-tolerance').value=r.quadrature_relative_tolerance ?? .000001;
   $('refine-request').value=JSON.stringify(r,null,2);$('refine-version').value=r.schema_version;refinementVersion();
-  for(const [id,key] of [['bulk','bulk_fraction'],['max-levels','max_levels'],['max-triangles','max_triangles'],['angle',r.schema_version===4 ? 'minimum_corner_angle_deg':'minimum_angle_deg']])$(`refine-${id}`).value=r[key];
+  for(const [id,key] of [['bulk','bulk_fraction'],['max-levels','max_levels'],['max-triangles','max_triangles'],['angle',r.schema_version>=4 ? 'minimum_corner_angle_deg':'minimum_angle_deg']])$(`refine-${id}`).value=r[key];
   for(const [id,key] of [['overlap','minimum_overlap'],['margin','minimum_assignment_margin'],['gap','relative_cluster_gap'],['rank','minimum_relative_singular_value']])$(`refine-${id}`).value=r.controls[key];
   if(r.schema_version===1)$('refine-order').value=r.controls.sample_order;
   $('refine-ids').value=JSON.stringify(r.initial_ids);$('refine-mode-id').value=r.mode_id;
@@ -2110,15 +2133,15 @@ async function refinementAction(action,data) {
 async function openRefinement(id) {await refinementAction('adaptive-refinement-result',{id});$('adaptive-refinement').scrollIntoView({behavior:'smooth'});}
 bind('refine-prepare',async()=>{
   const project=await preview(),version=Number($('refine-version').value);
-  const controls={mapping:version===4 ? 'nested_curved':version>=2 ? 'nested_affine':'same_domain',minimum_overlap:number('refine-overlap'),minimum_assignment_margin:number('refine-margin'),relative_cluster_gap:number('refine-gap'),minimum_relative_singular_value:number('refine-rank')};
+  const controls={mapping:version>=4 ? 'nested_curved':version>=2 ? 'nested_affine':'same_domain',minimum_overlap:number('refine-overlap'),minimum_assignment_margin:number('refine-margin'),relative_cluster_gap:number('refine-gap'),minimum_relative_singular_value:number('refine-rank')};
   if(version===1)controls.sample_order=number('refine-order');
   const request={schema_version:version,case:project.case,initial_mesh:null,
     initial_ids:$('refine-ids').value.trim() ? JSON.parse($('refine-ids').value):Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`),
-    mode_id:$('refine-mode-id').value,controls,bulk_fraction:number('refine-bulk'),max_levels:number('refine-max-levels'),max_triangles:number('refine-max-triangles'),[version===4 ? 'minimum_corner_angle_deg':'minimum_angle_deg']:number('refine-angle'),
+    mode_id:$('refine-mode-id').value,controls,bulk_fraction:number('refine-bulk'),max_levels:number('refine-max-levels'),max_triangles:number('refine-max-triangles'),[version>=4 ? 'minimum_corner_angle_deg':'minimum_angle_deg']:number('refine-angle'),
     relative_tolerances:Object.fromEntries(refinementQuantities.map(([key,label,id])=>[key,number(`refine-${id}`)]))};
   if(version>=2)request.confirmation='uniform_two_steps';
   if(version>=3)request.surface_relative_tolerances=Object.fromEntries(refinementPeaks.map(([key,label,id])=>[key,number(`refine-${id}`)]));
-  if(version===4){request.quadrature_check_order=number('refine-quadrature-order');request.quadrature_relative_tolerance=number('refine-quadrature-tolerance');}
+  if(version>=4){request.quadrature_check_order=number('refine-quadrature-order');request.quadrature_relative_tolerance=number('refine-quadrature-tolerance');}
   $('refine-request').value=JSON.stringify(request,null,2);
 });
 bind('refine-start',()=>refinementAction('start-adaptive-refinement',{request:$('refine-request').value,...refinementLimit()}));
@@ -2130,17 +2153,20 @@ $('refine-open').addEventListener('change',async event=>{
   catch(e){failure(e);}finally{event.target.value='';}
 });
 bind('refine-open-field',async()=>{
+  const index=Number($('refine-field-event').value);
   await refinementAction('replay-adaptive-refinement',{document:refinementResult.serialized});
-  const d=refinementResult.document,mode=d.levels.at(-1).mode_index;
-  if(mode===null || !d.levels.at(-1).quantities)throw Error('最終水準の対象IDは未確認です');
-  const result=await api('import',{path:d.level_runs.at(-1)});await refreshJobs();await openResult(result.id,mode+1);
+  const d=refinementResult.document,level=d.levels[index];
+  if(!Number.isInteger(index) || !level?.quantities || level.mode_index===null)throw Error('選択した計算の対象IDは未確認です');
+  $('refine-field-event').value=index;
+  const result=await api('import',{path:d.level_runs[index]});await refreshJobs();await openResult(result.id,level.mode_index+1);
 });
+$('refine-field-event').addEventListener('change',refinementButtons);
 $('refine-version').addEventListener('change',refinementVersion);
 refinementButtons();refinementVersion();
 
 
 function affineSurfaceButtons() {
-  $('affine-surface-assess').disabled=affineSurfaceBusy || refinementBusy || (refinementResult?.document.levels.length ?? 0)<3 || refinementResult?.document.request.schema_version===4;
+  $('affine-surface-assess').disabled=affineSurfaceBusy || refinementBusy || (refinementResult?.document.levels.length ?? 0)<3 || refinementResult?.document.request.schema_version>=4;
   for(const id of ['save','replay','open-field'])$(`affine-surface-${id}`).disabled=affineSurfaceBusy || !affineSurfaceResult;
   for(const id of ['open','mode-id'])$(`affine-surface-${id}`).disabled=affineSurfaceBusy;
   $('affine-surface-progress').textContent=affineSurfaceBusy ? '元の適応系列・保存場・ピーク上下界を再検証しています…':'';

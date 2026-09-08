@@ -1,6 +1,6 @@
 # N04の要件・証拠・残件の照合
 
-2026-09-09、RF適応版5のAPI/CLI/JobManager追加時点まで更新。親課題N04全体は未受入。
+2026-09-09、RF適応版5のGUI追加時点まで更新。親課題N04全体は未受入。
 本書は[計画のN04行](COMPATIBILITY_PLAN.md)と[追加受入条件](BACKLOG.md)を照合する。
 機能を実装した事実、検証した形状の数値結果、一般精度/効率を分ける。
 
@@ -25,8 +25,8 @@
   [固定形状の履歴対応Study](CURVED_HISTORY_STUDY.md)は接続済み。
   `out/browser-curved-history-study-20260909/report.json` の23項目が合格。
   StudyのGUI/CLI報告は完全一致し、粗い二水準のRF未収束FAILとCLI終了1を維持した。
-- 最新標準 `out/validation-curved-rf-adaptive-20260909` は681件中679合格・2 skip。
-  `seed_regression.json`で周波数差0、RF最大相対差8.882e-16、独立版5 CLIと標準のhash一致を確認。標準後はJobManagerの出力名検証だけを追加し、両版の実ジョブで確認。数値・CLI・検査は不変。
+- 最新標準 `out/validation-gui-rf-adaptive-20260909` は681件中679合格・2 skip。
+  `seed_regression.json`で周波数差0、RF最大相対差8.882e-16、最終全対象hashと標準、版5 GUIの実ブラウザー対象hashの一致を確認。
   図上選択のブラウザー証拠は `out/validation-gui-curved-mesh-selection-20260909` 時点のもの。
 - 数値高速化後の非球形11水準の保存再検証は
   `out/curved-edge-nonsphere-replay-20260909/validation.json` がPASS。
@@ -41,7 +41,7 @@
 
 1. 非球形両尺度報告は全五量・追跡・積分・幾何相似・source hashまでPASS。
    追加対照差対DOF/時間の図と完全な結果を保存し、この限定対照項目は完了した。
-2. [RF重み付き親要素選択](CURVED_RF_GOAL_INDICATOR.md)から実局所FEMまで接続し、3形状の一様対照差の減少を確認した。[実行内共有](CURVED_RF_GOAL_REUSE.md)で約1.9倍を観測した。[版5](CURVED_RF_ADAPTIVE_REFINEMENT.md)の分岐・保存再開・五量停止はAPI/CLI/JobManagerへ接続し、半球1尺度で停止・解析五量を確認。GUI・非球形/尺度・総費用の受入は残る。
+2. [RF重み付き親要素選択](CURVED_RF_GOAL_INDICATOR.md)から実局所FEMまで接続し、3形状の一様対照差の減少を確認した。[実行内共有](CURVED_RF_GOAL_REUSE.md)で約1.9倍を観測した。[版5](CURVED_RF_ADAPTIVE_REFINEMENT.md)の分岐・保存再開・五量停止はAPI/CLI/JobManagerへ接続し、半球1尺度で停止・解析五量を確認。[GUI](GUI_RF_ADAPTIVE.md)の分岐/場選択/保存/中止後再開も確認。累積費用の専用表示・非球形/尺度・総費用比較は残る。
    [固定周波数のRF係数感度](CURVED_RF_SENSITIVITY.md)と[制約付き随伴](CURVED_RF_ADJOINT.md)、[角周波数偏微分](CURVED_RF_FREQUENCY_SENSITIVITY.md)を追加した。球形と回転楕円体で適応優位を得られなかった結果から、RFを意識した選択と全域確認費用の
    改善を検討する。原計画の「誤差対DOF/時間」は優位の保証ではないが、BACKLOGに残した
    一般形状/効率課題を文言の読み替えだけで削除しない。

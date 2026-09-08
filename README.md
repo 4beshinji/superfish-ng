@@ -1,5 +1,7 @@
 # Superfish-NG — 0.1.0 research seed
 
+[RF適応版5のGUI](docs/GUI_RF_ADAPTIVE.md)を追加。親・採用列・連続確認を表示し、確認場/採用場の選択、保存再読込、中止後の再開を実ブラウザーで確認した。非球形/両尺度/総費用比較と累積費用の専用表示は残る。
+
 [RF適応版5の分岐・保存再開](docs/CURVED_RF_ADAPTIVE_REFINEMENT.md)をAPI/CLI/JobManagerへ接続。元親からの局所細分と確認2回の五量停止を実装し、半球で5イベントの停止・全保存再検証・独立解析五量を確認した。GUI・一般形状/尺度/総費用の受入は残る。
 
 [RF指標の重複再構築](docs/CURVED_RF_GOAL_REUSE.md)を削減。[自動適応の分岐・保存再開の設計](docs/CURVED_RF_ADAPTIVE_PLAN.md)を具体化した。版5の実行・CLI/GUI・反復受入は未実装。
