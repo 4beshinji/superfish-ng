@@ -47,7 +47,11 @@ def build_saved_mode_tracking(request,*,base_directory=None):
         directories.append(path);normalized[name]=str(path)
     before=[_snapshot(path) for path in directories]
     solutions=[read_solution(path) for path in directories]
-    report=track_cylindrical_modes(*solutions,request.get('previous_ids'),**controls,
+    tracker=track_cylindrical_modes
+    if controls['mapping']=='normalized_profile':
+        from .profile_mode_tracking import track_profile_modes
+        tracker=track_profile_modes
+    report=tracker(*solutions,request.get('previous_ids'),**controls,
         **({'previous_identity_groups':request['previous_groups']} if version==2 else {}))
     if before!=[_snapshot(path) for path in directories]:
         raise ValueError('tracking source changed during field sampling; use stable saved results and retry')

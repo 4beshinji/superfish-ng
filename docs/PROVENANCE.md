@@ -1,5 +1,38 @@
 # 独立実装・情報来歴
 
+## D01半径可変profileの体積整合写像 — 2026-09-08
+
+直前基準fd1d4ed。`profile_mode_tracking.track_profile_modes` と保存/履歴/CLIへ
+mapping=normalized_profileを追加。正の連続折れ線半径と両端PECだけに限定する。
+r=rho R(L zeta), z=L zetaの体積要素2π L R² rhoから、標本をHphi*R/Rmaxとした。
+定数2π L Rmax²だけを正規化で除き、変動する体積要素を保持する。
+両形状の正規化節点の和集合で積分区間を分け、写像・倍率・点・重みを記録する。
+総標本262144上限、未対応形状/対称端・参照節点の潰れ等を明示拒否。
+従来normalized_cylinderの計算/保存意味は維持する。FEM自体の変更なし。
+
+着手前438件中436合格・2 skip（127.238秒）。新API未実装を確認して追加6検査を実装。
+初回2件はCaseを含まない生Solutionをテストから渡したため失敗し、契約どおり保存解を再読込して修正。
+独立多項式体積積分、節点不変性、未対応入力、実FEM相似則/標本次数、保存履歴、円筒極限がPASS。
+最終444件中442合格・2 skip（128.693秒）、`out/validation-d01-profile-tracking-20260908` PASS。
+seed周波数差0、RF/エネルギー相対差最大8.881784197001248e-16。
+同ディレクトリseed_comparison.jsonに内訳。基準値・許容差を変更していない。
+
+`python scripts/validate_profile_tracking.py --out out/d01-profile-tracking-20260908` PASS。
+合成profile、P2、12×20、3モードの2倍相似で、相対差はf:9.103828801926284e-15、
+R/Q:4.007905118896815e-14、G:7.327471962526033e-15。
+局所半径1%変更の最小主角重なりは次数8:0.9999457659745057、次数12:0.9999457604718266。
+両方で同じID対応を得て、保存後の履歴再開もPASS。点間の連続物理枝の証明ではない。
+同出力pair/historyをCLI再検証し、requestから `out/d01-profile-tracking-cli-20260908.json` を
+CLI新規保存/再検証してPASS。標準/独立検証のsource hashは最終コードと一致。
+GUI・Wine・hosted CIは今回未実行。
+
+判断: 円筒の定数Jacobianを半径可変形状へそのまま流用せず、体積整合の明示写像を追加。
+数式は変数変換から独立導出し、新規外部資料・依存・legacy参照なし。
+折返し・曲線等の一般写像、合流/分裂解決、適応的ステップ、GUI/Study/tuneは残件。
+親課題は8受入、C00/G03/D01の3進行中、他21未受入、X01拡張候補1で変わらず。
+全計画は未完了。[仕様と再現](MODE_TRACKING.md)。
+
+
 ## D01部分空間ID集合の履歴継承 — 2026-09-08
 
 直前基準14438fa。標本追跡にprevious_identity_groupsを追加し、現在順位集合とID集合を

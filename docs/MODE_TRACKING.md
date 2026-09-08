@@ -178,3 +178,39 @@ CLIの操作・延長requestの2項目は変わらない。
 native保存場での集合履歴/改変拒否、第1版停止の互換性を確認する。
 実FEM検証では明示的に広い周波数gapで3モードを一つの部分空間へまとめる。
 これは集合の保存/再開検査であり、3モードが物理的に縮退しているという主張ではない。
+
+## 半径可変profileの体積整合写像
+
+`profile_mode_tracking.track_profile_modes` と保存request/履歴/CLIで
+mapping="normalized_profile" を明示すると、正の連続折れ線R(z)を持つprofileへ対応する。
+両端PECの真空m=0 TMに限定し、段差、折返し輪郭、native曲線、対称端は拒否する。
+解は既存read_solutionで読み込んだ、Caseと実場を含む保存解を渡す。
+既存normalized_cylinderは計算・出力とも変更しない。
+
+参照写像を r=rho R(L zeta), z=L zeta と定義する。体積要素は
+2π L R(L zeta)² rho d_rho d_zetaなので、比較標本をHphi*R(z)/Rmaxとし、
+共通重みrho d_rho d_zetaを使う。一定因子2π L Rmax²は各モードの正規化で消える。
+この処理は磁場の物理的な二乗積分に含まれる変動体積要素を保持する。
+異形状間の対応はこの明示写像で定義するもので、唯一の物理対応を保証するものではない。
+
+両形状のz/L節点の和集合で参照区間を分割し、各区間と半径方向にsample_order点の
+Gauss-Legendre則を使う。標本次数・点・重み・分割点・両profile・場の倍率を結果へ保存する。
+標本総数は262144以下とし、超過は次数や節点数を減らすよう明示的に拒否する。
+参照節点の尺度変換による潰れ、半径比のunderflow、非正重みも黙って進めない。
+節点分割はFEM要素境界を全て含む積分ではなく、標本数を変えた検査は引き続き必要。
+
+```bash
+OPENBLAS_NUM_THREADS=1 python scripts/validate_profile_tracking.py --out out/profile-tracking-new
+python -m superfish_ng replay-mode-tracking out/profile-tracking-new/pair.json
+python -m superfish_ng replay-mode-history out/profile-tracking-new/history.json
+```
+
+独立検証は合成半径可変profileを実P2 FEMで解き、2倍相似形状と局所半径1%変更形状を保存する。
+相似則f→f/2、R/QとGの不変性を検査する。標本次数8/12の両方で対応を確認し、
+保存後の2時点対応・履歴再開も検証する。局所変更例の対応成功は任意の形状変化へ一般化しない。
+
+追加6テストは、正則な試験場Hphi=rの体積積分から導く重なり
+(7/3)/sqrt(31/5)、両側節点と冗長な直線節点の不変性、未対応入力、
+実FEM相似則と標本次数、保存/履歴、円筒極限で従来写像との一致を確認する。
+試験場の積分検査と、実FEM固有モードの検証を分離する。
+折返し・曲線等への一般写像、合流/分裂の解決、適応的ステップ、GUI/Study/tuneは残件。
