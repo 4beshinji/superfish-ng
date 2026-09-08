@@ -1,5 +1,36 @@
 # ローカルCodexへの引継ぎ
 
+## D01完了Studyの保存場を順序追跡 — 2026-09-08
+
+直前基準1f68d45。study_mode_tracking.pyとtrack-study-modes/replay-study-mode-tracking CLIを追加。
+完了Studyと各点のmanifest、Study宣言/値/順序、生成Project、各点のcase hash/モード要約を照合する。
+隣接点ごとのstep_controlsを明示し、全段階の項目・範囲を先に検査する。
+保存場から履歴を作り、最初のUNVERIFIEDで停止。後続点をNOT_VISITEDとして明示保存する。
+元Studyの独立スペクトル・mode_tracking記述・numerical_statusは書き換えない。
+Study/子Jobのhashと履歴を別文書へ保存し、全体再検証で入力変更・文書改変を拒否する。
+
+着手前460件中458合格・2 skip（131.309秒）。新API未実装で失敗を確認後、6検査を追加。
+実Study交差/保存再検証、未確認停止と未使用controls検査、失敗点、manifestを更新した順序改変、
+途中変更/文書改変、CLIと厳密requestがPASS。既存2時点保存6検査もPASS。
+最終466件中464合格・2 skip（129.715秒）、`out/validation-d01-study-tracking-20260908` PASS。
+seed周波数差0、RF/エネルギー相対差最大8.881784197001248e-16。
+同ディレクトリseed_comparison.jsonに内訳。FEM・基準値・許容差の変更なし。
+
+`python scripts/validate_study_tracking.py --out out/d01-study-tracking-20260908` PASS。
+半径0.1 m、長さ0.055→解析縮退位置→0.075 m、P2/12×12/3モードの実Studyを実行。
+独立解析周波数相対誤差は最大5.6130317729330415e-6。3点すべてを追跡し、
+最終TM010は個別、TM011/TM020は集合を保持する。集合継続を無効にした別requestでは
+最初の未確認で停止し、点2を未追跡と記録。両文書の再読込と元Study不変を確認。
+同requestから `out/d01-study-tracking-cli-20260908.json` をCLI新規保存/再検証PASS。
+stopped-study-tracking.jsonのCLI再検証はUNVERIFIEDを維持。
+標準/独立Study検証のsource hashは最終コードと一致。GUI・Wine・hosted CIは今回未実行。
+
+判断: 保存Studyとの対応根拠を明示し、失敗/未確認点を飛ばした履歴や収束合格への読み替えを作らない。
+新規外部資料・依存・legacy参照なし。追跡付きStudy自動実行/再開、専用GUI、適応的点追加、tune、
+一般追跡の多対多/個別枝回復/再メッシュ写像が残る。親課題は8受入、C00/G03/D01の3進行中、
+他21未受入、X01拡張候補1で変わらず。全計画は未完了。[仕様と再現](MODE_TRACKING.md)。
+
+
 ## D01 GUI対応比較・追跡履歴 — 2026-09-08
 
 直前基準abf856f。gui_mode_tracking.pyで完了個別Jobの選択と既存native追跡/再検証APIを接続。

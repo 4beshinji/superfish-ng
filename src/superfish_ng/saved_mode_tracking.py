@@ -27,6 +27,30 @@ def _snapshot(directory):
     return dict(directory=str(directory),sha256=result)
 
 
+def validate_tracking_controls(controls):
+    """Validate every step configuration before a Study may stop early."""
+    names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
+    if isinstance(controls,dict) and controls.get('mapping')=='paired_mesh':names+=('vertex_pairs',)
+    if isinstance(controls,dict) and ('cluster_transition_policy' in controls or 'minimum_cluster_link' in controls):
+        names+=('cluster_transition_policy','minimum_cluster_link')
+        if controls.get('cluster_transition_policy')!='retain_subspace':raise ValueError('cluster_transition_policy must be retain_subspace')
+    keys(controls,names,names,'mode tracking controls')
+    from .mode_tracking import _control
+    mapping=controls['mapping']
+    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh'):raise ValueError('mapping must be normalized_cylinder, normalized_profile or paired_mesh')
+    order=controls['sample_order'];limit=32 if mapping=='paired_mesh' else 256
+    if type(order) is not int or not 2<=order<=limit:raise ValueError(f'sample_order must be an integer from 2 to {limit}')
+    _control(controls['minimum_overlap'],'minimum_overlap')
+    _control(controls['minimum_assignment_margin'],'minimum_assignment_margin',zero=True)
+    _control(controls['relative_cluster_gap'],'relative_cluster_gap',zero=True,one=False)
+    _control(controls['minimum_relative_singular_value'],'minimum_relative_singular_value')
+    if 'minimum_cluster_link' in controls:_control(controls['minimum_cluster_link'],'minimum_cluster_link')
+    if mapping=='paired_mesh':
+        pairs=controls['vertex_pairs']
+        if type(pairs) is not list or any(type(p) is not list or len(p)!=2 or any(type(i) is not int or i<0 for i in p) for p in pairs):
+            raise ValueError('vertex_pairs must list zero-based integer vertex pairs')
+
+
 def build_saved_mode_tracking(request,*,base_directory=None):
     if not isinstance(request,dict):raise ValueError('mode tracking request must be an object')
     version=request.get('schema_version')
@@ -36,12 +60,7 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     keys(request,fields,fields,'mode tracking request')
     _canonical(request)
     controls=request['controls']
-    names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
-    if isinstance(controls,dict) and controls.get('mapping')=='paired_mesh':names+=('vertex_pairs',)
-    if isinstance(controls,dict) and ('cluster_transition_policy' in controls or 'minimum_cluster_link' in controls):
-        names+=('cluster_transition_policy','minimum_cluster_link')
-        if controls.get('cluster_transition_policy')!='retain_subspace':raise ValueError('cluster_transition_policy must be retain_subspace')
-    keys(controls,names,names,'mode tracking controls')
+    validate_tracking_controls(controls)
     normalized=deepcopy(request);root=Path.cwd() if base_directory is None else Path(base_directory)
     directories=[]
     for name in ('previous_run','current_run'):

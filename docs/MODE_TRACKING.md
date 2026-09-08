@@ -319,3 +319,50 @@ GUI輸送の既存4 MiB入力上限は維持する。巨大な履歴はCLI/API�
 profile/paired_meshは共通APIへ接続するが、今回のブラウザー受入例は円筒写像。
 初回ブラウザーでは1.0を1へ再整形した文書の再検証が失敗し、文字列保持へ修正して再実行した。
 数値検証条件は変更していない。詳しい実行証拠は[GUI受入](GUI_ACCEPTANCE.md)。
+
+## 完了Studyの隣接点を順番に追跡する
+
+`study_mode_tracking` とtrack-study-modes CLIは、完了したnative Studyを読み取り、
+宣言された値の順序で各隣接点を追跡する。Study本体/各点の完了とmanifest、study.jsonと要約の一致、
+各点のProjectと生成予定Projectの一致、要約case hash/モード量と保存場の一致を確認する。
+未完了/失敗Studyや欠損点は入力エラーとし、点を飛ばして追跡しない。
+
+request版1の全項目は以下。step_controlsには点数-1個のcontrolsを必ず明示する。
+全段階の項目名と数値範囲を先に検査する。paired_meshの対応表も各隣接点に対して個別指定する。
+
+```json
+{
+  "schema_version": 1,
+  "study_run": "study",
+  "initial_ids": ["TM010", "TM020", "TM011"],
+  "step_controls": [
+    {"mapping":"normalized_cylinder","sample_order":12,"minimum_overlap":0.98,"minimum_assignment_margin":0.05,"relative_cluster_gap":0.001,"minimum_relative_singular_value":1e-8,"cluster_transition_policy":"retain_subspace","minimum_cluster_link":0.2},
+    {"mapping":"normalized_cylinder","sample_order":12,"minimum_overlap":0.98,"minimum_assignment_margin":0.05,"relative_cluster_gap":0.001,"minimum_relative_singular_value":1e-8,"cluster_transition_policy":"retain_subspace","minimum_cluster_link":0.2}
+  ]
+}
+```
+
+study_runの相対パスはrequestファイル所在基準。初期IDは最初の点の周波数順位順で、
+以後は履歴から継承する。最初のUNVERIFIED対応で停止し、後続点をNOT_VISITEDとする。
+point_results、visited_point_indices、unvisited_point_indicesは0始まりのStudy点番号で、
+FEMの1始まりmode_indexとは異なる。後続点のcurrent_mode_ids=nullは未追跡を意味する。
+すでに全点を解いたStudyを後処理するため、追跡停止が元の計算を取り消すことはない。
+
+```bash
+OPENBLAS_NUM_THREADS=1 python scripts/validate_study_tracking.py --out out/study-tracking-new
+python -m superfish_ng track-study-modes out/study-tracking-new/request.json --out out/study-tracking-cli-new.json
+python -m superfish_ng replay-study-mode-tracking out/study-tracking-cli-new.json
+```
+
+Python APIはbuild/save/read/replay_study_mode_tracking。新規ファイルだけに保存し、
+元Studyの独立スペクトル、mode_tracking記述、numerical_statusを変更しない。
+別文書のStudy hashと履歴が今回の追跡の証拠となる。追跡PASSはFEM収束の合格ではない。
+再読込は全Study出力と順序を再検証し、追跡を再実行して文書全体を照合する。
+元Study/子Jobのバイト同一性と比較前後の安定性を検査する。元ファイルと絶対保存先が再検証に必要。
+CLI終了コードはPASS=0、UNVERIFIED=1、入力/再検証エラー=2。
+
+追加6テストは実Study順位交差と保存再検証、未確認停止/未使用controlsの検査、失敗点拒否、
+manifestを更新しても順序不整合を拒否すること、途中変更/文書改変、CLIと厳密requestを確認する。
+独立スクリプトはBessel零点から求めた縮退位置を含む3点を実P2 FEMのStudyとして解き、
+解析周波数・集合継承・停止時の未追跡記録・元Study不変を確認する。
+Study専用GUI操作、追跡付きStudyの自動実行/再開、適応的点追加、tuneは残件。

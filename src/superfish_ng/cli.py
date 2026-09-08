@@ -16,6 +16,11 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    study_tracking=sub.add_parser('track-study-modes',help='track adjacent points of a completed native Study without skipping failures')
+    study_tracking.add_argument('request',type=Path)
+    study_tracking.add_argument('--out',type=Path,required=True)
+    study_tracking_replay=sub.add_parser('replay-study-mode-tracking',help='verify Study source identities and recompute ordered correspondence')
+    study_tracking_replay.add_argument('document',type=Path)
     for command,help_text in [('start-mode-history','start history from a saved correspondence'),
                               ('extend-mode-history','append a verified saved-field step'),
                               ('replay-mode-history','verify all history sources and ID continuity')]:
@@ -92,7 +97,18 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command in ('start-mode-history','extend-mode-history','replay-mode-history'):
+        if args.command=='track-study-modes':
+            from .study_mode_tracking import save_study_mode_tracking
+            from .project import parse_json
+            result=save_study_mode_tracking(parse_json(args.request.read_text(encoding='utf-8')),args.out,base_directory=args.request.resolve().parent)
+            print(f"{result['status']}: {args.out}")
+            return 0 if result['status']=='PASS' else 1
+        elif args.command=='replay-study-mode-tracking':
+            from .study_mode_tracking import read_study_mode_tracking
+            result=read_study_mode_tracking(args.document)
+            print(f"REPLAYED {result['status']}: {args.document}")
+            return 0 if result['status']=='PASS' else 1
+        elif args.command in ('start-mode-history','extend-mode-history','replay-mode-history'):
             from .mode_tracking_history import start_mode_history,extend_mode_history,read_mode_history,save_mode_history
             from .saved_mode_tracking import read_mode_tracking
             from .project import parse_json
