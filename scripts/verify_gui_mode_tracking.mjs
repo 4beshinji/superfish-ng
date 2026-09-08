@@ -278,6 +278,35 @@ try {
     const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
     await writeFile(out+"/same-domain.png",Buffer.from(capture.data,"base64"));
   }
+  if (args["--affine"]) {
+    await click("#tracking-reset");await loadFile(resolve(args["--affine"],"sheared_triangle-1-3-pair.json"));
+    await wait('trackingResult?.document.request?.controls.mapping==="affine_remesh" && !trackingBusy');
+    await check("saved affine mapping restores all three coefficients",'document.querySelector("#tracking-mapping").value==="affine_remesh" && !document.querySelector("#tracking-affine").hidden && document.querySelector("#tracking-affine-radial").value==="1.1" && document.querySelector("#tracking-affine-axial").value==="0.9" && document.querySelector("#tracking-affine-shear").value==="0.1"');
+    const affineIds=[];
+    for (const stage of [0,1]) {
+      const beforeIds=await ev('[...document.querySelector("#tracking-current").options].map(x=>x.value)');
+      await fill("#import-path",resolve(args["--affine"],`sheared_triangle-1-${stage}`));await click("#import-result");
+      await wait(`document.querySelector("#tracking-current").options.length===${beforeIds.length+1}`);
+      affineIds.push(await ev(`[...document.querySelector("#tracking-current").options].map(x=>x.value).find(x=>!${JSON.stringify(beforeIds)}.includes(x))`));
+    }
+    await click("#tracking-reset");await select("tracking-previous",affineIds[0]);await select("tracking-current",affineIds[1]);
+    await fill("#tracking-ids",'["fundamental"]');await click("#tracking-compare");await wait('trackingResult?.document.status==="PASS" && !trackingBusy');
+    await check("GUI applies the declared shear to independent remeshes",'trackingResult.document.request.controls.affine_map.axial_shear===0.1 && trackingResult.document.tracking.physical_mapping.triangle_counts[0]!==trackingResult.document.tracking.physical_mapping.triangle_counts[1]');
+    await click("#tracking-start");await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy');
+    await select("tracking-current",affineIds[0]);await click("#tracking-extend");await wait('!document.querySelector("#error").hidden && !trackingBusy');
+    await check("forward coefficients are rejected for reverse history continuation",'trackingResult.document.steps.length===1 && document.querySelector("#error").textContent.includes("affine_map")');
+    await click("#tracking-affine-invert");await click("#tracking-extend");await wait('trackingResult?.document.steps?.length===2 && !trackingBusy');
+    await check("explicit inverse coefficients continue the verified history",'trackingResult.document.status==="PASS" && trackingResult.document.current_mode_ids[0]==="fundamental" && Math.abs(trackingResult.document.steps[1].request.controls.affine_map.axial_shear+0.1/1.1/0.9)<1e-15');
+    await select("tracking-mapping","same_domain");
+    await check("other mappings omit affine inputs",'document.querySelector("#tracking-affine").hidden && !("affine_map" in trackingControls())');
+    await select("tracking-mapping","affine_remesh");
+    await ev('document.querySelector("#mode-tracking").scrollIntoView({behavior:"instant",block:"start"})');
+    const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
+    await writeFile(out+"/affine-history.png",Buffer.from(capture.data,"base64"));
+    const axialBefore=await ev('document.querySelector("#tracking-affine-axial").value');
+    await fill("#tracking-affine-radial",0);await click("#tracking-affine-invert");await wait('!document.querySelector("#error").hidden');
+    await check("invalid inversion leaves other coefficients and verified history intact",`document.querySelector("#tracking-affine-radial").value==="0" && document.querySelector("#tracking-affine-axial").value===${JSON.stringify(axialBefore)} && trackingResult.document.steps.length===2`);
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if (!report.passed) throw Error("mode tracking GUI checks failed");

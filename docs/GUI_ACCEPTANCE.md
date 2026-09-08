@@ -397,3 +397,17 @@ same-domain.pngで写像と説明・確認済み履歴の保持を画像確認�
 再現は空の専用GUIワークスペースで、verify_gui_mode_tracking.mjsに
 `--repartition out/d01-cluster-repartition-20260908 --same-domain out/d01-same-domain-final-20260908`
 を追加する。基本の --sources は out/d01-cluster-transitions-20260908。
+
+## D01アフィン再メッシュのGUI接続 — 2026-09-08
+
+直前基準a9f7324。アフィン写像選択・a,c,bの入力/保存復元と明示逆変換操作を追加。
+逆変換は入力欄だけを1/a、1/c、-b/(a*c)へ変換する。不正時は部分更新しない。
+結果の選択は利用者が行い、誤った写像の履歴継続は拒否して確認済み履歴を保持する。
+他写像ではアフィン係数を送らない。
+
+out/browser-affine-final-20260908の実Chrome23項目PASS（追加6/既存17）、外部要求0。
+affine-history.pngで逆係数・操作説明を画像確認。変更前out/browser-affine-red-20260908は
+写像/係数復元で想定どおりFAILし、出力を保持した。
+空の専用GUIワークスペースとverify_gui_mode_tracking.mjsで再現する。
+既存 --sources/--repartition/--same-domain に
+`--affine out/d01-affine-remesh-verified-20260908` を追加する。

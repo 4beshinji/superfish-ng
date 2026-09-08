@@ -317,9 +317,20 @@
           <label>比較写像<select id="tracking-mapping">
             <option value="normalized_cylinder">一定半径の円筒</option>
             <option value="normalized_profile">連続した可変半径profile</option>
+            <option value="affine_remesh">軸を保つアフィン変形（異なるメッシュ）</option>
             <option value="same_domain">同じ直線境界の領域（異なるメッシュ）</option>
             <option value="paired_mesh">明示頂点対応（折返し・曲線を含む）</option>
           </select></label>
+          <div id="tracking-affine" hidden>
+            <p>旧結果から新結果への変換: r′ = a r、z′ = b r + c z。正の倍率で軸と原点を保ちます。直線境界の全体が対応する必要があります。</p>
+            <div class="grid">
+              <label>半径倍率 a<input id="tracking-affine-radial" type="number" value="1" step="any" /></label>
+              <label>軸方向倍率 c<input id="tracking-affine-axial" type="number" value="1" step="any" /></label>
+              <label>軸方向せん断 b<input id="tracking-affine-shear" type="number" value="0" step="any" /></label>
+            </div>
+            <button id="tracking-affine-invert" type="button">入力した変換を逆変換にする</button>
+            <p>逆方向へ継続する場合は、比較する結果も逆方向に選んでください。係数は 1/a、1/c、−b/(a c) に変換されます。</p>
+          </div>
           <p id="tracking-domain-note" hidden>直線境界とPEC/axisタグが一致する領域に限ります。標本次数を上げて対応を確認してください。対応PASSはRF量の収束を保証しません。</p>
           <label id="tracking-pairs-label" hidden>頂点対応（0始まりの旧・新番号のJSON配列）<textarea id="tracking-pairs" rows="3">[]</textarea></label>
           <div class="grid">
