@@ -383,3 +383,17 @@ connected-policy.pngの方式選択と注意書きを画像確認した。
 修正直後 `out/browser-connected-policy-20260908` は検証ワークスペースを再利用して
 インポート済み件数が初期条件と異なりFAIL。専用の空ワークスペースで再実行した。
 旧失敗出力を保持。今回ブラウザー検証は集合継承の操作受入であり、一般枝回復の受入ではない。
+
+## D01同一領域再メッシュのGUI接続 — 2026-09-08
+
+直前基準aac49fc。比較写像に「同じ直線境界の領域（異なるメッシュ）」を追加。
+選択時は全境界一致・標本次数確認・対応とRF収束の区別を表示し、頂点対応欄は隠す。
+保存対応/履歴から写像を復元し、直接比較・履歴継続に使う。
+
+`out/browser-same-domain-final-20260908` の実Chrome17項目PASS、外部要求0。
+既存13項目と、写像復元・折返し再メッシュ比較・ID履歴継続・異領域拒否/履歴保護の4項目。
+same-domain.pngで写像と説明・確認済み履歴の保持を画像確認した。
+変更前 `out/browser-same-domain-red-20260908` は写像復元で想定どおりFAIL。出力を保持。
+再現は空の専用GUIワークスペースで、verify_gui_mode_tracking.mjsに
+`--repartition out/d01-cluster-repartition-20260908 --same-domain out/d01-same-domain-final-20260908`
+を追加する。基本の --sources は out/d01-cluster-transitions-20260908。

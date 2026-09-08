@@ -254,6 +254,30 @@ try {
     const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
     await writeFile(out+"/connected-policy.png",Buffer.from(capture.data,"base64"));
   }
+  if (args["--same-domain"]) {
+    await click("#tracking-reset");await loadFile(resolve(args["--same-domain"],"folded-1-3-pair.json"));
+    await wait('trackingResult?.document.request?.controls.mapping==="same_domain" && !trackingBusy');
+    await check("saved remesh correspondence restores the same-domain mapping",'document.querySelector("#tracking-mapping").value==="same_domain" && document.querySelector("#tracking-pairs-label").hidden && !document.querySelector("#tracking-domain-note").hidden');
+    const remeshed=[];
+    for (const stage of [0,1]) {
+      const beforeIds=await ev('[...document.querySelector("#tracking-current").options].map(x=>x.value)');
+      await fill("#import-path",resolve(args["--same-domain"],`folded-1-${stage}`));await click("#import-result");
+      await wait(`document.querySelector("#tracking-current").options.length===${beforeIds.length+1}`);
+      remeshed.push(await ev(`[...document.querySelector("#tracking-current").options].map(x=>x.value).find(x=>!${JSON.stringify(beforeIds)}.includes(x))`));
+    }
+    await click("#tracking-reset");await select("tracking-previous",remeshed[0]);await select("tracking-current",remeshed[1]);
+    await fill("#tracking-ids",'["ID0"]');await select("tracking-mapping","same_domain");
+    await click("#tracking-compare");await wait('trackingResult?.document.status==="PASS" && !trackingBusy');
+    await check("GUI compares independently remeshed folded fields without vertex pairs",'trackingResult.document.request.controls.mapping==="same_domain" && !("vertex_pairs" in trackingResult.document.request.controls) && trackingResult.document.tracking.physical_mapping.triangle_counts[0]!==trackingResult.document.tracking.physical_mapping.triangle_counts[1]');
+    await click("#tracking-start");await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy');
+    await select("tracking-current",remeshed[0]);await click("#tracking-extend");await wait('trackingResult?.document.steps?.length===2 && !trackingBusy');
+    await check("remesh history extends with stable individual identity",'trackingResult.document.status==="PASS" && trackingResult.document.current_mode_ids[0]==="ID0" && trackingResult.document.steps[1].request.controls.mapping==="same_domain"');
+    await select("tracking-current",imported.a);await click("#tracking-extend");await wait('!document.querySelector("#error").hidden && !trackingBusy');
+    await check("a different physical domain is rejected without changing the verified history",'document.querySelector("#error").textContent.includes("boundary differs") && trackingResult.document.steps.length===2 && trackingResult.document.current_mode_ids[0]==="ID0"');
+    await ev('document.querySelector("#mode-tracking").scrollIntoView({behavior:"instant",block:"start"})');
+    const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
+    await writeFile(out+"/same-domain.png",Buffer.from(capture.data,"base64"));
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if (!report.passed) throw Error("mode tracking GUI checks failed");

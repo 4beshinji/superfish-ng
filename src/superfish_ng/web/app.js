@@ -1554,6 +1554,7 @@ function trackingButtons() {
   $("tracking-ids").closest("label").hidden = history;
   $("tracking-origin").hidden = !history;
   $("tracking-origin").textContent = history ? `履歴末尾の基準結果: ${study ? d.history.current_run : d.current_run}` : "";
+  $("tracking-domain-note").hidden = $("tracking-mapping").value !== "same_domain";
   $("tracking-pairs-label").hidden = $("tracking-mapping").value !== "paired_mesh";
   $("tracking-policy-label").hidden = !$("tracking-retain").checked;
   $("tracking-link-label").hidden = !$("tracking-retain").checked;

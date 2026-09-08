@@ -317,8 +317,10 @@
           <label>比較写像<select id="tracking-mapping">
             <option value="normalized_cylinder">一定半径の円筒</option>
             <option value="normalized_profile">連続した可変半径profile</option>
+            <option value="same_domain">同じ直線境界の領域（異なるメッシュ）</option>
             <option value="paired_mesh">明示頂点対応（折返し・曲線を含む）</option>
           </select></label>
+          <p id="tracking-domain-note" hidden>直線境界とPEC/axisタグが一致する領域に限ります。標本次数を上げて対応を確認してください。対応PASSはRF量の収束を保証しません。</p>
           <label id="tracking-pairs-label" hidden>頂点対応（0始まりの旧・新番号のJSON配列）<textarea id="tracking-pairs" rows="3">[]</textarea></label>
           <div class="grid">
             <label>標本次数<input id="tracking-order" type="number" value="12" min="2" step="1" /></label>
