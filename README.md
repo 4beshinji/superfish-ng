@@ -198,6 +198,7 @@ G03全体は部分対応です。[要件と証拠の照合](docs/G03_ACCEPTANCE.
 `JobManager.start_tune`で別プロセス実行・取消し・確認済みチェックポイントからの再開も利用できます。GUIの「同じモードの周波数を調整する」から開始・保存・再開でき、成功後は調整対象の場・RFを開けます。
 一つの長さ/無次元変数で複数のprofile座標を連動させる指定にも対応します。
 半径調整の例は `examples/tuning/pillbox_radius.json` です。
+[選択要素の適合細分API](docs/MARKED_REFINEMENT.md)は、直線P1/P2の境界と旧場を保つ係数移送を返します。局所誤差指標による自動適応計算は未実装です。
 一般形状の追跡・制約付き最適化は未完了です。
 [表面ピークの収束評価](docs/SURFACE_CONVERGENCE.md)をAPI/CLI/GUIへ追加しました。追跡済みの固定曲線幾何について、周波数・R/Q・G・ピーク比の細分差を別々に判定します。
 接線構築は `construct-tangent` → `export-constructed-case` → `solve` で実行できます。
