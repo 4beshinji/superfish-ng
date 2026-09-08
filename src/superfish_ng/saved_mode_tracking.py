@@ -28,10 +28,12 @@ def _snapshot(directory):
 
 
 def build_saved_mode_tracking(request,*,base_directory=None):
-    fields=('schema_version','previous_run','current_run','previous_ids','controls')
+    if not isinstance(request,dict):raise ValueError('mode tracking request must be an object')
+    version=request.get('schema_version')
+    if type(version) is not int or version not in (1,2):raise ValueError('mode tracking request requires schema_version 1 or 2')
+    identity='previous_ids' if version==1 else 'previous_groups'
+    fields=('schema_version','previous_run','current_run',identity,'controls')
     keys(request,fields,fields,'mode tracking request')
-    if type(request['schema_version']) is not int or request['schema_version']!=1:
-        raise ValueError('mode tracking request requires schema_version 1')
     _canonical(request)
     controls=request['controls']
     names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
@@ -45,10 +47,11 @@ def build_saved_mode_tracking(request,*,base_directory=None):
         directories.append(path);normalized[name]=str(path)
     before=[_snapshot(path) for path in directories]
     solutions=[read_solution(path) for path in directories]
-    report=track_cylindrical_modes(*solutions,request['previous_ids'],**controls)
+    report=track_cylindrical_modes(*solutions,request.get('previous_ids'),**controls,
+        **({'previous_identity_groups':request['previous_groups']} if version==2 else {}))
     if before!=[_snapshot(path) for path in directories]:
         raise ValueError('tracking source changed during field sampling; use stable saved results and retry')
-    return dict(schema_version=1,document_type='saved_mode_tracking',software_version=__version__,
+    return dict(schema_version=version,document_type='saved_mode_tracking',software_version=__version__,
                 request=normalized,request_sha256=hashlib.sha256(_canonical(normalized).encode()).hexdigest(),
                 sources=before,tracking=report,status=report['status'],
                 scope='replayed native saved-field correspondence; source byte identities required; not a continuous tracking history or FEM convergence certificate')

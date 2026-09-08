@@ -31,7 +31,7 @@ class ModeHistoryTests(unittest.TestCase):
         second=self.extend(first)
         self.assertEqual(first,original);self.assertEqual(second['status'],'PASS')
         self.assertEqual(second['current_mode_ids'],['TM010','TM011','TM020'])
-        self.assertEqual(second['steps'][1]['request']['previous_ids'],second['current_mode_ids'])
+        self.assertEqual(second['steps'][1]['tracking']['previous_identity_groups'],first['current_identity_groups'])
         path=self.root/'resume.json';save_mode_history(second,path)
         self.assertEqual(read_mode_history(path),second)
         with self.assertRaises(FileExistsError):save_mode_history(second,path)
@@ -47,8 +47,9 @@ class ModeHistoryTests(unittest.TestCase):
         controls=dict(self.controls,relative_cluster_gap=.9)
         history=start_mode_history(self.pair(controls=controls))
         self.assertEqual(history['steps'][0]['status'],'PASS')
-        self.assertEqual(history['status'],'UNVERIFIED');self.assertFalse(history['can_extend'])
-        with self.assertRaisesRegex(ValueError,'unresolved'):self.extend(history)
+        self.assertEqual(history['status'],'PASS');self.assertTrue(history['can_extend'])
+        self.assertFalse(history['individual_ids_complete'])
+        self.assertEqual(self.extend(history)['status'],'UNVERIFIED')
 
     def test_individually_valid_but_disconnected_steps_are_rejected(self):
         good=self.extend(start_mode_history(self.pair()))

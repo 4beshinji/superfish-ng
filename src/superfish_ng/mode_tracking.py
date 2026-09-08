@@ -47,9 +47,28 @@ def _basis(fields,weights,indices,rank_threshold):
     return u[:,:len(indices)]
 
 
+def _identity_groups(groups,count):
+    from .config import keys
+    if type(groups) is not list or not groups:raise ValueError('previous_identity_groups requires a nonempty partition')
+    normalized=[];indices=[];identities=[]
+    for group in groups:
+        keys(group,('indices','ids'),('indices','ids'),'identity group')
+        ranks=group['indices'];ids=group['ids']
+        if (type(ranks) is not list or not ranks or any(type(i) is not int for i in ranks)
+                or ranks!=list(range(ranks[0],ranks[0]+len(ranks)))
+                or type(ids) is not list or len(ids)!=len(ranks)
+                or any(type(x) is not str or not x.strip() for x in ids)):
+            raise ValueError('identity group requires contiguous frequency indices and one nonempty ID per dimension')
+        indices.extend(ranks);identities.extend(ids)
+        normalized.append(dict(indices=list(ranks),ids=sorted(ids)))
+    if sorted(indices)!=list(range(1,count+1)) or len(set(identities))!=len(identities):
+        raise ValueError('identity groups must partition all frequency ranks with globally distinct IDs')
+    return sorted(normalized,key=lambda x:x['indices'][0])
+
+
 def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous_frequencies_hz,current_frequencies_hz,
                                  previous_ids,*,comparison_description,minimum_overlap,minimum_assignment_margin,
-                                 relative_cluster_gap,minimum_relative_singular_value=1e-8):
+                                 relative_cluster_gap,minimum_relative_singular_value=1e-8,previous_identity_groups=None):
     """Match equal-dimensional frequency clusters by their worst principal overlap.
 
     PASS means all previous and current clusters have unambiguous matches.
@@ -64,7 +83,11 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
             or a.shape[1]!=len(f) or b.shape[1]!=len(g) or np.any(w<=0)
             or np.any(f<=0) or np.any(g<=0) or np.any(np.diff(f)<0) or np.any(np.diff(g)<0)):
         raise ValueError('tracking requires common samples, positive weights and positive frequency-ranked columns')
-    if (not isinstance(previous_ids,(list,tuple)) or len(previous_ids)!=len(f)
+    groups=None
+    if previous_identity_groups is not None:
+        if previous_ids is not None:raise ValueError('supply individual IDs or identity groups, never both')
+        groups=_identity_groups(previous_identity_groups,len(f))
+    elif (not isinstance(previous_ids,(list,tuple)) or len(previous_ids)!=len(f)
             or any(type(x) is not str or not x.strip() for x in previous_ids) or len(set(previous_ids))!=len(previous_ids)):
         raise ValueError('previous_ids must contain one distinct nonempty string per previous frequency rank')
     if type(comparison_description) is not str or not comparison_description.strip():
@@ -74,7 +97,7 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
     gap=_control(relative_cluster_gap,'relative_cluster_gap',zero=True,one=False)
     rank_threshold=_control(minimum_relative_singular_value,'minimum_relative_singular_value')
     effective_margin=max(margin,32*np.finfo(float).eps*max(len(w),len(f),len(g)))
-    old=_clusters(f,gap);new=_clusters(g,gap)
+    old=_clusters(f,gap) if groups is None else [[k-1 for k in c['indices']] for c in groups];new=_clusters(g,gap)
     left=[_basis(a,w,c,rank_threshold) for c in old];right=[_basis(b,w,c,rank_threshold) for c in new]
     scores=np.full((len(old),len(new)),np.nan)
     singular={}
@@ -97,7 +120,7 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
             unresolved.append(dict(previous_indices=[k+1 for k in old[i]],current_indices=[k+1 for k in new[j]],
                                    reason='overlap or assignment separation is insufficient',overlap=float(value),
                                    row_margin=row_margin,column_margin=column_margin));continue
-        ids=sorted(previous_ids[k] for k in old[i]);dimension=len(ids)
+        ids=sorted(previous_ids[k] for k in old[i]) if groups is None else groups[i]['ids'];dimension=len(ids)
         match=dict(previous_ids=ids,previous_indices=[k+1 for k in old[i]],current_indices=[k+1 for k in new[j]],
                    dimension=dimension,kind='MODE' if dimension==1 else 'SUBSPACE',principal_overlaps=singular[i,j],
                    minimum_principal_overlap=float(value),row_margin=row_margin,column_margin=column_margin,
@@ -107,8 +130,8 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
     unmatched_old=[dict(indices=[k+1 for k in c],reason='rank-deficient samples' if left[i] is None else 'no accepted equal-dimensional match') for i,c in enumerate(old) if i not in matched_old]
     unmatched_new=[dict(indices=[k+1 for k in c],reason='rank-deficient samples' if right[j] is None else 'no accepted equal-dimensional match') for j,c in enumerate(new) if j not in matched_new]
     passed=not unmatched_old and not unmatched_new
-    return dict(status='PASS' if passed else 'UNVERIFIED',comparison_description=comparison_description,
-                previous_frequencies_hz=f.tolist(),current_frequencies_hz=g.tolist(),previous_mode_ids=list(previous_ids),
+    result=dict(status='PASS' if passed else 'UNVERIFIED',comparison_description=comparison_description,
+                previous_frequencies_hz=f.tolist(),current_frequencies_hz=g.tolist(),previous_mode_ids=list(previous_ids) if groups is None else None,
                 matches=matches,current_mode_ids=current_ids,individual_ids_complete=passed and all(x is not None for x in current_ids),
                 unmatched_previous=unmatched_old,unmatched_current=unmatched_new,unresolved=unresolved,
                 previous_clusters=[[k+1 for k in c] for c in old],current_clusters=[[k+1 for k in c] for c in new],
@@ -116,6 +139,9 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
                 controls=dict(minimum_overlap=overlap,minimum_assignment_margin=margin,effective_assignment_margin=effective_margin,relative_cluster_gap=gap,
                               minimum_relative_singular_value=rank_threshold),
                 scope='numerical weighted sample/subspace correspondence; mode_index remains frequency rank; no proof of continuous-path identity, mapping accuracy or FEM convergence')
+
+    if groups is not None:result['previous_identity_groups']=groups
+    return result
 
 
 def tracked_frequency_hz(report,mode_id):

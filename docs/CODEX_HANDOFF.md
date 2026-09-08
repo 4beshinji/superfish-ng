@@ -1,5 +1,37 @@
 # ローカルCodexへの引継ぎ
 
+## D01部分空間ID集合の履歴継承 — 2026-09-08
+
+直前基準14438fa。標本追跡にprevious_identity_groupsを追加し、現在順位集合とID集合を
+個別基底への仮割当なしで次段階へ継承する。全順位の分割、ID一意性、次元、連続順位を厳密検査。
+旧集合を保持して新周波数クラスタと比較し、閾値変更で旧集合を勝手に再分割しない。
+合流/分裂は未確認。個別周波数の受渡しは多次元集合内で引き続き拒否する。
+2時点request第2版はprevious_groupsを使用。履歴第2版はcurrent_identity_groupsと
+individual_ids_completeを保存し、部分空間対応PASSなら集合として再開する。
+第1版は元の停止意味を含め再検証互換。旧停止文書を自動でPASSへ変更しない。
+
+着手前433件中431合格・2 skip（127.209秒）。未実装で新しい5テストの失敗を確認した。
+3時点の独立直交基底回転/順位交差、分裂、厳密分割、native保存場履歴/改変拒否、旧停止互換を追加。
+既存履歴2検査は第2版の集合継承契約に更新し、個別ID不確定を確認し続ける。
+最終438件中436合格・2 skip（127.959秒）、`out/validation-d01-subspace-history-20260908` PASS。
+seed周波数差0、RF/エネルギー相対差最大8.881784197001248e-16。
+内訳は同ディレクトリseed_comparison.json。FEM・基準値・許容差の変更なし。
+
+`out/d01-subspace-history-sources-20260908` の独立円筒交差PASS。
+長さ0.055/0.075/0.08 m、半径0.1 m、P2、12×12、3モードの保存場で、
+gap=.9を明示して3モードを一つの集合にまとめ、CLI履歴を作成/延長/再検証した。
+`out/d01-subspace-history-first-20260908.json` とsecond版を新規保存、PASS。
+最終ID集合はTM010/TM011/TM020、個別IDは全null、individual_ids_complete=false。
+これは広い周波数集合の保存検証であり、実FEMの3モードが縮退しているという主張ではない。
+前回保存の `out/d01-history-second-20260908.json` （第1版）もCLI再検証PASS。
+標準/独立検証のsource hashは最終コード一致。GUI・Wine・hosted CIは今回未実行。
+
+判断: 基底のラベルを捏造せず、集合の同一性を履歴へ渡す。一般写像、合流/分裂の追跡解決、
+適応的ステップ制御、GUI/Study/tuneが残る。新規外部資料・依存・legacy参照なし。
+親課題は8受入、C00/G03/D01の3進行中、他21未受入、X01拡張候補1で変わらず。
+全計画は未完了。[仕様](MODE_TRACKING.md)。
+
+
 ## D01順序付き履歴・個別ID再開 — 2026-09-08
 
 直前基準3d4401b。`mode_tracking_history.py` とstart/extend/replay-mode-history CLIを追加。
