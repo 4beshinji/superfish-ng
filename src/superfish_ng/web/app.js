@@ -1531,8 +1531,64 @@ bind("tangent-apply", () => {
   $("tangent-status").textContent = "検査済み形状と条件を編集画面へ適用しました。計算または入力保存へ進めます。";
 });
 
+
+// Surface assessment retains the exact server document and its source history.
+function surfaceHistory() {
+  const d=trackingResult?.document;
+  return d?.document_type === "study_mode_tracking" ? d.history : d?.document_type === "mode_tracking_history" ? d : null;
+}
+function surfaceButtons() {
+  $("surface-assess").disabled=surfaceBusy || trackingBusy || (surfaceHistory()?.steps?.length ?? 0)<2;
+  for (const id of ["surface-save","surface-replay"]) $(id).disabled=surfaceBusy || !surfaceResult;
+  $("surface-open").disabled=surfaceBusy;
+  $("surface-mode-id").disabled=surfaceBusy;
+  $("surface-progress").textContent=surfaceBusy ? "保存場・履歴と表面評価を検証しています…" : "";
+}
+function showSurfaceAssessment(response) {
+  surfaceResult=response;
+  const d=response.document;
+  $("surface-mode-id").value=d.mode_id;
+  const statuses={TARGETS_MET:"基準達成（細分差）",NOT_CONVERGED:"未収束",UNVERIFIED:"未確認",SINGULAR_GEOMETRY:"特異形状：有限ピークは未認定",UNVERIFIED_GEOMETRY:"形状未確認：ピークは未認定"};
+  $("surface-status").textContent=`${statuses[d.status] ?? d.status}。対象ID: ${d.mode_id}。${d.rows.length}水準、直近2区間を判定。`;
+  const corners=d.geometry_diagnostic.joins.counts;
+  $("surface-geometry-status").textContent=`再入角 ${corners.reentrant_pec_corner}、凸角 ${corners.convex_pec_corner}。形状診断: ${d.geometry_diagnostic.status === "SMOOTH_WITHIN_TOLERANCE" ? "接線・軸端を許容差内で確認" : "未認定の接続があります"}。`;
+  const numberText=x => typeof x === "number" && Number.isFinite(x) ? x.toPrecision(8) : "未確認";
+  const interval=(v,scale=1) => v === null ? "未確認" : v[0]===v[1] ? numberText(v[0]*scale) : `${numberText(v[0]*scale)} ～ ${numberText(v[1]*scale)}`;
+  const append=(body,values) => {const row=document.createElement("tr");for (const value of values) {const cell=document.createElement("td");cell.textContent=value;row.append(cell);}body.append(row);};
+  const values=$("surface-values").querySelector("tbody"),peaks=$("surface-peaks").querySelector("tbody"),changes=$("surface-changes").querySelector("tbody");
+  for (const body of [values,peaks,changes]) body.replaceChildren();
+  for (const row of d.rows) {
+    const q=row.intervals;
+    append(values,[row.refinement_level,row.mode_index,row.triangles,interval(q.frequency_hz,1e-6),interval(q.r_over_q_accelerator_ohm),interval(q.geometry_factor_ohm)]);
+    append(peaks,[row.refinement_level,interval(q.epk_over_eacc),interval(q.bpk_over_eacc_mt_per_mv_per_m)]);
+  }
+  const labels={frequency_hz:"周波数",r_over_q_accelerator_ohm:"R/Q（加速器）",geometry_factor_ohm:"G",epk_over_eacc:"Epk/Eacc",bpk_over_eacc_mt_per_mv_per_m:"Bpk/Eacc"};
+  for (const [index,c] of d.refinement_diagnostic.comparisons.entries()) for (const [key,label] of Object.entries(labels)) {
+    const change=c.relative_change_upper_bounds[key];
+    append(changes,[`${d.rows[c.previous_row].refinement_level} → ${d.rows[c.current_row].refinement_level}`,label,change===null ? "未確認" : numberText(100*change),numberText(100*d.limits[key]),d.refinement_diagnostic.acceptance_comparison_indices.includes(index) ? "対象" : "履歴",change===null ? "未確認" : c.gates[key] ? "基準内" : "未達"]);
+  }
+  $("surface-diagnostics").textContent=JSON.stringify({mode_id:d.mode_id,source_runs:d.rows.map(r=>r.run),geometry:d.geometry_diagnostic,refinement:d.refinement_diagnostic,geometry_approximation_assessed:d.geometry_approximation_assessed,physical_error_bound:d.physical_error_bound,scope:d.scope},null,2);
+  surfaceButtons();
+}
+async function runSurfaceAssessment(action,data) {
+  if (surfaceBusy) throw Error("表面評価の検証が終わるまで待ってください。");
+  surfaceBusy=true;surfaceButtons();
+  try {showSurfaceAssessment(await api(action,data));}
+  finally {surfaceBusy=false;surfaceButtons();}
+}
+bind("surface-assess",async()=>{await runSurfaceAssessment("assess-surface-convergence",{document:trackingResult.serialized,mode_id:$("surface-mode-id").value});});
+bind("surface-replay",async()=>{await runSurfaceAssessment("replay-surface-convergence",{document:surfaceResult.serialized});});
+bind("surface-save",()=>{download("surface-convergence.json",surfaceResult.serialized);});
+$("surface-open").addEventListener("change",async event=>{
+  const file=event.target.files[0];if(!file)return;
+  try {$("error").hidden=true;await runSurfaceAssessment("replay-surface-convergence",{document:await file.text()});}
+  catch(error){failure(error);}
+  finally{event.target.value="";}
+});
+
 // Saved-field mode tracking; the server owns validation and ID propagation.
 let trackingResult = null, trackingBusy = false, trackingJobSignature = "";
+let surfaceResult = null, surfaceBusy = false;
 function trackingJobs(jobs) {
   const completed = jobs.filter(j => j.status === "complete" && !["study","tracked_study","adaptive_study","tune"].includes(j.kind));
   const signature = JSON.stringify(jobs.filter(j => j.status === "complete").map(j => [j.id,j.kind]));
@@ -1570,6 +1626,7 @@ function trackingButtons() {
   $("tracking-pairs-label").hidden = $("tracking-mapping").value !== "paired_mesh";
   $("tracking-policy-label").hidden = !$("tracking-retain").checked;
   $("tracking-link-label").hidden = !$("tracking-retain").checked;
+  surfaceButtons();
 }
 function trackingControls() {
   const controls = {mapping: $("tracking-mapping").value, sample_order: number("tracking-order"),

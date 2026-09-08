@@ -401,6 +401,41 @@ try {
     const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
     await writeFile(out+"/curved-affine-history.png",Buffer.from(capture.data,"base64"));
   }
+  if (args["--surface"]) {
+    if(!args["--surface-singular"] || !args["--surface-study"])throw Error("--surface requires --surface-singular and --surface-study");
+    const openSurface=async filename=>{const {root}=await call("DOM.getDocument",{},sessionId);const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#surface-open"},sessionId);await call("DOM.setFileInputFiles",{nodeId,files:[resolve(filename)]},sessionId);await wait("surfaceBusy",5000);};
+    await click("#tracking-reset");
+    await check("surface assessment requires a usable three-level history",'document.querySelector("#surface-assess").disabled && document.querySelector("#surface-save").disabled');
+    await loadFile(resolve(args["--surface"],"history-1.json"));await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy',60000);
+    await fill("#surface-mode-id","fundamental");await click("#surface-assess");await wait('surfaceResult?.document.status==="TARGETS_MET" && !surfaceBusy',60000);
+    await check("surface GUI shows separate frequency RF and bounded peak series",'document.querySelector("#surface-status").textContent.includes("基準達成（細分差）") && document.querySelector("#surface-values tbody").rows.length===3 && document.querySelector("#surface-peaks tbody").rows.length===3 && document.querySelector("#surface-changes tbody").rows.length===10 && document.querySelector("#surface-convergence").textContent.includes("物理誤差の上界") && surfaceResult.document.rows.map(r=>r.triangles).join(",")==="36,144,576"');
+    await check("surface GUI retains individual identity and independent criterion values",'surfaceResult.document.mode_id==="fundamental" && surfaceResult.document.limits.frequency_hz===0.0001 && surfaceResult.document.limits.epk_over_eacc===0.01 && document.querySelector("#surface-diagnostics").textContent.includes("source_runs")');
+    const expected=await ev('surfaceResult.serialized');await click("#surface-save");let saved;
+    for(let n=0;n<100;n++){try{saved=await readFile(out+"/downloads/surface-convergence.json","utf8");if(saved===expected)break;}catch{}await sleep(100);}
+    if(saved!==expected)throw Error("surface download changes verified document text");
+    report.checks.push({operation:"surface download preserves exact server document text",passed:true});
+    await openSurface(out+"/downloads/surface-convergence.json");await wait('!surfaceBusy',60000);
+    await check("saved surface assessment replays without changing its values",`surfaceResult.serialized===${JSON.stringify(expected)} && document.querySelector("#surface-mode-id").value==="fundamental"`);
+    await fill("#surface-mode-id","missing-mode");await click("#surface-assess");await wait('!surfaceBusy && !document.querySelector("#error").hidden',60000);
+    await check("invalid identity leaves the preceding verified surface assessment intact",`surfaceResult.serialized===${JSON.stringify(expected)} && document.querySelector("#surface-status").textContent.includes("fundamental") && document.querySelector("#error").textContent.includes("mode_id")`);
+    const changed=JSON.parse(expected);changed.limits.frequency_hz=1;await writeFile(out+"/changed-surface.json",JSON.stringify(changed));
+    await openSurface(out+"/changed-surface.json");await wait('!surfaceBusy && document.querySelector("#error").textContent.includes("differs")',60000);
+    await check("modified criteria are rejected without replacing verified surface data",`surfaceResult.serialized===${JSON.stringify(expected)} && !document.querySelector("#surface-save").disabled`);
+    await click("#surface-replay");await wait('!surfaceBusy && document.querySelector("#error").hidden',60000);
+    await check("explicit surface revalidation restores the saved mode selection",'document.querySelector("#surface-mode-id").value==="fundamental"');
+    await ev('document.querySelector("#surface-convergence").scrollIntoView({behavior:"instant",block:"start"})');
+    let capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);await writeFile(out+"/surface-targets.png",Buffer.from(capture.data,"base64"));
+    await click("#tracking-reset");await loadFile(resolve(args["--surface-singular"],"history.json"));await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy',60000);
+    await click("#surface-assess");await wait('surfaceResult?.document.status==="SINGULAR_GEOMETRY" && !surfaceBusy',60000);
+    await check("reentrant native geometry is displayed as unaccepted despite completed evaluation",'document.querySelector("#surface-status").textContent.includes("特異形状") && document.querySelector("#surface-geometry-status").textContent.includes("再入角 1") && !document.querySelector("#surface-save").disabled && document.querySelector("#surface-values tbody").rows.length===3');
+    await click("#surface-replay");await wait('!surfaceBusy',60000);
+    await check("singular surface diagnostics remain singular after replay",'surfaceResult.document.status==="SINGULAR_GEOMETRY" && surfaceResult.document.physical_error_bound===null');
+    await ev('document.querySelector("#surface-convergence").scrollIntoView({behavior:"instant",block:"start"})');
+    capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);await writeFile(out+"/surface-singular.png",Buffer.from(capture.data,"base64"));
+    await click("#tracking-reset");await loadFile(resolve(args["--surface-study"]));await wait('trackingResult?.document.document_type==="study_mode_tracking" && !trackingBusy',60000);
+    await click("#surface-assess");await wait('surfaceResult?.document.status==="TARGETS_MET" && !surfaceBusy',60000);
+    await check("verified fixed-geometry Study history feeds the same surface assessment",'trackingResult.document.document_type==="study_mode_tracking" && surfaceResult.document.rows.every(r=>r.run.includes("point-")) && document.querySelector("#surface-values tbody").rows.length===3');
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if (!report.passed) throw Error("mode tracking GUI checks failed");

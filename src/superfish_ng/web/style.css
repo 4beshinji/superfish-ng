@@ -300,3 +300,5 @@ input[aria-invalid="true"] {
 
 #mode-tracking textarea, #tracked-execution textarea, #tuning textarea { display: block; width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid #b8cbe0; border-radius: 4px; font: inherit; }
 #tracking-origin, #tracking-diagnostics { overflow-wrap: anywhere; white-space: pre-wrap; }
+.surface-table { overflow-x: auto; }
+#surface-diagnostics { white-space: pre-wrap; overflow-wrap: anywhere; }

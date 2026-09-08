@@ -133,7 +133,11 @@ def save_surface_convergence(history,mode_id,path):
 
 
 def read_surface_convergence(path):
-    document=parse_json(Path(path).read_text(encoding='utf-8'))
+    return replay_surface_convergence(parse_json(Path(path).read_text(encoding='utf-8')))
+
+
+def replay_surface_convergence(document):
+    """Rebuild a serialized assessment without creating a temporary file."""
     fields=('schema_version','document_type','history','mode_id','status','limits','rows','refinement_diagnostic',
         'geometry_diagnostic','geometry_approximation_assessed','physical_error_bound','scope')
     keys(document,fields,fields,'surface convergence assessment')

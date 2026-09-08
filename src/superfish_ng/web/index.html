@@ -376,6 +376,22 @@
           <table id="tracking-matches"><thead><tr><th>ID・ID集合</th><th>対応の種類</th><th>現在の周波数順位</th><th>周波数 [MHz]</th><th>最小重なり</th></tr></thead><tbody></tbody></table>
           <details><summary>未確認の理由・写像・クラスタ診断</summary><pre id="tracking-diagnostics"></pre></details>
         </section>
+        <section id="surface-convergence">
+          <h2>表面ピークの細分差を評価する</h2>
+          <p>上の「対応・履歴を開いて再検証」で、同じ二次曲線境界を保つ3水準以上の追跡履歴を開いてください。追跡済みStudyの履歴も使えます。対象は確認済みの個別モードIDです。</p>
+          <label>評価するモードID<input id="surface-mode-id" value="fundamental" /></label>
+          <button id="surface-assess" disabled>上の履歴から評価する</button>
+          <label class="file">保存した表面評価を開いて再検証<input id="surface-open" type="file" accept=".json" /></label>
+          <div class="actions"><button id="surface-replay" disabled>表示中の評価を再検証</button><button id="surface-save" disabled>検証済みの表面評価を保存</button></div>
+          <p id="surface-progress" role="status"></p>
+          <p id="surface-status" role="status">表面評価はまだありません。</p>
+          <p class="hint">表示は最後に検証した評価です。IDや上の履歴を変更した後は評価を実行してください。基準達成は直近2区間の細分差に対する判定です。物理誤差の上界や解析曲線への幾何収束は保証しません。</p>
+          <p id="surface-geometry-status"></p>
+          <div class="surface-table"><table id="surface-values"><thead><tr><th>細分段数</th><th>周波数順位</th><th>要素数</th><th>周波数 [MHz]</th><th>R/Q（加速器）[Ω]</th><th>G [Ω]</th></tr></thead><tbody></tbody></table></div>
+          <div class="surface-table"><table id="surface-peaks"><thead><tr><th>細分段数</th><th>Epk/Eacc の上下界</th><th>Bpk/Eacc の上下界 [mT/(MV/m)]</th></tr></thead><tbody></tbody></table></div>
+          <div class="surface-table"><table id="surface-changes"><thead><tr><th>細分段数</th><th>量</th><th>最大相対変化 [%]</th><th>基準 [%]</th><th>判定対象</th><th>結果</th></tr></thead><tbody></tbody></table></div>
+          <details><summary>元結果・角・細分診断</summary><pre id="surface-diagnostics"></pre></details>
+        </section>
         <section id="tracked-execution">
           <h2>追跡しながらStudyを計算する</h2>
           <p class="hint">下のStudy設定と上の初期ID・追跡設定を取り込み、入力を確認して開始します。通常は未確認で停止し、適応二分を指定すると上限まで中点を追加します。開始する方式はJSON内の設定で決まります。</p>
