@@ -924,12 +924,18 @@ try {
     await click("#tangent-build");
     await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
     const built=await ev("tangentResult.construction");
-    if (built.request.schema_version >= 2) {
+    if ([2,3].includes(built.request.schema_version)) {
       if (built.schema_version !== built.request.schema_version || built.enumeration.arc_filter_status !== (built.schema_version === 2 ? "CERTIFIED_MEMBERSHIP_AND_FRACTIONS" : "CERTIFIED_FIXED_LINE_CONTACT")) throw Error("GUI lost certified construction version");
       const selected=built.enumeration.candidates[built.candidate_index];
       if (!selected.trim_contact_error_bounds_m.every(x=>x<=built.request.controls.position_tolerance_m)) throw Error("GUI trim contact error exceeds request");
       if (!await ev('document.querySelector("#tangent-status").textContent.includes("接点誤差上界")')) throw Error("GUI does not display contact error bound");
       report.checks.push({operation:"versioned certificate and contact error bound display",version:built.schema_version,passed:true});
+    }
+
+    if (built.request.schema_version === 4) {
+      if (built.schema_version !== 4 || built.enumeration.arc_filter_status !== "NUMERICAL_LINE_FILLET") throw Error("GUI lost fillet construction version");
+      if (!await ev('document.querySelector("#tangent-status").textContent.includes("指定半径") && !document.querySelector("#tangent-status").textContent.includes("誤差上界")')) throw Error("GUI fillet numerical scope display incorrect");
+      report.checks.push({operation:"radius-specified fillet and numerical scope display",passed:true});
     }
 
     await click("#tangent-save");

@@ -1,5 +1,42 @@
 # 独立実装・情報来歴
 
+## G03版4指定半径の線分間フィレット — 2026-09-08
+
+line_filletと構築schema_version=4を追加。2本の有向線分の支持交点を二進入力から
+有理数で求め、R tan(|θ|/2)の切詰め距離で小円弧を構築する。交点以降の生成幾何は
+浮動小数点を含み、支持直線距離・有限範囲・G1・保持方向を数値検査する。
+版2/3の区間認証とは区別し、GUIにも指定半径・円弧長・数値検査と表示する。
+有限線分の延長は明示bool、空/逆向き保持線分・平行/反転・数値未達を拒否し、
+半径を自動縮小しない。線分/円弧/線分を完成Case全体の検査へ通す。
+
+既知直角接点/中心/1/R曲率/除去面積を先にテスト化し、未実装ImportErrorを確認。
+追加7テストは回転/鏡映/尺度/逆順、浅い/鈍い転向、過大半径/延長/厳密指定、
+保存改変拒否/GUI共通APIと解析面積、二次曲線FEM相似則までPASS。
+初期テストのNumPy scalar入力をbuilt-in floatへ修正し、数値未達用fixtureは
+端点がfloatで一致する直角から非直角へ訂正した。製品の型契約・許容差は緩和していない。
+変更前標準356件中354合格・2 skip、最終363件中361合格・2 skip（94.553秒）。
+out/validation-g03-line-fillet-20260908 PASS。seed_comparison.jsonでcase hash一致、
+周波数差0、RF/エネルギー相対差最大8.882e-16。FEM本体/数値基準の変更なし。
+
+out/gui-line-fillet-browser-20260908/report.jsonのChrome8操作PASS、外部要求0、
+実行中ソース変更なし。tangent-construction.pngの半径/長さ/検査範囲表示を確認。
+明示選択・保存ダウンロード・再構築・適用・曲線FEM/描画・改変拒否まで実操作済み。
+検証用GUIサーバーは停止済み。validation内construction_replay.jsonには
+以前の版1/2/3と今回の版4の実保存ファイル再読込をCASE_VALIDATEDで記録した。
+
+例はexamples/construction/corner_fillet_request.json。合成長方形断面の右上角を
+R=0.02 mで丸め、geometry_order=2 / element_order=2を明示。
+実CLI構築/Case/solveはout/g03-line-fillet-construction-20260908.json、
+out/g03-line-fillet-case-20260908.json、out/g03-line-fillet-solve-20260908。
+周波数1152045668.073337 Hz、R/Q(acc)=57.172456 ohm。GUIと同じ値を確認。
+幾何の解析不変量とFEMの相似則の証拠であり、この形状のRF/ピーク収束は未検証。
+
+式は初等直線/円幾何から独立導出。新規外部資料/コード/依存/旧資産参照なし。
+Wine新規計算なし。次は円/楕円/双曲線弧を含むフィレットとG03全要件照合。
+線分間の部分受入で全フィレット対応とは扱わず、8親課題の限定受入を維持する。
+G03全体・全互換目標は未完了。
+
+
 ## G03版3固定支持直線・有限弧の構築統合 — 2026-09-08
 
 line_arc_tangentと構築schema_version=3を追加。固定支持直線の接線条件w²=nQnと

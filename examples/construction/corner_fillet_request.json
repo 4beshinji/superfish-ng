@@ -1,0 +1,112 @@
+{
+  "schema_version": 4,
+  "case_template": {
+    "schema_version": 3,
+    "name": "synthetic radius-specified corner fillet",
+    "geometry": {
+      "type": "curved_contour",
+      "curves": [
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.0,
+            0.0
+          ],
+          "end_zr_m": [
+            0.2,
+            0.0
+          ]
+        },
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.2,
+            0.0
+          ],
+          "end_zr_m": [
+            0.2,
+            0.1
+          ]
+        },
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.2,
+            0.1
+          ],
+          "end_zr_m": [
+            0.0,
+            0.1
+          ]
+        },
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.0,
+            0.1
+          ],
+          "end_zr_m": [
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "edge_tags": [
+        "axis",
+        "pec",
+        "pec",
+        "pec"
+      ],
+      "join_tolerance_m": 1e-12,
+      "minimum_gap_m": 0.0,
+      "chord_tolerance_m": 0.0005,
+      "chord_max_segments": 20000
+    },
+    "mesh": {
+      "nr": 24,
+      "nz": 32,
+      "contour_mesh": {
+        "max_edge_m": 0.02,
+        "min_angle_deg": 10.0,
+        "max_triangles": 250000,
+        "max_rounds": 12
+      },
+      "geometry_order": 2
+    },
+    "solver": {
+      "modes": 1,
+      "element_order": 2
+    },
+    "rf": {
+      "beta": 1.0,
+      "conductivity_s_per_m": 58000000.0,
+      "normalization_j": 1.0
+    },
+    "model": {
+      "physics": "rf_eigenmode",
+      "coordinates": "axisymmetric",
+      "polarization": "tm",
+      "azimuthal_index": 0,
+      "materials": [
+        {
+          "id": "vacuum",
+          "type": "vacuum"
+        }
+      ],
+      "regions": [
+        {
+          "id": "cavity",
+          "material": "vacuum",
+          "domain": "interior"
+        }
+      ]
+    }
+  },
+  "pair_start": 1,
+  "controls": {
+    "radius_m": 0.02,
+    "allow_extension": false,
+    "position_tolerance_m": 1e-12,
+    "angle_tolerance_rad": 1e-08
+  }
+}

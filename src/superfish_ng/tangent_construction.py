@@ -29,8 +29,8 @@ def _canonical(value):
 def _request(request):
     keys(request, ('schema_version', 'case_template', 'pair_start', 'controls'),
          ('schema_version', 'case_template', 'pair_start', 'controls'), 'tangent construction request')
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3):
-        raise ValueError('tangent construction request requires schema_version 1, 2 or 3')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4):
+        raise ValueError('tangent construction request requires schema_version 1, 2, 3 or 4')
     _canonical(request)  # Reject nonfinite JSON values even in the unfinished template.
     template = request['case_template']
     keys(template, ('schema_version', 'name', 'geometry', 'mesh', 'solver', 'rf', 'model', 'boundaries'),
@@ -57,6 +57,9 @@ def _request(request):
     if request['schema_version']==3:
         if sum(isinstance(c,LineSegment) for c in pair)!=1 or sum(isinstance(c,(EllipseArc,HyperbolaArc)) for c in pair)!=1:
             raise ValueError('version 3 tangent pair requires one line and one ellipse or hyperbola arc')
+    elif request['schema_version']==4:
+        if any(not isinstance(c,LineSegment) for c in pair):
+            raise ValueError('version 4 fillet pair requires two directed lines')
     elif any(not isinstance(curve,(EllipseArc,HyperbolaArc)) for curve in pair):
         raise ValueError('tangent pair must contain two ellipse or hyperbola arcs')
     if tags[index:index+2] != ['pec','pec']:
@@ -71,12 +74,14 @@ def _request(request):
     if request['schema_version']==3:
         allowed=('position_tolerance_m','angle_tolerance_rad','allow_extension','endpoint_width',
                  'max_series_terms','fraction_width','max_fraction_steps')
+    if request['schema_version']==4:
+        allowed=('radius_m','allow_extension','position_tolerance_m','angle_tolerance_rad')
     keys(controls, allowed, allowed, 'tangent controls')
     return template, geometry, curves, index, controls
 
 
 def construct_tangent_case(request, *, candidate_index=None):
-    """Preview candidates or explicitly replace a consecutive pair by arc/line/arc.
+    """Preview candidates or explicitly construct a consecutive primitive pair.
 
     The input template is an unfinished editing document, not an accepted Case.
     Selection invokes the full existing Case/closed-contour validator, including
@@ -94,6 +99,10 @@ def construct_tangent_case(request, *, candidate_index=None):
         line,arc=(first,second) if line_first else (second,first)
         enumerate_candidates=lambda a,b,**kwargs: line_arc_tangent_candidates(line,arc,line_first=line_first,**kwargs)
         connect=lambda a,b,**kwargs: connect_line_arc(line,arc,line_first=line_first,**kwargs)
+
+    elif request['schema_version']==4:
+        from .line_fillet import line_fillet_candidates, connect_line_fillet
+        enumerate_candidates,connect=line_fillet_candidates,connect_line_fillet
 
     if candidate_index is None:
         enumeration = enumerate_candidates(first, second, **controls)
@@ -116,7 +125,9 @@ def construct_tangent_case(request, *, candidate_index=None):
                                   if request['schema_version'] == 1 else
                                   'certified binary-model membership/fractions and trim contact error; floating G1; canonical case validation; no FEM solve'
                                   if request['schema_version']==2 else
-                                  'fixed binary supporting-line contact; explicit extension and order; certified arc membership and trim error; floating G1; no FEM solve')))
+                                  'fixed binary supporting-line contact; explicit extension and order; certified arc membership and trim error; floating G1; no FEM solve'
+                                  if request['schema_version']==3 else
+                                  'radius-specified minor line fillet; numerical contact/extents/G1 checks; no interval certificate; canonical case validation; no FEM solve')))
 
 
 def save_construction(request, path, *, candidate_index=None):

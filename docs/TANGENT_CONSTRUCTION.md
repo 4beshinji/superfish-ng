@@ -429,3 +429,55 @@ seed周波数差ゼロ、RF/エネルギー差最大8.882e-16、基準変更な�
 両RQ差0.626214%、G差8.12673e-8、TTF差0.310662%。双方617節点/1152三角形。
 微小な構築差を含む再メッシュ同士の比較であり、純粋な幾何誤差とは分離していない。
 位置保証をRF保証にはせず、カプセルのRF精度収束は未検証として保持する。
+
+## 版4の指定半径・線分フィレット — 2026-09-08
+
+`line_fillet_candidates` / `connect_line_fillet` は2本の有向線分の間へ、指定半径Rの
+小円弧を構築する。支持直線の交点Vは二進入力の有理数で解く。平行・同一直線・
+反転はPARALLEL_SUPPORTSとして区別し、角度を微小量ずらして構築しない。
+単位接線u,v、符号付き転向角θ=atan2(cross(u,v),dot(u,v))から
+切詰め距離d=R tan(|θ|/2)を求め、接点をV−du、V+dvとする。
+計算にはR|cross|/(1+dot)、反転に近い場合には同値なR(1−dot)/|cross|を使う。
+中心は第1接点から、転向側の単位法線方向へRだけ移した位置である。
+これは支持直線が交差する場合の、元の向きを保持する小円弧の構築。
+大円弧や方向反転による別枝を自動選択しない。
+
+R、位置許容差、G1角度許容差は正の有限値を明示する。延長許可もboolで明示する。
+`allow_extension=false`では接点が両有限線分内に必要で、未許可の延長は
+OUTSIDE_SEGMENT。延長を許可しても第1線分始点/第2線分終点は保持し、
+空/逆向きになる保持線分はEMPTY_LINEとして接続しない。半径を自動縮小しない。
+生成接点の支持直線距離、生成線分/円弧の両G1接続、保持線分と元線分の方向を
+数値検査する。表現不能・許容差未達はUNVERIFIEDと理由を保持する。
+接点/有限区間/G1の検査は浮動小数点を含み、版2/3の区間認証とは異なる。
+出力の円プリミティブは指定Rを両半軸として保持し、曲率は1/Rである。
+曲率ゼロの線分とのG2接続を意味しない。
+
+構築schema_version=4では隣接PEC線分2本を受け、明示候補0の選択により
+線分・円弧・線分へ置換する。controlsはradius_m、allow_extension、
+position_tolerance_m、angle_tolerance_radだけを全て明示必須とする。
+他版の探索controlsや円錐曲線のフィレット指定は受理しない。
+保存文書は要求/生成幾何/診断/完成Caseを同じ入口で再構築照合し、
+Caseの閉輪郭・自己交差・軸接続・設定の全体検査を維持する。
+GUIは指定半径、円弧長、数値検査であることを表示する。
+候補表の2位置は接点であり、長さ欄はこの版では弦長ではなく円弧長を示す。
+
+```bash
+superfish-ng construct-tangent examples/construction/corner_fillet_request.json --candidate-index 0 --out out/fillet-construction.json
+superfish-ng export-constructed-case out/fillet-construction.json --out out/fillet-case.json
+superfish-ng solve out/fillet-case.json --out out/fillet-solve
+```
+
+合成例は長さ0.2 m、半径0.1 mの長方形断面の上部右角をR=0.02 mで丸める。
+二次曲線幾何/二次場FEMを明示する。測定空洞や旧版の例題とは呼ばない。
+独立検査は直角の既知接点/中心/曲率、除去面積R²(1−π/4)、回転/鏡映/尺度/逆順、
+浅い/鈍い転向、過大半径・有限範囲・延長・空線分・平行/反転・厳密controls、
+保存改変拒否とGUI、完成Caseの面積と曲線FEM相似則(f半減、両RQ/G/TTF不変)。
+初回はAPI未実装のImportErrorを確認してから実装した。
+これは線分間フィレットの受入であり、円/楕円/双曲線弧を含むフィレット、
+物理ピークの収束、旧曲線入力、G03全要件照合は引き続き残件である。
+
+版4統合の標準363件中361合格・2 skip、out/validation-g03-line-fillet-20260908 PASS。
+seed周波数差0、RF/エネルギー差最大8.882e-16、基準変更なし。
+Chrome8操作と版1〜4の実保存ファイル再読込PASS。検証中の実装変更なし。
+合成例の周波数1152045668.073337 Hz、R/Q(acc)=57.172456 ohmをCLI/GUIで確認。
+この形状のRF精度・物理ピーク収束は未検証として保持する。

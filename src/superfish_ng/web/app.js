@@ -1405,13 +1405,13 @@ $("tangent-request").addEventListener("input", clearTangent);
 function showTangent(response) {
   tangentResult = response;
   const c = response.construction, report = c.enumeration;
-  const labels = {FORWARD:"順方向", OPPOSED:"逆向き（接続不可）", ZERO_LENGTH:"ゼロ長（接続不可）", EMPTY_ARC:"空の弧（接続不可）", EMPTY_LINE:"空の線分（接続不可）", UNVERIFIED:"未確認（接続不可）"};
+  const labels = {FORWARD:"順方向", OPPOSED:"逆向き（接続不可）", ZERO_LENGTH:"ゼロ長（接続不可）", EMPTY_ARC:"空の弧（接続不可）", EMPTY_LINE:"空の線分（接続不可）", OUTSIDE_SEGMENT:"線分外（延長未許可）", UNVERIFIED:"未確認（接続不可）"};
   $("tangent-table").tBodies[0].replaceChildren();
   $("tangent-candidate").replaceChildren(new Option("候補を選択してください", ""));
   report.candidates.forEach((candidate, index) => {
     const row = document.createElement("tr");
     const values = [index, ...candidate.contacts_zr_m.map((p,i)=>(candidate.contact_roles ? ({line_start:"線分始点: ",line_end:"線分終点: ",conic_contact:"接点: "}[candidate.contact_roles[i]]) : "")+p.map(v=>(v*1000).toPrecision(7)).join(", ")),
-                    (candidate.contact_distance_m*1000).toPrecision(7), labels[candidate.connection_direction]];
+                    ((candidate.fillet_arc_length_m ?? candidate.contact_distance_m)*1000).toPrecision(7), labels[candidate.connection_direction]];
     for (const value of values) {const cell=document.createElement("td");cell.textContent=value;row.append(cell);}
     $("tangent-table").tBodies[0].append(row);
     const option = new Option(`${index}: ${labels[candidate.connection_direction]}`, String(index));
@@ -1426,11 +1426,14 @@ function showTangent(response) {
   $("tangent-status").textContent = c.status === "CASE_VALIDATED"
     ? "閉輪郭と計算条件の検査に合格しました。編集画面へ適用できます。FEM精度は別途検証が必要です。"
     : `${c.status === "UNVERIFIED" ? "未確認" : "候補表示"}: ${report.candidates.length}候補、${report.unresolved.length}件未確認。候補表示だけでは計算できません。`;
-  if (c.schema_version >= 2) {
+  if (c.schema_version === 2 || c.schema_version === 3) {
     const selected = c.candidate_index === null ? null : report.candidates[c.candidate_index];
     $("tangent-status").textContent += selected?.trim_contact_error_bounds_m
       ? ` 接点誤差上界は最大${(Math.max(...selected.trim_contact_error_bounds_m)*1000).toExponential(3)} mmです。接線角度は数値検査です。`
       : ` 弧の所属と位置区間を検査する版${c.schema_version}の構築要求です。`;
+  }
+  if (c.schema_version === 4) {
+    $("tangent-status").textContent += ` 指定半径${(report.radius_m*1000).toPrecision(7)} mmの線分フィレットです。長さは円弧長、接点・接線角度は数値検査です。`;
   }
   $("tangent-diagnostics").textContent = JSON.stringify({status:c.status, scope:c.scope, enumeration:report, joins:c.joins},null,2);
 }

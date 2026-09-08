@@ -1,5 +1,20 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 版4指定半径・線分フィレット — 2026-09-08
+
+out/gui-line-fillet-browser-20260908/report.jsonのChrome8操作PASS。
+指定半径/円弧長/数値検査の表示、明示選択、保存/再構築/Case適用、二次曲線FEM/描画、
+改変拒否を確認。外部要求0、実行中ソース変更なし。tangent-construction.pngも確認した。
+検証用GUIは停止済み。版1〜4の実保存ファイル再読込はPythonで別途確認済み。
+
+```bash
+node scripts/verify_gui.mjs --url '起動URL' --out out/gui-line-fillet-NEW --tangent-request examples/construction/corner_fillet_request.json
+```
+
+この合成フィレット形状のRF/物理ピークの収束検証ではない。
+版4の接点/有限範囲/G1数値検査を、版2/3の区間認証として表示しない。
+
+
 ## 版3固定直線・弧接続 — 2026-09-08
 
 out/gui-line-arc-browser-20260908/report.jsonのChrome8操作PASS。
