@@ -215,6 +215,9 @@ try {
   await fill('#refine-limit','1');const local=await launch('#refine-resume');await openJob(local,'PAUSED',3);
   await check('local branch returns to original parent and becomes selected field','document.querySelector("#refine-levels tbody").rows[2].cells[9].textContent==="1" && document.querySelector("#refine-levels tbody").rows[2].cells[10].textContent==="採用" && document.querySelector("#refine-field-event").value==="2" && document.querySelector("#refine-confirmation").textContent.includes("1 → 3")');
   await fill('#refine-limit','');const final=await launch('#refine-resume');await openJob(final,'TARGETS_MET',5);
+  const durations=await Promise.all([first,local,final].map(async identifier=>JSON.parse(await readFile(resolve(args['--workspace'],identifier,'job.json'),'utf8')).elapsed_seconds));
+  const total=durations.reduce((a,b)=>a+b,0);
+  await check('three ancestor job durations are counted once including the rejected probe',`refinementResult.execution_cost.all_event_owners_timed && refinementResult.execution_cost.jobs.length===3 && Math.abs(refinementResult.execution_cost.recorded_seconds-${total})<1e-9 && document.querySelector('#refine-cost').textContent.includes('時間記録あり 3 ジョブ') && document.querySelector('#refine-cost').textContent.includes('時間不明の計算 0 回')`);
   await check('two accepted comparisons populate all five gates and integration rows','[...document.querySelector("#refine-gates tbody").rows].length===5 && [...document.querySelector("#refine-gates tbody").rows].every(r=>r.cells[1].textContent!=="—" && r.cells[2].textContent!=="—" && r.cells[4].textContent==="条件内") && document.querySelector("#refine-quadrature tbody").rows.length===5 && !document.querySelector("#refine-quadrature").hidden && document.querySelector("#refine-confirmation").textContent.includes("最終連続確認 2 回") && document.querySelector("#affine-surface-assess").disabled');
   const expected=await ev('refinementResult.serialized');await click('#refine-save');
   const file=out+'/downloads/adaptive-refinement-checkpoint.json';let downloaded;
@@ -223,6 +226,7 @@ try {
   await call('Page.reload',{},sessionId);await wait('typeof refinementResult!=="undefined" && refinementResult===null && document.querySelector("#shape polygon")');
   await loadFile('#refine-open',file);await wait('!refinementBusy && refinementResult?.document.status==="TARGETS_MET"',600000);
   await check('reopening restores branch state and final accepted field','document.querySelector("#refine-version").value==="5" && document.querySelector("#refine-field-event").value==="4" && document.querySelector("#refine-levels tbody").rows[1].cells[10].textContent==="未採用"');
+  await check('reopening recomputes the same observed total from local jobs',`Math.abs(refinementResult.execution_cost.recorded_seconds-${total})<1e-9 && refinementResult.execution_cost.jobs.length===3`);
   const rect=await ev('(()=>{const a=document.querySelector("#refine-status").getBoundingClientRect(),b=document.querySelector("#refine-levels").getBoundingClientRect();return {x:a.x+scrollX,y:a.y+scrollY,width:Math.max(a.width,b.width),height:b.bottom-a.top,scale:1}})()');
   const shot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+'/rf-branches.png',Buffer.from(shot.data,'base64'));
   const bad=JSON.parse(downloaded);bad.levels[2].parent_event_index=1;await writeFile(out+'/changed.json',JSON.stringify(bad));
@@ -237,8 +241,12 @@ try {
   await loadFile('#refine-open',checkpoint);await wait('!refinementBusy && refinementResult?.document.status==="PAUSED" && refinementResult.document.levels.length===1',600000);
   await fill('#refine-limit','1');const resumed=await launch('#refine-resume');await openJob(resumed,'PAUSED',2);
   await check('cancelled job checkpoint resumes without discarding its parent source',`refinementResult.document.level_runs[0].includes(${JSON.stringify(cancelled)}) && refinementResult.document.levels[1].parent_event_index===0`);
+  const resumedDurations=await Promise.all([cancelled,resumed].map(async identifier=>JSON.parse(await readFile(resolve(args['--workspace'],identifier,'job.json'),'utf8')).elapsed_seconds));
+  if(!resumedDurations.every(value=>Number.isFinite(value)&&value>0))throw Error('cancelled/resumed time missing');
+  await check('cancelled work remains in the resumed observed total',`refinementResult.execution_cost.all_event_owners_timed && refinementResult.execution_cost.jobs.length===2 && refinementResult.execution_cost.jobs[0].status==='cancelled' && Math.abs(refinementResult.execution_cost.recorded_seconds-${resumedDurations.reduce((a,b)=>a+b,0)})<1e-9`);
   await loadFile('#refine-open',args['--old-checkpoint']);await wait('!refinementBusy && refinementResult?.document.request.schema_version===4',600000);
   await check('version 4 replay hides branch-only columns and retains two gate intervals','[...document.querySelectorAll("[data-refine-branch]")].every(e=>e.hidden) && [...document.querySelector("#refine-gates tbody").rows].every(r=>r.cells[4].textContent==="条件内") && !document.querySelector("#refine-quadrature").hidden');
+  await check('external checkpoint shows unknown time instead of a complete zero total','!refinementResult.execution_cost.all_event_owners_timed && refinementResult.execution_cost.unknown_event_indices.length===refinementResult.document.levels.length && document.querySelector("#refine-cost").textContent.includes("記録のある部分の合計")');
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if(!report.passed)throw Error('RF adaptive GUI checks failed');

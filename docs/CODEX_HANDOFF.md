@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## 適応祖先ジョブの時間表示 — 2026-09-09
+
+[費用表示](GUI_RF_ADAPTIVE_COST.md)を追加。native checkpoint再検証後、現GUI作業領域内の所有者ジョブをrequest/祖先sourceと照合して一度ずつ時間を合算。中止時にも経過時間を保存。未知/欠測/外部は部分合計と不明回数を表示する。
+数値checkpointの文書・保存文字列は不変。GUI応答のexecution_costは観測metadataなので、ジョブ状態が変われば再計算する。記録されたworker時間であり、事前検証を含む全workflow時間ではない。保存場のない別試行は祖先に入らない。
+2検査PASS、実JobManager5176は7検査19.203秒で終了0。実Chrome3062は終了0、out/browser-rf-cost-initial-20260909 の15項目PASS/外部要求0。3ジョブ合算、保存再読込、中止→再開、外部不明を実FEMで確認。rf-branches.pngを実表示済み。GUI85156/PID103279は引数確認後停止、終了0。
+最初の標準48730は終了1、out/validation-rf-cost-20260909 は683件/680合格/1失敗/2 skip、426.102秒。時間記録を消した後も応答全体一致を要求した旧GUI検査を、数値文書/保存文字列完全一致+欠測不明の検査へ更新。GUI65956は5検査33.329秒で終了0。数値実装や許容差の変更ではない。
+最終標準60286は終了0、out/validation-rf-cost-accepted-20260909 は683件/681合格/2 skip、428.580秒PASS。seed9モード19量、f差0/RF最大8.882e-16。全対象sourceと標準、browser対象hash一致。全費用表示検証は終了。
+この変更は /tmp/superfish-rf-cost-worktree-20260909、branch feature/adaptive-refinement-cost。主ツリーmainは01aa584の非球形検証を実行中（60815/PID76757、out/curved-rf-nonsphere-expanded-20260909、ログ/tmp/curved-rf-nonsphere-expanded-20260909.log）。主ツリーsrc/tests/scripts/examplesはその終了まで固定。先に変更を混ぜない。
+主ツリーの12回上限は両尺度LEVEL_LIMIT。48回検証はまだ尺度1途中で、Epk差約2.4%が停滞。プロフィール89107は終了0、out/curved-rf-nonsphere-profile-20260909 で親1723/確認6892要素の読込27.766秒/指標36.873秒。指標はcheckpointと完全一致。再構築/辺検査の重複が主因候補。全workflowプロファイルではない。
+次は非球形の実行結果確認・記録、主ツリーへの費用ブランチ統合、検証済み空間の実行内共有の検討。RFA-6/親N04/全体計画は未完了。
+
 ## RF適応版5 GUI — 2026-09-09
 
 [版5 GUI](GUI_RF_ADAPTIVE.md)を追加。曲線入力・全計算予算を有効にし、親/採用列/最終連続確認数を表示。

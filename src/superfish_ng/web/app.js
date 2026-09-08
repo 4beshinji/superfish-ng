@@ -2053,6 +2053,8 @@ function showRefinement(response) {
   refinementResult=response;const d=response.document,r=d.request,branched=r.schema_version===5;
   const names={QUADRATURE_UNVERIFIED:'高次積分との比較を確認できず停止',PAUSED:'一時停止・再開可能',TARGETS_MET:'指定した細分差を達成',UNVERIFIED:'個別ID未確認で停止',QUANTITY_UNVERIFIED:'正の有限な判定量を確認できず停止',LEVEL_LIMIT:'水準上限で停止',REFINEMENT_LIMIT:'要素数または最小角の制約で停止',TRACKING_BUDGET:'追跡の作業量上限で停止',ZERO_INDICATOR:'選択可能な残差指標がなく停止'};
   $('refine-status').textContent=`${d.status} — ${names[d.status]}。計算済み ${d.levels.length} ${branched ? '回（未採用の確認も含む）':'水準'}。対象ID: ${r.mode_id}`;
+  const cost=response.execution_cost;
+  $('refine-cost').textContent=cost ? `関連ジョブの観測時間: ${cost.recorded_seconds.toFixed(2)} 秒${cost.all_event_owners_timed ? '':'（記録のある部分の合計）'}。時間記録あり ${cost.jobs.filter(j=>j.elapsed_seconds!==null).length} ジョブ。時間不明の計算 ${cost.unknown_event_indices.length} 回。`:'関連ジョブの観測時間: 不明。';
   const phase={initial:'初期',residual:'局所細分',uniform_confirmation:'全域確認',uniform_probe:'RF確認',rf_local:'RF局所細分'};
   $('refine-confirmation').textContent=`版${r.schema_version}: ${r.schema_version>=2 ? '全域確認 '+d.levels.filter(l=>l.refinement_kind==='uniform_confirmation').length+' 回（最低2回）' : '局所差のみ・全域確認なし'}。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'。' : ''} 表面ピーク: ${{UNASSESSED:'未評価',NOT_CONFIRMED:'全条件の確認未完',UNVERIFIED:'未確認',TARGETS_MET:'指定した区間変化を達成'}[d.surface_status]} (${d.surface_status})。物理誤差上界: なし。`;
   const accepted=branched ? d.decision.accepted_event_indices : d.levels.map(l=>l.index);
@@ -2116,7 +2118,7 @@ function showRefinement(response) {
   for(const [id,key] of [['overlap','minimum_overlap'],['margin','minimum_assignment_margin'],['gap','relative_cluster_gap'],['rank','minimum_relative_singular_value']])$(`refine-${id}`).value=r.controls[key];
   if(r.schema_version===1)$('refine-order').value=r.controls.sample_order;
   $('refine-ids').value=JSON.stringify(r.initial_ids);$('refine-mode-id').value=r.mode_id;
-  $('refine-diagnostics').textContent=JSON.stringify({decision:d.decision,controls:r.controls,initial_mesh:r.initial_mesh,level_runs:d.level_runs,
+  $('refine-diagnostics').textContent=JSON.stringify({execution_cost:cost ?? null,decision:d.decision,controls:r.controls,initial_mesh:r.initial_mesh,level_runs:d.level_runs,
     quality:d.levels.map(l=>l.quality),quadrature:d.levels.map(l=>l.quadrature_check ?? null),last_correspondence:d.levels.at(-1)?.tracking ?? null},null,2);
   refinementButtons();
 }
