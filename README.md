@@ -1,5 +1,7 @@
 # Superfish-NG — 0.1.0 research seed
 
+[曲線細分履歴のGUI編集](docs/GUI_CURVED_REFINEMENT_HISTORY.md)を追加。局所履歴が保存時に失われる不具合を修正し、段階の追加・順序変更・削除とstrict入力を接続した。Chrome 19項目と実FEM/native一致を確認。図上の要素選択・履歴対応Study・一般精度/効率は残る。
+
 **軸対称RF空洞を公開された数学から独立実装するOSSプロジェクトの初期版です。**
 旧SUPERFISHのソース・実行形式には依存しません。Pythonで形状を定義し、実際に有限要素行列を組み立て、固有モードとRF量を計算します。解析式だけを返すモックではありません。
 

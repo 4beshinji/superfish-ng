@@ -178,11 +178,19 @@
         <label>要素次数<select id="element-order"><option value="1">P1（一次）</option><option value="2">P2（二次）</option></select></label>
         <div id="curved-fem-controls" hidden>
           <label>曲線の計算形状<select id="geometry-order"><option value="1">直線の弦近似</option><option value="2">二次曲線要素（P2が必要）</option></select></label>
+          <label>細分の指定方法<select id="curved-refinement-mode"><option value="levels">一様細分の段数</option><option value="steps">順序付き細分履歴</option></select></label>
           <div class="grid">
             <label>体積積分次数<input id="quadrature-order" type="number" min="2" step="1" value="8" /></label>
             <label>形状を保つ細分段数<input id="curved-refinement-levels" type="number" min="0" step="1" value="0" /></label>
           </div>
           <p>段数を1増やすと要素数は4倍になります。初期の二次形状を保持し、解析曲線へ点を置き直しません。</p>
+          <fieldset id="curved-history-controls" hidden disabled>
+            <legend>順序付き細分履歴</legend>
+            <p>上から順に実行します。選択要素の番号は各段階の直前のメッシュに対する0始まりの番号です。形状や初期メッシュを変更する場合は履歴も確認してください。</p>
+            <table id="curved-history"><thead><tr><th>方法</th><th>要素番号（カンマ区切り）</th><th>最小頂点接線角 [度]</th><th>順序・削除</th></tr></thead><tbody></tbody></table>
+            <button id="curved-add-uniform" type="button">一様細分を追加</button>
+            <button id="curved-add-marked" type="button">選択要素の細分を追加</button>
+          </fieldset>
         </div>
         <details open>
           <summary>メッシュと正規化</summary>

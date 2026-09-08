@@ -143,10 +143,44 @@ function geometryLength(g) {
 }
 function updateCurvedControls() {
   const curved = $("geometry-order").value === "2";
+  const history = $("curved-refinement-mode").value === "steps";
   $("quadrature-order").disabled = !curved;
-  $("curved-refinement-levels").disabled = !curved;
+  $("curved-refinement-mode").disabled = !curved;
+  $("curved-refinement-levels").disabled = !curved || history;
+  $("curved-history-controls").disabled = !curved || !history;
+  $("curved-history-controls").hidden = !history;
 }
 $("geometry-order").addEventListener("change", updateCurvedControls);
+$("curved-refinement-mode").addEventListener("change", updateCurvedControls);
+function curvedRefinementRow(step = {kind: "uniform"}) {
+  const row = $("curved-history").tBodies[0].insertRow();
+  row.innerHTML = '<td><select class="step-kind" aria-label="細分方法"><option value="uniform">一様</option><option value="marked">選択要素</option></select></td><td><input class="step-cells" aria-label="細分する要素番号" /></td><td><input class="step-angle" aria-label="最小頂点接線角" type="number" min="0" max="60" step="any" /></td><td><button type="button" class="step-up" aria-label="この段階を上へ">↑</button><button type="button" class="step-down" aria-label="この段階を下へ">↓</button><button type="button" class="step-remove">削除</button></td>';
+  const kind = row.querySelector('.step-kind'), cells = row.querySelector('.step-cells'), angle = row.querySelector('.step-angle');
+  kind.value = step.kind;
+  cells.value = (step.marked_cells || []).join(', ');
+  angle.value = step.minimum_corner_angle_deg ?? 5;
+  const update = () => { cells.disabled = angle.disabled = kind.value === 'uniform'; };
+  kind.addEventListener('change', update); update();
+  row.querySelector('.step-up').onclick = () => { if (row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling); markDirty(); };
+  row.querySelector('.step-down').onclick = () => { if (row.nextElementSibling) row.nextElementSibling.after(row); markDirty(); };
+  row.querySelector('.step-remove').onclick = () => { row.remove(); markDirty(); };
+}
+bind('curved-add-uniform', () => { curvedRefinementRow(); markDirty(); });
+bind('curved-add-marked', () => { curvedRefinementRow({kind: 'marked'}); markDirty(); });
+function collectCurvedRefinementSteps() {
+  const rows = [...$("curved-history").tBodies[0].rows];
+  if (!rows.length) throw Error('順序付き細分履歴を1段以上追加するか、一様細分の段数を選んでください');
+  return rows.map((row, index) => {
+    if (row.querySelector('.step-kind').value === 'uniform') return {kind: 'uniform'};
+    const tokens = row.querySelector('.step-cells').value.split(',').map(s => s.trim());
+    const cells = tokens.map(Number);
+    if (tokens.some(s => !/^(0|[1-9][0-9]*)$/.test(s)) || cells.some(n => !Number.isSafeInteger(n)) || new Set(cells).size !== cells.length)
+      throw Error(`細分履歴${index + 1}段目の要素番号は、重複のない0以上の整数をカンマで区切ってください`);
+    const angle = Number(row.querySelector('.step-angle').value);
+    if (!Number.isFinite(angle) || angle <= 0 || angle >= 60) throw Error(`細分履歴${index + 1}段目の最小頂点接線角は0より大きく60より小さい値を指定してください`);
+    return {kind: 'marked', marked_cells: cells, minimum_corner_angle_deg: angle};
+  });
+}
 function showGeometry() {
   updateCurvedControls();
   $("curved-fem-controls").hidden = $("geometry-type").value !== "curved_contour";
@@ -252,8 +286,11 @@ function collect() {
   if (number("element-order") === 2) p.case.solver.element_order = 2;
   if (number("geometry-order") === 2) {
     p.case.mesh.geometry_order = 2;
-    p.case.mesh.curved_refinement_levels = number("curved-refinement-levels");
+    if ($("curved-refinement-mode").value === "steps") p.case.mesh.curved_refinement_steps = collectCurvedRefinementSteps();
+    else p.case.mesh.curved_refinement_levels = number("curved-refinement-levels");
     p.case.solver.quadrature_order = number("quadrature-order");
+  } else if ($("curved-refinement-mode").value === "steps") {
+    throw Error('順序付き細分履歴には二次曲線要素が必要です。履歴を外す場合は細分の指定方法を切り替えてください');
   }
   if (isContour(p.case.geometry.type)) delete p.case.boundaries;
   if (assemblyActive) p.sections = structuredClone(sections);
@@ -307,6 +344,9 @@ function applyProject(p) {
   const c = p.case;
   $("geometry-order").value = c.mesh.geometry_order ?? 1;
   $("curved-refinement-levels").value = c.mesh.curved_refinement_levels ?? 0;
+  $("curved-refinement-mode").value = c.mesh.curved_refinement_steps?.length ? "steps" : "levels";
+  $("curved-history").tBodies[0].replaceChildren();
+  for (const step of c.mesh.curved_refinement_steps || []) curvedRefinementRow(step);
   $("quadrature-order").value = c.solver.quadrature_order ?? 8;
   contourMeshOriginal = c.mesh.contour_mesh ? structuredClone(c.mesh.contour_mesh) : null;
   $("contour-edge").value = contourMeshOriginal ? contourMeshOriginal.max_edge_m * 1000 : "";

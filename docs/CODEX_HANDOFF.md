@@ -1,5 +1,20 @@
 # ローカルCodexへの引継ぎ
 
+## 曲線履歴GUIの保持・編集 — 2026-09-09
+
+[GUI履歴編集](GUI_CURVED_REFINEMENT_HISTORY.md)を実装。修正前のGUI往復は履歴を落とし、
+修正後はChrome 19項目と実FEM/nativeのCase/メッシュ/場空間・周波数/RF一致がPASS。
+初回拡張検査のページ遷移待ちFAILも保持。ブラウザー77546は終了0、
+自分のGUIサーバー83492/PID4004824はargv完全一致後SIGINT、終了0を確認した。
+標準検証41261は終了0、out/validation-gui-curved-history-20260909 がPASS。
+656件中654合格・2 skip、404.847秒。seed周波数差ゼロ/RF最大8.882e-16、
+最終ソースhashとブラウザー検査ソースが一致。本体の検証用固定は解除済み。
+図上の要素選択・履歴対応Study・一般精度/効率と親課題全体は未受入。
+
+別worktreeの非球形検証96442は継続中。尺度1は追加対照までPASS、尺度2適応へ進んだ。
+同検証のソースはdc795e9時点で固定され、今回のGUI変更を含まない。
+引き続き /tmp/superfish-curved-edge-search-worktree-20260909 の計算対象ファイルを変更しない。
+
 ## 非球形尺度1の確定と高速化ブランチの本体反映 — 2026-09-09
 
 旧942860bの尺度1報告 out/curved-nonsphere-expanded-20260909/scale-1.json はPASS。

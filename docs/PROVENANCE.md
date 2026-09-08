@@ -1,5 +1,13 @@
 # 独立実装・情報来歴
 
+## 曲線履歴GUIの保持と編集 — 2026-09-09
+
+既存のstrictなCurvedRefinementStep仕様に従い、番号指定の表と順序操作を独立実装した。
+入力した履歴がGUI往復で消失する反例を修正前に実ブラウザーで確認。
+保存後の実FEMと既存native結果のCase/メッシュ/場空間・周波数/RF一致を確認した。
+計算公式・許容差・数値コアの変更、新規依存、外部資料/旧資産の参照はない。
+詳しくは[GUI受入記録](GUI_CURVED_REFINEMENT_HISTORY.md)。
+
 ## 非球形尺度1の確定と高速化ブランチの本体反映 — 2026-09-09
 
 旧942860bの尺度1報告 out/curved-nonsphere-expanded-20260909/scale-1.json はPASS。

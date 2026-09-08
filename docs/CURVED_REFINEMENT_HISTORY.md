@@ -1,6 +1,8 @@
 # N04 曲線局所細分のCase履歴とnative再構築
 
-2026-09-09追記: [版4のGUI](GUI_CURVED_ADAPTIVE_REFINEMENT.md)も入力・五量/積分比較表示・保存再開へ接続した。以下は各追加時点の記録。一般精度/効率・任意履歴の直接GUI編集は残る。
+2026-09-09追記: [GUIの履歴編集](GUI_CURVED_REFINEMENT_HISTORY.md)で番号指定・順序変更・保存/再読込・実計算を接続した。以下の未接続記述は追加時点の履歴。図上の要素選択と履歴対応Studyは残る。
+
+2026-09-09追記: [版4のGUI](GUI_CURVED_ADAPTIVE_REFINEMENT.md)も入力・五量/積分比較表示・保存再開へ接続した。以下は各追加時点の記録。一般精度/効率は残る。
 
 2026-09-09追記: [適応計算版4](CURVED_ADAPTIVE_REFINEMENT.md)で滑らかな閉PEC曲線の五量停止・高次積分比較・保存再開をAPI/CLI/JobManagerへ接続した。以下の未接続記述は当時の履歴。GUI・一般精度/効率は残る。
 
