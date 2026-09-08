@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## 版5非球形検証・費用表示の並行作業 — 2026-09-09
+
+主作業ツリーに scripts/validate_curved_rf_nonsphere.py と仕様を追加。既存両尺度reportとの一致とhashを検査し、全イベントの時間・親子Ritz・体積・Maxwell・追加対照差を保存する。
+初回43989は終了1、out/curved-rf-nonsphere-initial-20260909。両尺度12回でLEVEL_LIMIT、124.582/124.566秒。イベント構造一致・尺度差最大5.089e-13。未達を受入へ変更しない。
+直前の標準681件の全対象既存ファイルは不変、baseline-coverage.jsonに記録。新しい全件回帰を主ツリーで実行したとは扱わない。
+拡大60815/PID76757は実行中。out/curved-rf-nonsphere-expanded-20260909、ログ /tmp/curved-rf-nonsphere-expanded-20260909.log。max-events48以外は同じ条件。尺度1の24イベント/確認20928要素まで進行。電場ピーク差約2.3〜2.4%で停滞、他4量が合格しても停止しない。終了までsrc/tests/scripts/examplesを固定する。
+GDB一度接続はPythonスタック情報なしでdetach済み。計算継続。別ツリーの検証も並行するため、時間は専有環境の速度試験ではない。
+別ツリー /tmp/superfish-rf-cost-worktree-20260909、branch feature/adaptive-refinement-cost で累積費用表示を実装中。主ツリーの数値検証終了まで変更を混ぜない。費用2検査と実JobManager7検査PASS、Chrome3062は終了0で15項目PASS/外部要求0。GUI85156/PID103279は停止・終了0、画像実表示済み。標準48730は実行中。詳細はそのツリーの docs/GUI_RF_ADAPTIVE_COST.md。
+全体目標/RFA-6/親N04は未完了。両方の実行結果・ソース一致を確認して記録し、費用ブランチを主ツリーへ統合する必要がある。
+
 ## RF適応版5 GUI — 2026-09-09
 
 [版5 GUI](GUI_RF_ADAPTIVE.md)を追加。曲線入力・全計算予算を有効にし、親/採用列/最終連続確認数を表示。
