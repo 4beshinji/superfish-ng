@@ -70,3 +70,8 @@ node scripts/verify_gui_adaptive_refinement.mjs --url '表示された起動URL'
 
 最終Chrome受入はout/browser-n04-refinement-strict-20260908の19操作PASS。
 最初の再読込検査のFAILと、手順修正後18操作PASSも保持する。数値検証の詳細は[引継ぎ](CODEX_HANDOFF.md)。
+
+## 直線表面評価のGUI接続
+
+[直線表面評価GUI](GUI_AFFINE_SURFACE_CONVERGENCE.md)で、適応結果から個別IDを指定して評価、
+保存/再検証、評価した最終対象場の表示を利用できる。表面量を含む適応停止は未完。

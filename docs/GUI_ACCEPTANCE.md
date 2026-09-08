@@ -541,3 +541,11 @@ out/browser-n04-refinement-strict-20260908のChrome19操作PASS、外部リク�
 最終標準600件中598合格・2 skip、独立P2円筒f/RQ/G・相似則と周波数/RF回帰もPASS。
 各検証のソースhashは最終コードと一致。対象・未対応は[適応細分GUI](GUI_ADAPTIVE_REFINEMENT.md)。
 一般形状の精度/効率や表面ピークを、このGUI受入で認定しない。
+
+## N03直線表面評価GUI — 2026-09-08
+
+適応結果から任意の確認済み個別IDで評価し、五量の区間判定・ピーク上下界・元輪郭角診断を表示。
+保存/全再検証・ページ再読込、別IDの対象場表示、確認待ち/再入角/形状未確認/未収束の区別を追加。
+out/browser-affine-surface-initial-20260908で実Chrome16操作が初回PASS。外部ページリクエストなし。
+達成と再入角の画像も確認。通信3検査、標準613件中611合格・2 skip、独立円筒解析比較・相似則PASS。
+各検証のソースhashは最終コードと一致。対象と残件は[直線表面評価GUI](GUI_AFFINE_SURFACE_CONVERGENCE.md)。

@@ -92,3 +92,8 @@ E比0.0008186、B比0.001981以内。P2はf 6.953e-10、RQ 1.674e-6、G 2.756e-9
 E比4.403e-7、B比5.350e-7以内。相似則差最大2.776e-14。
 版1もout/n03-affine-surface-v1-20260908で3水準の新規実計算・保存全再検証を行い、
 局所差のTARGETS_METを確認。uniform_confirmation_required=false、two_uniform_steps_present=nullを保持。
+
+## 直線表面評価のGUI接続
+
+[直線表面評価GUI](GUI_AFFINE_SURFACE_CONVERGENCE.md)で、適応結果から個別IDを指定して評価、
+保存/再検証、評価した最終対象場の表示を利用できる。表面量を含む適応停止は未完。

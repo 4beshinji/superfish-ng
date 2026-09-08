@@ -1924,9 +1924,10 @@ $("tune-parameter-unit").addEventListener("change",tuningParameterMode);
 tuningParameterMode();
 
 
-let refinementResult=null, refinementBusy=false;
+let refinementResult=null, refinementBusy=false, affineSurfaceResult=null, affineSurfaceBusy=false;
 const refinementQuantities=[['frequency_hz','周波数','frequency'],['r_over_q_accelerator_ohm','R/Q = V²/(ωU)','rq'],['geometry_factor_ohm','G','g']];
 function refinementButtons() {
+  affineSurfaceButtons();
   for (const id of ['prepare','start','open']) $(`refine-${id}`).disabled=refinementBusy;
   $('refine-resume').disabled=refinementBusy || !refinementResult?.document.can_resume;
   $('refine-save').disabled=refinementBusy || !refinementResult;
@@ -2006,3 +2007,58 @@ bind('refine-open-field',async()=>{
 });
 $('refine-version').addEventListener('change',refinementVersion);
 refinementButtons();refinementVersion();
+
+
+function affineSurfaceButtons() {
+  $('affine-surface-assess').disabled=affineSurfaceBusy || refinementBusy || (refinementResult?.document.levels.length ?? 0)<3;
+  for(const id of ['save','replay','open-field'])$(`affine-surface-${id}`).disabled=affineSurfaceBusy || !affineSurfaceResult;
+  for(const id of ['open','mode-id'])$(`affine-surface-${id}`).disabled=affineSurfaceBusy;
+  $('affine-surface-progress').textContent=affineSurfaceBusy ? '元の適応系列・保存場・ピーク上下界を再検証しています…':'';
+}
+function showAffineSurface(response) {
+  affineSurfaceResult=response;const d=response.document;
+  $('affine-surface-mode-id').value=d.mode_id;
+  const statuses={TARGETS_MET:'基準達成（細分差）',NOT_CONVERGED:'未収束',UNVERIFIED:'未確認',CONFIRMATION_PENDING:'全域確認待ち',SINGULAR_GEOMETRY:'再入角：有限ピークは未認定',UNVERIFIED_GEOMETRY:'形状未確認：ピークは未認定'};
+  $('affine-surface-status').textContent=`${d.status} — ${statuses[d.status]}。対象ID: ${d.mode_id}。${d.rows.length}水準、直近2区間を判定。`;
+  $('affine-surface-confirmation').textContent=`${d.uniform_confirmation_required ? '版2：最後の全域確認2水準 '+(d.two_uniform_steps_present ? 'あり':'不足'):'版1：局所差のみ・全域確認なし'}。元の適応判定: ${d.checkpoint.status}。物理誤差上界: なし。`;
+  const joins=d.geometry_diagnostic.joins;
+  $('affine-surface-geometry').textContent=`元輪郭の再入角 ${joins.filter(j=>j.classification==='reentrant_pec_corner').length}、凸角 ${joins.filter(j=>j.classification==='convex_pec_corner').length}。形状診断: ${d.geometry_diagnostic.status}。${d.geometry_diagnostic.analytic_geometry_approximated ? '解析曲線の弦近似：元幾何は未確認。':''}`;
+  const text=x=>Number.isFinite(x) ? x.toPrecision(8):'未確認';
+  const interval=(v,scale=1)=>v===null ? '未確認':v[0]===v[1] ? text(v[0]*scale):`${text(v[0]*scale)} ～ ${text(v[1]*scale)}`;
+  const append=(body,values)=>{const row=document.createElement('tr');for(const value of values){const cell=document.createElement('td');cell.textContent=value;row.append(cell);}body.append(row);};
+  const values=$('affine-surface-values').querySelector('tbody'),peaks=$('affine-surface-peaks').querySelector('tbody'),changes=$('affine-surface-changes').querySelector('tbody');
+  for(const body of [values,peaks,changes])body.replaceChildren();
+  const phases={initial:'初期',residual:'局所細分',uniform_confirmation:'全域確認'};
+  for(const row of d.rows) {
+    const q=row.intervals;
+    append(values,[row.refinement_level+1,phases[row.refinement_kind],row.mode_index+1,row.triangles,interval(q.frequency_hz,1e-6),interval(q.r_over_q_accelerator_ohm),interval(q.geometry_factor_ohm)]);
+    append(peaks,[row.refinement_level+1,interval(q.epk_over_eacc),interval(q.bpk_over_eacc_mt_per_mv_per_m)]);
+  }
+  const labels={frequency_hz:'周波数',r_over_q_accelerator_ohm:'R/Q（加速器）',geometry_factor_ohm:'G',epk_over_eacc:'Epk/Eacc',bpk_over_eacc_mt_per_mv_per_m:'Bpk/Eacc'};
+  for(const [index,c] of d.refinement_diagnostic.comparisons.entries())for(const [key,label] of Object.entries(labels)) {
+    const change=c.relative_change_upper_bounds[key];
+    append(changes,[`${d.rows[c.previous_row].refinement_level+1} → ${d.rows[c.current_row].refinement_level+1}`,label,change===null ? '未確認':text(100*change),text(100*d.limits[key]),d.refinement_diagnostic.acceptance_comparison_indices.includes(index) ? '対象':'履歴',change===null ? '未確認':c.gates[key] ? '基準内':'未達']);
+  }
+  $('affine-surface-diagnostics').textContent=JSON.stringify({mode_id:d.mode_id,source_runs:d.rows.map(r=>r.run),geometry:d.geometry_diagnostic,refinement:d.refinement_diagnostic,geometry_approximation_assessed:d.geometry_approximation_assessed,physical_error_bound:d.physical_error_bound,scope:d.scope},null,2);
+  affineSurfaceButtons();
+}
+async function runAffineSurface(action,data) {
+  if(affineSurfaceBusy)throw Error('直線表面評価を再検証中です');
+  affineSurfaceBusy=true;affineSurfaceButtons();
+  try {showAffineSurface(await api(action,data));}
+  finally {affineSurfaceBusy=false;affineSurfaceButtons();}
+}
+bind('affine-surface-assess',()=>runAffineSurface('assess-affine-surface-convergence',{document:refinementResult.serialized,mode_id:$('affine-surface-mode-id').value}));
+bind('affine-surface-replay',()=>runAffineSurface('replay-affine-surface-convergence',{document:affineSurfaceResult.serialized}));
+bind('affine-surface-save',()=>download('affine-surface-convergence.json',affineSurfaceResult.serialized));
+$('affine-surface-open').addEventListener('change',async event=>{
+  const file=event.target.files[0];if(!file)return;
+  try {$('error').hidden=true;await runAffineSurface('replay-affine-surface-convergence',{document:await file.text()});}
+  catch(error){failure(error);}finally{event.target.value='';}
+});
+bind('affine-surface-open-field',async()=>{
+  await runAffineSurface('replay-affine-surface-convergence',{document:affineSurfaceResult.serialized});
+  const row=affineSurfaceResult.document.rows.at(-1),result=await api('import',{path:row.run});
+  await refreshJobs();await openResult(result.id,row.mode_index+1);
+});
+affineSurfaceButtons();

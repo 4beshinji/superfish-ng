@@ -158,6 +158,8 @@ def create_server(workspace, port=0):
                     "start-mode-history": ["document"],
                     "extend-mode-history": ["document", "current_id", "controls"],
                     "replay-mode-tracking": ["document"],
+                    "assess-affine-surface-convergence": ["document", "mode_id"],
+                    "replay-affine-surface-convergence": ["document"],
                     "assess-surface-convergence": ["document", "mode_id"],
                     "replay-surface-convergence": ["document"],
                     "normalize": ["document"],
@@ -184,7 +186,7 @@ def create_server(workspace, port=0):
                 if action not in allowed:
                     raise ValueError("unknown operation")
                 keys(data, ["action", *allowed[action]], ["action"], "request")
-                if action in ("assess-surface-convergence", "replay-surface-convergence"):
+                if action in ("assess-surface-convergence", "replay-surface-convergence", "assess-affine-surface-convergence", "replay-affine-surface-convergence"):
                     from .gui_surface_convergence import surface_convergence_response
                     return self.reply(surface_convergence_response(action,{k:v for k,v in data.items() if k!='action'}))
                 if action in ("start-adaptive-refinement", "resume-adaptive-refinement", "adaptive-refinement-result", "replay-adaptive-refinement"):

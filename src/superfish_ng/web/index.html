@@ -452,6 +452,23 @@
           <table id="refine-levels"><thead><tr><th>水準</th><th>細分方式</th><th>三角形</th><th>自由度</th><th>対応</th><th>対象順位</th><th>周波数 [MHz]</th><th>R/Q = V²/(ωU) [Ω]</th><th>G [Ω]</th></tr></thead><tbody></tbody></table>
           <details><summary>停止理由・品質・追跡・保存先</summary><pre id="refine-diagnostics"></pre></details>
         </section>
+        <section id="affine-surface-convergence">
+          <h2>直線要素の表面ピークの細分差を評価する</h2>
+          <p>上の適応細分で3水準以上の結果を開き、全水準で確認された個別モードIDを指定してください。元の細分対象とは別のIDも評価できます。</p>
+          <label>評価するモードID<input id="affine-surface-mode-id" value="fundamental" /></label>
+          <button id="affine-surface-assess" disabled>上の適応結果から表面評価する</button>
+          <label class="file">保存した直線表面評価を開いて再検証<input id="affine-surface-open" type="file" accept=".json" /></label>
+          <div class="actions"><button id="affine-surface-replay" disabled>表示中の評価を再検証</button><button id="affine-surface-save" disabled>検証済みの表面評価を保存</button><button id="affine-surface-open-field" disabled>評価した最終水準の対象場・RFを開く</button></div>
+          <p id="affine-surface-progress" role="status"></p>
+          <p id="affine-surface-status" role="status">直線要素の表面評価はまだありません。</p>
+          <p id="affine-surface-confirmation"></p>
+          <p id="affine-surface-geometry"></p>
+          <p class="hint">表示は最後に再検証した評価です。IDや適応結果の変更後は評価を実行してください。達成は直近2区間の細分差の判定で、物理誤差上界や正則性の証明ではありません。元の適応停止・表面未評価状態は変更しません。確認待ちは元の計算が再開可能という意味ではありません。</p>
+          <div class="surface-table"><table id="affine-surface-values"><thead><tr><th>水準</th><th>細分方式</th><th>対象順位</th><th>要素数</th><th>周波数 [MHz]</th><th>R/Q = V²/(ωU) [Ω]</th><th>G [Ω]</th></tr></thead><tbody></tbody></table></div>
+          <div class="surface-table"><table id="affine-surface-peaks"><thead><tr><th>水準</th><th>Epk/Eacc の上下界</th><th>Bpk/Eacc の上下界 [mT/(MV/m)]</th></tr></thead><tbody></tbody></table></div>
+          <div class="surface-table"><table id="affine-surface-changes"><thead><tr><th>水準</th><th>量</th><th>最大相対変化 [%]</th><th>基準 [%]</th><th>判定対象</th><th>結果</th></tr></thead><tbody></tbody></table></div>
+          <details><summary>元結果・角・細分診断</summary><pre id="affine-surface-diagnostics"></pre></details>
+        </section>
         <section id="tuning">
           <h2>同じモードの周波数を調整する</h2>
           <p class="hint">連続した正半径profile・閉PEC専用です。変更する頂点座標と範囲を指定し、上の形状・追跡設定から入力を作成します。円筒またはprofile写像を選び、入力を確認して開始してください。</p>
