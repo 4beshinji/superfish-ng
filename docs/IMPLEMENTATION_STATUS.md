@@ -1,6 +1,6 @@
 # 実装・検証の現状
 
-確認日: 2026-09-08。N04適応細分GUI接続後（直前製品基準 `6f65e48`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-08。N03直線離散ピーク囲い込み追加後（直前製品基準 `972f46e`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -21,7 +21,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 穴・内導体・任意CADなし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
 | メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLI/JobManager/GUIあり。物理誤差上界・表面量停止・曲線局所細分は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |
 | 固有値・場 | 実FEM、複数モード、残差/直交性/エネルギー検査、物理座標プローブ | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | solver.py、curved_solution.py、curved_sampling.py |
-| RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、曲線連続離散極値と角診断 | peak phasor・RQ二規約。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
+| RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、直線/曲線の連続離散極値の囲い込み、曲線角診断 | peak phasor・RQ二規約。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 表面収束評価 | 固定曲線P2の3水準・追跡ID・ピーク上下界によるf/RQ/G/ピーク比判定API/CLI/GUI | 幾何近似誤差/一般形状/直線要素/通常RF画面統合は残件。物理誤差上界ではない | [SURFACE_CONVERGENCE.md](SURFACE_CONVERGENCE.md) |
 | 条件群・鏡映 | 掃引、同一形状細分比較、条件付きバンド同定、曲線の幾何/FEM別Study・鏡映 | D01は重み付き標本部分空間・円筒/profile写像・明示メッシュ対応による追跡と2時点保存/再検証CLI/GUIと個別IDと部分空間ID集合の順序付き履歴/再開、完了Studyの隣接点追跡と点状態表示・保存再検証GUI、追跡付き逐次計算・停止・チェックポイント再開API/CLI・JobManager・GUI、幾何掃引の適応二分と途中保存・再開API/CLI・JobManager・GUI、多対多の保守的ID集合継承とGUI方式選択/復元、同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。曲線領域の一般写像/個別枝回復、制約付き最適化は未実装 | studies.py、symmetry.py、curved_reflection.py |
 | 周波数調整 | 単一/連動profile座標・明示円筒/profile写像の1変数二分探索・停止・再開・最終細メッシュ判定API/CLI・JobManager・GUI、対象の場表示 | 全個別ID確認が前提。二水準差は誤差上界でない。曲線/非線形変数/最適化は未実装 | [TUNING.md](TUNING.md) |
@@ -36,8 +36,9 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 600件中598合格・NGSolve参照環境専用2件skip。N04適応細分GUI接続後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | N04適応細分GUI接続後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-n04-refinement-gui-strict-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 605件中603合格・NGSolve参照環境専用2件skip。N03直線離散ピーク囲い込み追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | N03直線離散ピーク囲い込み追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-n03-affine-extrema-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| N03直線離散ピーク | P1/P2の厳密有理数辺多項式と上下界、native保存/CLI/改変拒否の5検査PASS。円筒P1/P2×尺度1/2×3メッシュのf/RF/ピーク比解析比較・相似則PASS | out/n03-affine-extrema-initial-20260908、[仕様](AFFINE_SURFACE_EXTREMA.md) |
 | N04適応GUI | 通信4検査と実Chrome19操作PASS。開始/中止、全域確認途中と中止後の保存再開、個別差・対象順位2の場表示、厳密JSON入力 | out/browser-n04-refinement-strict-20260908、[操作仕様](GUI_ADAPTIVE_REFINEMENT.md) |
 | N04適応JobManager | 版1/版2×尺度1/2の部分実行・再開・管理器再生成、解析P2円筒f/RQ/Gと相似則PASS | out/n04-refinement-gui-strict-physics-20260908、[仕様](ADAPTIVE_REFINEMENT_JOBS.md) |
 | N04適応独立検証 | 版2全域確認は円筒P1/P2のRF改善・相似則・内積独立検査PASS。P1解析RQ差約0.056%、ただし48069 DOF。折返しは上限停止。版1のFAILも保持 | out/n04-rf-confirmation-initial-20260908、[適応計算](ADAPTIVE_REFINEMENT.md) |

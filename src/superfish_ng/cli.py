@@ -57,6 +57,14 @@ def main(argv=None):
     tracking.add_argument('--out',type=Path,required=True)
     tracking_replay=sub.add_parser('replay-mode-tracking',help='recompute and verify saved mode correspondence and source identities')
     tracking_replay.add_argument('tracking',type=Path)
+    affine_peaks=sub.add_parser('bound-affine-peaks',help='bound continuous discrete PEC peaks of a native affine P1/P2 solution')
+    affine_peaks.add_argument('run',type=Path)
+    affine_peaks.add_argument('--mode',type=int,default=1,help='one-based frequency rank; not a persistent mode identity')
+    affine_peaks.add_argument('--relative-tolerance',type=float,default=1e-6)
+    affine_peaks.add_argument('--max-boxes-per-edge',type=int,default=10000)
+    affine_peaks.add_argument('--out',type=Path,required=True)
+    affine_peak_replay=sub.add_parser('replay-affine-peaks',help='revalidate native affine fields and recompute their saved discrete peak bounds')
+    affine_peak_replay.add_argument('document',type=Path)
     surface=sub.add_parser('assess-surface-convergence',help='assess tracked fixed-geometry frequency, RF and peak refinement changes')
     surface.add_argument('history',type=Path)
     surface.add_argument('--mode-id',required=True)
@@ -206,6 +214,16 @@ def main(argv=None):
             result=read_mode_tracking(args.tracking)
             print(f"REPLAYED {result['status']}: {args.tracking}")
             return 0 if result['status']=='PASS' else 1
+        elif args.command == 'bound-affine-peaks':
+            from .affine_extrema import save_affine_peaks
+            result=save_affine_peaks(args.run,args.out,mode=args.mode-1,relative_tolerance=args.relative_tolerance,max_boxes_per_edge=args.max_boxes_per_edge)
+            print(f"{result['peaks']['status']}: {args.out}; discrete field enclosure only")
+            return 0
+        elif args.command == 'replay-affine-peaks':
+            from .affine_extrema import read_affine_peaks
+            result=read_affine_peaks(args.document)
+            print(f"REPLAYED {result['peaks']['status']}: {args.document}; discrete field enclosure only")
+            return 0
         elif args.command == 'assess-surface-convergence':
             from .surface_convergence import save_surface_convergence
             from .mode_tracking_history import read_mode_history
