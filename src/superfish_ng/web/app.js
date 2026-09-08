@@ -624,11 +624,12 @@ async function refreshJobs() {
     row.className = "job";
     row.dataset.job = j.id;
     const title = document.createElement("strong");
-    title.textContent = statusNames[j.status] || j.status;
+    title.textContent = (statusNames[j.status] || j.status) + (j.kind === "tracked_study" ? ` / 追跡Study${j.tracking_status ? " " + j.tracking_status : ""}` : "");
     row.append(title);
     const desc = document.createElement("small");
     const stage =
       {
+        "sequential FEM solves and saved-field tracking": "各点を計算・追跡中",
         "finite element solve": "有限要素計算",
         "saving fields and RF quantities": "場とRF量を保存中",
         saved: "保存済み",
@@ -648,7 +649,8 @@ async function refreshJobs() {
         if (["running", "queued"].includes(j.status)) {
           await api("cancel", { id: j.id });
           await refreshJobs();
-        } else if (j.kind === "study") await openStudy(j.id);
+        } else if (j.kind === "tracked_study") await openTrackedExecution(j.id);
+        else if (j.kind === "study") await openStudy(j.id);
         else await openResult(j.id);
       } catch (e) {
         failure(e);
@@ -1524,7 +1526,7 @@ bind("tangent-apply", () => {
 // Saved-field mode tracking; the server owns validation and ID propagation.
 let trackingResult = null, trackingBusy = false, trackingJobSignature = "";
 function trackingJobs(jobs) {
-  const completed = jobs.filter(j => j.status === "complete" && j.kind !== "study");
+  const completed = jobs.filter(j => j.status === "complete" && !["study","tracked_study"].includes(j.kind));
   const signature = JSON.stringify(jobs.filter(j => j.status === "complete").map(j => [j.id,j.kind]));
   if (signature === trackingJobSignature) return;
   trackingJobSignature = signature;
@@ -1639,3 +1641,70 @@ bind("tracking-study-run", async () => {
   else data.controls = trackingControls();
   await runTracking("track-study-modes", data);
 });
+
+// A checkpoint's original JSON text is retained for exact server replay.
+let trackedExecutionResult = null, trackedExecutionBusy = false;
+function trackedExecutionButtons() {
+  $("tracked-execution-start").disabled = trackedExecutionBusy;
+  $("tracked-execution-resume").disabled = trackedExecutionBusy || !trackedExecutionResult?.document.can_resume;
+  $("tracked-execution-save").disabled = trackedExecutionBusy || !trackedExecutionResult;
+  $("tracked-execution-open").disabled = trackedExecutionBusy;
+  $("tracked-execution-prepare").disabled = trackedExecutionBusy;
+}
+function trackedPointLimit() {
+  const raw = $("tracked-execution-limit").value.trim();
+  if (!raw) return {};
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 1) throw Error("新たに計算する点数は正の整数で指定してください");
+  return {max_new_points:value};
+}
+function showTrackedExecution(response) {
+  trackedExecutionResult = response;
+  const d=response.document;
+  $("tracked-execution-status").textContent = `${d.status} — ${{PAUSED:"一時停止",COMPLETE:"全指定点の対応を確認",UNVERIFIED:"対応未確認で停止"}[d.status]}。計算済み ${d.point_runs.length}/${d.point_results.length} 点。`;
+  const body=$("tracked-execution-points").querySelector("tbody");body.replaceChildren();
+  for (const point of d.point_results) {
+    const row=document.createElement("tr");
+    for (const value of [point.index,point.value,({INITIAL:"初期点",PASS:"確認済み",UNVERIFIED:"未確認",NOT_COMPUTED:"未計算"})[point.status],
+      point.current_mode_ids === null ? "未計算" : point.current_mode_ids.map(id=>id ?? "個別ID未確定").join(", ")]) {
+      const cell=document.createElement("td");cell.textContent=value;row.append(cell);
+    }
+    body.append(row);
+  }
+  $("tracked-execution-request").value=JSON.stringify(d.request,null,2);
+  $("tracked-execution-diagnostics").textContent=JSON.stringify({identity_groups:d.history?.current_identity_groups ?? null,
+    stop_reason:d.history?.stop_reason ?? null,last_correspondence:d.history?.steps.at(-1)?.tracking ?? null,point_runs:d.point_runs},null,2);
+  trackedExecutionButtons();
+}
+async function trackedExecutionAction(action,data) {
+  trackedExecutionBusy=true;trackedExecutionButtons();
+  try {
+    const response=await api(action,data);
+    if (response.document) showTrackedExecution(response);
+    else {$("tracked-execution-job").textContent=`追跡付きStudyを開始しました: ${response.id}。計算一覧から中止・結果表示できます。`;await refreshJobs();}
+    return response;
+  } finally {trackedExecutionBusy=false;trackedExecutionButtons();}
+}
+async function openTrackedExecution(id) {
+  await trackedExecutionAction("tracked-study-result",{id});
+  $("tracked-execution").scrollIntoView({behavior:"smooth"});
+}
+bind("tracked-execution-prepare", async () => {
+  const study=await studyDefinition(), explicit=$("tracking-study-controls").value.trim();
+  $("tracked-execution-request").value=JSON.stringify({schema_version:1,study,initial_ids:JSON.parse($("tracking-study-ids").value),
+    step_controls:explicit ? JSON.parse(explicit) : study.values.slice(1).map(()=>trackingControls())},null,2);
+});
+bind("tracked-execution-start", async () => {
+  await trackedExecutionAction("start-tracked-study",{request:JSON.parse($("tracked-execution-request").value),...trackedPointLimit()});
+});
+bind("tracked-execution-resume", async () => {
+  await trackedExecutionAction("resume-tracked-study",{document:trackedExecutionResult.serialized,...trackedPointLimit()});
+});
+bind("tracked-execution-save", () => download("tracked-study-checkpoint.json",trackedExecutionResult.serialized));
+$("tracked-execution-open").addEventListener("change",async event => {
+  const file=event.target.files[0];if (!file) return;
+  try {$("error").hidden=true;await trackedExecutionAction("replay-tracked-study",{document:await file.text()});}
+  catch(e) {failure(e);}
+  finally {event.target.value="";}
+});
+trackedExecutionButtons();

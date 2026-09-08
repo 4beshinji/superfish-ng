@@ -350,6 +350,21 @@
           <table id="tracking-matches"><thead><tr><th>ID・ID集合</th><th>対応の種類</th><th>現在の周波数順位</th><th>周波数 [MHz]</th><th>最小重なり</th></tr></thead><tbody></tbody></table>
           <details><summary>未確認の理由・写像・クラスタ診断</summary><pre id="tracking-diagnostics"></pre></details>
         </section>
+        <section id="tracked-execution">
+          <h2>追跡しながらStudyを計算する</h2>
+          <p class="hint">下のStudy設定と上の初期ID・追跡設定を取り込み、入力を確認して開始します。未確認の対応で停止し、後続点は計算しません。</p>
+          <button id="tracked-execution-prepare">現在のStudy・追跡設定を取り込む</button>
+          <label>計算するStudyと追跡設定（JSON）<textarea id="tracked-execution-request" rows="6" placeholder="設定を取り込むか、追跡付きStudyのrequest JSONを入力"></textarea></label>
+          <label>今回新たに計算する点数（空欄なら最後まで）<input id="tracked-execution-limit" type="number" min="1" step="1" /></label>
+          <div class="actions"><button id="tracked-execution-start">追跡付きStudyを開始</button><button id="tracked-execution-resume" disabled>確認済みの続きから再開</button></div>
+          <p id="tracked-execution-job" role="status"></p>
+          <label class="file">チェックポイントを開いて再検証<input id="tracked-execution-open" type="file" accept=".json" /></label>
+          <button id="tracked-execution-save" disabled>検証済みチェックポイントを保存</button>
+          <p id="tracked-execution-status" role="status">計算結果はまだ開いていません。</p>
+          <p class="hint">表示は最後に検証した結果です。再開は保存文書のID・閾値・Studyを使用し、入力欄の編集を反映しません。元の保存先が必要です。全点の対応確認は物理的収束の保証ではありません。</p>
+          <table id="tracked-execution-points"><thead><tr><th>点（0始まり）</th><th>パラメータ値</th><th>追跡状態</th><th>個別ID</th></tr></thead><tbody></tbody></table>
+          <details><summary>ID集合・未確認の理由・保存先</summary><pre id="tracked-execution-diagnostics"></pre></details>
+        </section>
         <section id="studies">
           <div class="section-title">
             <span>04</span>

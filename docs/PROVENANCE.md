@@ -1,5 +1,37 @@
 # 独立実装・情報来歴
 
+## D01追跡付きStudyのブラウザー操作 — 2026-09-08
+
+直前基準2c23365。共通JobManagerへ開始/結果/再開/保存再検証のGUI APIを接続。
+通常Study欄と追跡設定からrequestを作成し、JSONを確認して開始できる。
+計算一覧で中止・結果表示、点数上限、初点だけのPAUSED、部分空間の個別ID未確定、
+未確認後のNOT_COMPUTEDを表示する。追跡Jobを個別結果の比較欄へ混ぜない。
+再開は検証済みの元JSON文字列を用い、編集欄からID・閾値を差し替えない。
+COMPLETE/UNVERIFIEDでは再開を無効にし、最後に検証した結果を保持する。
+
+変更前480件中478合格・2 skip（135.155秒）。未実装GUI APIのテスト読込失敗を確認後、
+開始/結果/文字列再検証/再開、厳密入力と改変、未確認/個別Job拒否の3テストPASS（2.354秒）。
+最終483件中481合格・2 skip（139.217秒）。
+`out/validation-tracked-execution-gui-final-20260908` PASS。seed周波数差ゼロ、
+RF/エネルギー相対差最大8.881784197001248e-16。FEM・基準・許容差変更なし。
+
+`out/d01-tracked-gui-final-20260908`で実ワーカーの解析円筒縮退と集合再開を再検証。
+解析周波数差最大5.613031772924436e-6、未確認後の3点目未計算を確認。
+最終実Chromeは`out/browser-tracked-execution-final-20260908`の11操作、
+既存比較/履歴は`out/browser-tracked-execution-final-pair-20260908`の8操作がPASS。
+両方とも外部要求0。tracked-execution.pngで入力欄と点状態表を画像確認した。
+標準/独立/両ブラウザーのsource hashは最終コードと一致。検証用GUIは停止済み。
+
+初回`out/browser-tracked-execution-20260908`はファイル読込完了前に検証スクリプトが
+入力欄を参照してFAIL。復元された値を待つよう修正し、recheck記録で10操作PASS。
+その画像で新規JSON入力欄が狭いことを検出し、既存textareaスタイルを適用。
+最終は入力幅も含め11操作と標準validateを再実行した。初回FAILと表示修正前の記録も保持する。
+
+新規外部資料・依存・legacy参照なし。Wine・hosted CIは今回未実行。
+中止/失敗Jobの途中文書は保存ファイルを再検証して開けるが、一覧からの自動選択は未実装。
+適応的点追加、tune、多対多/個別枝回復、接続変更を伴う再メッシュ写像、電源断回復保証は残る。
+親課題区分は8受入・3進行中・21未受入・拡張候補1のまま。計画全体は継続する。
+
 ## D01追跡付きStudyのJobManager接続 — 2026-09-08
 
 直前基準7dd3431。JobManager.start_tracked_studyとtracked_study_jobs.pyを追加。
