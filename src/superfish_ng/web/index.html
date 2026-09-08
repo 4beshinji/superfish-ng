@@ -420,8 +420,8 @@
         </section>
         <section id="adaptive-refinement">
           <h2>同じモードを追跡してメッシュを細分する</h2>
-          <p class="hint">真空・軸接続m=0 TMの固定した直線要素領域（P1/P2）を細分します。二次曲線幾何の局所細分には未対応です。各水準で全個別IDを確認し、対象IDの周波数・R/Q・Gを別々に判定します。</p>
-          <label>確認方式<select id="refine-version"><option value="2">局所候補の後に全域細分を最低2回（版2・親子メッシュ内積追跡）</option><option value="1">局所細分の差だけで判定（版1・同一領域標本追跡）</option></select></label>
+          <p class="hint">真空・軸接続m=0 TMの固定した直線要素領域（P1/P2）を細分します。二次曲線幾何の局所細分には未対応です。各水準で全個別IDを確認し、対象IDの周波数・R/Q・Gを別々に判定します。版3は電場・磁場ピーク比の区間変化も含めます。再入角・未確認の境界接続・曲線の弦近似は版3では受理しません。</p>
+          <label>確認方式<select id="refine-version"><option value="3">ピーク比も含めて全域細分を最低2回確認（版3・正確な多角形）</option><option value="2">局所候補の後に全域細分を最低2回（版2・親子メッシュ内積追跡）</option><option value="1">局所細分の差だけで判定（版1・同一領域標本追跡）</option></select></label>
           <div class="grid">
             <label>残差指標の選択割合（0より大きく1以下）<input id="refine-bulk" type="number" step="any" value="0.5" /></label>
             <label>水準上限（初回を含む）<input id="refine-max-levels" type="number" min="3" step="1" value="8" /></label>
@@ -430,6 +430,8 @@
             <label>周波数の相対変化の許容値<input id="refine-frequency" type="number" step="any" value="0.0001" /></label>
             <label>R/Qの相対変化の許容値<input id="refine-rq" type="number" step="any" value="0.005" /></label>
             <label>Gの相対変化の許容値<input id="refine-g" type="number" step="any" value="0.005" /></label>
+            <label>電場ピーク比 Epk/Eacc の相対変化上界の許容値（版3）<input id="refine-epk" type="number" step="any" value="0.01" /></label>
+            <label>磁場ピーク比 Bpk/Eacc の相対変化上界の許容値（版3）<input id="refine-bpk" type="number" step="any" value="0.01" /></label>
             <label>追跡の最小重なり<input id="refine-overlap" type="number" step="any" value="0.95" /></label>
             <label>追跡の割当差の下限<input id="refine-margin" type="number" step="any" value="0.05" /></label>
             <label>縮退とみなす相対周波数差<input id="refine-gap" type="number" step="any" value="0.000001" /></label>
@@ -447,9 +449,10 @@
           <div class="actions"><button id="refine-save" disabled>検証済みチェックポイントを保存</button><button id="refine-open-field" disabled>表示中の最終水準の対象場・RFを開く</button></div>
           <p id="refine-status" role="status">計算結果はまだ開いていません。</p>
           <p id="refine-confirmation"></p>
-          <p class="hint">表示は最後に再検証した結果です。再開には保存された条件を使い、入力欄の編集を反映しません。計算一覧で中止できます。中止・失敗後は、そのジョブのexecution/checkpoint-NNN.jsonを開いて再検証してください。全域確認後も細分差は物理誤差上界ではなく、表面ピークは未評価です。</p>
-          <table id="refine-gates"><thead><tr><th>判定量</th><th>前の区間の相対変化</th><th>最後の区間の相対変化</th><th>許容値</th><th>2区間の判定</th></tr></thead><tbody></tbody></table>
+          <p class="hint">表示は最後に再検証した結果です。再開には保存された条件を使い、入力欄の編集を反映しません。計算一覧で中止できます。中止・失敗後は、そのジョブのexecution/checkpoint-NNN.jsonを開いて再検証してください。全域確認後も細分差は物理誤差上界ではありません。版1/版2の表面ピークは未評価です。版3のピーク上下界は連続離散場についての値です。</p>
+          <table id="refine-gates"><thead><tr><th>判定量</th><th>前の区間の相対変化（ピーク比は上界）</th><th>最後の区間の相対変化（ピーク比は上界）</th><th>許容値</th><th>2区間の判定</th></tr></thead><tbody></tbody></table>
           <table id="refine-levels"><thead><tr><th>水準</th><th>細分方式</th><th>三角形</th><th>自由度</th><th>対応</th><th>対象順位</th><th>周波数 [MHz]</th><th>R/Q = V²/(ωU) [Ω]</th><th>G [Ω]</th></tr></thead><tbody></tbody></table>
+          <table id="refine-peaks" hidden><caption>版3の連続離散ピーク比上下界</caption><thead><tr><th>水準</th><th>Epk/Eacc 下界</th><th>上界</th><th>Bpk/Eacc 下界 [mT/(MV/m)]</th><th>上界</th><th>元多角形診断</th></tr></thead><tbody></tbody></table>
           <details><summary>停止理由・品質・追跡・保存先</summary><pre id="refine-diagnostics"></pre></details>
         </section>
         <section id="affine-surface-convergence">

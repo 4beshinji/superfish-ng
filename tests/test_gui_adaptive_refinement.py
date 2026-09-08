@@ -81,3 +81,16 @@ class GuiAdaptiveRefinementTests(unittest.TestCase):
         self.assertEqual(list(self.root.glob('*/job.json')),[])
         first=self.wait(self.action('start-adaptive-refinement',request=raw,max_new_levels=1)['id'])
         self.assertEqual(first['document']['request'],self.request)
+
+    def test_version3_raw_start_resume_and_surface_evidence(self):
+        self.request=json.loads(Path('examples/adaptive_refinement/pillbox_surface_confirmed.json').read_text())
+        self.request['mode_id']='second'
+        first=self.wait(self.action('start-adaptive-refinement',request=json.dumps(self.request),max_new_levels=4)['id'])
+        self.assertEqual(first['document']['surface_status'],'NOT_CONFIRMED')
+        final=self.wait(self.action('resume-adaptive-refinement',document=first['serialized'])['id'])
+        self.assertEqual(final['document']['surface_status'],'TARGETS_MET')
+        self.assertEqual(self.action('replay-adaptive-refinement',document=final['serialized']),final)
+        self.assertEqual(final['document']['levels'][-1]['mode_index'],1)
+        bad=deepcopy(final['document']);bad['levels'][0]['surface']['intervals']['epk_over_eacc'][0]*=.5
+        with self.assertRaisesRegex(ValueError,'replay'):self.action('replay-adaptive-refinement',document=json.dumps(bad))
+        self.assertEqual(json.loads(final['serialized']),final['document'])

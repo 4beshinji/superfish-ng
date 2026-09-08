@@ -85,9 +85,9 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、N04ピーク比を含む適応停止追加後（直前基準 `7645883`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-08、N04版3適応停止GUI接続後（直前基準 `9cee5a4`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
 
-[版3の表面量を含む適応停止](docs/ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI統合・一般精度/効率は未完。
+[版3の表面量を含む適応停止](docs/ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。明示policyによる多対多のID集合継承とGUIでの方式選択・復元を追加。条件と残件は [追跡仕様](docs/MODE_TRACKING.md)。
 
 | 分野 | 現在の内容 |
@@ -200,7 +200,7 @@ G03全体は部分対応です。[要件と証拠の照合](docs/G03_ACCEPTANCE.
 `JobManager.start_tune`で別プロセス実行・取消し・確認済みチェックポイントからの再開も利用できます。GUIの「同じモードの周波数を調整する」から開始・保存・再開でき、成功後は調整対象の場・RFを開けます。
 一つの長さ/無次元変数で複数のprofile座標を連動させる指定にも対応します。
 半径調整の例は `examples/tuning/pillbox_radius.json` です。
-[選択要素の適合細分API](docs/MARKED_REFINEMENT.md)は、直線P1/P2の境界と旧場を保つ係数移送を返します。[残差指標と細分対象選択](docs/RESIDUAL_INDICATOR.md)を追加しました。[追跡付き適応計算](docs/ADAPTIVE_REFINEMENT.md)のf/RQ/G停止・保存再開・CLIも利用できます。版2では局所候補後に全域細分を最低2回行い、RF量を確認します。`JobManager.start_adaptive_refinement`で[別プロセス実行・取消し・再開](docs/ADAPTIVE_REFINEMENT_JOBS.md)も可能です。[GUI](docs/GUI_ADAPTIVE_REFINEMENT.md)からも開始・中止・保存再開・f/RQ/G判定表示・対象場の表示を利用できます。版3で表面量停止をAPI/CLI/JobManagerへ追加しました。版3 GUI・曲線局所細分は未実装です。
+[選択要素の適合細分API](docs/MARKED_REFINEMENT.md)は、直線P1/P2の境界と旧場を保つ係数移送を返します。[残差指標と細分対象選択](docs/RESIDUAL_INDICATOR.md)を追加しました。[追跡付き適応計算](docs/ADAPTIVE_REFINEMENT.md)のf/RQ/G停止・保存再開・CLIも利用できます。版2では局所候補後に全域細分を最低2回行い、RF量を確認します。`JobManager.start_adaptive_refinement`で[別プロセス実行・取消し・再開](docs/ADAPTIVE_REFINEMENT_JOBS.md)も可能です。[GUI](docs/GUI_ADAPTIVE_REFINEMENT.md)からも開始・中止・保存再開・f/RQ/G判定表示・対象場の表示を利用できます。版3で表面量停止をAPI/CLI/JobManagerへ追加しました。版3のGUI入力/表示/保存再開も利用できます。曲線局所細分は未実装です。
 一般形状の追跡・制約付き最適化は未完了です。
 [表面ピークの収束評価](docs/SURFACE_CONVERGENCE.md)をAPI/CLI/GUIへ追加しました。追跡済みの固定曲線幾何について、周波数・R/Q・G・ピーク比の細分差を別々に判定します。
 接線構築は `construct-tangent` → `export-constructed-case` → `solve` で実行できます。

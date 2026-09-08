@@ -1926,6 +1926,7 @@ tuningParameterMode();
 
 let refinementResult=null, refinementBusy=false, affineSurfaceResult=null, affineSurfaceBusy=false;
 const refinementQuantities=[['frequency_hz','周波数','frequency'],['r_over_q_accelerator_ohm','R/Q = V²/(ωU)','rq'],['geometry_factor_ohm','G','g']];
+const refinementPeaks=[['epk_over_eacc','Epk/Eacc','epk'],['bpk_over_eacc_mt_per_mv_per_m','Bpk/Eacc [mT/(MV/m)]','bpk']];
 function refinementButtons() {
   affineSurfaceButtons();
   for (const id of ['prepare','start','open']) $(`refine-${id}`).disabled=refinementBusy;
@@ -1933,7 +1934,10 @@ function refinementButtons() {
   $('refine-save').disabled=refinementBusy || !refinementResult;
   $('refine-open-field').disabled=refinementBusy || !refinementResult?.document.levels.at(-1)?.quantities;
 }
-function refinementVersion() {$('refine-order').disabled=$('refine-version').value==='2';}
+function refinementVersion() {
+  const version=Number($('refine-version').value);$('refine-order').disabled=version!==1;
+  for(const [, ,id] of refinementPeaks)$(`refine-${id}`).disabled=version!==3;
+}
 function refinementLimit() {
   if(!$('refine-limit').value.trim())return {};
   const n=number('refine-limit');if(!Number.isInteger(n)||n<1)throw Error('今回の水準上限は正の整数で指定してください');
@@ -1944,7 +1948,7 @@ function showRefinement(response) {
   const names={PAUSED:'一時停止・再開可能',TARGETS_MET:'指定した細分差を達成',UNVERIFIED:'個別ID未確認で停止',QUANTITY_UNVERIFIED:'正の有限な判定量を確認できず停止',LEVEL_LIMIT:'水準上限で停止',REFINEMENT_LIMIT:'要素数または最小角の制約で停止',TRACKING_BUDGET:'追跡の作業量上限で停止',ZERO_INDICATOR:'選択可能な残差指標がなく停止'};
   $('refine-status').textContent=`${d.status} — ${names[d.status]}。計算済み ${d.levels.length} 水準。対象ID: ${r.mode_id}`;
   const phase={initial:'初期',residual:'局所細分',uniform_confirmation:'全域確認'};
-  $('refine-confirmation').textContent=`版${r.schema_version}: ${r.schema_version===2 ? '全域確認 '+d.levels.filter(l=>l.refinement_kind==='uniform_confirmation').length+' 回（最低2回）' : '局所差のみ・全域確認なし'}。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'。' : ''} 表面ピーク: 未評価。物理誤差上界: なし。`;
+  $('refine-confirmation').textContent=`版${r.schema_version}: ${r.schema_version>=2 ? '全域確認 '+d.levels.filter(l=>l.refinement_kind==='uniform_confirmation').length+' 回（最低2回）' : '局所差のみ・全域確認なし'}。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'。' : ''} 表面ピーク: ${{UNASSESSED:'未評価',NOT_CONFIRMED:'全条件の確認未完',UNVERIFIED:'未確認',TARGETS_MET:'指定した区間変化を達成'}[d.surface_status]} (${d.surface_status})。物理誤差上界: なし。`;
   const display=v=>Number.isFinite(v) ? Number(v.toPrecision(9)) : '—';
   const row=(body,values)=>{const tr=document.createElement('tr');for(const value of values){const td=document.createElement('td');td.textContent=value;tr.append(td);}body.append(tr);};
   const body=$('refine-levels').querySelector('tbody');body.replaceChildren();
@@ -1959,6 +1963,18 @@ function showRefinement(response) {
     const changes=d.decision.changes ?? [],a=changes[0]?.[key],b=changes[1]?.[key];
     row(gates,[label,display(a?.relative_change),display(b?.relative_change),r.relative_tolerances[key],!a||!b ? '未評価' : a.passed&&b.passed ? '条件内':'未達']);
     $(`refine-${id}`).value=r.relative_tolerances[key];
+  }
+  const peakBody=$('refine-peaks').querySelector('tbody');peakBody.replaceChildren();$('refine-peaks').hidden=r.schema_version!==3;
+  if(r.schema_version===3) {
+    for(const [key,label,id] of refinementPeaks) {
+      const changes=d.decision.surface_changes ?? [],a=changes[0]?.[key],b=changes[1]?.[key];
+      row(gates,[label,display(a?.relative_change_upper_bound),display(b?.relative_change_upper_bound),r.surface_relative_tolerances[key],!a||!b ? '未評価' : a.passed&&b.passed ? '条件内':'未達']);
+      $(`refine-${id}`).value=r.surface_relative_tolerances[key];
+    }
+    for(const level of d.levels) {
+      const intervals=level.surface?.intervals;
+      row(peakBody,[level.index+1,...refinementPeaks.flatMap(([key])=>[display(intervals?.[key]?.[0]),display(intervals?.[key]?.[1])]),level.surface?.geometry_diagnostic.status ?? '個別ID未確認']);
+    }
   }
   $('refine-request').value=JSON.stringify(r,null,2);$('refine-version').value=r.schema_version;refinementVersion();
   for(const [id,key] of [['bulk','bulk_fraction'],['max-levels','max_levels'],['max-triangles','max_triangles'],['angle','minimum_angle_deg']])$(`refine-${id}`).value=r[key];
@@ -1982,13 +1998,14 @@ async function refinementAction(action,data) {
 async function openRefinement(id) {await refinementAction('adaptive-refinement-result',{id});$('adaptive-refinement').scrollIntoView({behavior:'smooth'});}
 bind('refine-prepare',async()=>{
   const project=await preview(),version=Number($('refine-version').value);
-  const controls={mapping:version===2 ? 'nested_affine':'same_domain',minimum_overlap:number('refine-overlap'),minimum_assignment_margin:number('refine-margin'),relative_cluster_gap:number('refine-gap'),minimum_relative_singular_value:number('refine-rank')};
+  const controls={mapping:version>=2 ? 'nested_affine':'same_domain',minimum_overlap:number('refine-overlap'),minimum_assignment_margin:number('refine-margin'),relative_cluster_gap:number('refine-gap'),minimum_relative_singular_value:number('refine-rank')};
   if(version===1)controls.sample_order=number('refine-order');
   const request={schema_version:version,case:project.case,initial_mesh:null,
     initial_ids:$('refine-ids').value.trim() ? JSON.parse($('refine-ids').value):Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`),
     mode_id:$('refine-mode-id').value,controls,bulk_fraction:number('refine-bulk'),max_levels:number('refine-max-levels'),max_triangles:number('refine-max-triangles'),minimum_angle_deg:number('refine-angle'),
     relative_tolerances:Object.fromEntries(refinementQuantities.map(([key,label,id])=>[key,number(`refine-${id}`)]))};
-  if(version===2)request.confirmation='uniform_two_steps';
+  if(version>=2)request.confirmation='uniform_two_steps';
+  if(version===3)request.surface_relative_tolerances=Object.fromEntries(refinementPeaks.map(([key,label,id])=>[key,number(`refine-${id}`)]));
   $('refine-request').value=JSON.stringify(request,null,2);
 });
 bind('refine-start',()=>refinementAction('start-adaptive-refinement',{request:$('refine-request').value,...refinementLimit()}));

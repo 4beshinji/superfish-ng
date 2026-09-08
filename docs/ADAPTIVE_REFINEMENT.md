@@ -1,6 +1,6 @@
 # N04 追跡付き直線要素の適応細分
 
-2026-09-08追記: [版3](ADAPTIVE_SURFACE_STOPPING.md)はピーク比区間を含む適応停止をAPI/CLI/JobManagerへ追加。以下の版1/版2の判定・保存契約は維持する。GUIの適応操作は版1/版2のみ。別途の直線表面評価は版3も全域確認条件付きで評価できる。
+2026-09-08追記: [版3](ADAPTIVE_SURFACE_STOPPING.md)はピーク比区間を含む適応停止をAPI/CLI/JobManagerへ追加。以下の版1/版2の判定・保存契約は維持する。[版3 GUI](GUI_ADAPTIVE_SURFACE_STOPPING.md)も接続済み。別途の直線表面評価は版3も全域確認条件付きで評価できる。
 
 ## 版2: 局所候補の後に全域細分で確認する
 

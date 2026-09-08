@@ -74,7 +74,7 @@ class AdaptiveSurfaceStoppingTests(unittest.TestCase):
                 with self.assertRaises(ValueError):execute_adaptive_refinement(bad,root/'bad')
                 self.assertFalse((root/'bad').exists())
 
-    def test_managed_resume_and_gui_scope(self):
+    def test_managed_resume_and_gui_replay(self):
         import time
         from superfish_ng.jobs import JobManager
         from superfish_ng.adaptive_refinement import read_adaptive_refinement
@@ -89,15 +89,11 @@ class AdaptiveSurfaceStoppingTests(unittest.TestCase):
                     time.sleep(.025)
                 self.fail('surface-confirmed job did not finish')
             r=request()
-            with self.assertRaisesRegex(ValueError,'version 3.*CLI'):
-                adaptive_refinement_response(manager,'start-adaptive-refinement',dict(request=r))
             identifier=manager.start_adaptive_refinement(r,max_new_levels=4)
             self.assertEqual(wait(identifier)['surface_status'],'NOT_CONFIRMED')
             first=read_adaptive_refinement(Path(temp)/identifier/'adaptive-refinement-results.json')
-            with self.assertRaisesRegex(ValueError,'version 3.*CLI'):
-                adaptive_refinement_response(manager,'replay-adaptive-refinement',dict(document=first))
+            self.assertEqual(adaptive_refinement_response(manager,'replay-adaptive-refinement',dict(document=first))['document'],first)
             identifier=manager.start_adaptive_refinement(r,checkpoint=first)
             state=wait(identifier);self.assertEqual(state['refinement_status'],'TARGETS_MET')
             self.assertEqual(state['surface_status'],'TARGETS_MET');self.assertEqual(state['numerical_validation'],'not_checked')
-            with self.assertRaisesRegex(ValueError,'version 3.*CLI'):
-                adaptive_refinement_response(manager,'adaptive-refinement-result',dict(id=identifier))
+            self.assertEqual(adaptive_refinement_response(manager,'adaptive-refinement-result',dict(id=identifier))['document']['surface_status'],'TARGETS_MET')

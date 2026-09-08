@@ -1,6 +1,6 @@
 # N04 適応細分のローカルワーカー
 
-2026-09-08追記: [版3](ADAPTIVE_SURFACE_STOPPING.md)はピーク比区間を含む適応停止をAPI/CLI/JobManagerへ追加。以下の版1/版2の判定・保存契約は維持する。GUIの適応操作は版1/版2のみ。別途の直線表面評価は版3も全域確認条件付きで評価できる。
+2026-09-08追記: [版3](ADAPTIVE_SURFACE_STOPPING.md)はピーク比区間を含む適応停止をAPI/CLI/JobManagerへ追加。以下の版1/版2の判定・保存契約は維持する。[版3 GUI](GUI_ADAPTIVE_SURFACE_STOPPING.md)も接続済み。別途の直線表面評価は版3も全域確認条件付きで評価できる。
 
 2026-09-08。既存のJobManagerへ`start_adaptive_refinement`を追加した。
 [適応計算](ADAPTIVE_REFINEMENT.md)の版1/版2要求を別のローカルPythonプロセスで実行する。
