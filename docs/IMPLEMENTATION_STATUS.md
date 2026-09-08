@@ -1,6 +1,6 @@
 # 実装・検証の現状
 
-確認日: 2026-09-08。N04全域RF確認・親子内積追跡追加後（直前製品基準 `b0a809e`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-08。N04適応計算JobManager接続後（直前製品基準 `d6064fb`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -19,7 +19,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 物理 | 真空、軸接続m=0 TM、PEC・平坦z端の電気/磁気対称 | TE、平面RF、内導体、複数材料、静的場は未実装 | [PHYSICS.md](PHYSICS.md)、solver.py |
 | 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否 | 追加物理を受理する契約ではない | [MODEL_CONTRACT.md](MODEL_CONTRACT.md) |
 | 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 穴・内導体・任意CADなし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
-| メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLIあり。物理誤差上界・表面量停止・曲線局所細分は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |
+| メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLI/JobManagerあり。物理誤差上界・表面量停止・曲線局所細分は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |
 | 固有値・場 | 実FEM、複数モード、残差/直交性/エネルギー検査、物理座標プローブ | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | solver.py、curved_solution.py、curved_sampling.py |
 | RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、曲線連続離散極値と角診断 | peak phasor・RQ二規約。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 表面収束評価 | 固定曲線P2の3水準・追跡ID・ピーク上下界によるf/RQ/G/ピーク比判定API/CLI/GUI | 幾何近似誤差/一般形状/直線要素/通常RF画面統合は残件。物理誤差上界ではない | [SURFACE_CONVERGENCE.md](SURFACE_CONVERGENCE.md) |
@@ -36,8 +36,9 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 589件中587合格・NGSolve参照環境専用2件skip。N04全域RF確認・親子内積追跡追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | N04全域RF確認・親子内積追跡追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-n04-rf-confirmation-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 596件中594合格・NGSolve参照環境専用2件skip。N04適応計算JobManager接続後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | N04適応計算JobManager接続後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-n04-adaptive-jobs-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| N04適応JobManager | 版1/版2×尺度1/2の部分実行・再開・管理器再生成、解析P2円筒f/RQ/Gと相似則PASS | out/n04-adaptive-jobs-initial-20260908、[仕様](ADAPTIVE_REFINEMENT_JOBS.md) |
 | N04適応独立検証 | 版2全域確認は円筒P1/P2のRF改善・相似則・内積独立検査PASS。P1解析RQ差約0.056%、ただし48069 DOF。折返しは上限停止。版1のFAILも保持 | out/n04-rf-confirmation-initial-20260908、[適応計算](ADAPTIVE_REFINEMENT.md) |
 | 曲線FEM | 球形独立参照、楕円/双曲線の3段階幾何近似・全6固定FEM比較・最終幾何間の場/RF比較PASS。初回FAIL保持 | [CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、out/validation-g03-native-geometry-separated-20260908 |
 | 接線候補 | 円/楕円/双曲線全体の四次式・根分離・接点再構成の独立8検査PASS。有限弧数値判定/明示選択G1接続の追加9検査PASS。有限弧所属/fractionと位置誤差上界を製品操作へ統合済み。固定直線と弧の追加7検査PASS。線分間フィレット追加7検査PASS。中心軌跡区間/特異性分割の追加6検査PASS。有限領域交点の追加7検査PASS。版5の有限弧フィレット追加6検査PASS、保存/Case/CLI/GUIへ統合。版6の直線・弧フィレット追加6検査PASS、同じ製品経路へ統合。弧端/退化の厳密特殊ケース診断API/CLIの追加9検査PASS。構築診断の別保存/CLI/GUI・再検証に追加5検査とChrome11操作PASS。最小子午面半径制約の追加6検査PASS、保存/鏡映/構築/GUIを確認。極端な尺度の曲率/半径の追加4検査PASS。一般分類と退化候補構築は未完 | [TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |

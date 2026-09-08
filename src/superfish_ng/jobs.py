@@ -77,6 +77,10 @@ def read_job(directory, verify=True):
             if manifest.get("kind") != state.get("kind"):
                 raise ValueError("tune job kind differs from completion manifest")
             required = {"tune-request.json", "tune-results.json"}
+        if manifest.get("kind") == "adaptive_refinement" or state.get("kind") == "adaptive_refinement":
+            if manifest.get("kind") != state.get("kind"):
+                raise ValueError("adaptive refinement job kind differs from completion manifest")
+            required = {"adaptive-refinement-request.json", "adaptive-refinement-results.json"}
         if not required.issubset(files):
             raise ValueError("completion manifest missing required output")
         for name, digest in files.items():
@@ -92,6 +96,9 @@ def read_job(directory, verify=True):
         if manifest.get("kind") == "tune":
             from .tuning_jobs import verify_tune_job
             verify_tune_job(directory, state, manifest)
+        if manifest.get("kind") == "adaptive_refinement":
+            from .adaptive_refinement_jobs import verify_adaptive_refinement_job
+            verify_adaptive_refinement_job(directory, state, manifest)
         if manifest.get("kind") in ("tracked_study", "adaptive_study"):
             from .tracked_study import read_tracked_study
             from .adaptive_study import read_adaptive_study
@@ -270,6 +277,11 @@ class JobManager:
         """Run tracked frequency tuning in an isolated local worker."""
         from .tuning_jobs import start_tune
         return start_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+    def start_adaptive_refinement(self, request, *, max_new_levels=None, checkpoint=None):
+        """Run adaptive FEM refinement in an isolated local worker."""
+        from .adaptive_refinement_jobs import start_adaptive_refinement
+        return start_adaptive_refinement(self, request, max_new_levels=max_new_levels, checkpoint=checkpoint)
 
     def start_tracked_study(self, request, *, max_new_points=None, checkpoint=None):
         """Run sequential tracked FEM points in an isolated local worker."""
