@@ -19,6 +19,42 @@ def rf_request():
 
 
 class CurvedRFAdaptiveTests(unittest.TestCase):
+    def test_pending_plan_is_private_and_rechecks_its_prefix(self):
+        from superfish_ng import curved_rf_adaptive_refinement as engine
+        r=rf_request()
+        with tempfile.TemporaryDirectory() as temp:
+            result=engine.execute(r,Path(temp)/'run',max_new_levels=2)
+            cache=engine._VerifiedRFPrefix()
+            first,_=engine.assemble(r,result['level_runs'],_cache=cache)
+            expected=deepcopy(first)
+            first['decision']['marked_cells'].append(999999)
+            with patch.object(engine,'next_plan',side_effect=AssertionError('pending plan must be reused')):
+                self.assertEqual(engine.assemble(r,result['level_runs'],_cache=cache)[0],expected)
+                with self.assertRaisesRegex(ValueError,'request changed'):
+                    engine.assemble(dict(r,bulk_fraction=.4),result['level_runs'],_cache=cache)
+                with self.assertRaisesRegex(ValueError,'ancestry changed'):
+                    engine.assemble(r,list(reversed(result['level_runs'])),_cache=cache)
+                path=Path(result['level_runs'][0])/'case.json';data=path.read_bytes()
+                path.write_bytes(data+b' ')
+                try:
+                    with self.assertRaisesRegex(ValueError,'sources changed'):
+                        engine.assemble(r,result['level_runs'],_cache=cache)
+                finally:path.write_bytes(data)
+                with patch.object(engine._VerifiedPrefix,'_check_implementation',side_effect=RuntimeError('implementation changed')):
+                    with self.assertRaisesRegex(RuntimeError,'implementation changed'):
+                        engine.assemble(r,result['level_runs'],_cache=cache)
+
+    def test_execution_reuses_the_verified_pending_rf_selection(self):
+        from superfish_ng import curved_rf_adaptive_refinement as engine
+        with tempfile.TemporaryDirectory() as temp:
+            with patch.object(engine,'curved_rf_goal_indicator',wraps=engine.curved_rf_goal_indicator) as indicator:
+                result=engine.execute(rf_request(),Path(temp)/'run',max_new_levels=3)
+            self.assertEqual(indicator.call_count,1)
+            self.assertEqual(result['levels'][2]['parent_event_index'],0)
+            self.assertEqual(result['levels'][2]['selection']['marked_parent_cells'],result['levels'][2]['marked_cells'])
+            with patch('superfish_ng.curved_solution.eigsh',side_effect=AssertionError('replay must not solve')):
+                self.assertEqual(replay_adaptive_refinement(result),result)
+
     def test_strict_request_and_event_budget(self):
         r=rf_request();self.assertEqual(_request(r).geometry_order,2)
         for bad in (dict(r,selection='implicit'),dict(r,max_levels=2),dict(r,confirmation='none')):

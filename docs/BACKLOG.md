@@ -1,5 +1,7 @@
 # 実装バックログ
 
+RFA実行内共有: [次計画の共有](RF_ADAPTIVE_PENDING_PLAN.md)で実3イベントのRF選択2→1回を確認。旧版のincremental checkpoint全文書一致、source/request/祖先/実装の変更拒否を受入条件とする。公開再検証は維持。表面だけ未達時の[明示的一様細分方針](RF_SURFACE_CONFIRMATION_PLAN.md)は未実装のRFA-6改善候補。
+
 RFA-5の[祖先ジョブ時間表示](GUI_RF_ADAPTIVE_COST.md)を実装。完了→再開・中止→再開の重複しない合算、欠測/外部出力の不明表示、実Chromeを受入条件とする。数値checkpointは変更しない。RFA-6の非球形/両尺度/全workflow費用は別途検証中。
 
 RFA-5のGUI入力・分岐/採用表示・対象場選択・保存・中止後再開を[Chrome 11項目と標準681件](GUI_RF_ADAPTIVE.md)で部分受入。次はRFA-6の非球形・両尺度・総費用比較、RFA-5の累積費用専用表示。親N04と全体計画は未完了。

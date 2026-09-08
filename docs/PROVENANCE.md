@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-09: [版5次計画の実行内共有](RF_ADAPTIVE_PENDING_PLAN.md)。自作旧実装fc76e64の当該モジュールをgit blobとhash一致で保存し、同じ自作native出力のincremental文書を比較した。永続checkpointの判断を信頼せず、実行内で一度導出した計画のみ再利用する。新しい外部資料・依存・legacy参照はない。[表面未達時の方針案](RF_SURFACE_CONFIRMATION_PLAN.md)は観測された停滞への未実装案。
+
 2026-09-09: [適応祖先ジョブの費用表示](GUI_RF_ADAPTIVE_COST.md)。既存自作JobManagerの経過時間をGUI応答へ合算し、中止時にも保存する。native祖先の所有者を現在の作業領域内で照合する独立実装。数値checkpoint・FEM・規約は不変。新規外部資料・依存・Wine実行はない。
 
 ## RF適応版5 GUI — 2026-09-09
