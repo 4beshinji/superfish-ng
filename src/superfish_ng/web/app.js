@@ -1388,3 +1388,98 @@ bind("probe-metadata", async () =>
     ),
   ),
 );
+
+
+// Construction is separate from the current project until explicit application.
+let tangentGeneration = 0, tangentResult = null;
+function clearTangent() {
+  tangentGeneration++;
+  tangentResult = null;
+  $("tangent-candidate").replaceChildren(new Option("候補を選択してください", ""));
+  $("tangent-table").tBodies[0].replaceChildren();
+  for (const id of ["tangent-candidate", "tangent-build", "tangent-save", "tangent-apply"]) $(id).disabled = true;
+  $("tangent-status").textContent = "要求を変更しました。接線候補を調べ直してください。";
+  $("tangent-diagnostics").textContent = "";
+}
+$("tangent-request").addEventListener("input", clearTangent);
+function showTangent(response) {
+  tangentResult = response;
+  const c = response.construction, report = c.enumeration;
+  const labels = {FORWARD:"順方向", OPPOSED:"逆向き（接続不可）", ZERO_LENGTH:"ゼロ長（接続不可）"};
+  $("tangent-table").tBodies[0].replaceChildren();
+  $("tangent-candidate").replaceChildren(new Option("候補を選択してください", ""));
+  report.candidates.forEach((candidate, index) => {
+    const row = document.createElement("tr");
+    const values = [index, ...candidate.contacts_zr_m.map(p=>p.map(v=>(v*1000).toPrecision(7)).join(", ")),
+                    (candidate.contact_distance_m*1000).toPrecision(7), labels[candidate.connection_direction]];
+    for (const value of values) {const cell=document.createElement("td");cell.textContent=value;row.append(cell);}
+    $("tangent-table").tBodies[0].append(row);
+    const option = new Option(`${index}: ${labels[candidate.connection_direction]}`, String(index));
+    option.disabled = candidate.connection_direction !== "FORWARD" || report.status !== "PASS";
+    $("tangent-candidate").append(option);
+  });
+  $("tangent-candidate").disabled = report.status !== "PASS";
+  if (c.candidate_index !== null) $("tangent-candidate").value = String(c.candidate_index);
+  $("tangent-build").disabled = $("tangent-candidate").value === "" || report.status !== "PASS";
+  $("tangent-save").disabled = false;
+  $("tangent-apply").disabled = c.status !== "CASE_VALIDATED";
+  $("tangent-status").textContent = c.status === "CASE_VALIDATED"
+    ? "閉輪郭と計算条件の検査に合格しました。編集画面へ適用できます。FEM精度は別途検証が必要です。"
+    : `${c.status === "UNVERIFIED" ? "未確認" : "候補表示"}: ${report.candidates.length}候補、${report.unresolved.length}件未確認。候補表示だけでは計算できません。`;
+  $("tangent-diagnostics").textContent = JSON.stringify({status:c.status, scope:c.scope, enumeration:report, joins:c.joins},null,2);
+}
+async function requestTangent(candidate = null) {
+  const source = $("tangent-request").value;
+  const generation = ++tangentGeneration;
+  tangentResult = null;
+  for (const id of ["tangent-build", "tangent-save", "tangent-apply"]) $(id).disabled = true;
+  let response;
+  try { response = await api("tangent", {document:source, candidate_index:candidate}); }
+  catch (error) { if (generation === tangentGeneration) throw error; else return; }
+  if (generation !== tangentGeneration || source !== $("tangent-request").value) return;
+  showTangent(response);
+}
+bind("tangent-enumerate", () => requestTangent());
+$("tangent-candidate").addEventListener("change", () => {
+  tangentGeneration++;
+  if (tangentResult) tangentResult = null;
+  $("tangent-save").disabled = $("tangent-apply").disabled = true;
+  $("tangent-build").disabled = $("tangent-candidate").value === "";
+  $("tangent-status").textContent = "候補を変更しました。選択した接線で閉輪郭を検査してください。";
+});
+bind("tangent-build", () => {
+  if ($("tangent-candidate").value === "") throw Error("接線候補を明示的に選択してください");
+  return requestTangent(Number($("tangent-candidate").value));
+});
+$("tangent-open").addEventListener("change", async event => {
+  clearTangent();
+  const generation = tangentGeneration;
+  try {
+    const file = event.target.files[0]; if (!file) return;
+    const source = await file.text();
+    if (generation !== tangentGeneration) return;
+    const parsed = JSON.parse(source);
+    if (Object.hasOwn(parsed, "request_sha256")) {
+      const response = await api("replay-tangent", {document:source});
+      if (generation !== tangentGeneration) return;
+      $("tangent-request").value = JSON.stringify(response.construction.request,null,2);
+      showTangent(response);
+    } else {
+      $("tangent-request").value = source;
+      await requestTangent().catch(failure);
+    }
+  } catch (error) { if (generation === tangentGeneration) failure(error); }
+  finally { event.target.value = ""; }
+});
+bind("tangent-save", () => {
+  if (!tangentResult) throw Error("構築要求を調べ直してください");
+  download("tangent-construction.json", tangentResult.serialized);
+});
+bind("tangent-apply", () => {
+  if (!tangentResult?.preview || tangentResult.construction.status !== "CASE_VALIDATED") throw Error("閉輪郭の検査が必要です");
+  const p = tangentResult.preview;
+  applyProject(p.project);
+  drawOutline(p.outline_zr_m,p.outline_closed,p.geometry_approximation);
+  markDirty();
+  $("tangent-status").textContent = "検査済み形状と条件を編集画面へ適用しました。計算または入力保存へ進めます。";
+});

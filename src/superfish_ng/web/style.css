@@ -293,3 +293,7 @@ input[aria-invalid="true"] {
   border: 2px solid #b33c24;
   background: #fff5ef;
 }
+
+#tangent-request { width: 100%; box-sizing: border-box; resize: vertical; font-family: monospace; }
+#tangent-diagnostics { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow: auto; }
+#tangent-table { font-size: 0.8rem; }

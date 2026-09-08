@@ -107,6 +107,21 @@
               step="any"
           /></label>
         </div>
+        <details id="tangent-panel">
+          <summary>円錐曲線の共通接線を構築</summary>
+          <p>構築要求または保存した構築結果を開き、接点を確認して候補を選択してください。2つのPEC弧を切り詰めて直線で接続します。</p>
+          <label class="file">構築ファイルを開く<input id="tangent-open" type="file" accept=".json" /></label>
+          <label>構築要求 [SI単位]<textarea id="tangent-request" rows="8" spellcheck="false" aria-describedby="tangent-status"></textarea></label>
+          <button id="tangent-enumerate">接線候補を調べる</button>
+          <p id="tangent-status" role="status">構築要求を読み込んでください。</p>
+          <table id="tangent-table"><thead><tr><th>候補</th><th>第1接点 (z,r) [mm]</th><th>第2接点 (z,r) [mm]</th><th>長さ [mm]</th><th>接続方向</th></tr></thead><tbody></tbody></table>
+          <label>接線候補<select id="tangent-candidate" disabled><option value="">候補を選択してください</option></select></label>
+          <button id="tangent-build" disabled>選択した接線で閉輪郭を検査</button>
+          <button id="tangent-save" disabled>構築結果を保存</button>
+          <button id="tangent-apply" disabled>検査済み形状と条件を編集画面へ適用</button>
+          <p>端点付近・探索未完了は未確認です。逆向き・ゼロ長の候補では接続できません。構築要求を編集すると選択と検査結果を解除します。</p>
+          <details><summary>構築診断</summary><pre id="tangent-diagnostics"></pre></details>
+        </details>
         <details>
           <summary>繰り返しと端部の組立</summary>
           <p class="hint">

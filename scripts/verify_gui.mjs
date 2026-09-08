@@ -902,6 +902,65 @@ try {
     const shot=await call("Page.captureScreenshot",{},sessionId);
     await writeFile(out+"/curved-reflection.png",Buffer.from(shot.data,"base64"));
   }
+  if (args["--tangent-request"]) {
+    const loadFile = async (selector, filename) => {
+      const {root}=await call("DOM.getDocument",{},sessionId);
+      const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector},sessionId);
+      await call("DOM.setFileInputFiles",{nodeId,files:[resolve(filename)]},sessionId);
+    };
+    await ev('document.querySelector("#tangent-panel").open=true');
+    const oldCase=await ev("collect().case");
+    await loadFile("#tangent-open",args["--tangent-request"]);
+    await wait('tangentResult?.construction.status === "CANDIDATES"');
+    if (!await ev('document.querySelector("#tangent-apply").disabled && document.querySelector("#tangent-candidate").value === ""')) throw Error("tangent candidate was automatically selected or applied");
+    if (!isDeepStrictEqual(oldCase,await ev("collect().case"))) throw Error("tangent preview changed current case");
+    report.checks.push({operation:"tangent candidates preserve project and require explicit selection",passed:true});
+    await click("#tangent-candidate");
+    for (const key of ["ArrowDown","Enter"]) {
+      const code=key==="ArrowDown"?40:13;
+      for (const type of ["keyDown","keyUp"]) await call("Input.dispatchKeyEvent",{type,key,code:key,windowsVirtualKeyCode:code},sessionId);
+    }
+    await wait('document.querySelector("#tangent-candidate").value === "0"');
+    await click("#tangent-build");
+    await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
+    const built=await ev("tangentResult.construction");
+    await click("#tangent-save");
+    let saved;
+    for (let n=0;n<100;n++) {
+      try {saved=JSON.parse(await readFile(out+"/downloads/tangent-construction.json","utf8"));break;} catch {}
+      await sleep(100);
+    }
+    if (!isDeepStrictEqual(saved,built)) throw Error("saved tangent document differs from displayed construction");
+    await fill("#tangent-request",JSON.stringify(built.request));
+    if (!await ev('!tangentResult && document.querySelector("#tangent-apply").disabled && document.querySelector("#tangent-save").disabled')) throw Error("request edit retained stale construction");
+    report.checks.push({operation:"explicit tangent selection, closure check, download and edit invalidation",passed:true});
+    await loadFile("#tangent-open",out+"/downloads/tangent-construction.json");
+    await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
+    await click("#tangent-apply");
+    if (!isDeepStrictEqual(await ev("collect().case.geometry"),built.case.geometry)) throw Error("applied tangent geometry differs from saved case");
+    await click("#preview");
+    await wait('document.querySelector("#shape polygon") && collect().case.geometry.type === "curved_contour"');
+    const before=await ev('document.querySelectorAll("#jobs .job").length');
+    await click("#run");
+    await wait(`document.querySelectorAll("#jobs .job").length>${before}`);
+    await wait('document.querySelector("#jobs .job strong").textContent.startsWith("計算完了")',120000);
+    await click("#jobs .job button");
+    await wait(`currentResult?.result?.case?.name === ${JSON.stringify(built.case.name)} && !document.querySelector("#field-image").hidden`,60000);
+    const computed=await ev("currentResult.result");
+    if (!isDeepStrictEqual(computed.case.geometry,built.case.geometry)) throw Error("GUI solve lost constructed geometry");
+    report.checks.push({operation:"saved tangent replay, explicit apply, FEM solve and saved plot",frequency_hz:computed.modes[0].frequency_hz,passed:true});
+    const corrupt=structuredClone(built);corrupt.case.rf.normalization_j*=2;
+    await writeFile(out+"/corrupt-construction.json",JSON.stringify(corrupt));
+    await loadFile("#tangent-open",out+"/corrupt-construction.json");
+    await wait('!document.querySelector("#error").hidden && document.querySelector("#error").textContent.includes("replay")');
+    if (!await ev('document.querySelector("#tangent-apply").disabled')) throw Error("corrupt tangent replay left apply enabled");
+    report.checks.push({operation:"modified saved construction rejected with apply disabled",passed:true});
+    await loadFile("#tangent-open",out+"/downloads/tangent-construction.json");
+    await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
+    await ev('document.querySelector("#error").hidden=true;document.querySelector("#tangent-panel").scrollIntoView({block:"start",behavior:"instant"})');
+    const shot=await call("Page.captureScreenshot",{},sessionId);
+    await writeFile(out+"/tangent-construction.png",Buffer.from(shot.data,"base64"));
+  }
   await ev("document.activeElement?.blur()");
   await wait("(window.scrollTo({top:0,behavior:'instant'}), window.scrollY===0)");
   const screenshot = await call("Page.captureScreenshot", {}, sessionId);

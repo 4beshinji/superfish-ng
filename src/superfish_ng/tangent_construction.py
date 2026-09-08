@@ -108,7 +108,11 @@ def read_construction(path):
     Exact JSON replay targets this implementation/environment. It is not an
     authenticity signature; a changed request can produce a new valid document.
     """
-    document = parse_json(Path(path).read_text(encoding='utf-8'))
+    return replay_construction(parse_json(Path(path).read_text(encoding='utf-8')))
+
+
+def replay_construction(document):
+    """Validate an in-memory saved document using the same replay as file import."""
     keys(document, ('schema_version', 'software_version', 'request', 'request_sha256', 'candidate_index',
                     'enumeration', 'joins', 'case', 'status', 'scope'),
          ('schema_version', 'software_version', 'request', 'request_sha256', 'candidate_index',

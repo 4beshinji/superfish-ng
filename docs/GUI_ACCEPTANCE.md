@@ -1,5 +1,22 @@
 # 汎用GUI・共通入出力の受入記録
 
+## G03接線構築GUI追加 — 2026-09-08
+
+out/gui-tangent-browser-final-20260908/report.jsonで7操作PASS、外部要求0、実行中ソース変更なし。
+既存の寸法入力/通常FEM・場表示/不正値保持に加え、接線候補表示と現在Case不変、
+明示候補選択/閉輪郭検査/保存/要求編集時の解除、保存再読込/明示適用/FEM/場表示、
+保存Case改変の拒否を実Chromeで確認した。tangent-construction.pngも表示確認済み。
+GUI合成カプセルの基本周波数1170098360.3437803 Hz。精度収束/旧版照合ではない。
+
+初回out/gui-tangent-browser-20260908は、ブラウザーJSON再生成による数値表記変更で
+再構築照合に失敗した。サーバーの保存文字列をそのままダウンロードする修正後に再検証。
+照合/数値閾値の緩和なし。構築要求はSIのJSONで編集し、GUI操作がフィレットや弧端認証を追加するわけではない。
+
+```bash
+node scripts/verify_gui.mjs --url '起動URL' --out out/gui-tangent-NEW --tangent-request examples/construction/capsule_request.json
+```
+
+
 2026-09-06。[計画](GUI_IO_PLAN.md)のG0〜G5、A1〜A8を対象とする。
 状態: 技術的受入PASS。操作ガイドは[GUI_GUIDE.md](GUI_GUIDE.md)。
 

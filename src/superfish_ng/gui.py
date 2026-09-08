@@ -40,6 +40,18 @@ def preview_document(project):
     return result
 
 
+def tangent_document(document, *, candidate_index=None, replay=False):
+    """Shared GUI response; never apply an unfinished template to a project."""
+    from .tangent_construction import construct_tangent_case, replay_construction
+    document = parse_json(document) if isinstance(document, str) else document
+    construction = (replay_construction(document) if replay else
+                    construct_tangent_case(document, candidate_index=candidate_index))
+    preview = (preview_document(Project.from_dict(construction["case"]))
+               if construction["case"] is not None else None)
+    return {"construction": construction, "preview": preview,
+            "serialized": json.dumps(construction, indent=2, ensure_ascii=False, allow_nan=False)+"\n"}
+
+
 def create_server(workspace, port=0):
     from importlib.util import find_spec
 
@@ -118,6 +130,8 @@ def create_server(workspace, port=0):
                 action = data.get("action")
                 allowed = {
                     "normalize": ["document"],
+                    "tangent": ["document", "candidate_index"],
+                    "replay-tangent": ["document"],
                     "assemble": ["case", "sections", "reflect_full"],
                     "start": ["document"],
                     "jobs": [],
@@ -139,6 +153,10 @@ def create_server(workspace, port=0):
                 if action not in allowed:
                     raise ValueError("unknown operation")
                 keys(data, ["action", *allowed[action]], ["action"], "request")
+                if action in ("tangent", "replay-tangent"):
+                    return self.reply(tangent_document(data["document"],
+                                                       candidate_index=data.get("candidate_index"),
+                                                       replay=action == "replay-tangent"))
                 if action == "normalize":
                     project = (
                         load_document(data["document"])
