@@ -51,6 +51,8 @@ class Study:
             raise ValueError("study values must contain at least two finite numbers")
         if not isinstance(self.parameter, str):
             raise ValueError("study parameter must be a string")
+        if self.project.case.curved_refinement_steps:
+            raise ValueError('studies cannot reinterpret curved_refinement_steps cell indices on changed meshes; remove the history and construct a separate refinement study')
         if self.kind == "mesh_convergence":
             if (
                 self.parameter != "mesh_scale"

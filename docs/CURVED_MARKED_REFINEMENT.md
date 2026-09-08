@@ -53,7 +53,8 @@ minimum_corner_angle_deg（既定5度）は子の各頂点で写像の接線か�
 
 このAPIは空間の細分と係数移送であり、新たな固有値計算・誤差推定・モード追跡・停止判断は行わない。
 移送された旧場は細分後の固有対ではない。物理誤差上界やRF精度合格を返さない。
-Caseの局所細分履歴、native保存再構築、CLI/JobManager/GUI、曲線の適応停止への接続は次段階。
+後続で[Caseの局所細分履歴、native保存再構築、通常CLI](CURVED_REFINEMENT_HISTORY.md)を接続した。
+GUI履歴編集・履歴対応Study・曲線の適応停止は次段階。
 現在のCaseのcurved_refinement_levelsを局所細分の代用にして保存してはいけない。
 
 ## 検証

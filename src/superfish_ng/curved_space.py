@@ -114,4 +114,18 @@ def case_curved_space(case, mesh):
             raise ValueError(f'curved refinement level {level+1} exceeds max_triangles={limit}; reduce levels or explicitly increase the mesh limit')
         from .curved_refinement import refine_curved_space
         space = refine_curved_space(space).space
+    for index, step in enumerate(case.curved_refinement_steps, start=1):
+        try:
+            if step.kind == 'uniform':
+                if 4*len(space.geometry.cell_nodes) > limit:
+                    raise ValueError(f'uniform refinement exceeds max_triangles={limit}')
+                from .curved_refinement import refine_curved_space
+                space = refine_curved_space(space).space
+            else:
+                from .curved_marked_refinement import refine_marked_curved_space
+                space = refine_marked_curved_space(
+                    space, list(step.marked_cells), max_triangles=limit,
+                    minimum_corner_angle_deg=step.minimum_corner_angle_deg).space
+        except ValueError as exc:
+            raise ValueError(f'curved_refinement_steps step {index}: {exc}') from exc
     return space

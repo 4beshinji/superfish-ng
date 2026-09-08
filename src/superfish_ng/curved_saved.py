@@ -8,6 +8,7 @@ import numpy as np
 import scipy
 from . import __version__
 from .constants import C0, EPS0, MU0, TAU
+from .curved_refinement_steps import steps_from_dict, steps_to_dict
 from .curved_solution import CurvedSolution
 from .curved_space import case_curved_space
 from .curved_fem import assemble_curved
@@ -33,6 +34,8 @@ def field_space(solution):
                 dofs=len(solution.u), quadrature_order=solution.quadrature_order)
     if solution.case.curved_refinement_levels:
         result["curved_refinement_levels"] = solution.case.curved_refinement_levels
+    if solution.case.curved_refinement_steps:
+        result['curved_refinement_steps'] = steps_to_dict(solution.case.curved_refinement_steps)
     return result
 
 
@@ -66,6 +69,11 @@ def write_curved_run(case, solution, directory):
         result['geometry_approximation'].update(
             representation='restrictions of the initial quadratic geometry; no analytic curve reprojection',
             curved_refinement_levels=case.curved_refinement_levels,
+            curve_parameters='ancestral intervals only; refined points lie on the initial quadratic boundary')
+    if case.curved_refinement_steps:
+        result['geometry_approximation'].update(
+            representation='ordered restrictions of the initial quadratic geometry; no analytic curve reprojection',
+            curved_refinement_steps=steps_to_dict(case.curved_refinement_steps),
             curve_parameters='ancestral intervals only; refined points lie on the initial quadratic boundary')
     if solution.reflection_source_case is not None:
         source = solution.reflection_source_case
@@ -108,6 +116,11 @@ def read_curved_run(directory, case, results):
         if (not isinstance(declaration, dict) or type(declaration.get('curved_refinement_levels')) is not int
                 or declaration['curved_refinement_levels'] != case.curved_refinement_levels):
             raise ValueError('invalid saved curved refinement declaration')
+    if case.curved_refinement_steps:
+        required.add('curved_refinement_steps')
+        if (not isinstance(declaration, dict)
+                or steps_from_dict(declaration.get('curved_refinement_steps')) != case.curved_refinement_steps):
+            raise ValueError('invalid saved curved refinement history')
     if (not isinstance(declaration, dict)
             or set(declaration) != required
             or any(type(declaration[key]) is not int for key in
@@ -138,6 +151,13 @@ def read_curved_run(directory, case, results):
         space = reflection.space
     else:
         space = case_curved_space(case, mesh_from_dict(case, mesh_data))
+    if case.curved_refinement_steps:
+        approximation = results.get('geometry_approximation', {})
+        if (not isinstance(approximation, dict)
+                or approximation.get('representation') != 'ordered restrictions of the initial quadratic geometry; no analytic curve reprojection'
+                or steps_from_dict(approximation.get('curved_refinement_steps')) != case.curved_refinement_steps
+                or approximation.get('curve_parameters') != 'ancestral intervals only; refined points lie on the initial quadratic boundary'):
+            raise ValueError('invalid saved curved geometry refinement history')
     construction = REFLECTED_CONSTRUCTION if reflection is not None else DIRECT_CONSTRUCTION
     if results.get('field_construction') != construction:
         raise ValueError('invalid saved curved field construction')

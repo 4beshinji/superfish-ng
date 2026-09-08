@@ -1,12 +1,12 @@
 # 互換開発の作業分割 v0
 
-[曲線要素の局所適合細分](CURVED_MARKED_REFINEMENT.md)の空間/係数移送APIを追加。親の二次写像を保ち、共有辺・軸/対称拘束・品質/予算を検証する。Caseの局所履歴・native保存再構築・適応/CLI/GUI統合は未接続。
+[曲線要素の局所適合細分](CURVED_MARKED_REFINEMENT.md)を[Caseの順序付き履歴・native保存再構築](CURVED_REFINEMENT_HISTORY.md)へ接続。通常FEM/CLIと半領域鏡映の保存再検証を確認した。履歴対応Study・GUI編集・曲線適応停止は未接続。
 
 [通常RF結果の連続離散ピーク評価](RF_DISCRETE_PEAKS.md)をAPI/保存/CLI/GUIへ追加。直線P1/P2・二次曲線P2の上下界、元RF推定値、規格化、角診断を同じ画面で確認できる。単一メッシュの物理収束合格ではない。
 
 [版3の表面量を含む適応停止](ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 
-## 現在の状態 — 2026-09-08、N04曲線局所細分基盤追加後（直前基準 9af9cf6）
+## 現在の状態 — 2026-09-08、N04曲線局所履歴のnative統合後（直前基準 84a49e4）
 
 この一覧を現在の状態とし、以下の日付付き経過記録の「次は」「未接続」「実行中」より優先する。
 33親課題は以下の区分。受入は明記した範囲に限定し、課題数を互換率・工数消化率にしない。
@@ -14,7 +14,7 @@
 | 状態 | 件数 | 親課題と範囲 |
 |---|---:|---|
 | .S/.I/.V受入済み | 8 | C01、C02（初期AF部分集合）、O01（ローカル保存）、R01（native規約）、N01/N02（直線P2）、G01/G02（軸接続単一輪郭・自動メッシュ） |
-| 調査・実装進行中、親課題全体は未受入 | 6 | C00（対象版/必須集合未確定）、G03（曲線FEM等を部分受入、弧端/退化分類・全要件照合が残る）、D01（標本部分空間追跡・円筒/profile写像・明示メッシュ対応を部分実装）、D02（追跡付き1変数tuneと再開・細分判定API/CLI・JobManager・GUIを部分実装）、N03（通常RFの上下界評価API/保存/CLI/GUI、固定曲線幾何の追跡済み表面収束評価API/CLI/GUI、直線P1/P2の連続離散ピーク囲い込み・元多角形角診断・表面収束評価API/保存/CLI/GUI）、N04（曲線局所細分の基盤API、適合細分・係数移送・残差指標、追跡付きf/RQ/G適応停止・保存再開API/CLI/JobManager/GUI。版2全域確認で円筒P1のRF改善検査もPASS。版3のピーク比停止はAPI/CLI/JobManagerへ追加。一般形状/効率は未受入） |
+| 調査・実装進行中、親課題全体は未受入 | 6 | C00（対象版/必須集合未確定）、G03（曲線FEM等を部分受入、弧端/退化分類・全要件照合が残る）、D01（標本部分空間追跡・円筒/profile写像・明示メッシュ対応を部分実装）、D02（追跡付き1変数tuneと再開・細分判定API/CLI・JobManager・GUIを部分実装）、N03（通常RFの上下界評価API/保存/CLI/GUI、固定曲線幾何の追跡済み表面収束評価API/CLI/GUI、直線P1/P2の連続離散ピーク囲い込み・元多角形角診断・表面収束評価API/保存/CLI/GUI）、N04（曲線局所細分の基盤APIとCase履歴/native保存/CLI、適合細分・係数移送・残差指標、追跡付きf/RQ/G適応停止・保存再開API/CLI/JobManager/GUI。版2全域確認で円筒P1のRF改善検査もPASS。版3のピーク比停止はAPI/CLI/JobManagerへ追加。一般形状/効率は未受入） |
 | 親課題として未受入 | 18 | C03/C04、D03、P01〜P04、S01〜S05、O02、A01、V01/V02、L01/L02。既存プローブ/GUI/掃引や個別統合はあるが、各親課題の完了ではない |
 | 互換必須集合外の拡張候補 | 1 | X01。本v0の実装予定には組み込まない |
 
@@ -44,7 +44,7 @@ GUIの開始/中止/結果/保存/再開と最終対象モードの場表示も�
 第2版の長さ/無次元変数と明示倍率/オフセットで複数profile座標を同時更新する調整も追加。
 一般形状の自動写像、RF制約付き最適化は未完。詳細は[TUNING.md](TUNING.md)。
 N03の[表面収束評価](SURFACE_CONVERGENCE.md)は固定曲線幾何の3水準と追跡IDを検証し、f/RQ/G/ピーク比を別判定する。保存履歴/追跡済みStudyからのGUI評価・保存/再検証も追加。[直線P1/P2の連続離散ピーク囲い込み](AFFINE_SURFACE_EXTREMA.md)をAPI/保存/CLIへ追加。[直線表面収束評価](AFFINE_SURFACE_CONVERGENCE.md)と元多角形の角診断もAPI/保存/CLIへ追加。[直線評価GUI](GUI_AFFINE_SURFACE_CONVERGENCE.md)の評価/保存/再検証・別IDの対象場表示も追加。一般形状・幾何誤差は未完。直線の版3適応停止はAPI/CLI/JobManager/GUIへ統合。
-N04は[選択要素の適合細分](MARKED_REFINEMENT.md)を追加。既存辺分割を再利用し、品質上限とP1/P2移送・親対応を確認する。[残差指標と対象選択](RESIDUAL_INDICATOR.md)も追加。[追跡付きf/RQ/G適応停止・保存再開API/CLI](ADAPTIVE_REFINEMENT.md)を追加。版2全域確認と親子メッシュ内積追跡、[JobManager実行/取消し/再開](ADAPTIVE_REFINEMENT_JOBS.md)を追加し、独立円筒P1のRF改善検査はPASS。一般形状/効率受入は残る。[GUI](GUI_ADAPTIVE_REFINEMENT.md)の開始/中止・保存再開・個別差表示・対象場表示も追加。曲線局所細分の空間/係数移送APIを追加。保存/適応接続・一般精度/効率は未完。
+N04は[選択要素の適合細分](MARKED_REFINEMENT.md)を追加。既存辺分割を再利用し、品質上限とP1/P2移送・親対応を確認する。[残差指標と対象選択](RESIDUAL_INDICATOR.md)も追加。[追跡付きf/RQ/G適応停止・保存再開API/CLI](ADAPTIVE_REFINEMENT.md)を追加。版2全域確認と親子メッシュ内積追跡、[JobManager実行/取消し/再開](ADAPTIVE_REFINEMENT_JOBS.md)を追加し、独立円筒P1のRF改善検査はPASS。一般形状/効率受入は残る。[GUI](GUI_ADAPTIVE_REFINEMENT.md)の開始/中止・保存再開・個別差表示・対象場表示も追加。曲線局所細分のCase履歴とnative保存/CLIを追加。適応接続・一般精度/効率は未完。
 詳細は [最新引継ぎ](CODEX_HANDOFF.md)、[曲線要素](CURVED_ELEMENTS.md)、[接線構築](TANGENT_CONSTRUCTION.md)。
 
 最新の標準テスト件数・数値回帰は[実装状況](IMPLEMENTATION_STATUS.md)を参照。通常RFピークGUIのChrome13検査PASS。
@@ -377,3 +377,10 @@ G03部分受入（2026-09-08、幾何収束確定）: 追加倍率1,.0625,.01562
 G03部分進捗（2026-09-08、接線構築）: [共通接線の構築契約](TANGENT_CONSTRUCTION.md)を仕様化し、有理数Sturm実根分離基盤を実装。標準300合格・2 skip、標準回帰PASS。四次式/接点再構成・候補選択・Case/CLI/GUIは未実装。
 
 G03部分進捗（2026-09-08、接点再構成）: 円錐曲線全体の共通接線四次式・根分離・接点再構成を実装。独立8検査PASS、標準308合格・2 skip。有限弧の区間/枝/向き制限と切詰め・候補選択・Case/CLI/GUIは未実装。
+
+## N04曲線局所履歴の部分受入 — 2026-09-08
+
+S: [順序付き履歴](CURVED_REFINEMENT_HISTORY.md)のstrict入力・番号所属・予算・旧levels互換・鏡映の半領域出所を確定。
+I: Case/FEM/CLI、native保存再構築と履歴照合、Studyの誤適用拒否を実装。
+V: 追加4検査、円筒/楕円/双曲線の6 native結果、別密行列FEM、円筒五量と相似則はPASS。
+曲線適応停止/GUI履歴編集/履歴対応Study・一般形状の精度/効率は未受入。最終標準検証は最新引継ぎを参照。

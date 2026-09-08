@@ -82,6 +82,7 @@ class Case:
     curved_contour: object | None = None
     curve_chord_tolerance_m: float | None = None
     curve_chord_max_segments: int = 20000
+    curved_refinement_steps: tuple = ()
 
     def __post_init__(self):
         if self.curved_contour is not None:
@@ -113,6 +114,18 @@ class Case:
             raise ValueError('curved_refinement_levels must be a nonnegative integer')
         if self.curved_refinement_levels and self.geometry_order != 2:
             raise ValueError('curved_refinement_levels requires geometry_order=2')
+        from .curved_refinement_steps import CurvedRefinementStep
+        if type(self.curved_refinement_steps) is not tuple:
+            raise ValueError('curved_refinement_steps must be an immutable tuple')
+        for step in self.curved_refinement_steps:
+            if not isinstance(step, CurvedRefinementStep):
+                raise ValueError('curved_refinement_steps requires validated CurvedRefinementStep instances')
+            step.__post_init__()
+        if self.curved_refinement_steps:
+            if self.geometry_order != 2:
+                raise ValueError('curved_refinement_steps requires geometry_order=2')
+            if self.curved_refinement_levels:
+                raise ValueError('curved_refinement_steps conflicts with curved_refinement_levels; use uniform steps in the ordered history')
         if self.model is not None:
             from .model import Model
             if not isinstance(self.model, Model):
@@ -297,7 +310,7 @@ class Case:
             geometry_options = {'arcs': tuple((a['end_index'], a['radius_m'], a['direction']) for a in g['arcs']),
                                 'arc_chord_tolerance_m': g['chord_tolerance_m']}
         mesh, solver, rf = (data.get(k, {}) for k in ("mesh", "solver", "rf"))
-        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m", "contour_mesh", "geometry_order", "curved_refinement_levels"], [], "mesh")
+        keys(mesh, ["nr", "nz", "triangulation", "boundary_max_edge_m", "corner_max_edge_m", "corner_radius_m", "contour_mesh", "geometry_order", "curved_refinement_levels", "curved_refinement_steps"], [], "mesh")
         if 'contour_mesh' in mesh:
             from .mesh_controls import ContourMeshControls
             if data['schema_version'] != 3:
@@ -314,6 +327,11 @@ class Case:
             raise ValueError('mesh.geometry_order requires schema_version 3')
         if 'curved_refinement_levels' in mesh and (data['schema_version'] != 3 or mesh.get('geometry_order') != 2):
             raise ValueError('mesh.curved_refinement_levels requires v3 geometry_order=2')
+        if 'curved_refinement_steps' in mesh:
+            from .curved_refinement_steps import steps_from_dict
+            if data['schema_version'] != 3 or mesh.get('geometry_order') != 2:
+                raise ValueError('mesh.curved_refinement_steps requires v3 geometry_order=2')
+            mesh = dict(mesh, curved_refinement_steps=steps_from_dict(mesh['curved_refinement_steps']))
         keys(solver, ["modes", "element_order", "quadrature_order"], [], "solver")
         if "quadrature_order" in solver and (data["schema_version"]!=3 or mesh.get("geometry_order",1)!=2):
             raise ValueError('solver.quadrature_order requires v3 geometry_order=2')
@@ -363,6 +381,9 @@ class Case:
             data["solver"]["quadrature_order"]=self.quadrature_order
         if self.curved_refinement_levels:
             data["mesh"]["curved_refinement_levels"] = self.curved_refinement_levels
+        if self.curved_refinement_steps:
+            from .curved_refinement_steps import steps_to_dict
+            data['mesh']['curved_refinement_steps'] = steps_to_dict(self.curved_refinement_steps)
         if self.element_order != 1:
             data["solver"]["element_order"] = self.element_order
         if self.model is not None:
