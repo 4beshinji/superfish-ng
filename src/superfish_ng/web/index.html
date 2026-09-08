@@ -352,10 +352,16 @@
         </section>
         <section id="tracked-execution">
           <h2>追跡しながらStudyを計算する</h2>
-          <p class="hint">下のStudy設定と上の初期ID・追跡設定を取り込み、入力を確認して開始します。未確認の対応で停止し、後続点は計算しません。</p>
+          <p class="hint">下のStudy設定と上の初期ID・追跡設定を取り込み、入力を確認して開始します。通常は未確認で停止し、適応二分を指定すると上限まで中点を追加します。開始する方式はJSON内の設定で決まります。</p>
+          <label><input id="tracked-execution-adaptive" type="checkbox" /> 取り込む設定に適応二分を追加（幾何掃引）</label>
+          <div id="tracked-adaptive-settings" class="grid" hidden>
+            <label>最大二分深さ<input id="tracked-adaptive-depth" type="number" min="0" max="20" value="4" /></label>
+            <label>全体の最大比較回数<input id="tracked-adaptive-attempts-limit" type="number" min="1" value="16" /></label>
+            <label>追加区間の最小幅（変更パラメータと同じ単位）<input id="tracked-adaptive-step" type="number" min="0" step="any" value="0.000001" /></label>
+          </div>
           <button id="tracked-execution-prepare">現在のStudy・追跡設定を取り込む</button>
           <label>計算するStudyと追跡設定（JSON）<textarea id="tracked-execution-request" rows="6" placeholder="設定を取り込むか、追跡付きStudyのrequest JSONを入力"></textarea></label>
-          <label>今回新たに計算する点数（空欄なら最後まで）<input id="tracked-execution-limit" type="number" min="1" step="1" /></label>
+          <label>今回の処理上限（通常は点数、適応は比較回数。空欄なら最後まで）<input id="tracked-execution-limit" type="number" min="1" step="1" /></label>
           <div class="actions"><button id="tracked-execution-start">追跡付きStudyを開始</button><button id="tracked-execution-resume" disabled>確認済みの続きから再開</button></div>
           <p id="tracked-execution-job" role="status"></p>
           <label class="file">チェックポイントを開いて再検証<input id="tracked-execution-open" type="file" accept=".json" /></label>
@@ -363,6 +369,11 @@
           <p id="tracked-execution-status" role="status">計算結果はまだ開いていません。</p>
           <p class="hint">表示は最後に検証した結果です。再開は保存文書のID・閾値・Studyを使用し、入力欄の編集を反映しません。元の保存先が必要です。全点の対応確認は物理的収束の保証ではありません。</p>
           <table id="tracked-execution-points"><thead><tr><th>点（0始まり）</th><th>パラメータ値</th><th>追跡状態</th><th>個別ID</th></tr></thead><tbody></tbody></table>
+          <div id="tracked-adaptive-results" hidden>
+            <p id="tracked-adaptive-pending"></p>
+            <table id="tracked-adaptive-points"><thead><tr><th>計算点番号（0始まり）</th><th>パラメータ値</th><th>点の種類</th><th>採用状態</th></tr></thead><tbody></tbody></table>
+            <table id="tracked-adaptive-attempts"><thead><tr><th>比較番号（0始まり）</th><th>前の値</th><th>次の値</th><th>元目標番号</th><th>深さ</th><th>対応</th><th>判断</th><th>追加中点</th></tr></thead><tbody></tbody></table>
+          </div>
           <details><summary>ID集合・未確認の理由・保存先</summary><pre id="tracked-execution-diagnostics"></pre></details>
         </section>
         <section id="studies">

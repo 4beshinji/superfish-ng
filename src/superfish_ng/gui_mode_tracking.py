@@ -10,7 +10,7 @@ from .mode_tracking_history import start_mode_history,extend_mode_history,replay
 
 def _solution(manager,identifier):
     directory=manager.directory(identifier);state=read_job(directory)
-    if state['status']!='complete' or state.get('kind') in ('study','tracked_study'):
+    if state['status']!='complete' or state.get('kind') in ('study','tracked_study','adaptive_study'):
         raise ValueError('mode tracking requires a completed individual saved result; import a Study point first')
     return str((directory/'solution').resolve())
 
