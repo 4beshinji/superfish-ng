@@ -41,7 +41,7 @@
 
 1. 非球形両尺度報告は全五量・追跡・積分・幾何相似・source hashまでPASS。
    追加対照差対DOF/時間の図と完全な結果を保存し、この限定対照項目は完了した。
-2. [RF重み付き親要素選択](CURVED_RF_GOAL_INDICATOR.md)から実局所FEMまで接続し、3形状の一様対照差の減少を確認した。[実行内共有](CURVED_RF_GOAL_REUSE.md)で約1.9倍を観測した。[版5](CURVED_RF_ADAPTIVE_REFINEMENT.md)の分岐・保存再開・五量停止はAPI/CLI/JobManagerへ接続し、半球1尺度で停止・解析五量を確認。[GUI](GUI_RF_ADAPTIVE.md)の分岐/場選択/保存/中止後再開も確認。[祖先ジョブの観測時間](GUI_RF_ADAPTIVE_COST.md)を表示する。非球形/尺度・全workflow費用比較は別途検証中。
+2. [RF重み付き親要素選択](CURVED_RF_GOAL_INDICATOR.md)から実局所FEMまで接続し、3形状の一様対照差の減少を確認した。[実行内共有](CURVED_RF_GOAL_REUSE.md)で約1.9倍を観測した。[版5](CURVED_RF_ADAPTIVE_REFINEMENT.md)の分岐・保存再開・五量停止はAPI/CLI/JobManagerへ接続し、半球1尺度で停止・解析五量を確認。[GUI](GUI_RF_ADAPTIVE.md)の分岐/場選択/保存/中止後再開も確認。[祖先ジョブの観測時間](GUI_RF_ADAPTIVE_COST.md)を表示する。[明示方針の非球形/両尺度](CURVED_RF_SURFACE_POLICY.md)は元の条件/予算で6イベント、追加対照五量・体積・Ritz・Maxwell・全execute費用を確認。従来R/Q単独の一般収束と一般精度/効率は未受入。
    [固定周波数のRF係数感度](CURVED_RF_SENSITIVITY.md)と[制約付き随伴](CURVED_RF_ADJOINT.md)、[角周波数偏微分](CURVED_RF_FREQUENCY_SENSITIVITY.md)を追加した。球形と回転楕円体で適応優位を得られなかった結果から、RFを意識した選択と全域確認費用の
    改善を検討する。原計画の「誤差対DOF/時間」は優位の保証ではないが、BACKLOGに残した
    一般形状/効率課題を文言の読み替えだけで削除しない。

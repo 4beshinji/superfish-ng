@@ -1,5 +1,7 @@
 # 実装バックログ
 
+RFA-6の[明示した表面細分方針](CURVED_RF_SURFACE_POLICY.md)を部分受入。元の合成回転楕円体/両尺度/五量許容差/12回予算で6イベント停止、追加対照差・Ritz・体積・MaxwellがPASS。旧文書一致、CLI、Chrome19項目、標準689件も確認。初期一致の検証式を修正し、失敗を保持して両尺度再実行PASS。従来R/Q単独の48回拡大はcheckpoint27を保持して中断、完走扱いしない。一般精度/効率と親N04は未完了。
+
 RFA実行内共有: [次計画の共有](RF_ADAPTIVE_PENDING_PLAN.md)で実3イベントのRF選択2→1回を確認。旧版のincremental checkpoint全文書一致、source/request/祖先/実装の変更拒否を受入条件とする。公開再検証は維持。表面だけ未達時の[明示的一様細分方針](RF_SURFACE_CONFIRMATION_PLAN.md)は未実装のRFA-6改善候補。
 
 RFA-5の[祖先ジョブ時間表示](GUI_RF_ADAPTIVE_COST.md)を実装。完了→再開・中止→再開の重複しない合算、欠測/外部出力の不明表示、実Chromeを受入条件とする。数値checkpointは変更しない。RFA-6の非球形/両尺度/全workflow費用は別途検証中。

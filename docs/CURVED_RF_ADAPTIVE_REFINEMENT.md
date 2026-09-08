@@ -7,7 +7,9 @@
 
 ## 入力と実行の意味
 
-requestのキーと五量/積分/幾何/品質の条件は版4と同じで、`schema_version`を5にする。
+基本キーと五量/積分/幾何/品質の条件は版4と同じで、`schema_version`を5にする。
+任意の[`surface_refinement_policy`](CURVED_RF_SURFACE_POLICY.md)は未指定/`rf_goal`で従来動作、
+`uniform_when_rf_passes`でRF合格・表面未達時に確認解から一様細分を続ける。
 確認は`uniform_two_steps`必須。未知指定・非対応幾何・不正な予算/許容差を拒否する。
 RF選択には[指標API](CURVED_RF_GOAL_INDICATOR.md)の個別追跡条件も適用する。
 
@@ -18,8 +20,9 @@ RF選択には[指標API](CURVED_RF_GOAL_INDICATOR.md)の個別追跡条件も�
 
 - `refinement_kind`: initial / uniform_probe / rf_local。
 - `parent_event_index`: そのsolveが細分した元のイベント番号。初期はnull。
-- `accepted`: 採用解列へ入るか。未達の確認はfalseで保存される。
-- `uniform_confirmations`: 採用列で連続して合格した一様確認数。局所採用で0へ戻る。
+- `accepted`: 次の親として採用解列へ入るか。既定では未達の確認はfalse。
+  明示した表面細分方針では、RF三量合格・表面未達の確認もtrueとなるが、停止合格ではない。
+- `uniform_confirmations`: 採用列で連続して合格した一様確認数。局所採用と表面未達で0へ戻る。
 - `confirmation_comparison`: 親とのf/RQ/Gおよび連続離散E/Bピーク比区間の判定。
 - `selection`: 局所solveを指示したRF指標・元親の選択番号。
 - decisionの`accepted_event_indices`は採用解列、`completed_solve_events`は全実solve数。
@@ -85,7 +88,7 @@ CLI実行は中断・再開合わせて7.682秒（このローカル実行の観
 f=2.504e-5、RQ=5.875e-6、G=2.348e-6、E比=3.913e-4、B比=1.793e-6で全て同じ基準内。
 E/Bは離散ピーク区間の両端を検査した。幾何誤差を含む一般誤差上界ではない。
 
-[祖先ジョブの観測時間表示](GUI_RF_ADAPTIVE_COST.md)を追加。非球形・両尺度・全workflow費用比較と長い反復の受入は残る。
+[祖先ジョブの観測時間表示](GUI_RF_ADAPTIVE_COST.md)を追加。[明示方針の非球形両尺度対照](CURVED_RF_SURFACE_POLICY.md)を確認した。一般精度/効率と従来R/Q単独の長い反復の受入は残る。
 新規依存・外部資料・旧資産は参照していない。
 
 ## 標準回帰と既存版

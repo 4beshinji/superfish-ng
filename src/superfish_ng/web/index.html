@@ -441,6 +441,7 @@
           <label>確認方式<select id="refine-version"><option value="5">RF寄与で局所選択（版5・確認も計算回数に含む・連続2回の五量確認）</option><option value="4">五量と高次積分を確認（版4・固定二次曲線・全域細分を最低2回）</option><option value="3" selected>ピーク比も含めて全域細分を最低2回確認（版3・正確な多角形）</option><option value="2">局所候補の後に全域細分を最低2回（版2・親子メッシュ内積追跡）</option><option value="1">局所細分の差だけで判定（版1・同一領域標本追跡）</option></select></label>
           <div class="grid">
             <label><span id="refine-bulk-label">残差指標の選択割合（0より大きく1以下）</span><input id="refine-bulk" type="number" step="any" value="0.5" /></label>
+            <label>表面だけ未達のとき（版5）<select id="refine-surface-policy"><option value="rf_goal">元の親からR/Q指標で局所細分（従来）</option><option value="uniform_when_rf_passes">RF三量が合格なら確認解から一様細分（合格数は0）</option></select></label>
             <label><span id="refine-max-levels-label">水準上限（初回を含む）</span><input id="refine-max-levels" type="number" min="3" step="1" value="8" /></label>
             <label>三角形の上限<input id="refine-max-triangles" type="number" min="1" step="1" value="100000" /></label>
             <label><span id="refine-angle-label">直線三角形の最小角 [度]</span><input id="refine-angle" type="number" step="any" value="5" /></label>

@@ -35,7 +35,17 @@ def validate_request(request):
     if not isinstance(request,dict) or type(request.get('schema_version')) is not int or request['schema_version']!=5:
         raise ValueError('RF adaptive refinement requires schema_version 5')
     original=deepcopy(request);original['schema_version']=4
+    policy=original.pop('surface_refinement_policy','rf_goal')
+    if type(policy) is not str or policy not in ('rf_goal','uniform_when_rf_passes'):
+        raise ValueError('surface_refinement_policy must be rf_goal or uniform_when_rf_passes')
     return validate_v4(original)
+
+
+def _surface_progress(comparison,request):
+    """An explicit mesh-progress choice, never a successful confirmation."""
+    return (request.get('surface_refinement_policy','rf_goal')=='uniform_when_rf_passes'
+            and comparison['verified'] and not comparison['passed']
+            and all(v['passed'] for v in comparison['changes'].values()))
 
 
 def _comparison(parent,current,request):
@@ -137,6 +147,8 @@ def assemble(request,runs,*,_cache=None):
                 comparison=_comparison(events[parent_index],row,request);row['confirmation_comparison']=comparison
                 if comparison['passed']:
                     row['accepted']=True;row['uniform_confirmations']=events[parent_index]['uniform_confirmations']+1
+                elif _surface_progress(comparison,request):
+                    row['accepted']=True  # Advance the mesh; confirmations remain zero.
             else:row['accepted']=True
         events.append(row);sources.append(source);solutions.append(current)
     if sources!=[_snapshot(Path(run)) for run in runs]:raise ValueError('RF adaptive sources changed during verification')

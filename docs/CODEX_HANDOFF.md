@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## 明示した表面細分方針の検証完了 — 2026-09-09
+
+[方針と証拠](CURVED_RF_SURFACE_POLICY.md)。版5任意surface_refinement_policyを追加。未指定/rf_goalは旧動作、uniform_when_rf_passesはRF三量合格・表面だけ未達時に確認解を次の親へ採用し、合格数0から一様細分。五量連続2回だけで停止する。GUI明示選択/未達表示/方針復元/一様再開、CLI例題を追加。
+新4検査12983は32.842秒で終了0。CLI70586は終了0。Chrome17410は19項目PASS/外部要求0で終了0、rf-surface-progress.png実表示、GUI80722/PID161243は停止終了0。旧文書比較81886は終了0、旧fc76e64と半球/非球形初期5イベント全prefix/最終文書完全一致。
+初回非球形89100は両尺度6イベントTARGETS_METだがverifierの初期一致式が区間幅を差に算入して終了1。端点は完全一致で差0、誤った差約3.686e-7。out/rf-surface-nonsphere-initial-20260909 と診断を保持。
+標準99231は終了0、out/validation-rf-surface-policy-20260909 は689件/687合格/2 skip、472.620秒PASS。seed9モード19量f差0/RF最大8.882e-16、終了時全source/旧文書比較/browser対象hash一致。標準終了後、scripts/validate_curved_rf_nonsphere.pyの初期同一性だけを対応端点差へ修正。数値コア/GUI/全検査は不変。標準をこの修正後に再実行したとは扱わない。
+修正後78250は終了0、out/rf-surface-nonsphere-accepted-20260909 両尺度PASS。同じ12回予算/初期写像/五量許容差、80→320未採用→113→452未達の親採用→1808→7232、6イベント/14665自由度。合格数0,0,0,0,1,2。追加一様対照164481自由度に対するf/RQ/G/E/B差は全基準内、Ritz/初期一致/native解析体積/固定体積/Maxwell（最大4.923e-13）PASS。全execute104.942/105.398秒、全solve12.224/12.249秒。過去版4/一様時間とは同一プロセス試験でない。
+最終native replay51871も終了0、out/rf-surface-native-replay-20260909。両尺度checkpoint006をeigsh禁止で公開再検証、文書完全一致91.725/91.673秒。最終sourceと修正後両尺度/再検証hash一致、標準との差は比較script1本だけ（standard-coverage.json）。
+主ツリー旧48回拡大60815/PID76757は、新方針が元の12回予算で両尺度PASSとなったためSIGINT、終了130。直前観測4745秒、verified checkpoint027・solveログ28。out/curved-rf-nonsphere-expanded-20260909/interruption.jsonと全出力を保持し、純RFの完走/尺度2結果とは扱わない。主ツリーのソース固定は解除できる。中断スタックはnested transferでの空間再構築とcheck_quadratic_boundary/separated_edgesにあった。
+全関連実行は終了。現在は/tmp/superfish-rf-cost-worktree-20260909、branch feature/rf-surface-uniformで、費用表示fc76e64と次計画共有81fc416を祖先に含む。主ツリー統合と証拠summaryの保存が必要。N04/RFA一般精度/一般効率/全体計画は未完了。次の性能課題はnative空間再構築と境界検査の共有/候補選別（公開拒否と文書一致を維持）。
+
 ## 版5次計画の実行内共有 — 2026-09-09
 
 [共有化](RF_ADAPTIVE_PENDING_PLAN.md)を /tmp/superfish-rf-cost-worktree-20260909 のbranch perf/rf-adaptive-pending-planで実装。親/確認からRF選択を導出した次計画をVerifiedRFPrefixへ一つ保持し、実装/request/祖先/native snapshot照合後だけ再利用。公開replayは全判断を再導出、新保存場のCase/mesh/二次写像照合も維持する。数値文書や停止条件の変更はない。
