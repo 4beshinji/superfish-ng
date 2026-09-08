@@ -1,5 +1,7 @@
 # N04 曲線局所細分のCase履歴とnative再構築
 
+2026-09-09追記: [適応計算版4](CURVED_ADAPTIVE_REFINEMENT.md)で滑らかな閉PEC曲線の五量停止・高次積分比較・保存再開をAPI/CLI/JobManagerへ接続した。以下の未接続記述は当時の履歴。GUI・一般精度/効率は残る。
+
 2026-09-08、直前基準84a49e4。
 [局所適合細分API](CURVED_MARKED_REFINEMENT.md)を通常のCase/FEM計算・native保存/再読込へ接続した。
 親の二次幾何を順番に制限する。解析曲線への再投影、解析解による固有値の置換は行わない。

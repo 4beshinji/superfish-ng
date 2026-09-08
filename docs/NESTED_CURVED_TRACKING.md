@@ -1,5 +1,7 @@
 # D01/N04 曲線の親子空間における質量内積追跡
 
+2026-09-09追記: [適応計算版4](CURVED_ADAPTIVE_REFINEMENT.md)で滑らかな閉PEC曲線の五量停止・高次積分比較・保存再開をAPI/CLI/JobManagerへ接続した。以下の未接続記述は当時の履歴。GUI・一般精度/効率は残る。
+
 2026-09-08、直前基準8ae8037。
 [曲線局所履歴](CURVED_REFINEMENT_HISTORY.md)で得たnative場を、P2係数の移送と
 `∫ r³ u v dr dz` の質量内積で比較する。点サンプリングによる対応とは別の方式。

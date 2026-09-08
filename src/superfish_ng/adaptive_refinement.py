@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Replayable residual-driven affine refinement with tracked RF diagnostics."""
+"""Replayable affine/curved refinement with tracked RF diagnostics."""
 from copy import deepcopy
 import json
 import math
@@ -23,6 +23,9 @@ QUANTITIES=('frequency_hz','r_over_q_accelerator_ohm','geometry_factor_ohm')
 
 
 def _request(request):
+    if isinstance(request,dict) and request.get('schema_version')==4:
+        from .curved_adaptive_refinement import validate_request
+        return validate_request(request)
     fields=('schema_version','case','initial_mesh','initial_ids','mode_id','controls','bulk_fraction','max_levels',
             'max_triangles','minimum_angle_deg','relative_tolerances')
     if isinstance(request,dict) and request.get('schema_version') in (2,3):fields+=('confirmation',)
@@ -123,6 +126,9 @@ def _next(case,request,levels,solution):
 
 
 def _assemble(request,runs):
+    if isinstance(request,dict) and request.get('schema_version')==4:
+        from .curved_adaptive_refinement import assemble
+        return assemble(request,runs)
     case=_request(request)
     if type(runs) is not list or any(type(p) is not str or not Path(p).is_absolute() for p in runs) or len(set(runs))!=len(runs):
         raise ValueError('level_runs requires distinct absolute native result directories')
@@ -176,6 +182,9 @@ def read_adaptive_refinement(path):return replay_adaptive_refinement(parse_json(
 
 
 def execute_adaptive_refinement(request,directory,*,max_new_levels=None,checkpoint=None):
+    if isinstance(request,dict) and request.get('schema_version')==4:
+        from .curved_adaptive_refinement import execute
+        return execute(request,directory,max_new_levels=max_new_levels,checkpoint=checkpoint)
     request=deepcopy(request);case=_request(request)
     if max_new_levels is not None:integer(max_new_levels,'max_new_levels')
     previous,mesh=_assemble(request,[])
