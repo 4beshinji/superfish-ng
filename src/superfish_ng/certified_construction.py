@@ -11,6 +11,8 @@ from .rational_bounds import _sqrt_bound
 
 
 def _endpoint_box(curve, at_end, endpoint_controls):
+    if isinstance(curve,LineSegment):
+        return tuple((F(x),F(x)) for x in (curve.end_zr_m if at_end else curve.start_zr_m))
     if isinstance(curve, EllipseArc):
         parameter = F(curve.start_rad)+(F(curve.sweep_rad) if at_end else 0)
         local = tuple(transcendental_interval(kind, parameter, **endpoint_controls) for kind in ('cos', 'sin'))

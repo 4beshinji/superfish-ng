@@ -6,7 +6,7 @@ curve. Bounds do not assert an intersection or a cusp exists, nor include the
 roundoff of a separately evaluated floating-point geometry primitive.
 """
 from fractions import Fraction as F
-from .conics import EllipseArc,HyperbolaArc,rotation_cos_sin
+from .conics import LineSegment,EllipseArc,HyperbolaArc,rotation_cos_sin
 from .certified_arcs import _number,_multiply,transcendental_interval,DEFAULT_ENDPOINT_WIDTH
 from .contact_enclosures import _interval_add as add,_interval_divide as divide
 from .rational_bounds import _sqrt_bound
@@ -38,13 +38,24 @@ def normal_offset_bounds(curve,first=0.,last=1.,*,distance_m,
     Positive d is to the left of the directed arc. A factor interval containing
     zero is unresolved, even if all sampled points would be regular.
     """
-    if not isinstance(curve,(EllipseArc,HyperbolaArc)):
-        raise ValueError('normal offsets require an ellipse or hyperbola arc')
+    if not isinstance(curve,(LineSegment,EllipseArc,HyperbolaArc)):
+        raise ValueError('normal offsets require a line, ellipse or hyperbola arc')
     first,last=_number(first,'first'),_number(last,'last')
     distance=_number(distance_m,'distance_m')
-    if not 0<=first<=last<=1:raise ValueError('offset interval requires 0 <= first <= last <= 1')
+    if first>last or not isinstance(curve,LineSegment) and not 0<=first<=last<=1:
+        raise ValueError('offset interval requires ordered endpoints; conic fractions must be in [0,1]')
     controls=dict(endpoint_width=endpoint_width,max_terms=max_series_terms)
     transcendental_interval('sin',0,**controls)  # Validate even in exact special cases.
+    if isinstance(curve,LineSegment):
+        start=tuple(map(F,curve.start_zr_m))
+        delta=tuple(F(curve.end_zr_m[i])-start[i] for i in range(2))
+        squared=sum(x*x for x in delta);length=root((squared,squared))
+        if length[0]<=0:raise ValueError('positive line length is below representable bound')
+        normal=(divide((-delta[1],)*2,length),divide((delta[0],)*2,length))
+        box=tuple(add(add((x,x),scale((first,last),v)),scale(n,distance)) for x,v,n in zip(start,delta,normal))
+        return dict(interval=(first,last),center_box_zr_m=box,derivative_box_zr_m=tuple((x,x) for x in delta),
+                    signed_curvature_interval_per_m=(F(0),F(0)),speed_factor_interval=(F(1),F(1)),regularity='FORWARD',
+                    scope='exact binary supporting line and signed normal offset; rational enclosure')
     a,b=map(F,curve.semiaxes_m);c,s=map(F,rotation_cos_sin(curve.rotation_rad))
     determinant=c*c+s*s
     if isinstance(curve,EllipseArc):

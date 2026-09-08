@@ -29,8 +29,8 @@ def _canonical(value):
 def _request(request):
     keys(request, ('schema_version', 'case_template', 'pair_start', 'controls'),
          ('schema_version', 'case_template', 'pair_start', 'controls'), 'tangent construction request')
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4, 5):
-        raise ValueError('tangent construction request requires schema_version 1, 2, 3, 4 or 5')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4, 5, 6):
+        raise ValueError('tangent construction request requires schema_version 1, 2, 3, 4, 5 or 6')
     _canonical(request)  # Reject nonfinite JSON values even in the unfinished template.
     template = request['case_template']
     keys(template, ('schema_version', 'name', 'geometry', 'mesh', 'solver', 'rf', 'model', 'boundaries'),
@@ -54,9 +54,9 @@ def _request(request):
     if type(index) is not int or index < 0 or index+1 >= len(curves):
         raise ValueError('pair_start must identify two consecutive curves without wrapping')
     pair=curves[index:index+2]
-    if request['schema_version']==3:
+    if request['schema_version'] in (3,6):
         if sum(isinstance(c,LineSegment) for c in pair)!=1 or sum(isinstance(c,(EllipseArc,HyperbolaArc)) for c in pair)!=1:
-            raise ValueError('version 3 tangent pair requires one line and one ellipse or hyperbola arc')
+            raise ValueError('line/arc construction pair requires one line and one ellipse or hyperbola arc')
     elif request['schema_version']==4:
         if any(not isinstance(c,LineSegment) for c in pair):
             raise ValueError('version 4 fillet pair requires two directed lines')
@@ -76,9 +76,10 @@ def _request(request):
                  'max_series_terms','fraction_width','max_fraction_steps')
     if request['schema_version']==4:
         allowed=('radius_m','allow_extension','position_tolerance_m','angle_tolerance_rad')
-    if request['schema_version']==5:
+    if request['schema_version'] in (5,6):
         allowed=('radius_m','turn_direction','max_sweep_rad','position_tolerance_m','angle_tolerance_rad',
                  'fraction_width','max_boxes','precision_bits','endpoint_width','max_series_terms')
+    if request['schema_version']==6:allowed+=('allow_extension',)
     keys(controls, allowed, allowed, 'tangent controls')
     return template, geometry, curves, index, controls
 
@@ -107,7 +108,7 @@ def construct_tangent_case(request, *, candidate_index=None):
         from .line_fillet import line_fillet_candidates, connect_line_fillet
         enumerate_candidates,connect=line_fillet_candidates,connect_line_fillet
 
-    elif request['schema_version']==5:
+    elif request['schema_version'] in (5,6):
         from .conic_fillet import conic_fillet_candidates, connect_conic_fillet
         enumerate_candidates,connect=conic_fillet_candidates,connect_conic_fillet
 
@@ -136,7 +137,9 @@ def construct_tangent_case(request, *, candidate_index=None):
                                   if request['schema_version']==3 else
                                   'radius-specified minor line fillet; numerical contact/extents/G1 checks; no interval certificate; canonical case validation; no FEM solve'
                                   if request['schema_version']==4 else
-                                  'certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve')))
+                                  'certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve'
+                                  if request['schema_version']==5 else
+                                  'certified finite line/conic offset crossings and bounded fillet contact error; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve')))
 
 
 def save_construction(request, path, *, candidate_index=None):

@@ -1,5 +1,40 @@
 # ローカルCodexへの引継ぎ
 
+## G03版6直線・有限弧フィレット — 2026-09-08
+
+normal_offsets / offset_intersectionsを線分の支持直線へ拡張し、conic_filletと
+構築schema_version=6で直線と有限弧の指定半径フィレットを保存/Case/CLI/GUIへ接続した。
+二進端点の線分を有理数アフィン式で扱い、単位法線の平方根を外向き区間で囲む。
+延長なしは[0,1]、明示allow_extension=trueでは有限弧の中心軌跡を線分方向へ射影して
+必要な有限探索範囲を導く。弧は延長しない。配列順に線分の始点/終点を保持し、
+空/逆向きになる保持線分を拒否する。生成接点/保持端/中心の位置上界を検査し、
+元線分との方向差とG1角度は数値検査として区別する。
+
+実装前には線分normal_offset_boundsのValueErrorとallow_extension未対応のTypeErrorを確認。
+追加6テストは3-4-5線分法線区間、既知円/双曲線接点、明示延長と両順序、逆向き拒否、
+保存/再構築/GUI・解析面積/体積、実曲線FEMの相似則。変更前382件中380合格・2 skip。
+最終388件中386合格・2 skip（124.074秒）、out/validation-g03-line-conic-fillet-20260908 PASS。
+同所seed_comparison.jsonでcase hash一致、周波数差0、RF/エネルギー差最大8.882e-16。
+FEM本体・数値基準・許容差変更なし。検証中の実装変更なし、最終fingerprint一致。
+
+out/gui-line-conic-fillet-browser-20260908/report.jsonはChrome8操作PASS、外部要求0、
+実行中ソース変更なし。半径/回転方向/円弧長/接点上界、明示選択・ダウンロード・再構築・
+適用・FEM/描画・改変拒否まで確認。tangent-construction.pngの表示も確認し、GUIは停止済み。
+validation内construction_replay.jsonに版1〜6の実保存ファイルのCASE_VALIDATEDを保存した。
+
+合成例はexamples/construction/line_conic_fillet_request.json。z=0.15 mの直線壁と
+半径0.1 mの円弧を半径0.02 m、反時計回りの円弧で接続する。延長なし、二次幾何/二次場。
+CLIはout/g03-line-conic-fillet-construction-20260908.json、out/g03-line-conic-fillet-case-20260908.json、
+out/g03-line-conic-fillet-solve-20260908へ保存。周波数1258432805.464176 HzはGUIと一致し、
+R/Q(acc)=140.166774 ohm。接点位置誤差上界最大2.568e-17 mで要求1e-12 m以内。
+保持線分の方向差0、延長なし、端点内側調整なし。この形状のRF/物理ピーク収束は未検証。
+
+既存の認証交点核・初等線形射影から独立実装。新規外部資料/コード/依存/旧資産参照なし。
+Wine新規実行なし。README・対応表・計画・実装状況・G03照合表を同期。
+次は弧端/退化の追加分類、輪郭全体の最小半径契約、旧入力と物理収束の残件。
+8親課題の限定受入を維持する。G03全体と全計画目標は未完了。
+
+
 ## G03版5有限弧フィレット・保存/CLI/GUI統合 — 2026-09-08
 
 conic_filletと構築schema_version=5を追加。両有限弧の中心軌跡に同じ符号付きRを使い、

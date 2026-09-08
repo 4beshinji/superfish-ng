@@ -1,5 +1,20 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 版6直線・有限弧フィレット — 2026-09-08
+
+out/gui-line-conic-fillet-browser-20260908/report.jsonでChrome8操作PASS。
+半径/回転方向/円弧長/接点上界、明示選択、保存・再構築・適用・二次曲線FEM・描画、
+改変拒否を確認。外部要求0、実行中ソース変更なし。tangent-construction.pngの表示も確認。
+検証用GUIは停止済み。版1〜6の実保存ファイル再読込をPythonでも確認した。
+
+```bash
+node scripts/verify_gui.mjs --url '起動URL' --out out/gui-line-conic-fillet-NEW --tangent-request examples/construction/line_conic_fillet_request.json
+```
+
+合成例の周波数1258432805.464176 Hzは実CLIと一致。
+UIのPASSは、この形状のRF/物理ピーク収束の証拠ではない。
+
+
 ## 版5有限弧フィレット — 2026-09-08
 
 out/gui-conic-fillet-browser-20260908/report.jsonでChrome8操作PASS。

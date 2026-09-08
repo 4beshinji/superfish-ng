@@ -7,7 +7,7 @@ shared boundaries and exhausted budgets remain unresolved, never sampled away.
 """
 from fractions import Fraction as F
 from functools import lru_cache
-from .conics import EllipseArc,HyperbolaArc
+from .conics import LineSegment,EllipseArc,HyperbolaArc
 from .normal_offsets import normal_offset_bounds,add,scale
 from .certified_arcs import _number,_multiply,transcendental_interval,DEFAULT_ENDPOINT_WIDTH
 from .contact_enclosures import _interval_subtract as subtract
@@ -60,8 +60,8 @@ def intersect_normal_offsets(first,second,*,first_distance_m,second_distance_m,
     fraction_width. Root boxes enclose mathematical binary-model parameters;
     no float contact trimming or usable fillet geometry is returned here.
     """
-    if not all(isinstance(c,(EllipseArc,HyperbolaArc)) for c in (first,second)):
-        raise ValueError('offset intersections require two ellipse or hyperbola arcs')
+    if not all(isinstance(c,(LineSegment,EllipseArc,HyperbolaArc)) for c in (first,second)):
+        raise ValueError('offset intersections require supported lines or conic arcs')
     distances=tuple(_number(x,'distance_m') for x in (first_distance_m,second_distance_m))
     width=_number(fraction_width,'fraction_width')
     if not 0<width<1 or type(max_boxes) is not int or max_boxes<1:
@@ -69,11 +69,12 @@ def intersect_normal_offsets(first,second,*,first_distance_m,second_distance_m,
     if type(precision_bits) is not int or precision_bits<1:
         raise ValueError('precision_bits must be a positive integer')
     domain=[]
-    for interval in (first_interval,second_interval):
+    for curve,interval in zip((first,second),(first_interval,second_interval)):
         if not isinstance(interval,(tuple,list)) or len(interval)!=2:
             raise ValueError('fraction interval requires a pair')
         lo,hi=(_number(x,'fraction interval') for x in interval)
-        if not 0<=lo<hi<=1:raise ValueError('fraction interval requires 0 <= lo < hi <= 1')
+        if lo>=hi or not isinstance(curve,LineSegment) and not 0<=lo<hi<=1:
+            raise ValueError('fraction interval must be increasing; conic fractions must be in [0,1]')
         domain.append((lo,hi))
     transcendental_interval('sin',0,endpoint_width=endpoint_width,max_terms=max_series_terms)
     curves=(first,second)

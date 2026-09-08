@@ -4,14 +4,18 @@ from dataclasses import replace
 from fractions import Fraction as F
 import math
 from .arc_tangents import _positive
-from .conics import EllipseArc,check_curve_join,curve_to_dict,curve_from_dict
-from .normal_offsets import normal_offset_bounds
+from .conics import LineSegment,EllipseArc,check_curve_join,curve_to_dict,curve_from_dict
+from .normal_offsets import normal_offset_bounds,add,scale,divide
+from .contact_enclosures import _interval_subtract as subtract
 from .offset_intersections import intersect_normal_offsets
 from .certified_construction import _endpoint_box,_distance_bound
 from .certified_arcs import DEFAULT_ENDPOINT_WIDTH
 
 
 def _trim(curve,fraction,keep_start):
+    if isinstance(curve,LineSegment):
+        p=tuple(float(F(a)+(F(b)-F(a))*F(fraction)) for a,b in zip(curve.start_zr_m,curve.end_zr_m))
+        return LineSegment(curve.start_zr_m,p) if keep_start else LineSegment(p,curve.end_zr_m)
     if isinstance(curve,EllipseArc):
         if keep_start:return replace(curve,sweep_rad=float(F(curve.sweep_rad)*F(fraction)))
         return replace(curve,start_rad=float(F(curve.start_rad)+F(curve.sweep_rad)*F(fraction)),
@@ -21,7 +25,7 @@ def _trim(curve,fraction,keep_start):
 
 
 def conic_fillet_candidates(first,second,*,radius_m,turn_direction,max_sweep_rad,
-                            position_tolerance_m,angle_tolerance_rad,
+                            position_tolerance_m,angle_tolerance_rad,allow_extension=False,
                             fraction_width=F(1,2**40),max_boxes=10000,precision_bits=96,
                             endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
     """Enumerate one explicitly selected radius/turn family on finite arcs.
@@ -36,17 +40,36 @@ def conic_fillet_candidates(first,second,*,radius_m,turn_direction,max_sweep_rad
     if max_sweep_rad>2*math.pi:raise ValueError('max_sweep_rad must be at most 2*pi')
     if type(turn_direction) is not int or turn_direction not in (-1,1):
         raise ValueError('turn_direction must be explicit integer -1 or 1')
+    if type(allow_extension) is not bool:raise ValueError('allow_extension must be an explicit boolean')
+    line_indices=[i for i,c in enumerate((first,second)) if isinstance(c,LineSegment)]
+    if len(line_indices)>1:raise ValueError('use line_fillet for two-line construction')
+    if allow_extension and not line_indices:raise ValueError('conic arcs cannot be extended by allow_extension')
     distance=turn_direction*radius_m
+    domains={}
+    if allow_extension:
+        i=line_indices[0];line=(first,second)[i];arc=(first,second)[1-i]
+        center_box=normal_offset_bounds(arc,distance_m=distance,endpoint_width=endpoint_width,max_series_terms=max_series_terms)['center_box_zr_m']
+        origin_box=normal_offset_bounds(line,0.,0.,distance_m=distance,endpoint_width=endpoint_width,max_series_terms=max_series_terms)['center_box_zr_m']
+        delta=tuple(F(b)-F(a) for a,b in zip(line.start_zr_m,line.end_zr_m));squared=sum(x*x for x in delta)
+        projected=(F(0),F(0))
+        for c,o,v in zip(center_box,origin_box,delta):projected=add(projected,scale(subtract(c,o),v))
+        low,high=divide(projected,(squared,squared))
+        domains['first_interval' if i==0 else 'second_interval']=(low-1,high+1)
     search=intersect_normal_offsets(first,second,first_distance_m=distance,second_distance_m=distance,
                                     fraction_width=fraction_width,max_boxes=max_boxes,precision_bits=precision_bits,
-                                    endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+                                    endpoint_width=endpoint_width,max_series_terms=max_series_terms,**domains)
     endpoint_controls=dict(endpoint_width=endpoint_width,max_terms=max_series_terms)
     candidates=[];unresolved=list(search['unresolved'])
     for index,root in enumerate(search['roots']):
         record=dict(root=root,connection_direction='UNVERIFIED',contacts_zr_m=(),contact_distance_m=None)
         try:
             fractions=tuple(float(sum(interval)/2) for interval in root['parameter_box'])
-            if not all(0<f<1 for f in fractions):raise ValueError('retained arc is empty or contact fraction is not representable in its interior')
+            for i,(curve,f) in enumerate(zip((first,second),fractions)):
+                if isinstance(curve,LineSegment):
+                    if not math.isfinite(f) or (f<=0 if i==0 else f>=1):raise ValueError('retained line would be empty or reversed')
+                    if not allow_extension and not 0<f<1:raise ValueError('line contact is outside the finite segment')
+                    record.update(line_first=i==0,line_fraction=f,line_extended=not 0<=f<=1,allow_extension=allow_extension)
+                elif not 0<f<1:raise ValueError('retained arc is empty or contact fraction is not representable in its interior')
             left,right=_trim(first,fractions[0],True),_trim(second,fractions[1],False)
             center=tuple(float(sum(interval)/2) for interval in root['center_box_zr_m'])
             p,q=[tuple(map(float,c.evaluate(f)['points_zr_m'])) for c,f in ((left,1.),(right,0.))]
@@ -100,6 +123,12 @@ def conic_fillet_candidates(first,second,*,radius_m,turn_direction,max_sweep_rad
                           retained_outer_endpoint_error_bounds_m=outer_errors)
             if any(F(x)>F(position_tolerance_m) for x in (*trim_errors,*fillet_errors,center_error,*outer_errors)):
                 raise ValueError('fillet/trim/center/outer endpoint error bound exceeds position_tolerance_m')
+            for original,trimmed in ((first,left),(second,right)):
+                if isinstance(original,LineSegment):
+                    u=original.evaluate(.5)['tangent_zr'];v=trimmed.evaluate(.5)['tangent_zr']
+                    error=math.atan2(abs(float(u[0]*v[1]-u[1]*v[0])),float(sum(u[i]*v[i] for i in range(2))))
+                    record['retained_line_direction_error_rad']=error
+                    if error>angle_tolerance_rad:raise ValueError('retained line direction exceeds angle_tolerance_rad')
             curves=(left,fillet,right)
             joins=[check_curve_join(a,b,position_tolerance_m=position_tolerance_m,
                                     angle_tolerance_rad=angle_tolerance_rad,require_tangent=True) for a,b in zip(curves,curves[1:])]
