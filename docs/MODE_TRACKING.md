@@ -365,7 +365,7 @@ CLI終了コードはPASS=0、UNVERIFIED=1、入力/再検証エラー=2。
 manifestを更新しても順序不整合を拒否すること、途中変更/文書改変、CLIと厳密requestを確認する。
 独立スクリプトはBessel零点から求めた縮退位置を含む3点を実P2 FEMのStudyとして解き、
 解析周波数・集合継承・停止時の未追跡記録・元Study不変を確認する。
-追跡付きStudyの自動実行/再開、適応的点追加、tuneは残件。
+追跡付き逐次実行/チェックポイント再開は下記API/CLIへ追加。GUI JobManagerへの組込、適応的点追加、tuneは残件。
 
 ## 完了StudyのGUI操作
 
@@ -383,3 +383,38 @@ JSON配列を入力すると、その各段階の設定が共通欄より優先�
 
 追加接続3テストと実Chrome7操作、既存の比較/履歴Chrome8操作がPASS。
 証拠と再現手順は[GUI受入](GUI_ACCEPTANCE.md)。一般D01の完了ではない。
+
+## 追跡しながらStudyを計算・再開する
+
+`execute-tracked-study`は各点をnative FEMで解き、保存場の対応を確認してから
+次の点へ進む。完了Studyの後処理とは別の実行経路で、最初の未確認の対応で停止する。
+後続点は計算せず、`NOT_COMPUTED`と記録する。既存Studyの独立スペクトルや
+収束判定をこの追跡状態で上書きしない。
+
+requestはschema_version 1、`study`（通常のStudy宣言）、`initial_ids`、
+`step_controls`（全隣接点の設定配列）の4項目。全点のProjectと全controlsを
+出力先の作成前に検査する。初期IDは最初の点の周波数順位順に、重複なく指定する。
+実例は`scripts/validate_tracked_study.py`が出力するrequest.jsonを参照。
+
+```bash
+python -m superfish_ng execute-tracked-study request.json --out out/tracked-NEW --max-new-points 1
+python -m superfish_ng replay-tracked-study out/tracked-NEW/checkpoint-001.json
+python -m superfish_ng resume-tracked-study out/tracked-NEW/checkpoint-001.json --out out/continued-NEW
+```
+
+`--max-new-points`は今回新たに計算する点数の上限。省略すると最後の点または
+未確認まで実行する。各点の計算と追跡確認後にcheckpoint-NNN.jsonを新規保存する。
+番号はStudyの1始まりの通し番号。文書の点indexは0始まり。
+状態は`PAUSED`（確認済みの途中）、`COMPLETE`（全点を計算し対応確認）、
+`UNVERIFIED`（対応未確認）。COMPLETEも物理的収束や連続枝の保証ではない。
+CLI終了値はPAUSED/COMPLETEが0、UNVERIFIEDが1、入力/実行エラーが2。
+
+再開できるのはPAUSEDのみ。元request・ID・閾値を変更せず、全先行点の入力・保存場・
+Jobファイルの同一性と履歴を再検証する。新しい出力先に未計算の点だけを解き、
+以前の点の絶対パスと証拠を継承するため、再検証には元の出力先も必要。
+各点の計算中に先行点のソースが変わった場合もチェックポイントを公開しない。
+未確認状態を閾値変更で上書き再開する操作は提供しない。
+
+後続の計算が失敗した場合、保存済みの直前チェックポイントから別の出力先へ再開できる。
+既存出力先は上書きしない。実行中プロセスの状態を再開対象とはしない。
+OS強制終了・電源断の回復保証やGUI JobManagerへの組込、適応的点追加、tuneは残件。

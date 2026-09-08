@@ -16,6 +16,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    for command in ('execute-tracked-study','resume-tracked-study','replay-tracked-study'):
+        tracked=sub.add_parser(command,help='execute or verify sequential FEM Study tracking checkpoints')
+        tracked.add_argument('document',type=Path)
+        if command!='replay-tracked-study':
+            tracked.add_argument('--out',type=Path,required=True)
+            tracked.add_argument('--max-new-points',type=int)
     study_tracking=sub.add_parser('track-study-modes',help='track adjacent points of a completed native Study without skipping failures')
     study_tracking.add_argument('request',type=Path)
     study_tracking.add_argument('--out',type=Path,required=True)
@@ -97,7 +103,18 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command=='track-study-modes':
+        if args.command in ('execute-tracked-study','resume-tracked-study','replay-tracked-study'):
+            from .tracked_study import execute_tracked_study,read_tracked_study
+            from .project import parse_json
+            if args.command=='execute-tracked-study':
+                result=execute_tracked_study(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_points=args.max_new_points)
+            else:
+                result=read_tracked_study(args.document)
+                if args.command=='resume-tracked-study':
+                    result=execute_tracked_study(result['request'],args.out,max_new_points=args.max_new_points,checkpoint=result)
+            print(f"{result['status']}: {args.document if args.command=='replay-tracked-study' else args.out}")
+            return 1 if result['status']=='UNVERIFIED' else 0
+        elif args.command=='track-study-modes':
             from .study_mode_tracking import save_study_mode_tracking
             from .project import parse_json
             result=save_study_mode_tracking(parse_json(args.request.read_text(encoding='utf-8')),args.out,base_directory=args.request.resolve().parent)
