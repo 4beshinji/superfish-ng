@@ -1,5 +1,7 @@
 # 版3のピーク比を含む適応停止GUI
 
+2026-09-09追記: [版4の曲線適応GUI](GUI_CURVED_ADAPTIVE_REFINEMENT.md)を追加した。以下は版3追加時の記録。
+
 2026-09-08、直前基準9cee5a4。[版3の数値仕様](ADAPTIVE_SURFACE_STOPPING.md)を
 既存のローカル適応GUIへ接続する。FEM・追跡・区間評価・停止基準は変更しない。
 

@@ -1,5 +1,7 @@
 # N04 二次曲線FEMの残差指標と局所選択
 
+2026-09-09追記: [版4のGUI](GUI_CURVED_ADAPTIVE_REFINEMENT.md)も入力・五量/積分比較表示・保存再開へ接続した。以下は各追加時点の記録。一般精度/効率・任意履歴の直接GUI編集は残る。
+
 2026-09-09追記: [適応計算版4](CURVED_ADAPTIVE_REFINEMENT.md)で滑らかな閉PEC曲線の五量停止・高次積分比較・保存再開をAPI/CLI/JobManagerへ接続した。以下の未接続記述は当時の履歴。GUI・一般精度/効率は残る。
 
 後続で[親子空間の質量内積によるモード追跡](NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ接続した。曲線の追跡付き適応停止は引き続き残る。

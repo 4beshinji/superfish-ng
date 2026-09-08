@@ -1938,7 +1938,9 @@ function refinementButtons() {
 }
 function refinementVersion() {
   const version=Number($('refine-version').value);$('refine-order').disabled=version!==1;
-  for(const [, ,id] of refinementPeaks)$(`refine-${id}`).disabled=version!==3;
+  for(const [, ,id] of refinementPeaks)$(`refine-${id}`).disabled=version<3;
+  for(const id of ['quadrature-order','quadrature-tolerance'])$(`refine-${id}`).disabled=version!==4;
+  $('refine-angle-label').textContent=version===4 ? '曲線写像の頂点接線間の最小角 [度]（内部の条件数は未評価）':'直線三角形の最小角 [度]';
 }
 function refinementLimit() {
   if(!$('refine-limit').value.trim())return {};
@@ -1947,7 +1949,7 @@ function refinementLimit() {
 }
 function showRefinement(response) {
   refinementResult=response;const d=response.document,r=d.request;
-  const names={PAUSED:'一時停止・再開可能',TARGETS_MET:'指定した細分差を達成',UNVERIFIED:'個別ID未確認で停止',QUANTITY_UNVERIFIED:'正の有限な判定量を確認できず停止',LEVEL_LIMIT:'水準上限で停止',REFINEMENT_LIMIT:'要素数または最小角の制約で停止',TRACKING_BUDGET:'追跡の作業量上限で停止',ZERO_INDICATOR:'選択可能な残差指標がなく停止'};
+  const names={QUADRATURE_UNVERIFIED:'高次積分との比較を確認できず停止',PAUSED:'一時停止・再開可能',TARGETS_MET:'指定した細分差を達成',UNVERIFIED:'個別ID未確認で停止',QUANTITY_UNVERIFIED:'正の有限な判定量を確認できず停止',LEVEL_LIMIT:'水準上限で停止',REFINEMENT_LIMIT:'要素数または最小角の制約で停止',TRACKING_BUDGET:'追跡の作業量上限で停止',ZERO_INDICATOR:'選択可能な残差指標がなく停止'};
   $('refine-status').textContent=`${d.status} — ${names[d.status]}。計算済み ${d.levels.length} 水準。対象ID: ${r.mode_id}`;
   const phase={initial:'初期',residual:'局所細分',uniform_confirmation:'全域確認'};
   $('refine-confirmation').textContent=`版${r.schema_version}: ${r.schema_version>=2 ? '全域確認 '+d.levels.filter(l=>l.refinement_kind==='uniform_confirmation').length+' 回（最低2回）' : '局所差のみ・全域確認なし'}。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'。' : ''} 表面ピーク: ${{UNASSESSED:'未評価',NOT_CONFIRMED:'全条件の確認未完',UNVERIFIED:'未確認',TARGETS_MET:'指定した区間変化を達成'}[d.surface_status]} (${d.surface_status})。物理誤差上界: なし。`;
@@ -1966,8 +1968,8 @@ function showRefinement(response) {
     row(gates,[label,display(a?.relative_change),display(b?.relative_change),r.relative_tolerances[key],!a||!b ? '未評価' : a.passed&&b.passed ? '条件内':'未達']);
     $(`refine-${id}`).value=r.relative_tolerances[key];
   }
-  const peakBody=$('refine-peaks').querySelector('tbody');peakBody.replaceChildren();$('refine-peaks').hidden=r.schema_version!==3;
-  if(r.schema_version===3) {
+  const peakBody=$('refine-peaks').querySelector('tbody');peakBody.replaceChildren();$('refine-peaks').hidden=r.schema_version<3;
+  if(r.schema_version>=3) {
     for(const [key,label,id] of refinementPeaks) {
       const changes=d.decision.surface_changes ?? [],a=changes[0]?.[key],b=changes[1]?.[key];
       row(gates,[label,display(a?.relative_change_upper_bound),display(b?.relative_change_upper_bound),r.surface_relative_tolerances[key],!a||!b ? '未評価' : a.passed&&b.passed ? '条件内':'未達']);
@@ -1978,13 +1980,23 @@ function showRefinement(response) {
       row(peakBody,[level.index+1,...refinementPeaks.flatMap(([key])=>[display(intervals?.[key]?.[0]),display(intervals?.[key]?.[1])]),level.surface?.geometry_diagnostic.status ?? '個別ID未確認']);
     }
   }
+  const quadratureBody=$('refine-quadrature').querySelector('tbody');quadratureBody.replaceChildren();
+  for(const id of ['quadrature','quadrature-note'])$(`refine-${id}`).hidden=r.schema_version!==4;
+  if(r.schema_version===4)for(const level of d.levels) {
+    const q=level.quadrature_check;
+    row(quadratureBody,[level.index+1,q?.base_order ?? '—',q?.check_order ?? '—',
+      ...['volume_relative_squared','interior_relative_squared','boundary_relative_squared','rayleigh_frequency','mass_form'].map(key=>display(q?.relative_differences[key])),
+      q?.relative_tolerance ?? r.quadrature_relative_tolerance,q ? q.passed ? '条件内':'未達':'未評価']);
+  }
+  $('refine-quadrature-order').value=r.quadrature_check_order ?? 24;
+  $('refine-quadrature-tolerance').value=r.quadrature_relative_tolerance ?? .000001;
   $('refine-request').value=JSON.stringify(r,null,2);$('refine-version').value=r.schema_version;refinementVersion();
-  for(const [id,key] of [['bulk','bulk_fraction'],['max-levels','max_levels'],['max-triangles','max_triangles'],['angle','minimum_angle_deg']])$(`refine-${id}`).value=r[key];
+  for(const [id,key] of [['bulk','bulk_fraction'],['max-levels','max_levels'],['max-triangles','max_triangles'],['angle',r.schema_version===4 ? 'minimum_corner_angle_deg':'minimum_angle_deg']])$(`refine-${id}`).value=r[key];
   for(const [id,key] of [['overlap','minimum_overlap'],['margin','minimum_assignment_margin'],['gap','relative_cluster_gap'],['rank','minimum_relative_singular_value']])$(`refine-${id}`).value=r.controls[key];
   if(r.schema_version===1)$('refine-order').value=r.controls.sample_order;
   $('refine-ids').value=JSON.stringify(r.initial_ids);$('refine-mode-id').value=r.mode_id;
   $('refine-diagnostics').textContent=JSON.stringify({decision:d.decision,controls:r.controls,initial_mesh:r.initial_mesh,level_runs:d.level_runs,
-    quality:d.levels.map(l=>l.quality),last_correspondence:d.levels.at(-1)?.tracking ?? null},null,2);
+    quality:d.levels.map(l=>l.quality),quadrature:d.levels.map(l=>l.quadrature_check ?? null),last_correspondence:d.levels.at(-1)?.tracking ?? null},null,2);
   refinementButtons();
 }
 async function refinementAction(action,data) {
@@ -2000,14 +2012,15 @@ async function refinementAction(action,data) {
 async function openRefinement(id) {await refinementAction('adaptive-refinement-result',{id});$('adaptive-refinement').scrollIntoView({behavior:'smooth'});}
 bind('refine-prepare',async()=>{
   const project=await preview(),version=Number($('refine-version').value);
-  const controls={mapping:version>=2 ? 'nested_affine':'same_domain',minimum_overlap:number('refine-overlap'),minimum_assignment_margin:number('refine-margin'),relative_cluster_gap:number('refine-gap'),minimum_relative_singular_value:number('refine-rank')};
+  const controls={mapping:version===4 ? 'nested_curved':version>=2 ? 'nested_affine':'same_domain',minimum_overlap:number('refine-overlap'),minimum_assignment_margin:number('refine-margin'),relative_cluster_gap:number('refine-gap'),minimum_relative_singular_value:number('refine-rank')};
   if(version===1)controls.sample_order=number('refine-order');
   const request={schema_version:version,case:project.case,initial_mesh:null,
     initial_ids:$('refine-ids').value.trim() ? JSON.parse($('refine-ids').value):Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`),
-    mode_id:$('refine-mode-id').value,controls,bulk_fraction:number('refine-bulk'),max_levels:number('refine-max-levels'),max_triangles:number('refine-max-triangles'),minimum_angle_deg:number('refine-angle'),
+    mode_id:$('refine-mode-id').value,controls,bulk_fraction:number('refine-bulk'),max_levels:number('refine-max-levels'),max_triangles:number('refine-max-triangles'),[version===4 ? 'minimum_corner_angle_deg':'minimum_angle_deg']:number('refine-angle'),
     relative_tolerances:Object.fromEntries(refinementQuantities.map(([key,label,id])=>[key,number(`refine-${id}`)]))};
   if(version>=2)request.confirmation='uniform_two_steps';
-  if(version===3)request.surface_relative_tolerances=Object.fromEntries(refinementPeaks.map(([key,label,id])=>[key,number(`refine-${id}`)]));
+  if(version>=3)request.surface_relative_tolerances=Object.fromEntries(refinementPeaks.map(([key,label,id])=>[key,number(`refine-${id}`)]));
+  if(version===4){request.quadrature_check_order=number('refine-quadrature-order');request.quadrature_relative_tolerance=number('refine-quadrature-tolerance');}
   $('refine-request').value=JSON.stringify(request,null,2);
 });
 bind('refine-start',()=>refinementAction('start-adaptive-refinement',{request:$('refine-request').value,...refinementLimit()}));
@@ -2029,7 +2042,7 @@ refinementButtons();refinementVersion();
 
 
 function affineSurfaceButtons() {
-  $('affine-surface-assess').disabled=affineSurfaceBusy || refinementBusy || (refinementResult?.document.levels.length ?? 0)<3;
+  $('affine-surface-assess').disabled=affineSurfaceBusy || refinementBusy || (refinementResult?.document.levels.length ?? 0)<3 || refinementResult?.document.request.schema_version===4;
   for(const id of ['save','replay','open-field'])$(`affine-surface-${id}`).disabled=affineSurfaceBusy || !affineSurfaceResult;
   for(const id of ['open','mode-id'])$(`affine-surface-${id}`).disabled=affineSurfaceBusy;
   $('affine-surface-progress').textContent=affineSurfaceBusy ? '元の適応系列・保存場・ピーク上下界を再検証しています…':'';

@@ -85,13 +85,13 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-09、N04曲線適応計算版4追加後（直前基準 `ba36a86`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-09、N04曲線適応版4のGUI接続後（直前基準 `3671707`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
 
-[曲線の適応計算版4](docs/CURVED_ADAPTIVE_REFINEMENT.md)をAPI/CLI/JobManagerへ接続。残差選択・native履歴・質量内積追跡、高次積分比較、五量の区間判定、全域確認2回、保存再開を統合する。滑らかさを確認した閉PEC曲線が対象で、GUI・一般精度/効率・幾何誤差の受入は残る。
+[曲線の適応計算版4](docs/CURVED_ADAPTIVE_REFINEMENT.md)をAPI/CLI/JobManagerへ接続。残差選択・native履歴・質量内積追跡、高次積分比較、五量の区間判定、全域確認2回、保存再開を統合する。滑らかさを確認した閉PEC曲線が対象。版4のGUI入力・五量/高次積分表示・保存再開も接続した。一般精度/効率・幾何誤差の受入は残る。
 
-[曲線の親子空間の質量内積追跡](docs/NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ追加。局所・全域の複数段階履歴、両対称と鏡映の偶奇部分空間を検証し、係数移送からモードID/部分空間を対応付ける。版4の適応停止へ接続した。GUIと一般精度・効率は残る。
+[曲線の親子空間の質量内積追跡](docs/NESTED_CURVED_TRACKING.md)をAPI/保存/CLIへ追加。局所・全域の複数段階履歴、両対称と鏡映の偶奇部分空間を検証し、係数移送からモードID/部分空間を対応付ける。版4の適応停止とGUIへ接続した。一般精度・効率は残る。
 
-[二次曲線FEMの残差指標](docs/CURVED_RESIDUAL_INDICATOR.md)を追加。物理座標の二階微分・曲線流束を評価し、既存の選択APIとCase局所履歴で実細分できる。指標は物理誤差上界ではなく、曲線の適応停止は版4へ接続した。GUIは残る。
+[二次曲線FEMの残差指標](docs/CURVED_RESIDUAL_INDICATOR.md)を追加。物理座標の二階微分・曲線流束を評価し、既存の選択APIとCase局所履歴で実細分できる。指標は物理誤差上界ではなく、曲線の適応停止とGUIは版4へ接続した。
 
 [曲線要素の局所適合細分](docs/CURVED_MARKED_REFINEMENT.md)を[Caseの順序付き履歴・native保存再構築](docs/CURVED_REFINEMENT_HISTORY.md)へ接続。通常FEM/CLIと半領域鏡映の保存再検証を確認した。曲線適応停止は版4へ接続した。履歴対応Study・GUI編集は未接続。
 
@@ -210,7 +210,7 @@ G03全体は部分対応です。[要件と証拠の照合](docs/G03_ACCEPTANCE.
 `JobManager.start_tune`で別プロセス実行・取消し・確認済みチェックポイントからの再開も利用できます。GUIの「同じモードの周波数を調整する」から開始・保存・再開でき、成功後は調整対象の場・RFを開けます。
 一つの長さ/無次元変数で複数のprofile座標を連動させる指定にも対応します。
 半径調整の例は `examples/tuning/pillbox_radius.json` です。
-[選択要素の適合細分API](docs/MARKED_REFINEMENT.md)は、直線P1/P2の境界と旧場を保つ係数移送を返します。[残差指標と細分対象選択](docs/RESIDUAL_INDICATOR.md)を追加しました。[追跡付き適応計算](docs/ADAPTIVE_REFINEMENT.md)のf/RQ/G停止・保存再開・CLIも利用できます。版2では局所候補後に全域細分を最低2回行い、RF量を確認します。`JobManager.start_adaptive_refinement`で[別プロセス実行・取消し・再開](docs/ADAPTIVE_REFINEMENT_JOBS.md)も可能です。[GUI](docs/GUI_ADAPTIVE_REFINEMENT.md)からも開始・中止・保存再開・f/RQ/G判定表示・対象場の表示を利用できます。版3で表面量停止をAPI/CLI/JobManagerへ追加しました。版3のGUI入力/表示/保存再開も利用できます。曲線局所細分のCase履歴とnative保存/CLIも接続しました。曲線の適応停止・保存再開は版4で接続しました。GUIの版4入力・履歴編集は未実装です。
+[選択要素の適合細分API](docs/MARKED_REFINEMENT.md)は、直線P1/P2の境界と旧場を保つ係数移送を返します。[残差指標と細分対象選択](docs/RESIDUAL_INDICATOR.md)を追加しました。[追跡付き適応計算](docs/ADAPTIVE_REFINEMENT.md)のf/RQ/G停止・保存再開・CLIも利用できます。版2では局所候補後に全域細分を最低2回行い、RF量を確認します。`JobManager.start_adaptive_refinement`で[別プロセス実行・取消し・再開](docs/ADAPTIVE_REFINEMENT_JOBS.md)も可能です。[GUI](docs/GUI_ADAPTIVE_REFINEMENT.md)からも開始・中止・保存再開・f/RQ/G判定表示・対象場の表示を利用できます。版3で表面量停止をAPI/CLI/JobManagerへ追加しました。版3のGUI入力/表示/保存再開も利用できます。曲線局所細分のCase履歴とnative保存/CLIも接続しました。曲線の適応停止・保存再開は版4で接続しました。版4のGUI入力・判定表示・保存再開も利用できます。任意の局所履歴を直接編集するGUIは未実装です。
 一般形状の追跡・制約付き最適化は未完了です。
 [表面ピークの収束評価](docs/SURFACE_CONVERGENCE.md)をAPI/CLI/GUIへ追加しました。追跡済みの固定曲線幾何について、周波数・R/Q・G・ピーク比の細分差を別々に判定します。
 接線構築は `construct-tangent` → `export-constructed-case` → `solve` で実行できます。
