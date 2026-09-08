@@ -16,6 +16,13 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    for command,help_text in [('start-mode-history','start history from a saved correspondence'),
+                              ('extend-mode-history','append a verified saved-field step'),
+                              ('replay-mode-history','verify all history sources and ID continuity')]:
+        history=sub.add_parser(command,help=help_text)
+        history.add_argument('document',type=Path)
+        if command=='extend-mode-history':history.add_argument('request',type=Path)
+        if command!='replay-mode-history':history.add_argument('--out',type=Path,required=True)
     tracking=sub.add_parser('track-modes',help='track modes from two saved PEC cylinders using an explicit request')
     tracking.add_argument('request',type=Path)
     tracking.add_argument('--out',type=Path,required=True)
@@ -85,7 +92,20 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        if args.command == 'track-modes':
+        if args.command in ('start-mode-history','extend-mode-history','replay-mode-history'):
+            from .mode_tracking_history import start_mode_history,extend_mode_history,read_mode_history,save_mode_history
+            from .saved_mode_tracking import read_mode_tracking
+            from .project import parse_json
+            if args.command=='start-mode-history':
+                result=save_mode_history(start_mode_history(read_mode_tracking(args.document)),args.out)
+            elif args.command=='extend-mode-history':
+                request=parse_json(args.request.read_text(encoding='utf-8'))
+                result=save_mode_history(extend_mode_history(read_mode_history(args.document),request,
+                    base_directory=args.request.resolve().parent),args.out)
+            else:result=read_mode_history(args.document)
+            print(f"{result['status']}: {getattr(args,'out',args.document)}")
+            return 0 if result['status']=='PASS' else 1
+        elif args.command == 'track-modes':
             from .saved_mode_tracking import save_mode_tracking
             from .project import parse_json
             result=save_mode_tracking(parse_json(args.request.read_text(encoding='utf-8')),args.out,base_directory=args.request.resolve().parent)

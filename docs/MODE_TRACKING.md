@@ -75,7 +75,7 @@ Bessel零点からの周波数で旧順位TM010/TM020/TM011、新順位TM010/TM0
 重み・座標順・符号・極端な振幅、厳密入力、最悪主角による方向喪失、保存後の実FEM円筒交差。
 標準周波数/RF回帰と独立実行の数値は[引継ぎ](CODEX_HANDOFF.md)に記録する。
 
-一般形状の比較写像・写像精度、クラスタ合流/分裂、連続した追跡履歴と安定IDの保存/再開、
+一般形状の比較写像・写像精度、クラスタ合流/分裂、部分空間を含む一般的な追跡履歴と安定IDの保存/再開、
 GUI・Study/tuneへの統合は未完了。2時点の保存とCLIは以下の範囲で実装した。D01親課題全体やD02を完了とは扱わない。
 既存の同一形状細分比較・条件付きバンド同定は従来どおり利用できる。
 重み付き内積の直交基底とSVDの基底不変性から独立実装し、新規外部資料・依存は追加していない。
@@ -121,3 +121,34 @@ SHA256、写像/重み/閾値/対応を記録する。比較前後で入力の�
 
 追加6テストで実FEM交差の保存/再検証、改変拒否、比較中の入力変更、入力バイト同一性、
 UNVERIFIEDの往復、CLIと厳密requestを確認した。
+
+## 順序付き履歴と個別IDの再開
+
+`mode_tracking_history` は確認済みの2時点文書から履歴を開始し、次の保存場へ延長する。
+各段階の文書を丸ごと保持し、隣接する元データのパス/hashとprevious_idsの連続性を検査する。
+延長時は全過去段階を再検証し、以前のcurrent_mode_idsを次のprevious_idsへ渡す。
+利用者によるID上書きは受け付けない。元履歴は変更せず、新しい出力へ保存する。
+controlsは延長requestで毎回明示し、段階ごとの変更も記録する。
+
+```bash
+python -m superfish_ng start-mode-history out/tracking-new.json --out out/history-first.json
+python -m superfish_ng extend-mode-history out/history-first.json out/extension.json --out out/history-second.json
+python -m superfish_ng replay-mode-history out/history-second.json
+```
+
+extension.jsonは `{"current_run":"next-saved-run","controls":{...}}` の2項目のみ。
+controlsは2時点requestと同じ全6項目を明記する。相対current_runはextension.json所在基準。
+Python APIはstart_mode_history、extend_mode_history、save_mode_history、read_mode_history。
+終了コードはPASS=0、UNVERIFIED=1、入力/再検証エラー=2。
+
+最後の段階がPASSかつ全個別IDが確定している場合だけcan_extend=trueとなる。
+未確認の段階も保存するが、その後の延長は拒否する。部分空間対応自体がPASSでも、
+個別IDが未確定なら履歴はUNVERIFIEDとして停止理由を保持する。
+部分空間内の基底へ勝手に個別IDを割り当てない。失敗履歴を消さず、必要なら最後の確認済み履歴から
+別の形状ステップを試して新規出力へ分岐する。履歴の自動分岐管理は未実装。
+
+現範囲は円筒の離散段階間で個別IDを継承する履歴であり、標本間を通る連続した物理枝の証明ではない。
+一般写像、部分空間ID集合の多段階継承、合流/分裂、適応的ステップ制御、GUI/Study/tuneは残件。
+再検証には全元保存場が必要で、長い履歴では全段階の再計算コストが掛かる。
+追加6テストは実FEM3時点交差・保存再開、未確認保存/停止、部分空間停止、
+単独で有効でも不連続な段階の拒否、過去入力変更と厳密request、CLI往復を確認する。
