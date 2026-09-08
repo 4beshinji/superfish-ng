@@ -411,3 +411,20 @@ affine-history.pngで逆係数・操作説明を画像確認。変更前out/brow
 空の専用GUIワークスペースとverify_gui_mode_tracking.mjsで再現する。
 既存 --sources/--repartition/--same-domain に
 `--affine out/d01-affine-remesh-verified-20260908` を追加する。
+
+## D01区分アフィン再メッシュGUI — 2026-09-08
+
+直前基準8870204。比較メッシュの完全なJSON配列入力・保存復元と旧/新の明示交換を追加。
+交換は入力欄だけを更新し、比較/履歴継続で領域・境界・向きを検査する。
+入力配列の構造が不正なら交換せず、比較が失敗しても確認済み履歴を保持する。
+
+変更前out/browser-piecewise-red-20260908は写像/比較メッシュ復元で想定どおりFAIL。
+初回out/browser-piecewise-final-20260908は比較/交換/履歴継続後の保存検査でFAIL。
+Chromeのダウンロード設定が同名ファイルを上書きする一方、検査は新規ファイル名を探していた。
+実ファイルにはpiecewise_remeshの2段階履歴が保存されていたため、製品の保存処理は変更せず、
+検査を保存内容と確認済み履歴の直接照合へ修正した。初回出力を保持。
+
+最終out/browser-piecewise-recheck-20260908は実Chrome30項目PASS（追加7/既存23）、外部要求0。
+piecewise-history.pngで入力・交換操作を画像確認した。空の専用GUIワークスペースで
+verify_gui_mode_tracking.mjsへ既存オプションと
+`--piecewise out/d01-piecewise-remesh-20260908` を渡して再現する。

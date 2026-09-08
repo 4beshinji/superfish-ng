@@ -317,10 +317,17 @@
           <label>比較写像<select id="tracking-mapping">
             <option value="normalized_cylinder">一定半径の円筒</option>
             <option value="normalized_profile">連続した可変半径profile</option>
+            <option value="piecewise_remesh">比較用メッシュによる局所変形</option>
             <option value="affine_remesh">軸を保つアフィン変形（異なるメッシュ）</option>
             <option value="same_domain">同じ直線境界の領域（異なるメッシュ）</option>
             <option value="paired_mesh">明示頂点対応（折返し・曲線を含む）</option>
           </select></label>
+          <div id="tracking-comparison" hidden>
+            <p>旧・新の比較用メッシュを明示します。両者は同じ頂点番号・三角形接続を持ち、それぞれの物理領域を覆う必要があります。実FEMメッシュの接続は一致しなくても比較できます。</p>
+            <label>比較用メッシュJSON（旧・新の2要素配列）<textarea id="tracking-comparison-json" rows="8">[]</textarea></label>
+            <button id="tracking-comparison-swap" type="button">旧・新の比較メッシュを入れ替える</button>
+            <p>逆方向へ継続する場合は、比較する結果も逆に選んでください。入力欄の旧・新だけを入れ替え、メッシュの妥当性は比較時に検証します。標本次数を上げた確認も必要です。</p>
+          </div>
           <div id="tracking-affine" hidden>
             <p>旧結果から新結果への変換: r′ = a r、z′ = b r + c z。正の倍率で軸と原点を保ちます。直線境界の全体が対応する必要があります。</p>
             <div class="grid">

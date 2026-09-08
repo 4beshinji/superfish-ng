@@ -1554,6 +1554,8 @@ function trackingButtons() {
   $("tracking-ids").closest("label").hidden = history;
   $("tracking-origin").hidden = !history;
   $("tracking-origin").textContent = history ? `履歴末尾の基準結果: ${study ? d.history.current_run : d.current_run}` : "";
+  $("tracking-comparison").hidden = $("tracking-mapping").value !== "piecewise_remesh";
+  $("tracking-comparison-swap").disabled = trackingBusy;
   $("tracking-affine").hidden = $("tracking-mapping").value !== "affine_remesh";
   $("tracking-affine-invert").disabled = trackingBusy;
   $("tracking-domain-note").hidden = $("tracking-mapping").value !== "same_domain";
@@ -1565,6 +1567,7 @@ function trackingControls() {
   const controls = {mapping: $("tracking-mapping").value, sample_order: number("tracking-order"),
     minimum_overlap: number("tracking-overlap"), minimum_assignment_margin: number("tracking-margin"),
     relative_cluster_gap: number("tracking-gap"), minimum_relative_singular_value: number("tracking-rank")};
+  if (controls.mapping === "piecewise_remesh") controls.comparison_meshes = JSON.parse($("tracking-comparison-json").value);
   if (controls.mapping === "affine_remesh") controls.affine_map = {radial_scale: number("tracking-affine-radial"), axial_scale: number("tracking-affine-axial"), axial_shear: number("tracking-affine-shear")};
   if (controls.mapping === "paired_mesh") controls.vertex_pairs = JSON.parse($("tracking-pairs").value);
   if ($("tracking-retain").checked) Object.assign(controls, {cluster_transition_policy: $("tracking-policy").value, minimum_cluster_link: number("tracking-link")});
@@ -1596,6 +1599,7 @@ function showTracking(response) {
   $("tracking-policy").value = controls.cluster_transition_policy ?? "retain_subspace";
   if (controls.minimum_cluster_link !== undefined) $("tracking-link").value = controls.minimum_cluster_link;
   if (controls.vertex_pairs) $("tracking-pairs").value = JSON.stringify(controls.vertex_pairs);
+  if (controls.comparison_meshes) $("tracking-comparison-json").value = JSON.stringify(controls.comparison_meshes,null,2);
   if (controls.affine_map) for (const [id,key] of [["radial","radial_scale"],["axial","axial_scale"],["shear","axial_shear"]]) $( `tracking-affine-${id}` ).value = controls.affine_map[key];
 
   $("tracking-status").textContent = `${d.status} — ${study ? `Study ${d.visited_point_indices.length}/${d.point_results.length} 点を追跡。未追跡 ${d.unvisited_point_indices.length} 点。` : history ? `履歴 ${d.steps.length} 段階。` : "2時点の比較。"} ${d.status !== "PASS" ? "未確認の対応があります。" : r.individual_ids_complete ? "全個別IDの対応を確認しました。" : "部分空間の対応を確認しました。集合内の個別IDは未確定です。"}${history && !sequence.can_extend ? " この履歴からの継続はできません。" : ""}`;
@@ -1638,6 +1642,12 @@ $("tracking-open").addEventListener("change", async event => {
   try { $("error").hidden = true; await runTracking("replay-mode-tracking", {document: await file.text()}); }
   catch (error) { failure(error); }
   finally { event.target.value = ""; }
+});
+bind("tracking-comparison-swap", () => {
+  const meshes=JSON.parse($("tracking-comparison-json").value);
+  if (!Array.isArray(meshes) || meshes.length!==2 || meshes.some(m=>!m || typeof m!=="object" || Array.isArray(m)))
+    throw Error("旧・新の比較メッシュを2要素のJSON配列で入力してください。");
+  $("tracking-comparison-json").value=JSON.stringify([meshes[1],meshes[0]],null,2);
 });
 bind("tracking-affine-invert", () => {
   const a=number("tracking-affine-radial"), c=number("tracking-affine-axial"), b=number("tracking-affine-shear");

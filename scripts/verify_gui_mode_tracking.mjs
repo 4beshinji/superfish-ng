@@ -307,6 +307,45 @@ try {
     await fill("#tracking-affine-radial",0);await click("#tracking-affine-invert");await wait('!document.querySelector("#error").hidden');
     await check("invalid inversion leaves other coefficients and verified history intact",`document.querySelector("#tracking-affine-radial").value==="0" && document.querySelector("#tracking-affine-axial").value===${JSON.stringify(axialBefore)} && trackingResult.document.steps.length===2`);
   }
+  if (args["--piecewise"]) {
+    await click("#tracking-reset");await loadFile(resolve(args["--piecewise"],"folded-1-6-pair.json"));
+    await wait('trackingResult?.document.request?.controls.mapping==="piecewise_remesh" && !trackingBusy');
+    await check("saved piecewise map restores both complete comparison meshes",'document.querySelector("#tracking-mapping").value==="piecewise_remesh" && !document.querySelector("#tracking-comparison").hidden && JSON.stringify(JSON.parse(document.querySelector("#tracking-comparison-json").value))===JSON.stringify(trackingResult.document.request.controls.comparison_meshes)');
+    const mappedIds=[];
+    for (const stage of [0,1]) {
+      const beforeIds=await ev('[...document.querySelector("#tracking-current").options].map(x=>x.value)');
+      await fill("#import-path",resolve(args["--piecewise"],`folded-1-${stage}`));await click("#import-result");
+      await wait(`document.querySelector("#tracking-current").options.length===${beforeIds.length+1}`);
+      mappedIds.push(await ev(`[...document.querySelector("#tracking-current").options].map(x=>x.value).find(x=>!${JSON.stringify(beforeIds)}.includes(x))`));
+    }
+    await click("#tracking-reset");await select("tracking-previous",mappedIds[0]);await select("tracking-current",mappedIds[1]);
+    await fill("#tracking-ids",'["fundamental"]');await click("#tracking-compare");await wait('trackingResult?.document.status==="PASS" && !trackingBusy');
+    await check("GUI compares non-affine folded meshes using the declared comparison mesh",'trackingResult.document.tracking.physical_mapping.comparison_triangle_count===44 && trackingResult.document.tracking.physical_mapping.solver_triangle_counts.join(",")==="74,167"');
+    await click("#tracking-start");await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy');
+    await select("tracking-current",mappedIds[0]);await click("#tracking-extend");await wait('!document.querySelector("#error").hidden && !trackingBusy');
+    await check("unswapped comparison meshes cannot overwrite reverse history",'trackingResult.document.steps.length===1 && document.querySelector("#error").textContent.includes("mesh")');
+    await click("#tracking-comparison-swap");await click("#tracking-extend");await wait('trackingResult?.document.steps?.length===2 && !trackingBusy');
+    await check("explicit comparison-mesh swap continues the identity history",'trackingResult.document.status==="PASS" && trackingResult.document.current_mode_ids[0]==="fundamental" && JSON.stringify(trackingResult.document.steps[1].request.controls.comparison_meshes[0])===JSON.stringify(trackingResult.document.steps[0].request.controls.comparison_meshes[1])');
+    const expectedHistory=await ev('trackingResult.document');await click("#tracking-save");
+    let savedHistory;
+    for (let n=0;n<100;n++) {
+      try {
+        const candidate=JSON.parse(await readFile(out+"/downloads/mode-tracking-history.json","utf8"));
+        if (isDeepStrictEqual(candidate,expectedHistory)) {savedHistory=candidate;break;}
+      } catch {}
+      await sleep(100);
+    }
+    if (!savedHistory) throw Error("piecewise history download differs from verified data");
+    report.checks.push({operation:"piecewise history download preserves both mesh declarations",passed:true});
+    await select("tracking-mapping","same_domain");
+    await check("other mappings omit comparison mesh declarations",'document.querySelector("#tracking-comparison").hidden && !("comparison_meshes" in trackingControls())');
+    await select("tracking-mapping","piecewise_remesh");
+    await ev('document.querySelector("#mode-tracking").scrollIntoView({behavior:"instant",block:"start"})');
+    const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
+    await writeFile(out+"/piecewise-history.png",Buffer.from(capture.data,"base64"));
+    await fill("#tracking-comparison-json",'[{}]');await click("#tracking-comparison-swap");await wait('!document.querySelector("#error").hidden');
+    await check("invalid comparison input is not partly swapped or committed",'document.querySelector("#tracking-comparison-json").value==="[{}]" && trackingResult.document.steps.length===2');
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if (!report.passed) throw Error("mode tracking GUI checks failed");
