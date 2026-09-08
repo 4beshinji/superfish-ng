@@ -52,8 +52,7 @@ class CurvedAdaptiveRefinementTests(unittest.TestCase):
 
     def test_strict_geometry_integration_controls_and_initial_budget(self):
         r=request()
-        from test_curved_reflection import half_case
-        bads=[dict(r,case=half_case('z_min','electric_symmetry').to_dict()),dict(r,confirmation='none'),
+        bads=[dict(r,confirmation='none'),
               dict(r,quadrature_check_order=12),dict(r,quadrature_check_order=True),dict(r,quadrature_relative_tolerance=0),
               dict(r,controls=dict(r['controls'],mapping='nested_affine')),dict(r,minimum_corner_angle_deg=60),
               dict(r,surface_relative_tolerances={}),dict(r,minimum_angle_deg=5)]

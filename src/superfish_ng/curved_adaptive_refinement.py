@@ -39,6 +39,27 @@ class Plan:
     space: object
 
 
+def _surface_geometry(contour):
+    """Check a full native PEC wall, or the full wall implied by one seam.
+
+    Reflection establishes the geometry test only. Peaks and RF normalization
+    continue to use the original half-domain and its declared symmetry parity.
+    """
+    tags=set(contour.edge_tags)
+    if tags=={'axis','pec'}:
+        return _geometry_assessment(contour)
+    symmetry=tags & {'electric_symmetry','magnetic_symmetry'}
+    if len(symmetry)!=1 or tags!={'axis','pec',*symmetry}:
+        raise ValueError('version 4 requires closed PEC/axis or one consistent flat symmetry end')
+    reflected=contour.reflected()
+    diagnostic=_geometry_assessment(reflected)
+    diagnostic.update(symmetry_boundary_tag=next(iter(symmetry)),
+                      geometry_domain='full native PEC contour produced by verified reflection',
+                      surface_domain='PEC wall of the original half-domain',
+                      rf_domain='original half-domain; no implicit full-domain RF conversion')
+    return diagnostic
+
+
 def validate_request(request):
     fields=('schema_version','case','initial_mesh','initial_ids','mode_id','controls','bulk_fraction','max_levels',
         'max_triangles','minimum_corner_angle_deg','relative_tolerances','confirmation','surface_relative_tolerances',
@@ -48,9 +69,7 @@ def validate_request(request):
         raise ValueError('curved adaptive refinement requires schema_version 4')
     case=Case.from_dict(request['case'])
     if case.geometry_order!=2:raise ValueError('version 4 requires native quadratic curved geometry')
-    if set(case.curved_contour.edge_tags)!={'axis','pec'}:
-        raise ValueError('version 4 surface confirmation requires a closed PEC/axis contour; symmetry subdomains need a separate surface regularity contract')
-    geometry=_geometry_assessment(case.curved_contour)
+    geometry=_surface_geometry(case.curved_contour)
     if geometry['status']!='SMOOTH_WITHIN_TOLERANCE':
         raise ValueError('version 4 surface confirmation requires verified smooth native PEC joins and axis poles; '+geometry['status'])
     if request['confirmation']!='uniform_two_steps':raise ValueError('version 4 requires uniform_two_steps confirmation')
@@ -174,7 +193,7 @@ def _surface(solution,mode,q):
     if q['epk_over_eacc_estimate'] is not None and q['bpk_over_eacc_estimate_mt_per_mv_per_m'] is not None and q['eacc_v_per_m']>0:
         electric=_ratio_interval(peaks['electric_v_per_m']['lower_bound'],peaks['electric_v_per_m']['upper_bound'],q['eacc_v_per_m'])
         magnetic=_ratio_interval(peaks['magnetic_a_per_m']['lower_bound'],peaks['magnetic_a_per_m']['upper_bound'],q['eacc_v_per_m'],factor=Fraction(MU0)*10**9)
-    return dict(intervals=dict(zip(PEAKS,(electric,magnetic))),peaks=peaks,geometry_diagnostic=_geometry_assessment(solution.case.curved_contour))
+    return dict(intervals=dict(zip(PEAKS,(electric,magnetic))),peaks=peaks,geometry_diagnostic=_surface_geometry(solution.case.curved_contour))
 
 
 class _VerifiedPrefix:
