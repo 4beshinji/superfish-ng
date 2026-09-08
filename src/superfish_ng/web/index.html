@@ -184,6 +184,14 @@
             <label>形状を保つ細分段数<input id="curved-refinement-levels" type="number" min="0" step="1" value="0" /></label>
           </div>
           <p>段数を1増やすと要素数は4倍になります。初期の二次形状を保持し、解析曲線へ点を置き直しません。</p>
+          <button id="curved-selection-load" type="button">現在のメッシュから図上選択</button>
+          <p class="hint">現在の履歴を適用した原領域の要素を選び、末尾に選択細分を追加します。図上表示は5000要素まで。入力変更後はメッシュを再表示してください。</p>
+          <div id="curved-selection-panel" hidden>
+            <svg id="curved-selection-mesh" viewBox="0 0 800 400" style="width:100%;min-height:240px" aria-label="細分要素を選ぶメッシュ"></svg>
+            <p id="curved-selection-status" role="status"></p>
+            <label>選択細分の最小頂点接線角 [度]<input id="curved-selection-angle" type="number" min="0" max="60" step="any" value="5" /></label>
+            <button id="curved-selection-append" type="button" disabled>選択要素の細分を履歴末尾へ追加</button>
+          </div>
           <fieldset id="curved-history-controls" hidden disabled>
             <legend>順序付き細分履歴</legend>
             <p>上から順に実行します。選択要素の番号は各段階の直前のメッシュに対する0始まりの番号です。形状や初期メッシュを変更する場合は履歴も確認してください。</p>

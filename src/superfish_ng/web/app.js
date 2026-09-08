@@ -181,6 +181,58 @@ function collectCurvedRefinementSteps() {
     return {kind: 'marked', marked_cells: cells, minimum_corner_angle_deg: angle};
   });
 }
+let curvedSelection = null;
+function selectionStatus() {
+  const ids = [...curvedSelection.cells].sort((a,b)=>a-b);
+  $("curved-selection-status").textContent = `選択 ${ids.length} 要素: ${ids.join(", ")}`;
+  $("curved-selection-append").disabled = !ids.length;
+}
+bind("curved-selection-load", async () => {
+  $("curved-selection-load").disabled = true;
+  try {
+    const project = collect(), signature = JSON.stringify(project);
+    const mesh = await api("curved-selection-mesh", {document:project});
+    if (JSON.stringify(collect()) !== signature) throw Error("メッシュ作成中に入力が変わりました。再表示してください");
+    curvedSelection = {signature, cells:new Set()};
+    const svg = $("curved-selection-mesh"), ns = "http://www.w3.org/2000/svg";
+    svg.replaceChildren();
+    const radii=mesh.points_rz_m.map(p=>p[0]), zs=mesh.points_rz_m.map(p=>p[1]);
+    const z0=Math.min(...zs), r0=Math.min(...radii);
+    const scale=Math.min(760/(Math.max(...zs)-z0),360/(Math.max(...radii)-r0));
+    const point=p=>[20+(p[1]-z0)*scale,380-(p[0]-r0)*scale];
+    mesh.cell_nodes.forEach((nodes,index) => {
+      const p=nodes.map(i=>point(mesh.points_rz_m[i]));
+      let d=`M ${p[0].join(" ")}`;
+      for (const [a,b,m] of [[0,1,3],[1,2,4],[2,0,5]]) {
+        const control=p[m].map((v,k)=>2*v-(p[a][k]+p[b][k])/2);
+        d+=` Q ${control.join(" ")} ${p[b].join(" ")}`;
+      }
+      const path=window.document.createElementNS(ns,"path");
+      for (const [name,value] of Object.entries({d:d+" Z",fill:"#d7e9f8",stroke:"#35647c","stroke-width":.6,tabindex:0,role:"button","aria-label":`要素 ${index}`,"aria-pressed":"false","data-cell":index})) path.setAttribute(name,value);
+      const toggle=()=>{
+        if(curvedSelection.cells.has(index))curvedSelection.cells.delete(index);else curvedSelection.cells.add(index);
+        const selected=curvedSelection.cells.has(index);path.setAttribute("fill",selected?"#efb44c":"#d7e9f8");path.setAttribute("aria-pressed",String(selected));selectionStatus();
+      };
+      path.onclick=toggle;path.onkeydown=event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();toggle();}};
+      svg.append(path);
+    });
+    $("curved-selection-panel").hidden=false;selectionStatus();
+  } finally { $("curved-selection-load").disabled=false; }
+});
+bind("curved-selection-append", () => {
+  if(!curvedSelection || JSON.stringify(collect())!==curvedSelection.signature)
+    throw Error("入力や履歴が変わりました。古い要素番号は追加できません。メッシュを再表示してください");
+  const ids=[...curvedSelection.cells].sort((a,b)=>a-b), angle=number("curved-selection-angle");
+  if(!ids.length || angle<=0 || angle>=60)throw Error("要素を選び、最小頂点接線角を0より大きく60より小さく指定してください");
+  if($("curved-refinement-mode").value==="levels") {
+    $("curved-history").tBodies[0].replaceChildren();
+    for(let i=0;i<number("curved-refinement-levels");i++)curvedRefinementRow();
+    $("curved-refinement-mode").value="steps";
+  }
+  curvedRefinementRow({kind:"marked",marked_cells:ids,minimum_corner_angle_deg:angle});
+  curvedSelection=null;$("curved-selection-panel").hidden=true;
+  updateCurvedControls();markDirty();
+});
 function showGeometry() {
   updateCurvedControls();
   $("curved-fem-controls").hidden = $("geometry-type").value !== "curved_contour";
@@ -341,6 +393,8 @@ function setGeometry(g) {
   showGeometry();
 }
 function applyProject(p) {
+  curvedSelection = null;
+  $("curved-selection-panel").hidden = true;
   const c = p.case;
   $("geometry-order").value = c.mesh.geometry_order ?? 1;
   $("curved-refinement-levels").value = c.mesh.curved_refinement_levels ?? 0;
