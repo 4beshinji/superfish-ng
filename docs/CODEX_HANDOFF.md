@@ -1,5 +1,25 @@
 # ローカルCodexへの引継ぎ
 
+## 非球形両尺度の最終対照が完了 — 2026-09-09
+
+handle96442/PID3978483は終了0、dc795e9固定ソースで両尺度PASS。
+[最終結果](CURVED_NONSPHERE_COMPARISON.md)と[N04照合](N04_ACCEPTANCE.md)を更新。
+尺度1旧報告との時間以外完全一致、両尺度五量相似最大8.362e-12、
+体積保存/8倍則・Ritz・追跡・積分・追加対照差・終了後source hash一致を確認した。
+適応100917対一様確認41281自由度で、適応優位は得られなかった。
+一般精度/効率と親N04全体は未受入のまま。
+
+本体 out/curved-nonsphere-spatial-search-20260909 に報告JSON/CSV/PNG/PDFとplot.pyを保存。
+元の全native結果は /tmp/superfish-curved-edge-search-worktree-20260909/out/curved-nonsphere-spatial-search-20260909 に保持する。
+source-location.jsonに元位置とソースcommit・hash照合を記録。絶対保存先を使う検証もあるため
+このworktree/元結果は削除・移動しない。本体は後続GUI/Study変更を含み、
+両尺度ベンチマークを最新版で再実行したとは扱わない。
+
+現在、今回追跡した検証・GUI・CLIプロセスはすべて終了済み。
+数値検証のためのソース固定は解除できるが、元成果物の再現用worktreeは保持する。
+最新版の標準658件・Chrome23項目はfae2bc4で完了済み。以後は文書/出力のみ変更した。
+次は受入照合表の一般形状/表面前提、RFを意識した選択と全域確認費用の残件を具体化する。
+
 ## N04要件の照合 — 2026-09-09
 
 [N04_ACCEPTANCE.md](N04_ACCEPTANCE.md)に原要件・実証・限界・次の残件を集約した。

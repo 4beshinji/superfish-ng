@@ -449,3 +449,5 @@ N04履歴対応Studyの受入条件（2026-09-09）: fixed_geometry_convergence�
 受入結果: 履歴対応の固定形状Studyは追加2検査、Chrome23項目、CLI/GUI報告一致、標準658件中656合格・2 skipがPASS。粗い2水準のRF収束FAILとCLI終了1は維持。seed周波数差ゼロ/RF最大8.882e-16、最終hash一致。[記録](CURVED_HISTORY_STUDY.md)。
 
 N04要件の再照合: [受入照合表](N04_ACCEPTANCE.md)に原要件・数値/GUI証拠・残件を集約した。対応済みの履歴編集/固定形状Studyを残件とする現状説明を修正。親N04全体は未受入を維持する。
+
+非球形対照の最終受入: dc795e9固定ソースで両尺度PASS、終了0。五量相似最大8.362e-12、体積8倍則/保存・Ritz・初期量一致・追跡/積分・追加対照差・最終hash一致を確認し、CSV/図を保存。適応100917対一様確認41281自由度で優位なし。限定対照項目は完了、一般精度/効率・親N04は未受入。[記録](CURVED_NONSPHERE_COMPARISON.md)。
