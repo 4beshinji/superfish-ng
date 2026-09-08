@@ -1,5 +1,47 @@
 # ローカルCodexへの引継ぎ
 
+## N03固定曲線幾何の表面収束評価API/CLI — 2026-09-08
+
+直前基準904c72b。N03へ着手し、追跡済み個別IDの保存履歴から固定曲線P2の
+周波数/RQ/G/ピーク比を評価するsurface_convergenceを追加。最低3水準・直近2区間を要求し、
+元Case/元メッシュ不変とcurved_refinement_levelsの厳密増加を検証する。
+curved_same_domainの全境界照合と保存場再検証を用い、rankを固定IDと取り違えない。
+
+f 1e-4、accelerator R/QとG各0.005、Epk/EaccとBpk/Eacc各0.01を別判定する。
+ピーク上下界をEaccで割った区間から最大相対変化を計算。二進入力をFractionで厳密に扱い、
+外向き丸めでピーク探索区間の不確かさを消さない。範囲逸脱や有意でない加速電場は未確認。
+元解析曲線の再入角はSINGULAR_GEOMETRY、他の未分類角/非直交軸接続はUNVERIFIED_GEOMETRY。
+球・楕円体の直交極は明示角度許容差で検査し、軸の内部分割点は物理角と数えない。
+TARGETS_METは二つの細分差の達成であり、物理誤差上界や解析境界への収束証明ではない。
+既存RF/Studyの未認証表示は変更していない。
+
+assess-surface-convergence/replay-surface-convergenceを追加。新規ファイルへ評価・全履歴・
+基準・全水準を保存し、再構築時に評価やsourceの変更を拒否する。未達/特異でも診断は保存。
+GUI品質表示、一般形状/幾何近似の収束、直線要素統合等は残す。[仕様](SURFACE_CONVERGENCE.md)。
+
+着手前562件中560合格・2 skip（194.363秒）。独立の区間不変量を含む新規テストは
+未実装のimportでまず失敗。追加5件PASS（29.637秒）：同じ上側推定値でも広い区間を拒否、
+直近2区間の各量判定、外向き比の包含、球極/円錐先端/再入角、実FEM保存履歴・逆細分拒否・
+改変拒否・上書き拒否。FEM、既存追跡核、ピーク探索核と数値基準を変更していない。
+
+初回out/n03-surface-convergence-initial-20260908は数値項目PASSだが、テスト追加を検知して
+総合FAIL。36/144/576要素の球形、長さ1/2とエネルギー1/4の二系列でTARGETS_MET。
+最終解析差はf最大2.48230e-5、RQ 6.48881e-6、G 8.80690e-7、
+Epk/Eacc 2.65676e-4、Bpk/Eacc 3.84609e-5。相似則差最大4.92940e-14。
+解析式は既存SphereTMの独立参照のみで、FEMに使用しない。新規外部資料・依存・legacy参照なし。
+初回結果を保持し、最終固定ソースの検証を別出力へ記録する。
+
+最終out/validation-n03-surface-convergence-20260908はPASS。567件中565合格・2 skip（225.948秒）。
+seed周波数差ゼロ、RF/エネルギー差最大8.881784197001252e-16。基準・許容差変更なし。
+独立out/n03-surface-convergence-final-20260908もPASS、標準/独立のsource_sha256は最終ソースと一致。
+CLI out/n03-surface-convergence-cli-20260908.jsonの作成・再検証はTARGETS_MET、終了値0。
+
+再入角を持つ実FEM18/72/288要素のout/n03-singular-cli-20260908でも、CLI作成/再検証は
+SINGULAR_GEOMETRYを保存して終了値1。角診断は再入角1/凸角3、細分診断自体もNOT_CONVERGED。
+特異形状を有限ピーク合格として扱わない経路を、合成行データだけでなくnative保存系列で確認した。
+
+親課題は8受入・5進行中（N03追加）・19未受入・X01候補。N03全体の完了とはしない。
+
 ## D01曲線P2のアフィン再メッシュ追跡 — 2026-09-08
 
 直前基準18f63e2。既存affine_remesh controlsを曲線P2へ拡張。双方のnative primitiveの

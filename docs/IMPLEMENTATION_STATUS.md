@@ -1,13 +1,13 @@
 # 実装・検証の現状
 
-確認日: 2026-09-08。D02連動座標の周波数調整追加後（直前製品基準 `c5233d9`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-08。N03固定幾何の表面収束評価追加後（直前製品基準 `904c72b`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
 ## 互換計画の進捗
 
 33親課題のうち、C01、限定C02、ローカルO01、native R01、N01、N02、G01、G02の
-8件が記載範囲で.S/.I/.V受入済み。G03・D01・D02は部分実装・部分検証、C00は調査継続中。
+8件が記載範囲で.S/.I/.V受入済み。G03・D01・D02・N03は部分実装・部分検証、C00は調査継続中。
 他の親課題は未受入で、既存の掃引・GUI等を親課題全体の完了へ数えない。
 X01は互換必須集合外の拡張候補。課題数は工数消化率や互換率ではない。
 詳細と33件の区分は [COMPATIBILITY_PLAN.md](COMPATIBILITY_PLAN.md)。
@@ -22,6 +22,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分 | 品質未達は拒否。二次境界は元の解析曲線の近似。適応誤差推定なし | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 固有値・場 | 実FEM、複数モード、残差/直交性/エネルギー検査、物理座標プローブ | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | solver.py、curved_solution.py、curved_sampling.py |
 | RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、曲線連続離散極値と角診断 | peak phasor・RQ二規約。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
+| 表面収束評価 | 固定曲線P2の3水準・追跡ID・ピーク上下界によるf/RQ/G/ピーク比判定API/CLI | 幾何近似誤差/一般形状/直線要素/GUIは残件。物理誤差上界ではない | [SURFACE_CONVERGENCE.md](SURFACE_CONVERGENCE.md) |
 | 条件群・鏡映 | 掃引、同一形状細分比較、条件付きバンド同定、曲線の幾何/FEM別Study・鏡映 | D01は重み付き標本部分空間・円筒/profile写像・明示メッシュ対応による追跡と2時点保存/再検証CLI/GUIと個別IDと部分空間ID集合の順序付き履歴/再開、完了Studyの隣接点追跡と点状態表示・保存再検証GUI、追跡付き逐次計算・停止・チェックポイント再開API/CLI・JobManager・GUI、幾何掃引の適応二分と途中保存・再開API/CLI・JobManager・GUI、多対多の保守的ID集合継承とGUI方式選択/復元、同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。曲線領域の一般写像/個別枝回復、制約付き最適化は未実装 | studies.py、symmetry.py、curved_reflection.py |
 | 周波数調整 | 単一/連動profile座標・明示円筒/profile写像の1変数二分探索・停止・再開・最終細メッシュ判定API/CLI・JobManager・GUI、対象の場表示 | 全個別ID確認が前提。二水準差は誤差上界でない。曲線/非線形変数/最適化は未実装 | [TUNING.md](TUNING.md) |
 | 操作・保存 | 共通CLI/Python/GUI、曲線計算・描画・鏡映、完了公開/hash、再読込 | 外部メッシュ指定UIなし。人による使いやすさ評価、電源断/他OSは未保証 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)、[SAVE_COMPLETION.md](SAVE_COMPLETION.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
@@ -35,8 +36,8 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 558件中556合格・NGSolve参照環境専用2件skip。D02連動座標の周波数調整追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | D02連動座標の周波数調整追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-d02-coupled-tuning-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 567件中565合格・NGSolve参照環境専用2件skip。N03固定幾何の表面収束評価追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | N03固定幾何の表面収束評価追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-n03-surface-convergence-20260908、[引継ぎ](CODEX_HANDOFF.md) |
 | 曲線FEM | 球形独立参照、楕円/双曲線の3段階幾何近似・全6固定FEM比較・最終幾何間の場/RF比較PASS。初回FAIL保持 | [CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、out/validation-g03-native-geometry-separated-20260908 |
 | 接線候補 | 円/楕円/双曲線全体の四次式・根分離・接点再構成の独立8検査PASS。有限弧数値判定/明示選択G1接続の追加9検査PASS。有限弧所属/fractionと位置誤差上界を製品操作へ統合済み。固定直線と弧の追加7検査PASS。線分間フィレット追加7検査PASS。中心軌跡区間/特異性分割の追加6検査PASS。有限領域交点の追加7検査PASS。版5の有限弧フィレット追加6検査PASS、保存/Case/CLI/GUIへ統合。版6の直線・弧フィレット追加6検査PASS、同じ製品経路へ統合。弧端/退化の厳密特殊ケース診断API/CLIの追加9検査PASS。構築診断の別保存/CLI/GUI・再検証に追加5検査とChrome11操作PASS。最小子午面半径制約の追加6検査PASS、保存/鏡映/構築/GUIを確認。極端な尺度の曲率/半径の追加4検査PASS。一般分類と退化候補構築は未完 | [TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
 | モード追跡 | 追跡核9件・2時点保存6件・履歴6件・部分空間継承5件・profile写像6件・明示メッシュ対応5件・合流/分裂6件・GUI接続5件・Study追跡6件・Study GUI接続3件・追跡付き実行6件・JobManager接続5件・逐次実行GUI接続3件・適応二分6件・適応再開5件・適応Job接続5件・適応GUI接続3件・多対多集合継承6件・同一領域再メッシュ6件・アフィン再メッシュ6件・区分アフィン再メッシュ5件・同一曲線領域6件PASS。解析交差/近接・縮退回転・曖昧停止・保存後の実FEM円筒交差・profile相似則/局所変更、明示メッシュ対応での折返し/曲線相似。同一曲線領域GUIを含むChrome35項目PASS。一般追跡全体の受入ではない | [MODE_TRACKING.md](MODE_TRACKING.md)、out/d01-cylinder-crossing-20260908 |

@@ -51,6 +51,12 @@ def main(argv=None):
     tracking.add_argument('--out',type=Path,required=True)
     tracking_replay=sub.add_parser('replay-mode-tracking',help='recompute and verify saved mode correspondence and source identities')
     tracking_replay.add_argument('tracking',type=Path)
+    surface=sub.add_parser('assess-surface-convergence',help='assess tracked fixed-geometry frequency, RF and peak refinement changes')
+    surface.add_argument('history',type=Path)
+    surface.add_argument('--mode-id',required=True)
+    surface.add_argument('--out',type=Path,required=True)
+    surface_replay=sub.add_parser('replay-surface-convergence',help='revalidate saved surface convergence and all native sources')
+    surface_replay.add_argument('assessment',type=Path)
     tangent = sub.add_parser('construct-tangent', help='preview or explicitly select a tangent in an unfinished curved case')
     tangent.add_argument('request', type=Path)
     tangent.add_argument('--candidate-index', type=int)
@@ -183,6 +189,17 @@ def main(argv=None):
             result=read_mode_tracking(args.tracking)
             print(f"REPLAYED {result['status']}: {args.tracking}")
             return 0 if result['status']=='PASS' else 1
+        elif args.command == 'assess-surface-convergence':
+            from .surface_convergence import save_surface_convergence
+            from .mode_tracking_history import read_mode_history
+            result=save_surface_convergence(read_mode_history(args.history),args.mode_id,args.out)
+            print(f"{result['status']}: {args.out}")
+            return 0 if result['status']=='TARGETS_MET' else 1
+        elif args.command == 'replay-surface-convergence':
+            from .surface_convergence import read_surface_convergence
+            result=read_surface_convergence(args.assessment)
+            print(f"REPLAYED {result['status']}: {args.assessment}")
+            return 0 if result['status']=='TARGETS_MET' else 1
         elif args.command == 'construct-tangent':
             from .tangent_construction import save_construction
             from .project import parse_json

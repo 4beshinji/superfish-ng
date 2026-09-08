@@ -199,6 +199,7 @@ G03全体は部分対応です。[要件と証拠の照合](docs/G03_ACCEPTANCE.
 一つの長さ/無次元変数で複数のprofile座標を連動させる指定にも対応します。
 半径調整の例は `examples/tuning/pillbox_radius.json` です。
 一般形状の追跡・制約付き最適化は未完了です。
+[表面ピークの収束評価](docs/SURFACE_CONVERGENCE.md)をAPI/CLIへ追加しました。追跡済みの固定曲線幾何について、周波数・R/Q・G・ピーク比の細分差を別々に判定します。
 接線構築は `construct-tangent` → `export-constructed-case` → `solve` で実行できます。
 合成例と保存・再構築の仕様は [接線構築](docs/TANGENT_CONSTRUCTION.md) を参照してください。
 
