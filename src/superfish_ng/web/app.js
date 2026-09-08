@@ -625,11 +625,13 @@ async function refreshJobs() {
     row.dataset.job = j.id;
     const title = document.createElement("strong");
     title.textContent = (statusNames[j.status] || j.status) + (["tracked_study","adaptive_study"].includes(j.kind) ? ` / ${j.kind === "adaptive_study" ? "適応" : "追跡"}Study${j.tracking_status ? " " + j.tracking_status : ""}` : "");
+    if (j.kind === "adaptive_refinement") title.textContent += ` / 適応細分${j.refinement_status ? " " + j.refinement_status : ""}`;
     if (j.kind === "tune") title.textContent += ` / 周波数調整${j.tuning_status ? " " + j.tuning_status : ""}`;
     row.append(title);
     const desc = document.createElement("small");
     const stage =
       {
+        "tracked adaptive FEM refinement and RF confirmation": "メッシュを細分・対象モードのRF量を確認中",
         "tracked FEM frequency tuning and final mesh refinement": "追跡しながら周波数を調整・細分検査中",
         "adaptive FEM solves and saved-field tracking": "中点を追加して計算・追跡中",
         "sequential FEM solves and saved-field tracking": "各点を計算・追跡中",
@@ -653,6 +655,7 @@ async function refreshJobs() {
           await api("cancel", { id: j.id });
           await refreshJobs();
         } else if (["tracked_study","adaptive_study"].includes(j.kind)) await openTrackedExecution(j.id,j.kind === "adaptive_study");
+        else if (j.kind === "adaptive_refinement") await openRefinement(j.id);
         else if (j.kind === "tune") await openTuning(j.id);
         else if (j.kind === "study") await openStudy(j.id);
         else await openResult(j.id);
@@ -1590,7 +1593,7 @@ $("surface-open").addEventListener("change",async event=>{
 let trackingResult = null, trackingBusy = false, trackingJobSignature = "";
 let surfaceResult = null, surfaceBusy = false;
 function trackingJobs(jobs) {
-  const completed = jobs.filter(j => j.status === "complete" && !["study","tracked_study","adaptive_study","tune"].includes(j.kind));
+  const completed = jobs.filter(j => j.status === "complete" && !["study","tracked_study","adaptive_study","tune","adaptive_refinement"].includes(j.kind));
   const signature = JSON.stringify(jobs.filter(j => j.status === "complete").map(j => [j.id,j.kind]));
   if (signature === trackingJobSignature) return;
   trackingJobSignature = signature;
@@ -1919,3 +1922,87 @@ tuningButtons();
 $("tune-coupled").addEventListener("change",tuningParameterMode);
 $("tune-parameter-unit").addEventListener("change",tuningParameterMode);
 tuningParameterMode();
+
+
+let refinementResult=null, refinementBusy=false;
+const refinementQuantities=[['frequency_hz','周波数','frequency'],['r_over_q_accelerator_ohm','R/Q = V²/(ωU)','rq'],['geometry_factor_ohm','G','g']];
+function refinementButtons() {
+  for (const id of ['prepare','start','open']) $(`refine-${id}`).disabled=refinementBusy;
+  $('refine-resume').disabled=refinementBusy || !refinementResult?.document.can_resume;
+  $('refine-save').disabled=refinementBusy || !refinementResult;
+  $('refine-open-field').disabled=refinementBusy || !refinementResult?.document.levels.at(-1)?.quantities;
+}
+function refinementVersion() {$('refine-order').disabled=$('refine-version').value==='2';}
+function refinementLimit() {
+  if(!$('refine-limit').value.trim())return {};
+  const n=number('refine-limit');if(!Number.isInteger(n)||n<1)throw Error('今回の水準上限は正の整数で指定してください');
+  return {max_new_levels:n};
+}
+function showRefinement(response) {
+  refinementResult=response;const d=response.document,r=d.request;
+  const names={PAUSED:'一時停止・再開可能',TARGETS_MET:'指定した細分差を達成',UNVERIFIED:'個別ID未確認で停止',QUANTITY_UNVERIFIED:'正の有限な判定量を確認できず停止',LEVEL_LIMIT:'水準上限で停止',REFINEMENT_LIMIT:'要素数または最小角の制約で停止',TRACKING_BUDGET:'追跡の作業量上限で停止',ZERO_INDICATOR:'選択可能な残差指標がなく停止'};
+  $('refine-status').textContent=`${d.status} — ${names[d.status]}。計算済み ${d.levels.length} 水準。対象ID: ${r.mode_id}`;
+  const phase={initial:'初期',residual:'局所細分',uniform_confirmation:'全域確認'};
+  $('refine-confirmation').textContent=`版${r.schema_version}: ${r.schema_version===2 ? '全域確認 '+d.levels.filter(l=>l.refinement_kind==='uniform_confirmation').length+' 回（最低2回）' : '局所差のみ・全域確認なし'}。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'。' : ''} 表面ピーク: 未評価。物理誤差上界: なし。`;
+  const display=v=>Number.isFinite(v) ? Number(v.toPrecision(9)) : '—';
+  const row=(body,values)=>{const tr=document.createElement('tr');for(const value of values){const td=document.createElement('td');td.textContent=value;tr.append(td);}body.append(tr);};
+  const body=$('refine-levels').querySelector('tbody');body.replaceChildren();
+  for(const level of d.levels) {
+    const q=level.quantities;
+    row(body,[level.index+1,phase[level.refinement_kind ?? (level.index===0 ? 'initial':'residual')],level.triangles,level.dofs,
+      {INITIAL:'初期ID',PASS:'確認済み',UNVERIFIED:'未確認'}[level.status],level.mode_index===null ? '—':level.mode_index+1,
+      q ? display(q.frequency_hz/1e6):'評価不可',q ? display(q.r_over_q_accelerator_ohm):'評価不可',q ? display(q.geometry_factor_ohm):'評価不可']);
+  }
+  const gates=$('refine-gates').querySelector('tbody');gates.replaceChildren();
+  for(const [key,label,id] of refinementQuantities) {
+    const changes=d.decision.changes ?? [],a=changes[0]?.[key],b=changes[1]?.[key];
+    row(gates,[label,display(a?.relative_change),display(b?.relative_change),r.relative_tolerances[key],!a||!b ? '未評価' : a.passed&&b.passed ? '条件内':'未達']);
+    $(`refine-${id}`).value=r.relative_tolerances[key];
+  }
+  $('refine-request').value=JSON.stringify(r,null,2);$('refine-version').value=r.schema_version;refinementVersion();
+  for(const [id,key] of [['bulk','bulk_fraction'],['max-levels','max_levels'],['max-triangles','max_triangles'],['angle','minimum_angle_deg']])$(`refine-${id}`).value=r[key];
+  for(const [id,key] of [['overlap','minimum_overlap'],['margin','minimum_assignment_margin'],['gap','relative_cluster_gap'],['rank','minimum_relative_singular_value']])$(`refine-${id}`).value=r.controls[key];
+  if(r.schema_version===1)$('refine-order').value=r.controls.sample_order;
+  $('refine-ids').value=JSON.stringify(r.initial_ids);$('refine-mode-id').value=r.mode_id;
+  $('refine-diagnostics').textContent=JSON.stringify({decision:d.decision,controls:r.controls,initial_mesh:r.initial_mesh,level_runs:d.level_runs,
+    quality:d.levels.map(l=>l.quality),last_correspondence:d.levels.at(-1)?.tracking ?? null},null,2);
+  refinementButtons();
+}
+async function refinementAction(action,data) {
+  if(refinementBusy)throw Error('適応計算の要求を処理中です');
+  refinementBusy=true;refinementButtons();
+  try {
+    const response=await api(action,data);
+    if(response.document)showRefinement(response);
+    else {$('refine-job').textContent=`適応計算を開始しました: ${response.id}。計算一覧から中止・結果表示できます。`;await refreshJobs();}
+    return response;
+  } finally {refinementBusy=false;refinementButtons();}
+}
+async function openRefinement(id) {await refinementAction('adaptive-refinement-result',{id});$('adaptive-refinement').scrollIntoView({behavior:'smooth'});}
+bind('refine-prepare',async()=>{
+  const project=await preview(),version=Number($('refine-version').value);
+  const controls={mapping:version===2 ? 'nested_affine':'same_domain',minimum_overlap:number('refine-overlap'),minimum_assignment_margin:number('refine-margin'),relative_cluster_gap:number('refine-gap'),minimum_relative_singular_value:number('refine-rank')};
+  if(version===1)controls.sample_order=number('refine-order');
+  const request={schema_version:version,case:project.case,initial_mesh:null,
+    initial_ids:$('refine-ids').value.trim() ? JSON.parse($('refine-ids').value):Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`),
+    mode_id:$('refine-mode-id').value,controls,bulk_fraction:number('refine-bulk'),max_levels:number('refine-max-levels'),max_triangles:number('refine-max-triangles'),minimum_angle_deg:number('refine-angle'),
+    relative_tolerances:Object.fromEntries(refinementQuantities.map(([key,label,id])=>[key,number(`refine-${id}`)]))};
+  if(version===2)request.confirmation='uniform_two_steps';
+  $('refine-request').value=JSON.stringify(request,null,2);
+});
+bind('refine-start',()=>refinementAction('start-adaptive-refinement',{request:$('refine-request').value,...refinementLimit()}));
+bind('refine-resume',()=>refinementAction('resume-adaptive-refinement',{document:refinementResult.serialized,...refinementLimit()}));
+bind('refine-save',()=>download('adaptive-refinement-checkpoint.json',refinementResult.serialized));
+$('refine-open').addEventListener('change',async event=>{
+  const file=event.target.files[0];if(!file)return;
+  try {$('error').hidden=true;await refinementAction('replay-adaptive-refinement',{document:await file.text()});}
+  catch(e){failure(e);}finally{event.target.value='';}
+});
+bind('refine-open-field',async()=>{
+  await refinementAction('replay-adaptive-refinement',{document:refinementResult.serialized});
+  const d=refinementResult.document,mode=d.levels.at(-1).mode_index;
+  if(mode===null || !d.levels.at(-1).quantities)throw Error('最終水準の対象IDは未確認です');
+  const result=await api('import',{path:d.level_runs.at(-1)});await refreshJobs();await openResult(result.id,mode+1);
+});
+$('refine-version').addEventListener('change',refinementVersion);
+refinementButtons();refinementVersion();

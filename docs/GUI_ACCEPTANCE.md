@@ -531,3 +531,13 @@ curved-history.pngの写像・条件・履歴保持を画像確認。変更前ou
 を追加して再現する。再投影例はellipsoid-1-0/case.jsonを読み、contourをNone、
 curve_chord_tolerance_mを1/4、curved_refinement_levelsを0にして実solve/save_runした156三角形の結果。
 解析曲線を変えず、二次近似境界だけを変えている。
+
+## N04適応細分GUI — 2026-09-08
+
+両版の入力作成・実worker開始/中止、全域確認途中と中止後の保存再開、f/RQ/G個別差、
+対象順位2の場表示、厳密JSONの重複キー拒否を追加。
+out/browser-n04-refinement-strict-20260908のChrome19操作PASS、外部リクエストなし。
+初回の再読込検査FAILは検証手順をPage.reloadへ修正し、出力を保持した。
+最終標準600件中598合格・2 skip、独立P2円筒f/RQ/G・相似則と周波数/RF回帰もPASS。
+各検証のソースhashは最終コードと一致。対象・未対応は[適応細分GUI](GUI_ADAPTIVE_REFINEMENT.md)。
+一般形状の精度/効率や表面ピークを、このGUI受入で認定しない。

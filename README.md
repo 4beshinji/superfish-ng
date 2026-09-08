@@ -85,7 +85,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、D01同一二次曲線領域のGUI接続後（直前基準 `a38f83a`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-08、N04適応細分のGUI接続後（直前基準 `6f65e48`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
 同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。明示policyによる多対多のID集合継承とGUIでの方式選択・復元を追加。条件と残件は [追跡仕様](docs/MODE_TRACKING.md)。
 
 | 分野 | 現在の内容 |
@@ -99,7 +99,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | 表面電磁場 | P1/P2片側場、曲線離散場の連続極値の囲い込みと角診断。物理ピークの収束保証とは区別 |
 | モード追跡 | [重み付き部分空間・円筒/profile写像・明示メッシュ対応](docs/MODE_TRACKING.md)、2時点対応の保存・再検証CLI/GUI。個別ID履歴・再開に対応。部分空間ID集合も継承。合流/分裂の集合継続と完了Studyの順序追跡、逐次計算・停止・チェックポイント再開CLI・JobManager・GUIに対応。幾何掃引の適応二分・途中再開API/CLI・JobManager・GUIあり。一般写像・個別枝回復は未完 |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 標準531件中529合格・2 skip。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
+| 検証 | 標準検証の最新件数は[実装状況](docs/IMPLEMENTATION_STATUS.md)を参照。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 2026-09-07: [NGSolveとの独立照合](docs/INDEPENDENT_COMPARISON.md)を追加し、
@@ -124,7 +124,7 @@ v3のrfとGUIで[加速長・電圧積分区間・位相原点](docs/ACCELERATIN
 - Q0は理想PEC固有場に常伝導表面抵抗を適用する摂動推定です。複素固有周波数、超伝導BCS損失、放射損失は計算しません。
 - 電磁場はピークphasorです。既定で全蓄積エネルギー1 Jに正規化します。運転電力1 Wの指定ではありません。
 - R/Qは `|Vacc|²/(ωU)` と `|Vacc|²/(2ωU)` を別名で出力します。
-- 周波数順のmode番号は物理モード名ではありません。形状変更時のmode trackingは未実装。
+- 周波数順のmode番号は物理モード名ではありません。明示した写像・対応による追跡に部分対応しますが、一般形状の自動対応や個別枝回復は未完です。
 - Wine版SUPERFISHとの基本3形状照合に加え、セミナーの80 mm Pillbox TM010/TM011、flat4・rounded4・rounded7の計17モードを照合済み。full-end比較形状と長さ40/120 mmはWine直接照合の対象外です。測定との比較は未実施で、角部のピーク電場には差が残ります。
 
 ## Codexに引き継ぐ
@@ -198,7 +198,7 @@ G03全体は部分対応です。[要件と証拠の照合](docs/G03_ACCEPTANCE.
 `JobManager.start_tune`で別プロセス実行・取消し・確認済みチェックポイントからの再開も利用できます。GUIの「同じモードの周波数を調整する」から開始・保存・再開でき、成功後は調整対象の場・RFを開けます。
 一つの長さ/無次元変数で複数のprofile座標を連動させる指定にも対応します。
 半径調整の例は `examples/tuning/pillbox_radius.json` です。
-[選択要素の適合細分API](docs/MARKED_REFINEMENT.md)は、直線P1/P2の境界と旧場を保つ係数移送を返します。[残差指標と細分対象選択](docs/RESIDUAL_INDICATOR.md)を追加しました。[追跡付き適応計算](docs/ADAPTIVE_REFINEMENT.md)のf/RQ/G停止・保存再開・CLIも利用できます。版2では局所候補後に全域細分を最低2回行い、RF量を確認します。`JobManager.start_adaptive_refinement`で[別プロセス実行・取消し・再開](docs/ADAPTIVE_REFINEMENT_JOBS.md)も可能です。表面量停止・曲線局所細分・GUIは未実装です。
+[選択要素の適合細分API](docs/MARKED_REFINEMENT.md)は、直線P1/P2の境界と旧場を保つ係数移送を返します。[残差指標と細分対象選択](docs/RESIDUAL_INDICATOR.md)を追加しました。[追跡付き適応計算](docs/ADAPTIVE_REFINEMENT.md)のf/RQ/G停止・保存再開・CLIも利用できます。版2では局所候補後に全域細分を最低2回行い、RF量を確認します。`JobManager.start_adaptive_refinement`で[別プロセス実行・取消し・再開](docs/ADAPTIVE_REFINEMENT_JOBS.md)も可能です。[GUI](docs/GUI_ADAPTIVE_REFINEMENT.md)からも開始・中止・保存再開・f/RQ/G判定表示・対象場の表示を利用できます。表面量停止・曲線局所細分は未実装です。
 一般形状の追跡・制約付き最適化は未完了です。
 [表面ピークの収束評価](docs/SURFACE_CONVERGENCE.md)をAPI/CLI/GUIへ追加しました。追跡済みの固定曲線幾何について、周波数・R/Q・G・ピーク比の細分差を別々に判定します。
 接線構築は `construct-tangent` → `export-constructed-case` → `solve` で実行できます。

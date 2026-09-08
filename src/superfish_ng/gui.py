@@ -137,6 +137,10 @@ def create_server(workspace, port=0):
                     raise ValueError("request must be an object")
                 action = data.get("action")
                 allowed = {
+                    "start-adaptive-refinement": ["request", "max_new_levels"],
+                    "resume-adaptive-refinement": ["document", "max_new_levels"],
+                    "adaptive-refinement-result": ["id"],
+                    "replay-adaptive-refinement": ["document"],
                     "start-tune": ["request", "max_new_trials"],
                     "resume-tune": ["document", "max_new_trials"],
                     "tune-result": ["id"],
@@ -183,6 +187,9 @@ def create_server(workspace, port=0):
                 if action in ("assess-surface-convergence", "replay-surface-convergence"):
                     from .gui_surface_convergence import surface_convergence_response
                     return self.reply(surface_convergence_response(action,{k:v for k,v in data.items() if k!='action'}))
+                if action in ("start-adaptive-refinement", "resume-adaptive-refinement", "adaptive-refinement-result", "replay-adaptive-refinement"):
+                    from .gui_adaptive_refinement import adaptive_refinement_response
+                    return self.reply(adaptive_refinement_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
                 if action in ("start-tune", "resume-tune", "tune-result", "replay-tune"):
                     from .gui_tuning import tuning_response
                     return self.reply(tuning_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
