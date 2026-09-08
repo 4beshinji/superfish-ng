@@ -39,8 +39,8 @@ def validate_tracking_controls(controls):
     keys(controls,names,names,'mode tracking controls')
     from .mode_tracking import _control
     mapping=controls['mapping']
-    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh','same_domain','affine_remesh','piecewise_remesh'):raise ValueError('mapping must be normalized_cylinder, normalized_profile, paired_mesh, same_domain, affine_remesh or piecewise_remesh')
-    order=controls['sample_order'];limit=32 if mapping in ('paired_mesh','same_domain','affine_remesh','piecewise_remesh') else 256
+    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh','same_domain','affine_remesh','piecewise_remesh','curved_same_domain'):raise ValueError('mapping must be normalized_cylinder, normalized_profile, paired_mesh, same_domain, affine_remesh, piecewise_remesh or curved_same_domain')
+    order=controls['sample_order'];limit=32 if mapping in ('paired_mesh','same_domain','affine_remesh','piecewise_remesh','curved_same_domain') else 256
     if type(order) is not int or not 2<=order<=limit:raise ValueError(f'sample_order must be an integer from 2 to {limit}')
     _control(controls['minimum_overlap'],'minimum_overlap')
     _control(controls['minimum_assignment_margin'],'minimum_assignment_margin',zero=True)
@@ -94,6 +94,9 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     elif controls['mapping']=='piecewise_remesh':
         from .piecewise_remesh_tracking import track_piecewise_remesh_modes
         tracker=track_piecewise_remesh_modes
+    elif controls['mapping']=='curved_same_domain':
+        from .curved_same_domain_tracking import track_curved_same_domain_modes
+        tracker=track_curved_same_domain_modes
     report=tracker(*solutions,request.get('previous_ids'),**controls,
         **({'previous_identity_groups':request['previous_groups']} if version==2 else {}))
     if before!=[_snapshot(path) for path in directories]:
