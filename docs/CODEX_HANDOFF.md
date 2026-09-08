@@ -1,5 +1,37 @@
 # ローカルCodexへの引継ぎ
 
+## D01 GUI対応比較・追跡履歴 — 2026-09-08
+
+直前基準abf856f。gui_mode_tracking.pyで完了個別Jobの選択と既存native追跡/再検証APIを接続。
+GUIに写像・閾値・ID入力、個別/部分空間の対応表、未確認理由、履歴開始/継続、保存/再読込を追加。
+履歴中は手入力IDを使わず基準結果を表示し、UNVERIFIED履歴の継続を無効化する。
+サーバー生成の文書文字列をダウンロード・再送し、数値表記を保持する。
+GUIの既存loopback/token/4 MiB上限と厳密入力を維持。FEM・追跡の数値条件は変更していない。
+
+着手前455件中453合格・2 skip（128.376秒）。新接続API未実装で失敗を確認して接続4検査を追加。
+初回Chromeは7操作後、minimum_overlap=1の未確認文書をJavaScriptで再JSON化して1.0→1となり、
+履歴開始の厳密再検証で失敗。out/browser-d01-mode-tracking-20260908/report.jsonと初回検証出力を保持。
+サーバー文書文字列をそのまま開始/継続へ渡す修正と回帰1検査を追加。検証条件を緩めていない。
+ID欄の幅と、履歴中の基準結果表示も修正した。
+最終460件中458合格・2 skip（128.587秒）、`out/validation-d01-gui-tracking-final-20260908` PASS。
+seed周波数差0、RF/エネルギー相対差最大8.881784197001248e-16。
+同ディレクトリseed_comparison.jsonに内訳。基準値・許容差の変更なし。
+
+`out/d01-gui-tracking-final-sources-20260908` の実FEM縮退合流/分裂もPASS。
+`out/browser-d01-mode-tracking-final-20260908/report.json` でChrome8操作PASS、外部要求0。
+取込/結果選択、合流の部分空間表示、履歴ID編集禁止、分裂継続、ダウンロード一致、
+ファイル再検証とcontrols復元、改変拒否、未確認履歴の保存可能/継続禁止を実操作で確認。
+tracking-history.pngを視認し、部分空間未確定表示とボタン状態を確認。
+標準・独立FEM・ブラウザーのsource hashは最終コードと一致。検証用GUI2プロセスは停止した。
+今回ブラウザー例は円筒写像。profile/paired_meshのGUI選択は共通API接続であり、各写像の新しいブラウザー受入ではない。
+Wine・hosted CIは今回未実行。
+
+判断: GUI独自のID推測や数値再計算を作らず、保存場APIの確定/未確認状態を製品操作へ伝える。
+新規外部資料・依存・legacy参照なし。多対多再構成、個別枝回復、接続の変わる再メッシュ写像、
+適応的ステップとStudy/tune統合は残件。親課題は8受入、C00/G03/D01の3進行中、
+他21未受入、X01拡張候補1で変わらず。全計画は未完了。[仕様](MODE_TRACKING.md)。
+
+
 ## D01合流/分裂をID集合として継続 — 2026-09-08
 
 直前基準826c647。明示controls cluster_transition_policy=retain_subspace とminimum_cluster_linkを追加。

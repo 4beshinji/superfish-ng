@@ -611,6 +611,7 @@ const statusNames = {
 };
 async function refreshJobs() {
   const jobs = await api("jobs");
+  trackingJobs(jobs);
   const focused = document.activeElement?.closest("#jobs .job"),
     focusedJob = focused?.dataset.job,
     focusedButton = focused
@@ -1519,3 +1520,97 @@ bind("tangent-apply", () => {
   markDirty();
   $("tangent-status").textContent = "検査済み形状と条件を編集画面へ適用しました。計算または入力保存へ進めます。";
 });
+
+// Saved-field mode tracking; the server owns validation and ID propagation.
+let trackingResult = null, trackingBusy = false, trackingJobSignature = "";
+function trackingJobs(jobs) {
+  const completed = jobs.filter(j => j.status === "complete" && j.kind !== "study");
+  const signature = JSON.stringify(completed.map(j => j.id));
+  if (signature === trackingJobSignature) return;
+  trackingJobSignature = signature;
+  for (const id of ["tracking-previous", "tracking-current"]) {
+    const select = $(id), previous = select.value;
+    select.replaceChildren(new Option("結果を選択", ""));
+    for (const j of completed) select.add(new Option(j.id, j.id));
+    if (completed.some(j => j.id === previous)) select.value = previous;
+  }
+}
+function trackingButtons() {
+  const d = trackingResult?.document, history = d?.document_type === "mode_tracking_history";
+  $("tracking-compare").disabled = trackingBusy || history;
+  $("tracking-start").disabled = trackingBusy || !d || history;
+  $("tracking-extend").disabled = trackingBusy || !history || !d.can_extend;
+  $("tracking-save").disabled = trackingBusy || !d;
+  $("tracking-reset").disabled = trackingBusy;
+  $("tracking-open").disabled = trackingBusy;
+  $("tracking-previous").disabled = trackingBusy || history;
+  $("tracking-ids").disabled = trackingBusy || history;
+  $("tracking-previous").closest("label").hidden = history;
+  $("tracking-ids").closest("label").hidden = history;
+  $("tracking-origin").hidden = !history;
+  $("tracking-origin").textContent = history ? `履歴末尾の基準結果: ${d.current_run}` : "";
+  $("tracking-pairs-label").hidden = $("tracking-mapping").value !== "paired_mesh";
+  $("tracking-link-label").hidden = !$("tracking-retain").checked;
+}
+function trackingControls() {
+  const controls = {mapping: $("tracking-mapping").value, sample_order: number("tracking-order"),
+    minimum_overlap: number("tracking-overlap"), minimum_assignment_margin: number("tracking-margin"),
+    relative_cluster_gap: number("tracking-gap"), minimum_relative_singular_value: number("tracking-rank")};
+  if (controls.mapping === "paired_mesh") controls.vertex_pairs = JSON.parse($("tracking-pairs").value);
+  if ($("tracking-retain").checked) Object.assign(controls, {cluster_transition_policy: "retain_subspace", minimum_cluster_link: number("tracking-link")});
+  return controls;
+}
+function showTracking(response) {
+  trackingResult = response;
+  const d = response.document, history = d.document_type === "mode_tracking_history";
+  const pair = history ? d.steps.at(-1) : d, r = pair.tracking, controls = pair.request.controls;
+  $("tracking-mapping").value = controls.mapping;
+  for (const [id,key] of [["order","sample_order"],["overlap","minimum_overlap"],["margin","minimum_assignment_margin"],["gap","relative_cluster_gap"],["rank","minimum_relative_singular_value"]])
+    $(`tracking-${id}`).value = controls[key];
+  $("tracking-retain").checked = controls.cluster_transition_policy === "retain_subspace";
+  if (controls.minimum_cluster_link !== undefined) $("tracking-link").value = controls.minimum_cluster_link;
+  if (controls.vertex_pairs) $("tracking-pairs").value = JSON.stringify(controls.vertex_pairs);
+
+  $("tracking-status").textContent = `${d.status} — ${history ? `履歴 ${d.steps.length} 段階。` : "2時点の比較。"} ${d.status !== "PASS" ? "未確認の対応があります。" : r.individual_ids_complete ? "全個別IDの対応を確認しました。" : "部分空間の対応を確認しました。集合内の個別IDは未確定です。"}${history && !d.can_extend ? " この履歴からの継続はできません。" : ""}`;
+  const body = $("tracking-matches").querySelector("tbody"); body.replaceChildren();
+  for (const m of r.matches) {
+    const row = document.createElement("tr");
+    for (const value of [m.previous_ids.join(", "), m.kind === "SUBSPACE" ? "部分空間（個別ID未確定）" : "個別モード",
+      m.current_indices.join(", "), m.current_frequencies_hz.map(f => (f / 1e6).toPrecision(9)).join(", "), m.minimum_principal_overlap.toPrecision(9)]) {
+      const cell = document.createElement("td"); cell.textContent = value; row.append(cell);
+    }
+    body.append(row);
+  }
+  $("tracking-diagnostics").textContent = JSON.stringify({previous_run: pair.request.previous_run, current_run: pair.request.current_run,
+    stop_reason: d.stop_reason ?? null, unmatched_previous: r.unmatched_previous, unmatched_current: r.unmatched_current,
+    unresolved: r.unresolved, cluster_transitions: r.cluster_transitions ?? null, controls: pair.request.controls,
+    scope: d.scope}, null, 2);
+  trackingButtons();
+}
+async function runTracking(action, data) {
+  if (trackingBusy) throw Error("追跡の検証中です。完了を待ってください。");
+  trackingBusy = true; trackingButtons();
+  try { showTracking(await api(action, data)); }
+  finally { trackingBusy = false; trackingButtons(); }
+}
+bind("tracking-compare", async () => {
+  await runTracking("compare-modes", {previous_id: $("tracking-previous").value, current_id: $("tracking-current").value,
+    previous_ids: JSON.parse($("tracking-ids").value), controls: trackingControls()});
+});
+bind("tracking-start", async () => { await runTracking("start-mode-history", {document: trackingResult.serialized}); });
+bind("tracking-extend", async () => { await runTracking("extend-mode-history", {document: trackingResult.serialized,
+  current_id: $("tracking-current").value, controls: trackingControls()}); });
+bind("tracking-reset", () => {
+  trackingResult = null; $("tracking-status").textContent = "比較する結果とIDを指定してください。";
+  $("tracking-matches").querySelector("tbody").replaceChildren(); $("tracking-diagnostics").textContent = ""; trackingButtons();
+});
+bind("tracking-save", () => { download(trackingResult.document.document_type === "mode_tracking_history" ? "mode-tracking-history.json" : "mode-tracking.json", trackingResult.serialized); });
+$("tracking-open").addEventListener("change", async event => {
+  const file = event.target.files[0]; if (!file) return;
+  try { $("error").hidden = true; await runTracking("replay-mode-tracking", {document: await file.text()}); }
+  catch (error) { failure(error); }
+  finally { event.target.value = ""; }
+});
+$("tracking-mapping").addEventListener("change", trackingButtons);
+$("tracking-retain").addEventListener("change", trackingButtons);
+trackingButtons();

@@ -1,5 +1,24 @@
 # 汎用GUI・共通入出力の受入記録
 
+## D01対応比較・追跡履歴 — 2026-09-08
+
+out/browser-d01-mode-tracking-final-20260908/report.jsonでChrome8操作PASS、外部要求0、ソース変更なし。
+円筒縮退例の取込、合流/分裂の部分空間表示、ID編集禁止、文書ダウンロード一致、
+再読込、改変拒否、未確認履歴の保存可能/継続禁止を確認。tracking-history.pngを視認した。
+初回は数値の再JSON化で厳密再検証に失敗し、サーバー文書文字列の保持へ修正して全操作を再実行。
+初回FAILはout/browser-d01-mode-tracking-20260908に保持する。検証用GUIは停止済み。
+
+```bash
+OPENBLAS_NUM_THREADS=1 python scripts/validate_cluster_transitions.py --out out/gui-tracking-source-NEW
+python -m superfish_ng gui --workspace out/gui-tracking-workspace-NEW --no-browser
+node scripts/verify_gui_mode_tracking.mjs --url '起動URL' --out out/gui-tracking-browser-NEW --sources out/gui-tracking-source-NEW
+```
+
+接続テスト5件と標準460件中458合格・2 skip、標準数値回帰PASS。
+profile/paired_meshもGUIから共通APIへ接続するが、今回Chromeの数値操作例は円筒写像のみ。
+一般追跡・Study/tune全体の受入とは区別する。[詳細](MODE_TRACKING.md)。
+
+
 ## 最小子午面曲率半径の保持 — 2026-09-08
 
 out/gui-meridional-radius-browser-20260908/report.jsonでChrome11操作PASS。

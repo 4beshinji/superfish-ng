@@ -305,6 +305,43 @@
           </details>
           <div id="jobs" aria-live="polite"></div>
         </section>
+        <section id="mode-tracking">
+          <div class="section-title"><h2>モード対応と追跡履歴</h2></div>
+          <p class="hint">完了した計算結果を選び、保存場を比較します。周波数順位とモードIDは別です。</p>
+          <div class="grid">
+            <label>以前の結果<select id="tracking-previous"><option value="">結果を選択</option></select></label>
+            <label>現在・次の結果<select id="tracking-current"><option value="">結果を選択</option></select></label>
+          </div>
+          <p id="tracking-origin" hidden></p>
+          <label>以前のID（周波数順位順のJSON配列）<textarea id="tracking-ids" rows="2">["mode-A"]</textarea></label>
+          <label>比較写像<select id="tracking-mapping">
+            <option value="normalized_cylinder">一定半径の円筒</option>
+            <option value="normalized_profile">連続した可変半径profile</option>
+            <option value="paired_mesh">明示頂点対応（折返し・曲線を含む）</option>
+          </select></label>
+          <label id="tracking-pairs-label" hidden>頂点対応（0始まりの旧・新番号のJSON配列）<textarea id="tracking-pairs" rows="3">[]</textarea></label>
+          <div class="grid">
+            <label>標本次数<input id="tracking-order" type="number" value="12" min="2" step="1" /></label>
+            <label>最小重なり<input id="tracking-overlap" type="number" value="0.98" step="any" /></label>
+            <label>割当候補との差<input id="tracking-margin" type="number" value="0.05" step="any" /></label>
+            <label>相対周波数クラスタ幅<input id="tracking-gap" type="number" value="0.001" step="any" /></label>
+            <label>相対ランク下限<input id="tracking-rank" type="number" value="0.00000001" step="any" /></label>
+          </div>
+          <label><input id="tracking-retain" type="checkbox" /> 合流・分裂をID集合として継続する</label>
+          <label id="tracking-link-label" hidden>集合候補の最小リンク<input id="tracking-link" type="number" value="0.2" step="any" /></label>
+          <div class="actions">
+            <button id="tracking-compare">2つの結果を比較</button>
+            <button id="tracking-start" disabled>追跡履歴を開始</button>
+            <button id="tracking-extend" disabled>次の結果へ継続</button>
+            <button id="tracking-reset">新しい比較</button>
+          </div>
+          <label class="file">対応・履歴を開いて再検証<input id="tracking-open" type="file" accept=".json" /></label>
+          <button id="tracking-save" disabled>検証済みの文書を保存</button>
+          <p id="tracking-status" role="status">比較する結果とIDを指定してください。</p>
+          <p class="hint">表示は最後に検証した結果です。設定変更後は比較・継続を実行してください。部分空間の確認は個別IDの確定ではありません。再検証には元の保存場が必要です。</p>
+          <table id="tracking-matches"><thead><tr><th>ID・ID集合</th><th>対応の種類</th><th>現在の周波数順位</th><th>周波数 [MHz]</th><th>最小重なり</th></tr></thead><tbody></tbody></table>
+          <details><summary>未確認の理由・写像・クラスタ診断</summary><pre id="tracking-diagnostics"></pre></details>
+        </section>
         <section id="studies">
           <div class="section-title">
             <span>04</span>

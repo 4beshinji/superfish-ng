@@ -137,6 +137,10 @@ def create_server(workspace, port=0):
                     raise ValueError("request must be an object")
                 action = data.get("action")
                 allowed = {
+                    "compare-modes": ["previous_id", "current_id", "previous_ids", "controls"],
+                    "start-mode-history": ["document"],
+                    "extend-mode-history": ["document", "current_id", "controls"],
+                    "replay-mode-tracking": ["document"],
                     "normalize": ["document"],
                     "tangent": ["document", "candidate_index"],
                     "replay-tangent": ["document"],
@@ -161,6 +165,9 @@ def create_server(workspace, port=0):
                 if action not in allowed:
                     raise ValueError("unknown operation")
                 keys(data, ["action", *allowed[action]], ["action"], "request")
+                if action in ("compare-modes", "start-mode-history", "extend-mode-history", "replay-mode-tracking"):
+                    from .gui_mode_tracking import tracking_response
+                    return self.reply(tracking_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
                 if action in ("tangent", "replay-tangent"):
                     return self.reply(tangent_document(data["document"],
                                                        candidate_index=data.get("candidate_index"),
