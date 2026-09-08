@@ -196,6 +196,8 @@ G03全体は部分対応です。[要件と証拠の照合](docs/G03_ACCEPTANCE.
 `python -m superfish_ng tune examples/tuning/pillbox_length.json --out out/tune-new`で実行できます。
 全個別IDの確認と最終細メッシュ判定を必須とします。
 `JobManager.start_tune`で別プロセス実行・取消し・確認済みチェックポイントからの再開も利用できます。GUIの「同じモードの周波数を調整する」から開始・保存・再開でき、成功後は調整対象の場・RFを開けます。
+一つの長さ/無次元変数で複数のprofile座標を連動させる指定にも対応します。
+半径調整の例は `examples/tuning/pillbox_radius.json` です。
 一般形状の追跡・制約付き最適化は未完了です。
 接線構築は `construct-tangent` → `export-constructed-case` → `solve` で実行できます。
 合成例と保存・再構築の仕様は [接線構築](docs/TANGENT_CONSTRUCTION.md) を参照してください。

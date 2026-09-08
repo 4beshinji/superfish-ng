@@ -1,5 +1,43 @@
 # 汎用GUI・共通入出力の受入記録
 
+## D02連動座標の周波数調整 — 2026-09-08
+
+直前基準c5233d9。tune request第2版にparameter名・parameter_unit（m/1）・bindingsを追加。
+座標[m]=multiplier×変数+offset_m。全profile座標を同時更新してから形状を検査し、
+順序依存の中間不正形状で有効な連動変形を拒否しない。重複/未知座標、非有限/範囲外、
+全ゼロ倍率・丸めで形状が変わらない変数を拒否。既存の単一座標v1経路とcheckpoint版1は維持。
+API/CLI/JobManager/GUIの共通tune経路で扱い、変更したbindingによる履歴再開/改変を拒否。
+GUIは連動指定と単位の入力/復元・結果列の単位表示、保存文書の条件による再開へ接続。
+
+着手前552件中550合格・2 skip（177.358秒）。既存のv2拒否で5件のFAIL/ERRORを確認後、
+追加6検査PASS（6.865秒）。同時更新/順序不変、m/無次元と負倍率、厳密拒否、
+実円筒半径の解析目標、CLI/保存/再開/改変拒否を確認。v1の既存
+out/d02-tuning-example-resumed-20260908/checkpoint-017.jsonも再検証してTUNED。
+
+out/d02-coupled-tuning-final-20260908は長さ/無次元×尺度1/2の4系列でPASS。
+実workerで管理器再起動・2試行から再開し、各15試行でTUNED、元source不変。
+半径相対差5.25034e-6、最終形状の解析周波数差最大4.33668e-9、
+f/RQ/G相似則相対差最大2.57572e-14。mと無次元の表現間ではf/RQ/G差ゼロ。
+解析式は検証専用の既存円筒TM010関係。FEM/追跡/探索核・基準・許容差変更なし。
+
+Chrome out/browser-coupled-tuning-final-20260908は19項目PASS（連動追加6/既存13）、外部要求0。
+coupled-result.pngで変数の無次元表示・15試行・最終細分を画像確認し、円筒を保つ最終場も確認。
+初回out/browser-coupled-tuning-20260908は非同期入力生成を待つ前の検査でFAIL。
+生成完了待ちを追加して全項目を再実行し、初回も保持。製品判定は変更していない。
+専用GUIはargv完全一致で特定して停止済み。新規外部資料・依存・legacy参照なし。
+
+一般曲線/折返し/組立、非線形結合、複数独立変数の制約付き最適化、
+細分未達後の自動再探索・個別枝回復は残る。親課題8受入・4進行中・20未受入・X01候補を維持。
+
+最終out/validation-d02-coupled-tuning-20260908はPASS。558件中556合格・2 skip（187.376秒）。
+seed周波数差ゼロ、RF/エネルギー相対差最大8.881784197001252e-16。
+標準・独立・Chrome検証のsource_sha256は最終ソースと一致。基準・許容差変更なし。
+
+再現はverify_gui_tuning.mjsへ既存の--url/--out/--requestに加え
+`--coupled examples/tuning/pillbox_radius_factor.json`を渡す。--requestは
+examples/tuning/pillbox_length.json。数値検証は
+`python scripts/validate_coupled_tuning.py --out out/coupled-validation-NEW`。
+
 ## D02周波数調整のGUI接続 — 2026-09-08
 
 直前基準0b40a5e。GUI transportのstart/result/replay/resumeをJobManagerへ接続。

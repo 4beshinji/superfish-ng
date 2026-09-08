@@ -23,7 +23,8 @@ OPENBLAS_NUM_THREADS=1 python -m superfish_ng resume-tune out/tune-new/checkpoin
 
 ## 厳密入力
 
-schema_version=1。全項目必須で、未知項目と不正な数値/型は拒否する。
+以下はschema_version=1の単一座標入力。全項目必須で、未知項目と不正な数値/型は拒否する。
+連動座標は下記のschema_version=2を使う。
 
 | 項目 | 意味 |
 |---|---|
@@ -40,7 +41,7 @@ schema_version=1。全項目必須で、未知項目と不正な数値/型は拒
 | mesh_frequency_tolerance_hz | 正の粗細周波数差許容値。目標許容差と独立に判定 |
 
 円筒写像で半径が一定でなくなる入力は拒否する。一般曲線・折返し・アフィン等の
-試行ごとの写像指定、複数座標を連動させる設計変数はこの版にない。
+試行ごとの写像指定はこの版にない。複数profile座標の線形連動は第2版で追加した。
 
 ## 判断と保存
 
@@ -86,7 +87,7 @@ L=83.00048828125 mm（2倍形はその2倍）、目標長相対差5.88291e-6、�
 別々の10000 Hz条件を満たす。f/RQ/G相似則相対差最大4.64074e-14。
 初期順位3→最終順位2、初期2試行のhash不変、保存再検証を確認した。
 
-一般写像・追跡の枝回復、曲線・組立・連動変数、細分失敗後の自動再探索、
+一般写像・追跡の枝回復、曲線・組立・非線形変数、細分失敗後の自動再探索、
 RF/ピーク制約付き最適化は残る。D01/D02/D03全体や旧tuner互換を完了としない。
 
 最初の標準回帰では調整requestの例を通常Case用examples直下へ置いて2件失敗。
@@ -174,9 +175,66 @@ TUNEDなら「調整済み最終形状の場・RFを開く」で再検証後に�
 対象IDが現在占める順位を選んで場を描く。順位1への固定はしない。
 
 GUI用transport追加3検査がPASS。ブラウザーの操作・画像・数値回帰の記録は
-[GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)のD02記録を参照。一般曲線/連動変数の調整と
+[GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)のD02記録を参照。一般曲線/非線形変数の調整と
 制約付き最適化、取消し後のチェックポイントの自動一覧選択は残る。
 
 最終out/validation-d02-tuning-gui-final-20260908はPASS。552件中550合格・2 skip（178.806秒）。
 seed周波数差ゼロ、RF/エネルギー相対差最大8.881784197001252e-16。
 標準・独立・3ブラウザーのsource_sha256は最終ソースと一致。基準・許容差変更なし。
+
+
+## 第2版: 一つの変数で複数座標を連動させる
+
+schema_version=2ではparameterを設計変数の名前とし、parameter_unit（mまたは文字列1）と
+bindingsを追加する。他の必須項目・探索/細分ゲート・停止/再開契約は第1版と共通。
+チェックポイント自体のschema_versionは1のままで、そのrequestが入力の版を保持する。
+
+各bindingはpath、multiplier、offset_mの3項目を持つ。式は
+`coordinate_m = multiplier * parameter_value + offset_m`。
+offset_mはm、multiplierの単位はm/parameter_unit（変数がmなら無次元、変数が1ならm）。
+boundsとparameter_toleranceは設計変数の単位で指定する。単位ラベルを変えるだけで
+数値の自動換算はしない。GUIでは単位・係数・範囲を併せて確認する。
+
+```json
+{
+  "parameter": "radius",
+  "parameter_unit": "m",
+  "bindings": [
+    {"path": "/case/geometry/points_zr_m/0/1", "multiplier": 1, "offset_m": 0},
+    {"path": "/case/geometry/points_zr_m/1/1", "multiplier": 1, "offset_m": 0}
+  ]
+}
+```
+
+上は説明用の抜粋。完全な入力はexamples/tuning/pillbox_radius.jsonで、円筒の両端半径を
+同じ長さ変数へ結び付ける。pillbox_radius_factor.jsonは無次元変数とmultiplier=0.1 mで
+同じ物理的な半径範囲を表す。どちらも通常のtune CLI/API/JobManager/GUIで実行できる。
+
+pathは既存profile頂点のz/rのみ。先頭ゼロのない頂点番号、重複しない座標を要求する。
+全ゼロ倍率、空リスト、未知項目、bool/非有限値、表現範囲外の係数/座標、存在しない頂点は拒否。
+少なくとも一つの倍率が非ゼロで、範囲の両端が浮動小数点でも異なる形状になることを要求する。
+ゼロや負の倍率は他の条件を満たせば使える。固定座標を指定するためのゼロ倍率も許す。
+全指定を一つの新しいProjectへ同時に適用し、最後に形状を検査するため、bindingの順序は
+形状を変えない。途中の一座標だけを更新した不正形状を理由に有効な連動変形を拒否しない。
+
+既存の正半径連続profile・閉PEC、追跡の全個別ID確認と二分法の契約を維持する。
+一般曲線、組立、非線形な結合関数、複数独立変数の最適化ではない。連動指定を変えた
+checkpointの再検証や異なるrequestでの再開は拒否する。
+
+GUIで「複数の座標を一つの設計変数に連動させる」を選び、名前・単位・bindingsを指定する。
+単一座標欄は無効になり、範囲と探索幅の単位も切り替わる。確認用入力を再作成して開始する。
+保存文書を開くと連動指定を復元し、結果表は変数名と単位を示す。再開は引き続き保存条件を使う。
+
+独立検証は`python scripts/validate_coupled_tuning.py --out out/coupled-validation-NEW`。
+長さ/無次元の2表現と尺度1/2をJobManager経由で計算し、管理器再起動後の再開、
+円筒半径の解析周波数f=c j₀₁/(2πR)、f/RQ/G相似則、単位表現の不変性を検査する。
+
+最終独立結果はout/d02-coupled-tuning-final-20260908/validation.json。
+長さ/無次元×尺度1/2の4系列が各15試行でTUNED、半径相対差5.25034e-6、
+最終形状の解析周波数差最大4.33668e-9、f/RQ/G相似則差最大2.57572e-14。
+単位表現を変えたf/RQ/G差はゼロ。追加6検査とChrome19項目（追加6/既存13）PASS。
+初回ブラウザー検査の非同期生成待ち不足は[GUI受入記録](GUI_ACCEPTANCE.md)に保持した。
+
+最終out/validation-d02-coupled-tuning-20260908はPASS。558件中556合格・2 skip（187.376秒）。
+seed周波数差ゼロ、RF/エネルギー相対差最大8.881784197001252e-16。
+標準・独立・Chrome検証のsource_sha256は最終ソースと一致。基準・許容差変更なし。

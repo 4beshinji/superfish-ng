@@ -405,14 +405,21 @@
         <section id="tuning">
           <h2>同じモードの周波数を調整する</h2>
           <p class="hint">連続した正半径profile・閉PEC専用です。変更する頂点座標と範囲を指定し、上の形状・追跡設定から入力を作成します。円筒またはprofile写像を選び、入力を確認して開始してください。</p>
+          <label><input id="tune-coupled" type="checkbox" /> 複数の座標を一つの設計変数に連動させる</label>
+          <div id="tune-binding-settings" hidden>
+            <label>設計変数の名前<input id="tune-parameter-name" type="text" value="radius" /></label>
+            <label>設計変数の単位<select id="tune-parameter-unit"><option value="m">m（長さ）</option><option value="1">無次元</option></select></label>
+            <p>各座標[m] = multiplier × 設計変数 + offset_m。multiplierは設計変数の1単位あたりの長さです。座標はすべて同時に更新します。</p>
+            <label>連動する座標と係数（JSON配列）<textarea id="tune-bindings" rows="4">[{"path":"/case/geometry/points_zr_m/0/1","multiplier":1,"offset_m":0},{"path":"/case/geometry/points_zr_m/1/1","multiplier":1,"offset_m":0}]</textarea></label>
+          </div>
           <div class="grid">
             <label>変更する頂点（0始まり）<input id="tune-vertex" type="number" min="0" step="1" value="1" /></label>
             <label>変更する座標<select id="tune-coordinate"><option value="0">z（軸方向）</option><option value="1">r（半径）</option></select></label>
-            <label>下限 [m]<input id="tune-low" type="number" step="any" value="0.06" /></label>
-            <label>上限 [m]<input id="tune-high" type="number" step="any" value="0.1" /></label>
+            <label>下限 [<span class="tune-unit-label">m</span>]<input id="tune-low" type="number" step="any" value="0.06" /></label>
+            <label>上限 [<span class="tune-unit-label">m</span>]<input id="tune-high" type="number" step="any" value="0.1" /></label>
             <label>目標周波数 [MHz]<input id="tune-target" type="number" min="0" step="any" value="2000" /></label>
             <label>目標との差の許容値 [Hz]<input id="tune-frequency-tolerance" type="number" min="0" step="any" value="10000" /></label>
-            <label>探索幅の下限 [m]<input id="tune-parameter-tolerance" type="number" min="0" step="any" value="0.000000001" /></label>
+            <label>探索幅の下限 [<span class="tune-unit-label">m</span>]<input id="tune-parameter-tolerance" type="number" min="0" step="any" value="0.000000001" /></label>
             <label>探索の最大計算回数（両端を含む）<input id="tune-max-trials" type="number" min="2" step="1" value="24" /></label>
             <label>最終メッシュの細分倍率<input id="tune-refinement" type="number" min="2" step="1" value="2" /></label>
             <label>粗細周波数差の許容値 [Hz]<input id="tune-mesh-tolerance" type="number" min="0" step="any" value="10000" /></label>
@@ -429,7 +436,7 @@
           <p id="tune-status" role="status">計算結果はまだ開いていません。</p>
           <p id="tune-gates"></p>
           <p class="hint">表示は最後に検証した結果です。再開には保存文書の条件を使い、入力欄の編集を反映しません。目標との差と粗細差の両方を検査します。二水準の差は離散化誤差上界ではなく、RF・ピーク場の収束も保証しません。</p>
-          <table id="tune-trials"><thead><tr><th>試行（0始まり）</th><th>種類</th><th>座標 [m]</th><th>対応</th><th>対象の順位</th><th>周波数 [MHz]</th><th>目標との差 [Hz]</th></tr></thead><tbody></tbody></table>
+          <table id="tune-trials"><thead><tr><th>試行（0始まり）</th><th>種類</th><th id="tune-variable-heading">座標 [m]</th><th>対応</th><th>対象の順位</th><th>周波数 [MHz]</th><th>目標との差 [Hz]</th></tr></thead><tbody></tbody></table>
           <details><summary>停止判断・追跡設定・保存先</summary><pre id="tune-diagnostics"></pre></details>
         </section>
         <section id="studies">

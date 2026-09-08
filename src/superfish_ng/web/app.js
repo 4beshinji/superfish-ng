@@ -1774,6 +1774,12 @@ $("tracked-execution-adaptive").addEventListener("change",()=>{$("tracked-adapti
 
 
 let tuningResult=null, tuningBusy=false;
+function tuningParameterMode() {
+  const coupled=$("tune-coupled").checked,unit=coupled ? $("tune-parameter-unit").value : "m";
+  $("tune-binding-settings").hidden=!coupled;
+  $("tune-vertex").disabled=coupled;$("tune-coordinate").disabled=coupled;
+  for(const label of document.querySelectorAll(".tune-unit-label"))label.textContent=unit==="1" ? "無次元" : unit;
+}
 function tuningButtons() {
   for (const id of ["start","prepare","open"]) $(`tune-${id}`).disabled=tuningBusy;
   $("tune-resume").disabled=tuningBusy || !tuningResult?.document.can_resume;
@@ -1801,8 +1807,15 @@ function showTuning(response) {
     }
     body.append(row);
   }
-  $("tune-request").value=JSON.stringify(r,null,2);const parts=r.parameter.split("/");
-  $("tune-vertex").value=parts.at(-2);$("tune-coordinate").value=parts.at(-1);
+  $("tune-request").value=JSON.stringify(r,null,2);$("tune-coupled").checked=r.schema_version===2;
+  if(r.schema_version===2) {
+    $("tune-parameter-name").value=r.parameter;$("tune-parameter-unit").value=r.parameter_unit;
+    $("tune-bindings").value=JSON.stringify(r.bindings,null,2);
+  } else {
+    const parts=r.parameter.split("/");$("tune-vertex").value=parts.at(-2);$("tune-coordinate").value=parts.at(-1);
+  }
+  tuningParameterMode();
+  $("tune-variable-heading").textContent=r.schema_version===2 ? `${r.parameter} [${r.parameter_unit==="1" ? "無次元" : "m"}]` : "座標 [m]";
   $("tune-low").value=r.bounds[0];$("tune-high").value=r.bounds[1];$("tune-target").value=r.target_hz/1e6;
   for (const [id,key] of [["frequency-tolerance","frequency_tolerance_hz"],["parameter-tolerance","parameter_tolerance"],["max-trials","max_trials"],["refinement","refinement_scale"],["mesh-tolerance","mesh_frequency_tolerance_hz"]]) $(`tune-${id}`).value=r[key];
   $("tune-ids").value=JSON.stringify(r.initial_ids);$("tune-mode-id").value=r.mode_id;
@@ -1820,13 +1833,15 @@ async function tuningAction(action,data) {
 }
 async function openTuning(id) {await tuningAction("tune-result",{id});$("tuning").scrollIntoView({behavior:"smooth"});}
 bind("tune-prepare",async()=>{
-  const project=await preview(),vertex=number("tune-vertex");
+  const project=await preview(),coupled=$("tune-coupled").checked,vertex=coupled ? 0 : number("tune-vertex");
   if(!Number.isInteger(vertex) || vertex<0) throw Error("頂点番号は0以上の整数で指定してください");
   const initial_ids=$("tune-ids").value.trim() ? JSON.parse($("tune-ids").value) : Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`);
   const request={schema_version:1,project,parameter:`/case/geometry/points_zr_m/${vertex}/${$("tune-coordinate").value}`,
     bounds:[number("tune-low"),number("tune-high")],target_hz:number("tune-target")*1e6,frequency_tolerance_hz:number("tune-frequency-tolerance"),
     parameter_tolerance:number("tune-parameter-tolerance"),max_trials:number("tune-max-trials"),initial_ids,mode_id:$("tune-mode-id").value,
     controls:trackingControls(),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
+  if(coupled) Object.assign(request,{schema_version:2,parameter:$("tune-parameter-name").value,
+    parameter_unit:$("tune-parameter-unit").value,bindings:JSON.parse($("tune-bindings").value)});
   $("tune-request").value=JSON.stringify(request,null,2);
 });
 bind("tune-start",()=>tuningAction("start-tune",{request:JSON.parse($("tune-request").value),...tuningLimit()}));
@@ -1843,3 +1858,7 @@ bind("tune-open-field",async()=>{
   const result=await api("import",{path:d.trial_runs.at(-1)});await refreshJobs();await openResult(result.id,mode);
 });
 tuningButtons();
+
+$("tune-coupled").addEventListener("change",tuningParameterMode);
+$("tune-parameter-unit").addEventListener("change",tuningParameterMode);
+tuningParameterMode();

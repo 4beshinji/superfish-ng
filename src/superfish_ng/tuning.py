@@ -18,16 +18,20 @@ from .mode_tracking import tracked_frequency_hz
 def _request(request):
     fields=('schema_version','project','parameter','bounds','target_hz','frequency_tolerance_hz',
         'parameter_tolerance','max_trials','initial_ids','mode_id','controls','refinement_scale','mesh_frequency_tolerance_hz')
+    if isinstance(request,dict) and request.get('schema_version')==2:fields+=('bindings','parameter_unit')
     keys(request,fields,fields,'tune request');_canonical(request)
-    if type(request['schema_version']) is not int or request['schema_version']!=1:raise ValueError('tune requires schema_version 1')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2):raise ValueError('tune requires schema_version 1 or 2')
     for name in ('target_hz','frequency_tolerance_hz','parameter_tolerance','mesh_frequency_tolerance_hz'):positive(request[name],name)
     integer(request['max_trials'],'max_trials',2);integer(request['refinement_scale'],'refinement_scale',2)
     bounds=request['bounds']
     if (type(bounds) is not list or len(bounds)!=2 or any(type(v) not in (int,float) or not math.isfinite(v) for v in bounds)
             or not bounds[0]<bounds[1]):raise ValueError('bounds must be two increasing finite parameter values')
     parameter=request['parameter']
-    if type(parameter) is not str or not re.fullmatch(r'/case/geometry/points_zr_m/[0-9]+/[01]',parameter):
-        raise ValueError('tune parameter must be a numeric /case/geometry/points_zr_m/<vertex>/<coordinate> path')
+    if request['schema_version']==1:
+        if type(parameter) is not str or not re.fullmatch(r'/case/geometry/points_zr_m/[0-9]+/[01]',parameter):
+            raise ValueError('tune parameter must be a numeric /case/geometry/points_zr_m/<vertex>/<coordinate> path')
+    elif type(parameter) is not str or not parameter.strip() or request['parameter_unit'] not in ('m','1'):
+        raise ValueError('coupled tune requires a nonempty parameter name and parameter_unit m or 1')
     project=Project.from_dict(request['project']);case=project.case
     if project.sections is not None or project.reflect_full or case.geometry_type!='profile' or case.z_min!='pec' or case.z_max!='pec':
         raise ValueError('tune requires an unassembled continuous positive-radius profile with closed PEC ends')
@@ -38,17 +42,45 @@ def _request(request):
     validate_tracking_controls(request['controls'])
     if request['controls']['mapping'] not in ('normalized_cylinder','normalized_profile'):
         raise ValueError('tune requires normalized_cylinder or normalized_profile; other geometry mappings need explicit per-trial support')
+    endpoint_geometries=[]
     for value in bounds:
         p=_project(request,value,'search')
         if request['controls']['mapping']=='normalized_cylinder' and any(r!=p.case.profile[0][1] for _,r in p.case.profile):
             raise ValueError('normalized_cylinder tune bounds must retain constant radius')
-        _project(request,value,'refinement')
+        _project(request,value,'refinement');endpoint_geometries.append(p.case.profile)
+    if request['schema_version']==2 and endpoint_geometries[0]==endpoint_geometries[1]:
+        raise ValueError('bindings do not change representable geometry across bounds')
     return project
 
 
 def _project(request,value,phase):
     project=Project.from_dict(request['project'])
-    project=Study(project,'sweep',request['parameter'],[value,value]).projects()[0]
+    if request['schema_version']==1:
+        project=Study(project,'sweep',request['parameter'],[value,value]).projects()[0]
+    else:
+        raw=project.to_dict();points=raw['case']['geometry']['points_zr_m']
+        bindings=request['bindings'];seen=set();active=False
+        if type(bindings) is not list or not bindings:raise ValueError('bindings must be a nonempty list')
+        for binding in bindings:
+            names=('path','multiplier','offset_m');keys(binding,names,names,'tune binding')
+            path=binding['path']
+            match=re.fullmatch(r'/case/geometry/points_zr_m/(0|[1-9][0-9]*)/([01])',path) if type(path) is str else None
+            if match is None:raise ValueError('binding path must name a canonical profile vertex coordinate')
+            index,coordinate=map(int,match.groups());target=(index,coordinate)
+            if target in seen:raise ValueError('duplicate binding target coordinate')
+            if index>=len(points):raise ValueError('binding vertex does not exist in the project')
+            seen.add(target)
+            for name in ('multiplier','offset_m'):
+                try:finite=type(binding[name]) in (int,float) and math.isfinite(binding[name])
+                except OverflowError:finite=False
+                if not finite:raise ValueError(f'binding {name} must be finite')
+            active=active or binding['multiplier']!=0
+            mapped=binding['multiplier']*value+binding['offset_m']
+            if not math.isfinite(mapped):raise ValueError('binding produces a nonfinite coordinate')
+            points[index][coordinate]=mapped
+        if not active:raise ValueError('at least one binding multiplier must be nonzero')
+        # Validate the combined shape once, never an arbitrary intermediate order.
+        project=Project.from_dict(raw)
     if phase=='refinement':project=Study(project,'mesh_convergence','mesh_scale',[1,request['refinement_scale']]).projects()[1]
     return project
 

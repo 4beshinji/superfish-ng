@@ -232,6 +232,33 @@ try {
   await wait(`document.querySelector('[data-job="${fifth}"] button')?.textContent==="中止"`);await click(`[data-job="${fifth}"] button`);
   await wait(`document.querySelector('[data-job="${fifth}"] strong')?.textContent.startsWith("中止")`);
   await check("active tuning can be cancelled without publishing success",`document.querySelector('[data-job="${fifth}"] button').disabled`);
+  if(args["--coupled"]) {
+    const coupled=JSON.parse(await readFile(args["--coupled"],"utf8"));
+    await click("#tune-coupled");
+    await ev('document.querySelector("#tune-parameter-unit").value="1";document.querySelector("#tune-parameter-unit").dispatchEvent(new Event("change"))');
+    await fill("#tune-bindings",JSON.stringify(coupled.bindings));await click("#tune-prepare");
+    await wait('JSON.parse(document.querySelector("#tune-request").value).schema_version===2');
+    await check("coupled form generates explicit bindings and dimensionless units",'JSON.parse(document.querySelector("#tune-request").value).schema_version===2 && JSON.parse(document.querySelector("#tune-request").value).bindings.length===2 && JSON.parse(document.querySelector("#tune-request").value).parameter_unit==="1" && document.querySelector(".tune-unit-label").textContent==="無次元" && document.querySelector("#tune-vertex").disabled');
+    await fill("#tune-request",JSON.stringify(coupled));await fill("#tune-limit","2");
+    const coupledFirst=await launch("#tune-start");await openJob(coupledFirst,"PAUSED",2);
+    await check("saved coupled request restores bindings and variable heading",'document.querySelector("#tune-coupled").checked && document.querySelector("#tune-variable-heading").textContent==="radius [無次元]" && JSON.parse(document.querySelector("#tune-bindings").value)[0].multiplier===.1');
+    const expected=await ev('tuningResult.serialized');await click("#tune-save");let coupledDownload;
+    for(let n=0;n<100;n++){try{const candidate=await readFile(out+"/downloads/tune-checkpoint.json","utf8");if(candidate===expected){coupledDownload=candidate;break;}}catch{}await sleep(100);}
+    if(!coupledDownload)throw Error("coupled download differs from verified text");
+    await loadFile(out+"/downloads/tune-checkpoint.json");await wait('!tuningBusy && tuningResult.document.request.schema_version===2');
+    report.checks.push({operation:"coupled checkpoint download and replay retain original JSON",passed:true});
+    const modified=JSON.parse(coupledDownload);modified.request.bindings[0].multiplier=.11;
+    await writeFile(out+"/modified-binding.json",JSON.stringify(modified));await loadFile(out+"/modified-binding.json");await wait('!tuningBusy && !document.querySelector("#error").hidden');
+    await check("changed binding cannot replace verified coupled data",'tuningResult.document.request.bindings[0].multiplier===.1 && document.querySelector("#error").textContent.includes("constant radius")');
+    await click("#tune-coupled");await fill("#tune-request",'{}');await fill("#tune-limit","");
+    const coupledLast=await launch("#tune-resume");await openJob(coupledLast,"TUNED",15);
+    await check("coupled resume retains saved variable despite form changes",'document.querySelector("#tune-coupled").checked && tuningResult.document.request.parameter_unit==="1" && tuningResult.document.decision.mesh_difference_met');
+    await click("#tune-open-field");await wait('document.querySelector("#mode").value==="1" && currentResult.result.case.geometry.points_zr_m[0][1]===currentResult.result.case.geometry.points_zr_m[1][1] && !document.querySelector("#field-image").hidden',60000);
+    await check("final coupled field retains a cylinder at the tuned radius",'Math.abs(currentResult.result.case.geometry.points_zr_m[0][1]/.093-1)<.00002');
+    const rect=await ev('(()=>{const a=document.querySelector("#tune-status").getBoundingClientRect(),b=document.querySelector("#tune-trials").getBoundingClientRect();return {x:a.x+scrollX,y:a.y+scrollY,width:a.width,height:b.bottom-a.top,scale:1}})()');
+    const image=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/coupled-result.png",Buffer.from(image.data,"base64"));
+    report.coupled_job_ids={coupledFirst,coupledLast};
+  }
   report.job_ids={first,second,third,fourth,fifth};
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if(!report.passed)throw Error("tuning GUI checks failed");console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));
