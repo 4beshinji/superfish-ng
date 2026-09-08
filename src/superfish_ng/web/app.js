@@ -689,6 +689,7 @@ async function refreshJobs() {
 }
 bind("refresh", refreshJobs);
 async function openResult(id, modeIndex=null) {
+  resetRFPeaks();
   const request = ++resultRequest;
   ++plotRequest;
   $("field-image").hidden = true;
@@ -1269,6 +1270,7 @@ const rfDetailNames = {
 };
 function renderRFDetails() {
   if (!currentResult) return;
+  resetRFPeaks(true);
   const q = currentResult.result.modes[Number($("mode").value) - 1],
     table = document.createElement("table");
   for (const [key, label] of Object.entries(rfDetailNames)) {
@@ -2079,3 +2081,46 @@ bind('affine-surface-open-field',async()=>{
   await refreshJobs();await openResult(result.id,row.mode_index+1);
 });
 affineSurfaceButtons();
+
+let rfPeakResult=null,rfPeakBusy=false,rfPeakReady=false,rfPeakRequest=0;
+function rfPeakButtons() {
+  $('rf-peaks-assess').disabled=!rfPeakReady || rfPeakBusy;
+  $('rf-peaks-open').disabled=!rfPeakReady || rfPeakBusy;
+  for(const id of ['save','replay'])$(`rf-peaks-${id}`).disabled=!rfPeakResult || rfPeakBusy;
+}
+function resetRFPeaks(ready=false) {
+  ++rfPeakRequest;rfPeakResult=null;rfPeakBusy=false;rfPeakReady=ready;
+  $('rf-peaks-status').textContent='選択した保存結果・順位の連続離散ピークはまだ評価していません。';
+  $('rf-peaks-values').querySelector('tbody').replaceChildren();$('rf-peaks-diagnostics').textContent='';rfPeakButtons();
+}
+function showRFPeaks(response) {
+  rfPeakResult=response;const d=response.document;
+  $('rf-peaks-status').textContent=`${d.case_name} — 順位 ${d.mode_index+1}: 連続離散ピークのみ (${d.status})。メッシュ収束: 未評価。物理誤差上界: なし。幾何診断: ${d.geometry_diagnostic.status}。`;
+  const body=$('rf-peaks-values').querySelector('tbody');body.replaceChildren();
+  const display=v=>v===null ? '未定義' : Number.isFinite(v) ? Number(v.toPrecision(9)) : '未評価';
+  for(const [key,label,estimate] of [['epk_v_per_m','Epk [V/m]','epk_surface_estimate_v_per_m'],['hpk_a_per_m','Hpk [A/m]',null],['bpk_t','Bpk [T]','bpk_surface_estimate_t'],['epk_over_eacc','Epk/Eacc','epk_over_eacc_estimate'],['bpk_over_eacc_mt_per_mv_per_m','Bpk/Eacc [mT/(MV/m)]','bpk_over_eacc_estimate_mt_per_mv_per_m']]) {
+    const row=document.createElement('tr'),interval=d.intervals[key];
+    for(const value of [label,display(estimate ? d.rf[estimate] : undefined),display(interval?.[0] ?? null),display(interval?.[1] ?? null)]){const cell=document.createElement('td');cell.textContent=value;row.append(cell);}body.append(row);
+  }
+  $('rf-peaks-diagnostics').textContent=JSON.stringify({run:d.run,mode_index:d.mode_index,element_order:d.element_order,geometry_order:d.geometry_order,
+    geometry_diagnostic:d.geometry_diagnostic,stored_energy_j:d.rf.stored_energy_j,eacc_v_per_m:d.rf.eacc_v_per_m,conventions:d.conventions,controls:d.controls,source:d.source},null,2);
+  rfPeakButtons();
+}
+async function rfPeakAction(action,document=null) {
+  if(!rfPeakReady || rfPeakBusy)throw Error('保存結果の読込またはピーク評価を処理中です');
+  const token=++rfPeakRequest,job=currentJob,mode=Number($('mode').value);rfPeakBusy=true;rfPeakButtons();
+  try {
+    const response=await api(action,{id:job,mode,...(document===null ? {} : {document})});
+    if(token===rfPeakRequest && job===currentJob && mode===Number($('mode').value))showRFPeaks(response);
+  } catch(e) {if(token===rfPeakRequest)throw e;}
+  finally {if(token===rfPeakRequest){rfPeakBusy=false;rfPeakButtons();}}
+}
+bind('rf-peaks-assess',()=>rfPeakAction('assess-rf-peaks'));
+bind('rf-peaks-replay',()=>rfPeakAction('replay-rf-peaks',rfPeakResult.serialized));
+bind('rf-peaks-save',()=>download('rf-discrete-peaks.json',rfPeakResult.serialized));
+$('rf-peaks-open').addEventListener('change',async event=>{
+  const file=event.target.files[0];if(!file)return;
+  try {$('error').hidden=true;await rfPeakAction('replay-rf-peaks',await file.text());}
+  catch(e){failure(e);}finally{event.target.value='';}
+});
+rfPeakButtons();

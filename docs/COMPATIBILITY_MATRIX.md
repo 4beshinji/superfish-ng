@@ -1,8 +1,10 @@
 # 互換対応表 v0
 
+[通常RF結果の連続離散ピーク評価](RF_DISCRETE_PEAKS.md)をAPI/保存/CLI/GUIへ追加。直線P1/P2・二次曲線P2の上下界、元RF推定値、規格化、角診断を同じ画面で確認できる。単一メッシュの物理収束合格ではない。
+
 [版3の表面量を含む適応停止](ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 
-更新: 2026-09-08、N04版3適応停止GUI接続後（直前基準 `9cee5a4`）。最新の親課題状態は [計画冒頭](COMPATIBILITY_PLAN.md)。
+更新: 2026-09-08、N03通常RFピーク統合後（直前基準 `add9938`）。最新の親課題状態は [計画冒頭](COMPATIBILITY_PLAN.md)。
 NG現状欄の区分は実装/NG範囲受入6件、部分対応11件、未実装・未検証15件（K32を含む）。
 これは旧版互換の合格件数ではない。C00の必須集合確定は未完で、互換率は算出しない。
 
@@ -57,7 +59,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K12 | 複数RF材料領域 | D（MAT、MT EPSILON/MU） | 未 | epsilon/mu界面、エネルギー、対象版での材料入力・実行検証 | B / P04 |
 | K13 | f/U/壁損失/Q0/G/RQ/シャント | L | 実装、対象ケース照合 | 単位/正規化/二つのRQ規約の入出力写像 | A / R01,C03,C04 |
 | K14 | 通過電圧・TTF・加速長・位相 | L（ZCTR/KMETHOD等の限定比較） | NG実装：[加速長/電圧区間/位相原点](ACCELERATING_CONVENTIONS.md) | 旧の任意位相指定の入出力写像・比較。現AF読込は限定 | A / R01,C02,C03 |
-| K15 | 表面ピークE/B | L | 部分：P1/P2片側場、[直線P1/P2の連続離散ピーク囲い込みAPI/保存/CLI](AFFINE_SURFACE_EXTREMA.md)、曲線離散場の連続極値の囲い込み、曲線/元多角形の角診断、[直線表面収束評価API/保存/CLI/GUI](AFFINE_SURFACE_CONVERGENCE.md)、[追跡済み固定幾何細分評価API/CLI/GUI](SURFACE_CONVERGENCE.md) | 固定丸め半径で収束、境界評価位置/規約の一致 | A / N03 |
+| K15 | 表面ピークE/B | L | 部分：[通常RFの上下界評価API/保存/CLI/GUI](RF_DISCRETE_PEAKS.md)、P1/P2片側場、[直線P1/P2の連続離散ピーク囲い込みAPI/保存/CLI](AFFINE_SURFACE_EXTREMA.md)、曲線離散場の連続極値の囲い込み、曲線/元多角形の角診断、[直線表面収束評価API/保存/CLI/GUI](AFFINE_SURFACE_CONVERGENCE.md)、[追跡済み固定幾何細分評価API/CLI/GUI](SURFACE_CONVERGENCE.md) | 固定丸め半径で収束、境界評価位置/規約の一致 | A / N03 |
 | K16 | 場のプローブ・線/領域積分 | L（SF7の限定利用）/H | 部分：軸/半径プローブ等 | 任意線/円弧/格子と必要出力の定義。旧補間アルゴリズムは再現しない | A / C03,O02 |
 | K17 | 形状掃引・モード同定 | U | 部分：独立掃引と条件付き同定、重み付き部分空間追跡・明示円筒/profile写像・明示メッシュ対応・2時点保存/再検証CLI・個別ID/部分空間ID集合の履歴/再開・合流/分裂の集合継続・同一領域/アフィン/明示区分アフィン変形の独立再メッシュ比較 | 曲線領域・対応推定、個別枝回復、製品接続 | A / D01 |
 | K18 | 周波数調整・制約付き最適化 | U | 部分：[追跡付き1変数tune・連動profile座標・再開・細メッシュ判定API/CLI・JobManager・GUI](TUNING.md) | 一般形状/非線形変数・制約付き最適化・旧tuner照合 | A / D02,D03 |

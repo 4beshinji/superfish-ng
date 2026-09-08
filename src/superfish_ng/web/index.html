@@ -586,6 +586,15 @@
               <summary>選択したモードのRF量と数値検査</summary>
               <div id="rf-details"></div>
             </details>
+            <section id="rf-peaks">
+              <h3>選択したモードの連続離散ピーク</h3>
+              <p class="hint">保存場を再検証し、PEC辺全体の最大値を上下界で評価します。直線P1/P2・二次曲線P2に対応します。単一メッシュの評価であり、物理ピークの収束保証ではありません。順位はこの保存結果内の番号で、追跡IDではありません。</p>
+              <div class="actions"><button id="rf-peaks-assess" disabled>選択した保存場のピークを評価</button><button id="rf-peaks-replay" disabled>表示中の評価を再検証</button><button id="rf-peaks-save" disabled>検証済みピーク評価を保存</button></div>
+              <label>現在の結果・順位に対応する評価を開く<input id="rf-peaks-open" type="file" accept=".json" disabled /></label>
+              <p id="rf-peaks-status" role="status">連続離散ピークはまだ評価していません。</p>
+              <table id="rf-peaks-values"><thead><tr><th>量</th><th>保存済みRF推定値</th><th>連続離散下界</th><th>上界</th></tr></thead><tbody></tbody></table>
+              <details><summary>角診断・規格化・対象場の証拠</summary><pre id="rf-peaks-diagnostics"></pre></details>
+            </section>
             <label>保存データ<select id="output-file"></select></label
             ><button id="download-output">選択したデータを保存</button>
             <details>

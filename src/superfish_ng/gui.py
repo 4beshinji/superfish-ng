@@ -137,6 +137,8 @@ def create_server(workspace, port=0):
                     raise ValueError("request must be an object")
                 action = data.get("action")
                 allowed = {
+                    "assess-rf-peaks": ["id", "mode"],
+                    "replay-rf-peaks": ["id", "mode", "document"],
                     "start-adaptive-refinement": ["request", "max_new_levels"],
                     "resume-adaptive-refinement": ["document", "max_new_levels"],
                     "adaptive-refinement-result": ["id"],
@@ -186,6 +188,9 @@ def create_server(workspace, port=0):
                 if action not in allowed:
                     raise ValueError("unknown operation")
                 keys(data, ["action", *allowed[action]], ["action"], "request")
+                if action in ("assess-rf-peaks", "replay-rf-peaks"):
+                    from .gui_rf_peaks import rf_peak_response
+                    return self.reply(rf_peak_response(manager,action,{k:v for k,v in data.items() if k!="action"}))
                 if action in ("assess-surface-convergence", "replay-surface-convergence", "assess-affine-surface-convergence", "replay-affine-surface-convergence"):
                     from .gui_surface_convergence import surface_convergence_response
                     return self.reply(surface_convergence_response(action,{k:v for k,v in data.items() if k!='action'}))

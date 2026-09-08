@@ -57,6 +57,12 @@ def main(argv=None):
     tracking.add_argument('--out',type=Path,required=True)
     tracking_replay=sub.add_parser('replay-mode-tracking',help='recompute and verify saved mode correspondence and source identities')
     tracking_replay.add_argument('tracking',type=Path)
+    rf_peaks=sub.add_parser('assess-rf-peaks',help='assess verified native RF discrete peaks and normalization')
+    rf_peaks.add_argument('run',type=Path)
+    rf_peaks.add_argument('--mode',type=int,default=1,help='one-based rank in this native result, not a persistent identity')
+    rf_peaks.add_argument('--out',type=Path,required=True)
+    rf_replay=sub.add_parser('replay-rf-peaks',help='revalidate a saved discrete RF peak assessment')
+    rf_replay.add_argument('document',type=Path)
     affine_peaks=sub.add_parser('bound-affine-peaks',help='bound continuous discrete PEC peaks of a native affine P1/P2 solution')
     affine_peaks.add_argument('run',type=Path)
     affine_peaks.add_argument('--mode',type=int,default=1,help='one-based frequency rank; not a persistent mode identity')
@@ -220,6 +226,16 @@ def main(argv=None):
             result=read_mode_tracking(args.tracking)
             print(f"REPLAYED {result['status']}: {args.tracking}")
             return 0 if result['status']=='PASS' else 1
+        elif args.command == 'assess-rf-peaks':
+            from .rf_peak_assessment import save_rf_peaks
+            result=save_rf_peaks(args.run,args.out,mode=args.mode-1)
+            print(f"{result['status']}: {args.out}; physical peak convergence unassessed")
+            return 0
+        elif args.command == 'replay-rf-peaks':
+            from .rf_peak_assessment import read_rf_peaks
+            result=read_rf_peaks(args.document)
+            print(f"REPLAYED {result['status']}: {args.document}")
+            return 0
         elif args.command == 'bound-affine-peaks':
             from .affine_extrema import save_affine_peaks
             result=save_affine_peaks(args.run,args.out,mode=args.mode-1,relative_tolerance=args.relative_tolerance,max_boxes_per_edge=args.max_boxes_per_edge)
