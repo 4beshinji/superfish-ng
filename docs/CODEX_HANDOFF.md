@@ -1,5 +1,36 @@
 # ローカルCodexへの引継ぎ
 
+## D01追跡付きStudyのJobManager接続 — 2026-09-08
+
+直前基準7dd3431。JobManager.start_tracked_studyとtracked_study_jobs.pyを追加。
+既存逐次FEM/追跡APIを別プロセスで実行し、共通status/cancel/list/closeへ接続する。
+全点/controlsと再開証拠を出力確保前に検査する。request・結果・点出力をmanifestへ保存。
+verify=Trueでは継承した過去Jobの点と保存履歴も検証し、要約の追跡状態/点数/再開可否を照合。
+
+Jobのcompleteは処理/保存完了。追跡はPAUSED/COMPLETE/UNVERIFIEDを別記し、
+numerical_validation=not_checkedを保持する。中止・ワーカー失敗は成功にしない。
+アプリ再起動時のinterruptedでJob種別が失われる既存処理も修正した。
+ブラウザー専用操作はまだ未接続。共通JobManager APIの受入でありGUI完了とは扱わない。
+
+着手前475件中473合格・2 skip（132.534秒）。未実装メソッドによる4テスト失敗を確認後、
+実ワーカーでの一時停止/再開/過去点再計算禁止と過去Job変更検出、未確認後の未計算、
+中止/再起動、入力事前検査、要約改変と実ワーカー失敗の5テストがPASS（2.593秒）。
+最終480件中478合格・2 skip（134.746秒）。
+`out/validation-d01-tracked-study-jobs-20260908` PASS。seed周波数差ゼロ、
+RF/エネルギー相対差最大8.881784197001248e-16。FEM・基準・許容差変更なし。
+
+`python scripts/validate_tracked_study_jobs.py --out out/d01-tracked-study-jobs-20260908` PASS。
+半径0.1 m、長さ0.055→Bessel解析縮退位置→0.075 m、P2/12×12/3モードの実ワーカー。
+2点目の縮退ID集合をPAUSEDとして保存し、別Jobで個別IDを恣意的に回復せず集合継承して完走。
+解析周波数差最大5.613031772924436e-6。集合継続なしの別Jobは2点目でUNVERIFIEDとし、
+3点目を計算しない。元チェックポイント不変・過去点再計算なしを確認。
+標準/独立検証のsource hash一致、実行中コード変更なし。検証用JobManagerはclose済み。
+GUI・Wine・hosted CIは今回未実行。新規外部資料・依存・legacy参照なし。
+
+次はブラウザーの開始/中止/結果/再開操作。適応的点追加、tune、多対多/個別枝回復、
+接続変更を伴う再メッシュ写像、電源断回復保証は残る。
+親課題区分は8受入・3進行中・21未受入・拡張候補1のまま。計画全体は継続する。
+
 ## D01追跡付きStudyの逐次実行・停止・再開 — 2026-09-08
 
 直前基準dc23102。tracked_study.pyとexecute-tracked-study/resume-tracked-study/

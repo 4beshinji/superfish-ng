@@ -418,3 +418,24 @@ Jobファイルの同一性と履歴を再検証する。新しい出力先に�
 後続の計算が失敗した場合、保存済みの直前チェックポイントから別の出力先へ再開できる。
 既存出力先は上書きしない。実行中プロセスの状態を再開対象とはしない。
 OS強制終了・電源断の回復保証やGUI JobManagerへの組込、適応的点追加、tuneは残件。
+
+## JobManagerから追跡付きStudyを実行する
+
+`JobManager.start_tracked_study(request, max_new_points=None, checkpoint=None)`は
+上記の実行APIを別プロセスで起動し、既存のstatus/cancel/list/closeを共用する。
+requestは逐次実行APIと同じ。checkpointは再検証可能なPAUSED文書に限る。
+再開は常に新しいJobを作り、前のJobの点を再計算・上書きしない。
+
+Jobルートにtracked-study-request.json、tracked-study-results.json、manifest.jsonを保存する。
+点とチェックポイントはexecution/以下に保存する。Jobの`status=complete`はワーカーの
+処理と保存の完了を表し、`tracking_status=PAUSED/COMPLETE/UNVERIFIED`とは別である。
+`numerical_validation=not_checked`を保持し、未確認を収束合格へ読み替えない。
+
+`status(id, verify=True)`は現在のJobのmanifestだけでなく、継承した過去Jobの点も
+再検証する。追跡状態・点数・再開可否の要約が保存文書と違う場合も拒否する。
+中止・ワーカー異常終了では成功を公開しない。保存済みチェックポイントは残るが、
+中止が書込み途中だったファイルは有効な再開点とみなさず、再検証できた文書を使う。
+アプリ再起動時のinterrupted状態にもtracked_studyのJob種別を保持する。
+
+この段階は共通JobManagerのPython API。ブラウザーでの開始・中止・結果表示・再開の
+専用操作はまだ接続していない。GUI受入、電源断回復保証、適応的点追加、tuneは残件。
