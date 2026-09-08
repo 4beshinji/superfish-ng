@@ -608,7 +608,9 @@ API/CLIのcontrolsに `cluster_transition_policy="retain_connected_subspace"` �
 
 controlsの `mapping="same_domain"` は、同じ直線辺の物理領域に対する異なる
 三角形分割の保存場を比較する。頂点番号・頂点数・三角形接続の一致を要求しない。
-軸接続の閉PEC領域に限定し、折返し境界とP1/P2場の相互比較にも対応する。
+軸接続の真空TM領域を対象とし、折返し境界とP1/P2場の相互比較にも対応する。
+N04適応計算との統合時に、同じ平坦z端の電気/磁気対称面タグを保持した比較も追加した。
+位置・全辺被覆・タグの一致が必要で、PECと対称面や異なる対称種別を同一視しない。
 `sample_order` は各三角形の次数2〜32、両メッシュ合計262144標本以下。
 その他のcontrolsとID集合policyは共通。追加のvertex_pairsは受け付けない。
 

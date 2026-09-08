@@ -1,5 +1,61 @@
 # ローカルCodexへの引継ぎ
 
+## N04追跡付き適応細分・保存再開API/CLI — 2026-09-08
+
+直前基準484e777。adaptive_refinementで同じ直線領域の残差→割合選択→適合細分→実FEMを接続。
+初期Case/メッシュ、全個別ID、対象ID、品質/要素/水準上限、追跡controls、f/RQ/G基準を明示。
+直近2区間の三量がすべて基準内ならTARGETS_MET、追跡曖昧・上限・不正量は別状態で停止。
+物理誤差上界はnull、表面量はUNASSESSEDを保持する。[仕様](ADAPTIVE_REFINEMENT.md)。
+
+各水準をnative保存し、選択/全メッシュ/全追跡/全判定を保存場から再構築するチェックポイントを追加。
+再開は新しい出力先で新しい水準だけをsolveする。実装/先祖ファイル変更・改変文書を拒否し、
+失敗記録を保存して前のチェックポイントを保持する。APIとadaptive-refine/
+resume-adaptive-refinement/replay-adaptive-refinement CLIを追加。
+PAUSED/TARGETS_METは終了値0、他の数値判定は1。PAUSEDを完了とはしない。
+
+通常の直線read_solutionは行列を持たず、前回の残差指標仕様の利用例説明が不正確だった。
+affine_saved.read_verified_affine_solutionを追加し、K/M再組立て、拘束・正規化/直交性・
+固有対残差・全RFを再検証して行列付き解を返す。閾値は既存曲線保存検査と同じ。
+通常readerの契約は変えず、残差指標仕様をこの専用readerへ訂正した。
+same_domainは同じ電気/磁気対称面タグの保存場比較にも対応。全境界被覆とタグ一致は維持。
+FEM/固有値核・RF式・追跡重なり核の変更、外部依存/新規資料/legacy参照はない。
+
+着手前576件中574合格・2 skip（224.593秒）。未実装importで先に失敗を確認した。
+新規7検査の最終実行はPASS（6.024秒）。P1/P2解析円筒周波数の変分改善とID、
+二つの区間/各RF量の未達保持、全再構築、再開solve数、失敗・改変拒否、対称面、
+要素/標本予算と追跡未確認、CLIの作成/再開/再検証/非合格終了を含む。
+最初のfocused検査はテスト側のcluster_gap=1が既存の厳密入力で拒否され、
+許される0.9へ訂正して未解決部分空間の停止を検査した。実装の追跡閾値は変えていない。
+
+初回標準out/validation-n04-adaptive-refinement-20260908は583件のうち2件ERROR。
+要求JSON例をCase専用examples直下へ置いたためで、既存テストを変更せず、
+examples/adaptive_refinement/pillbox.jsonへ移動した。初回ログを保持する。
+最終out/validation-n04-adaptive-refinement-final-20260908はPASS、
+583件中581合格・2 skip（230.396秒）。seed周波数差ゼロ、RF/エネルギー相対差最大
+8.881784197001252e-16。標準・最終独立のsource_sha256は最終ソースと一致。
+検証中のsrc/tests/scripts/examples変更なし。GUI/hosted CI/Wine再実行は含めない。
+
+独立検証は未達を保持する。初回out/n04-adaptive-refinement-initial-20260908では
+円筒P1が3水準でR/Q基準を満たさずLEVEL_LIMIT、総合FAIL。
+fは基準内でもRQの0.830%/1.740%変化を別判定した。
+基準f1e-4、RQ/G各0.005は変えず、別pilotで予算7水準を試し、5水準でTARGETS_MET。
+最終out/n04-adaptive-refinement-final-20260908では円筒P1のみ予算7、他は3水準、
+一様対照は各3水準を実FEMで計算。P1は5/P2は3水準で細分差達成、折返しP1/P2は
+LEVEL_LIMIT。全個別IDは追加次数4でも一致し、完全再構築・尺度間選択一致・
+Ritz単調性・解析周波数改善・f/RQ/G相似則（最大1.82965e-13）は確認できた。
+
+しかし最終独立検証も円筒P1のRF改善条件で総合FAIL。
+P1局所の解析R/Q差は初期4.88971%から1.95839%へ改善したが、一様対照の0.472912%より大きい。
+G解析誤差は初期1.04284e-5に対し最終1.05812e-5と僅かに増加した。
+P1最終DOFは局所777/一様825、周波数誤差7.10881e-6/7.55376e-6。
+P2局所DOF498でf誤差1.38174e-7、RQ差3.07434e-4、G差8.51606e-7。
+全RF/選択/DOFと時間を保存し、適応のworkflow時間と一様の細分/solve時間を同じ時間定義にしない。
+細分差の達成を物理RF受入へ読み替えず、RF改善条件・許容差を緩めない。初回/pilot/最終の全出力を保持。
+
+次はRF精度に対応する選択/独立確認を改善・評価する。表面量の停止、曲線局所細分、
+GUI/JobManager、一般の誤差対DOF/時間受入も残る。N04全体は未受入。
+親課題8受入・6進行中・18未受入・X01候補を維持する。
+
 ## N04重み付き残差指標と細分対象選択 — 2026-09-08
 
 直前基準cb3cd3f。residual_indicatorとmark_bulkを追加。

@@ -16,6 +16,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
+    for command in ('adaptive-refine','resume-adaptive-refinement','replay-adaptive-refinement'):
+        adaptive=sub.add_parser(command,help='run or verify residual-driven mesh refinement with tracked f/RQ/G differences')
+        adaptive.add_argument('document',type=Path)
+        if command!='replay-adaptive-refinement':
+            adaptive.add_argument('--out',type=Path,required=True)
+            adaptive.add_argument('--max-new-levels',type=int)
     for command in ('tune','resume-tune','replay-tune'):
         tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
         tuning.add_argument('document',type=Path)
@@ -132,6 +138,17 @@ def main(argv=None):
                     result=execute_adaptive_study(result['request'],args.out,max_new_attempts=args.max_new_attempts,checkpoint=result)
             print(f"{result['status']}: {args.document if args.command=='replay-adaptive-study' else args.out}")
             return 1 if result['status']=='UNVERIFIED' else 0
+        elif args.command in ('adaptive-refine','resume-adaptive-refinement','replay-adaptive-refinement'):
+            from .adaptive_refinement import execute_adaptive_refinement,read_adaptive_refinement
+            from .project import parse_json
+            if args.command=='adaptive-refine':
+                result=execute_adaptive_refinement(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_levels=args.max_new_levels)
+            else:
+                result=read_adaptive_refinement(args.document)
+                if args.command=='resume-adaptive-refinement':
+                    result=execute_adaptive_refinement(result['request'],args.out,max_new_levels=args.max_new_levels,checkpoint=result)
+            print(f"{result['status']}: {args.document if args.command=='replay-adaptive-refinement' else args.out}")
+            return 0 if result['status'] in ('TARGETS_MET','PAUSED') else 1
         elif args.command in ('tune','resume-tune','replay-tune'):
             from .tuning import execute_tune,read_tune
             from .project import parse_json

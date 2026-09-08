@@ -2,7 +2,7 @@
 
 N04の局所細分基盤API。直線三角形の任意の要素を指定して細分し、共有辺・境界タグ・
 元の領域を保持する。旧P1/P2空間から新空間への疎な係数移送行列と、親要素の対応を返す。
-後続で[残差指標と割合による選択](RESIDUAL_INDICATOR.md)を追加した。追跡付き自動停止は未実装。
+後続で[残差指標と割合による選択](RESIDUAL_INDICATOR.md)を追加した。追跡付きf/RQ/G停止は[適応計算](ADAPTIVE_REFINEMENT.md)へ接続した。
 
 ```python
 from superfish_ng import Case, solve
@@ -64,7 +64,7 @@ Caseに輪郭メッシュの上限・最小角がある場合、より厳しい�
 この局所選択は座標で明示した領域であり、誤差指標に基づく適応選択ではない。
 少ないDOFが一様細分より小さい誤差を意味するとは扱わない。
 
-指標/対象選択は[後続API](RESIDUAL_INDICATOR.md)を参照。追跡付き自動停止、曲線幾何の局所細分、CLI/GUIの適応操作は残件。
+指標/対象選択は[後続API](RESIDUAL_INDICATOR.md)を参照。追跡付きf/RQ/G停止とCLIは[適応計算](ADAPTIVE_REFINEMENT.md)へ接続。物理RF受入、曲線幾何の局所細分、GUI操作は残件。
 N04全体の受入とはしない。既存の物理辺長による細分や曲線の固定幾何一様細分は変更していない。
 
 受入証拠は `out/n04-marked-refinement-initial-20260908/validation.json`。

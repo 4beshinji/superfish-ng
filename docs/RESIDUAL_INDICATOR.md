@@ -51,7 +51,7 @@ if marked:
     next_solution = solve(case, mesh_data=mesh_to_dict(refined.mesh))
 ```
 
-caseとsolutionの次数・全境界を照合する。solutionはnative solve/read_solutionで得たものを使う。
+caseとsolutionの次数・全境界を照合する。solutionはnative solveまたはaffine_saved.read_verified_affine_solutionで得たものを使う。通常のread_solutionは行列を持たないため、そのままは使えない。
 `mode`は0始まりの順位であり永続IDではない。複数モードをまたぐ反復では別途追跡を行う。
 戻り値は要素順の `volume_relative_squared`、`interior_relative_squared`、
 `boundary_relative_squared`、その和 `cell_relative_squared` と `relative_indicator` を持つ。
@@ -75,8 +75,7 @@ caseとsolutionの次数・全境界を照合する。solutionはnative solve/re
 解析円筒周波数、Ritz単調性、指標減少、相似則、尺度間の同じ選択を検査する。
 選択の少なさだけで同じ誤差に対して効率が優れるとは判定しない。
 
-一般モードの追跡付き適応停止、RF/表面量の個別停止基準、曲線局所細分、保存再開・CLI/GUI
-の製品経路は残る。このAPI追加だけでN04全体を完了にしない。
+追跡付きf/RQ/G停止・保存再開・CLIは後続で接続した。物理RF受入、表面量停止、曲線局所細分、GUIは残る。このAPI追加だけでN04全体を完了にしない。
 
 最終受入: `out/n04-residual-indicator-final-20260908` PASS。指標相似則差最大3.182e-13、
 f/RQ/G相似則差最大1.830e-13。円筒局所の周波数相対誤差はP1 1.103e-4→2.504e-5、
@@ -84,3 +83,5 @@ P2 1.040e-6→1.382e-7。別の独立積分で非ゼロλ項と傾斜PEC壁も4.
 標準`out/validation-n04-residual-indicator-final-20260908`は576件中574合格・2 skip、
 周波数差ゼロ・RF/エネルギー差最大8.882e-16。両検証のソースハッシュは最終実装と一致。
 初回PASS後の入力診断修正と再検証の経過は[引継ぎ](CODEX_HANDOFF.md)に保持する。
+
+追跡付きf/RQ/G適応停止・保存再開・CLIは[後続実装](ADAPTIVE_REFINEMENT.md)へ接続した。曲線局所細分・表面量停止・GUIは残る。

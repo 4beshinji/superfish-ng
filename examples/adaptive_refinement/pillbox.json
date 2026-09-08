@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "case": {
+    "schema_version": 3,
+    "name": "cavity",
+    "geometry": {
+      "type": "profile",
+      "points_zr_m": [
+        [
+          0.0,
+          0.1
+        ],
+        [
+          0.2,
+          0.1
+        ]
+      ]
+    },
+    "mesh": {
+      "nr": 4,
+      "nz": 5
+    },
+    "solver": {
+      "modes": 2,
+      "element_order": 2
+    },
+    "rf": {
+      "beta": 1.0,
+      "conductivity_s_per_m": 58000000.0,
+      "normalization_j": 1.0
+    },
+    "model": {
+      "physics": "rf_eigenmode",
+      "coordinates": "axisymmetric",
+      "polarization": "tm",
+      "azimuthal_index": 0,
+      "materials": [
+        {
+          "id": "vacuum",
+          "type": "vacuum"
+        }
+      ],
+      "regions": [
+        {
+          "id": "cavity",
+          "material": "vacuum",
+          "domain": "interior"
+        }
+      ]
+    }
+  },
+  "initial_mesh": null,
+  "initial_ids": [
+    "fundamental",
+    "second"
+  ],
+  "mode_id": "fundamental",
+  "controls": {
+    "mapping": "same_domain",
+    "sample_order": 3,
+    "minimum_overlap": 0.95,
+    "minimum_assignment_margin": 0.05,
+    "relative_cluster_gap": 1e-06,
+    "minimum_relative_singular_value": 1e-08
+  },
+  "bulk_fraction": 0.5,
+  "max_levels": 4,
+  "max_triangles": 5000,
+  "minimum_angle_deg": 5.0,
+  "relative_tolerances": {
+    "frequency_hz": 0.01,
+    "r_over_q_accelerator_ohm": 0.1,
+    "geometry_factor_ohm": 0.1
+  }
+}

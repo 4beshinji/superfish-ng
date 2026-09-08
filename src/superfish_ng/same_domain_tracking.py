@@ -10,8 +10,8 @@ from .mode_tracking import track_sampled_mode_subspaces
 def _same_boundary(first,second):
     meshes=(first.mesh,second.mesh)
     for mesh in meshes:
-        if any(tag not in ('axis','pec') for tag in mesh.boundary_tags):
-            raise ValueError('same_domain requires closed PEC and axis boundaries only')
+        if any(tag not in ('axis','pec','electric_symmetry','magnetic_symmetry') for tag in mesh.boundary_tags):
+            raise ValueError('same_domain requires supported PEC, symmetry and axis boundaries')
     scale=max(float(np.max(np.abs(m.points))) for m in meshes)
     tolerance=128*np.finfo(float).eps*scale
     # Cover every boundary segment in both directions, allowing subdivision.
@@ -30,7 +30,7 @@ def _same_boundary(first,second):
                 if lo>covered+tolerance:break
                 covered=max(covered,hi)
             if covered<length-tolerance:
-                raise ValueError('same_domain boundary differs; use an explicit shape correspondence, not same-domain remeshing')
+                raise ValueError('same_domain PEC/symmetry boundary differs; use an explicit shape correspondence, not same-domain remeshing')
     return tolerance
 
 
