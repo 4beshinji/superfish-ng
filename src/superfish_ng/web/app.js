@@ -625,10 +625,12 @@ async function refreshJobs() {
     row.dataset.job = j.id;
     const title = document.createElement("strong");
     title.textContent = (statusNames[j.status] || j.status) + (["tracked_study","adaptive_study"].includes(j.kind) ? ` / ${j.kind === "adaptive_study" ? "適応" : "追跡"}Study${j.tracking_status ? " " + j.tracking_status : ""}` : "");
+    if (j.kind === "tune") title.textContent += ` / 周波数調整${j.tuning_status ? " " + j.tuning_status : ""}`;
     row.append(title);
     const desc = document.createElement("small");
     const stage =
       {
+        "tracked FEM frequency tuning and final mesh refinement": "追跡しながら周波数を調整・細分検査中",
         "adaptive FEM solves and saved-field tracking": "中点を追加して計算・追跡中",
         "sequential FEM solves and saved-field tracking": "各点を計算・追跡中",
         "finite element solve": "有限要素計算",
@@ -651,6 +653,7 @@ async function refreshJobs() {
           await api("cancel", { id: j.id });
           await refreshJobs();
         } else if (["tracked_study","adaptive_study"].includes(j.kind)) await openTrackedExecution(j.id,j.kind === "adaptive_study");
+        else if (j.kind === "tune") await openTuning(j.id);
         else if (j.kind === "study") await openStudy(j.id);
         else await openResult(j.id);
       } catch (e) {
@@ -682,7 +685,7 @@ async function refreshJobs() {
   }
 }
 bind("refresh", refreshJobs);
-async function openResult(id) {
+async function openResult(id, modeIndex=null) {
   const request = ++resultRequest;
   ++plotRequest;
   $("field-image").hidden = true;
@@ -714,6 +717,10 @@ async function openResult(id) {
     opt.value = q.mode_index;
     opt.textContent = `${q.mode_index} — ${(q.frequency_hz / 1e6).toFixed(6)} MHz`;
     $("mode").append(opt);
+  }
+  if (modeIndex!==null) {
+    if (![...$("mode").options].some(o=>Number(o.value)===modeIndex)) throw Error("指定された追跡モードの順位が保存結果にありません");
+    $("mode").value=modeIndex;
   }
   $("probe-z").value = geometryLength(r.result.case.geometry) * 250;
   $("conventions").replaceChildren();
@@ -1527,7 +1534,7 @@ bind("tangent-apply", () => {
 // Saved-field mode tracking; the server owns validation and ID propagation.
 let trackingResult = null, trackingBusy = false, trackingJobSignature = "";
 function trackingJobs(jobs) {
-  const completed = jobs.filter(j => j.status === "complete" && !["study","tracked_study","adaptive_study"].includes(j.kind));
+  const completed = jobs.filter(j => j.status === "complete" && !["study","tracked_study","adaptive_study","tune"].includes(j.kind));
   const signature = JSON.stringify(jobs.filter(j => j.status === "complete").map(j => [j.id,j.kind]));
   if (signature === trackingJobSignature) return;
   trackingJobSignature = signature;
@@ -1764,3 +1771,75 @@ function showAdaptiveExecution(response) {
   trackedExecutionButtons();
 }
 $("tracked-execution-adaptive").addEventListener("change",()=>{$("tracked-adaptive-settings").hidden=!$("tracked-execution-adaptive").checked;});
+
+
+let tuningResult=null, tuningBusy=false;
+function tuningButtons() {
+  for (const id of ["start","prepare","open"]) $(`tune-${id}`).disabled=tuningBusy;
+  $("tune-resume").disabled=tuningBusy || !tuningResult?.document.can_resume;
+  $("tune-save").disabled=tuningBusy || !tuningResult;
+  $("tune-open-field").disabled=tuningBusy || tuningResult?.document.status!=="TUNED";
+}
+function tuningLimit() {
+  if (!$("tune-limit").value.trim()) return {};
+  const n=number("tune-limit");if(!Number.isInteger(n) || n<1) throw Error("今回の計算上限は正の整数で指定してください");
+  return {max_new_trials:n};
+}
+function showTuning(response) {
+  tuningResult=response;const d=response.document,r=d.request;
+  const names={PAUSED:"一時停止",TUNED:"目標周波数と粗細差の条件を確認",UNVERIFIED:"個別モードの対応未確認で停止",REFINEMENT_FAILED:"細メッシュの検査未達",UNBRACKETED:"両端で目標を挟めません",ITERATION_LIMIT:"探索回数の上限",PARAMETER_LIMIT:"探索幅の下限"};
+  $("tune-status").textContent=`${d.status} — ${names[d.status]}。計算済み ${d.trials.length} 試行。対象ID: ${r.mode_id}`;
+  const verdict=v=>v===undefined ? "未実施" : v ? "条件内" : "未達", display=v=>Number(v.toPrecision(9));
+  $("tune-gates").textContent=`細メッシュの目標差: ${verdict(d.decision.refined_target_met)}（許容 ${r.frequency_tolerance_hz} Hz）。粗細差: ${verdict(d.decision.mesh_difference_met)}（${d.decision.mesh_frequency_difference_hz===undefined ? "—" : display(d.decision.mesh_frequency_difference_hz)} Hz / 許容 ${r.mesh_frequency_tolerance_hz} Hz）。`;
+  const body=$("tune-trials").querySelector("tbody");body.replaceChildren();
+  for (const trial of d.trials) {
+    const rank=trial.current_mode_ids.indexOf(r.mode_id),row=document.createElement("tr");
+    for (const value of [trial.index,trial.phase==="refinement" ? "最終細分" : "探索",display(trial.value),
+      {INITIAL:"初期ID",PASS:"確認済み",UNVERIFIED:"未確認"}[trial.status],rank<0 ? "—" : rank+1,
+      trial.frequency_hz===null ? "評価不可" : (trial.frequency_hz/1e6).toFixed(6),trial.target_error_hz===null ? "—" : display(trial.target_error_hz)]) {
+      const cell=document.createElement("td");cell.textContent=value;row.append(cell);
+    }
+    body.append(row);
+  }
+  $("tune-request").value=JSON.stringify(r,null,2);const parts=r.parameter.split("/");
+  $("tune-vertex").value=parts.at(-2);$("tune-coordinate").value=parts.at(-1);
+  $("tune-low").value=r.bounds[0];$("tune-high").value=r.bounds[1];$("tune-target").value=r.target_hz/1e6;
+  for (const [id,key] of [["frequency-tolerance","frequency_tolerance_hz"],["parameter-tolerance","parameter_tolerance"],["max-trials","max_trials"],["refinement","refinement_scale"],["mesh-tolerance","mesh_frequency_tolerance_hz"]]) $(`tune-${id}`).value=r[key];
+  $("tune-ids").value=JSON.stringify(r.initial_ids);$("tune-mode-id").value=r.mode_id;
+  $("tune-diagnostics").textContent=JSON.stringify({decision:d.decision,controls:r.controls,trial_runs:d.trial_runs,last_correspondence:d.trials.at(-1)?.tracking?.tracking ?? null},null,2);
+  tuningButtons();
+}
+async function tuningAction(action,data) {
+  tuningBusy=true;tuningButtons();
+  try {
+    const response=await api(action,data);
+    if(response.document) showTuning(response);
+    else {$("tune-job").textContent=`周波数調整を開始しました: ${response.id}。計算一覧から中止・結果表示できます。`;await refreshJobs();}
+    return response;
+  } finally {tuningBusy=false;tuningButtons();}
+}
+async function openTuning(id) {await tuningAction("tune-result",{id});$("tuning").scrollIntoView({behavior:"smooth"});}
+bind("tune-prepare",async()=>{
+  const project=await preview(),vertex=number("tune-vertex");
+  if(!Number.isInteger(vertex) || vertex<0) throw Error("頂点番号は0以上の整数で指定してください");
+  const initial_ids=$("tune-ids").value.trim() ? JSON.parse($("tune-ids").value) : Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`);
+  const request={schema_version:1,project,parameter:`/case/geometry/points_zr_m/${vertex}/${$("tune-coordinate").value}`,
+    bounds:[number("tune-low"),number("tune-high")],target_hz:number("tune-target")*1e6,frequency_tolerance_hz:number("tune-frequency-tolerance"),
+    parameter_tolerance:number("tune-parameter-tolerance"),max_trials:number("tune-max-trials"),initial_ids,mode_id:$("tune-mode-id").value,
+    controls:trackingControls(),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
+  $("tune-request").value=JSON.stringify(request,null,2);
+});
+bind("tune-start",()=>tuningAction("start-tune",{request:JSON.parse($("tune-request").value),...tuningLimit()}));
+bind("tune-resume",()=>tuningAction("resume-tune",{document:tuningResult.serialized,...tuningLimit()}));
+bind("tune-save",()=>download("tune-checkpoint.json",tuningResult.serialized));
+$("tune-open").addEventListener("change",async event=>{
+  const file=event.target.files[0];if(!file)return;
+  try {$("error").hidden=true;await tuningAction("replay-tune",{document:await file.text()});}
+  catch(e){failure(e);}finally{event.target.value="";}
+});
+bind("tune-open-field",async()=>{
+  await tuningAction("replay-tune",{document:tuningResult.serialized});
+  const d=tuningResult.document,mode=d.trials.at(-1).current_mode_ids.indexOf(d.request.mode_id)+1;
+  const result=await api("import",{path:d.trial_runs.at(-1)});await refreshJobs();await openResult(result.id,mode);
+});
+tuningButtons();

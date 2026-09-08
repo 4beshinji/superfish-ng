@@ -25,7 +25,7 @@ const args = Object.fromEntries(
 );
 if (!args["--url"] || !args["--out"] || !args["--request"])
   throw Error(
-    "Usage: node scripts/verify_gui_tracked_execution.mjs --url LAUNCH_URL --out NEW_DIRECTORY --request REQUEST_JSON",
+    "Usage: node scripts/verify_gui_tuning.mjs --url LAUNCH_URL --out NEW_DIRECTORY --request REQUEST_JSON",
   );
 const out = resolve(args["--out"]);
 await mkdir(out, { recursive: false });
@@ -187,49 +187,53 @@ try {
   report.startup_ms = performance.now() - begin;
   const check=async (operation,expression)=>{if (!await ev(expression)) throw Error(operation);report.checks.push({operation,passed:true});};
   const request=JSON.parse(await readFile(args["--request"],"utf8"));
-  const loadFile=async filename=>{const {root}=await call("DOM.getDocument",{},sessionId);const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#tracked-execution-open"},sessionId);await call("DOM.setFileInputFiles",{nodeId,files:[resolve(filename)]},sessionId);};
+  const loadFile=async filename=>{const {root}=await call("DOM.getDocument",{},sessionId);const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#tune-open"},sessionId);await call("DOM.setFileInputFiles",{nodeId,files:[resolve(filename)]},sessionId);};
   const launch=async selector=>{
-    const previous=await ev('document.querySelector("#tracked-execution-job").textContent');
-    await click(selector);await wait(`!trackedExecutionBusy && document.querySelector("#tracked-execution-job").textContent!==${JSON.stringify(previous)}`);
-    return await ev('document.querySelector("#tracked-execution-job").textContent.match(/開始しました: ([a-zA-Z0-9-]+)/)[1]');
+    const old=await ev('document.querySelector("#tune-job").textContent');await click(selector);
+    await wait(`!tuningBusy && document.querySelector("#tune-job").textContent!==${JSON.stringify(old)}`);
+    return await ev('document.querySelector("#tune-job").textContent.match(/開始しました: ([a-zA-Z0-9-]+)/)[1]');
   };
-  const openJob=async (id,status,count)=>{
-    await wait(`document.querySelector('[data-job="${id}"] strong')?.textContent.includes(${JSON.stringify(status)})`,30000);
+  const openJob=async(id,status,count)=>{
+    await wait(`document.querySelector('[data-job="${id}"] strong')?.textContent.includes(${JSON.stringify(status)})`,60000);
     await click(`[data-job="${id}"] button`);
-    await wait(`!trackedExecutionBusy && trackedExecutionResult?.document.status===${JSON.stringify(status)} && trackedExecutionResult.document.point_runs.length===${count}`);
+    await wait(`!tuningBusy && tuningResult?.document.status===${JSON.stringify(status)} && tuningResult.document.trials.length===${count}`,60000);
   };
-  await click("#tracked-execution-prepare");await wait('document.querySelector("#tracked-execution-request").value.includes("step_controls")');
-  await check("current Study and tracking controls produce a reviewable execution request",'JSON.parse(document.querySelector("#tracked-execution-request").value).study.study_version===1');
-  await check("execution request editor uses the available panel width",'document.querySelector("#tracked-execution-request").getBoundingClientRect().width > .8*document.querySelector("#tracked-execution").getBoundingClientRect().width');
-  await fill("#tracked-execution-request",JSON.stringify(request));await fill("#tracked-execution-limit","1");
-  const first=await launch("#tracked-execution-start");await openJob(first,"PAUSED",1);
-  await check("first point can pause without a pair history and shows later points as uncomputed",'trackedExecutionResult.document.history===null && document.querySelector("#tracked-execution-points tbody").rows[1].textContent.includes("未計算") && !document.querySelector("#tracked-execution-resume").disabled');
-  await check("tracked jobs are excluded from individual result selectors",`![...document.querySelector("#tracking-current").options].some(o=>o.value===${JSON.stringify(first)})`);
-  await click("#tracked-execution-save");let downloaded;
-  for (let n=0;n<100;n++){try {downloaded=await readFile(out+"/downloads/tracked-study-checkpoint.json","utf8");break;}catch{}await sleep(100);}
-  if (downloaded!==await ev('trackedExecutionResult.serialized'))throw Error("checkpoint download differs from verified text");
-  report.checks.push({operation:"checkpoint download preserves original JSON text",passed:true});
-  await fill("#tracked-execution-request",'{}');await loadFile(out+"/downloads/tracked-study-checkpoint.json");await wait('!trackedExecutionBusy && JSON.parse(document.querySelector("#tracked-execution-request").value).initial_ids?.[0]==="TM010"');
-  await check("checkpoint file replay restores the verified request",'JSON.parse(document.querySelector("#tracked-execution-request").value).initial_ids[0]==="TM010"');
-  const changed=JSON.parse(downloaded);changed.point_results[0].value=.123;await writeFile(out+"/modified.json",JSON.stringify(changed));await loadFile(out+"/modified.json");
-  await wait('!trackedExecutionBusy && !document.querySelector("#error").hidden');
-  await check("modified checkpoint is rejected while the previous verified result remains",'document.querySelector("#error").textContent.includes("replay") && trackedExecutionResult.document.point_results[0].value===.055');
-  await fill("#tracked-execution-request",'{}');const second=await launch("#tracked-execution-resume");await openJob(second,"PAUSED",2);
-  await check("resume retains saved settings despite editor changes and carries a degenerate ID set",'trackedExecutionResult.document.request.initial_ids[0]==="TM010" && trackedExecutionResult.document.history.current_identity_groups.some(g=>g.ids.length===2) && document.querySelector("#tracked-execution-points tbody").rows[1].textContent.includes("個別ID未確定")');
-  await fill("#tracked-execution-limit","");const third=await launch("#tracked-execution-resume");await openJob(third,"COMPLETE",3);
-  await check("completed tracking cannot resume and retains the subspace after split",'document.querySelector("#tracked-execution-resume").disabled && trackedExecutionResult.document.history.current_identity_groups.some(g=>g.ids.length===2)');
-  const stopped=structuredClone(request);for (const c of stopped.step_controls){delete c.cluster_transition_policy;delete c.minimum_cluster_link;}
-  await fill("#tracked-execution-request",JSON.stringify(stopped));const fourth=await launch("#tracked-execution-start");await openJob(fourth,"UNVERIFIED",2);
-  await check("unverified correspondence stops computation and remains downloadable",'document.querySelector("#tracked-execution-resume").disabled && !document.querySelector("#tracked-execution-save").disabled && document.querySelector("#tracked-execution-points tbody").rows[2].textContent.includes("未計算")');
-  const rect=await ev('(()=>{const r=document.querySelector("#tracked-execution").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
-  const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/tracked-execution.png",Buffer.from(shot.data,"base64"));
-  const large=structuredClone(request);large.study.project.case.mesh.nr=350;large.study.project.case.mesh.nz=350;
-  await fill("#tracked-execution-request",JSON.stringify(large));const fifth=await launch("#tracked-execution-start");
+  await click("#tune-prepare");await wait('document.querySelector("#tune-request").value.includes("target_hz")');
+  await check("form builds an SI request from current geometry and tracking controls",'JSON.parse(document.querySelector("#tune-request").value).target_hz===2000000000 && JSON.parse(document.querySelector("#tune-request").value).parameter==="/case/geometry/points_zr_m/1/0"');
+  await check("request editor fills its panel",'document.querySelector("#tune-request").getBoundingClientRect().width>.8*document.querySelector("#tuning").getBoundingClientRect().width');
+  await fill("#tune-request",JSON.stringify(request));await fill("#tune-limit","2");
+  const first=await launch("#tune-start");await openJob(first,"PAUSED",2);
+  await check("paused tune displays tracked rank crossing and permits resume",'tuningResult.document.trials[0].current_mode_ids.indexOf("TM011")===2 && tuningResult.document.trials[1].current_mode_ids.indexOf("TM011")===1 && !document.querySelector("#tune-resume").disabled');
+  await check("tune jobs are excluded from individual result selectors",`![...document.querySelector("#tracking-current").options].some(o=>o.value===${JSON.stringify(first)})`);
+  await click("#tune-save");let downloaded;
+  for(let n=0;n<100;n++){try{downloaded=await readFile(out+"/downloads/tune-checkpoint.json","utf8");break;}catch{}await sleep(100);}
+  if(downloaded!==await ev('tuningResult.serialized'))throw Error("download differs from verified text");
+  report.checks.push({operation:"checkpoint download preserves server-verified JSON text",passed:true});
+  await fill("#tune-request",'{}');await loadFile(out+"/downloads/tune-checkpoint.json");await wait('!tuningBusy && JSON.parse(document.querySelector("#tune-request").value).mode_id==="TM011"');
+  await check("checkpoint replay restores editable settings",'document.querySelector("#tune-mode-id").value==="TM011" && document.querySelector("#tune-low").value==="0.06"');
+  const changed=JSON.parse(downloaded);changed.trials[0].value=.5;await writeFile(out+"/modified.json",JSON.stringify(changed));await loadFile(out+"/modified.json");
+  await wait('!tuningBusy && !document.querySelector("#error").hidden');
+  await check("modified checkpoint cannot replace the verified result",'document.querySelector("#error").textContent.includes("replay") && tuningResult.document.trials[0].value===.06');
+  await fill("#tune-request",'{}');await fill("#tune-limit","");const second=await launch("#tune-resume");await openJob(second,"TUNED",17);
+  await check("resume uses verified settings and separates final frequency gates",'tuningResult.document.request.mode_id==="TM011" && tuningResult.document.decision.refined_target_met && tuningResult.document.decision.mesh_difference_met && document.querySelector("#tune-gates").textContent.includes("粗細差: 条件内") && document.querySelector("#tune-resume").disabled');
+  await check("trial table distinguishes final refinement",'document.querySelector("#tune-trials tbody").rows[16].textContent.includes("最終細分")');
+  const rect=await ev('(()=>{const r=document.querySelector("#tune-status").getBoundingClientRect(),b=document.querySelector("#tune-trials").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:b.bottom-r.top,scale:1}})()');
+  const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/tuning-result.png",Buffer.from(shot.data,"base64"));
+  const oldJob=await ev('currentJob');await click("#tune-open-field");await wait(`currentJob!==${JSON.stringify(oldJob)} && document.querySelector("#mode").value==="2" && !document.querySelector("#field-image").hidden`,60000);
+  await check("final field opens the tracked mode rather than frequency rank one",'Number(document.querySelector("#mode").value)===tuningResult.document.trials.at(-1).current_mode_ids.indexOf("TM011")+1');
+  const unresolved=structuredClone(request);unresolved.controls.minimum_overlap=1;
+  await fill("#tune-request",JSON.stringify(unresolved));const third=await launch("#tune-start");await openJob(third,"UNVERIFIED",2);
+  await check("unverified correspondence cannot resume or open a tuned field",'document.querySelector("#tune-resume").disabled && document.querySelector("#tune-open-field").disabled && document.querySelector("#tune-trials tbody").rows[1].textContent.includes("評価不可")');
+  const fine=structuredClone(request);fine.mesh_frequency_tolerance_hz=1;
+  await fill("#tune-request",JSON.stringify(fine));const fourth=await launch("#tune-start");await openJob(fourth,"REFINEMENT_FAILED",17);
+  await check("failed mesh gate is visible despite completed execution",'document.querySelector("#tune-gates").textContent.includes("粗細差: 未達") && document.querySelector("#tune-open-field").disabled && !document.querySelector("#tune-save").disabled');
+  const large=structuredClone(request);large.project.case.mesh.nr=350;large.project.case.mesh.nz=350;
+  await fill("#tune-request",JSON.stringify(large));const fifth=await launch("#tune-start");
   await wait(`document.querySelector('[data-job="${fifth}"] button')?.textContent==="中止"`);await click(`[data-job="${fifth}"] button`);
   await wait(`document.querySelector('[data-job="${fifth}"] strong')?.textContent.startsWith("中止")`);
-  await check("running tracked Study can be cancelled without publishing success",`document.querySelector('[data-job="${fifth}"] button').disabled`);
+  await check("active tuning can be cancelled without publishing success",`document.querySelector('[data-job="${fifth}"] button').disabled`);
   report.job_ids={first,second,third,fourth,fifth};
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
-  if (!report.passed) throw Error("tracked execution GUI checks failed");console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));
+  if(!report.passed)throw Error("tuning GUI checks failed");console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));
 } catch(e){report.error=String(e);process.exitCode=1;console.error(e);}
-finally {await writeFile(out+"/report.json",JSON.stringify(report,null,2));ws?.close();browser.kill();}
+finally{await writeFile(out+"/report.json",JSON.stringify(report,null,2));ws?.close();browser.kill();}

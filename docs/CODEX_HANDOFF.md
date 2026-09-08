@@ -1,5 +1,41 @@
 # ローカルCodexへの引継ぎ
 
+## D02周波数調整のGUI接続 — 2026-09-08
+
+直前基準0b40a5e。GUI transportのstart/result/replay/resumeをJobManagerへ接続。
+形状・追跡設定からの入力作成、座標範囲・目標MHz・二つのHz許容差・探索/細分上限、
+開始/中止/結果表示、検証済み元JSON保存/再検証/再開を追加した。
+Job処理完了とTUNED/未確認/細分未達を分け、試行表に探索/最終細分・対象順位・周波数・目標差を表示。
+表示の小数は丸めるが元JSONを変更しない。再開は入力欄でなく検証済み文書の条件を使う。
+
+TUNEDの最終場を開く際は文書を再検証し、最終native Jobを通常結果へ取り込んで、
+対象IDの現在順位を選択する。一般openResultの既定順位選択は維持する。
+調整Jobを単独解の選択欄へ混ぜない。物理誤差上界やRF/ピーク収束は保証しない。
+着手前549件中547合格・2 skip（168.278秒）。未実装import失敗後、transport追加3検査PASS（10.197秒）。
+
+Chromeはout/browser-tuning-final-20260908で13項目、既存追跡は
+out/browser-tuning-tracking-regression-20260908で35項目、既存Studyは
+out/browser-tuning-study-final-20260908で11項目PASS。全59項目、外部要求0。
+tuning-result.pngで二つのゲート・17試行・順位3→2・最終細分を画像確認した。
+最終場は対象の順位2で描画することも確認。
+初回Studyのout/browser-tuning-study-regression-20260908はスクロール中の誤クリックで
+期待ファイルがなくFAIL。別ダウンロードdownloads.htmlも含め出力を保持した。
+既存adaptive検証と同じ即時スクロール・2描画待ち・実ヒット対象確認へverifierを修正し、
+11項目を再実行。製品の保存規約や許容差は変更していない。
+
+out/d02-tuning-gui-final-20260908のJobManager経由独立検証はPASS。
+尺度1/2各17試行、長さ相対差5.88291e-6、解析周波数差最大1.14697e-7、
+f/RQ/G相似則最大4.64074e-14。標準と独立検証はverifier修正後に再実行。
+独立・3ブラウザーのsource_sha256は最終ソースと一致。専用GUI2件を完全一致argvで停止済み。
+新規外部資料・依存・legacy参照なし。FEM/RF/追跡/探索核・基準・許容差変更なし。
+
+一般写像・個別枝回復、曲線/折返し/連動変数、細分未達後の自動再探索、制約付き最適化、
+取消し後のcheckpoint自動一覧選択は残る。親課題8受入・4進行中・20未受入・X01候補を維持。
+
+最終out/validation-d02-tuning-gui-final-20260908はPASS。552件中550合格・2 skip（178.806秒）。
+seed周波数差ゼロ、RF/エネルギー相対差最大8.881784197001252e-16。
+標準・独立・3ブラウザーのsource_sha256は最終ソースと一致。基準・許容差変更なし。
+
 ## D02周波数調整のJobManager接続 — 2026-09-08
 
 直前基準5f280cb。JobManager.start_tuneとtuning_jobsの実workerを追加。

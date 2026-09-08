@@ -137,6 +137,10 @@ def create_server(workspace, port=0):
                     raise ValueError("request must be an object")
                 action = data.get("action")
                 allowed = {
+                    "start-tune": ["request", "max_new_trials"],
+                    "resume-tune": ["document", "max_new_trials"],
+                    "tune-result": ["id"],
+                    "replay-tune": ["document"],
                     "start-adaptive-study": ["request", "max_new_attempts"],
                     "resume-adaptive-study": ["document", "max_new_attempts"],
                     "adaptive-study-result": ["id"],
@@ -174,6 +178,9 @@ def create_server(workspace, port=0):
                 if action not in allowed:
                     raise ValueError("unknown operation")
                 keys(data, ["action", *allowed[action]], ["action"], "request")
+                if action in ("start-tune", "resume-tune", "tune-result", "replay-tune"):
+                    from .gui_tuning import tuning_response
+                    return self.reply(tuning_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
                 if action in ("start-tracked-study", "resume-tracked-study", "tracked-study-result", "replay-tracked-study", "start-adaptive-study", "resume-adaptive-study", "adaptive-study-result", "replay-adaptive-study"):
                     from .gui_tracked_study import tracked_study_response
                     return self.reply(tracked_study_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
