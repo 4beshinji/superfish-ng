@@ -1,6 +1,6 @@
 # 実装・検証の現状
 
-確認日: 2026-09-08。版4線分フィレット統合後（直前製品基準 `35380e3`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-08。法線オフセット区間基盤追加後（直前製品基準 `7f1d8e4`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -34,17 +34,18 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 363件中361合格・NGSolve参照環境専用2件skip。版4線分フィレット統合後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | 有限弧接線追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-g03-line-fillet-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 369件中367合格・NGSolve参照環境専用2件skip。法線オフセット区間基盤追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | 有限弧接線追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-g03-normal-offsets-20260908、[引継ぎ](CODEX_HANDOFF.md) |
 | 曲線FEM | 球形独立参照、楕円/双曲線の3段階幾何近似・全6固定FEM比較・最終幾何間の場/RF比較PASS。初回FAIL保持 | [CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、out/validation-g03-native-geometry-separated-20260908 |
-| 接線候補 | 円/楕円/双曲線全体の四次式・根分離・接点再構成の独立8検査PASS。有限弧数値判定/明示選択G1接続の追加9検査PASS。有限弧所属/fractionと位置誤差上界を製品操作へ統合済み。固定直線と弧の追加7検査PASS。線分間フィレット追加7検査PASS。円錐曲線弧を含むフィレットは未完 | [TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
+| 接線候補 | 円/楕円/双曲線全体の四次式・根分離・接点再構成の独立8検査PASS。有限弧数値判定/明示選択G1接続の追加9検査PASS。有限弧所属/fractionと位置誤差上界を製品操作へ統合済み。固定直線と弧の追加7検査PASS。線分間フィレット追加7検査PASS。中心軌跡区間/特異性分割の追加6検査PASS。円錐曲線弧を含むフィレットの交点探索/製品接続は未完 | [TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
 | 独立NGSolve | 過去の円筒/円錐台基本モード、両側3段階、f/RQ/G/内部Hphi、円筒解析PASS | [INDEPENDENT_COMPARISON.md](INDEPENDENT_COMPARISON.md) |
 | Wine比較 | 基本3形状と演習17対象モードの既存照合。限定AF読込は保存AF2形状から新規NG計算を照合。曲線全般の旧版照合ではない | [SUPERFISH_COMPARISON.md](SUPERFISH_COMPARISON.md)、[MILESTONE_ACCEPTANCE.md](MILESTONE_ACCEPTANCE.md)、[LEGACY_INPUT.md](LEGACY_INPUT.md) |
 | GUI | G0〜G5と後続個別受入。曲線鏡映は左右/両対称を含む11ブラウザー操作PASS | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 実機測定 | 未検証。合成幾何・演習照合を測定検証に数えない | V01 |
 
-版4線分フィレットの標準validateとChrome8操作がPASS。Wineは今回未実行。
-前回の実行中docstring変更によるStudy失敗は引継ぎに保持。今回の検証中は実装を編集していない。
+法線オフセット区間基盤の標準validateはPASS。GUI/Wineは今回未実行。
+既存Chrome8操作の記録はG03照合表で再確認した。
+過去の実行中docstring変更によるStudy失敗は引継ぎに保持。今回の検証中は実装を編集していない。
 out/が別環境で欠けても、過去の実行と現在再現できる状態を区別する。
 
 ## 旧計画からの訂正
