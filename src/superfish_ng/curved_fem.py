@@ -19,18 +19,24 @@ def mapped_element_matrices(geometry, *, quadrature_order=8):
             raise ValueError('mapped element crosses r=0; negative physical radius is unsupported')
     rule = list(triangle_quadrature(order=quadrature_order))
     mapped = geometry.evaluate([barycentric[1:] for barycentric,_ in rule])
-    stiffness = np.zeros((6,6)); mass = np.zeros((6,6))
-    for i,(_,weight) in enumerate(rule):
-        n = mapped['basis_values'][i]
-        derivative = mapped['basis_gradients'][i]
-        radius = mapped['points_rz_m'][i,0]
-        measure = weight*mapped['determinant_m2'][i]
-        curl_z = 2*n+radius*derivative[:,0]
-        curl_r = radius*derivative[:,1]
-        stiffness += measure*radius*(np.outer(curl_z,curl_z)+np.outer(curl_r,curl_r))
-        mass += measure*radius**3*np.outer(n,n)
-    return stiffness,mass
-
+    n=mapped['basis_values']
+    derivative=mapped['basis_gradients']
+    radius=mapped['points_rz_m'][:,0]
+    measure=np.asarray([weight for _,weight in rule])*mapped['determinant_m2']
+    curl_z=2*n+radius[:,None]*derivative[:,:,0]
+    curl_r=radius[:,None]*derivative[:,:,1]
+    # Accumulate in quadrature order, including the original initial zero.
+    # A Gram product or sum may reassociate additions and alter saved scores.
+    stiffness=np.zeros((len(rule)+1,6,6))
+    mass=np.zeros_like(stiffness)
+    stiffness[1:]=(measure*radius)[:,None,None]*(curl_z[:,:,None]*curl_z[:,None,:]+curl_r[:,:,None]*curl_r[:,None,:])
+    # Scalar powers retain the original NumPy scalar rounding.
+    radius_cubed=np.asarray([r**3 for r in radius])
+    mass[1:]=(measure*radius_cubed)[:,None,None]*(n[:,:,None]*n[:,None,:])
+    np.add.accumulate(stiffness,axis=0,out=stiffness)
+    np.add.accumulate(mass,axis=0,out=mass)
+    # Detach the small matrices: global assembly must not retain every prefix.
+    return stiffness[-1].copy(),mass[-1].copy()
 
 def assemble_curved(space, *, quadrature_order=8):
     """Scatter mapped local matrices through the unique shared node indices."""

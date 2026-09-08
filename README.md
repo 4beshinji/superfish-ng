@@ -85,7 +85,9 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-09、N04曲線適応の検証済み先祖再利用追加後（直前基準 `07dac27`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-09、N04曲線順序付き組立追加後（直前基準 `465e09f`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+
+[曲線要素の順序付き組立](docs/CURVED_ORDERED_ASSEMBLY.md)を追加。基底・積分寄与を配列化し、従来の加算順序と保存再検証の整合性を維持する。[非球形対照](docs/CURVED_NONSPHERE_COMPARISON.md)は初回の予算不足を記録し、予算拡大後の両尺度検証を進めている。N04全体の精度・効率は未受入。
 
 [曲線適応の検証済み先祖の再利用](docs/CURVED_VERIFICATION_REUSE.md)を追加。実行中だけ先祖の場/ピーク/積分の重複評価を省き、要求・実装・元ファイル内容の照合と新水準の完全検証を維持する。独立replayは全水準を評価する。細分の一般精度/効率の受入とは区別する。
 

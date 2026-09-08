@@ -1,5 +1,7 @@
 # 実装・検証の現状
 
+[曲線要素の順序付き組立](CURVED_ORDERED_ASSEMBLY.md)を追加。基底・積分寄与を配列化し、従来の加算順序と保存再検証の整合性を維持する。[非球形対照](CURVED_NONSPHERE_COMPARISON.md)は初回の予算不足を記録し、予算拡大後の両尺度検証を進めている。N04全体の精度・効率は未受入。
+
 [曲線適応の検証済み先祖の再利用](CURVED_VERIFICATION_REUSE.md)を追加。実行中だけ先祖の場/ピーク/積分の重複評価を省き、要求・実装・元ファイル内容の照合と新水準の完全検証を維持する。独立replayは全水準を評価する。細分の一般精度/効率の受入とは区別する。
 
 
@@ -54,8 +56,8 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 650件中648合格・NGSolve参照環境専用2件skip。N04曲線先祖再利用追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | N04曲線先祖再利用追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-curved-prefix-20260909、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 653件中651合格・NGSolve参照環境専用2件skip。N04曲線順序付き組立追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | N04曲線順序付き組立追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧曲線演算とのバイト一致も確認 | out/validation-curved-ordered-20260909、[引継ぎ](CODEX_HANDOFF.md) |
 | N04実行内の先祖再利用 | 追加3検査PASS。出所改変拒否・独立replayを維持し重複評価を削減。版1〜4実保存の完全一致と前回対照の全水準五量差ゼロ。球形の適応全体は約119秒から約82秒の観測 | [仕様](CURVED_VERIFICATION_REUSE.md) |
 | N04曲線の効率対照 | 同一二次写像の球形で解析五量/追跡/積分/二区間停止・Ritz・誤差対DOF/時間を確認。一様1201自由度に対し適応2661自由度。この例で適応優位なし、一般効率は未受入 | [比較仕様](CURVED_REFINEMENT_EFFICIENCY.md) |
 | N04曲線適応GUI | 版4の実Chrome11項目・旧版15項目PASS。GUI実計算の独立球形五量もPASS。全ジョブ終了・検証サーバー停止済み | [GUI仕様](GUI_CURVED_ADAPTIVE_REFINEMENT.md) |

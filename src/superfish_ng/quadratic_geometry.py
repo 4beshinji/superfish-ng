@@ -6,7 +6,6 @@ This geometry core does not by itself certify a conforming global mesh.
 """
 from dataclasses import dataclass
 import numpy as np
-from .high_order import basis_p2
 
 _REFERENCE_GRAD = np.array(((-1.,-1.),(1.,0.),(0.,1.)))
 _REFERENCE_NODES = np.array(((0.,0.),(1.,0.),(0.,1.),(.5,0.),(.5,.5),(0.,.5)))
@@ -86,11 +85,14 @@ class QuadraticTriangle:
         points = raw.astype(float)
         if not np.isfinite(points).all() or np.any(points<0) or np.any(points.sum(axis=1)>1):
             raise ValueError('reference points must lie in the closed unit triangle')
-        values,gradients = [],[]
-        for x,y in points:
-            value,gradient = basis_p2(np.array((1-x-y,x,y)),_REFERENCE_GRAD)
-            values.append(value); gradients.append(gradient)
-        values,gradients = np.asarray(values),np.asarray(gradients)
+        # Preserve the scalar P2 arithmetic order for saved-geometry replay.
+        barycentric=np.column_stack((1-points[:,0]-points[:,1],points[:,0],points[:,1]))
+        values=np.concatenate((barycentric*(2*barycentric-1),
+            np.stack([4*barycentric[:,i]*barycentric[:,j] for i,j in ((0,1),(1,2),(2,0))],axis=1)),axis=1)
+        vertex_gradients=(4*barycentric-1)[:,:,None]*_REFERENCE_GRAD
+        edge_gradients=np.stack([4*(barycentric[:,i,None]*_REFERENCE_GRAD[j]+barycentric[:,j,None]*_REFERENCE_GRAD[i])
+            for i,j in ((0,1),(1,2),(2,0))],axis=1)
+        gradients=np.concatenate((vertex_gradients,edge_gradients),axis=1)
         # J[physical coordinate, reference coordinate].
         jacobian = np.einsum('ia,qib->qab',self.points_rz_m-self.points_rz_m[0],gradients)
         determinant = np.linalg.det(jacobian)
