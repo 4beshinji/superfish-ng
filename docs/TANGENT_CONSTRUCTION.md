@@ -683,3 +683,8 @@ superfish-ng solve out/line-conic-fillet-case.json --out out/line-conic-fillet-s
 構築込みの別文書としてCLI/GUI保存・再構築照合へ接続した。元構築版1〜6の形式は維持する。
 診断のCERTIFIED/UNVERIFIEDを候補選択・閉輪郭検査・FEM精度の判定へ読み替えない。
 [構築診断の契約](OFFSET_DEGENERACIES.md)と[GUI手順](GUI_GUIDE.md)を参照。
+
+
+最小半径制約の接続（2026-09-08）: [minimum_meridional_radius_m](MERIDIONAL_RADIUS.md)を
+完成曲線輪郭の任意指定として追加。PEC曲線内部の区間検査とPEC-PECのG1数値検査を課し、
+構築/保存/鏡映へ保持する。既存の数値minimum_radius_mプロパティと認証の根拠は区別する。

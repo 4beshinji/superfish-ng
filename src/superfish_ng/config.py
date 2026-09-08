@@ -266,7 +266,7 @@ class Case:
         elif g.get('type') == 'curved_contour':
             if data['schema_version']!=3 or boundaries:
                 raise ValueError('curved_contour requires v3 and edge_tags instead of boundaries')
-            keys(g,('type','curves','edge_tags','join_tolerance_m','minimum_gap_m','chord_tolerance_m','chord_max_segments'),
+            keys(g,('type','curves','edge_tags','join_tolerance_m','minimum_gap_m','chord_tolerance_m','chord_max_segments','minimum_meridional_radius_m'),
                  ('type','curves','edge_tags','join_tolerance_m','chord_tolerance_m'),'geometry')
             profile = ()
         elif g.get("type") in ("profile", "stepped_profile", "arc_profile"):

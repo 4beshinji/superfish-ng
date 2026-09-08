@@ -191,3 +191,8 @@ RF積分・保存・再読込でも保持する。形状は直線要素のまま
 診断だけで構築候補の選択や適用を許可しません。要求/候補の変更後は再検査が必要です。
 `examples/construction/degenerate_fillet_request.json` は弧端での接触を診断できても
 構築は未確認として残る例です。計算用の完成Caseではありません。
+
+
+曲線形状JSONの `minimum_meridional_radius_m` は読込・構築適用・計算・保存へ保持します。
+専用の編集欄はありません。例 `examples/construction/radius_constrained_fillet_request.json` は
+半径20 mmのフィレットを含むPEC壁に19 mm以上を要求します。詳細は[半径制約](MERIDIONAL_RADIUS.md)。

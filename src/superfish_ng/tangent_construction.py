@@ -41,7 +41,7 @@ def _request(request):
     Model.from_dict(template['model'])
     geometry = template['geometry']
     keys(geometry, ('type', 'curves', 'edge_tags', 'join_tolerance_m', 'minimum_gap_m',
-                    'chord_tolerance_m', 'chord_max_segments'),
+                    'chord_tolerance_m', 'chord_max_segments','minimum_meridional_radius_m'),
          ('type', 'curves', 'edge_tags', 'join_tolerance_m', 'chord_tolerance_m'), 'construction geometry')
     if geometry['type'] != 'curved_contour' or not isinstance(geometry['curves'], list):
         raise ValueError('construction requires curved_contour with a curves array')

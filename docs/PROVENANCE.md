@@ -1,5 +1,40 @@
 # 独立実装・情報来歴
 
+## G03最小子午面曲率半径のCase制約 — 2026-09-08
+
+meridional_radius.pyと任意geometry.minimum_meridional_radius_mを追加。
+有限正数を要求し、未指定なら旧JSONのキー・Case hashを維持する。
+PEC曲線内部の|k|を距離0の法線オフセット区間で囲み、全域|k|<=1/Rを検査する。
+違反点の下界が1/Rを超えればFAIL、幅/級数/箱数予算不足はUNVERIFIED。両方をCaseで拒否。
+PEC-PECは1e-8 radのG1数値検査も要求。軸/対称境界と周方向主曲率は対象外。
+構築選択後の完成Case、保存再読込、鏡映、GUIでの形状保持へ接続した。
+専用GUI入力欄はない。制約は解析曲線に対するもの。FEM精度や物理ピーク収束の保証ではない。
+
+実装前のModuleNotFoundErrorを確認。追加6テストは円/直線・1 ULP差、楕円/双曲線極値と
+有限弧/尺度/向き、予算不足、PEC角拒否/厳密入力/旧JSON、構築/GUI・実FEM不変/保存再読込、
+両対称タグの鏡映後再検査。予算不足fixtureの初期要求3.9 mは実最小約3.870707 mを超え、
+実装が正しくFAILを返した。要求を3.8 mへ修正し、1箱UNVERIFIED/既定予算PASSを確認。
+製品の判定や許容差は緩めていない。
+変更前402件中400合格・2 skip（121.781秒）。最終408件中406合格・2 skip（125.496秒）。
+out/validation-g03-meridional-radius-20260908 PASS、seed_comparison.jsonでcase hash一致、
+周波数差0、RF/エネルギー差最大8.882e-16。FEM本体/数値基準変更なし、最終source hash一致。
+同所construction_replay.jsonで版1〜6の既存保存を再読込。radius_constraint.jsonに区間証拠を保存。
+
+out/gui-meridional-radius-browser-20260908/report.jsonでChrome11操作PASS、外部要求0、
+実行中ソース変更なし。保存された構築・適用・FEM計算で0.019 mの制約保持を確認。
+tangent-construction.pngの表示も確認。検証GUIは停止済み。今回Wine新規実行なし。
+例examples/construction/radius_constrained_fillet_request.jsonはR20 mmのフィレットへ下限19 mmを指定。
+21 mm指定は違反として拒否し、半径は自動変更しない。
+実CLIはout/g03-radius-constrained-construction-20260908.json、out/g03-radius-constrained-case-20260908.json、
+out/g03-radius-constrained-solve-20260908。周波数1258432805.464176 Hz、R/Q(acc)=140.166774 ohm、
+制約なしの同一形状と一致。合成形状であり測定空洞ではない。
+
+[制約仕様](MERIDIONAL_RADIUS.md)を追加。README・対応表・計画・実装状況・G03照合表を同期。
+既存区間曲率核から独立実装し、新規外部資料/コード/依存/旧資産参照なし。
+次は一般の弧端/重解と退化候補構築、旧入力/物理収束の残件。
+8親課題の限定受入を維持し、G03全体と全計画目標は未完了。
+
+
 ## G03構築診断の保存・CLI/GUI接続 — 2026-09-08
 
 construction_diagnostics.pyを追加し、版5/6構築の実探索証明から区間・符号付き距離を

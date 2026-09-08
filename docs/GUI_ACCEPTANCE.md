@@ -1,5 +1,19 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 最小子午面曲率半径の保持 — 2026-09-08
+
+out/gui-meridional-radius-browser-20260908/report.jsonでChrome11操作PASS。
+外部要求0、実行中ソース変更なし。構築保存・再読込・適用・実FEM計算の幾何に
+minimum_meridional_radius_m=0.019を保持した。tangent-construction.pngの表示を確認し、GUIを停止した。
+専用の半径編集欄は追加していない。曲線JSONの読込/保持として検証した。
+
+```bash
+node scripts/verify_gui.mjs --url '起動URL' --out out/gui-meridional-radius-NEW --tangent-request examples/construction/radius_constrained_fillet_request.json --tangent-degenerate-request examples/construction/degenerate_fillet_request.json
+```
+
+曲率制約の合格を物理ピーク収束へ読み替えない。
+
+
 ## 構築診断の表示・保存・再検証 — 2026-09-08
 
 out/gui-construction-diagnosis-browser-20260908/report.jsonでChrome11操作PASS、外部要求0、

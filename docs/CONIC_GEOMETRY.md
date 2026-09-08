@@ -463,3 +463,8 @@ RF・物理座標プローブ・通常保存は未接続。[詳細](CURVED_ELEME
 未確定を領域外へ読み替えず、共有辺は片側場を返す。
 球形の独立物理点/全軸で場ゲートPASS。[詳細](CURVED_ELEMENTS.md)。
 通常Caseの幾何次数と保存/再読込、ピーク/鏡映/Study/GUIは継続。
+
+
+最小半径制約の接続（2026-09-08）: [minimum_meridional_radius_m](MERIDIONAL_RADIUS.md)を
+完成曲線輪郭の任意指定として追加。PEC曲線内部の区間検査とPEC-PECのG1数値検査を課し、
+構築/保存/鏡映へ保持する。既存の数値minimum_radius_mプロパティと認証の根拠は区別する。

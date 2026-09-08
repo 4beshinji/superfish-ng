@@ -24,6 +24,7 @@ class CurvedContour:
     edge_tags: tuple
     join_tolerance_m: float
     minimum_gap_m: float = 0.
+    minimum_meridional_radius_m: float | None = None
 
     def __post_init__(self):
         if not isinstance(self.curves,(list,tuple)) or len(self.curves)<2 or any(
@@ -37,6 +38,10 @@ class CurvedContour:
             if type(x) not in (int,float) or not math.isfinite(x) or x<0:
                 raise ValueError(f'{key} must be finite and nonnegative')
         object.__setattr__(self,'curves',tuple(self.curves))
+        if self.minimum_meridional_radius_m is not None:
+            x=self.minimum_meridional_radius_m
+            if type(x) not in (int,float) or not math.isfinite(x) or x<=0:
+                raise ValueError('minimum_meridional_radius_m must be finite and positive')
         object.__setattr__(self,'edge_tags',tuple(self.edge_tags))
         for a,b in zip(self.curves,self.curves[1:]+self.curves[:1]):
             check_curve_join(a,b,position_tolerance_m=self.join_tolerance_m,require_tangent=False)
@@ -86,6 +91,15 @@ class CurvedContour:
                 certify_curve_separation(a,b,gap)
         if not math.isfinite(self.area_m2) or self.area_m2<=0:
             raise ValueError('curved contour must have positive signed area in (z,r)')
+        report=self.radius_constraint_report()
+        if report is not None and report['status']!='PASS':
+            raise ValueError(f'minimum_meridional_radius_m: {report["reason"]}; inspect radius bounds or PEC joins')
+
+    def radius_constraint_report(self):
+        if self.minimum_meridional_radius_m is None:return None
+        from .meridional_radius import contour_meridional_radius_report
+        return contour_meridional_radius_report(self.curves,self.edge_tags,
+            minimum_radius_m=self.minimum_meridional_radius_m,join_tolerance_m=self.join_tolerance_m)
 
     @property
     def area_m2(self):
@@ -137,21 +151,25 @@ class CurvedContour:
             return replace(curve,**changes)
         curves = tuple(transformed(self.curves[i],False) for i in remaining)+tuple(transformed(self.curves[i],True) for i in reversed(remaining))
         tags = tuple(self.edge_tags[i] for i in remaining)+tuple(self.edge_tags[i] for i in reversed(remaining))
-        return CurvedContour(curves,tags,self.join_tolerance_m,self.minimum_gap_m)
+        return CurvedContour(curves,tags,self.join_tolerance_m,self.minimum_gap_m,self.minimum_meridional_radius_m)
 
     def to_dict(self):
         curves = [curve_to_dict(curve) for curve in self.curves]
-        return dict(curves=curves,edge_tags=list(self.edge_tags),join_tolerance_m=self.join_tolerance_m,
+        result=dict(curves=curves,edge_tags=list(self.edge_tags),join_tolerance_m=self.join_tolerance_m,
                     minimum_gap_m=self.minimum_gap_m)
+        if self.minimum_meridional_radius_m is not None:result['minimum_meridional_radius_m']=self.minimum_meridional_radius_m
+        return result
 
     @classmethod
     def from_dict(cls,data):
         from .config import keys
-        keys(data,('curves','edge_tags','join_tolerance_m','minimum_gap_m'),
+        keys(data,('curves','edge_tags','join_tolerance_m','minimum_gap_m','minimum_meridional_radius_m'),
              ('curves','edge_tags','join_tolerance_m'),'curved contour')
         if not isinstance(data['curves'],list):raise ValueError('curves must be an array')
         curves = [curve_from_dict(row) for row in data['curves']]
-        return cls(tuple(curves),data['edge_tags'],data['join_tolerance_m'],data.get('minimum_gap_m',0.))
+        if 'minimum_meridional_radius_m' in data and data['minimum_meridional_radius_m'] is None:
+            raise ValueError('minimum_meridional_radius_m must be positive when present; omit it to disable')
+        return cls(tuple(curves),data['edge_tags'],data['join_tolerance_m'],data.get('minimum_gap_m',0.),data.get('minimum_meridional_radius_m'))
 
     def linearize(self,tolerance_m,*,max_segments=20000):
         """Produce a tagged polygon with explicit, bounded join adjustments.
