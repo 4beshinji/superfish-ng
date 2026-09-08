@@ -5,9 +5,8 @@ import numpy as np
 from .curved_rf_sensitivity import _omega
 from .curved_rf_adjoint import r_over_q_adjoint
 from .curved_rf_frequency_sensitivity import r_over_q_frequency_derivative
-from .curved_refinement import refine_curved_space
 from .curved_fem import mapped_element_matrices
-from .nested_curved_tracking import _nested_transfer,_same_space,track_nested_curved_modes
+from .nested_curved_tracking import _nested_transfer,_track_prepared_nested_modes
 from .curved_rf import quantities_curved
 from .residual_indicator import mark_bulk
 
@@ -24,16 +23,17 @@ def curved_rf_goal_indicator(previous,current,*,mode=0,bulk_fraction=.5):
     _omega(previous,mode)
     if previous.reflection_source_case is not None or current.reflection_source_case is not None:
         raise ValueError('RF goal indicator requires direct native spaces, not reflected constructions')
-    p,space,a,b,ancestry=_nested_transfer(previous,current)
+    prepared=_nested_transfer(previous,current)
+    p,space,a,b,ancestry=prepared
     if ancestry['appended_steps']!=[{'kind':'uniform'}]:
         raise ValueError('RF goal indicator requires exactly one uniform confirmation step')
-    refined=refine_curved_space(previous.space)
-    if not _same_space(refined.space,space) or (p-refined.prolongation).nnz:
-        raise ValueError('RF goal indicator confirmation differs from uniform restriction')
+    # _nested_transfer already applies and verifies this exact uniform step.
+    # Its four-child order supplies parent ownership without rebuilding it.
+    parent_cells=np.repeat(np.arange(len(previous.space.geometry.cell_nodes)),4)
     if previous.quadrature_order!=current.quadrature_order:
         raise ValueError('RF goal indicator requires the same assembly quadrature order')
     ids=[f'previous-{i}' for i in range(a.shape[1])]
-    tracking=track_nested_curved_modes(previous,current,ids,mapping='nested_curved',minimum_overlap=.95,
+    tracking=_track_prepared_nested_modes(previous,current,ids,prepared,minimum_overlap=.95,
         minimum_assignment_margin=.05,relative_cluster_gap=1e-6,minimum_relative_singular_value=1e-8)
     if tracking['status']!='PASS' or not tracking['individual_ids_complete'] or ids[mode] not in tracking['current_mode_ids']:
         raise ValueError('RF goal indicator requires verified individual mode tracking, not a cluster')
@@ -61,7 +61,7 @@ def curved_rf_goal_indicator(previous,current,*,mode=0,bulk_fraction=.5):
         k,m=mapped_element_matrices(mapping,quadrature_order=current.quadrature_order)
         children.append(-float(detail[nodes]@((k-eigenvalue*m)@coarse[nodes])))
     children=np.asarray(children)
-    signed=np.bincount(refined.parent_cells,weights=children,minlength=len(previous.space.geometry.cell_nodes))
+    signed=np.bincount(parent_cells,weights=children,minlength=len(previous.space.geometry.cell_nodes))
     scores=abs(signed);total=float(math.fsum(signed));absolute=float(math.fsum(abs(children)))
     consistency=abs(total-global_action)/max(absolute,abs(global_action),np.finfo(float).tiny)
     if not np.isfinite(children).all() or not math.isfinite(consistency) or consistency>1e-10:

@@ -1,5 +1,7 @@
 # Superfish-NG — 0.1.0 research seed
 
+[RF指標の重複再構築](docs/CURVED_RF_GOAL_REUSE.md)を削減。[自動適応の分岐・保存再開の設計](docs/CURVED_RF_ADAPTIVE_PLAN.md)を具体化した。版5の実行・CLI/GUI・反復受入は未実装。
+
 [RF重み付き親要素選択](docs/CURVED_RF_GOAL_INDICATOR.md)を追加。実全域確認の随伴で親残差を局所化し、選択番号から実FEMまで接続した。3形状のR/Q対照差は減少したが、確認/指標費用を含む効率と適応版4への接続は未受入。
 
 [RFの角周波数偏微分](docs/CURVED_RF_FREQUENCY_SENSITIVITY.md)を追加。位相・電場・電磁エネルギーの周波数依存を解析的に微分し、係数随伴との結合を検査した。親子残差と細分選択・効率受入は残る。

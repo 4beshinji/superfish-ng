@@ -93,7 +93,17 @@ def _nested_transfer(previous,current):
 def track_nested_curved_modes(previous,current,previous_ids,*,mapping,**controls):
     if mapping!='nested_curved':
         raise ValueError('explicit mapping must be nested_curved')
-    transfer,space,a,b,ancestry=_nested_transfer(previous,current)
+    prepared=_nested_transfer(previous,current)
+    return _track_prepared_nested_modes(previous,current,previous_ids,prepared,**controls)
+
+
+def _track_prepared_nested_modes(previous,current,previous_ids,prepared,**controls):
+    """Internal reuse of a transfer already verified by _nested_transfer.
+
+    Never deserialize or accept this execution-local tuple from a caller's
+    persistent document. Public tracking always reconstructs and verifies it.
+    """
+    transfer,space,a,b,ancestry=prepared
     def normalized(values):
         scale=np.max(abs(values),axis=0)
         return values/np.where(scale>0,scale,1.)
@@ -111,7 +121,7 @@ def track_nested_curved_modes(previous,current,previous_ids,*,mapping,**controls
     report=track_sampled_mode_subspaces(features[:,:a.shape[1]],features[:,a.shape[1]:],np.ones(len(features)),
         previous.frequencies_hz,current.frequencies_hz,previous_ids,
         comparison_description='native quadratic refinement history; transferred u=Hphi/r in fine curved P2 mass inner product integral r^3 u v dr dz; QR/Cholesky coordinates, not physical point samples',**controls)
-    report['physical_mapping']=dict(name=mapping,triangle_counts=[len(previous.space.geometry.cell_nodes),len(space.geometry.cell_nodes)],
+    report['physical_mapping']=dict(name='nested_curved',triangle_counts=[len(previous.space.geometry.cell_nodes),len(space.geometry.cell_nodes)],
         ancestry=ancestry,coefficient_feature_entries=coefficients.size,feature_rows=len(features),
         mass_quadrature_order=MASS_QUADRATURE_ORDER,mass_embedding_relative_difference=difference,
         numerical_assignment_margin_floor=numeric_margin,
