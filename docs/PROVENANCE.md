@@ -1,5 +1,39 @@
 # 独立実装・情報来歴
 
+## G03版3固定支持直線・有限弧の構築統合 — 2026-09-08
+
+line_arc_tangentと構築schema_version=3を追加。固定支持直線の接線条件w²=nQnと
+接点c+Qn/wを二進入力から厳密有理数で求める。非接線・無限遠接点を区別し、
+有限線分の延長可否と元の順序/保持端点を明示する。枝/有限弧/fractionを区間判定し、
+空線分/空弧・逆向き・未確認は接続しない。生成端点と保持弧外端の位置誤差を囲む。
+G1角度は数値検査。近傍線の自動補正・任意フィレット・角度区間認証とは区別する。
+要求/保存/再構築・Case/CLI/GUIへ接続し、版1/2の既存保存文書も実再読込できた。
+
+追加7テストは既知円/双曲線接点、枝/端点/延長/方向、非接線/漸近線、予算/厳密controls、
+保存/GUI共通API、合成カプセルの解析面積/体積と実FEM相似則。
+標準356件中354合格・2 skip（92.557秒）、out/validation-g03-line-arc-20260908 PASS。
+同所seed_comparison.jsonでcase hash一致、周波数差0、RF/エネルギー相対差最大8.882e-16。
+数値基準/FEM本体/許容差の変更なし。
+
+out/gui-line-arc-browser-20260908/report.jsonのChrome8操作PASS、外部要求0、
+実行中ソース変更なし。tangent-construction.pngで保持端/接点と誤差上界の表示を確認。
+保存ダウンロード・再構築・明示適用・FEM/描画・改変拒否まで確認し、GUIサーバーは停止済み。
+実CLI記録はout/g03-line-arc-construction-20260908.json、out/g03-line-arc-case-20260908.json、
+out/g03-line-arc-solve-20260908。例はexamples/construction/capsule_line_arc_request.json。
+版1のout/gui-tangent-browser-final-20260908/downloads/tangent-construction.json、
+版2のout/g03-certified-capsule-construction-20260908.jsonもCASE_VALIDATEDで再読込した。
+
+版2/3カプセル比較はvalidation内capsule_v2_v3_comparison.json。
+双方617節点/1152三角形で、f相対差2.32491e-8、両RQ差0.626214%、G差8.12673e-8、
+TTF差0.310662%。微小な構築差から再生成したメッシュ同士の比較であり、純幾何誤差と
+FEM/RF誤差を分離していない。このカプセルのRF精度収束は未検証として保持する。
+接点誤差上界をRF精度保証に読み替えず、差を隠す補正も行わない。
+
+式は既存二次形式と初等幾何から独立導出。新規外部資料/コード/依存/旧資産参照なし。
+Wine新規計算なし。次はフィレットとG03全要件照合。8親課題の限定受入を維持し、
+G03全体・全互換目標の完了は宣言しない。
+
+
 ## G03版2区間付き構築・保存・CLI/GUI統合 — 2026-09-08
 
 certified_constructionと構築schema_version=2を追加。確定fraction区間内のfloat位置を選び、

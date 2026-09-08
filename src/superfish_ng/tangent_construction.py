@@ -8,7 +8,7 @@ from pathlib import Path
 from . import __version__
 from .arc_tangents import finite_arc_tangents, connect_finite_arcs
 from .config import Case, keys
-from .conics import EllipseArc, HyperbolaArc, curve_from_dict, curve_to_dict
+from .conics import LineSegment, EllipseArc, HyperbolaArc, curve_from_dict, curve_to_dict
 from .project import parse_json
 
 
@@ -29,8 +29,8 @@ def _canonical(value):
 def _request(request):
     keys(request, ('schema_version', 'case_template', 'pair_start', 'controls'),
          ('schema_version', 'case_template', 'pair_start', 'controls'), 'tangent construction request')
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2):
-        raise ValueError('tangent construction request requires schema_version 1 or 2')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3):
+        raise ValueError('tangent construction request requires schema_version 1, 2 or 3')
     _canonical(request)  # Reject nonfinite JSON values even in the unfinished template.
     template = request['case_template']
     keys(template, ('schema_version', 'name', 'geometry', 'mesh', 'solver', 'rf', 'model', 'boundaries'),
@@ -53,10 +53,14 @@ def _request(request):
     index = request['pair_start']
     if type(index) is not int or index < 0 or index+1 >= len(curves):
         raise ValueError('pair_start must identify two consecutive curves without wrapping')
-    if any(not isinstance(curve, (EllipseArc, HyperbolaArc)) for curve in curves[index:index+2]):
+    pair=curves[index:index+2]
+    if request['schema_version']==3:
+        if sum(isinstance(c,LineSegment) for c in pair)!=1 or sum(isinstance(c,(EllipseArc,HyperbolaArc)) for c in pair)!=1:
+            raise ValueError('version 3 tangent pair requires one line and one ellipse or hyperbola arc')
+    elif any(not isinstance(curve,(EllipseArc,HyperbolaArc)) for curve in pair):
         raise ValueError('tangent pair must contain two ellipse or hyperbola arcs')
-    if tags[index:index+2] != ['pec', 'pec']:
-        raise ValueError('tangent construction currently requires two PEC arcs')
+    if tags[index:index+2] != ['pec','pec']:
+        raise ValueError('tangent construction currently requires two PEC primitives')
     controls = request['controls']
     allowed = ('position_tolerance_m', 'angle_tolerance_rad', 'parameter_guard', 'normal_width',
                'max_boxes', 'residual_tolerance')
@@ -64,6 +68,9 @@ def _request(request):
         allowed = ('position_tolerance_m', 'angle_tolerance_rad', 'normal_width', 'max_boxes',
                    'residual_tolerance', 'max_contact_width_m', 'endpoint_width', 'max_series_terms',
                    'fraction_width', 'max_fraction_steps')
+    if request['schema_version']==3:
+        allowed=('position_tolerance_m','angle_tolerance_rad','allow_extension','endpoint_width',
+                 'max_series_terms','fraction_width','max_fraction_steps')
     keys(controls, allowed, allowed, 'tangent controls')
     return template, geometry, curves, index, controls
 
@@ -81,6 +88,13 @@ def construct_tangent_case(request, *, candidate_index=None):
     if request['schema_version'] == 2:
         from .certified_construction import certified_construction_candidates, connect_certified_arcs
         enumerate_candidates, connect = certified_construction_candidates, connect_certified_arcs
+    elif request['schema_version']==3:
+        from .line_arc_tangent import line_arc_tangent_candidates, connect_line_arc
+        line_first=isinstance(first,LineSegment)
+        line,arc=(first,second) if line_first else (second,first)
+        enumerate_candidates=lambda a,b,**kwargs: line_arc_tangent_candidates(line,arc,line_first=line_first,**kwargs)
+        connect=lambda a,b,**kwargs: connect_line_arc(line,arc,line_first=line_first,**kwargs)
+
     if candidate_index is None:
         enumeration = enumerate_candidates(first, second, **controls)
         case, joins = None, None
@@ -91,7 +105,7 @@ def construct_tangent_case(request, *, candidate_index=None):
         selected = deepcopy(template)
         selected['geometry']['curves'] = [curve_to_dict(curve) for curve in
                                           curves[:index]+list(construction['curves'])+curves[index+2:]]
-        selected['geometry']['edge_tags'] = geometry['edge_tags'][:index]+['pec']*3+geometry['edge_tags'][index+2:]
+        selected['geometry']['edge_tags'] = geometry['edge_tags'][:index]+['pec']*len(construction['curves'])+geometry['edge_tags'][index+2:]
         case = Case.from_dict(selected).to_dict()
         status = 'CASE_VALIDATED'
     return _json_value(dict(schema_version=request['schema_version'], software_version=__version__, request=deepcopy(request),
@@ -100,7 +114,9 @@ def construct_tangent_case(request, *, candidate_index=None):
                            case=case, status=status,
                            scope=('guarded numerical tangent construction; preview template is not a validated case; no FEM solve'
                                   if request['schema_version'] == 1 else
-                                  'certified binary-model membership/fractions and trim contact error; floating G1; canonical case validation; no FEM solve')))
+                                  'certified binary-model membership/fractions and trim contact error; floating G1; canonical case validation; no FEM solve'
+                                  if request['schema_version']==2 else
+                                  'fixed binary supporting-line contact; explicit extension and order; certified arc membership and trim error; floating G1; no FEM solve')))
 
 
 def save_construction(request, path, *, candidate_index=None):

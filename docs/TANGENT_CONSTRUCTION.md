@@ -380,3 +380,52 @@ R/Q相対差0.00312004、G相対差6.77706e-8、TTF相対差0.00154291がある�
 
 版2統合の標準349件中347合格・2 skip、out/validation-g03-certified-construction-20260908 PASS。
 Chrome8操作PASS、seed周波数差ゼロ、RF/エネルギー差最大8.882e-16、基準更新なし。検証用GUIは停止済み。
+
+## 版3の固定支持直線と有限弧 — 2026-09-08
+
+`line_arc_tangent_candidates` / `connect_line_arc` を追加した。指定した線分の支持直線を
+固定し、その直線が円/楕円/双曲線の支持曲線に接する場合だけ有限接点を構築する。
+二進入力から有理数で中心c、行列Q、法線n、w=n·(line_start−c)を作り、
+接線条件w²=nQnを厳密に判定する。不等ならNOT_TANGENT、両辺ゼロなら
+有限接点を持たないAT_INFINITYとして区別する。有限接点はc+Qn/wで厳密な有理数。
+近傍の非接線を許容差で接線へ補正しない。回転後の入力丸めでも条件が崩れれば拒否する。
+
+接点を元の線分start+t(end−start)へ射影し、有理数tを記録する。
+`allow_extension=false`ではt∉[0,1]を除外する。延長を許可しても有向線分を反転しない。
+直線→弧では線分始点と弧終点、弧→直線では弧始点と線分終点を保持する。
+保持線分が空ならEMPTY_LINE、弧が空ならEMPTY_ARC、逆向きならOPPOSED。
+元弧の枝/有向有限区間への所属とfractionは既存の有理数区間APIで確認する。
+未分離・予算不足・表現不能・位置誤差未達はUNVERIFIEDと理由を保持し、Case化しない。
+
+新線分の接点側は厳密接点のfloat表現とし、保持端点は元線分から継承する。
+切詰め弧の数学的/出力端点と、線分のfloat接点それぞれの厳密接点からの距離上界、
+弧の保持外端の誤差上界を位置許容差と照合する。float化した新線分の支持直線が
+厳密に元の直線と一致する保証ではない。接合G1角度は数値検査である。
+
+構築schema_version=3は隣接したPEC線分1本とPEC弧1本を任意の順で受理する。
+`pair_start`と配列順が接続端を指定する。曲線2本を曲線2本で置換し、完成Case全体を検査する。
+要求/保存/CLI/GUIは版1/2と同じ入口で、保存文書は再構築による全体照合を維持する。
+controlsは全て明示必須:
+position_tolerance_m、angle_tolerance_rad、allow_extension、endpoint_width、
+max_series_terms、fraction_width、max_fraction_steps。版2の根探索用controls等は拒否する。
+GUIの位置表は保持線分端点と接点を区別し、長さは保持線分の長さである。
+
+```bash
+superfish-ng construct-tangent examples/construction/capsule_line_arc_request.json --candidate-index 0 --out out/line-arc-construction.json
+superfish-ng export-constructed-case out/line-arc-construction.json --out out/line-arc-case.json
+superfish-ng solve out/line-arc-case.json --out out/line-arc-solve
+```
+
+独立検査は既知の円/双曲線接点、有限区間/枝、延長許可と方向、非接線/漸近線の区別、
+空区間拒否、級数予算、厳密controls、保存往復とGUI共通経路。
+合成カプセルの解析面積/回転体体積と、実FEMの2倍相似則(f半減、両RQ/G/TTF不変)も確認した。
+これらは接線構築の幾何不変量とFEMの尺度不変量であり、任意形状のRF収束保証ではない。
+新規外部資料/コード/依存なし。既存の二次形式と初等幾何から独立導出した。
+任意半径フィレット・旧曲線入力・G03全要件照合は引き続き未完。
+
+版3統合の標準356件中354合格・2 skip、out/validation-g03-line-arc-20260908 PASS。
+seed周波数差ゼロ、RF/エネルギー差最大8.882e-16、基準変更なし。Chrome8操作もPASS。
+同所capsule_v2_v3_comparison.jsonでは版2/3カプセルのf差2.32491e-8、
+両RQ差0.626214%、G差8.12673e-8、TTF差0.310662%。双方617節点/1152三角形。
+微小な構築差を含む再メッシュ同士の比較であり、純粋な幾何誤差とは分離していない。
+位置保証をRF保証にはせず、カプセルのRF精度収束は未検証として保持する。

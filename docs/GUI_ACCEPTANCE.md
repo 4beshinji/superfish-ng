@@ -1,5 +1,20 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 版3固定直線・弧接続 — 2026-09-08
+
+out/gui-line-arc-browser-20260908/report.jsonのChrome8操作PASS。
+保持線分端と接点、位置誤差上界の表示、明示選択/保存/再構築/Case適用/FEM/描画、
+改変拒否を確認。外部要求0、ソース変更なし、tangent-construction.pngも表示確認した。
+検証用GUIサーバーは停止済み。旧版1/2の保存ファイル再読込もPythonで確認した。
+
+```bash
+node scripts/verify_gui.mjs --url '起動URL' --out out/gui-line-arc-NEW --tangent-request examples/construction/capsule_line_arc_request.json
+```
+
+同じ合成カプセルの版2/3構築間には両RQ差0.626214%がある。UIのPASSと
+RF収束の未検証を分け、詳細を[接線構築](TANGENT_CONSTRUCTION.md)に記録した。
+
+
 ## 版2区間付き接線構築 — 2026-09-08
 
 out/gui-certified-construction-browser-20260908/report.jsonで8操作PASS。
