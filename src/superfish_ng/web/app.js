@@ -1036,8 +1036,12 @@ async function updateStudyParameters(preferred) {
     $("study-hint").textContent =
       "nr/nzを倍率倍し、指定された最大辺長を倍率で割ります。元曲線と弦誤差は固定ですが、二次境界は変わることがあります。周波数・RF・軸場を別々に判定します。";
   } else if (kind === "fixed_geometry_convergence") {
-    add("/case/mesh/curved_refinement_levels", "二次形状を保つ細分段数");
-    $("study-hint").textContent = "二次曲線要素で使用します。元メッシュと二次形状を固定し、0, 1, 2などの段数を比較します。1段で要素数は4倍になります。";
+    const history = !!p.case.mesh.curved_refinement_steps?.length;
+    add(history ? "additional_uniform_refinements" : "/case/mesh/curved_refinement_levels",
+        history ? "保存履歴の後に追加する一様細分段数" : "二次形状を保つ細分段数");
+    $("study-hint").textContent = history
+      ? "現在の順序付き履歴を保持し、その末尾へ一様細分を追加します。0は現在の履歴のまま、1はそこから全要素を4分割します。初期メッシュと二次形状は固定です。"
+      : "二次曲線要素で使用します。元メッシュと二次形状を固定し、0, 1, 2などの段数を比較します。1段で要素数は4倍になります。";
   } else if (kind === "geometry_convergence") {
     add("/case/geometry/chord_tolerance_m", "曲線の最大弦誤差 [mm]", 0.001);
     $("study-hint").textContent =

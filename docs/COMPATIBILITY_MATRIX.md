@@ -1,5 +1,7 @@
 # 互換対応表 v0
 
+[履歴を保持する収束Study](CURVED_HISTORY_STUDY.md)を追加。既存の局所細分履歴の末尾へ一様細分を追加し、固定形状の体積不変とRitz単調性、GUIからの作成/保存/実計算を確認した。形状・初期メッシュを変える履歴付き掃引は引き続き拒否する。
+
 [曲線細分履歴のGUI編集](GUI_CURVED_REFINEMENT_HISTORY.md)を追加。局所履歴が保存時に失われる不具合を修正し、段階の追加・順序変更・削除とstrict入力を接続した。Chrome 19項目と実FEM/native一致を確認。図上の要素選択・履歴対応Study・一般精度/効率は残る。
 
 V02の[ローカル配布確認](LOCAL_DISTRIBUTION_20260909.md)として3386a5fのZIP/wheel内容とCLI/曲線native計算を確認。全機能/GUI・別OS・公開リリースと親課題の受入は残る。

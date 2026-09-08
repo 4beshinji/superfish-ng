@@ -443,3 +443,7 @@ V02ローカル配布の部分確認: 3386a5fの決定的ZIP/manifest、wheelの
 N04曲線履歴GUIの今回の受入条件（2026-09-09）: native Caseを開いて保存/再読込/実FEM計算しても順序付き履歴を保持する。手動の一様/選択段階の追加・順序変更・削除、要素番号/角度のstrict拒否、一様段数との排他、履歴を落とす幾何次数変更の拒否、旧入力への切替を実ブラウザーで確認する。独立不変量は入力した履歴と保存/実計算Caseの一致。要素の図上選択・履歴対応Study・一般精度/効率は含めない。
 
 受入結果: 曲線履歴GUIのChrome 19項目・実FEM/native一致・標準656件中654合格/2 skipがPASS。seed周波数差ゼロ/RF最大8.882e-16。初回履歴消失とページ遷移待ちの検査FAILも[記録](GUI_CURVED_REFINEMENT_HISTORY.md)に保持。親N04全体の受入は変えない。
+
+N04履歴対応Studyの受入条件（2026-09-09）: fixed_geometry_convergenceで既存局所履歴を保持し、additional_uniform_refinementsの0以上の整数を末尾へ追加する。変更後メッシュへの要素番号流用は引き続き拒否。保存往復、実Studyの固定体積・Ritz単調性・元メッシュ一致、GUI生成/保存/実行、標準f/RF回帰を検査する。
+
+受入結果: 履歴対応の固定形状Studyは追加2検査、Chrome23項目、CLI/GUI報告一致、標準658件中656合格・2 skipがPASS。粗い2水準のRF収束FAILとCLI終了1は維持。seed周波数差ゼロ/RF最大8.882e-16、最終hash一致。[記録](CURVED_HISTORY_STUDY.md)。

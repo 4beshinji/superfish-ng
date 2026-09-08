@@ -1,5 +1,7 @@
 # N04 曲線局所細分のCase履歴とnative再構築
 
+2026-09-09追記: [固定形状の履歴対応Study](CURVED_HISTORY_STUDY.md)を追加。履歴を保持し、その後へ一様細分を追加する。形状変更を伴う履歴付き掃引は未対応。以下は追加時点の記録。
+
 2026-09-09追記: [GUIの履歴編集](GUI_CURVED_REFINEMENT_HISTORY.md)で番号指定・順序変更・保存/再読込・実計算を接続した。以下の未接続記述は追加時点の履歴。図上の要素選択と履歴対応Studyは残る。
 
 2026-09-09追記: [版4のGUI](GUI_CURVED_ADAPTIVE_REFINEMENT.md)も入力・五量/積分比較表示・保存再開へ接続した。以下は各追加時点の記録。一般精度/効率は残る。
@@ -33,7 +35,7 @@ minimum_corner_angle_degを必須指定する。uniform操作はkind以外を受
 正のlevelsと新履歴の併用は拒否する。混在する細分は履歴内のuniformで順序を明示する。
 Python APIではcurved_refinement_stepsにCurvedRefinementStepのtupleを渡す。
 元メッシュや幾何を変更すると番号の意味も変わるため、履歴をそのまま別メッシュへ流用しない。
-Studyは履歴付きCaseを明示的に拒否する。履歴対応の収束Studyは今後の課題。
+Studyは履歴の後へ一様細分を追加する固定形状比較に対応する。初期メッシュを変える操作は明示的に拒否する。
 
 通常CLIでCaseを解く。
 

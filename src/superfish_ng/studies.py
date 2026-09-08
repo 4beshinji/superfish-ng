@@ -51,8 +51,10 @@ class Study:
             raise ValueError("study values must contain at least two finite numbers")
         if not isinstance(self.parameter, str):
             raise ValueError("study parameter must be a string")
-        if self.project.case.curved_refinement_steps:
-            raise ValueError('studies cannot reinterpret curved_refinement_steps cell indices on changed meshes; remove the history and construct a separate refinement study')
+        has_history = bool(self.project.case.curved_refinement_steps)
+        if has_history and not (self.kind == 'fixed_geometry_convergence'
+                                and self.parameter == 'additional_uniform_refinements'):
+            raise ValueError('studies cannot reinterpret curved_refinement_steps cell indices on changed meshes; use fixed_geometry_convergence with additional_uniform_refinements to preserve the history')
         if self.kind == "mesh_convergence":
             if (
                 self.parameter != "mesh_scale"
@@ -63,11 +65,21 @@ class Study:
                     "mesh convergence requires increasing positive integer mesh_scale values"
                 )
         elif self.kind == "fixed_geometry_convergence":
-            if (self.parameter != "/case/mesh/curved_refinement_levels"
+            expected_parameter = ("additional_uniform_refinements" if has_history
+                                  else "/case/mesh/curved_refinement_levels")
+            if (self.parameter != expected_parameter
                     or self.project.case.geometry_order != 2
                     or any(type(v) is not int or v < 0 for v in self.values)
                     or any(b <= a for a, b in zip(self.values, self.values[1:]))):
-                raise ValueError('fixed geometry convergence requires geometry_order=2 and increasing nonnegative integer curved_refinement_levels')
+                raise ValueError(f'fixed geometry convergence requires geometry_order=2 and increasing nonnegative integer {expected_parameter} values')
+            if has_history:
+                controls = self.project.case.contour_mesh
+                limit = controls.max_triangles if controls is not None else 250000
+                # Even a single initial triangle requires 4**value descendants.
+                # Bound before allocating the explicit history; the real mesh
+                # still enforces its stricter cell count at computation time.
+                if any(v > (limit.bit_length()-1)//2 for v in self.values):
+                    raise ValueError(f'additional_uniform_refinements exceeds max_triangles={limit}')
         elif self.kind == "geometry_convergence":
             if (
                 self.parameter != "/case/geometry/chord_tolerance_m"
@@ -121,7 +133,11 @@ class Study:
         for value in self.values:
             raw = deepcopy(self.project.to_dict())
             if self.kind == "fixed_geometry_convergence":
-                raw['case']['mesh']['curved_refinement_levels'] = value
+                if self.parameter == 'additional_uniform_refinements':
+                    raw['case']['mesh']['curved_refinement_steps'].extend(
+                        {'kind': 'uniform'} for _ in range(value))
+                else:
+                    raw['case']['mesh']['curved_refinement_levels'] = value
             elif self.parameter == "mesh_scale":
                 raw["case"]["mesh"]["nr"] *= value
                 raw["case"]["mesh"]["nz"] *= value

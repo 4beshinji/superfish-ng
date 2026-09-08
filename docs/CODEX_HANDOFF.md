@@ -1,5 +1,24 @@
 # ローカルCodexへの引継ぎ
 
+## 履歴対応の固定形状Study — 2026-09-09
+
+[履歴を保持する収束Study](CURVED_HISTORY_STUDY.md)を追加。
+固定形状Studyのadditional_uniform_refinementsは既存履歴の後への追加段数。
+0で元Caseそのまま、旧curved_refinement_levelsの意味は変更しない。
+変更後メッシュへの番号流用は引き続き拒否する。
+追加2検査は固定体積・Ritz単調性と保存往復/strict拒否を実計算で確認。
+Chrome23項目PASS、GUI Studyの180→720要素と履歴・元メッシュhashも確認。
+GUIサーバー21475/PID4039112は引数確認後SIGINT、終了0。
+ブラウザー61621も終了0。標準回帰7227は終了0、
+out/validation-curved-history-study-20260909 がPASS。
+658件中656合格・2 skip、404.889秒。seed周波数差ゼロ/RF最大8.882e-16、
+最終hashとブラウザー検証ソースが一致。本体の検証用固定は解除済み。
+CLI58793は数値RF判定FAILを正しく返して終了1、GUIと報告完全一致。
+これは収束未達の受入例であり、物理収束合格とはしない。
+
+非球形の別worktree検証96442は尺度2の適応を終え、最終の追加一様対照水準5へ進んだ。
+両尺度最終報告の公開とhash確認までは完了扱いにしない。
+
 ## 曲線履歴GUIの保持・編集 — 2026-09-09
 
 [GUI履歴編集](GUI_CURVED_REFINEMENT_HISTORY.md)を実装。修正前のGUI往復は履歴を落とし、

@@ -236,6 +236,24 @@ try {
   await click('#jobs .job button');await wait('document.querySelector("#field-image").naturalWidth>0',120000);
   await equal('actual FEM result retains requested history',await ev('currentResult.result.case.mesh.curved_refinement_steps'),expected);
   await writeFile(out+'/result.json',JSON.stringify(await ev('currentResult'),null,2));
+  await select('#study-kind','fixed_geometry_convergence');
+  await wait('document.querySelector("#study-parameter").value==="additional_uniform_refinements"');
+  await fill('#study-values','0, 1');
+  const study=await ev('studyDefinition()');
+  await equal('Study input retains the prefix and uses explicit additional levels',
+    [study.parameter,study.values,study.project.case.mesh.curved_refinement_steps],
+    ['additional_uniform_refinements',[0,1],expected]);
+  await click('#save-study');let savedStudy;
+  for(let i=0;i<100;i++){try{savedStudy=JSON.parse(await readFile(out+'/downloads/study.json','utf8'));break;}catch{}await sleep(100);}
+  await equal('downloaded Study preserves complete input',savedStudy,study);
+  const studyBefore=await ev('document.querySelectorAll("#jobs .job").length');
+  await click('#start-study');await wait(`document.querySelectorAll('#jobs .job').length>${studyBefore}`);
+  await wait('document.querySelector("#jobs .job strong").textContent.startsWith("計算完了")',120000);
+  await click('#jobs .job button');await wait('activeStudy?.study.parameter==="additional_uniform_refinements"',120000);
+  const studyResult=await ev('activeStudy');
+  await equal('real GUI Study computes both requested levels',studyResult.points.map(p=>p.value),[0,1]);
+  await equal('real GUI Study retains the prefix',studyResult.study.project.case.mesh.curved_refinement_steps,expected);
+  await writeFile(out+'/study-result.json',JSON.stringify(studyResult,null,2));
   await select('#curved-refinement-mode','levels');await fill('#curved-refinement-levels','1');
   await check('uniform level mode sends only levels','(()=>{const m=collect().case.mesh;return m.curved_refinement_levels===1 && !("curved_refinement_steps" in m)})()');
   await select('#curved-refinement-mode','steps');
