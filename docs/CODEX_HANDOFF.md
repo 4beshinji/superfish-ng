@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: 次計画共有も別ブランチで検証済み — 2026-09-09
+
+/tmp/superfish-rf-cost-worktree-20260909 は現在branch perf/rf-adaptive-pending-plan、HEAD81fc416。費用表示fc76e64を祖先に含む。主ツリーへは未統合。主ツリーsrc/tests/scripts/examplesは60815終了まで固定する。
+81fc416は、VerifiedRFPrefixに一つの次計画を保持し、実装/request/祖先/native sourceを再照合した後だけ使う変更。実行3イベントのRF指標は2→1回、公開replayと全数値文書は不変。新規保存場のCase/mesh/二次写像照合も残る。
+呼出し回数red71948は終了1、変更後65973は6検査25.070秒で終了0。比較11865は終了0、別ツリーout/rf-pending-comparison-20260909。fc76e64モジュールはgit blobとhash完全一致。半球/非球形初期5イベントで、全prefixと入力最終文書が旧/新完全一致、eigsh禁止。3回交互中央値は5.533→5.127秒/16.805→14.238秒、RF選択2→1/4→2回。incremental assembleのみで全workflow費用ではない。
+標準3145は終了0、別ツリーout/validation-rf-pending-20260909 は685件/683合格/2 skip、434.058秒PASS。seed9モード19量f差0/RF最大8.882e-16、最終全対象sourceと標準/独立比較hash一致。共有化側の実行は全て終了。新規ブラウザー検証は行っていない。費用表示のChrome15項目はfc76e64時点の証拠。
+主ツリー非球形60815/PID76757は実行中、/tmp/curved-rf-nonsphere-expanded-20260909.log。直近はcheckpoint-026.json PAUSED/31224要素確認、イベント27の11182要素局所solve後の評価中。観測タイムアウトで再起動しない。
+次の候補は別ツリーdocs/RF_SURFACE_CONFIRMATION_PLAN.md（未実装）。R/Q選択だけでは表面ピーク差約2.4%が停滞するため、RF三量合格・表面だけ未達時は確認解を次の親へ採用し、合格回数0から一様細分を続ける明示指定を検討。旧request未指定の判断は変えず、五量2回連続合格だけで停止する。元の非球形/両尺度/許容差と予算で検証する。native空間の実行内共有も残る。
+全体目標/RFA-6/親N04は未完了。主ツリー統合時はfc76e64と81fc416の両方を取り込み、両ツリーの最新引継ぎ/計画を保つ。
+
 ## 最新状態: 費用表示コミット・非球形実行継続 — 2026-09-09
 
 費用表示は別ツリー /tmp/superfish-rf-cost-worktree-20260909、branch feature/adaptive-refinement-cost の fc76e64 にコミット済み、作業ツリーclean。主ツリーへは未統合。主ツリーsrc/tests/scripts/examplesは60815の終了まで固定し、先にcherry-pickしない。
