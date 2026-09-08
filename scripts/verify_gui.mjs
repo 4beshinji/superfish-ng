@@ -924,10 +924,10 @@ try {
     await click("#tangent-build");
     await wait('tangentResult?.construction.status === "CASE_VALIDATED"');
     const built=await ev("tangentResult.construction");
-    if ([2,3].includes(built.request.schema_version)) {
-      if (built.schema_version !== built.request.schema_version || built.enumeration.arc_filter_status !== (built.schema_version === 2 ? "CERTIFIED_MEMBERSHIP_AND_FRACTIONS" : "CERTIFIED_FIXED_LINE_CONTACT")) throw Error("GUI lost certified construction version");
+    if ([2,3,5].includes(built.request.schema_version)) {
+      if (built.schema_version !== built.request.schema_version || built.enumeration.arc_filter_status !== ({2:"CERTIFIED_MEMBERSHIP_AND_FRACTIONS",3:"CERTIFIED_FIXED_LINE_CONTACT",5:"CERTIFIED_CONIC_FILLET_CONTACTS"}[built.schema_version])) throw Error("GUI lost certified construction version");
       const selected=built.enumeration.candidates[built.candidate_index];
-      if (!selected.trim_contact_error_bounds_m.every(x=>x<=built.request.controls.position_tolerance_m)) throw Error("GUI trim contact error exceeds request");
+      if (![...selected.trim_contact_error_bounds_m,...(selected.fillet_contact_error_bounds_m ?? [])].every(x=>x<=built.request.controls.position_tolerance_m)) throw Error("GUI trim contact error exceeds request");
       if (!await ev('document.querySelector("#tangent-status").textContent.includes("接点誤差上界")')) throw Error("GUI does not display contact error bound");
       report.checks.push({operation:"versioned certificate and contact error bound display",version:built.schema_version,passed:true});
     }

@@ -29,8 +29,8 @@ def _canonical(value):
 def _request(request):
     keys(request, ('schema_version', 'case_template', 'pair_start', 'controls'),
          ('schema_version', 'case_template', 'pair_start', 'controls'), 'tangent construction request')
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4):
-        raise ValueError('tangent construction request requires schema_version 1, 2, 3 or 4')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4, 5):
+        raise ValueError('tangent construction request requires schema_version 1, 2, 3, 4 or 5')
     _canonical(request)  # Reject nonfinite JSON values even in the unfinished template.
     template = request['case_template']
     keys(template, ('schema_version', 'name', 'geometry', 'mesh', 'solver', 'rf', 'model', 'boundaries'),
@@ -76,6 +76,9 @@ def _request(request):
                  'max_series_terms','fraction_width','max_fraction_steps')
     if request['schema_version']==4:
         allowed=('radius_m','allow_extension','position_tolerance_m','angle_tolerance_rad')
+    if request['schema_version']==5:
+        allowed=('radius_m','turn_direction','max_sweep_rad','position_tolerance_m','angle_tolerance_rad',
+                 'fraction_width','max_boxes','precision_bits','endpoint_width','max_series_terms')
     keys(controls, allowed, allowed, 'tangent controls')
     return template, geometry, curves, index, controls
 
@@ -104,6 +107,10 @@ def construct_tangent_case(request, *, candidate_index=None):
         from .line_fillet import line_fillet_candidates, connect_line_fillet
         enumerate_candidates,connect=line_fillet_candidates,connect_line_fillet
 
+    elif request['schema_version']==5:
+        from .conic_fillet import conic_fillet_candidates, connect_conic_fillet
+        enumerate_candidates,connect=conic_fillet_candidates,connect_conic_fillet
+
     if candidate_index is None:
         enumeration = enumerate_candidates(first, second, **controls)
         case, joins = None, None
@@ -127,7 +134,9 @@ def construct_tangent_case(request, *, candidate_index=None):
                                   if request['schema_version']==2 else
                                   'fixed binary supporting-line contact; explicit extension and order; certified arc membership and trim error; floating G1; no FEM solve'
                                   if request['schema_version']==3 else
-                                  'radius-specified minor line fillet; numerical contact/extents/G1 checks; no interval certificate; canonical case validation; no FEM solve')))
+                                  'radius-specified minor line fillet; numerical contact/extents/G1 checks; no interval certificate; canonical case validation; no FEM solve'
+                                  if request['schema_version']==4 else
+                                  'certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve')))
 
 
 def save_construction(request, path, *, candidate_index=None):

@@ -1,5 +1,21 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 版5有限弧フィレット — 2026-09-08
+
+out/gui-conic-fillet-browser-20260908/report.jsonでChrome8操作PASS。
+半径/回転方向/円弧長/元弧とフィレット双方の接点誤差上界、明示選択、保存/再構築/適用、
+曲線FEM/描画、改変拒否を確認。外部要求0、実行中ソース変更なし。
+tangent-construction.pngも表示確認し、検証用GUIサーバーは停止した。
+版1〜5の実保存ファイル再読込はPythonでも別途確認した。
+
+```bash
+node scripts/verify_gui.mjs --url '起動URL' --out out/gui-conic-fillet-NEW --tangent-request examples/construction/two_lobe_fillet_request.json
+```
+
+合成2山形状の周波数1310579815.6725943 Hzは実CLIと一致。
+UIのPASSを、この形状のRF/物理ピーク収束の証拠にはしない。
+
+
 ## 版4指定半径・線分フィレット — 2026-09-08
 
 out/gui-line-fillet-browser-20260908/report.jsonのChrome8操作PASS。

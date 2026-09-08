@@ -567,3 +567,66 @@ max_boxesは処理長方形数を制限し、有理数演算全体の時間上�
 同所intersection_examples.jsonには円2交点・楕円4交点・楕円/双曲線1交点のPASSと、
 接触例の未確認領域を保持。seed周波数差0、RF差最大8.882e-16、基準変更なし。
 GUI/Wineは今回未実行。数学的交点の認証を完成したフィレット操作の受入とはしない。
+
+## 版5の有限弧フィレット構築・製品接続 — 2026-09-08
+
+`conic_fillet_candidates` / `connect_conic_fillet` は認証済みの中心軌跡交点から
+有限弧の接点を復元し、元弧・指定半径円弧・元弧へ切り詰める。
+元弧と同じ向きのG1接続には、両接点の中心が同じ符号の左法線距離に必要である。
+`turn_direction=1`は(z,r)平面で反時計回り、−1は時計回りで、両軌跡にd=turn_direction*radius_mを使う。
+向きを黙って反転せず、左右の組合せを暗黙に選ばない。
+`max_sweep_rad`は正で2π以下。指定方向では大回りとなる候補もあり、上限超過はSWEEP_LIMIT。
+半径や方向を変えてその候補を合格にしない。
+
+根箱の中点をfloatへ変換し、第1弧の始点側と第2弧の終点側を保持する。
+中心も認証座標箱の中点をfloatへ変換する。狭い箱の中にfloatが存在しない場合もあるため、
+中点の二進表現が元の根箱内かを記録するが、その一致を正確な接点の根拠にしない。
+接点箱は元弧の根fraction区間を距離0の法線オフセット区間で評価して得る。
+生成した両元弧端点と円弧端点は、新しい二進パラメータから数学的端点を再評価し、
+実装が出すfloat座標も囲む。その箱と元の接点箱の距離上界を明示位置許容差と照合する。
+中心の丸め誤差と、保持する両外端の誤差上界も検査する。
+空/表現不能な弧・接点/半径方向の潰れ・未達は理由付きで選択不可。
+
+float丸めで接合点が進行方向にわずかに重なる場合、閉輪郭の隣接検査は拒否する。
+この検査は変更せず、必要な場合だけ円弧の両端を内側へ取り、前向きの微小な隙間を残す。
+内側へ取る角度はmin(position_tolerance_m/(16R),angle_tolerance_rad/16,|sweep|/16)。
+中心とRは保持し、内側へ取った角度と元の要求角を保存する。
+調整後も位置誤差上界・G1角度・進行方向の重なりを再検査し、失敗時はUNVERIFIED。
+これは明示許容差内のfloat構築であり、生成した弧同士の数学的な厳密接触/G1角度保証ではない。
+**接点位置は区間上界、G1角度と最大円弧角は生成プリミティブの数値検査**として区別する。
+
+構築要求/保存schema_version=5は隣接PEC円/楕円/双曲線弧2本を受ける。
+controlsは全て明示必須: radius_m、turn_direction、max_sweep_rad、position_tolerance_m、
+angle_tolerance_rad、fraction_width、max_boxes、precision_bits、endpoint_width、max_series_terms。
+線分、延長指定、他版だけのcontrolsは拒否する。元の全有限弧に対する探索PASSと
+選択候補FORWARDを要求し、完成Case全体の閉輪郭・自己交差・軸接続・全設定も検査する。
+他候補の数値構築未達は残すが、探索が完了した選択可能候補を隠さない。
+
+同じconstruct-tangent / export-constructed-caseとGUI構築欄で保存・再構築・適用できる。
+GUIには半径、回転方向、円弧長、元弧/フィレットを含む最大接点誤差上界を表示する。
+未復元の接点・長さは0などの架空値で埋めない。保存はサーバーの直列化文字列を維持し、
+再読込では要求から再構築して全体照合する。版1〜4の従来経路は保持する。
+
+```bash
+superfish-ng construct-tangent examples/construction/two_lobe_fillet_request.json --candidate-index 0 --out out/conic-fillet-construction.json
+superfish-ng export-constructed-case out/conic-fillet-construction.json --out out/conic-fillet-case.json
+superfish-ng solve out/conic-fillet-case.json --out out/conic-fillet-solve
+```
+
+合成2山形状は半径0.1 mの2円弧を半径0.02 mの時計回り円弧でつなぎ、
+軸長0.4 m、二次曲線幾何/二次場を使う。測定空洞や旧版の実測例とは呼ばない。
+追加6テストは既知円の接点/半径/小回り・大回り、楕円/双曲線の四分円、
+方向反転、厳密指定/未達、保存/GUIと独立解析面積・体積、実曲線FEMの相似則。
+相似則は周波数半減・両RQ/G/TTF不変であり、この形状のRF/ピーク精度収束は未検証。
+
+初回の閉輪郭隣接失敗はout/g03-conic-fillet-overlap-before-20260908.jsonに保持する。
+約3e-17 mのfloat接合差が進行方向へ重なった例であり、隣接/許容差検査を緩めず
+上記の位置上界付き内側処理で解消した。接点復元前には未実装ImportErrorも確認した。
+線分と円錐曲線弧のフィレット、弧端/退化の追加分類、旧入力、物理ピーク収束は残件。
+
+版5統合の標準382件中380合格・2 skip、out/validation-g03-conic-fillet-20260908 PASS。
+seed周波数差0、RF/エネルギー差最大8.882e-16、基準変更なし。
+Chrome8操作と版1〜5の実保存ファイル再読込もPASS。検証用GUIは停止済み。
+合成例の周波数1310579815.6725943 Hz、R/Q(acc)=85.595228 ohmを実CLIで確認。
+フィレット接点誤差上界は最大約6.36e-14 mで、要求1e-12 m以内。
+この形状のRF精度/物理ピーク収束は引き続き未検証として保持する。
