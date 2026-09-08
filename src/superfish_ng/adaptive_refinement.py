@@ -23,19 +23,28 @@ QUANTITIES=('frequency_hz','r_over_q_accelerator_ohm','geometry_factor_ohm')
 def _request(request):
     fields=('schema_version','case','initial_mesh','initial_ids','mode_id','controls','bulk_fraction','max_levels',
             'max_triangles','minimum_angle_deg','relative_tolerances')
+    if isinstance(request,dict) and request.get('schema_version')==2:fields+=('confirmation',)
     keys(request,fields,fields,'adaptive refinement request');_canonical(request)
-    if type(request['schema_version']) is not int or request['schema_version']!=1:raise ValueError('adaptive refinement requires schema_version 1')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2):raise ValueError('adaptive refinement requires schema_version 1 or 2')
+    confirmed=request['schema_version']==2
+    if confirmed and request['confirmation']!='uniform_two_steps':raise ValueError('version 2 requires explicit uniform_two_steps confirmation')
     case=Case.from_dict(request['case'])
     if case.geometry_order!=1:raise ValueError('adaptive refinement requires straight P1/P2 geometry')
-    integer(request['max_levels'],'max_levels',3);integer(request['max_triangles'],'max_triangles')
+    integer(request['max_levels'],'max_levels',5 if confirmed else 3);integer(request['max_triangles'],'max_triangles')
     for key in ('bulk_fraction','minimum_angle_deg'):positive(request[key],key)
     if request['bulk_fraction']>1 or request['minimum_angle_deg']>=60:raise ValueError('bulk_fraction must be <=1 and minimum_angle_deg <60')
     ids=request['initial_ids']
     if type(ids) is not list or len(ids)!=case.modes or any(type(v) is not str or not v.strip() for v in ids) or len(set(ids))!=len(ids):
         raise ValueError('initial_ids requires distinct nonempty strings for every initial frequency rank')
     if type(request['mode_id']) is not str or request['mode_id'] not in ids:raise ValueError('mode_id must occur in initial_ids')
-    validate_tracking_controls(request['controls'])
-    if request['controls']['mapping']!='same_domain':raise ValueError('adaptive refinement requires explicit same_domain tracking')
+    if confirmed:
+        names=('mapping','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
+        keys(request['controls'],names,names,'uniform-confirmed tracking controls')
+        if request['controls']['mapping']!='nested_affine':raise ValueError('version 2 requires explicit nested_affine tracking')
+        validate_tracking_controls(dict(request['controls'],marked_cells=[0]))
+    else:
+        validate_tracking_controls(request['controls'])
+        if request['controls']['mapping']!='same_domain':raise ValueError('adaptive refinement requires explicit same_domain tracking')
     keys(request['relative_tolerances'],QUANTITIES,QUANTITIES,'adaptive relative tolerances')
     for key,value in request['relative_tolerances'].items():positive(value,key)
     if request['initial_mesh'] is not None:mesh_from_dict(case,request['initial_mesh'])
@@ -52,11 +61,12 @@ def _limits(case,request):
 def _next(case,request,levels,solution):
     def stop(status,**data):return dict(status=status,**data),None
     maximum,angle=_limits(case,request)
+    confirmed=request['schema_version']==2
     if not levels:
         mesh=make_mesh(case) if request['initial_mesh'] is None else mesh_from_dict(case,request['initial_mesh'])
         if len(mesh.triangles)>maximum or contour_mesh_quality(mesh)['min_angle_deg']<angle:
             raise ValueError('initial mesh exceeds max_triangles or fails minimum_angle_deg')
-        return dict(status='PAUSED',marked_cells=[],next_triangles=len(mesh.triangles)),mesh
+        return dict(status='PAUSED',marked_cells=[],next_triangles=len(mesh.triangles),**({'next_refinement_kind':'initial'} if confirmed else {})),mesh
     if levels[-1]['status']=='UNVERIFIED':return stop('UNVERIFIED',reason='individual mode identities are unresolved')
     changes=[]
     for a,b in zip(levels[-3:],levels[-2:]) if len(levels)>=3 else []:
@@ -68,19 +78,29 @@ def _next(case,request,levels,solution):
             if not math.isfinite(value):return stop('QUANTITY_UNVERIFIED',quantity=key)
             row[key]=dict(relative_change=value,limit=request['relative_tolerances'][key],passed=value<=request['relative_tolerances'][key])
         changes.append(row)
-    if len(changes)==2 and all(item['passed'] for row in changes for item in row.values()):
+    targets_met=len(changes)==2 and all(item['passed'] for row in changes for item in row.values())
+    two_uniform=confirmed and len(levels)>=2 and all(row['refinement_kind']=='uniform_confirmation' for row in levels[-2:])
+    if targets_met and (not confirmed or two_uniform):
         return stop('TARGETS_MET',changes=changes)
     if len(levels)>=request['max_levels']:return stop('LEVEL_LIMIT',changes=changes)
-    marked=mark_bulk(levels[-1]['indicator']['cell_relative_squared'],request['bulk_fraction'])
+    uniform=confirmed and (targets_met or levels[-1]['refinement_kind']=='uniform_confirmation')
+    marked=list(range(len(solution.mesh.triangles))) if uniform else mark_bulk(levels[-1]['indicator']['cell_relative_squared'],request['bulk_fraction'])
     if not marked:return stop('ZERO_INDICATOR',changes=changes,reason='zero priority does not establish physical convergence')
     try:
         refined=refine_marked_cells(case,solution.mesh,marked,max_triangles=maximum,minimum_angle_deg=angle)
     except ValueError as exc:
         if 'max_triangles' not in str(exc) and 'minimum angle' not in str(exc):raise
         return stop('REFINEMENT_LIMIT',changes=changes,reason=str(exc),marked_cells=marked)
-    if (len(solution.mesh.triangles)+len(refined.mesh.triangles))*request['controls']['sample_order']**2>262144:
+    if confirmed:
+        from .nested_affine_tracking import MAX_FEATURE_ENTRIES
+        from .high_order import quadratic_space
+        dofs=len(quadratic_space(refined.mesh).dof_points) if case.element_order==2 else len(refined.mesh.points)
+        if dofs*2*case.modes>MAX_FEATURE_ENTRIES:
+            return stop('TRACKING_BUDGET',changes=changes,reason='nested_affine would exceed 8388608 coefficient feature entries',marked_cells=marked)
+    elif (len(solution.mesh.triangles)+len(refined.mesh.triangles))*request['controls']['sample_order']**2>262144:
         return stop('TRACKING_BUDGET',changes=changes,reason='same_domain sampling would exceed 262144 points',marked_cells=marked)
-    return dict(status='PAUSED',changes=changes,marked_cells=marked,next_triangles=len(refined.mesh.triangles)),refined.mesh
+    return dict(status='PAUSED',changes=changes,marked_cells=marked,next_triangles=len(refined.mesh.triangles),
+        **({'next_refinement_kind':'uniform_confirmation' if uniform else 'residual'} if confirmed else {})),refined.mesh
 
 
 def _assemble(request,runs):
@@ -97,8 +117,9 @@ def _assemble(request,runs):
             raise ValueError('saved adaptive case or mesh differs from prescribed residual-driven refinement')
         pair=None;ids=request['initial_ids'];status='INITIAL'
         if levels:
+            controls=dict(request['controls'],marked_cells=decision['marked_cells']) if request['schema_version']==2 else request['controls']
             pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=runs[index-1],current_run=run,
-                previous_ids=levels[-1]['current_mode_ids'],controls=request['controls']))
+                previous_ids=levels[-1]['current_mode_ids'],controls=controls))
             report=pair['tracking'];ids=report['current_mode_ids']
             status='PASS' if report['status']=='PASS' and report['individual_ids_complete'] else 'UNVERIFIED'
         mode=ids.index(request['mode_id']) if status!='UNVERIFIED' else None
@@ -106,6 +127,7 @@ def _assemble(request,runs):
             dofs=len(current.u),quality=contour_mesh_quality(current.mesh),current_mode_ids=ids,mode_index=mode,tracking=pair,
             indicator=None if mode is None else residual_indicator(case,current,mode=mode),
             quantities=None if mode is None else current.results['modes'][mode]))
+        if request['schema_version']==2:levels[-1]['refinement_kind']=decision['next_refinement_kind']
         sources.append(source);solution=current
     if sources!=[_snapshot(Path(run)) for run in runs]:raise ValueError('adaptive sources changed during verification')
     decision,mesh=_next(case,request,levels,solution)
@@ -113,6 +135,8 @@ def _assemble(request,runs):
         sources=sources,levels=levels,decision=decision,status=decision['status'],can_resume=decision['status']=='PAUSED',
         physical_error_bound=None,surface_status='UNASSESSED',
         scope='fixed affine TM geometry; residual-driven refinement with sampled individual mode tracking and two consecutive f/RQ/G differences; no physical error bound, peak or geometry-approximation acceptance')
+    if request['schema_version']==2:
+        result['scope']='fixed affine TM geometry; nested mass-inner-product individual tracking, local candidate followed by at least two uniform refinements and consecutive f/RQ/G differences; no physical error bound, peak or geometry-approximation acceptance'
     return result,mesh
 
 

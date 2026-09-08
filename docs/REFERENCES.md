@@ -170,6 +170,12 @@ Acta Numerica 19, pp.287–449、DOI 10.1017/S096249291000005X。
 本PJのTM強形式に基づく残差指標の背景。軸で退化する重み付き固有値問題への
 誤差上界・最適性の証明としては使用しない。コード・本文・PDFの転載なし。
 
+**R34. LAPACK Users’ Guide, QR Factorization / Linear Equations.**
+[QR](https://www.netlib.org/lapack/lug/node40.html)、[Choleskyを含む線形方程式の分解](https://www.netlib.org/lapack/lug/node38.html)
+— 2026-09-08閲覧。直交三角分解と正定値行列の三角因子の一般式を確認。
+本PJのTM質量内積を少数列の座標へ移す恒等式を独立に導出した。掲載コード・本文・図の転載なし。
+既存NumPyのQR/Choleskyを使用し、物理誤差上界の根拠とはしない。
+
 ## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、

@@ -1,6 +1,6 @@
 # 実装・検証の現状
 
-確認日: 2026-09-08。N04追跡付き適応計算API/CLI追加後（直前製品基準 `484e777`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-08。N04全域RF確認・親子内積追跡追加後（直前製品基準 `b0a809e`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -36,9 +36,9 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 583件中581合格・NGSolve参照環境専用2件skip。N04追跡付き適応計算API/CLI追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | N04追跡付き適応計算API/CLI追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-n04-adaptive-refinement-final-20260908、[引継ぎ](CODEX_HANDOFF.md) |
-| N04適応独立検証 | 円筒P1のRF改善条件FAILを保持。f/RQ/G細分差達成でも解析RQ差約1.96%。P2の成功をP1受入へ代用しない | out/n04-adaptive-refinement-final-20260908、[適応計算](ADAPTIVE_REFINEMENT.md) |
+| 標準unittest | 589件中587合格・NGSolve参照環境専用2件skip。N04全域RF確認・親子内積追跡追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | N04全域RF確認・親子内積追跡追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。FEM変更なし | out/validation-n04-rf-confirmation-20260908、[引継ぎ](CODEX_HANDOFF.md) |
+| N04適応独立検証 | 版2全域確認は円筒P1/P2のRF改善・相似則・内積独立検査PASS。P1解析RQ差約0.056%、ただし48069 DOF。折返しは上限停止。版1のFAILも保持 | out/n04-rf-confirmation-initial-20260908、[適応計算](ADAPTIVE_REFINEMENT.md) |
 | 曲線FEM | 球形独立参照、楕円/双曲線の3段階幾何近似・全6固定FEM比較・最終幾何間の場/RF比較PASS。初回FAIL保持 | [CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、out/validation-g03-native-geometry-separated-20260908 |
 | 接線候補 | 円/楕円/双曲線全体の四次式・根分離・接点再構成の独立8検査PASS。有限弧数値判定/明示選択G1接続の追加9検査PASS。有限弧所属/fractionと位置誤差上界を製品操作へ統合済み。固定直線と弧の追加7検査PASS。線分間フィレット追加7検査PASS。中心軌跡区間/特異性分割の追加6検査PASS。有限領域交点の追加7検査PASS。版5の有限弧フィレット追加6検査PASS、保存/Case/CLI/GUIへ統合。版6の直線・弧フィレット追加6検査PASS、同じ製品経路へ統合。弧端/退化の厳密特殊ケース診断API/CLIの追加9検査PASS。構築診断の別保存/CLI/GUI・再検証に追加5検査とChrome11操作PASS。最小子午面半径制約の追加6検査PASS、保存/鏡映/構築/GUIを確認。極端な尺度の曲率/半径の追加4検査PASS。一般分類と退化候補構築は未完 | [TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
 | モード追跡 | 追跡核9件・2時点保存6件・履歴6件・部分空間継承5件・profile写像6件・明示メッシュ対応5件・合流/分裂6件・GUI接続5件・Study追跡6件・Study GUI接続3件・追跡付き実行6件・JobManager接続5件・逐次実行GUI接続3件・適応二分6件・適応再開5件・適応Job接続5件・適応GUI接続3件・多対多集合継承6件・同一領域再メッシュ6件・アフィン再メッシュ6件・区分アフィン再メッシュ5件・同一曲線領域6件PASS。解析交差/近接・縮退回転・曖昧停止・保存後の実FEM円筒交差・profile相似則/局所変更、明示メッシュ対応での折返し/曲線相似。同一曲線領域GUIを含むChrome35項目PASS。一般追跡全体の受入ではない | [MODE_TRACKING.md](MODE_TRACKING.md)、out/d01-cylinder-crossing-20260908 |

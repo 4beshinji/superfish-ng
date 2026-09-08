@@ -1,5 +1,37 @@
 # N04 追跡付き直線要素の適応細分
 
+## 版2: 局所候補の後に全域細分で確認する
+
+schema_version=2、confirmation="uniform_two_steps"を明示すると、局所細分で
+従来の直近2区間のf/RQ/G基準を満たした後、全要素の4分割へ移る。
+全域細分へ入った後はその方式で続け、直近2区間の三量がすべて基準内の場合のみ
+TARGETS_METとする。全域細分は最低2回必要で、初回の全域確認が未達なら3回以上になる。
+確認前・確認1回目の局所達成だけでは成功としない。全域確認にも同じ数値基準と予算を使う。
+
+```bash
+python -m superfish_ng adaptive-refine examples/adaptive_refinement/pillbox_confirmed.json --out out/confirmed-new --max-new-levels 1
+python -m superfish_ng resume-adaptive-refinement out/confirmed-new/checkpoint-001.json --out out/confirmed-resume
+python -m superfish_ng replay-adaptive-refinement out/confirmed-resume/checkpoint-005.json
+```
+
+この小規模P2例は5水準。任意の要求では実際に保存されたファイル名を使う。
+max_levelsは版2で最低5。controlsはmapping="nested_affine"と既存の四つの数値閾値を指定し、
+sample_order/marked_cellsは要求へ指定しない。各比較のmarked_cellsは計算が生成して保存する。
+[親子メッシュの質量内積追跡](NESTED_AFFINE_TRACKING.md)を使用し、旧same_domainの標本上限に
+依存せずに確認する。係数配列の作業量上限と要素上限は別途検査し、超過は非成功で停止する。
+
+各水準のrefinement_kindはinitial/residual/uniform_confirmation。PAUSEDの
+next_refinement_kindで次の方式を明示し、途中再開・全再構築でこの履歴も検査する。
+通常CLIの入口・終了値は同じ。版1の要求/保存結果は旧判定のまま再検証し、自動昇格しない。
+physical_error_bound=null、surface_status=UNASSESSEDも維持する。全域確認後の差も誤差上界ではない。
+
+`python scripts/validate_adaptive_refinement.py --confirmation --out out/confirmed-validation-new`
+で、前回と同じ円筒/折返しP1/P2、尺度1/2、f1e-4・RQ/G各0.005を使う。
+円筒P1の水準予算は8、他は5、要素上限250000。追加確認を行う資源予算だけを増やす。
+解析RF改善条件と相似則・解析周波数基準は維持し、全比較の内積を次数6積分でも照合する。
+
+## 版1の契約と実施履歴
+
 2026-09-08。`adaptive_refinement.py` は、残差指標→対象選択→適合細分→実FEM再計算を
 繰り返す。対象は既存の真空・軸接続m=0 TM、直線P1/P2。固定した同一多角形領域を使い、
 各水準で全個別モードIDを追跡する。二次曲線幾何の局所細分は未対応として拒否する。
@@ -105,3 +137,13 @@ GUI/JobManagerの操作・停止再開、曲線局所細分、表面量に対す
 独立検証`out/n04-adaptive-refinement-final-20260908`は円筒P1のRF改善条件がFAIL。
 API/CLIの7検査合格や円筒P2の達成を、P1の物理RF受入へ代用しない。
 許容差もRF改善条件も緩和せず、この出力を次のRFに対応する選択/独立確認の改善基準に残す。
+
+## 版2の独立結果 — 2026-09-08
+
+out/n04-rf-confirmation-initial-20260908はPASS。前回と同じf/RQ/G基準・解析RF改善条件を維持。
+円筒P1は全域確認3回を含む8水準で、解析RQ差を約1.96%から0.056%へ改善し、Gも改善。
+最終48069 DOF、f誤差1.184e-7、G差7.125e-8。円筒P2は全域確認2回を含む5水準、
+7485 DOF、f誤差5.922e-10、RQ差1.770e-6、G差3.779e-9。
+内積独立積分差最大1.111e-15、相似則差最大4.394e-13。折返しは5水準上限を保持。
+標準589件中587合格・2 skipと既存周波数/RF回帰もPASS。両検証の最終ソースhashは一致。
+全域確認のコストが大きいため一般の精度/効率受入は残す。版1のFAILは過去の事実として保持する。

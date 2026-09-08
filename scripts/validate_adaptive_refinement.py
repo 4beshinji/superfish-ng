@@ -18,10 +18,31 @@ from superfish_ng.io import save_run
 from superfish_ng.mesh_input import mesh_to_dict
 from superfish_ng.marked_refinement import refine_marked_cells
 from superfish_ng.saved_mode_tracking import build_saved_mode_tracking
+from superfish_ng.saved import read_solution
+from superfish_ng.mesh import element_geometry
+from superfish_ng.fem import triangle_quadrature
+from superfish_ng.high_order import basis_p2
+
+
+def nested_quadrature_difference(pair):
+    request=pair['request'];a=read_solution(request['previous_run']);b=read_solution(request['current_run'])
+    refined=refine_marked_cells(a.case,a.mesh,request['controls']['marked_cells'],max_triangles=len(b.mesh.triangles),minimum_angle_deg=1e-12)
+    x=np.column_stack((refined.prolongation@a.u,b.u));x/=np.max(abs(x),axis=0)
+    vertices,det,grad=element_geometry(b.mesh);dofs=b.space.cell_dofs if b.element_order==2 else b.mesh.triangles
+    gram=np.zeros((x.shape[1],x.shape[1]))
+    for n,w in triangle_quadrature(order=6):
+        values=basis_p2(n,grad)[0] if b.element_order==2 else n
+        fields=np.einsum('tjm,j->tm',x[dofs],values);radius=vertices[:,:,0]@n
+        gram+=fields.T@((w*det*radius**3)[:,None]*fields)
+    count=a.u.shape[1];scale=np.sqrt(np.diag(gram))
+    expected=abs(gram[:count,count:]/scale[:count,None]/scale[None,count:])
+    return float(np.max(abs(expected-np.asarray(pair['tracking']['overlap_matrix']))))
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,required=True)
+    parser.add_argument('--confirmation',action='store_true',help='test version 2 with nested tracking and two uniform confirmation steps')
+    args=parser.parse_args()
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     def hashes():return {str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest()
         for folder in ('src','tests','scripts','examples') for p in sorted((ROOT/folder).rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
@@ -42,13 +63,19 @@ def main():
                     controls=dict(mapping='same_domain',sample_order=3,minimum_overlap=.9,minimum_assignment_margin=.05,
                         relative_cluster_gap=1e-6,minimum_relative_singular_value=1e-8),bulk_fraction=.5,max_levels=7 if kind=='cylinder' and order==1 else 3,max_triangles=20000,
                     minimum_angle_deg=5.,relative_tolerances=dict(frequency_hz=1e-4,r_over_q_accelerator_ohm=.005,geometry_factor_ohm=.005))
+                if args.confirmation:
+                    req.update(schema_version=2,confirmation='uniform_two_steps',max_levels=8 if kind=='cylinder' and order==1 else 5,max_triangles=250000)
+                    req['controls']['mapping']='nested_affine';del req['controls']['sample_order']
                 name=f'{kind}-p{order}-s{int(scale)}';start=time.perf_counter()
                 adaptive=execute_adaptive_refinement(req,out/name);seconds=time.perf_counter()-start
                 replay_ok=replay_adaptive_refinement(adaptive)==adaptive
                 (out/f'{name}.json').write_text(json.dumps(adaptive,indent=2,allow_nan=False)+'\n')
-                quadrature=[]
+                quadrature=[];nested_differences=[]
                 for row in adaptive['levels'][1:]:
                     if row['tracking'] is None:continue
+                    if args.confirmation:
+                        difference=nested_quadrature_difference(row['tracking']);nested_differences.append(difference)
+                        quadrature.append(difference<1e-11 and row['tracking']['tracking']['individual_ids_complete']);continue
                     request=dict(row['tracking']['request']);request['controls']=dict(request['controls'],sample_order=4)
                     pair=build_saved_mode_tracking(request)
                     quadrature.append(pair['tracking']['individual_ids_complete'] and pair['tracking']['current_mode_ids']==row['current_mode_ids'] and pair['status']=='PASS')
@@ -61,7 +88,10 @@ def main():
                     elapsed=time.perf_counter()-start;run=out/f'{name}-uniform-{level}';save_run(case,solution,run)
                     q=json.loads((run/'results.json').read_text())['modes'][0]
                     uniform.append(dict(triangles=len(solution.mesh.triangles),dofs=len(solution.u),refine_and_solve_seconds=elapsed,quantities=q))
-                row=dict(adaptive=adaptive,uniform=uniform,adaptive_workflow_seconds=seconds,replay_identical=replay_ok,quadrature_order4_same_individual_ids=quadrature)
+                row=dict(adaptive=adaptive,uniform=uniform,adaptive_workflow_seconds=seconds,replay_identical=replay_ok,quadrature_cross_check_passed=quadrature)
+                if args.confirmation:
+                    row['nested_order6_overlap_absolute_differences']=nested_differences
+                    row['quadrature_cross_check']='fine-mesh order-6 polynomial integration of all singleton cross-overlaps; not order-4 physical resampling'
                 if kind=='cylinder':row['analytical_frequency_relative_errors']={branch:[level['quantities']['frequency_hz']/exact-1 for level in levels]
                     for branch,levels in (('adaptive',adaptive['levels']),('uniform',uniform))}
                 if kind=='cylinder':
@@ -72,7 +102,7 @@ def main():
             similarity={key:max(abs(b['quantities'][key]*(2 if key=='frequency_hz' else 1)/a['quantities'][key]-1)
                 for branch in ('adaptive','uniform') for a,b in zip(series[0][branch]['levels'] if branch=='adaptive' else series[0][branch],series[1][branch]['levels'] if branch=='adaptive' else series[1][branch]))
                 for key in ('frequency_hz','r_over_q_accelerator_ohm','geometry_factor_ohm')}
-            isolated=all(all(v for v in s['quadrature_order4_same_individual_ids']) and s['replay_identical'] and len(s['adaptive']['levels'])>=3 for s in series)
+            isolated=all(all(v for v in s['quadrature_cross_check_passed']) and s['replay_identical'] and len(s['adaptive']['levels'])>=3 for s in series)
             same=all(a['marked_cells']==b['marked_cells'] for a,b in zip(series[0]['adaptive']['levels'],series[1]['adaptive']['levels']))
             statuses=[s['adaptive']['status'] for s in series]
             analytic=kind!='cylinder' or all(all(0<b<a for a,b in zip(errors,errors[1:])) for s in series for errors in s['analytical_frequency_relative_errors'].values())
@@ -85,6 +115,7 @@ def main():
     unchanged=before==hashes();passed=unchanged and all(c['passed'] for c in checks.values())
     report=dict(passed=passed,checks=checks,source_sha256=before,source_changed_during_run=not unchanged,
         scope='native affine adaptive API workflow and complete replay; isolated fundamental, cylinder analysis and uniform comparison, folded budget diagnostics, physical f/RQ/G similarity and tracking quadrature cross-check; not surface-peak or physical error-bound acceptance')
+    report['uniform_confirmation']=args.confirmation
     (out/'validation.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n');print(f'Adaptive refinement {"PASS" if passed else "FAIL"}: {out}');return 0 if passed else 1
 
 if __name__=='__main__':raise SystemExit(main())
