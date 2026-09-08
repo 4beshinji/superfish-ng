@@ -1,5 +1,30 @@
 # ローカルCodexへの引継ぎ
 
+## RF適応版5 API/CLI/JobManager — 2026-09-09
+
+[版5](CURVED_RF_ADAPTIVE_REFINEMENT.md)のstrict入力、親参照付きイベントplanner/実行/replayを追加。
+同じcheckpoint外形のlevels/level_runsは全solveイベントを表し、accepted_event_indicesが採用列。
+確認未達なら元親から局所、合格なら確認を採用し、連続2回の一様五量合格だけで停止する。
+初回もnativeを再読込し、λ規約をreplayと一致させる。出力はevent-NNN。
+追加4検査はstrict/分岐/確認後再開/改変/五量個別/2回確認/積分未確認でPASS（17.948秒）。
+初回74267・最終37263とも終了0。未実装の版5拒否ログも保持。
+独立CLI82450は終了0、out/curved-rf-adaptive-initial-20260909 がPASS。
+元の電気半球requestから版番号のみ変更し、f=1e-4/RQ,G=.005/E,B=.01を維持。
+イベントは初期10→確認40（不採用）→元親から局所20→確認80→確認320要素、5イベントでTARGETS_MET。
+採用イベント0,2,3,4。全checkpointはeigsh禁止で完全一致、全親子Ritz減少。実行7.682秒。
+解析66239は終了0、out/curved-rf-adaptive-analytic-20260909 の球形五量も同基準内。
+版4旧7水準のreplay59632は終了0、文書完全一致（out/curved-rf-adaptive-v4-replay-20260909）。
+標準48118は終了0、out/validation-curved-rf-adaptive-20260909 は681件中679合格・2 skip、422.318秒でPASS。
+seed9モード19量の周波数差0/RF最大8.882e-16。独立CLIと標準の全対象hash一致。
+標準終了後、adaptive_refinement_jobs.pyの出力名検証2行だけを追加（版5 event/旧版level）。
+数値・CLI・全検査は標準時点から不変。全件回帰をこの修正後に再実行したとは扱わない。
+版4実ジョブ53344は終了0（1検査4.409秒）。版5実ジョブ20084も終了0。
+out/curved-rf-adaptive-jobs-20260909で確認後の中断再開・元親から局所・manifest・確認出力改変拒否を確認。
+両JobManagerはclose済み。最終ジョブ検証は最終全対象hashと一致。全実行終了。
+RFA-1〜4とRFA-5のCLI/JobManagerを部分受入。次は版5 GUI入力・分岐/採用表示・取消し検証、
+RFA-6の非球形・両尺度・全solve/指標費用比較。親N04と全体計画は未完了。
+
+
 ## RF指標の移送共有と版5の状態遷移 — 2026-09-09
 
 [検証済み移送の共有](CURVED_RF_GOAL_REUSE.md)で重複したnative再構築と一様制限を削減。

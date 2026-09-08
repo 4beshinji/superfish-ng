@@ -17,11 +17,11 @@ def main(argv=None):
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
     for command in ('adaptive-refine','resume-adaptive-refinement','replay-adaptive-refinement'):
-        adaptive=sub.add_parser(command,help='run or verify residual-driven mesh refinement with tracked f/RQ/G differences')
+        adaptive=sub.add_parser(command,help='run or verify tracked mesh refinement, including version 5 RF confirmation branches')
         adaptive.add_argument('document',type=Path)
         if command!='replay-adaptive-refinement':
             adaptive.add_argument('--out',type=Path,required=True)
-            adaptive.add_argument('--max-new-levels',type=int)
+            adaptive.add_argument('--max-new-levels',type=int,help='maximum new solves; version 5 includes uniform probes and local solves')
     for command in ('tune','resume-tune','replay-tune'):
         tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
         tuning.add_argument('document',type=Path)

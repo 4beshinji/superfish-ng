@@ -73,7 +73,8 @@ def verify_adaptive_refinement_job(directory,state,manifest):
         raise ValueError('adaptive refinement job level budget differs from verified result')
     required={f'{PREFIX}-request.json',f'{PREFIX}-results.json'}
     for index in range(offset,len(result['level_runs'])):
-        relative=f'execution/level-{index+1:03d}'
+        stem='event' if data['request']['schema_version']==5 else 'level'
+        relative=f'execution/{stem}-{index+1:03d}'
         if result['level_runs'][index]!=str(directory/relative):raise ValueError('adaptive refinement newly computed level is outside its execution directory')
         required.add(f'execution/checkpoint-{index+1:03d}.json')
         required.update(relative+'/'+name for name in result['sources'][index]['sha256'])

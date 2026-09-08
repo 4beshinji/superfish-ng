@@ -1,5 +1,9 @@
 # 実装バックログ
 
+RFA-1〜4とRFA-5のCLI/JobManagerを[版5実装・681件標準・実ジョブ・既存版4 replay](CURVED_RF_ADAPTIVE_REFINEMENT.md)で部分受入。電気半球1尺度は5イベント停止と解析五量がPASS。次はGUIの版5入力・分岐表示/取消しと、非球形・尺度・総費用比較。親N04は未完了。
+
+N04/RFA-1〜4: 版5のstrict入力、親/確認/局所イベント、2回連続五量停止、確認直後の再開・canonical replayを実装する。元親のCase/ID/要素番号、全solve予算、五量個別・積分・改変拒否、CLI半球/独立解析と版4互換を受入条件とする。GUI・非球形/尺度/総費用は残す。
+
 RF指標の[実行内共有](CURVED_RF_GOAL_REUSE.md)は新旧文書完全一致・標準677件で受入。同一プロセス交互測定で約1.88〜1.91倍。次は[版5設計](CURVED_RF_ADAPTIVE_PLAN.md)のRFA-1（strict request・イベントplanner・dispatch）から進める。RFA-1〜6と親N04は未完了。
 
 N04の計算共有: 検証済み親子移送を実行内で共有し、保存済み指標・新旧結果の完全一致、公開追跡の拒否条件、交互測定・標準f/RFを受入条件とする。次は[版5のRFA-1〜6](CURVED_RF_ADAPTIVE_PLAN.md)を順に実装し、親/確認/局所の分岐を保存再検証する。

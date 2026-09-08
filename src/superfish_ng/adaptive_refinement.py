@@ -23,6 +23,9 @@ QUANTITIES=('frequency_hz','r_over_q_accelerator_ohm','geometry_factor_ohm')
 
 
 def _request(request):
+    if isinstance(request,dict) and request.get('schema_version')==5:
+        from .curved_rf_adaptive_refinement import validate_request
+        return validate_request(request)
     if isinstance(request,dict) and request.get('schema_version')==4:
         from .curved_adaptive_refinement import validate_request
         return validate_request(request)
@@ -126,6 +129,9 @@ def _next(case,request,levels,solution):
 
 
 def _assemble(request,runs):
+    if isinstance(request,dict) and request.get('schema_version')==5:
+        from .curved_rf_adaptive_refinement import assemble
+        return assemble(request,runs)
     if isinstance(request,dict) and request.get('schema_version')==4:
         from .curved_adaptive_refinement import assemble
         return assemble(request,runs)
@@ -186,6 +192,9 @@ def read_adaptive_refinement(path):return replay_adaptive_refinement(parse_json(
 
 
 def execute_adaptive_refinement(request,directory,*,max_new_levels=None,checkpoint=None):
+    if isinstance(request,dict) and request.get('schema_version')==5:
+        from .curved_rf_adaptive_refinement import execute
+        return execute(request,directory,max_new_levels=max_new_levels,checkpoint=checkpoint)
     if isinstance(request,dict) and request.get('schema_version')==4:
         from .curved_adaptive_refinement import execute
         return execute(request,directory,max_new_levels=max_new_levels,checkpoint=checkpoint)
