@@ -177,13 +177,47 @@ def _surface(solution,mode,q):
     return dict(intervals=dict(zip(PEAKS,(electric,magnetic))),peaks=peaks,geometry_diagnostic=_geometry_assessment(solution.case.curved_contour))
 
 
-def assemble(request,runs):
+class _VerifiedPrefix:
+    """Execution-local reuse; persistent checkpoints never supply trusted state."""
+    def __init__(self):
+        self.implementation=_implementation_hashes()
+        self.request_key=None
+        self.runs=[]
+        self.sources=[]
+        self.levels=[]
+        self.solution=None
+
+    def _check_implementation(self):
+        if self.implementation!=_implementation_hashes():
+            raise RuntimeError('implementation changed during curved adaptive refinement')
+
+    def load(self,request,runs):
+        self._check_implementation()
+        if self.request_key is not None and self.request_key!=_canonical(request):
+            raise ValueError('verified curved prefix request changed')
+        if runs[:len(self.runs)]!=self.runs:
+            raise ValueError('verified curved prefix ancestry changed')
+        if self.sources!=[_snapshot(Path(run)) for run in self.runs]:
+            raise ValueError('prior curved adaptive sources changed during execution')
+        return deepcopy(self.levels),deepcopy(self.sources),self.solution
+
+    def store(self,request,runs,levels,sources,solution):
+        self._check_implementation()
+        self.request_key=_canonical(request)
+        self.runs=list(runs)
+        self.sources=deepcopy(sources)
+        self.levels=deepcopy(levels)
+        self.solution=solution
+
+
+def assemble(request,runs,*,_cache=None):
     case=validate_request(request)
     if type(runs) is not list or any(type(p) is not str or not Path(p).is_absolute() for p in runs) or len(set(runs))!=len(runs):
         raise ValueError('level_runs requires distinct absolute native result directories')
     if len(runs)>request['max_levels']:raise ValueError('level_runs exceeds max_levels')
-    levels=[];sources=[];solution=None
-    for index,run in enumerate(runs):
+    levels,sources,solution=([],[],None) if _cache is None else _cache.load(request,runs)
+    for index in range(len(levels),len(runs)):
+        run=runs[index]
         decision,plan=next_plan(case,request,levels,solution)
         if decision['status']!='PAUSED':raise ValueError('curved adaptive refinement continues after a terminal decision')
         source=_snapshot(Path(run));current=read_solution(run)
@@ -212,26 +246,31 @@ def assemble(request,runs):
         sources=sources,levels=levels,decision=decision,status=status,can_resume=status=='PAUSED',physical_error_bound=None,
         surface_status='TARGETS_MET' if status=='TARGETS_MET' else 'UNVERIFIED' if status in ('UNVERIFIED','QUANTITY_UNVERIFIED','QUADRATURE_UNVERIFIED') else 'NOT_CONFIRMED',
         scope='fixed quadratic geometry with verified smooth native joins; nested individual tracking, higher-order integration checks, RF candidate and at least two uniform refinements; consecutive f/RQ/G and continuous discrete peak-ratio interval changes; no physical error bound or geometry-approximation acceptance')
+    if _cache is not None:
+        # Check again after planning: no changed native source may be published.
+        if sources!=[_snapshot(Path(run)) for run in runs]:
+            raise ValueError('curved adaptive sources changed during verification')
+        _cache.store(request,runs,levels,sources,solution)
     return result,plan
 
 
 def execute(request,directory,*,max_new_levels=None,checkpoint=None):
-    from .adaptive_refinement import replay_adaptive_refinement
+    from .adaptive_refinement import _replay
     request=deepcopy(request);validate_request(request)
     if max_new_levels is not None:integer(max_new_levels,'max_new_levels')
-    previous,plan=assemble(request,[])
+    cache=_VerifiedPrefix()
+    previous,plan=assemble(request,[],_cache=cache)
     if checkpoint is not None:
-        previous=replay_adaptive_refinement(checkpoint)
+        previous,plan=_replay(checkpoint,lambda saved_request,saved_runs:assemble(saved_request,saved_runs,_cache=cache))
         if _canonical(previous['request'])!=_canonical(request):raise ValueError('resume request differs from checkpoint')
         if not previous['can_resume']:raise ValueError('only PAUSED curved adaptive refinement can resume')
-        _,plan=assemble(request,previous['level_runs'])
     implementation=_implementation_hashes();runs=list(previous['level_runs'])
     directory=Path(directory).resolve();directory.mkdir(parents=True,exist_ok=False);count=0
     while previous['can_resume'] and (max_new_levels is None or count<max_new_levels):
         index=len(runs);run=directory/f'level-{index+1:03d}'
         try:
             solution=solve(plan.case,mesh_data=plan.source_mesh);save_run(plan.case,solution,run)
-            result,next_=assemble(request,runs+[str(run)])
+            result,next_=assemble(request,runs+[str(run)],_cache=cache)
             if result['sources'][:len(runs)]!=previous['sources']:raise ValueError('prior curved adaptive sources changed during execution')
             if implementation!=_implementation_hashes():raise RuntimeError('implementation changed during curved adaptive refinement')
         except Exception as exc:

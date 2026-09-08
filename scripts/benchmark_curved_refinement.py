@@ -150,7 +150,7 @@ def main():
                      first_analytical_target_level=next((i for i, row in enumerate(uniform_rows) if row['analytical_targets_met']), None)),
         final_dof_ratio_adaptive_over_uniform=adaptive_rows[-1]['dofs'] / uniform_rows[-1]['dofs'],
         final_solve_time_ratio_adaptive_over_uniform=adaptive_rows[-1]['solve_seconds'] / uniform_rows[-1]['solve_seconds'],
-        scope='synthetic sphere on one fixed quadratic geometry; two-interval five-quantity confirmation and independent analytical errors; timing is one local observation, not a performance guarantee; adaptive workflow replays all ancestors, uniform evaluation visits each level once, so workflow times have different verification workloads; no physical error bound or general efficiency acceptance')
+        scope='synthetic sphere on one fixed quadratic geometry; two-interval five-quantity confirmation and independent analytical errors; timing is one local observation, not a performance guarantee; adaptive workflow includes execution and checkpoint verification, uniform evaluation visits each level once, so workflow times have different verification workloads; no physical error bound or general efficiency acceptance')
     (out / 'validation.json').write_text(json.dumps(report, indent=2, allow_nan=False) + '\n')
     with (out / 'errors-and-cost.csv').open('w') as stream:
         writer = csv.writer(stream)

@@ -169,13 +169,17 @@ def _assemble(request,runs):
     return result,mesh
 
 
-def replay_adaptive_refinement(document):
+def _replay(document,assembler):
     fields=('schema_version','document_type','request','level_runs','sources','levels','decision','status','can_resume',
             'physical_error_bound','surface_status','scope')
     keys(document,fields,fields,'adaptive refinement checkpoint')
-    expected,_=_assemble(document['request'],document['level_runs'])
+    expected,plan=assembler(document['request'],document['level_runs'])
     if _canonical(expected)!=_canonical(document):raise ValueError('adaptive checkpoint replay differs from saved decisions or sources')
-    return expected
+    return expected,plan
+
+
+def replay_adaptive_refinement(document):
+    return _replay(document,_assemble)[0]
 
 
 def read_adaptive_refinement(path):return replay_adaptive_refinement(parse_json(Path(path).read_text(encoding='utf-8')))
