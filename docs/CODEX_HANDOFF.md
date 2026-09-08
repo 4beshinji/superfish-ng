@@ -1,5 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## 最新状態: 費用表示コミット・非球形実行継続 — 2026-09-09
+
+費用表示は別ツリー /tmp/superfish-rf-cost-worktree-20260909、branch feature/adaptive-refinement-cost の fc76e64 にコミット済み、作業ツリーclean。主ツリーへは未統合。主ツリーsrc/tests/scripts/examplesは60815の終了まで固定し、先にcherry-pickしない。
+最終標準60286は終了0、out/validation-rf-cost-accepted-20260909 は683件/681合格/2 skip、428.580秒PASS。seed9モード19量でf差0/RF最大8.882e-16、最終全対象hashと標準/browser対象hash一致。最初の標準48730は応答metadata完全一致の旧検査1件で失敗し、数値文書/保存文字列完全一致+欠測不明の検査に更新。失敗ログ保持。Chrome3062の15項目PASS、GUI85156/PID103279も終了0。費用表示側の実行は全て終了。
+主ツリーの拡大非球形60815/PID76757は実行中。out/curved-rf-nonsphere-expanded-20260909、/tmp/curved-rf-nonsphere-expanded-20260909.log。checkpoint-025.json PAUSED、尺度1の採用7806要素まで確認。Epk差約2.4%が律速、完走/両尺度PASSはまだ主張しない。初回12回の両尺度LEVEL_LIMITは保持。ソースhashは初回から一致。
+GDBは2度ともPythonスタック取得不可でdetach済み。独立プロファイル89107は終了0、out/curved-rf-nonsphere-profile-20260909。nativeイベント17/18（1723/6892要素）の読込27.766秒、RF指標36.873秒（cProfile負荷込み）。4回のcase_curved_spaceが累積45.144秒、71回のcheck_curved_edgesが34.652秒。指標はcheckpoint-018のdecisionと完全一致、ソースhash一致。初回driver名profile.pyは標準ライブラリーを隠して失敗、measure.pyへ変更し初回ログ保持。
+次は60815の結果確認/記録とfc76e64統合。長時間実行中の独立作業なら別ツリーで行う。実行内の検証済み空間/次plan共有は具体的な次の性能課題: RF指標が確認後と次の局所組立時に重複評価され、saved trackingでも場再読込と空間再構築が重なる。公開再検証や拒否条件を省かず、旧文書/指標/選択の完全一致を先に受入条件にする。
+全体目標、RFA-6、親N04は未完了。費用表示は記録済み祖先ジョブ時間であり、事前検証を含む全workflow時間とは区別する。
+
 ## 版5非球形検証・費用表示の並行作業 — 2026-09-09
 
 主作業ツリーに scripts/validate_curved_rf_nonsphere.py と仕様を追加。既存両尺度reportとの一致とhashを検査し、全イベントの時間・親子Ritz・体積・Maxwell・追加対照差を保存する。
