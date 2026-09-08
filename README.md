@@ -85,7 +85,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 
 ## 実装済み
 
-2026-09-08、極端な尺度の曲率評価修正後（直前基準 `a5a912e`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
+2026-09-08、D01標本部分空間追跡の追加後（直前基準 `66a6518`）。最新の受入範囲と履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md)。
 
 | 分野 | 現在の内容 |
 |---|---|
@@ -97,7 +97,7 @@ python scripts/plot_results.py out/shaped --out out/shaped.png
 | RF量 | f、U、表面抵抗、壁損失、Q0、G、通過位相を含むVacc、R/Q、シャントインピーダンス、TTF |
 | 表面電磁場 | P1/P2片側場、曲線離散場の連続極値の囲い込みと角診断。物理ピークの収束保証とは区別 |
 | 出力 | 単位と規約を含むJSON、CSV、NPZ、ParaView向けASCII VTK |
-| 検証 | 標準412件中410合格・2 skip。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
+| 検証 | 標準421件中419合格・2 skip。Pillbox/Bessel場、球形独立参照、楕円/双曲線の幾何・FEM細分、RF、保存、GUI等。数値・ブラウザー受入は個別記録を参照 |
 
 `benchmarks/validation/` に納品時の実測ログ、解析値との比較、計算場を収録しています。
 2026-09-07: [NGSolveとの独立照合](docs/INDEPENDENT_COMPARISON.md)を追加し、
@@ -189,6 +189,8 @@ G03全体は部分対応です。[要件と証拠の照合](docs/G03_ACCEPTANCE.
 証拠の確認と有限領域全体の分類完了は別に記録します。版5/6の構築ではGUIにも表示し、
 元の構築を含めて保存・再検証できます。CLIは `diagnose-construction` を使います。
 曲線輪郭には[PEC壁の最小子午面曲率半径](docs/MERIDIONAL_RADIUS.md)も指定できます。
+[モード追跡](docs/MODE_TRACKING.md)は重み付き標本・縮退部分空間と、明示写像による円筒の実FEM交差に部分対応します。
+一般形状の追跡、履歴・tuneとの統合は未完了です。
 接線構築は `construct-tangent` → `export-constructed-case` → `solve` で実行できます。
 合成例と保存・再構築の仕様は [接線構築](docs/TANGENT_CONSTRUCTION.md) を参照してください。
 
