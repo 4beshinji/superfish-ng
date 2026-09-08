@@ -37,8 +37,8 @@ def validate_tracking_controls(controls):
     keys(controls,names,names,'mode tracking controls')
     from .mode_tracking import _control
     mapping=controls['mapping']
-    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh'):raise ValueError('mapping must be normalized_cylinder, normalized_profile or paired_mesh')
-    order=controls['sample_order'];limit=32 if mapping=='paired_mesh' else 256
+    if mapping not in ('normalized_cylinder','normalized_profile','paired_mesh','same_domain'):raise ValueError('mapping must be normalized_cylinder, normalized_profile, paired_mesh or same_domain')
+    order=controls['sample_order'];limit=32 if mapping in ('paired_mesh','same_domain') else 256
     if type(order) is not int or not 2<=order<=limit:raise ValueError(f'sample_order must be an integer from 2 to {limit}')
     _control(controls['minimum_overlap'],'minimum_overlap')
     _control(controls['minimum_assignment_margin'],'minimum_assignment_margin',zero=True)
@@ -77,6 +77,9 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     elif controls['mapping']=='paired_mesh':
         from .paired_mesh_tracking import track_paired_mesh_modes
         tracker=track_paired_mesh_modes
+    elif controls['mapping']=='same_domain':
+        from .same_domain_tracking import track_same_domain_modes
+        tracker=track_same_domain_modes
     report=tracker(*solutions,request.get('previous_ids'),**controls,
         **({'previous_identity_groups':request['previous_groups']} if version==2 else {}))
     if before!=[_snapshot(path) for path in directories]:
