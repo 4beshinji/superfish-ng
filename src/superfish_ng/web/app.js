@@ -1525,22 +1525,24 @@ bind("tangent-apply", () => {
 let trackingResult = null, trackingBusy = false, trackingJobSignature = "";
 function trackingJobs(jobs) {
   const completed = jobs.filter(j => j.status === "complete" && j.kind !== "study");
-  const signature = JSON.stringify(completed.map(j => j.id));
+  const signature = JSON.stringify(jobs.filter(j => j.status === "complete").map(j => [j.id,j.kind]));
   if (signature === trackingJobSignature) return;
   trackingJobSignature = signature;
-  for (const id of ["tracking-previous", "tracking-current"]) {
+  for (const id of ["tracking-previous", "tracking-current", "tracking-study"]) {
+    const available = id === "tracking-study" ? jobs.filter(j => j.status === "complete" && j.kind === "study") : completed;
     const select = $(id), previous = select.value;
     select.replaceChildren(new Option("結果を選択", ""));
-    for (const j of completed) select.add(new Option(j.id, j.id));
-    if (completed.some(j => j.id === previous)) select.value = previous;
+    for (const j of available) select.add(new Option(j.id, j.id));
+    if (available.some(j => j.id === previous)) select.value = previous;
   }
 }
 function trackingButtons() {
-  const d = trackingResult?.document, history = d?.document_type === "mode_tracking_history";
+  const d = trackingResult?.document, study = d?.document_type === "study_mode_tracking", history = study || d?.document_type === "mode_tracking_history";
   $("tracking-compare").disabled = trackingBusy || history;
   $("tracking-start").disabled = trackingBusy || !d || history;
-  $("tracking-extend").disabled = trackingBusy || !history || !d.can_extend;
+  $("tracking-extend").disabled = trackingBusy || study || !history || !d.can_extend;
   $("tracking-save").disabled = trackingBusy || !d;
+  $("tracking-study-run").disabled = trackingBusy;
   $("tracking-reset").disabled = trackingBusy;
   $("tracking-open").disabled = trackingBusy;
   $("tracking-previous").disabled = trackingBusy || history;
@@ -1548,7 +1550,7 @@ function trackingButtons() {
   $("tracking-previous").closest("label").hidden = history;
   $("tracking-ids").closest("label").hidden = history;
   $("tracking-origin").hidden = !history;
-  $("tracking-origin").textContent = history ? `履歴末尾の基準結果: ${d.current_run}` : "";
+  $("tracking-origin").textContent = history ? `履歴末尾の基準結果: ${study ? d.history.current_run : d.current_run}` : "";
   $("tracking-pairs-label").hidden = $("tracking-mapping").value !== "paired_mesh";
   $("tracking-link-label").hidden = !$("tracking-retain").checked;
 }
@@ -1562,8 +1564,23 @@ function trackingControls() {
 }
 function showTracking(response) {
   trackingResult = response;
-  const d = response.document, history = d.document_type === "mode_tracking_history";
-  const pair = history ? d.steps.at(-1) : d, r = pair.tracking, controls = pair.request.controls;
+  const d = response.document, study = d.document_type === "study_mode_tracking", history = study || d.document_type === "mode_tracking_history";
+  const sequence = study ? d.history : d;
+  const pair = history ? sequence.steps.at(-1) : d, r = pair.tracking, controls = pair.request.controls;
+  $("tracking-study-points").hidden = !study;
+  const pointBody = $("tracking-study-points").querySelector("tbody"); pointBody.replaceChildren();
+  if (study) {
+    $("tracking-study-ids").value = JSON.stringify(d.request.initial_ids);
+    $("tracking-study-controls").value = JSON.stringify(d.request.step_controls,null,2);
+    for (const point of d.point_results) {
+      const row=document.createElement("tr");
+      for (const value of [point.index,point.value,({INITIAL:"初期点",PASS:"確認済み",UNVERIFIED:"未確認",NOT_VISITED:"未追跡"})[point.status],
+        point.current_mode_ids === null ? "未追跡" : point.current_mode_ids.map(id=>id ?? "個別ID未確定").join(", ")]) {
+        const cell=document.createElement("td");cell.textContent=value;row.append(cell);
+      }
+      pointBody.append(row);
+    }
+  }
   $("tracking-mapping").value = controls.mapping;
   for (const [id,key] of [["order","sample_order"],["overlap","minimum_overlap"],["margin","minimum_assignment_margin"],["gap","relative_cluster_gap"],["rank","minimum_relative_singular_value"]])
     $(`tracking-${id}`).value = controls[key];
@@ -1571,7 +1588,7 @@ function showTracking(response) {
   if (controls.minimum_cluster_link !== undefined) $("tracking-link").value = controls.minimum_cluster_link;
   if (controls.vertex_pairs) $("tracking-pairs").value = JSON.stringify(controls.vertex_pairs);
 
-  $("tracking-status").textContent = `${d.status} — ${history ? `履歴 ${d.steps.length} 段階。` : "2時点の比較。"} ${d.status !== "PASS" ? "未確認の対応があります。" : r.individual_ids_complete ? "全個別IDの対応を確認しました。" : "部分空間の対応を確認しました。集合内の個別IDは未確定です。"}${history && !d.can_extend ? " この履歴からの継続はできません。" : ""}`;
+  $("tracking-status").textContent = `${d.status} — ${study ? `Study ${d.visited_point_indices.length}/${d.point_results.length} 点を追跡。未追跡 ${d.unvisited_point_indices.length} 点。` : history ? `履歴 ${d.steps.length} 段階。` : "2時点の比較。"} ${d.status !== "PASS" ? "未確認の対応があります。" : r.individual_ids_complete ? "全個別IDの対応を確認しました。" : "部分空間の対応を確認しました。集合内の個別IDは未確定です。"}${history && !sequence.can_extend ? " この履歴からの継続はできません。" : ""}`;
   const body = $("tracking-matches").querySelector("tbody"); body.replaceChildren();
   for (const m of r.matches) {
     const row = document.createElement("tr");
@@ -1582,7 +1599,8 @@ function showTracking(response) {
     body.append(row);
   }
   $("tracking-diagnostics").textContent = JSON.stringify({previous_run: pair.request.previous_run, current_run: pair.request.current_run,
-    stop_reason: d.stop_reason ?? null, unmatched_previous: r.unmatched_previous, unmatched_current: r.unmatched_current,
+    study_run: study ? d.request.study_run : null, unvisited_point_indices: study ? d.unvisited_point_indices : [],
+    stop_reason: sequence.stop_reason ?? null, unmatched_previous: r.unmatched_previous, unmatched_current: r.unmatched_current,
     unresolved: r.unresolved, cluster_transitions: r.cluster_transitions ?? null, controls: pair.request.controls,
     scope: d.scope}, null, 2);
   trackingButtons();
@@ -1601,10 +1619,10 @@ bind("tracking-start", async () => { await runTracking("start-mode-history", {do
 bind("tracking-extend", async () => { await runTracking("extend-mode-history", {document: trackingResult.serialized,
   current_id: $("tracking-current").value, controls: trackingControls()}); });
 bind("tracking-reset", () => {
-  trackingResult = null; $("tracking-status").textContent = "比較する結果とIDを指定してください。";
+  trackingResult = null; $("tracking-study-points").hidden = true; $("tracking-status").textContent = "比較する結果とIDを指定してください。";
   $("tracking-matches").querySelector("tbody").replaceChildren(); $("tracking-diagnostics").textContent = ""; trackingButtons();
 });
-bind("tracking-save", () => { download(trackingResult.document.document_type === "mode_tracking_history" ? "mode-tracking-history.json" : "mode-tracking.json", trackingResult.serialized); });
+bind("tracking-save", () => { download(trackingResult.document.document_type === "study_mode_tracking" ? "study-mode-tracking.json" : trackingResult.document.document_type === "mode_tracking_history" ? "mode-tracking-history.json" : "mode-tracking.json", trackingResult.serialized); });
 $("tracking-open").addEventListener("change", async event => {
   const file = event.target.files[0]; if (!file) return;
   try { $("error").hidden = true; await runTracking("replay-mode-tracking", {document: await file.text()}); }
@@ -1614,3 +1632,10 @@ $("tracking-open").addEventListener("change", async event => {
 $("tracking-mapping").addEventListener("change", trackingButtons);
 $("tracking-retain").addEventListener("change", trackingButtons);
 trackingButtons();
+
+bind("tracking-study-run", async () => {
+  const data = {study_id: $("tracking-study").value, initial_ids: JSON.parse($("tracking-study-ids").value)};
+  if ($("tracking-study-controls").value.trim()) data.step_controls = JSON.parse($("tracking-study-controls").value);
+  else data.controls = trackingControls();
+  await runTracking("track-study-modes", data);
+});

@@ -335,10 +335,18 @@
             <button id="tracking-extend" disabled>次の結果へ継続</button>
             <button id="tracking-reset">新しい比較</button>
           </div>
+          <details id="tracking-study-panel"><summary>完了したStudyを順番に追跡する</summary>
+            <label>Study<select id="tracking-study"><option value="">Studyを選択</option></select></label>
+            <label>最初の点のID（周波数順位順）<textarea id="tracking-study-ids" rows="2">["mode-A"]</textarea></label>
+            <label>段階別controls（JSON配列・省略可）<textarea id="tracking-study-controls" rows="4" placeholder="空欄なら上の写像・閾値を全隣接点に適用"></textarea></label>
+            <p class="hint">配列を指定した場合は各段階の設定を使用します。未確認の対応で停止し、後続点を未追跡と記録します。元Studyの計算結果・収束判定は変わりません。</p>
+            <button id="tracking-study-run">Studyを追跡</button>
+          </details>
           <label class="file">対応・履歴を開いて再検証<input id="tracking-open" type="file" accept=".json" /></label>
           <button id="tracking-save" disabled>検証済みの文書を保存</button>
           <p id="tracking-status" role="status">比較する結果とIDを指定してください。</p>
           <p class="hint">表示は最後に検証した結果です。設定変更後は比較・継続を実行してください。部分空間の確認は個別IDの確定ではありません。再検証には元の保存場が必要です。</p>
+          <table id="tracking-study-points" hidden><thead><tr><th>Study点（0始まり）</th><th>パラメータ値</th><th>追跡状態</th><th>個別ID</th></tr></thead><tbody></tbody></table>
           <table id="tracking-matches"><thead><tr><th>ID・ID集合</th><th>対応の種類</th><th>現在の周波数順位</th><th>周波数 [MHz]</th><th>最小重なり</th></tr></thead><tbody></tbody></table>
           <details><summary>未確認の理由・写像・クラスタ診断</summary><pre id="tracking-diagnostics"></pre></details>
         </section>

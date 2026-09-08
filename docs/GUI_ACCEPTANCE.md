@@ -1,5 +1,36 @@
 # 汎用GUI・共通入出力の受入記録
 
+## D01完了Studyの追跡GUI — 2026-09-08
+
+直前基準406e636。完了Studyの選択、共通/段階別controls、全点の追跡状態と個別ID、
+保存・再読込を既存study_mode_tracking APIへ接続。未確認後の点を未追跡として表示し、
+Study文書を一般履歴として延長する操作を禁止する。再読込は元JSON文字列を保持する。
+元Studyのスペクトル・収束判定は変更しない。新規外部資料・依存・legacy参照なし。
+
+変更前466件中464合格・2 skip（129.603秒）。追加GUI接続3テストは実装前に失敗し、
+接続後は既存5件と併せ8件PASS。最終標準469件中467合格・2 skip（130.237秒）。
+`out/validation-d01-gui-study-20260908` PASS。seed周波数差ゼロ、RF/エネルギー差最大
+8.881784197001248e-16。FEM変更なし、閾値緩和なし。
+
+`out/d01-gui-study-20260908`の独立3点P2 Studyで解析縮退位置を通る集合継承と
+未確認停止を再検証。Bessel解析周波数との差最大5.6130317729330415e-6。
+元Study不変を確認。`out/browser-d01-gui-study-20260908`の実Chrome7操作と
+`out/browser-d01-study-pair-regression-20260908`の既存比較/履歴8操作がPASS。
+外部要求0。study-tracking.pngで未確認/未追跡表を視認。全4記録のsource hash一致。
+Wine・hosted CIは未実行。
+
+判断: 完了済みStudyを追跡する後処理を提供する。追跡付きStudyの自動実行/再開、
+適応的点追加、tune、多対多/個別枝回復、接続変更を伴う再メッシュ写像は残る。
+33親課題の区分は8受入・3進行中・21未受入・拡張候補1のまま。計画全体は継続する。
+
+再現手順（それぞれ未使用の出力先を指定）:
+
+```bash
+OPENBLAS_NUM_THREADS=1 python scripts/validate_study_tracking.py --out out/gui-study-NEW
+python -m superfish_ng gui --workspace out/gui-study-NEW --no-browser
+node scripts/verify_gui_study_tracking.mjs --url '起動URL' --out out/gui-study-browser-NEW
+```
+
 ## D01対応比較・追跡履歴 — 2026-09-08
 
 out/browser-d01-mode-tracking-final-20260908/report.jsonでChrome8操作PASS、外部要求0、ソース変更なし。
