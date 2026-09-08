@@ -1,5 +1,30 @@
 # 独立実装・情報来歴
 
+## 非球形尺度1の確定と高速化ブランチの本体反映 — 2026-09-09
+
+旧942860bの尺度1報告 out/curved-nonsphere-expanded-20260909/scale-1.json はPASS。
+適応11水準/100917自由度、一様確認41281自由度、追加対照164481自由度。
+五量比較・追加対照の二区間条件・追跡・高次積分・独立体積/保存/Ritzが合格。
+相対差と時間は[非球形比較](CURVED_NONSPHERE_COMPARISON.md)。適応自由度の優位は得られなかった。
+報告と元ソースhash一致をtransition.jsonへ保存し、argv確認したPID3901559へSIGINT。
+handle71658の終了130を確認。旧実行の全両尺度検証は未完了として保持する。
+移行理由は標準656件・球形・旧版保存・非球形100917自由度の完全再検証を通した高速化であり、
+観測タイムアウトを終了とみなしたものではない。
+
+perf/curved-edge-searchを本体へfast-forwardし、dc795e9を反映。
+本体の全検証対象ソースは、完了した隔離標準656検査のhashと一致。
+最初の全hash集合一致検査は、本体にだけ存在する既存.egg-info6ファイルによりFAILした。
+実装/検査ファイルの差はなく、その6ファイルも元942860bの標準検証hashと一致した。
+詳細は out/curved-edge-nonsphere-replay-20260909/main-integration-source-check.json。
+同じ実装・検査に全体回帰を重複実行せず、既存インストールメタデータも変更しない。
+
+高速化版の両尺度対照はhandle96442で継続中。
+worktree /tmp/superfish-curved-edge-search-worktree-20260909、
+出力 out/curved-nonsphere-spatial-search-20260909、ログ /tmp/curved-nonsphere-spatial-search.log。
+このworktreeのsrc/tests/scripts/examplesは完了まで固定する。
+旧大規模replay47014、旧標準24254等は全て終了済み。新対照96442だけが今回の数値実行として残る。
+一般精度/効率・親課題区分と全体目標の未完項目は維持する。
+
 ## N04非球形大規模系列の新候補検索による再検証 — 2026-09-09
 
 非球形の追加再検証 out/curved-edge-nonsphere-replay-20260909 もPASS。
