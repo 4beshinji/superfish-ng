@@ -22,6 +22,12 @@ def main(argv=None):
         if command!='replay-adaptive-refinement':
             adaptive.add_argument('--out',type=Path,required=True)
             adaptive.add_argument('--max-new-levels',type=int,help='maximum new solves; version 5 includes uniform probes and local solves')
+    for command in ('optimize-rf','resume-rf-optimization','replay-rf-optimization'):
+        optimization=sub.add_parser(command,help='bounded two-variable native RF constrained search with final refinement')
+        optimization.add_argument('document',type=Path)
+        if command!='replay-rf-optimization':
+            optimization.add_argument('--out',type=Path,required=True)
+            optimization.add_argument('--max-new-trials',type=int)
     for command in ('tune','resume-tune','replay-tune'):
         tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
         tuning.add_argument('document',type=Path)
@@ -169,6 +175,17 @@ def main(argv=None):
                     result=execute_adaptive_refinement(result['request'],args.out,max_new_levels=args.max_new_levels,checkpoint=result)
             print(f"{result['status']}: {args.document if args.command=='replay-adaptive-refinement' else args.out}")
             return 0 if result['status'] in ('TARGETS_MET','PAUSED') else 1
+        elif args.command in ('optimize-rf','resume-rf-optimization','replay-rf-optimization'):
+            from .rf_optimization import execute_rf_optimization,read_rf_optimization
+            from .project import parse_json
+            if args.command=='optimize-rf':
+                result=execute_rf_optimization(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_trials=args.max_new_trials)
+            else:
+                result=read_rf_optimization(args.document)
+                if args.command=='resume-rf-optimization':
+                    result=execute_rf_optimization(result['request'],args.out,checkpoint=result,max_new_trials=args.max_new_trials)
+            print(f"{result['status']}: {args.document if args.command=='replay-rf-optimization' else args.out}")
+            return 0 if result['status'] in ('SEARCH_COMPLETE','PAUSED') else 1
         elif args.command in ('tune','resume-tune','replay-tune'):
             from .tuning import execute_tune,read_tune
             from .project import parse_json

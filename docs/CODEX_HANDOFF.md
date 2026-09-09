@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: D03 曲線2変数RF探索 — 2026-09-09
+
+基準f976091。[仕様・証拠](RF_OPTIMIZATION.md)。rf_optimization_search.pyはradial/axialの有界座標試行、明示尺度による最大制約違反の減少→実行可能時だけの目的関数改善、step半減/訪問済み除外/最終試行予約を実装。rf_optimization.pyは各候補の3水準実FEM、相対アフィン写像で全個別ID確認、RF設計評価、全試行/入力/場/判定の再構築・保存再開を接続。最終は1段細かい3水準を新規solve。max_trialsは初期/最終を含み、3*max_trialsがFEM上限。失敗はfailure文書/呼出し数を残し例外停止し、採用値/成功checkpointへ変換しない。失敗前checkpointからの別分岐は利用者全体の予算とは別。CLI optimize-rf/resume-rf-optimization/replay-rf-optimizationと合成球形の例題examples/optimization/curved_rf.jsonを追加。
+
+開始時45954終了0、RF設計5件21.537秒。追加17597終了0、4件377.610秒（実FEM9解・pause/resume/final/replay/改変/終端拒否、探索predicate）。その後CLI/例題/検証scriptを追加。失敗注入追加1件0.133秒PASS。初回失敗なし。全ログをout/rf-optimization-independent-20260909へ保存。
+独立24265終了0、out/rf-optimization-independent-20260909。両尺度4試行/12FEM、値[1,1]→[1.01,1]→[1.01,1.01]→final同値。探索段数0/1/2→final1/2/3。CLI pause/replay/resumeと最終APIreplay、最終解析f相対差両尺度2.472e-5、観測包絡のMaxwell相似最大4.930e-14。SEARCH_COMPLETEだが停止理由TRIAL_LIMITを保持し、最適性としない。
+追加82660終了0、同out/restoration-validation.json。既存native試行を解析f上限（元球形f/1.005）の追加制約で再評価し、両尺度で初期CONSTRAINTS_VIOLATED/採用値null→最終SEARCH_COMPLETEの同じ試行列と公開replay一致。新しいFEM実行とは主張しない。最終球形解析f2.472e-5/RQ2.525e-6/G1.077e-7/E比2.314e-4/B比6.077e-6で既存独立許容差PASS。driverはoutに保持。
+標準44857終了0、out/validation-rf-optimization-20260909、734件732合格・2skip、991.980秒。seed9モード19量f差0/RF最大8.882e-16。標準/独立/追加再評価/終了後422対象hash一致。新規JobManager/GUI/ブラウザーなし。全関連実行は終了、ソース固定解除。
+
+D03親/全体計画は未完了、親8受入/8進行中/16他未受入/1候補=33。次は既存tuning_jobs等を参照して、このRF探索のJobManager中止・チェックポイント読込/再開とGUI操作へ接続する。3解の試行単位の保存と途中失敗を分け、元ジョブへの所属・改変拒否・管理器再起動を検証する。原始評価器surface_convergenceの制限を引き継ぎ、反射/組立/curved_refinement_steps配列（一様だけでも）・一般変数/せん断は未対応。curved_refinement_levelsは対応。一般性能/任意形状の受入と最適性/物理誤差保証は残る。既存場の再読込を何度も行うため小例題の実行/完全replayにも数分を要する。効率改善は証拠一致を保った独立課題とする。
+
 ## 最新: D03 RF設計制約評価基盤 — 2026-09-09
 
 [仕様・証拠](RF_DESIGN_CRITERIA.md)。基準3b80839。rf_design.pyはstrictな一目的関数/複数制約、既存の保存個別追跡付き固定曲線P2三水準の再検証、最後3区間の包絡を実装。全区間内MET/全区間外VIOLATED/重なりUNRESOLVED。既存表面収束・形状診断未達ならUNVERIFIED。CRITERIA_METだけが最大化の下端/最小化の上端をeligible_valueとして持ち、他はnull。回路RQは定義どおり加速器RQの半分を外向き丸め。観測包絡は物理誤差上界でない。保存・再読込・全文書再構築照合あり。API基盤のみ、探索器/CLI/Job/GUIは未接続。

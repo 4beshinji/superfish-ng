@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "project": {
+    "project_version": 1,
+    "case": {
+      "schema_version": 3,
+      "name": "synthetic_optimization",
+      "geometry": {
+        "type": "curved_contour",
+        "curves": [
+          {
+            "type": "line",
+            "start_zr_m": [
+              0.0,
+              0.0
+            ],
+            "end_zr_m": [
+              0.16,
+              0.0
+            ]
+          },
+          {
+            "type": "ellipse_arc",
+            "center_zr_m": [
+              0.08,
+              0.0
+            ],
+            "semiaxes_m": [
+              0.08,
+              0.08
+            ],
+            "start_rad": 0.0,
+            "sweep_rad": 3.141592653589793,
+            "rotation_rad": 0.0
+          }
+        ],
+        "edge_tags": [
+          "axis",
+          "pec"
+        ],
+        "join_tolerance_m": 1e-14,
+        "minimum_gap_m": 0.0,
+        "chord_tolerance_m": 0.0016,
+        "chord_max_segments": 20000
+      },
+      "mesh": {
+        "nr": 24,
+        "nz": 32,
+        "geometry_order": 2,
+        "contour_mesh": {
+          "max_edge_m": 0.064,
+          "min_angle_deg": 5.0,
+          "max_triangles": 250000,
+          "max_rounds": 12
+        }
+      },
+      "solver": {
+        "modes": 1,
+        "quadrature_order": 8,
+        "element_order": 2
+      },
+      "rf": {
+        "beta": 1.0,
+        "conductivity_s_per_m": 58000000.0,
+        "normalization_j": 1.0
+      },
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "axisymmetric",
+        "polarization": "tm",
+        "azimuthal_index": 0,
+        "materials": [
+          {
+            "id": "vacuum",
+            "type": "vacuum"
+          }
+        ],
+        "regions": [
+          {
+            "id": "cavity",
+            "material": "vacuum",
+            "domain": "interior"
+          }
+        ]
+      }
+    },
+    "reflect_full": false,
+    "display_length_unit": "mm"
+  },
+  "variables": [
+    {
+      "name": "radial_scale",
+      "lower": 1.0,
+      "upper": 1.01,
+      "initial": 1.0,
+      "step": 0.01,
+      "tolerance": 0.01
+    },
+    {
+      "name": "axial_scale",
+      "lower": 1.0,
+      "upper": 1.01,
+      "initial": 1.0,
+      "step": 0.01,
+      "tolerance": 0.01
+    }
+  ],
+  "criteria": {
+    "schema_version": 1,
+    "objective": {
+      "quantity": "frequency_hz",
+      "direction": "minimize"
+    },
+    "constraints": [
+      {
+        "quantity": "r_over_q_accelerator_ohm",
+        "lower": 1.0,
+        "upper": 10000.0
+      },
+      {
+        "quantity": "epk_over_eacc",
+        "upper": 100.0
+      }
+    ]
+  },
+  "constraint_scales": {
+    "r_over_q_accelerator_ohm": 100.0,
+    "epk_over_eacc": 1.0
+  },
+  "objective_improvement": 1.0,
+  "max_trials": 4,
+  "initial_ids": [
+    "fundamental"
+  ],
+  "mode_id": "fundamental",
+  "controls": {
+    "mapping": "affine_remesh",
+    "sample_order": 3,
+    "minimum_overlap": 0.98,
+    "minimum_assignment_margin": 0.05,
+    "relative_cluster_gap": 1e-06,
+    "minimum_relative_singular_value": 1e-08
+  },
+  "rf_coordinates": "axial"
+}
