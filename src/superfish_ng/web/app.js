@@ -758,6 +758,12 @@ async function refreshJobs() {
       }
     };
     row.append(action);
+    if(j.kind==="tune" && ["complete","cancelled","interrupted","failed"].includes(j.status)) {
+      const checkpoints=document.createElement("button");checkpoints.textContent="途中保存を選ぶ";
+      checkpoints.dataset.tuneCheckpoints=j.id;
+      checkpoints.onclick=async()=>{try{await openTuningCheckpoints(j.id);}catch(e){failure(e);}};
+      row.append(checkpoints);
+    }
     const log = document.createElement("button");
     log.textContent = "ログ";
     log.onclick = async () => {
@@ -1945,6 +1951,21 @@ function tuningButtons() {
   $("tune-resume").disabled=tuningBusy || !tuningResult?.document.can_resume;
   $("tune-save").disabled=tuningBusy || !tuningResult;
   $("tune-open-field").disabled=tuningBusy || tuningResult?.document.status!=="TUNED";
+  $("tune-checkpoint-index").disabled=tuningBusy || !$("tune-checkpoint-index").options.length;
+  $("tune-checkpoint-open").disabled=tuningBusy || !$("tune-checkpoint-index").options.length;
+}
+async function openTuningCheckpoints(id) {
+  tuningBusy=true;tuningButtons();
+  try {
+    const response=await api("tune-checkpoints",{id}),select=$("tune-checkpoint-index");
+    select.replaceChildren();select.dataset.job=id;
+    for(const index of response.indices) {
+      const option=document.createElement("option");option.value=index;option.textContent=`${index}試行の保存（未検証）`;select.append(option);
+    }
+    if(response.indices.length)select.value=response.indices.at(-1);
+    $("tune-checkpoint-job").textContent=`${id}: `+(response.indices.length ? "保存済み試行を選んで再検証してください。" : "保存済み試行はありません。");
+    $("tuning").scrollIntoView({behavior:"smooth"});
+  } finally {tuningBusy=false;tuningButtons();}
 }
 function tuningLimit() {
   if (!$("tune-limit").value.trim()) return {};
@@ -2007,6 +2028,7 @@ bind("tune-prepare",async()=>{
 bind("tune-start",()=>tuningAction("start-tune",{request:JSON.parse($("tune-request").value),...tuningLimit()}));
 bind("tune-resume",()=>tuningAction("resume-tune",{document:tuningResult.serialized,...tuningLimit()}));
 bind("tune-save",()=>download("tune-checkpoint.json",tuningResult.serialized));
+bind("tune-checkpoint-open",()=>tuningAction("open-tune-checkpoint",{id:$("tune-checkpoint-index").dataset.job,index:Number($("tune-checkpoint-index").value)}));
 $("tune-open").addEventListener("change",async event=>{
   const file=event.target.files[0];if(!file)return;
   try {$("error").hidden=true;await tuningAction("replay-tune",{document:await file.text()});}

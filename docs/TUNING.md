@@ -176,7 +176,8 @@ TUNEDなら「調整済み最終形状の場・RFを開く」で再検証後に�
 
 GUI用transport追加3検査がPASS。ブラウザーの操作・画像・数値回帰の記録は
 [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)のD02記録を参照。一般曲線/非線形変数の調整と
-制約付き最適化、取消し後のチェックポイントの自動一覧選択は残る。
+制約付き最適化は残る。取消し後のチェックポイント一覧選択は後続の
+[途中保存選択](GUI_TUNING_CHECKPOINTS.md)で追加した。
 
 最終out/validation-d02-tuning-gui-final-20260908はPASS。552件中550合格・2 skip（178.806秒）。
 seed周波数差ゼロ、RF/エネルギー相対差最大8.881784197001252e-16。

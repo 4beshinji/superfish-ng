@@ -31,6 +31,46 @@ class GuiTuningTests(unittest.TestCase):
         self.assertEqual(self.action('replay-tune',document=final['serialized']),final)
         with self.assertRaisesRegex(ValueError,'PAUSED'):self.action('resume-tune',document=final['serialized'])
 
+    def test_checkpoint_selection_rejects_foreign_tampered_and_linked_files(self):
+        identifier=self.action('start-tune',request=self.request,max_new_trials=2)['id']
+        first=self.wait(identifier)
+        self.assertEqual(self.action('tune-checkpoints',id=identifier),dict(id=identifier,indices=[1,2],verified=False))
+        self.assertEqual(self.action('open-tune-checkpoint',id=identifier,index=2),first)
+        selected=self.action('open-tune-checkpoint',id=identifier,index=1)
+        self.assertEqual(len(selected['document']['trials']),1)
+        path=self.manager.directory(identifier)/'execution/checkpoint-001.json';original=path.read_bytes()
+        changed=deepcopy(selected['document']);changed['trials'][0]['value']=.5
+        path.write_text(json.dumps(changed))
+        with self.assertRaisesRegex(ValueError,'replay'):self.action('open-tune-checkpoint',id=identifier,index=1)
+        path.write_bytes(original)
+        other=self.action('start-tune',request=self.request,max_new_trials=1)['id'];self.wait(other)
+        path.write_bytes((self.manager.directory(other)/'execution/checkpoint-001.json').read_bytes())
+        with self.assertRaisesRegex(ValueError,'another tuning job'):self.action('open-tune-checkpoint',id=identifier,index=1)
+        path.unlink();path.symlink_to(self.manager.directory(other)/'execution/checkpoint-001.json')
+        self.assertEqual(self.action('tune-checkpoints',id=identifier)['indices'],[2])
+        with self.assertRaisesRegex(ValueError,'symlink'):self.action('open-tune-checkpoint',id=identifier,index=1)
+        for index in (True,0,-1,1.,'1','../1'):
+            with self.assertRaises(ValueError):self.action('open-tune-checkpoint',id=identifier,index=index)
+
+    def test_cancelled_job_checkpoints_survive_manager_restart_and_resume(self):
+        self.request['project']['case']['mesh'].update(nr=64,nz=64)
+        identifier=self.action('start-tune',request=self.request)['id']
+        with self.assertRaisesRegex(ValueError,'stopped'):self.action('tune-checkpoints',id=identifier)
+        directory=self.manager.directory(identifier)
+        deadline=time.monotonic()+30
+        while not (directory/'execution/checkpoint-001.json').is_file():
+            if time.monotonic()>deadline:self.fail('first tune checkpoint timed out')
+            time.sleep(.01)
+        self.manager.cancel(identifier)
+        self.assertEqual(self.manager.status(identifier)['status'],'cancelled')
+        self.manager.close();self.manager=JobManager(self.root);self.addCleanup(self.manager.close)
+        listing=self.action('tune-checkpoints',id=identifier)
+        self.assertIn(1,listing['indices'])
+        first=self.action('open-tune-checkpoint',id=identifier,index=1)
+        resumed=self.wait(self.action('resume-tune',document=first['serialized'],max_new_trials=1)['id'])
+        self.assertEqual(resumed['document']['trial_runs'][:1],first['document']['trial_runs'])
+        self.assertEqual(len(resumed['document']['trials']),2)
+
     def test_strict_transport_and_changed_checkpoint(self):
         for action,data in [('start-tune',dict(request=self.request,unknown=True)),('tune-result',dict(id='../x')),
                 ('replay-tune',dict(document={'document_type':'wrong'}))]:

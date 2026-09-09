@@ -232,6 +232,30 @@ try {
   await wait(`document.querySelector('[data-job="${fifth}"] button')?.textContent==="中止"`);await click(`[data-job="${fifth}"] button`);
   await wait(`document.querySelector('[data-job="${fifth}"] strong')?.textContent.startsWith("中止")`);
   await check("active tuning can be cancelled without publishing success",`document.querySelector('[data-job="${fifth}"] button').disabled`);
+  await click(`[data-tune-checkpoints="${fifth}"]`);await wait('!tuningBusy && document.querySelector("#tune-checkpoint-job").textContent.includes("保存済み試行はありません")');
+  await check("cancelled job without saved trials cannot open a checkpoint",'document.querySelector("#tune-checkpoint-open").disabled');
+  await click(`[data-tune-checkpoints="${first}"]`);await wait('!tuningBusy && document.querySelector("#tune-checkpoint-index").options.length===2');
+  await check("checkpoint list labels unverified candidates and defaults to latest",'document.querySelector("#tune-checkpoint-index").value==="2" && document.querySelector("#tune-checkpoint-index").textContent.includes("未検証")');
+  await ev('document.querySelector("#tune-checkpoint-index").value="1"');await click("#tune-checkpoint-open");
+  await wait('!tuningBusy && tuningResult.document.trials.length===1');
+  await check("selected earlier checkpoint is verified before enabling resume",'tuningResult.document.status==="PAUSED" && !document.querySelector("#tune-resume").disabled');
+  if(args["--workspace"]) {
+    const recoverable=structuredClone(request);recoverable.project.case.mesh.nr=64;recoverable.project.case.mesh.nz=64;
+    await fill("#tune-request",JSON.stringify(recoverable));await fill("#tune-limit","");
+    const interrupted=await launch("#tune-start");let saved=false;
+    for(let n=0;n<300;n++){try{JSON.parse(await readFile(resolve(args["--workspace"],interrupted,"execution/checkpoint-001.json"),"utf8"));saved=true;break;}catch{}await sleep(20);}
+    if(!saved)throw Error("recoverable checkpoint was not saved");
+    await click(`[data-job="${interrupted}"] button`);
+    await wait(`document.querySelector('[data-job="${interrupted}"] strong')?.textContent.startsWith("中止")`);
+    await click(`[data-tune-checkpoints="${interrupted}"]`);await wait('!tuningBusy && document.querySelector("#tune-checkpoint-index").options.length>0');
+    await ev('document.querySelector("#tune-checkpoint-index").value="1"');await click("#tune-checkpoint-open");
+    await wait('!tuningBusy && tuningResult.document.request.project.case.mesh.nr===64 && tuningResult.document.trials.length===1');
+    await fill("#tune-limit","1");const resumed=await launch("#tune-resume");await openJob(resumed,"PAUSED",2);
+    await check("cancelled tuning resumes from the selected saved trial",`tuningResult.document.trial_runs[0].includes(${JSON.stringify(interrupted)}) && tuningResult.document.trial_runs[1].includes(${JSON.stringify(resumed)})`);
+    const rect=await ev('(()=>{const a=document.querySelector("#tune-checkpoint-job").getBoundingClientRect(),b=document.querySelector("#tune-trials").getBoundingClientRect();return {x:a.x+scrollX,y:a.y+scrollY,width:a.width,height:b.bottom-a.top,scale:1}})()');
+    const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/checkpoint-recovery.png",Buffer.from(shot.data,"base64"));
+    report.recovery_job_ids={interrupted,resumed};
+  }
   if(args["--coupled"]) {
     const coupled=JSON.parse(await readFile(args["--coupled"],"utf8"));
     await click("#tune-coupled");

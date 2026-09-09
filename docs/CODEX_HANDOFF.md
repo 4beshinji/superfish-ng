@@ -1,6 +1,14 @@
 # ローカルCodexへの引継ぎ
 
-## 最新: 二次境界の空間候補選別 — 2026-09-09
+## 最新: 周波数調整の途中保存一覧・復旧 — 2026-09-09
+
+[D02 GUI復旧](GUI_TUNING_CHECKPOINTS.md)を限定受入。停止したtuneジョブに「途中保存を選ぶ」を追加し、保存済み試行を未検証候補として一覧表示。選択時は公開replayに加えて元ジョブrequest、保存番号、今回の試行の所属、再開前祖先を照合する。PAUSEDだけ既存操作で別ジョブへ再開する。空一覧/改変/別ジョブ差替え/symlink/実行中を拒否・区別。FEM/追跡/二分法/最終ゲート不変。
+API91592は終了0、5検査17.017秒。実中止→管理器再起動→最初の保存を選択→1試行追加を確認。ログは標準out/gui-tests.log。
+Chrome84581は終了0、out/browser-tune-checkpoints-20260909の17項目PASS/外部要求0。従来13項目に空一覧、未検証一覧、前の保存選択、実中止後再開を追加。checkpoint-recovery.pngを実表示。復旧元20260909-092352-af4bd6dd68はcancelled、再開先20260909-092355-7a9ef2eed0はcomplete/PAUSEDで2試行。rawジョブはout/gui-tune-checkpoints-20260909に保持。GUI64611/PID238249はSIGINT正常停止・終了0。
+標準46473は終了0、out/validation-tune-checkpoints-20260909、692件中690合格・2 skip、unittest471.722秒。seed9モード19量f差0/RF最大8.882e-16。標準392対象ファイルと終了後source、Chrome対象hash一致。全関連実行は終了しソース固定解除。主ツリー6b2a592を基準に実装した。
+README/対応表/計画/実装状況/TUNINGの残件を同期。親D02の一般形状/非線形変数とD03の制約付き最適化は残る。次はD02の残る設計変数/形状契約か、他未完了親課題の実装へ進む。親課題の受入件数8は増やさず、全体目標を継続する。
+
+## 二次境界の空間候補選別 — 2026-09-09
 
 [限定受入](QUADRATIC_BOUNDARY_CANDIDATES.md)。curved_spaceの既存箱木をbox_candidatesへ移し、check_quadratic_boundaryにも適用。厳密に分離した箱だけを除外、隣接辺と辞書順を維持。boxes_checkedは旧相当の論理数であり実呼出し数ではない。FEM式・許容差・探索上限を変更しない。
 正64角形の呼出し検査は変更前1,952回でFAIL、変更後に関連9件PASS。旧自作d319dc2のモジュールと24条件で証明/最初のエラー完全一致。git blob照合済み。独立測定out/boundary-candidates-comparison-20260909はPASS、交互3回中央値で正512角形0.911→0.0366秒、native 2,744辺23.975→0.203秒。境界単体であり全workflowの速度とは扱わない。native入力は中断実験event-028から取り、元実験の完走とは扱わない。

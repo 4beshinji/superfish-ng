@@ -144,6 +144,8 @@ def create_server(workspace, port=0):
                     "adaptive-refinement-result": ["id"],
                     "replay-adaptive-refinement": ["document"],
                     "start-tune": ["request", "max_new_trials"],
+                    "tune-checkpoints": ["id"],
+                    "open-tune-checkpoint": ["id", "index"],
                     "resume-tune": ["document", "max_new_trials"],
                     "tune-result": ["id"],
                     "replay-tune": ["document"],
@@ -198,7 +200,7 @@ def create_server(workspace, port=0):
                 if action in ("start-adaptive-refinement", "resume-adaptive-refinement", "adaptive-refinement-result", "replay-adaptive-refinement"):
                     from .gui_adaptive_refinement import adaptive_refinement_response
                     return self.reply(adaptive_refinement_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
-                if action in ("start-tune", "resume-tune", "tune-result", "replay-tune"):
+                if action in ("start-tune", "resume-tune", "tune-result", "replay-tune", "tune-checkpoints", "open-tune-checkpoint"):
                     from .gui_tuning import tuning_response
                     return self.reply(tuning_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
                 if action in ("start-tracked-study", "resume-tracked-study", "tracked-study-result", "replay-tracked-study", "start-adaptive-study", "resume-adaptive-study", "adaptive-study-result", "replay-adaptive-study"):
