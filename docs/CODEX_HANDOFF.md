@@ -1,6 +1,10 @@
 # ローカルCodexへの引継ぎ
 
-次の限定課題：[C00/K09のTE相補解](C00_TE_COMPLEMENTARY_PLAN.md)。R25本文の説明とSFO壁損失の制限を確認したが、新規旧版実行は未実施。独立TEの受入と旧版の相補解入力/出力の受入を分離する。
+最新集計は8受入/10調査実装中/14他/1候補=33。P02の仕様と隔離FEM調査を開始したため分類を更新した。以下の8/9/15/1は以前の記録。P02製品対応や親受入は未完。
+
+C00/K09の[TE相補解比較器](C00_TE_COMPLEMENTARY_PLAN.md)を限定受入。基準ff0b572。独立46759は12旧版計算＋2P2 FEM、追加Q照合47913、標準87077（803件/801合格/2skip、1237.336秒）、最終33982は全て終了0。TM seed f差0/RF最大8.882e-16、旧TE10件差0、source472一致。専用Xvfb95359/PID1203189もSIGINT終了0。生データはout/c00-te-complementary-independent-20260909、最終回帰はout/validation-c00-te-complementary-20260909。既存Wine wrapperは出力を生成せず、明示Wine/prefix＋専用画面で実行した。失敗ログは開発outに保持。
+
+次は[平面RF契約](PLANAR_RF_PLAN.md)の主ツリー実装。隔離候補out/planar-rf-subspace-candidate-20260909は48実FEM・8モードのP2最終f/場/G・零空間・縮退/相似がPASS。P1追加out/planar-rf-p1-fine-candidate-20260909も24実FEM・n512で同じゲートを満たした。両方のverify.py/report.json/execution.logを保持し、全実行は終了0、source472不変。候補はstrict Case/保存/CLI未接続であり製品対応ではない。旧版Cartesian実行も未検証。
 
 ## 同端条件のTE円筒/鏡映追跡：限定受入完了
 
