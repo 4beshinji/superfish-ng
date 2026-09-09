@@ -1,6 +1,13 @@
 # ローカルCodexへの引継ぎ
 
-## 最新: RF適応の改善を主ツリーへ統合 — 2026-09-09
+## 最新: 二次境界の空間候補選別 — 2026-09-09
+
+[限定受入](QUADRATIC_BOUNDARY_CANDIDATES.md)。curved_spaceの既存箱木をbox_candidatesへ移し、check_quadratic_boundaryにも適用。厳密に分離した箱だけを除外、隣接辺と辞書順を維持。boxes_checkedは旧相当の論理数であり実呼出し数ではない。FEM式・許容差・探索上限を変更しない。
+正64角形の呼出し検査は変更前1,952回でFAIL、変更後に関連9件PASS。旧自作d319dc2のモジュールと24条件で証明/最初のエラー完全一致。git blob照合済み。独立測定out/boundary-candidates-comparison-20260909はPASS、交互3回中央値で正512角形0.911→0.0366秒、native 2,744辺23.975→0.203秒。境界単体であり全workflowの速度とは扱わない。native入力は中断実験event-028から取り、元実験の完走とは扱わない。
+標準out/validation-boundary-candidates-20260909はPASS、690件中688合格・2 skip、unittest469.939秒、子コマンド終了0。seed9モード19量f差0/RF最大8.882e-16。独立/標準/終了後の全392対象hash一致。新規ブラウザー検証なし。ログは各out/execution.logにも保存。
+独立・標準プロセスは終了済み（標準PID213861/213862消滅と最終PASS報告確認）。実行ハンドルは出力切詰めで失われたため親の終了コードを再取得したとは記録しない。ソース固定解除可。主ツリー上の変更で、前回統合d319dc2を基準とする。次は未完了親課題の仕様/受入条件を再照合する。N04一般精度/効率と全体計画は継続中。
+
+## RF適応の改善を主ツリーへ統合 — 2026-09-09
 
 fc76e64（祖先ジョブの観測時間）、81fc416（次計画共有）、ee455eb（明示した表面細分方針）を主ツリーへ統合。README/対応表/計画/実装状況を更新。主ツリーの検証対象384ファイルはee455ebの実装・tests・scripts・examplesと完全一致。主ツリーだけにあるeditable-install egg-info 6ファイルは統合前から不変。installed .venvで主ツリーの新request検証/importもPASS。
 標準689件（687合格・2 skip、472.620秒）、実Chrome19項目、旧文書全prefix一致、CLI、非球形両尺度、最終公開native replayが完了。標準後の変更は比較scriptの初期同一性修正だけで、修正後に両尺度を再実行PASS。数値コア/GUI/全testsは標準時点と一致。新しく全件回帰を主ツリーで繰り返したとは扱わない。

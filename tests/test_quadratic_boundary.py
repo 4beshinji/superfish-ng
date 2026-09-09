@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 import unittest
+from unittest.mock import patch
 import numpy as np
 from superfish_ng.quadratic_boundary import QuadraticEdge,check_quadratic_boundary,separated_edges,adjacent_edges
 from superfish_ng import Case
@@ -15,6 +16,17 @@ def square(bottom=0.,top=1.):
 
 
 class QuadraticBoundaryTests(unittest.TestCase):
+    def test_disjoint_polygon_boxes_avoid_pairwise_subdivision_calls(self):
+        from superfish_ng import quadratic_boundary as module
+        n=64;angle=np.arange(n)*2*np.pi/n
+        corners=np.column_stack((np.cos(angle),np.sin(angle)))
+        points=np.vstack((corners,(corners+np.roll(corners,-1,axis=0))/2))
+        nodes=np.column_stack((np.arange(n),np.roll(np.arange(n),-1),np.arange(n)+n))
+        with patch.object(module,'separated_edges',wraps=module.separated_edges) as calls:
+            result=module.check_quadratic_boundary(points,nodes)
+        self.assertEqual(result['boxes_checked'],n*(n-3)//2)
+        self.assertLess(calls.call_count,4*n)
+
     def test_curved_cycle_and_reversed_unordered_edges(self):
         points,nodes = square(.4,.6)
         for scale in (1e-5,1.,1e5):

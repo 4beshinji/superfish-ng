@@ -2,6 +2,7 @@
 """Quadratic Bezier boundary checks using subdivision and convex-hull bounds."""
 from dataclasses import dataclass
 import numpy as np
+from .box_candidates import _overlapping_box_candidates
 
 
 @dataclass(frozen=True)
@@ -147,15 +148,23 @@ def check_quadratic_boundary(points,boundary_nodes,*,max_boxes=10000):
         node = end
     if node!=start or len(used)!=len(nodes):
         raise ValueError('quadratic boundary must be one closed cycle')
-    checked = 0
-    for i,a in enumerate(ordered):
-        for j in range(i+1,len(ordered)):
+    bounds=np.asarray([edge.bounds(padding) for edge in ordered])
+    # Each nonadjacent pair has one initial box test. Spatially discharged
+    # pairs contribute that same logical count without entering subdivision.
+    checked = len(ordered)*(len(ordered)-3)//2
+    for i,candidates in _overlapping_box_candidates(bounds):
+        a=ordered[i]
+        # Shared endpoints are inclusive candidates; retain adjacency checks
+        # explicitly as well, in the original first-failure order.
+        adjacent={i+1} if i+1<len(ordered) else set()
+        if i==0:adjacent.add(len(ordered)-1)
+        for j in sorted(set(candidates)|adjacent):
             b = ordered[j]
             if j==i+1:
                 checked += adjacent_edges(a,b,padding=padding,max_boxes=max_boxes)
             elif i==0 and j==len(ordered)-1:
                 checked += adjacent_edges(b,a,padding=padding,max_boxes=max_boxes)
             else:
-                checked += separated_edges(a,b,padding=padding,max_boxes=max_boxes)
+                checked += separated_edges(a,b,padding=padding,max_boxes=max_boxes)-1
     return dict(status='PASS',edges=len(ordered),boxes_checked=checked,
                 roundoff_padding_m=padding*scale,scope='quadratic boundary cycle only')
