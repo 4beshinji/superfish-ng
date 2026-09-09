@@ -35,7 +35,8 @@
 <div id="convergence-result" hidden><h3>選択した細分診断</h3><p id="convergence-selection"></p><div id="convergence-checks"></div><div id="convergence-points"></div><button id="convergence-result-save">診断結果を保存</button></div>
 </section><section><h2>平面のモード追跡</h2>
 <p>元の電場を宣言した写像で比較します。各対象帯域の上に、少なくとも1モードを計算しておいてください。</p>
-<label>形状の対応<select id="tracking-mapping"><option value="normalized_rectangle">矩形：単位正方形へ写す</option><option value="polygon_uniform_scale">明示多角形：原点まわりの一様尺度</option><option value="polygon_similarity">明示多角形：尺度・回転・平行移動</option></select></label>
+<label>形状の対応<select id="tracking-mapping"><option value="normalized_rectangle">矩形：単位正方形へ写す</option><option value="polygon_uniform_scale">明示多角形：原点まわりの一様尺度</option><option value="polygon_similarity">明示多角形：尺度・回転・平行移動</option><option value="polygon_same_domain">同じ多角形：異なるメッシュ</option></select></label>
+<div id="tracking-remesh-options" hidden><p>同じ多角形の元要素どうしを比較します。節点番号や分割は異なって構いません。形状の変更は受け付けません。</p><label>候補探索の比較回数上限<input id="tracking-candidate-tests" type="number" min="1" step="1" value="2000000"></label></div>
 <div id="tracking-polygon-options" hidden><p id="tracking-origin-note">次の座標 = 尺度 × 前の座標。平行移動・回転・形状変更は対応していません。三角形の番号と宣言した四分割関係が一致する保存場を選びます。</p>
 <div id="tracking-similarity-options" hidden><p>宣言変換 F(x) = 尺度 × R(角度) x + 平行移動。通常は次の座標 = F(前の座標)、逆向きでは前の座標 = F(次の座標)です。せん断・鏡映・任意変形には対応していません。</p>
 <label>回転角 [rad]（反時計回り）<input id="tracking-angle" type="number" step="any" value="0"></label><label>平行移動 x [m]<input id="tracking-translation-x" type="number" step="any" value="0"></label><label>平行移動 y [m]<input id="tracking-translation-y" type="number" step="any" value="0"></label><label><input id="tracking-inverse" type="checkbox">宣言変換を逆向きに使う</label></div>

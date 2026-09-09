@@ -1,5 +1,7 @@
 # 実装・検証の現状
 
+[同じ多角形の独立再メッシュ](PLANAR_REMESH_TRACKING.md)：同じ多角形の独立メッシュ間の元電場追跡を限定受入。要求/結果版4、厳密な領域・各元要素面積・候補予算、全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準939件（937合格、2skip、1486.136秒）、追加7unit、独立32 FEM/32対応、混次数16比較、幾何24条件、解析16条件、縮退16 FEM、実追跡32/履歴16worker、中止/再起動、Chrome96操作とGUI63保存ジョブを確認。旧版1〜3・38履歴・TM/TE/平面回帰と538sourceも合格。形状変更との合成・曲線・親P02と全計画は未完。
+
 [多角形の宣言相似写像](PLANAR_SIMILARITY_TRACKING.md)：明示多角形の正の尺度・回転・SI平行移動による追跡を限定受入。要求/結果版3、正逆の元電場積分、完全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準932件（930合格、2skip、1447.175秒）、追加9unit、独立64 FEM/128対応、解析32条件、縮退16 FEM、実追跡32/履歴16worker、中止/再起動、Chrome87操作とGUI56保存ジョブを確認。旧版追跡・22履歴・TM/TE/平面数値回帰と535sourceも合格。一般変形・親P02と全計画は未完。
 
 [平面追跡の保存履歴](PLANAR_TRACKING_HISTORY.md)：平面モード追跡の保存履歴を限定受入。保存場・帯域・ID集合の連続性を全再検証し、未解決・段階上限での停止、所有コピーへの追加、CLI/実worker/GUIを接続した。標準923件（921合格、2skip、1417.539秒）、追加15unit、独立18履歴worker、Chrome76操作、GUI47保存ジョブと再起動後取込を確認。532sourceと旧TM/TE/平面の保存・周波数/RF回帰も合格。親P02と全計画は未完。
@@ -110,7 +112,7 @@
 
 [版3の表面量を含む適応停止](ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 
-確認日: 2026-09-10。平面相似写像版3の実装後。コードと最新の個別受入記録を照合した。標準検証の最終状態は冒頭と個別仕様を参照。
+確認日: 2026-09-10。平面独立再メッシュ追跡版4の実装後。コードと最新の個別受入記録を照合した。標準検証の最終状態は冒頭と個別仕様を参照。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -127,7 +129,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 分野 | 実装・入口 | 制約・残件 | 証拠 |
 |---|---|---|---|
 | 物理 | 真空、軸接続m=0 TM/TE、PEC・平坦z端の電気/磁気対称。別契約で矩形/単純多角形の平面TE/TM遮断問題 | 内導体、複数材料、静的場は未実装。平面はβ=0で、曲線・多重連結/TEMは未対応 | [PHYSICS.md](PHYSICS.md)、[AXISYMMETRIC_TE.md](AXISYMMETRIC_TE.md)、[PLANAR_POLYGON_RF.md](PLANAR_POLYGON_RF.md) |
-| TE・平面の操作 | 専用native/Project/worker・CLI/GUI、場表示とSIプローブ、独立Study・同形状細分、限定追跡。平面は所有履歴と宣言相似写像版3を接続 | TE追跡は同端条件の円筒。平面追跡は矩形宣言写像または検証済み多角形尺度/相似関係。一般形状変更の追跡・調整は未対応 | [GUI_TE.md](GUI_TE.md)、[GUI_PLANAR.md](GUI_PLANAR.md)、[PLANAR_TRACKING_HISTORY.md](PLANAR_TRACKING_HISTORY.md)、[PLANAR_SIMILARITY_TRACKING.md](PLANAR_SIMILARITY_TRACKING.md) |
+| TE・平面の操作 | 専用native/Project/worker・CLI/GUI、場表示とSIプローブ、独立Study・同形状細分、限定追跡。平面は所有履歴、宣言相似写像版3、同一領域再メッシュ版4を接続 | TE追跡は同端条件の円筒。平面追跡は矩形宣言写像または検証済み多角形尺度/相似関係、同一多角形の独立メッシュ。一般形状変更の追跡・調整は未対応 | [GUI_TE.md](GUI_TE.md)、[GUI_PLANAR.md](GUI_PLANAR.md)、[PLANAR_TRACKING_HISTORY.md](PLANAR_TRACKING_HISTORY.md)、[PLANAR_SIMILARITY_TRACKING.md](PLANAR_SIMILARITY_TRACKING.md) |
 | 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否 | 軸対称TEと専用平面TE/TM以外の追加物理を受理する契約ではない | [MODEL_CONTRACT.md](MODEL_CONTRACT.md) |
 | 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 穴・内導体・任意CADなし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
 | メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLI/JobManager/GUIあり。版3の表面量停止はAPI/CLI/JobManager/GUIへ接続。曲線局所細分の空間/係数移送APIあり。曲線局所履歴の保存/CLI・曲線残差指標あり。曲線版4の五量停止/保存再開API/CLI/JobManager/GUIあり。高次積分比較も表示。物理誤差上界は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |

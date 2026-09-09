@@ -1,5 +1,7 @@
 # 平面RFの表示とGUI
 
+[同じ多角形の独立メッシュ間の追跡](PLANAR_REMESH_TRACKING.md)も専用方式として追加。候補予算・要求/結果・履歴・保存復元を版4で保持する。
+
 [平面独立Study](PLANAR_STUDY.md)を追加。現在のProjectからの掃引、条件保存/読込、各点のRF表示・結果取込に対応する。[同形状細分診断](PLANAR_CONVERGENCE.md)も専用操作へ接続・限定受入。[矩形の宣言写像追跡](PLANAR_TRACKING.md)、[多角形の原点尺度追跡](PLANAR_POLYGON_TRACKING.md)、[所有履歴](PLANAR_TRACKING_HISTORY.md)にも対応する。回転・平行移動を含む新しい要求版3の仕様と検証状態は[相似写像追跡](PLANAR_SIMILARITY_TRACKING.md)を参照。
 
 専用xy表示・SIプローブと `/planar.html` を接続した。独立場・ブラウザー操作・保存再起動・標準/既存数値回帰を確認し、以下の範囲で限定受入。[受入条件](PLANAR_GUI_PLAN.md)。矩形Case版1・明示単純多角形版2、TE/TM、P1/P2と専用PlanarProjectを保持する。
