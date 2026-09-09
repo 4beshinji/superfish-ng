@@ -1,5 +1,7 @@
 # 弧ごとの分割数を保持する
 
+後続実装: [曲線Project一括変形](CURVED_PROJECT_TRANSFORM.md)を追加。曲線tune接続は残る。以下はこの基盤を受け入れた時点の記録。
+
 2026-09-09、D02の曲線/元メッシュ同時変形の前提。
 Case第3版のcurved_contour geometryに任意 `segments_per_curve` を追加する。
 元の各プリミティブに対応する正整数配列であり、弧のfractionを均等分割する。

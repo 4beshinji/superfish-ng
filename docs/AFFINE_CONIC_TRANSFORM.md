@@ -1,5 +1,7 @@
 # 弧の対応を保持するアフィン変形
 
+後続実装: [曲線Project一括変形](CURVED_PROJECT_TRANSFORM.md)を追加。曲線tune接続は残る。以下はこの基盤を受け入れた時点の記録。
+
 2026-09-09。D02の曲線形状調整に必要な幾何基盤。
 `affine_conics.transform_curve(curve, affine_map)` は既存の線分・円/楕円弧・
 双曲線弧を `(r,z) → (a r, b r+c z)` へ変形する。

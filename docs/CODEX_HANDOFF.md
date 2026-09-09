@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: D02 曲線Project一括変形 — 2026-09-09
+
+[仕様・証拠](CURVED_PROJECT_TRANSFORM.md)。curved_project_transform.transform_curved_projectは元Case/メッシュを新しいProject第2版へアフィン変形し、元の自動弦分割も固定数へ確定する。元メッシュ未指定なら元形状で一度生成。rf_coordinatesは必須fixed/axial、間隙・最小曲率/生成/品質/材料/正規化条件は固定、弦/接合近似予算は最大特異値で伸縮して再検査。二次空間の各履歴prefixの接続/点/境界fractionを照合し、最長辺/対角線選択が変わる局所細分はUNVERIFIED拒否。relative_affine_mapは同じbaseからの2変形のcurrent @ inverse(previous)を導出する。
+開始時59659終了0、706件704合格・2skip、477.917秒。API未存在で追加検査red。別置き試作93329終了0/5件2.129秒、試作独立86936終了0/8例は最終証拠と区別。鏡映追加58964終了1/6件2FAILは、未指定phase_origin_mを明示0にした際のz_min反射後の原点移動。未指定は未指定のまま保つ修正で既存の全体空洞既定0を維持、明示原点は変換後に既存の鏡映規約を適用。最終unit71542終了0、6件3.792秒。左右×両対称の実Job/保存RF条件も確認した。
+最終独立82969終了0、out/curved-project-transform-final-20260909の8例。楕円/双曲線/円筒/円錐の通常Job保存再読込、相似4例最大1.710e-14、円筒解析f2例最大1.053e-7、円錐せん断も含む体積a²c則最大1.111e-16、二次点誤差最大2.776e-17 m、相対写像での実追跡4例PASS。局所細分追加63640終了0、out/curved-project-marked-20260909、marked集合[0]/[0,2]→uniformの0.5/2倍4例、100/108要素接続/保存完全一致、f/両RQ/G相似最大3.753e-14。driverとsource hashを保持。
+最終標準98159終了0、out/validation-curved-project-transform-20260909、712件中710合格・2skip、481.768秒。seed9モード19量f差0/RF最大8.882e-16。標準/最終独立/局所細分追加/終了後406対象hashが一致。GUI変更なし/新規Chromeなし。全関連実行終了、ソース固定解除。主ツリーe30a312を基準とする。
+次はtuning.pyの_request/_project/_assembleを曲線アフィン試行へ接続する。各試行は同じbaseから変換し、親試行→現在の写像を上記relative_affine_mapから導出してbuild_saved_mode_trackingへ渡す。固定ユーザー写像の使い回しは不可。最終細分は元二次幾何の一様制限として追加し、再メッシュ/再投影しない。旧v1/v2/v3文書と判定は保持、曲線版の単位・係数・RF方針・無効内部形状・保存再開・CLI/Job/GUIを明示検証する。局所履歴の任意変形は分割選択そのものの輸送契約が未実装。親8受入/7進行中/17他未受入/1候補=33、全体とD02未完了。
+
 ## 最新: D02 曲線と元メッシュの固定分割契約 — 2026-09-09
 
 [弧ごとの分割数](FIXED_CURVE_PARTITIONS.md)を限定受入。Case v3 geometryの任意segments_per_curveを正整数配列としてstrict受理、Pythonではtuple。既存弦誤差上界と接合補正の予算内でuniform fraction分割を保持する。不足時は拒否し自動増加しない。曲線二次写像・native保存/再構築・鏡映・GUI入力復元/保存へ接続。例題examples/projects/curved_fixed_partition.json。

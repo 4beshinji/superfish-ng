@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-09: [曲線Projectの一括変形](CURVED_PROJECT_TRANSFORM.md)。既存自作のnative弧変換・strictメッシュ・曲線空間再構築を合成し、行列合成/逆変換、体積のa²c則、円筒解析周波数とMaxwell相似を独立検証参照とした。最長辺依存の細分は各段階で対応を検査し、暗黙位相原点は既存鏡映契約を保持する。新規外部資料・依存・legacy参照はない。
+
 2026-09-09: [弧ごとの固定分割](FIXED_CURVE_PARTITIONS.md)。既存自作の二階微分による弦誤差上界を使用し、指定されたuniform fraction分割を検査・保持する。アフィン写像の点/Jacobian則、FEM相似則と鏡映を独立検証参照とする。新規外部資料・依存・legacy参照はない。
 
 2026-09-09: [Project第2版の元メッシュ](PROJECT_MESH.md)。既存自作のstrictメッシュ読込とsolve(mesh_data=...)をProject/通常Job/GUIへ接続。番号反転の不変性、円筒解析と相似則、固定曲線細分を検証参照とした。新規外部資料・依存・legacy参照はない。

@@ -1,5 +1,7 @@
 # Projectに明示元メッシュを保持する
 
+後続実装: [曲線Project一括変形](CURVED_PROJECT_TRANSFORM.md)を追加。曲線tune接続は残る。以下はこの基盤を受け入れた時点の記録。
+
 2026-09-09、O02/D02の実行・保存基盤。
 Project第2版は既存Projectの項目に必須 `mesh_data` を追加する。
 値は既存のSI/rz・0始まり・境界タグ付き三角形JSONであり、パス参照ではない。
