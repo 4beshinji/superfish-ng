@@ -13,6 +13,8 @@ from .planar_project import PlanarProject
 from .project import parse_json
 
 ACTIONS = {
+    'planar-normalize-study': ['document'], 'planar-start-study': ['document'],
+    'planar-study-result': ['id'], 'planar-study-point': ['id', 'index'],
     'planar-normalize': ['document'], 'planar-start': ['document'],
     'planar-import': ['path'], 'planar-result': ['id'],
     'planar-plot': ['id', 'mode', 'mesh', 'length_unit'],
@@ -25,6 +27,8 @@ ACTIONS = {
 def planar_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown planar operation')
+    if action in ('planar-normalize-study','planar-start-study','planar-study-result','planar-study-point'):
+        return planar_study_response(manager,action,data)
     required = ['document'] if action in ('planar-normalize', 'planar-start') else ['path'] if action=='planar-import' else ['id']
     if action in ('planar-probe', 'planar-probe-metadata'): required += ['points_xy_m']
     if action=='planar-download': required += ['file']
@@ -88,3 +92,27 @@ def planar_response(manager, action, data, render_lock, plot_cache):
     if _native_hashes(native)!=before or manager.status(data['id'], verify=True)!=state:
         raise ValueError('planar job changed while preparing GUI response')
     return payload, media
+
+
+def planar_study_response(manager, action, data):
+    from .planar_study import PlanarStudy
+    from .planar_study_jobs import read_planar_study, _snapshot
+    required=['document'] if action.endswith(('normalize-study','start-study')) else ['id']
+    if action=='planar-study-point':required.append('index')
+    keys(data,ACTIONS[action],required,'planar Study request')
+    media='application/json; charset=utf-8'
+    if 'document' in required:
+        raw=parse_json(data['document']) if isinstance(data['document'],str) else data['document']
+        study=PlanarStudy.from_dict(raw)
+        return ({'id':manager.start_planar_study(study)} if action=='planar-start-study' else study.to_dict()),media
+    directory=manager.directory(data['id']);study=PlanarStudy.load(directory/'study.json');before=_snapshot(directory,study)
+    result=read_planar_study(directory)
+    if action=='planar-study-result':
+        payload=dict(study=study.to_dict(),result=result,state=manager.status(data['id'],verify=True))
+    else:
+        index=data['index']
+        if type(index) is not int or not 0<=index<len(result['points']):raise ValueError('planar Study point index is out of range')
+        if before!=_snapshot(directory,study):raise ValueError('planar Study changed before point import')
+        payload={'id':manager.import_planar_result(directory/result['points'][index]['directory'])}
+    if before!=_snapshot(directory,study):raise ValueError('planar Study changed during GUI response')
+    return payload,media

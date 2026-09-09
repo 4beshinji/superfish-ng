@@ -8,5 +8,6 @@ from .solver import solve
 from .planar import PlanarCase, solve_planar
 from .planar_polygon import PlanarPolygonCase, load_planar_case
 from .planar_project import PlanarProject
+from .planar_study import PlanarStudy
 
-__all__ = ["Case", "make_mesh", "solve", "PlanarCase", "PlanarPolygonCase", "PlanarProject", "load_planar_case", "solve_planar", "__version__"]
+__all__ = ["Case", "make_mesh", "solve", "PlanarCase", "PlanarPolygonCase", "PlanarProject", "PlanarStudy", "load_planar_case", "solve_planar", "__version__"]

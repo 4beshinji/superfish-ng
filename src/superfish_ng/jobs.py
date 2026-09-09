@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_study_jobs import is_planar_study, verify_planar_study
+        if is_planar_study(directory, state, manifest):
+            verify_planar_study(directory, state, manifest)
+            return state
         from .planar_jobs import is_planar_job,verify_planar_job
         if is_planar_job(directory,state,manifest):
             verify_planar_job(directory,state,manifest)
@@ -289,6 +293,11 @@ class JobManager:
         """Execute a dedicated Cartesian cutoff Project in a local worker."""
         from .planar_jobs import start_planar
         return start_planar(self,project)
+
+    def start_planar_study(self, study):
+        """Run an independent Cartesian sweep; point ranks are not mode identities."""
+        from .planar_study_jobs import start_planar_study
+        return start_planar_study(self, study)
 
     def import_planar_result(self, source):
         """Import verified planar native bytes, preserving their explicit mesh."""

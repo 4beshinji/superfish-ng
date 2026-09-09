@@ -115,6 +115,11 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    planar_study=sub.add_parser('execute-planar-study',help='execute an independent Cartesian sweep; mode ranks are not tracked IDs')
+    planar_study.add_argument('study',type=Path)
+    planar_study.add_argument('--out',required=True,type=Path)
+    planar_study_replay=sub.add_parser('replay-planar-study',help='fully verify every saved Cartesian sweep point')
+    planar_study_replay.add_argument('run',type=Path)
     planar_plot=sub.add_parser('plot-planar',help='plot signed Cartesian cutoff fields from verified native coefficients')
     planar_plot.add_argument('run',type=Path)
     planar_plot.add_argument('--out',type=Path,required=True)
@@ -174,6 +179,12 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('execute-planar-study','replay-planar-study'):
+            from .planar_study import PlanarStudy
+            from .planar_study_jobs import execute_planar_study, read_planar_study
+            result=(execute_planar_study(PlanarStudy.load(args.study),args.out) if args.command=='execute-planar-study' else read_planar_study(args.run))
+            print(json.dumps(result,indent=2,allow_nan=False))
+            return 0
         if args.command=='plot-planar':
             from .planar_visualize import plot_planar_mode
             plot_planar_mode(args.run,args.out,args.mode,args.mesh,args.length_unit)

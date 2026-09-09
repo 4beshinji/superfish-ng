@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## 平面独立Study：限定受入
+
+基準2aac376。平面RFの独立Studyを限定受入。全点先行検証・実worker・完全保存再生・CLI/GUI・点取込を接続し、標準865件（863合格、2skip、unittest1238.644秒）、追加9検査、独立24掃引48点＋参照8FEM、交差/例題CLI、Chrome35操作と保存29Study/61点を確認。旧平面32件/TE10件、TM seed9モード19量f差0/RF最大8.882e-16、505sourceと保存hashも一致した。収束診断・追跡、親P02と全計画は未完。
+
+標準10422、独立86003（34.995秒）、交差/例題48062（5.155秒）、GUI独立70301、旧native98399、Chrome71114/14703/96225/12118と空でない候補一覧確認、保存監査35167と最終照合は全て終了0。専用GUI18475/PID1502485、40600/PID1512507、11843/PID1530349はSIGINT終了0、残る実行はない。全点/strict文書・source/queued/再投入・要約再hash/種別逃避・保存失敗の新8unitとGUI新1がPASS。主ツリー505source固定を解除して次へ進む。証拠PLANAR_STUDY.mdとout/validation-planar-study-final-20260910。
+
+次はPLANAR_CONVERGENCE_PLAN.md。隔離候補out/planar-refinement-candidate-20260910/refine.pyは四分割と疎なP1/P2係数移送だけ。32条件の元点/重心写像/多項式/PEC・PᵀM_fP/M_cとKの一致が50502終了0。収束診断/保存/製品APIへ未接続。同形状のf/E/H/RF、縮退部分空間/UNVERIFIED、三水準・保存再生を別に受け入れる。親集計8受入/10進行中/14他/1候補=33と全体目標を維持。
+
 ## 平面表示/GUI：限定受入
 
 基準7ae2212。平面RFのxy場表示・SIプローブ・専用GUIを限定受入。標準856件（854合格、2skip、unittest1238.757秒）、追加7unit、Chrome13操作・旧軸対称10操作・再起動後3操作、独立表示場/回転・CLI・保存/HTTP照合を確認。旧平面32件/TE10件、TM seed9モード19量（f差0、RF最大8.882e-16）、499sourceと保存hashも一致した。平面Study・収束比較・追跡等と親P02は未完。

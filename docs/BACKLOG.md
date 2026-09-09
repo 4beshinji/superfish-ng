@@ -1,5 +1,7 @@
 # 実装バックログ
 
+P02平面独立Study：[契約](PLANAR_STUDY_PLAN.md)と[証拠](PLANAR_STUDY.md)。平面RFの独立Studyを限定受入。全点先行検証・実worker・完全保存再生・CLI/GUI・点取込を接続し、標準865件（863合格、2skip、unittest1238.644秒）、追加9検査、独立24掃引48点＋参照8FEM、交差/例題CLI、Chrome35操作と保存29Study/61点を確認。旧平面32件/TE10件、TM seed9モード19量f差0/RF最大8.882e-16、505sourceと保存hashも一致した。収束診断・追跡、親P02と全計画は未完。 次は[同形状細分診断](PLANAR_CONVERGENCE_PLAN.md)の幾何・係数移送・全場/RF・縮退・保存再生を進める。
+
 P02平面表示/GUI：[受入条件](PLANAR_GUI_PLAN.md)と[証拠](GUI_PLANAR.md)。平面RFのxy場表示・SIプローブ・専用GUIを限定受入。標準856件（854合格、2skip、unittest1238.757秒）、追加7unit、Chrome13操作・旧軸対称10操作・再起動後3操作、独立表示場/回転・CLI・保存/HTTP照合を確認。旧平面32件/TE10件、TM seed9モード19量（f差0、RF最大8.882e-16）、499sourceと保存hashも一致した。平面Study・収束比較・追跡等と親P02は未完。 次は[Study・収束比較・追跡](PLANAR_STUDY_PLAN.md)を各契約ごとに進める。
 
 P02平面Project/Job：[受入条件](PLANAR_JOBS_PLAN.md)と[証拠](PLANAR_JOBS.md)。専用PlanarProjectと実worker、直接/管理済み取込、再起動・再実行を限定受入。標準849件（847合格、2skip、unittest1234.561秒）、新14unit、独立16条件workflow・8workerのf/場/G/Q、72保存ジョブと2同梱CLI例を確認。旧平面32件/TE10件/管理済み8件、TM seed9モード19量（f差0、RF最大8.882e-16）、491sourceと保存hashも一致した。GUI・Study・追跡等と親P02は未完。 次は[表示・GUI](PLANAR_GUI_PLAN.md)のxy場・位相/単位・元hash・ブラウザー/保存照合を進める。

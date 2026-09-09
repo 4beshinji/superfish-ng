@@ -67,3 +67,21 @@ class PlanarGuiTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'integrity'):self.request('planar-plot',id=identifier,mode=1,mesh=True,length_unit='m')
         for params in ({'mode':True},{'mode':3},{'mesh':1},{'length_unit':'cm'}):
             with self.assertRaises(ValueError):self.request('planar-plot',id=identifier,**params)
+
+    def test_independent_study_and_verified_point_import(self):
+        from superfish_ng.planar_study import PlanarStudy
+        study=PlanarStudy(self.project,'uniform_scale',[1,2])
+        self.assertEqual(self.request('planar-normalize-study',document=study.to_dict())[0],study.to_dict())
+        identifier=self.request('planar-start-study',document=study.to_dict())[0]['id']
+        self.assertEqual(self.manager.processes[identifier].wait(timeout=30),0)
+        result,_=self.request('planar-study-result',id=identifier)
+        self.assertEqual(result['result']['mode_tracking'],'not_performed')
+        self.assertEqual(result['study'],study.to_dict())
+        for index in (True,-1,2):
+            with self.assertRaises(ValueError):self.request('planar-study-point',id=identifier,index=index)
+        imported=self.request('planar-study-point',id=identifier,index=1)[0]['id']
+        opened,_=self.request('planar-result',id=imported)
+        self.assertEqual(opened['project'],study.projects()[1].to_dict())
+        source=self.manager.directory(identifier)/'point-0001/solution'
+        target=self.manager.directory(imported)/'solution'
+        self.assertEqual({p.name:p.read_bytes() for p in source.iterdir()},{p.name:p.read_bytes() for p in target.iterdir()})

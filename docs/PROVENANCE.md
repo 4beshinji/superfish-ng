@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-10：[平面独立Study](PLANAR_STUDY.md)。自作PlanarProject/FEM/Job/GUIを専用掃引文書と全点再検証で結合した。座標尺度・U′規格化・導電率の独立則、矩形cos場の順位交差と縮退部分空間を照合した。個別モードIDを順位から生成せず、全長RFやr重みを流用しない。新規外部資料・依存・legacy参照はない。
+
 2026-09-10：[平面表示/GUI](GUI_PLANAR.md)。自作平面FEMの元要素/重心座標を使って表示中心の場を評価し、既存MatplotlibとローカルHTTP/Chrome検証基盤へ接続。sin/cos解析場、回転ベクトル・相似則、B=μ0HとSI保存を独立照合した。新規外部資料・依存・legacy参照はない。
 
 2026-09-10：[平面Project/Job](PLANAR_JOBS.md)。既存自作JobManagerへ専用kind・Project/native結合・実worker・元係数を保持する取込を接続。投入後/完了中のProject変更とworker再投入の失敗反例を記録して、hash・queued条件・排他的claimを実装した。物理FEM/場/RF式は不変。独立の矩形sin/cosと三角形対称/反対称解で周波数・場・壁損失・場積分エネルギーを検証した。新規外部資料・依存・legacy参照はない。

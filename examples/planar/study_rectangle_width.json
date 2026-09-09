@@ -1,0 +1,44 @@
+{
+  "format": "superfish_ng_planar_study",
+  "study_version": 1,
+  "kind": "sweep",
+  "project": {
+    "format": "superfish_ng_planar_project",
+    "project_version": 1,
+    "case": {
+      "format": "superfish_ng_planar_case",
+      "schema_version": 1,
+      "name": "planar cutoff",
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "cartesian",
+        "polarization": "te",
+        "propagation_constant_per_m": 0,
+        "material": "vacuum",
+        "boundary": "pec"
+      },
+      "geometry": {
+        "type": "rectangle",
+        "width_m": 0.31,
+        "height_m": 0.2
+      },
+      "mesh": {
+        "nx": 8,
+        "ny": 6,
+        "element_order": 2
+      },
+      "modes": 4,
+      "rf": {
+        "stored_energy_j_per_m": 1.0,
+        "conductivity_s_per_m": 58000000.0
+      }
+    },
+    "display_length_unit": "mm"
+  },
+  "parameter": "/case/geometry/width_m",
+  "values": [
+    0.18,
+    0.2,
+    0.22
+  ]
+}

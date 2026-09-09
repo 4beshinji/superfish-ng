@@ -15,10 +15,16 @@
 <label>モード数<input id="modes" type="number" min="1" step="1"></label>
 <label>単位長エネルギー U′ [J/m]<input id="energy" type="number" step="any"></label>
 <label>壁導電率 [S/m]<input id="conductivity" type="number" step="any"></label>
-<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。曲線・材料・穴・伝搬・Studyは未対応です。</p>
+<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。曲線・材料・穴・伝搬・収束診断・追跡は未対応です。</p>
 <details><summary>Project JSONを編集</summary><textarea id="document" rows="18" aria-label="Project JSON"></textarea><button id="apply">JSONを適用</button><p>座標は表示単位によらずSIのmです。フォームへの反映には「JSONを適用」を押してください。</p></details>
 </section><section><h2>保存結果の取込</h2><label>ローカルnativeまたはジョブのディレクトリ<input id="import-path" type="text"></label><button id="import">保存結果を取り込む</button><p>保存係数と元メッシュを保持して検証します。新たな計算は「計算を開始」で行います。</p></section></div>
-<div><section><h2>計算履歴</h2><div id="jobs"></div></section>
+<div><section><h2>独立パラメータ掃引</h2>
+<p>現在のProjectから全点を検証して計算します。同じ順位は同一モードを意味しません。モード追跡・収束判定は行いません。</p>
+<label>パラメータ<select id="study-parameter"><option value="uniform_scale">一様尺度（元座標を原点から倍率変換）</option><option value="/case/geometry/width_m">矩形の幅 [m]</option><option value="/case/geometry/height_m">矩形の高さ [m]</option><option value="/case/rf/stored_energy_j_per_m">単位長エネルギー [J/m]</option><option value="/case/rf/conductivity_s_per_m">壁導電率 [S/m]</option></select></label>
+<label>値の配列（SI、2点以上）<textarea id="study-values" rows="2">[1, 2]</textarea></label>
+<button id="study-start">掃引を開始</button><button id="study-save">Studyを保存</button><label class="file">Studyを開く<input id="study-open" type="file" accept=".json"></label>
+<div id="study-result" hidden><h3>選択した掃引</h3><p id="study-selection"></p><p>独立スペクトル：追跡未実施・精度未検証。各点の「結果を取り込む」で元メッシュと保存係数を持つ結果を開きます。</p><div id="study-points"></div></div>
+</section><section><h2>計算履歴</h2><div id="jobs"></div></section>
 <section id="result" hidden><h2>選択した結果</h2><p id="selection"></p><p>完了は保存場の整合性確認です。メッシュの精度は未検証です。番号は固有値の順序で、追跡したモード名ではありません。</p><label>モード<select id="mode"></select></label><p id="quantities"></p><p id="na"></p><label><input id="mesh" type="checkbox">表示三角形を重ねる</label><button id="plot">場を描画</button><button id="save-image" disabled>画像を保存</button><img id="image" alt="xy断面の符号付き電磁場。実部とquadratureを別表示。" hidden>
 <h3>xyプローブ</h3><label>座標の配列 [m] — [[x, y], …]<textarea id="points" rows="3">[[0.03, 0.02]]</textarea></label><button id="probe">SIプローブCSVを保存</button><button id="probe-meta">プローブ情報を保存</button><p>全E/H成分をrealと+i quadratureで保存します。B=μ0H。領域外の点は拒否します。</p>
 <h3>元の計算データ</h3><div id="files"></div></section></div></main></body></html>
