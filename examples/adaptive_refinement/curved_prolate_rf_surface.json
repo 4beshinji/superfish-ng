@@ -1,0 +1,114 @@
+{
+  "schema_version": 5,
+  "case": {
+    "schema_version": 3,
+    "name": "synthetic_prolate_adaptive",
+    "geometry": {
+      "type": "curved_contour",
+      "curves": [
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.0,
+            0.0
+          ],
+          "end_zr_m": [
+            0.32,
+            0.0
+          ]
+        },
+        {
+          "type": "ellipse_arc",
+          "center_zr_m": [
+            0.16,
+            0.0
+          ],
+          "semiaxes_m": [
+            0.16,
+            0.08
+          ],
+          "start_rad": 0.0,
+          "sweep_rad": 3.141592653589793,
+          "rotation_rad": 0.0
+        }
+      ],
+      "edge_tags": [
+        "axis",
+        "pec"
+      ],
+      "join_tolerance_m": 1e-14,
+      "minimum_gap_m": 0.0,
+      "chord_tolerance_m": 0.0016,
+      "chord_max_segments": 20000
+    },
+    "mesh": {
+      "nr": 24,
+      "nz": 32,
+      "geometry_order": 2,
+      "contour_mesh": {
+        "max_edge_m": 0.064,
+        "min_angle_deg": 5.0,
+        "max_triangles": 250000,
+        "max_rounds": 12
+      }
+    },
+    "solver": {
+      "modes": 1,
+      "quadrature_order": 12,
+      "element_order": 2
+    },
+    "rf": {
+      "beta": 1.0,
+      "conductivity_s_per_m": 58000000.0,
+      "normalization_j": 1.0
+    },
+    "model": {
+      "physics": "rf_eigenmode",
+      "coordinates": "axisymmetric",
+      "polarization": "tm",
+      "azimuthal_index": 0,
+      "materials": [
+        {
+          "id": "vacuum",
+          "type": "vacuum"
+        }
+      ],
+      "regions": [
+        {
+          "id": "cavity",
+          "material": "vacuum",
+          "domain": "interior"
+        }
+      ]
+    }
+  },
+  "initial_mesh": null,
+  "initial_ids": [
+    "fundamental"
+  ],
+  "mode_id": "fundamental",
+  "controls": {
+    "mapping": "nested_curved",
+    "minimum_overlap": 0.95,
+    "minimum_assignment_margin": 0.05,
+    "relative_cluster_gap": 1e-06,
+    "minimum_relative_singular_value": 1e-08
+  },
+  "bulk_fraction": 0.5,
+  "max_levels": 12,
+  "max_triangles": 100000,
+  "minimum_corner_angle_deg": 5.0,
+  "relative_tolerances": {
+    "frequency_hz": 0.0001,
+    "r_over_q_accelerator_ohm": 0.005,
+    "geometry_factor_ohm": 0.005
+  },
+  "confirmation": "uniform_two_steps",
+  "surface_relative_tolerances": {
+    "epk_over_eacc": 0.01,
+    "bpk_over_eacc_mt_per_mv_per_m": 0.01
+  },
+  "quadrature_check_order": 24,
+  "quadrature_relative_tolerance": 1e-06,
+  "surface_refinement_policy": "uniform_when_rf_passes"
+}

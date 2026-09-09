@@ -336,6 +336,7 @@ class JobManager:
 
     def cancel(self, identifier):
         with self.lock:
+            cancel_started = time.monotonic()
             state = self.status(identifier)
             if state["status"] not in ("queued", "running"):
                 return state
@@ -357,6 +358,7 @@ class JobManager:
                     "cancelled",
                     kind=state.get("kind", "solve"),
                     error="cancelled by user; start a new run to retry",
+                    elapsed_seconds=state["elapsed_seconds"] + time.monotonic() - cancel_started,
                 )
             return self.status(identifier)
 

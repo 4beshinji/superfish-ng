@@ -63,7 +63,13 @@ class GuiAdaptiveRefinementTests(unittest.TestCase):
         self.request=json.loads(Path('examples/adaptive_refinement/pillbox.json').read_text())
         first_id=self.action('start-adaptive-refinement',request=self.request,max_new_levels=1)['id']
         first=self.wait(first_id);_state(self.manager.directory(first_id),'cancelled',kind='adaptive_refinement')
-        self.assertEqual(self.action('replay-adaptive-refinement',document=first['serialized']),first)
+        replayed=self.action('replay-adaptive-refinement',document=first['serialized'])
+        # Native evidence stays byte-identical; removed timing metadata becomes unknown.
+        self.assertEqual(replayed['document'],first['document'])
+        self.assertEqual(replayed['serialized'],first['serialized'])
+        self.assertTrue(first['execution_cost']['all_event_owners_timed'])
+        self.assertEqual(replayed['execution_cost']['unknown_event_indices'],[0])
+        self.assertEqual(replayed['execution_cost']['recorded_seconds'],0)
         resumed=self.wait(self.action('resume-adaptive-refinement',document=first['serialized'])['id'])
         self.assertEqual(resumed['document']['status'],'TARGETS_MET')
         from superfish_ng.jobs import execute_project

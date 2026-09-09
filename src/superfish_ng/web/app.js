@@ -2036,6 +2036,7 @@ function refinementButtons() {
 }
 function refinementVersion() {
   const version=Number($('refine-version').value);$('refine-order').disabled=version!==1;
+  $('refine-surface-policy').disabled=version!==5;
   $('refine-bulk-label').textContent=version===5 ? 'RF寄与の選択割合（0より大きく1以下）':'残差指標の選択割合（0より大きく1以下）';
   $('refine-max-levels-label').textContent=version===5 ? '全計算回数の上限（初期・未採用の確認・局所を含む）':'水準上限（初回を含む）';
   $('refine-limit-label').textContent=version===5 ? '今回追加する計算回数（確認も含む。空欄なら停止判断まで）':'今回追加する水準の上限（空欄なら停止判断まで）';
@@ -2053,6 +2054,8 @@ function showRefinement(response) {
   refinementResult=response;const d=response.document,r=d.request,branched=r.schema_version===5;
   const names={QUADRATURE_UNVERIFIED:'高次積分との比較を確認できず停止',PAUSED:'一時停止・再開可能',TARGETS_MET:'指定した細分差を達成',UNVERIFIED:'個別ID未確認で停止',QUANTITY_UNVERIFIED:'正の有限な判定量を確認できず停止',LEVEL_LIMIT:'水準上限で停止',REFINEMENT_LIMIT:'要素数または最小角の制約で停止',TRACKING_BUDGET:'追跡の作業量上限で停止',ZERO_INDICATOR:'選択可能な残差指標がなく停止'};
   $('refine-status').textContent=`${d.status} — ${names[d.status]}。計算済み ${d.levels.length} ${branched ? '回（未採用の確認も含む）':'水準'}。対象ID: ${r.mode_id}`;
+  const cost=response.execution_cost;
+  $('refine-cost').textContent=cost ? `関連ジョブの観測時間: ${cost.recorded_seconds.toFixed(2)} 秒${cost.all_event_owners_timed ? '':'（記録のある部分の合計）'}。時間記録あり ${cost.jobs.filter(j=>j.elapsed_seconds!==null).length} ジョブ。時間不明の計算 ${cost.unknown_event_indices.length} 回。`:'関連ジョブの観測時間: 不明。';
   const phase={initial:'初期',residual:'局所細分',uniform_confirmation:'全域確認',uniform_probe:'RF確認',rf_local:'RF局所細分'};
   $('refine-confirmation').textContent=`版${r.schema_version}: ${r.schema_version>=2 ? '全域確認 '+d.levels.filter(l=>l.refinement_kind==='uniform_confirmation').length+' 回（最低2回）' : '局所差のみ・全域確認なし'}。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'。' : ''} 表面ピーク: ${{UNASSESSED:'未評価',NOT_CONFIRMED:'全条件の確認未完',UNVERIFIED:'未確認',TARGETS_MET:'指定した区間変化を達成'}[d.surface_status]} (${d.surface_status})。物理誤差上界: なし。`;
   const accepted=branched ? d.decision.accepted_event_indices : d.levels.map(l=>l.index);
@@ -2064,7 +2067,9 @@ function showRefinement(response) {
     gateChanges=[previous?.changes,probe?.confirmation_comparison?.changes];
     peakGateChanges=[previous?.surface_changes,probe?.confirmation_comparison?.surface_changes];
     $('refine-confirmation').textContent=`版5: 採用列 ${accepted.map(i=>i+1).join(' → ') || 'なし'}。確認 ${d.levels.filter(l=>l.refinement_kind==='uniform_probe').length} 回、局所 ${d.levels.filter(l=>l.refinement_kind==='rf_local').length} 回。最終連続確認 ${d.levels[accepted.at(-1)]?.uniform_confirmations ?? 0} 回（必要2回）。${d.decision.next_refinement_kind ? '次: '+phase[d.decision.next_refinement_kind]+'、親計算 '+(d.decision.parent_event_index+1)+'。':''} 表面ピーク: ${d.surface_status}。物理誤差上界: なし。`;
-    $('refine-gate-context').textContent=probe ? `最後の比較: 親計算 ${probe.parent_event_index+1} → 確認計算 ${probe.index+1}（${probe.accepted ? '採用':'未採用'}）。局所細分の後は新しい確認が必要です。`:'一様確認はまだありません。';
+    const surfaceProgress=probe?.accepted && !probe.confirmation_comparison?.passed;
+    $('refine-gate-context').textContent=probe ? `最後の比較: 親計算 ${probe.parent_event_index+1} → 確認計算 ${probe.index+1}（${surfaceProgress ? '確認未達・次の親として採用':probe.accepted ? '採用':'未採用'}）。${surfaceProgress ? '合格数は0から数え直します。':'局所細分の後は新しい確認が必要です。'}`:'一様確認はまだありません。';
+    if(r.surface_refinement_policy==='uniform_when_rf_passes')$('refine-confirmation').textContent+=' 方針: RF三量が合格し表面だけ未達なら、確認解を次の親にして一様細分。';
   } else $('refine-gate-context').textContent='';
   for(const element of document.querySelectorAll('[data-refine-branch]'))element.hidden=!branched;
   const field=$('refine-field-event');field.replaceChildren();
@@ -2111,12 +2116,13 @@ function showRefinement(response) {
   }
   $('refine-quadrature-order').value=r.quadrature_check_order ?? 24;
   $('refine-quadrature-tolerance').value=r.quadrature_relative_tolerance ?? .000001;
+  $('refine-surface-policy').value=r.surface_refinement_policy ?? 'rf_goal';
   $('refine-request').value=JSON.stringify(r,null,2);$('refine-version').value=r.schema_version;refinementVersion();
   for(const [id,key] of [['bulk','bulk_fraction'],['max-levels','max_levels'],['max-triangles','max_triangles'],['angle',r.schema_version>=4 ? 'minimum_corner_angle_deg':'minimum_angle_deg']])$(`refine-${id}`).value=r[key];
   for(const [id,key] of [['overlap','minimum_overlap'],['margin','minimum_assignment_margin'],['gap','relative_cluster_gap'],['rank','minimum_relative_singular_value']])$(`refine-${id}`).value=r.controls[key];
   if(r.schema_version===1)$('refine-order').value=r.controls.sample_order;
   $('refine-ids').value=JSON.stringify(r.initial_ids);$('refine-mode-id').value=r.mode_id;
-  $('refine-diagnostics').textContent=JSON.stringify({decision:d.decision,controls:r.controls,initial_mesh:r.initial_mesh,level_runs:d.level_runs,
+  $('refine-diagnostics').textContent=JSON.stringify({execution_cost:cost ?? null,decision:d.decision,controls:r.controls,initial_mesh:r.initial_mesh,level_runs:d.level_runs,
     quality:d.levels.map(l=>l.quality),quadrature:d.levels.map(l=>l.quadrature_check ?? null),last_correspondence:d.levels.at(-1)?.tracking ?? null},null,2);
   refinementButtons();
 }
@@ -2142,6 +2148,7 @@ bind('refine-prepare',async()=>{
   if(version>=2)request.confirmation='uniform_two_steps';
   if(version>=3)request.surface_relative_tolerances=Object.fromEntries(refinementPeaks.map(([key,label,id])=>[key,number(`refine-${id}`)]));
   if(version>=4){request.quadrature_check_order=number('refine-quadrature-order');request.quadrature_relative_tolerance=number('refine-quadrature-tolerance');}
+  if(version===5 && $('refine-surface-policy').value!=='rf_goal')request.surface_refinement_policy=$('refine-surface-policy').value;
   $('refine-request').value=JSON.stringify(request,null,2);
 });
 bind('refine-start',()=>refinementAction('start-adaptive-refinement',{request:$('refine-request').value,...refinementLimit()}));

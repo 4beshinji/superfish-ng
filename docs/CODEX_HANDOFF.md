@@ -1,6 +1,51 @@
 # ローカルCodexへの引継ぎ
 
-## 最新: 次計画共有も別ブランチで検証済み — 2026-09-09
+## 最新: RF適応の改善を主ツリーへ統合 — 2026-09-09
+
+fc76e64（祖先ジョブの観測時間）、81fc416（次計画共有）、ee455eb（明示した表面細分方針）を主ツリーへ統合。README/対応表/計画/実装状況を更新。主ツリーの検証対象384ファイルはee455ebの実装・tests・scripts・examplesと完全一致。主ツリーだけにあるeditable-install egg-info 6ファイルは統合前から不変。installed .venvで主ツリーの新request検証/importもPASS。
+標準689件（687合格・2 skip、472.620秒）、実Chrome19項目、旧文書全prefix一致、CLI、非球形両尺度、最終公開native replayが完了。標準後の変更は比較scriptの初期同一性修正だけで、修正後に両尺度を再実行PASS。数値コア/GUI/全testsは標準時点と一致。新しく全件回帰を主ツリーで繰り返したとは扱わない。
+両尺度は同じ12回予算/初期写像/五量許容差で6イベント、最終7232要素/14665自由度。親採用と停止合格を区別し、未達確認採用の合格数0から一様2回合格。追加参照との差、Ritz、初期一致、体積、Maxwell最大4.923e-13がPASS。全execute104.942/105.398秒。参照は以前の自作一様FEM reportであり、絶対RF誤差上界ではない。詳細は[明示方針](CURVED_RF_SURFACE_POLICY.md)。
+関連summary・スクリーンショットを主ツリーoutへコピーし、各source-location.jsonに元パス/hashを記録。native実出力と絶対パスcheckpointは /tmp/superfish-rf-cost-worktree-20260909/out に保持。移動/削除しない。out/rf-surface-nonsphere-accepted-20260909/integration-source-check.json が統合照合証拠。
+従来の12回R/Q単独は両尺度LEVEL_LIMITを保持。任意の48回拡大60815/PID76757は新方針の両尺度完走を受けてSIGINT、終了130。checkpoint27/solveログ28、直前観測4745秒。中断を完走や尺度2結果と呼ばない。interruption.jsonと全native出力を保持。
+全プロセス・GUI・ブラウザーは終了済み。ソース固定なし。次は未完了親項目の再照合と、必要ならnative空間再構築/曲線境界ペア検査の改善。中断スタックはnested transfer再構築→check_quadratic_boundary→separated_edges。公開拒否と既存文書/数値一致を維持して実測する。N04一般精度/一般効率と全体計画は未完了。
+
+以下は統合前の時点別記録。進行中/未統合/未実装という表記は当時の状態を示す。
+
+## 明示した表面細分方針の検証完了 — 2026-09-09
+
+[方針と証拠](CURVED_RF_SURFACE_POLICY.md)。版5任意surface_refinement_policyを追加。未指定/rf_goalは旧動作、uniform_when_rf_passesはRF三量合格・表面だけ未達時に確認解を次の親へ採用し、合格数0から一様細分。五量連続2回だけで停止する。GUI明示選択/未達表示/方針復元/一様再開、CLI例題を追加。
+新4検査12983は32.842秒で終了0。CLI70586は終了0。Chrome17410は19項目PASS/外部要求0で終了0、rf-surface-progress.png実表示、GUI80722/PID161243は停止終了0。旧文書比較81886は終了0、旧fc76e64と半球/非球形初期5イベント全prefix/最終文書完全一致。
+初回非球形89100は両尺度6イベントTARGETS_METだがverifierの初期一致式が区間幅を差に算入して終了1。端点は完全一致で差0、誤った差約3.686e-7。out/rf-surface-nonsphere-initial-20260909 と診断を保持。
+標準99231は終了0、out/validation-rf-surface-policy-20260909 は689件/687合格/2 skip、472.620秒PASS。seed9モード19量f差0/RF最大8.882e-16、終了時全source/旧文書比較/browser対象hash一致。標準終了後、scripts/validate_curved_rf_nonsphere.pyの初期同一性だけを対応端点差へ修正。数値コア/GUI/全検査は不変。標準をこの修正後に再実行したとは扱わない。
+修正後78250は終了0、out/rf-surface-nonsphere-accepted-20260909 両尺度PASS。同じ12回予算/初期写像/五量許容差、80→320未採用→113→452未達の親採用→1808→7232、6イベント/14665自由度。合格数0,0,0,0,1,2。追加一様対照164481自由度に対するf/RQ/G/E/B差は全基準内、Ritz/初期一致/native解析体積/固定体積/Maxwell（最大4.923e-13）PASS。全execute104.942/105.398秒、全solve12.224/12.249秒。過去版4/一様時間とは同一プロセス試験でない。
+最終native replay51871も終了0、out/rf-surface-native-replay-20260909。両尺度checkpoint006をeigsh禁止で公開再検証、文書完全一致91.725/91.673秒。最終sourceと修正後両尺度/再検証hash一致、標準との差は比較script1本だけ（standard-coverage.json）。
+主ツリー旧48回拡大60815/PID76757は、新方針が元の12回予算で両尺度PASSとなったためSIGINT、終了130。直前観測4745秒、verified checkpoint027・solveログ28。out/curved-rf-nonsphere-expanded-20260909/interruption.jsonと全出力を保持し、純RFの完走/尺度2結果とは扱わない。主ツリーのソース固定は解除できる。中断スタックはnested transferでの空間再構築とcheck_quadratic_boundary/separated_edgesにあった。
+全関連実行は終了。現在は/tmp/superfish-rf-cost-worktree-20260909、branch feature/rf-surface-uniformで、費用表示fc76e64と次計画共有81fc416を祖先に含む。主ツリー統合と証拠summaryの保存が必要。N04/RFA一般精度/一般効率/全体計画は未完了。次の性能課題はnative空間再構築と境界検査の共有/候補選別（公開拒否と文書一致を維持）。
+
+## 版5次計画の実行内共有 — 2026-09-09
+
+[共有化](RF_ADAPTIVE_PENDING_PLAN.md)を /tmp/superfish-rf-cost-worktree-20260909 のbranch perf/rf-adaptive-pending-planで実装。親/確認からRF選択を導出した次計画をVerifiedRFPrefixへ一つ保持し、実装/request/祖先/native snapshot照合後だけ再利用。公開replayは全判断を再導出、新保存場のCase/mesh/二次写像照合も維持する。数値文書や停止条件の変更はない。
+呼出し回数red71948は終了1（旧2回）。変更後65973は6検査25.070秒で終了0。実3イベントRF選択1回、元親・marked対応、公開replay完全一致、変更拒否、外部decision変更が内部へ伝播しないことを確認。
+旧自作モジュールfc76e64をout/rf-pending-baseline-20260909へ保存し、git blob hash完全一致を確認。比較11865は終了0、out/rf-pending-comparison-20260909。半球/非球形初期5イベントを旧/新同一プロセスで交互3回。各prefix全文書とnative入力最終文書が完全一致、eigsh禁止。RF選択は2→1/4→2回、中央値5.533→5.127秒/16.805→14.238秒（旧/新1.079/1.180）。新solve/保存を含む全workflow時間ではない。
+標準3145は終了0、out/validation-rf-pending-20260909 は685件中683合格・2 skip、434.058秒PASS。seed9モード19量f差0/RF最大8.882e-16、最終全対象sourceと標準/独立比較hash一致。新規ブラウザー検証はなし（先行費用表示はfc76e64でChrome15項目PASS）。共有化側の実行は全て終了。
+主ツリーmainの非球形60815/PID76757は引き続き実行中（ログ/tmp/curved-rf-nonsphere-expanded-20260909.log）。その終了まで主ツリーsrc/tests/scripts/examplesは固定する。費用表示fc76e64と本変更は主ツリーへ未統合。現在の作業ブランチは費用表示コミットを祖先に含む。
+次は[表面だけ未達時の明示的一様細分方針](RF_SURFACE_CONFIRMATION_PLAN.md)の検討/実装、または残るnative空間再構築共有。現状のR/Q選択はEpk差約2.4%で停滞する非球形例を抱える。方針を加えるなら旧request未指定は旧動作、五量2回連続合格だけで停止、未達確認を親へ採用しても合格数0とする。案は未実装であり受入済みと呼ばない。元の難しい非球形/尺度/許容差を維持して検証する。
+全体目標、RFA-6、親N04は未完了。主ツリーへの統合時に両ツリーの最新引継ぎ・計画を保つ。
+
+## 適応祖先ジョブの時間表示 — 2026-09-09
+
+[費用表示](GUI_RF_ADAPTIVE_COST.md)を追加。native checkpoint再検証後、現GUI作業領域内の所有者ジョブをrequest/祖先sourceと照合して一度ずつ時間を合算。中止時にも経過時間を保存。未知/欠測/外部は部分合計と不明回数を表示する。
+数値checkpointの文書・保存文字列は不変。GUI応答のexecution_costは観測metadataなので、ジョブ状態が変われば再計算する。記録されたworker時間であり、事前検証を含む全workflow時間ではない。保存場のない別試行は祖先に入らない。
+2検査PASS、実JobManager5176は7検査19.203秒で終了0。実Chrome3062は終了0、out/browser-rf-cost-initial-20260909 の15項目PASS/外部要求0。3ジョブ合算、保存再読込、中止→再開、外部不明を実FEMで確認。rf-branches.pngを実表示済み。GUI85156/PID103279は引数確認後停止、終了0。
+最初の標準48730は終了1、out/validation-rf-cost-20260909 は683件/680合格/1失敗/2 skip、426.102秒。時間記録を消した後も応答全体一致を要求した旧GUI検査を、数値文書/保存文字列完全一致+欠測不明の検査へ更新。GUI65956は5検査33.329秒で終了0。数値実装や許容差の変更ではない。
+最終標準60286は終了0、out/validation-rf-cost-accepted-20260909 は683件/681合格/2 skip、428.580秒PASS。seed9モード19量、f差0/RF最大8.882e-16。全対象sourceと標準、browser対象hash一致。全費用表示検証は終了。
+この変更は /tmp/superfish-rf-cost-worktree-20260909、branch feature/adaptive-refinement-cost。主ツリーmainは01aa584の非球形検証を実行中（60815/PID76757、out/curved-rf-nonsphere-expanded-20260909、ログ/tmp/curved-rf-nonsphere-expanded-20260909.log）。主ツリーsrc/tests/scripts/examplesはその終了まで固定。先に変更を混ぜない。
+主ツリーの12回上限は両尺度LEVEL_LIMIT。48回検証はまだ尺度1途中で、Epk差約2.4%が停滞。プロフィール89107は終了0、out/curved-rf-nonsphere-profile-20260909 で親1723/確認6892要素の読込27.766秒/指標36.873秒。指標はcheckpointと完全一致。再構築/辺検査の重複が主因候補。全workflowプロファイルではない。
+次は非球形の実行結果確認・記録、主ツリーへの費用ブランチ統合、検証済み空間の実行内共有の検討。RFA-6/親N04/全体計画は未完了。
+
+## 統合前の主ツリー記録（進行中表記は当時の状態）
+
+### 最新: 次計画共有も別ブランチで検証済み — 2026-09-09
 
 /tmp/superfish-rf-cost-worktree-20260909 は現在branch perf/rf-adaptive-pending-plan、HEAD81fc416。費用表示fc76e64を祖先に含む。主ツリーへは未統合。主ツリーsrc/tests/scripts/examplesは60815終了まで固定する。
 81fc416は、VerifiedRFPrefixに一つの次計画を保持し、実装/request/祖先/native sourceを再照合した後だけ使う変更。実行3イベントのRF指標は2→1回、公開replayと全数値文書は不変。新規保存場のCase/mesh/二次写像照合も残る。
@@ -10,7 +55,7 @@
 次の候補は別ツリーdocs/RF_SURFACE_CONFIRMATION_PLAN.md（未実装）。R/Q選択だけでは表面ピーク差約2.4%が停滞するため、RF三量合格・表面だけ未達時は確認解を次の親へ採用し、合格回数0から一様細分を続ける明示指定を検討。旧request未指定の判断は変えず、五量2回連続合格だけで停止する。元の非球形/両尺度/許容差と予算で検証する。native空間の実行内共有も残る。
 全体目標/RFA-6/親N04は未完了。主ツリー統合時はfc76e64と81fc416の両方を取り込み、両ツリーの最新引継ぎ/計画を保つ。
 
-## 最新状態: 費用表示コミット・非球形実行継続 — 2026-09-09
+### 最新状態: 費用表示コミット・非球形実行継続 — 2026-09-09
 
 費用表示は別ツリー /tmp/superfish-rf-cost-worktree-20260909、branch feature/adaptive-refinement-cost の fc76e64 にコミット済み、作業ツリーclean。主ツリーへは未統合。主ツリーsrc/tests/scripts/examplesは60815の終了まで固定し、先にcherry-pickしない。
 最終標準60286は終了0、out/validation-rf-cost-accepted-20260909 は683件/681合格/2 skip、428.580秒PASS。seed9モード19量でf差0/RF最大8.882e-16、最終全対象hashと標準/browser対象hash一致。最初の標準48730は応答metadata完全一致の旧検査1件で失敗し、数値文書/保存文字列完全一致+欠測不明の検査に更新。失敗ログ保持。Chrome3062の15項目PASS、GUI85156/PID103279も終了0。費用表示側の実行は全て終了。
@@ -19,7 +64,7 @@ GDBは2度ともPythonスタック取得不可でdetach済み。独立プロフ�
 次は60815の結果確認/記録とfc76e64統合。長時間実行中の独立作業なら別ツリーで行う。実行内の検証済み空間/次plan共有は具体的な次の性能課題: RF指標が確認後と次の局所組立時に重複評価され、saved trackingでも場再読込と空間再構築が重なる。公開再検証や拒否条件を省かず、旧文書/指標/選択の完全一致を先に受入条件にする。
 全体目標、RFA-6、親N04は未完了。費用表示は記録済み祖先ジョブ時間であり、事前検証を含む全workflow時間とは区別する。
 
-## 版5非球形検証・費用表示の並行作業 — 2026-09-09
+### 版5非球形検証・費用表示の並行作業 — 2026-09-09
 
 主作業ツリーに scripts/validate_curved_rf_nonsphere.py と仕様を追加。既存両尺度reportとの一致とhashを検査し、全イベントの時間・親子Ritz・体積・Maxwell・追加対照差を保存する。
 初回43989は終了1、out/curved-rf-nonsphere-initial-20260909。両尺度12回でLEVEL_LIMIT、124.582/124.566秒。イベント構造一致・尺度差最大5.089e-13。未達を受入へ変更しない。

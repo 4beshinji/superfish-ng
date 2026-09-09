@@ -5,6 +5,7 @@ from .config import keys
 from .jobs import read_job
 from .project import parse_json
 from .adaptive_refinement import read_adaptive_refinement,replay_adaptive_refinement
+from .adaptive_refinement_cost import refinement_cost_summary
 
 
 def adaptive_refinement_response(manager,action,data):
@@ -29,4 +30,5 @@ def adaptive_refinement_response(manager,action,data):
         result=replay_adaptive_refinement(document)
         if action=='resume-adaptive-refinement':
             return dict(id=manager.start_adaptive_refinement(result['request'],checkpoint=result,max_new_levels=data.get('max_new_levels')))
-    return dict(document=result,serialized=json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False)+'\n')
+    return dict(document=result,serialized=json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False)+'\n',
+                execution_cost=refinement_cost_summary(manager,result))

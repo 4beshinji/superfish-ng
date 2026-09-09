@@ -9,6 +9,7 @@ from unittest.mock import patch
 from superfish_ng.jobs import JobManager,read_job,_digest
 from superfish_ng.adaptive_refinement import execute_adaptive_refinement,read_adaptive_refinement
 from superfish_ng.adaptive_refinement_jobs import execute_prepared_adaptive_refinement
+from superfish_ng.adaptive_refinement_cost import refinement_cost_summary
 
 
 class AdaptiveRefinementJobTests(unittest.TestCase):
@@ -36,6 +37,10 @@ class AdaptiveRefinementJobTests(unittest.TestCase):
         self.assertEqual(state['numerical_validation'],'not_checked');self.assertEqual(state['surface_status'],'UNASSESSED')
         self.assertFalse(state['can_resume']);self.assertFalse((self.root/second/'execution/level-001').exists())
         self.assertEqual(self.result(second)['sources'][:4],checkpoint['sources'])
+        cost=refinement_cost_summary(self.manager,self.result(second))
+        self.assertTrue(cost['all_event_owners_timed']);self.assertEqual(len(cost['jobs']),2)
+        self.assertAlmostEqual(cost['recorded_seconds'],sum(self.manager.status(i)['elapsed_seconds'] for i in (first,second)))
+        self.assertEqual(cost['jobs'][0]['event_indices'],[0,1,2,3])
         self.manager.close();self.manager=JobManager(self.root);self.addCleanup(self.manager.close)
         self.assertEqual(self.manager.status(second,verify=True)['refinement_status'],'TARGETS_MET')
         source=self.root/first/'execution/level-001/case.json';source.write_text(source.read_text()+' ')
@@ -73,8 +78,12 @@ class AdaptiveRefinementJobTests(unittest.TestCase):
             except (ValueError,OSError):time.sleep(.005)
         self.assertIsNotNone(prior);self.assertIsNone(self.manager.processes[identifier].poll())
         state=self.manager.cancel(identifier);self.assertEqual(state['status'],'cancelled');self.assertEqual(state['kind'],'adaptive_refinement')
+        self.assertGreater(state['elapsed_seconds'],0)
         prior=read_adaptive_refinement(path);second=self.manager.start_adaptive_refinement(req,checkpoint=prior,max_new_levels=1)
         self.assertEqual(self.wait(second)['refinement_status'],'PAUSED');self.assertEqual(read_adaptive_refinement(path),prior)
+        cost=refinement_cost_summary(self.manager,self.result(second))
+        self.assertTrue(cost['all_event_owners_timed']);self.assertEqual([j['id'] for j in cost['jobs']],[identifier,second])
+        self.assertAlmostEqual(cost['recorded_seconds'],state['elapsed_seconds']+self.manager.status(second)['elapsed_seconds'])
         abandoned=self.root/'abandoned';abandoned.mkdir();(abandoned/'job.json').write_text(json.dumps(dict(status='running',kind='adaptive_refinement')))
         self.manager.close();self.manager=JobManager(self.root);self.addCleanup(self.manager.close)
         self.assertEqual(self.manager.status('abandoned')['status'],'interrupted')

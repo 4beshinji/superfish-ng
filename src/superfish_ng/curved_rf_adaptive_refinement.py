@@ -24,11 +24,28 @@ from .io import save_run
 from .jobs import _implementation_hashes
 
 
+class _VerifiedRFPrefix(_VerifiedPrefix):
+    """Keep one derived next plan alongside the execution-local verified prefix."""
+    def __init__(self):
+        super().__init__()
+        self.pending_plan=None
+
+
 def validate_request(request):
     if not isinstance(request,dict) or type(request.get('schema_version')) is not int or request['schema_version']!=5:
         raise ValueError('RF adaptive refinement requires schema_version 5')
     original=deepcopy(request);original['schema_version']=4
+    policy=original.pop('surface_refinement_policy','rf_goal')
+    if type(policy) is not str or policy not in ('rf_goal','uniform_when_rf_passes'):
+        raise ValueError('surface_refinement_policy must be rf_goal or uniform_when_rf_passes')
     return validate_v4(original)
+
+
+def _surface_progress(comparison,request):
+    """An explicit mesh-progress choice, never a successful confirmation."""
+    return (request.get('surface_refinement_policy','rf_goal')=='uniform_when_rf_passes'
+            and comparison['verified'] and not comparison['passed']
+            and all(v['passed'] for v in comparison['changes'].values()))
 
 
 def _comparison(parent,current,request):
@@ -95,8 +112,14 @@ def assemble(request,runs,*,_cache=None):
     if len(runs)>request['max_levels']:raise ValueError('level_runs exceeds max_levels including probes')
     events,sources,solutions=([],[],[]) if _cache is None else _cache.load(request,runs)
     solutions=list(solutions or [])
+    # load has rechecked implementation, request, ancestry and native snapshots.
+    # No persistent checkpoint can supply this execution-local plan.
+    pending=getattr(_cache,'pending_plan',None)
+    if pending is not None:pending=(deepcopy(pending[0]),pending[1])
     for index in range(len(events),len(runs)):
-        run=runs[index];decision,plan=next_plan(case,request,events,solutions)
+        run=runs[index]
+        decision,plan=next_plan(case,request,events,solutions) if pending is None else pending
+        pending=None
         if decision['status']!='PAUSED':raise ValueError('RF adaptive event follows a terminal decision')
         source=_snapshot(Path(run));current=read_solution(run)
         if current.case!=plan.case or mesh_digest(current.source_mesh_data)!=mesh_digest(plan.source_mesh):
@@ -124,10 +147,13 @@ def assemble(request,runs,*,_cache=None):
                 comparison=_comparison(events[parent_index],row,request);row['confirmation_comparison']=comparison
                 if comparison['passed']:
                     row['accepted']=True;row['uniform_confirmations']=events[parent_index]['uniform_confirmations']+1
+                elif _surface_progress(comparison,request):
+                    row['accepted']=True  # Advance the mesh; confirmations remain zero.
             else:row['accepted']=True
         events.append(row);sources.append(source);solutions.append(current)
     if sources!=[_snapshot(Path(run)) for run in runs]:raise ValueError('RF adaptive sources changed during verification')
-    decision,plan=next_plan(case,request,events,solutions);status=decision['status']
+    decision,plan=next_plan(case,request,events,solutions) if pending is None else pending
+    status=decision['status']
     result=dict(schema_version=1,document_type='adaptive_refinement_checkpoint',request=deepcopy(request),level_runs=list(runs),
         sources=sources,levels=events,decision=decision,status=status,can_resume=status=='PAUSED',physical_error_bound=None,
         surface_status='TARGETS_MET' if status=='TARGETS_MET' else 'UNVERIFIED' if status in ('UNVERIFIED','QUANTITY_UNVERIFIED','QUADRATURE_UNVERIFIED') else 'NOT_CONFIRMED',
@@ -135,6 +161,7 @@ def assemble(request,runs,*,_cache=None):
     if _cache is not None:
         if sources!=[_snapshot(Path(run)) for run in runs]:raise ValueError('RF adaptive sources changed during verification')
         _cache.store(request,runs,events,sources,solutions)
+        _cache.pending_plan=(deepcopy(decision),plan)
     return result,plan
 
 
@@ -142,7 +169,7 @@ def execute(request,directory,*,max_new_levels=None,checkpoint=None):
     from .adaptive_refinement import _replay
     request=deepcopy(request);validate_request(request)
     if max_new_levels is not None:integer(max_new_levels,'max_new_levels')
-    cache=_VerifiedPrefix()
+    cache=_VerifiedRFPrefix()
     previous,plan=assemble(request,[],_cache=cache)
     if checkpoint is not None:
         previous,plan=_replay(checkpoint,lambda saved_request,saved_runs:assemble(saved_request,saved_runs,_cache=cache))

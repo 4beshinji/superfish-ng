@@ -30,6 +30,7 @@ def main():
     parser.add_argument('--reference', type=Path, required=True,
                         help='directory containing the accepted v4 validation.json and scale reports')
     parser.add_argument('--max-events', type=int, default=12)
+    parser.add_argument('--surface-policy',choices=('rf_goal','uniform_when_rf_passes'))
     args = parser.parse_args()
     reference = args.reference.resolve()
     paths = [reference/name for name in ('validation.json', 'scale-1.json', 'scale-2.json')]
@@ -55,6 +56,7 @@ def main():
         if request != old['request']:
             raise ValueError('current version 4 example differs from the archived request')
         request['schema_version'] = 5; request['max_levels'] = args.max_events
+        if args.surface_policy is not None:request['surface_refinement_policy']=args.surface_policy
         case = engine.validate_request(request)
         write(out/f'request-{scale}.json', request)
         timings = []; original = engine.solve
@@ -84,7 +86,10 @@ def main():
         ritz = all(r['parent_event_index'] is None or
                    r['intervals']['frequency_hz'][0] <= rows[r['parent_event_index']]['intervals']['frequency_hz'][0]*(1+1e-10)
                    for r in rows)
-        initial = max(difference(rows[0], old['uniform'][0]).values())
+        # Fixture identity compares corresponding bounds. The worst-case
+        # interval-change bound also counts interval width, even for A == A.
+        initial = max(abs(y/x-1) for key in LIMITS for x,y in
+                      zip(rows[0]['intervals'][key], old['uniform'][0]['intervals'][key]))
         base_volume = old['uniform'][0]['fixed_domain_volume_m3']
         invariant = max(abs(r['fixed_domain_volume_m3']/base_volume-1) for r in rows)
         native_error = abs(case.curved_contour.volume_m3/(4*math.pi*(.16*scale)*(.08*scale)**2/3)-1)
