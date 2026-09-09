@@ -157,7 +157,7 @@ class TEJobTests(unittest.TestCase):
         from superfish_ng.tuning import _request
         from superfish_ng.rf_optimization import validate_optimization_request
         with self.assertRaisesRegex(ValueError,'TE reflected'):Project(cavity(),reflect_full=True)
-        with self.assertRaisesRegex(ValueError,'TE Study'):Study(Project(cavity()),'mesh_convergence','nr',[8,16])
+        with self.assertRaisesRegex(ValueError,'TE convergence Study'):Study(Project(cavity()),'mesh_convergence','nr',[8,16])
         root=Path(__file__).resolve().parents[1]
         for filename,validator in (('examples/optimization/curved_rf.json',validate_optimization_request),('examples/tuning/curved_affine_scale.json',_request)):
             request=json.loads((root/filename).read_text());request['project']['case']['model']['polarization']='te'

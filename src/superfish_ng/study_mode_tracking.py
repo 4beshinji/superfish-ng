@@ -35,8 +35,15 @@ def _study_inputs(directory):
         if path.is_symlink() or read_job(path)['status']!='complete':raise ValueError('Study contains an incomplete or redirected point; no point may be skipped')
         saved_project=Project.load(path/'project.json')
         if _canonical(saved_project.to_dict())!=_canonical(project.to_dict()):raise ValueError('Study point project differs from its declared parameter value')
-        solution=read_solution(path/'solution')
-        if point.get('case_sha256')!=solution.results['case_sha256'] or _canonical(point.get('modes'))!=_canonical(solution.results['modes']):
+        from .te import is_te
+        if is_te(project.case):
+            from .te_saved import read_te_run
+            read_te_run(path/'solution')
+            result=parse_json((path/'solution/results.json').read_text())
+            case_hash=digest(path/'solution/case.json')
+        else:
+            solution=read_solution(path/'solution');result=solution.results;case_hash=result['case_sha256']
+        if point.get('case_sha256')!=case_hash or _canonical(point.get('modes'))!=_canonical(result['modes']):
             raise ValueError('Study point summary differs from its native saved fields')
         runs.append(str((path/'solution').resolve()))
     sources.update(jobs)

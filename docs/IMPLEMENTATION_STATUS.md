@@ -1,6 +1,8 @@
 # 実装・検証の現状
 
-[円筒TEのモード追跡](TE_TRACKING_PLAN.md)を接続。Eφによる順位交差・部分空間、全native保存/replay、CLIとGUI履歴へ接続。独立8実FEM・Chrome8項目・標準771件（769合格、2skip）と既存数値回帰を確認。Study・一般形状/曲線写像は後続工程。
+[TEの独立パラメータ掃引](TE_STUDY_PLAN.md)を接続。全点の入力検証、TE native保存と別操作の円筒追跡、GUIのR/Q N/A表示を追加。円筒/曲線の独立18FEM・CLI/GUI保存一致・再起動・標準775件と数値回帰を確認。収束Studyと一般形状の追跡は未対応。
+
+[円筒TEのモード追跡](TE_TRACKING_PLAN.md)を接続。Eφによる順位交差・部分空間、全native保存/replay、CLIとGUI履歴へ接続。独立8実FEM・Chrome8項目・標準771件（769合格、2skip）と既存数値回帰を確認。収束Study・一般形状/曲線写像は後続工程。
 
 [TEのGUI接続](GUI_TE.md)を接続。Eφ/Br/Bzの場表示・SIプローブ・偏波選択とN/A理由を追加。Chrome10項目・独立保存照合/球形解析・標準766件と既存数値回帰を確認した。
 
@@ -126,8 +128,9 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 771件中769合格・NGSolve参照環境専用2件skip。TE円筒追跡追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | TE円筒追跡追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧直線/曲線TE7件差ゼロ。標準・独立・終了後452対象hashとブラウザー実装hash一致 | out/validation-te-tracking-20260909、[TE追跡仕様](TE_TRACKING_PLAN.md) |
+| 標準unittest | 775件中773合格・NGSolve参照環境専用2件skip。TE掃引追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | TE掃引追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧直線/曲線TE7件差ゼロ。標準・独立・終了後455対象hashとブラウザー実装hash一致 | out/validation-te-study-20260909、[TE掃引仕様](TE_STUDY_PLAN.md) |
+| O02/P01 TE掃引 | 独立18FEMで円筒P1/P2・両尺度・規格化・曲線P2、解析ID順位とCLI追跡4組、GUI2項目・CLI/GUI保存完全一致・管理器再起動、旧TM保存Study3件完全一致 | [仕様と証拠](TE_STUDY_PLAN.md) |
 | O02 TE GUI | Chrome10項目・追加3検査、GUI/API新規3FEMと係数/周波数一致、全3プローブ保存場照合・管理器再起動、球形3モードf/場/G解析PASS | [仕様・失敗履歴](GUI_TE.md) |
 | O02 TEジョブ | 追加8検査・独立8実FEMとCLI/API一致、直接/管理済み8取込、再起動後verify=True全8件PASS。元mesh保持・改変/検証中変更拒否。GUI/追跡は継続 | [仕様と証拠](TE_JOBS.md) |
 | P01曲線TE | 球形3モード・2尺度の5水準と磁気対称半領域で独立f/場/G/エネルギー・相似則PASS。TE12検査（追加5件）・実二次幾何保存と再構築/局所履歴・CLI/API一致。当時Project/GUI/追跡は未接続（Project/Jobは上記で接続） | out/curved-te-independent-final-20260909、[仕様と失敗履歴](CURVED_TE_PLAN.md) |

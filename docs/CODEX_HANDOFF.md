@@ -1,5 +1,27 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: TE Study — 2026-09-09
+
+基準324dc20。TE独立掃引の実装・限定受入を完了。全関連実行は終了しソース固定を解除。追加4unit/既存TE Job8件、旧TM Study関連11件、実worker中止/2点完了/再起動/追跡replayPASS。
+標準48904・最終比較22868はともに終了0。775件中773合格・2skip（unittest1179.803秒、command1180.149秒）。TM seed9モード19量の周波数差0、RF/エネルギー最大相対差8.882e-16、旧TE保存7件差0。標準・独立・GUI・固定時・終了後455対象hashを照合し一致。out/validation-te-study-20260909に全ログ・比較driver・source-fixed.json・seed_regression.jsonを保持。
+初回独立82140終了1: P1nr64/nz96の高位f誤差.00109154>条件.0008。許容差維持、P1nr96/nz144へ細分。62766終了0、out/te-study-independent-refined-20260909に16FEM/P1P2/両尺度/規格化/CLI追跡4組PASS、driver/log保持。P1最大.000485641、P2最大3.515e-7。次に最終ID順序解析照合を検証器へ追加し、GUI driverの候補由来main_tree_implementation=falseをtrueへ修正した。
+最終独立4976終了0、out/te-study-final-independent-20260909。16FEM/解析ID順序/CLI追跡4組・規格化・両尺度PASS、command.log保持。
+CLI実掃引55045終了0、out/te-study-cli-product-20260909、log /tmp/te-study-cli-product-20260909.log。Chrome初版68372終了0だが候補false metadataが残った旧driver。最終10613終了1は既存ジョブのあるworkspaceでactiveStudyを開けずtimeout（out/browser-te-study-final-20260909）。新workspaceで同じ最終driver12749終了0、out/browser-te-study-fresh-final-20260909、2項目PASS、外部HTTP0、実装hash一致、study.png目視。両GUI89355/PID964363・44941/PID968341はSIGINT終了0。
+GUI独立12518終了0、out/te-study-gui-independent-20260909/verify.py/command.log/report.json。新管理器2job verify=True、GUI要約==保存文書、CLI/GUI2点全係数/周波数/全RF結果完全一致、Study追跡/replayPASS、455source一致。
+次工程: [TE収束Study](TE_CONVERGENCE_STUDY_PLAN.md)。下記の6FEM体積場候補とred.jsonを起点に、TE専用比較・物理一致/縮退/標本依存・RF/電磁場別ゲート・Study/API/CLI/GUI/保存契約を実装する。掃引と収束を混同しない。親8受入/9進行中/15他/1候補=33を維持し、全計画は継続。
+
+
+追加曲線TE掃引6889終了0、out/te-study-curved-independent-20260909/verify.py/command.log/report.json。球形P2の2FEMで規格化振幅・損失比例/f,G,Q不変・N/A維持・未対応円筒追跡拒否PASS、455source一致。最終比較driverへ証拠照合を追加。README/対応表/計画/実装状況と物理/来歴に掃引の接続・標準待機状態を追記済み。後続docs/TE_CONVERGENCE_STUDY_PLAN.mdは設計のみ。標準48904と最終比較は終了0。
+
+
+## 独立の体積場比較候補
+
+主ツリーを変更せず、out/te-convergence-field-candidate-20260909/verify.pyを実行。94381終了0、6実FEM（P1/P2×nr12/24/48）・Gauss標本次数48/96で2モードの解析周波数・Eφ体積L2・Hr/Hz体積L2・G誤差が細分ごとに減少した。各隣接水準の場変化も別に保持。既存R35の円筒解析を再利用し、候補のreport.json/command.log/6保存結果を保持。主ツリー455source不変。
+同一保存TEをcompare_refinementへ渡してもTM readerで拒否される現行不適合をred.jsonに記録した。これは候補計測であり、一般形状/曲線・縮退・Study/API/GUIへの収束接続や最終精度の合格ではない。
+
+
+旧TM保存Studyの追加照合84108終了0。out/te-study-development-20260909/verify_old_studies.py/old_studies.log/old_studies.jsonに保持。固定曲線3水準と明示元mesh P1/P2の計3Studyで全細分比較が保存時と完全一致、旧曲線Study追跡文書のfull replayも完全一致。最終比較driverにこの証拠も要求する。
+
 ## 最新: TE円筒追跡 — 2026-09-09
 
 基準c5b4409。TE円筒追跡API/保存/CLI/GUI履歴の限定受入を完了。[計画・失敗履歴](TE_TRACKING_PLAN.md)。全関連実行は終了し、ソース固定を解除。

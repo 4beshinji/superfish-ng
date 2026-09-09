@@ -38,7 +38,7 @@ class Study:
 
     def __post_init__(self):
         from .te import is_te
-        if is_te(self.project.case):raise ValueError('TE Study/tracking integration is pending; use an ordinary TE Project solve')
+        if is_te(self.project.case) and self.kind != 'sweep':raise ValueError('TE convergence Study integration is pending; use an explicit TE parameter sweep')
         if self.project.mesh_data is not None and self.kind!='fixed_geometry_convergence':
             raise ValueError('explicit project meshes require fixed_geometry_convergence; geometry/mesh sweeps need a declared mesh transformation')
         if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence", "fixed_geometry_convergence"):
@@ -374,7 +374,14 @@ def execute_study(study, directory, prepared=False):
             )
             target = directory / f"point-{i + 1:03d}"
             execute_project(project, target)
-            result = read_solution(target / "solution").results
+            from .te import is_te
+            if is_te(project.case):
+                from .te_saved import read_te_run
+                read_te_run(target / 'solution')
+                result = json.loads((target / 'solution/results.json').read_text())
+                result['case_sha256'] = _digest(target / 'solution/case.json')
+            else:
+                result = read_solution(target / "solution").results
             points.append(
                 {
                     "value": study.values[i],
@@ -404,6 +411,9 @@ def execute_study(study, directory, prepared=False):
                               else "finite-element boundary estimates; not certified; element orders "
                               +str(sorted({p.case.element_order for p in projects}))),
         }
+        if is_te(study.project.case):
+            report['physics'] = 'axisymmetric_m0_te'
+            report['surface_field'] = 'TE surface peaks not evaluated; axial accelerating quantities are not applicable'
         if any(p.case.geometry_order == 2 for p in projects):
             report['surface_field'] = 'physical surface-peak convergence not assessed by this Study'
             report['geometry_refinement'] = (

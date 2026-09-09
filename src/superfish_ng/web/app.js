@@ -1269,7 +1269,7 @@ async function openStudy(id) {
         m.r_over_q_accelerator_ohm,
       ]) {
         const td = document.createElement("td");
-        td.textContent = Number(v).toPrecision(7);
+        td.textContent = v === null ? (m.accelerating_quantities_status?.startsWith("NOT_APPLICABLE") ? "N/A（TEの軸方向電場はゼロ）" : "未定義") : Number(v).toPrecision(7);
         row.append(td);
       }
       const td = document.createElement("td");
