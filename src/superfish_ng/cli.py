@@ -115,6 +115,9 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    planar_project=sub.add_parser('execute-planar-project',help='execute a dedicated Cartesian cutoff Project and verify native completion')
+    planar_project.add_argument('project',type=Path)
+    planar_project.add_argument('--out',type=Path,required=True)
     planar=sub.add_parser('solve-planar',help='solve an explicit Cartesian vacuum TE/TM cutoff case with J/m normalization')
     planar.add_argument('case',type=Path)
     planar.add_argument('--out',type=Path,required=True)
@@ -165,6 +168,11 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command=='execute-planar-project':
+            from .planar_project import PlanarProject
+            from .planar_jobs import execute_planar_project
+            print(json.dumps(execute_planar_project(PlanarProject.load(args.project),args.out),indent=2,allow_nan=False))
+            return 0
         if args.command in ('solve-planar','replay-planar','probe-planar'):
             from .planar import PlanarCase,solve_planar,PlanarFieldSampler
             from .planar_saved import save_planar_run,read_planar_run

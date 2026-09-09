@@ -1,8 +1,10 @@
 # 物理・数値仕様 — canonical specification v6（軸対称v1/v2/v3・平面専用v1/v2入力）
 
+2026-09-10追補：[平面Project/Job](PLANAR_JOBS.md)を接続し、矩形/三角形の実workerでf・全場・単位長RFを独立照合。FEM・規格化・既存nativeの科学契約は不変。GUI等は後続。
+
 2026-09-09：[単純多角形の平面RF](PLANAR_POLYGON_RF.md)を接続し、標準835件・両尺度独立f/場/Gまで限定受入。xyの明示三角形、単一PEC境界、真空遮断のP1/P2に限定し、面積弱形式・TM/TE場・U′/P′規約は矩形と共通。専用Case/native版2に元の宣言形状とメッシュを保持し、版1を再生する。曲線/材料/穴/伝搬は未対応。
 
-2026-09-09追補：[矩形の平面TE/TM遮断問題](PLANAR_RF.md)を専用PlanarCaseへ接続。断面xy・伝搬定数0、面積積分dx dy、U′[J/m]・側壁P′[W/m]を明示する。TMの実Ez/PEC DirichletとTEの実Hz/PEC Neumann・定数零空間除外を別に組み立て、E/Hのreal/quadrature成分を保持する。既存の軸対称Caseと以下のTM/TE式は不変。矩形P1/P2の独立解析・保存/CLIと標準813件・既存数値回帰がPASS。曲線・材料・伝搬・Project/GUIは未接続。
+2026-09-09追補：[矩形の平面TE/TM遮断問題](PLANAR_RF.md)を専用PlanarCaseへ接続。断面xy・伝搬定数0、面積積分dx dy、U′[J/m]・側壁P′[W/m]を明示する。TMの実Ez/PEC DirichletとTEの実Hz/PEC Neumann・定数零空間除外を別に組み立て、E/Hのreal/quadrature成分を保持する。既存の軸対称Caseと以下のTM/TE式は不変。矩形P1/P2の独立解析・保存/CLIと標準813件・既存数値回帰がPASS。曲線・材料・伝搬・GUIは未接続。Project/Jobは上記で接続。
 
 2026-09-09追補: [同端条件のTE円筒追跡](TE_SECTOR_TRACKING_PLAN.md)を半領域・鏡映部分スペクトルへ拡張し、限定受入。同じ側の一対称面を持つ直線P1/P2円筒が対象。実Eφで対応し、異なる端条件・通常/鏡映の混在を拒否する。独立32FEM、8Study、Chrome9操作、旧追跡8文書の再生、標準801件（799合格、2skip）と既存TM/TE数値回帰を確認。一般形状の追跡・TE調整は未対応。
 

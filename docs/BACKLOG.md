@@ -1,5 +1,7 @@
 # 実装バックログ
 
+P02平面Project/Job：[受入条件](PLANAR_JOBS_PLAN.md)と[証拠](PLANAR_JOBS.md)。専用PlanarProjectと実worker、直接/管理済み取込、再起動・再実行を限定受入。標準849件（847合格、2skip、unittest1234.561秒）、新14unit、独立16条件workflow・8workerのf/場/G/Q、72保存ジョブと2同梱CLI例を確認。旧平面32件/TE10件/管理済み8件、TM seed9モード19量（f差0、RF最大8.882e-16）、491sourceと保存hashも一致した。GUI・Study・追跡等と親P02は未完。 次は[表示・GUI](PLANAR_GUI_PLAN.md)のxy場・位相/単位・元hash・ブラウザー/保存照合を進める。
+
 P02一般多角形RFの受入条件：[専用Case/native版2・CLI・点検索](PLANAR_POLYGON_RF_PLAN.md)のstrict/改変拒否、P1/P2・両尺度・三角形のf/全場/G、回転ベクトル/単位長規格化、旧版1/native再生、標準回帰。主ツリーへ接続し、新11unit/平面全32件・独立両尺度24FEM・全保存/CLI・標準835件・既存回帰と486source一致まで限定受入。次は[平面Project/Job](PLANAR_JOBS_PLAN.md)。親P02は継続。
 
 P02明示xyメッシュ基盤の受入条件：[単純PEC多角形](PLANAR_POLYGON_MESH.md)の正Jacobian・連結disk・交差/T字/重なり拒否・全境界被覆、独立面積/モーメント/勾配と回転・尺度則、旧矩形行列一致、標準回帰。追加11unitと独立24変換/8凹領域パッチ、標準824件・既存数値回帰/平面保存・480source一致まで基盤を限定受入。一般断面solve/native/CLIは専用版2へ接続。Project/Job/GUIは後続。

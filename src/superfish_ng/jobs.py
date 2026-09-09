@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_jobs import is_planar_job,verify_planar_job
+        if is_planar_job(directory,state,manifest):
+            verify_planar_job(directory,state,manifest)
+            return state
         files = manifest.get("files", {})
         required = (
             {"study.json", "study-results.json"}
@@ -280,6 +284,16 @@ class JobManager:
                 _state(directory, "failed", error=str(exc))
                 raise
             return identifier
+
+    def start_planar(self, project):
+        """Execute a dedicated Cartesian cutoff Project in a local worker."""
+        from .planar_jobs import start_planar
+        return start_planar(self,project)
+
+    def import_planar_result(self, source):
+        """Import verified planar native bytes, preserving their explicit mesh."""
+        from .planar_jobs import import_planar_result
+        return import_planar_result(self,source)
 
     def start_adaptive_study(self, request, *, max_new_attempts=None, checkpoint=None):
         """Run adaptive tracked FEM sweeps in an isolated local worker."""

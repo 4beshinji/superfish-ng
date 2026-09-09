@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## P02平面Project/Job：限定受入
+
+基準461f4c4。専用PlanarProjectと実worker、直接/管理済み取込、再起動・再実行を限定受入。標準849件（847合格、2skip、unittest1234.561秒）、新14unit、独立16条件workflow・8workerのf/場/G/Q、72保存ジョブと2同梱CLI例を確認。旧平面32件/TE10件/管理済み8件、TM seed9モード19量（f差0、RF最大8.882e-16）、491sourceと保存hashも一致した。GUI・Study・追跡等と親P02は未完。
+
+標準53788、物理53222、workflow3102、旧native70626、保存再起動54771、旧管理済み57596と最終照合は全て終了0。証拠はPLANAR_JOBS.mdとout/validation-planar-jobs-final-20260910。queued後/完了中の入力変更、worker再投入の失敗を先に記録し修正した。worker.claimは重複防止だけで生存証拠にしない。監査driverのcontext manager誤用も初回失敗を保持し修正済み。source固定を解除して次へ進める。
+
+次はPLANAR_GUI_PLAN.md。現行plot_modeが平面Caseを拒否する反例out/planar-display-development-20260910/preflight.log（終了1）を保持。xy/位相/単位長RFを扱う専用表示からGUI接続へ進む。親集計8受入/10進行中/14他/1候補=33と全体目標は維持。
+
 ## P02単純多角形RFの主ツリー接続：限定受入
 
 基準c2e5679。PlanarPolygonCase/Case-native版2・load dispatcher・CLI・厳密点検索、大規模辺集合のBVH（同じ厳密線分述語）を接続。旧矩形版1を保持。標準835件（833合格、2skip、unittest1233.849秒）、独立三角形24FEM、回転/尺度16FEM＋参照4FEM、CLI・32プローブ/16replay・凹L字・規格化を確認。旧平面32件/TE10件、TM seed9モード19量と486source、36新規native hashも照合した。

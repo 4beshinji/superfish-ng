@@ -1,5 +1,7 @@
 # 単純多角形の平面TE/TM遮断問題
 
+[専用Project・ローカルジョブ](PLANAR_JOBS.md)を追加し限定受入。以下は保持する平面FEM/単体native・CLIの契約。
+
 専用Case版2により、真空・単一PEC多角形・明示xy三角形のP1/P2をsolve/replay/probeへ接続した。2026-09-10、主ツリーの独立物理検証・標準回帰まで限定受入。矩形のCase/native版1を保持する。[受入計画・隔離検証](PLANAR_POLYGON_RF_PLAN.md)、[メッシュ契約](PLANAR_POLYGON_MESH.md)。
 
 ## 使い方

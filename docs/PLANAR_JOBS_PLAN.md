@@ -1,6 +1,6 @@
 # 平面RFのProject・ローカルジョブ接続計画
 
-[矩形・単純多角形の平面RF](PLANAR_POLYGON_RF.md)を、再実行可能な編集文書とローカルworkerへ接続する次工程。現在は設計であり、PlanarProjectや平面ジョブの製品対応を宣言しない。
+[矩形・単純多角形の平面RF](PLANAR_POLYGON_RF.md)を、再実行可能な編集文書とローカルworkerへ接続する次工程。PlanarProjectと平面ジョブを主ツリーへ接続し、独立物理・保存操作・標準849件と既存数値回帰まで限定受入。次は[表示・GUI](PLANAR_GUI_PLAN.md)。現在の仕様・検証は[平面ジョブ](PLANAR_JOBS.md)。以下は接続前に定めた受入条件。
 
 ## 独立した文書と実行種別
 
