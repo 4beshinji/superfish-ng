@@ -30,6 +30,8 @@ def linear_voltage(z, field, wave_number):
 
 def cell_fields(solution, mode):
     """Cell-centre signed amplitudes (Er, Ez, Hphi); Ephasor=-i*Eamplitude."""
+    from .te import TESolution
+    if isinstance(solution,TESolution):raise ValueError('TE fields use Ephi/Hr/Hz; use TEFieldSampler')
     if getattr(solution, 'element_order', 1) == 2:
         from .sampling import FieldSampler
         centers = solution.mesh.points[solution.mesh.triangles].mean(axis=1)
@@ -64,6 +66,11 @@ def accelerating_voltage(case, z, field, wave_number):
 
 
 def quantities(case, solution, mode=0):
+    from .te import TESolution,is_te,te_quantities
+    if isinstance(solution,TESolution):
+        if case!=solution.case:raise ValueError('TE RF case differs from solution case')
+        return te_quantities(solution,mode)
+    if is_te(case):raise ValueError('TE RF evaluation requires a TESolution')
     from .curved_solution import CurvedSolution
     if isinstance(solution,CurvedSolution):
         from .curved_rf import quantities_curved

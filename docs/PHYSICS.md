@@ -1,4 +1,6 @@
-# 物理・数値仕様 — canonical specification v3（v1/v2/v3入力）
+# 物理・数値仕様 — canonical specification v4（v1/v2/v3入力）
+
+第4版では [真空m=0 TEの明示拡張](AXISYMMETRIC_TE.md) を追加する。以下の既存TMの式・規約は保持し、TEの未知数/PEC拘束・磁場phasor・加速量N/A・結果版を別契約にする。TEは直線P1/P2から実装し、曲線TEと共通Project/GUI等は未対応として拒否する。
 
 v3の明示物理モデルは [MODEL_CONTRACT.md](MODEL_CONTRACT.md)。本書の真空TM物理・
 数式は変更せず、入力の版と物理モデルの版を区別する。

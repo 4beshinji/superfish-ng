@@ -1,5 +1,11 @@
 # アーキテクチャと拡張判断
 
+P01の[軸対称TE](AXISYMMETRIC_TE.md)は明示Modelからsolver.solveがte.solve_teへ分岐する。
+TESolutionは電場係数coefficients_v_per_m2を持ち、TMのuへ別名を付けて渡さない。
+TEのP1/P2では既存curl積分とメッシュ/幾何検索を共有し、PEC必須条件とε0規格化を独立に適用する。
+te_savedは結果版2と専用完了マーカーを扱い、再読込でK/M・境界・規格化・RFを再検証する。
+旧TM readerとProject/GUI等の未統合入口は明示拒否する。
+
 ## ADR-017: 一般輪郭は品質判定と停止上限を持つ自前生成を第一方式にする
 
 2026-09-08、G02。全境界頂点/タグを保持する初期分割から、共有辺細分、内部辺交換、

@@ -1,0 +1,49 @@
+{
+  "schema_version": 3,
+  "name": "synthetic_TE_cylinder",
+  "geometry": {
+    "type": "profile",
+    "points_zr_m": [
+      [
+        0.0,
+        0.1
+      ],
+      [
+        0.2,
+        0.1
+      ]
+    ]
+  },
+  "mesh": {
+    "nr": 64,
+    "nz": 96
+  },
+  "solver": {
+    "modes": 6,
+    "element_order": 2
+  },
+  "rf": {
+    "beta": 1.0,
+    "conductivity_s_per_m": 58000000.0,
+    "normalization_j": 1.0
+  },
+  "model": {
+    "physics": "rf_eigenmode",
+    "coordinates": "axisymmetric",
+    "polarization": "te",
+    "azimuthal_index": 0,
+    "materials": [
+      {
+        "id": "vacuum",
+        "type": "vacuum"
+      }
+    ],
+    "regions": [
+      {
+        "id": "cavity",
+        "material": "vacuum",
+        "domain": "interior"
+      }
+    ]
+  }
+}

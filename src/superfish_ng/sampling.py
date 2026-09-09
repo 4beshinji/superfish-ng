@@ -29,6 +29,8 @@ class FieldSampler:
 
     @classmethod
     def from_solution(cls, solution):
+        from .te import TESolution,TEFieldSampler
+        if isinstance(solution,TESolution):return TEFieldSampler(solution)
         from .curved_solution import CurvedSolution
         if isinstance(solution,CurvedSolution):
             from .curved_sampling import CurvedFieldSampler

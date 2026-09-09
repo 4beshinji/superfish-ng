@@ -21,9 +21,13 @@ def read_solution(directory, *, allow_quadratic=True):
         results = json.loads((directory / "results.json").read_text(encoding="utf-8"))
     except FileNotFoundError as exc:
         raise ValueError('incomplete saved result: results.json is missing') from exc
+    if results.get('physics')=='axisymmetric_m0_te' or (directory/'te_complete.json').exists():
+        raise ValueError('TE saved fields require read_te_run or the replay-te command; TM consumers are not supported')
     if type(results.get("schema_version")) is not int or results["schema_version"] != 1:
         raise ValueError("only saved result schema_version 1 is supported")
     case = Case.load(directory / "case.json")
+    from .te import is_te
+    if is_te(case):raise ValueError('TE Case cannot be interpreted by the TM saved reader; use read_te_run')
     from .completion import verify_completion
     verify_completion(directory, case, results)
     if Case.from_dict(results["case"]) != case:

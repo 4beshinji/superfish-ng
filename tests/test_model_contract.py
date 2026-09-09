@@ -66,7 +66,7 @@ class ModelContractTests(unittest.TestCase):
     def test_unsupported_physics_and_nested_fields_rejected(self):
         base = declared(Case(((0., .1), (.2, .1))))
         for key, value in [('physics', 'electrostatic'), ('physics', 'unknown'),
-                           ('coordinates', 'planar'), ('polarization', 'te'),
+                           ('coordinates', 'planar'), ('polarization', 'unsupported'),
                            ('azimuthal_index', 1), ('azimuthal_index', True),
                            ('azimuthal_index', 0.0), ('future_option', 0)]:
             data = copy.deepcopy(base)
@@ -105,7 +105,7 @@ class ModelContractTests(unittest.TestCase):
         with self.assertRaises(FrozenInstanceError):
             case.model.polarization = 'te'
         with self.assertRaises(ValueError):
-            Model(polarization='te')
+            Model(polarization='unsupported')
         with self.assertRaises(ValueError):
             replace(case, model={})
 
@@ -141,7 +141,7 @@ class ModelContractTests(unittest.TestCase):
                 self.assertEqual(main(['migrate-case', str(source), '--out', str(migrated)]), 2)
                 self.assertEqual(main(['solve', str(migrated), '--out', str(out)]), 0)
                 invalid = declared(old)
-                invalid['model']['polarization'] = 'te'
+                invalid['model']['polarization'] = 'unsupported'
                 migrated.write_text(json.dumps(invalid))
                 self.assertEqual(main(['solve', str(migrated), '--out', str(folder/'bad')]), 2)
             self.assertEqual(source.read_bytes(), original)

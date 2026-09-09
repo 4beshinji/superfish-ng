@@ -27,6 +27,8 @@ class Solution:
 
 
 def solve(case, *, mesh_data=None):
+    from .te import is_te,solve_te
+    if is_te(case):return solve_te(case,mesh_data=mesh_data)
     if case.geometry_order==2:
         from .curved_solution import solve_curved
         return solve_curved(case,mesh_data=mesh_data)
@@ -34,6 +36,10 @@ def solve(case, *, mesh_data=None):
 
 
 def _solve(case, *, mesh_data=None, element_order=1):
+    from .te import is_te,solve_te
+    if is_te(case):
+        from dataclasses import replace
+        return solve_te(replace(case,element_order=element_order),mesh_data=mesh_data)
     if mesh_data is None:
         mesh = make_mesh(case)
     else:

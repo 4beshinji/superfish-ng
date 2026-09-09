@@ -15,9 +15,11 @@ class Model:
 
     def __post_init__(self):
         for name, supported in [('physics', 'rf_eigenmode'),
-                                ('coordinates', 'axisymmetric'), ('polarization', 'tm')]:
+                                ('coordinates', 'axisymmetric')]:
             if getattr(self, name) != supported:
                 raise ValueError(f'model.{name}: only {supported!r} is implemented; see capabilities')
+        if self.polarization not in ('tm','te'):
+            raise ValueError('model.polarization: only tm and te are implemented; see capabilities')
         integer(self.azimuthal_index, 'model.azimuthal_index', 0)
         if self.azimuthal_index != 0:
             raise ValueError('model.azimuthal_index: only m=0 is implemented')
@@ -62,7 +64,8 @@ def upgrade_case(data):
 def capabilities():
     """Machine-readable capabilities of this implementation, not its roadmap."""
     return {'capabilities_version': 1, 'case_schema_versions': [1, 2, 3],
-            'supported_models': [Model().to_dict()],
+            'supported_models': [Model().to_dict(), Model(polarization='te').to_dict()],
+            'model_limits': {'te': 'vacuum m=0, straight P1/P2, solve/TE native read; Project/GUI/tracking/curved TE pending'},
             'geometry_types': ['pillbox', 'profile', 'stepped_profile', 'arc_profile', 'contour'],
             'automatic_mesh_geometry_types': ['pillbox', 'profile', 'stepped_profile', 'arc_profile', 'contour'],
             'contour_mesh_requirement': 'explicit mesh.contour_mesh controls or validated external tagged mesh',

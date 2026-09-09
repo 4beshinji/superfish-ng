@@ -176,6 +176,12 @@ Acta Numerica 19, pp.287–449、DOI 10.1017/S096249291000005X。
 本PJのTM質量内積を少数列の座標へ移す恒等式を独立に導出した。掲載コード・本文・図の転載なし。
 既存NumPyのQR/Choleskyを使用し、物理誤差上界の根拠とはしない。
 
+**R35. Richard Fitzpatrick, Cylindrical Cavities (2014).**
+[著者の大学公開講義](https://farside.ph.utexas.edu/teaching/jk1/lectures/node116.html)
+— 2026-09-09閲覧。式1351–1353のTE円筒のBessel導関数零点・軸方向依存・周波数条件を独立参照にした。
+m=0の正のJ1零点とp≥1を使い、零点0をTE共振へ含めない。製品の弱形式と+時間phasorの場復元はMaxwellから独立に導出。
+本文・図・コード・PDFの転載なし。ソルバーを解析式で置き換えない。
+
 ## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、

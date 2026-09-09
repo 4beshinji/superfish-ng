@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-09: [P01 軸対称TE](AXISYMMETRIC_TE.md)。MaxwellからEφ=r vのcurl弱形式、PEC必須条件・磁気対称自然条件、+時間phasorの磁場符号とε0エネルギー規格化を独立導出。既存自作P1/P2 curl積分と幾何点検索を再利用し、未知数・出力単位・保存版をTMと分離。公開参照R35の円筒TE周波数/導関数零点を独立検証に使用。新規依存・legacy参照なし。TE/TM旧保存誤読の反例と拒否修正、P1/P2の未達細分結果を保持する。
+
 2026-09-09: [RF探索の実行内再利用](RF_OPTIMIZATION_REUSE.md)。既存自作の曲線適応prefix方式をRF探索に適用。全nativeファイルの内容とリンク拒否を照合し、実行内で再構築済みの追跡/評価だけを再利用する。公開replayは独立、式・許容差・保存書式は不変。新規資料・依存・legacy参照はない。
 
 2026-09-09: [RF探索GUI](GUI_RF_OPTIMIZATION.md)。既存自作のtune画面・CDP検証器・native import・RF探索replayを利用して接続。再開preflightは完全検証を保ち管理器ロック外へ移動し、closeとの競合を起動前に再確認する。FEM・RF・探索式と数値許容差は不変。新規資料・依存・legacy参照はない。

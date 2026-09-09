@@ -40,6 +40,11 @@ def write_vtk(path, solution, mode):
 
 def save_run(case, solution, directory):
     """Publish readiness after writing all files; never replace an existing path."""
+    from .te import TESolution,is_te
+    if isinstance(solution,TESolution):
+        from .te_saved import save_te_run
+        return save_te_run(case,solution,directory)
+    if is_te(case):raise ValueError('TE case requires a TESolution')
     from .curved_solution import CurvedSolution
     if isinstance(solution, CurvedSolution):
         from dataclasses import replace

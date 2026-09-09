@@ -134,6 +134,9 @@ class Case:
             if not isinstance(self.model, Model):
                 raise ValueError('model must be a validated Model instance or None for legacy input')
             self.model.__post_init__()
+            if self.model.polarization=='te':
+                from .te import validate_te_case
+                validate_te_case(self)
         if not isinstance(self.name, str):
             raise ValueError("name must be a string")
         if self.contour is not None:

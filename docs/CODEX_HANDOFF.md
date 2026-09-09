@@ -1,5 +1,23 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: 真空m=0 TEの直線P1/P2 — 2026-09-09
+
+基準b0f8b0c。[仕様・独立検証](AXISYMMETRIC_TE.md)。P01を進行中へ更新。明示Modelのpolarization=teだけを別TESolutionへ分岐し、Eφ/rを未知数としてTE PEC/電気対称の本質条件、磁気対称の自然条件を解く。既存の自作P1/P2 curl行列・幾何を再利用するが、TMのuへ別名を付けない。軸のEφ/Hr=0、Hz有限を保持し、+iωtの磁場quadrature、電気/磁気エネルギー、PECだけの壁損失/Q0/Gを評価する。軸方向加速量と両R/Qはnullと理由を保存する。解析式を製品solverへ入れていない。
+
+通常solve/API、外部直線mesh、TEFieldSampler、専用schema_version=2結果/NPZ/CSV/VTK、replay-teを追加。TE完了marker/hash、Case/場空間/単位/phasor/版・環境、係数のBC/残差/直交/エネルギー規格化、保存場からのRF再積分を検証する。RF照合相対1e-10は再積分の丸め用で物理精度許容差とは別。Project/Job/GUI、追跡、曲線、鏡映等は明示拒否し、既存TM readerはTE markerだけでなく読んだCaseでもTEを拒否する。
+
+事前独立不変量は円筒TE011とTM自然壁の周波数差41.9%でFAILを確認。TE追加テストの最初の軸値FAILはqueried r=0を厳密処理して修正。TM形式のCaseだけをTEへ変えhashも更新した不正保存を旧readerが誤受入するredを確認し、Case段階の拒否と回帰検査を追加した。初回標準64170はこの実不具合の修正のため自身のvalidate/unittestだけを停止（143、interruption.json保持）。関連のないプロセスは停止していない。
+
+最初の独立1735終了1、out/te-independent-20260909。P1 n=256はf条件を満たしても場約1.83%/G約1.09%でFAIL。交差格子の追加観測も未達で不採用。次の47582終了1、out/te-independent-accepted-20260909では対角格子P1 n=768の両尺度はPASS、P2 n=32高次モードG約0.999%でFAIL。各失敗log/driver/部分値を保持し許容差は不変。P2 n=64の追加対照64053終了0を経て最終両次数/両尺度を再計算した。
+
+最終独立32360終了0、out/te-independent-final-20260909。scripts/validate_te.pyで6モード×2尺度、P1の5水準/P2の4水準の18 API FEMと2 CLI FEM。最終P1/P2の最大相対差はf 7.861e-6/3.509e-7、場5.148e-3/1.492e-3、G3.690e-3/2.505e-3。電磁エネルギー比最大1.599e-12、Maxwell f/G/Q0相似最大1.219e-12。P2 CLI/API/nativeの係数・RF一致。Besselの正零点は独立検証だけで使う。保存値の収束図を作成し目視、図とdriver/logをoutに保持。TE追加7 unitは0.302秒PASS（外部mesh/共通sampler/不正tagも含む）。
+
+中間標準44221は終了0、749件中747合格・2skip、1157.734秒。終了してから最終の保存版・環境メタデータ/外部mesh検査/例題・独立P2分割64へ変更し、最終標準を再実施した。この中間結果を最終版の証拠には使わない。
+
+最終標準61417終了0、out/validation-te-final-20260909。750件中748合格・2skip、unittest1150.683秒（command全体1151.029秒）。seed9モード19量のf差0/RF最大8.882e-16。標準/最終TE独立/終了後436対象hashが一致。verify_completion.pyとseed_regression.jsonを標準outへ保存。全関連実行は終了、ソース固定解除。
+
+P01/全体は未完。親8受入/9進行中/15他未受入/1候補=33。次はP01の曲線TEとO02のProject/Job/GUI統合へ進め、場・壁損失と保存再検証を保つ。TE追跡/Study/設計探索も残る。今回GUI/ブラウザー・Wine・Hosted CI・他OSの新規実行はなし。新規依存なし、公開数学R35と独立Maxwell導出をREFERENCES/PROVENANCEへ記録した。
+
 ## 最新: RF探索の実行内祖先再利用 — 2026-09-09
 
 基準9fe3ff2。[仕様・証拠](RF_OPTIMIZATION_REUSE.md)。rf_optimization.pyのprivate _VerifiedPrefixは実行ごとに生成し、検証済みtrial/全3水準sourceを深いコピーで保存。要求/祖先順/実装hash/全ファイル変更とリンクを検査して新試行だけを再評価する。終了時の二重native再読込は全ファイルhash一致へ置換。公開replayはcacheなしで全試行をnative場から再構築、再開は空cacheで全replayしてから追記する。式・許容差・保存schema・GUI操作は不変。

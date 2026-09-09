@@ -51,6 +51,8 @@ class CurvedSolution:
 
 def solve_curved(case,*,quadrature_order=None,mesh_data=None):
     """Solve on a validated curved space, promoting an explicit experimental call."""
+    from .te import is_te
+    if is_te(case):raise ValueError('curved TE integration is pending; use straight TE geometry')
     if case.element_order!=2:
         raise ValueError('experimental curved solve requires element_order=2')
     quadrature_order=case.quadrature_order if quadrature_order is None else quadrature_order

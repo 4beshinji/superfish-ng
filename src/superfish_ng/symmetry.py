@@ -14,6 +14,8 @@ def reflect_solution(case, solution):
     are unchanged, so energy and loss double. The original mode indices are a
     subset of the full spectrum, not its global frequency ranks.
     """
+    from .te import is_te
+    if is_te(case):raise ValueError('TE reflection is pending; solve the full TE cavity explicitly')
     order = getattr(solution, 'element_order', 1)
     if case.geometry_order == 2:
         from .curved_reflection import reflect_curved_solution

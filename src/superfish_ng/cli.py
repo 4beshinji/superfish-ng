@@ -13,7 +13,7 @@ from .solver import solve
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric TM research solver")
+    parser = argparse.ArgumentParser(description="Superfish-NG: axisymmetric RF research solver")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
     for command in ('adaptive-refine','resume-adaptive-refinement','replay-adaptive-refinement'):
@@ -115,6 +115,8 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    te_replay=sub.add_parser('replay-te',help='verify TE native fields, electric-wall constraints and RF quantities')
+    te_replay.add_argument('run',type=Path)
     run = sub.add_parser("solve", help="solve a JSON case and export RF quantities/fields")
     run.add_argument("case", type=Path)
     run.add_argument("--mesh", type=Path, help="explicit SI/rz tagged triangle JSON; replaces case mesh generation")
@@ -362,6 +364,11 @@ def main(argv=None):
             from .jobs import execute_project
             result = execute_project(Project.load(args.project), args.out)
             print(f"{result['status']}: {args.out}")
+        elif args.command == 'replay-te':
+            from .te_saved import read_te_run
+            from .te import te_quantities
+            solution=read_te_run(args.run)
+            print(json.dumps({'status':'PASS','modes':[te_quantities(solution,i) for i in range(solution.case.modes)]},indent=2))
         elif args.command == "solve":
             if args.out.exists():
                 raise ValueError(f"output already exists: {args.out}; choose a new directory")
@@ -376,6 +383,9 @@ def main(argv=None):
                 case, solution = reflect_solution(case, solution)
             result = save_run(case, solution, args.out)
             for mode in result["modes"]:
+                if case.model is not None and case.model.polarization=='te':
+                    print(f"TE mode {mode['mode_index']}: {mode['frequency_hz']/1e6:.6f} MHz, Q0={mode['q0']:.3f}, axial R/Q=N/A")
+                    continue
                 print(f"Mode {mode['mode_index']}: {mode['frequency_hz']/1e6:.6f} MHz, "
                       f"Q0={mode['q0']:.3f}, R/Q(acc)={mode['r_over_q_accelerator_ohm']:.6f} ohm")
         elif args.command == "plot":
