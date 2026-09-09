@@ -100,7 +100,7 @@ class TETests(unittest.TestCase):
     def test_native_metadata_must_preserve_te_meaning_even_with_new_hashes(self):
         from superfish_ng.curved_solution import solve_curved
         c=cavity(n=4,modes=1)
-        with self.assertRaisesRegex(ValueError,'curved TE'):solve_curved(c)
+        with self.assertRaisesRegex(ValueError,'geometry_order=2 requires'):solve_curved(c)
         with tempfile.TemporaryDirectory() as tmp:
             path=Path(tmp)/'run';save_run(c,solve(c),path)
             original=json.loads((path/'results.json').read_text());marker=json.loads((path/'te_complete.json').read_text())

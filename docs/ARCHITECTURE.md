@@ -1,5 +1,9 @@
 # アーキテクチャと拡張判断
 
+曲線TEはte_curved.pyで二次写像の場・PEC接線磁場・逆写像点検索を評価する。
+TE native版3のgeometry.npzを実空間再構築と照合し、元メッシュと実二次幾何を区別する。
+直線TE版2の読み書きは維持する。[仕様・検証](CURVED_TE_PLAN.md)。
+
 P01の[軸対称TE](AXISYMMETRIC_TE.md)は明示Modelからsolver.solveがte.solve_teへ分岐する。
 TESolutionは電場係数coefficients_v_per_m2を持ち、TMのuへ別名を付けて渡さない。
 TEのP1/P2では既存curl積分とメッシュ/幾何検索を共有し、PEC必須条件とε0規格化を独立に適用する。

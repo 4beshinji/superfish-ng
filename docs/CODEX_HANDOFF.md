@@ -1,5 +1,17 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: 曲線P2 TEの通常solve・native接続 — 2026-09-09
+
+基準e243205。[仕様/方式/失敗履歴](CURVED_TE_PLAN.md)。前回は球形試作と受入条件の具体化で進捗あり。今回、一時コピーで実装・検証後、開始時標準session1151終了0（750件中748合格/2skip、1155.964秒）を確認して主ツリーへ反映した。主ツリーTE12件session69453終了0、2.028秒。te.py/te_curved.py/te_saved.py/curved_solution.py/model.py、tests/test_te.py/test_te_curved.py、scripts/validate_curved_te.py、examples/te/sphere.jsonが変更対象。最終検証までソースを固定し、全実行終了後に固定解除した。
+
+最終標準42758終了0、out/validation-curved-te-final-20260909。755件中753合格/2skip、unittest1157.101秒、command1157.463秒。最終独立24369終了0、out/curved-te-independent-final-20260909。比較18306終了0、seed9モード19量f差0/RF最大8.882e-16、旧直線TE版2 native/CLI4件全RF差0。標準/独立/終了後440対象hash一致。verify_completion.py/seed_regression.json/comparison.log/command.logを標準outに保存。全関連実行は終了。
+
+実装: 二次写像からTE勾配/場を復元、PEC側要素の接線磁場を2πr dsで積分する。TE用constrained_dofsを保持。点検索はQuadraticLocator、領域外とUNVERIFIEDを区別。専用結果版3とgeometry.npzで実節点/接続/タグを保存再照合、二次VTKと実軸節点CSV。直線TE版2は不変。Caseの一様/局所履歴を再構築し最後にTE拘束集合を作る。既存TMのCurvedSpace追跡/適応APIを直接TEへ受入したわけではない。
+
+一時コピー /tmp/superfish-te-curved-20260909 は主ツリーの最終基準ではない。候補初回7 unitの1FAILは旧curved拒否regexの期待をgeometry前提拒否へ更新。追加12件の1ERRORはmarked入力の最小角未指定を修正。その後12件2.109/2.073/2.059秒でPASS。独立3915終了1は第3モードG1.133%未達、同一幾何で一様4段へ追加。72877終了1は両尺度3モードの条件を満たしたが半領域の軸始点0規約に違反。平行移動した62291終了0、10全領域FEM＋1半領域FEMでPASS。最終18625係数、f最大2.500e-5/場1.506e-3/G2.824e-3、相似1.219e-13。半領域/全領域f1.368e-8/G8.484e-5/壁損失1/2則8.481e-5。旧直線TE版2 native/CLI4件の再読込は差0（54762終了0）。各一時結果・失敗/logはout/te-curved-draft-20260909に保存。合格後のcapabilities説明/例題/壁mode検査も最終検証に含める。
+
+最終独立の収束図を作成し、2尺度のf/G/場と受入線を目視した。convergence.png/描画driver/command.log/unit.logを同じoutへ保存。README/対応表/計画/実装状況/PHYSICS/MODEL_CONTRACTのTE対応範囲を揃えた。全体/P01は未完、親8受入/9進行中/15他未受入/1候補=33。次はProject/Job/GUI等のO02統合。入口・worker・read_job・import_result・GUIモデル生成の読取調査はout/te-curved-draft-20260909/next_project_integration.json。入口の拒否解除だけで完了としない。TE直接nativeの取込ではsource_mesh_dataをProject版2へ引き継ぎ、再実行時に元メッシュを失わないことも受入条件へ含める。サブエージェント/新規依存/legacy参照/新規ブラウザー・Wine・Hosted CI・他OS実行なし。
+
 ## 最新: 真空m=0 TEの直線P1/P2 — 2026-09-09
 
 基準b0f8b0c。[仕様・独立検証](AXISYMMETRIC_TE.md)。P01を進行中へ更新。明示Modelのpolarization=teだけを別TESolutionへ分岐し、Eφ/rを未知数としてTE PEC/電気対称の本質条件、磁気対称の自然条件を解く。既存の自作P1/P2 curl行列・幾何を再利用するが、TMのuへ別名を付けない。軸のEφ/Hr=0、Hz有限を保持し、+iωtの磁場quadrature、電気/磁気エネルギー、PECだけの壁損失/Q0/Gを評価する。軸方向加速量と両R/Qはnullと理由を保存する。解析式を製品solverへ入れていない。

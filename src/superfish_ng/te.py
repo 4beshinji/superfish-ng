@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Vacuum m=0 TE: Ephi=r*v with essential electric-wall constraints."""
-from dataclasses import dataclass
+from dataclasses import dataclass,replace
 import numpy as np
 from scipy.sparse import diags
 from scipy.sparse.linalg import eigsh,ArpackNoConvergence
@@ -18,8 +18,6 @@ def is_te(case):
 
 def validate_te_case(case):
     if not is_te(case):raise ValueError('TE solve requires explicit model.polarization=te')
-    if case.geometry_order!=1:
-        raise ValueError('TE currently requires straight triangular geometry; curved TE integration is pending')
     if case.has_acceleration_overrides:
         raise ValueError('TE has no axial accelerating field; remove active_length/voltage_interval/phase_origin overrides')
 
@@ -45,10 +43,14 @@ class TESolution:
         integer(mode,'TE mode',0)
         if mode>=self.case.modes:raise ValueError('TE mode is outside the saved mode range')
         cells=np.asarray(cells);bary=np.asarray(barycentric,dtype=float)
-        if cells.ndim!=1 or not np.issubdtype(cells.dtype,np.integer) or np.any(cells<0) or np.any(cells>=len(self.mesh.triangles)):
+        count=len(self.space.geometry.cell_nodes) if self.case.geometry_order==2 else len(self.mesh.triangles)
+        if cells.ndim!=1 or not np.issubdtype(cells.dtype,np.integer) or np.any(cells<0) or np.any(cells>=count):
             raise ValueError('TE cells must be valid integer element indices')
         if bary.shape!=(len(cells),3) or not np.isfinite(bary).all() or np.any(bary < -1e-10) or not np.allclose(bary.sum(axis=1),1,rtol=0,atol=1e-10):
             raise ValueError('TE reference points must be valid barycentric triples')
+        if self.case.geometry_order==2:
+            from .te_curved import mapped_fields
+            return mapped_fields(self,cells,bary,mode)
         p,_,grad=element_geometry(self.mesh);grad=grad[cells]
         if self.space is None:
             values=bary;derivatives=grad;dofs=self.mesh.triangles[cells]
@@ -65,6 +67,15 @@ class TESolution:
 
 def te_matrices(case,mesh):
     validate_te_case(case)
+    if case.geometry_order==2:
+        from .curved_space import case_curved_space
+        from .curved_fem import assemble_curved
+        space=case_curved_space(case,mesh)
+        k,m=assemble_curved(space,quadrature_order=case.quadrature_order)
+        constrained=np.unique(space.geometry.boundary_nodes[np.isin(space.boundary_tags,['pec','electric_symmetry'])])
+        constrained.setflags(write=False)
+        space=replace(space,constrained_dofs=constrained)
+        return space,k,m,np.setdiff1d(np.arange(k.shape[0]),constrained)
     space=quadratic_space(mesh) if case.element_order==2 else None
     k,m=assemble(mesh) if space is None else assemble_p2(space)
     boundary=mesh.boundary_edges if space is None else space.boundary_dofs
@@ -104,16 +115,20 @@ def te_quantities(solution,mode=0):
     electric=EPS0*TAU*float(v@(solution.mass@v))/4
     magnetic=MU0*TAU*float(v@(solution.stiffness@v))/(4*(omega*MU0)**2)
     energy=electric+magnetic
-    mesh=solution.mesh;chosen=np.flatnonzero(mesh.boundary_tags=='pec');cells=mesh.boundary_cells[chosen]
-    endpoints=mesh.points[mesh.boundary_edges[chosen]];t=endpoints[:,1]-endpoints[:,0];length=np.linalg.norm(t,axis=1);t/=length[:,None]
-    p,_,grad=element_geometry(mesh);surface=0.
-    nodes,weights=np.polynomial.legendre.leggauss(5)
-    for node,weight in zip((nodes+1)/2,weights/2):
-        points=(1-node)*endpoints[:,0]+node*endpoints[:,1]
-        bary=np.einsum('nij,nj->ni',grad[cells],points-p[cells,0]);bary[:,0]+=1
-        fields=solution.fields_in_cells(cells,bary,mode)
-        tangent=fields['Hr_quadrature_A_per_m']*t[:,0]+fields['Hz_quadrature_A_per_m']*t[:,1]
-        surface+=float(np.sum(weight*length*TAU*points[:,0]*tangent**2))
+    if case.geometry_order==2:
+        from .te_curved import wall_integral
+        surface=wall_integral(solution,mode)
+    else:
+        mesh=solution.mesh;chosen=np.flatnonzero(mesh.boundary_tags=='pec');cells=mesh.boundary_cells[chosen]
+        endpoints=mesh.points[mesh.boundary_edges[chosen]];t=endpoints[:,1]-endpoints[:,0];length=np.linalg.norm(t,axis=1);t/=length[:,None]
+        p,_,grad=element_geometry(mesh);surface=0.
+        nodes,weights=np.polynomial.legendre.leggauss(5)
+        for node,weight in zip((nodes+1)/2,weights/2):
+            points=(1-node)*endpoints[:,0]+node*endpoints[:,1]
+            bary=np.einsum('nij,nj->ni',grad[cells],points-p[cells,0]);bary[:,0]+=1
+            fields=solution.fields_in_cells(cells,bary,mode)
+            tangent=fields['Hr_quadrature_A_per_m']*t[:,0]+fields['Hz_quadrature_A_per_m']*t[:,1]
+            surface+=float(np.sum(weight*length*TAU*points[:,0]*tangent**2))
     resistance=np.sqrt(omega*MU0/(2*case.conductivity_s_per_m));loss=resistance*surface/2
     if not surface>0 or not np.isfinite(surface):raise ValueError('TE PEC wall loss requires positive finite tangential magnetic energy')
     return dict(mode_index=mode+1,frequency_hz=float(solution.frequencies_hz[mode]),stored_energy_j=energy,
@@ -129,6 +144,10 @@ class TEFieldSampler:
     def __init__(self,solution):
         from .sampling import FieldSampler
         self.solution=solution
+        if solution.case.geometry_order==2:
+            from .te_curved import MappedTELocator
+            self.locator=MappedTELocator(solution)
+            return
         self.locator=FieldSampler(solution.mesh.points,solution.mesh.triangles,solution.coefficients_v_per_m2,
                                   solution.frequencies_hz,space=solution.space)
 
@@ -138,6 +157,8 @@ class TEFieldSampler:
         if outside not in ('raise','nan'):raise ValueError('outside must be raise or nan')
         if points.ndim!=2 or points.shape[1]!=2 or not len(points) or not np.isfinite(points).all():
             raise ValueError('TE probe coordinates must be a nonempty finite N by 2 array in (r,z) metres')
+        if self.solution.case.geometry_order==2:
+            return self.locator.evaluate(points,mode,outside)
         loc=self.locator;k=min(16,len(loc.triangles));candidates=np.asarray(loc.tree.query(points,k=k)[1]).reshape(len(points),k)
         weights=loc._weights(points[:,None,:],candidates);valid=np.all((weights>=-1e-10)&(weights<=1+1e-10),axis=-1)
         cells=candidates[np.arange(len(points)),np.argmax(valid,axis=1)];found=valid.any(axis=1)
