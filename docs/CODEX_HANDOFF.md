@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: D03 RF設計制約評価基盤 — 2026-09-09
+
+[仕様・証拠](RF_DESIGN_CRITERIA.md)。基準3b80839。rf_design.pyはstrictな一目的関数/複数制約、既存の保存個別追跡付き固定曲線P2三水準の再検証、最後3区間の包絡を実装。全区間内MET/全区間外VIOLATED/重なりUNRESOLVED。既存表面収束・形状診断未達ならUNVERIFIED。CRITERIA_METだけが最大化の下端/最小化の上端をeligible_valueとして持ち、他はnull。回路RQは定義どおり加速器RQの半分を外向き丸め。観測包絡は物理誤差上界でない。保存・再読込・全文書再構築照合あり。API基盤のみ、探索器/CLI/Job/GUIは未接続。
+
+開始時56875終了0、既存表面5件21.806秒。追加初回8100終了1、quantity配列2例がTypeErrorとなるstrict検査の不備。数量名の型確認でValueErrorへ修正、64878終了0、5件21.539秒。最初の修正用コマンドはpythonがPATHになく終了127で無変更、その後.venv/bin/pythonで適用。初回/修正後/基準ログはout/rf-design-independent-20260909に保持。
+独立85428終了0、out/rf-design-independent-20260909。球形両尺度・正規化1/4 J、36/144/576要素の新規FEM。独立球形解析f最大2.483e-5/RQ6.489e-6/G8.807e-7/E比2.657e-4/B比3.847e-5。先に指定した解析6量±5%の設計制約と既存の厳しい収束停止を両方PASS、意図した周波数制約違反は採用値null。全包絡相似差最大4.930e-14、保存再検証PASS。
+最終標準61901終了0、out/validation-rf-design-20260909、729件727合格・2skip、612.057秒。seed9モード19量f差0/RF最大8.882e-16。標準/独立/内部FEM/終了後417対象hash一致。新規GUI/ブラウザーなし。全関連実行終了、ソース固定解除。
+
+D03着手により親集計8受入/8進行中/16他未受入/1候補=33。次はD03の有限予算・複数変数探索を仕様化して実装する。曲線Project共通baseのradial/axial変形と相対写像で個別IDを継承し、初期/最終の独立細分、全試行と失敗、停止/予算/保存再開を接続する。制約違反から実行可能領域へ移る方針と、未確認を採用しない条件を区別する。本評価器は既存surface_convergenceの制限（native曲線P2、段数増分、同じ元mesh/Case）を引き継ぎ、局所履歴や直線P1/P2は未接続。大域最適性・物理誤差の証明はしない。D03親と全体計画は未完了。
+
 ## 最新: O02 外部mesh単体GUIと直線固定Study — 2026-09-09
 
 [外部mesh操作](EXTERNAL_MESH_WORKFLOW.md)。project_mesh_operations.replace_project_meshはCase/Projectと新meshをstrict検証後に置換/解除。古いmeshが編集後のCaseと合わなくても置換可能で、他のCase/Projectフィールドはstrictのまま。raw JSONのduplicate keyとファイルnullは拒否し、明示null操作のみ解除。marked履歴は旧/新（自動生成へ戻す場合も）の完全一致がないと拒否し、履歴を明示解除させる。GUIreplace-mesh操作、file picker/解除・失敗時保持/保存/実計算へ接続。
