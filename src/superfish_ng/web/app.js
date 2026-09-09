@@ -1824,6 +1824,11 @@ function showTracking(response) {
   if (controls.affine_map) for (const [id,key] of [["radial","radial_scale"],["axial","axial_scale"],["shear","axial_shear"]]) $( `tracking-affine-${id}` ).value = controls.affine_map[key];
 
   $("tracking-status").textContent = `${d.status} — ${study ? `Study ${d.visited_point_indices.length}/${d.point_results.length} 点を追跡。未追跡 ${d.unvisited_point_indices.length} 点。` : history ? `履歴 ${d.steps.length} 段階。` : "2時点の比較。"} ${d.status !== "PASS" ? "未確認の対応があります。" : r.individual_ids_complete ? "全個別IDの対応を確認しました。" : "部分空間の対応を確認しました。集合内の個別IDは未確定です。"}${history && !sequence.can_extend ? " この履歴からの継続はできません。" : ""}`;
+  if (r.physical_mapping?.boundary_conditions) {
+    $("tracking-status").textContent += r.physical_mapping.reflected_partial_spectrum
+      ? " 鏡映された部分スペクトルの対応です。番号は全空洞の周波数順位ではありません。"
+      : " 同じ端条件の半領域を比較しました。";
+  }
   const body = $("tracking-matches").querySelector("tbody"); body.replaceChildren();
   for (const m of r.matches) {
     const row = document.createElement("tr");

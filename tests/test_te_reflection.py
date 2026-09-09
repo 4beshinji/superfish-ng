@@ -106,8 +106,9 @@ class TEReflectionTests(unittest.TestCase):
             comparison=compare_refinement(root,root)
             self.assertEqual(comparison['status'],'PASS')
             self.assertEqual(comparison['reflection_comparison']['domain'],'reconstructed source half-domain')
-            with self.assertRaisesRegex(ValueError,'partial spectra'):
-                track_cylindrical_modes(solution,solution,['a'],mapping='normalized_cylinder',sample_order=12)
+            tracking=track_cylindrical_modes(solution,solution,['a'],mapping='normalized_cylinder',sample_order=12,minimum_overlap=.98,minimum_assignment_margin=.05,relative_cluster_gap=.001)
+            self.assertEqual(tracking['status'],'PASS')
+            self.assertTrue(tracking['physical_mapping']['reflected_partial_spectrum'])
             path=root/'fields.npz'
             with np.load(path) as data:v=data['coefficients_v_per_m2'];f=data['frequencies_hz']
             v=-v;np.savez_compressed(path,coefficients_v_per_m2=v,frequencies_hz=f)

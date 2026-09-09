@@ -1,5 +1,7 @@
 # 実装バックログ
 
+D01/O02 TE対称面円筒追跡の受入条件: 同じ端条件・一対称面の半領域/鏡映に限定、通常/鏡映や異種端条件拒否、実Eφの正規化写像、両次数/相似則/解析交差/縮退/帯域退出/符号振幅、完全native再生と元ファイル変更拒否、従来閉PEC文書の維持、CLI/Study/GUIと標準回帰。API/GUIへ接続し、新6unit/TE全58件、独立32FEM/8CLI、8Study/16FEM、Chrome9操作、標準801件と旧数値回帰・470source一致を確認して限定受入。[計画](TE_SECTOR_TRACKING_PLAN.md)。
+
 O02/P01 TE鏡映部分スペクトル収束比較の受入条件: 同じ元半領域物理/同じ対称条件だけを比較し、元FEMの電場/磁場/RF/ゲートと全文書一致、混在/改変拒否、完全native snapshot、4種Study/CLI/worker/GUIと既存数値回帰。主ツリーの元半領域分岐・追加5unit・独立12FEM・4Study・Chrome7操作・標準795件・旧TE/TM回帰と467source照合を限定受入。[計画](TE_REFLECTED_CONVERGENCE_PLAN.md)。
 
 O02/P01 TE鏡映の受入条件: 左右・磁気/電気対称の直線P1/P2/曲線P2、vとEφ/Hr/Hz符号、自由方程式、U/P損失2倍・f/Q/G不変、半領域sourceと部分スペクトルを保存再検証、Project/CLI/Job/GUI、改変/中止/再起動・旧TM/TE回帰。専用schema4/native・Project/Job・CLI/GUIまで接続し、直線独立16FEM・Chrome6操作・GUI/CLI/再実行一致を確認。球形独立4FEM・標準790件・旧TM/TE数値回帰と464source照合まで限定受入。次は鏡映部分スペクトルの収束比較。[計画](TE_REFLECTION_PLAN.md)。

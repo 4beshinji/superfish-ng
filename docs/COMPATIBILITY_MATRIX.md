@@ -1,8 +1,10 @@
 # 互換対応表 v0
 
+2026-09-09追補: [同端条件のTE円筒追跡](TE_SECTOR_TRACKING_PLAN.md)を半領域・鏡映部分スペクトルへ拡張し、限定受入。同じ側の一対称面を持つ直線P1/P2円筒が対象。実Eφで対応し、異なる端条件・通常/鏡映の混在を拒否する。独立32FEM、8Study、Chrome9操作、旧追跡8文書の再生、標準801件（799合格、2skip）と既存TM/TE数値回帰を確認。一般形状の追跡・TE調整は未対応。
+
 [TE鏡映結果の収束比較](TE_REFLECTED_CONVERGENCE_PLAN.md)を接続・限定受入。同じ元半領域の物理・対称条件だけを比較し、電場/磁場/RFの個別判定と部分スペクトル番号を保持する。独立12FEM、4Study、Chrome7操作、CLI/GUI保存一致と再起動を確認。標準795件（793合格、2skip）と既存TM/TE数値回帰が合格。
 
-[TEの対称面鏡映](TE_REFLECTION_PLAN.md)をAPI・CLI・専用native版4・Project/Job・GUIへ接続。元の半領域と係数を保存し、全領域の場を再構成して検証する。番号は対称性で選ばれた部分スペクトルの順序。直線P1/P2・曲面P2の独立解析/反射不変量と保存操作を確認し、標準790件（788合格、2skip）と既存TM/TE数値回帰が合格。鏡映結果の追跡は未対応。収束比較は上記の元半領域方式に限定対応。
+[TEの対称面鏡映](TE_REFLECTION_PLAN.md)をAPI・CLI・専用native版4・Project/Job・GUIへ接続。元の半領域と係数を保存し、全領域の場を再構成して検証する。番号は対称性で選ばれた部分スペクトルの順序。直線P1/P2・曲面P2の独立解析/反射不変量と保存操作を確認し、標準790件（788合格、2skip）と既存TM/TE数値回帰が合格。鏡映結果の追跡は上記の同端条件円筒に限定対応。収束比較は上記の元半領域方式に限定対応。
 
 [TEの収束Study](TE_CONVERGENCE_STUDY_PLAN.md)を接続。同一物理Caseの電場・磁場・RFを個別比較し、縮退や積分不安定時はUNVERIFIED。円筒/球形の独立21FEM・GUI三判定・CLI/worker/再起動・標準785件と数値回帰が合格。細分差は物理誤差上界や表面ピーク精度の保証ではない。
 
@@ -149,7 +151,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K06 | 高次要素・誤差推定・適応細分 | U | 部分：P1と実長細分、[P2場/RF/保存・表示](HIGH_ORDER_FIELDS.md) | P2場/RFは受入済み。[選択直線要素の細分・係数移送API](MARKED_REFINEMENT.md)を追加。[残差指標と割合による選択](RESIDUAL_INDICATOR.md)を追加。[追跡付きf/RQ/G停止・保存再開API/CLI](ADAPTIVE_REFINEMENT.md)を追加。版2全域確認で円筒P1のRF改善検査はPASS。JobManager実行/取消し/再開と[GUI](GUI_ADAPTIVE_REFINEMENT.md)も接続。[版3](ADAPTIVE_SURFACE_STOPPING.md)でピーク比を含む停止をAPI/CLI/JobManagerへ追加（版3 GUIも接続）。一般形状/効率・誤差上界は未完。曲線局所細分のCase履歴・native保存/CLI、曲線残差指標、親子質量内積追跡を追加。版4の滑らかな閉PEC曲線の五量停止・保存再開はAPI/CLI/JobManager/GUIへ接続。一様細分との球形対照では適応優位は得られず、一般精度/効率は未完。旧アルゴリズムの再現要件ではない | A / N01,N02,N04 |
 | K07 | 軸対称m=0 TM基本/高次モード | L/H | 実装、演習17対象モード照合 | 形状/周波数範囲・探索条件の網羅、対応モードの判定 | A / C04,D01 |
 | K08 | 電気/磁気対称・PEC | L（全領域比較）、U（旧半領域詳細） | 部分：平坦z端・鏡映 | 旧タグ写像、任意境界への拡張要否。旧半領域を直接照合済みとはしない | A / C02,G01 |
-| K09 | 軸対称TE | H | 部分：[直線P1/P2](AXISYMMETRIC_TE.md)・[曲線P2](CURVED_TE_PLAN.md)の固有値・Eφ/Hr/Hz・エネルギー/壁損失・専用native/CLI、[Project/Job](TE_JOBS.md)・[通常GUI](GUI_TE.md)・[円筒追跡](TE_TRACKING_PLAN.md)・[独立掃引](TE_STUDY_PLAN.md)・[収束比較](TE_CONVERGENCE_STUDY_PLAN.md)・[対称面鏡映](TE_REFLECTION_PLAN.md) | 鏡映部分スペクトル/一般形状の追跡等、一般形状の受入 | B / P01 |
+| K09 | 軸対称TE | H | 部分：[直線P1/P2](AXISYMMETRIC_TE.md)・[曲線P2](CURVED_TE_PLAN.md)の固有値・Eφ/Hr/Hz・エネルギー/壁損失・専用native/CLI、[Project/Job](TE_JOBS.md)・[通常GUI](GUI_TE.md)・[円筒追跡](TE_TRACKING_PLAN.md)・[独立掃引](TE_STUDY_PLAN.md)・[収束比較](TE_CONVERGENCE_STUDY_PLAN.md)・[対称面鏡映](TE_REFLECTION_PLAN.md) | 一般形状の追跡等、一般形状の受入 | B / P01 |
 | K10 | 平面2D RF | H | 未 | 単位長エネルギー/損失・偏波・境界の仕様 | B / P02 |
 | K11 | 同軸共振器/TEM系 | U | 未 | 内導体、端面、零固有値と物理共振の区別 | B / P03 |
 | K12 | 複数RF材料領域 | D（MAT、MT EPSILON/MU） | 未 | epsilon/mu界面、エネルギー、対象版での材料入力・実行検証 | B / P04 |

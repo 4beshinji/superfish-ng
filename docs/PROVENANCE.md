@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-09: [TE対称面円筒追跡](TE_SECTOR_TRACKING_PLAN.md)。自作のEφ標本内積へ元端条件の一致検査と部分スペクトル記録を追加。実際の入力場を比較し、通常閉PECの保存文書を保持する。既存R35のBessel正零点とMaxwell相似則で交差/尺度を独立検証。新規外部資料・依存・legacy参照・FEM数式や精度許容差の変更なし。
+
 2026-09-09: [TE収束Study](TE_CONVERGENCE_STUDY_PLAN.md)。既存自作のTE場評価・Duffy Gauss積分・native検証へ両分割の体積内積とTE専用比較を追加。Eφによる対応、磁場quadratureの符号整合、電場/磁場/RF別ゲート、前後hash、積分次数依存を独立実装した。既存R35の円筒Bessel/球形TE解析とMaxwell相似則を検証に再利用する。新規外部資料・依存・FEM数式変更・legacy参照なし。TMの既存比較ゲートは維持。
 
 2026-09-09: [TE Study](TE_STUDY_PLAN.md)。既存のProject/worker/Studyへ自作TE native完全読込を接続し、保存Case/hash/各点要約を照合する。GUIでNumber(null)がR/Q=0を表示する実反例を修正した。独立検証は既存R35のBessel零点式・Maxwell相似則とエネルギー規格化を使用。初回P1高位モードの精度不足にはメッシュ細分で対応し、許容差を維持した。新規外部資料・依存・FEM数式・legacy参照はない。

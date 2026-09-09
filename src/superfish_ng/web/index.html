@@ -36,7 +36,7 @@
         </div>
         <label>名前<input id="name" value="新しい空洞" /></label>
         <label>偏波<select id="polarization"><option value="tm">TM（Er・Ez・Hφ）</option><option value="te">TE（Eφ・Hr・Hz）</option></select></label>
-        <p id="te-model-note" class="hint" hidden>TEの磁場は+時間phasorのquadratureです。軸方向加速場はゼロで、R/Q・加速量はN/Aです。通常計算・保存・場表示・プローブに対応します。TEの保存場比較は閉PEC円筒のEφに対応します。Studyは独立したパラメータ掃引と同一物理条件の細分比較に対応します。TE細分比較では電場・磁場・RFを別々に判定し、物理誤差上界や表面ピーク精度は保証しません。鏡映結果は対称性で選ばれた部分スペクトルで、元半領域から再検証します。鏡映結果の細分比較は同じ物理・同じ対称条件の元半領域に対応します。鏡映結果の追跡・一般形状の追跡・適応・調整・最適化は未対応です。</p>
+        <p id="te-model-note" class="hint" hidden>TEの磁場は+時間phasorのquadratureです。軸方向加速場はゼロで、R/Q・加速量はN/Aです。通常計算・保存・場表示・プローブに対応します。TEの保存場比較は同じ端条件の円筒のEφに対応し、一対称面の半領域とその鏡映結果を扱います。通常/鏡映の混在は拒否します。Studyは独立したパラメータ掃引と同一物理条件の細分比較に対応します。TE細分比較では電場・磁場・RFを別々に判定し、物理誤差上界や表面ピーク精度は保証しません。鏡映結果は対称性で選ばれた部分スペクトルで、元半領域から再検証します。鏡映結果の細分比較は同じ物理・同じ対称条件の元半領域に対応します。一般形状の追跡・適応・調整・最適化は未対応です。</p>
         <label
           >形状の入力方法<select id="geometry-type">
             <option value="pillbox">円筒 — 半径と長さ</option>
@@ -331,13 +331,13 @@
         </section>
         <section id="mode-tracking">
           <div class="section-title"><h2>モード対応と追跡履歴</h2></div>
-          <p class="hint">完了した計算結果を選び、保存場を比較します。周波数順位とモードIDは別です。TEは閉PEC円筒のEφを比較し、TE/TMの混在は受理しません。</p>
+          <p class="hint">完了した計算結果を選び、保存場を比較します。周波数順位とモードIDは別です。TEは同じ端条件の円筒のEφを比較し、TE/TMや通常/鏡映の混在は受理しません。対称面は一つまでで、鏡映の番号は部分スペクトル内の順序です。</p>
           <div class="grid">
             <label>以前の結果<select id="tracking-previous"><option value="">結果を選択</option></select></label>
             <label>現在・次の結果<select id="tracking-current"><option value="">結果を選択</option></select></label>
           </div>
           <p id="tracking-origin" hidden></p>
-          <label>以前のID（周波数順位順のJSON配列）<textarea id="tracking-ids" rows="2">["mode-A"]</textarea></label>
+          <label>以前のID（鏡映では部分スペクトル内の順位順、JSON配列）<textarea id="tracking-ids" rows="2">["mode-A"]</textarea></label>
           <label>比較写像<select id="tracking-mapping">
             <option value="normalized_cylinder">一定半径の円筒</option>
             <option value="normalized_profile">連続した可変半径profile</option>
@@ -387,7 +387,7 @@
           </div>
           <details id="tracking-study-panel"><summary>完了したStudyを順番に追跡する</summary>
             <label>Study<select id="tracking-study"><option value="">Studyを選択</option></select></label>
-            <label>最初の点のID（周波数順位順）<textarea id="tracking-study-ids" rows="2">["mode-A"]</textarea></label>
+            <label>最初の点のID（鏡映では部分スペクトル内の順位順）<textarea id="tracking-study-ids" rows="2">["mode-A"]</textarea></label>
             <label>段階別controls（JSON配列・省略可）<textarea id="tracking-study-controls" rows="4" placeholder="空欄なら上の写像・閾値を全隣接点に適用"></textarea></label>
             <p class="hint">配列を指定した場合は各段階の設定を使用します。未確認の対応で停止し、後続点を未追跡と記録します。元Studyの計算結果・収束判定は変わりません。</p>
             <button id="tracking-study-run">Studyを追跡</button>
