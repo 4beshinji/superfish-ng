@@ -103,8 +103,9 @@ class TEReflectionTests(unittest.TestCase):
         full,solution=reflect_solution(case,solve(case))
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)/'native';save_run(full,solution,root)
-            with self.assertRaisesRegex(ValueError,'partial spectra'):
-                compare_refinement(root,root)
+            comparison=compare_refinement(root,root)
+            self.assertEqual(comparison['status'],'PASS')
+            self.assertEqual(comparison['reflection_comparison']['domain'],'reconstructed source half-domain')
             with self.assertRaisesRegex(ValueError,'partial spectra'):
                 track_cylindrical_modes(solution,solution,['a'],mapping='normalized_cylinder',sample_order=12)
             path=root/'fields.npz'

@@ -1,5 +1,7 @@
 # TE鏡映の後続契約
 
+後続追補（2026-09-09）：[鏡映TEの元半領域収束比較](TE_REFLECTED_CONVERGENCE_PLAN.md)を同じ元物理/同じ対称条件に限定して接続した。以下の当時の未対応記録より、この追補を優先する。鏡映部分スペクトルの追跡は未対応のまま。
+
 ## 最終受入 — 2026-09-09
 
 基準be212b7。標準17381・最終数値照合4175とも終了0。790件中788合格・2skip（unittest1193.336秒、command1193.711秒）。TM seed9モード19量の周波数差0、RF/エネルギー最大相対差8.882e-16、旧通常TE版2/3保存7件のRF差0。標準・直線/球形独立・GUI保存照合・改変/worker検証・固定時/終了後464対象hashが一致し、Chrome実装hashも一致。証拠はout/validation-te-reflection-20260909のtests.log/command.log/validation.json/source-fixed.json/verify_completion.py/comparison.log/seed_regression.json。

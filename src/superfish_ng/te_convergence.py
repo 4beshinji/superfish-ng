@@ -77,11 +77,26 @@ def compare_te_refinement(first_directory, second_directory):
         raise ValueError('TE refinement cannot compare mixed TE/TM physics')
     snapshots = [_snapshot(p, c) for p, c in zip(paths, cases)]
     first, second = [read_te_run(p) for p in paths]
+    reflection_comparison = None
     if any(s.reflection_source_case is not None for s in (first,second)):
-        raise ValueError('TE refinement of reflected partial spectra is pending; compare the source half domains')
+        if any(s.reflection_source_case is None for s in (first,second)):
+            raise ValueError('TE refinement cannot mix ordinary and reflected spectra')
+        from .te_saved import _restore_fields, _reflection_metadata
+        sources = [s.reflection_source_case for s in (first,second)]
+        if _physical_spec(sources[0]) != _physical_spec(sources[1]):
+            raise ValueError('TE reflected refinement requires identical source physics and symmetry sector')
+        reflection_comparison = dict(domain='reconstructed source half-domain',
+            mode_indices='source parity-filtered order; not full-spectrum ranks',
+            source_reflections=[_reflection_metadata(c) for c in sources])
+        first, second = [_restore_fields(s.reflection_source_case, s.source_mesh_data,
+            s.reflection_source_coefficients, s.frequencies_hz) for s in (first,second)]
     if _physical_spec(first.case) != _physical_spec(second.case):
         raise ValueError('TE refinement requires identical physical cases')
-    results = [json.loads((p/'results.json').read_text()) for p in paths]
+    if reflection_comparison is None:
+        results = [json.loads((p/'results.json').read_text()) for p in paths]
+    else:
+        from .te import te_quantities
+        results = [dict(modes=[te_quantities(s,i) for i in range(s.case.modes)]) for s in (first,second)]
     low, high = [_integrals(first, second, order) for order in (3, 5)]
     norms, cross, signed, fraction, samples = high
     scores = np.abs(signed)
@@ -115,7 +130,7 @@ def compare_te_refinement(first_directory, second_directory):
               else 'PASS' if all(m['status']=='PASS' for m in records) else 'FAIL')
     if snapshots != [_snapshot(p, c) for p, c in zip(paths, cases)]:
         raise ValueError('TE refinement source changed during comparison; retry with stable native files')
-    return dict(physics='axisymmetric_m0_te', status=status, modes=records,
+    result = dict(physics='axisymmetric_m0_te', status=status, modes=records,
                 pairing='same physical case; volume-weighted Ephi overlap; unresolved clusters abstain',
                 samples=samples, common_volume_fraction=fraction,
                 sampling='both native cell partitions, all cells, Duffy orders 3 and 5; common support only',
@@ -124,3 +139,7 @@ def compare_te_refinement(first_directory, second_directory):
                             integration_absolute_change=.001, common_volume_fraction=.999),
                 accelerating_quantities_status='NOT_APPLICABLE: TE axial electric field is zero',
                 surface_field='not assessed; sampled volume changes are not physical error bounds')
+
+    if reflection_comparison is not None:
+        result['reflection_comparison'] = reflection_comparison
+    return result

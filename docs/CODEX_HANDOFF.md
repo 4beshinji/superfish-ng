@@ -1,8 +1,14 @@
 # ローカルCodexへの引継ぎ
 
+## TE鏡映元半領域の収束比較：限定受入完了
+
+基準7fcf4a7。標準47383・最終数値照合27419は終了0。795件中793合格/2skip（1230.296秒/command1230.670秒）。TM seed9モード19量f差0/RF最大8.882e-16、旧TE通常7件＋鏡映3件差0。標準/最終独立/GUI照合/固定時/現在467source一致。out/validation-te-reflected-convergence-20260909に全証拠、TE_REFLECTED_CONVERGENCE_PLAN.md冒頭に範囲・失敗履歴を集約。関連実行は全て終了し、GUI83516/PID1110446もSIGINT終了0。今回のローカルコミットに含める完了変更。親集計は8受入/9進行中/15他/1候補=33のまま、全計画は継続。
+
+次はTE_SECTOR_TRACKING_PLAN.md。一時パッケージ/tmp/superfish-te-sector-tracking-candidate-20260909（主ツリーへ未適用）に同端条件のTE円筒/鏡映追跡の候補あり。out/te-sector-tracking-candidate-20260909/candidate.patch、70770終了0（8FEM）、71233終了0（両次数/両尺度32FEM）、58725終了0（縮退/帯域退出4FEM・保存API replay/metadata改変拒否）、main467source不変。製品実装では旧閉PEC文書を保持する分岐が必要。厳密拒否・実ファイル変更中追跡・CLI/Study/GUI・標準回帰を行ってから限定受入する。候補を製品対応とは数えない。
+
 ## TE鏡映の限定受入完了 — 2026-09-09
 
-基準be212b7。標準17381・最終数値照合4175は終了0。790件中788合格/2skip（1193.336秒/command1193.711秒）。TM seed9モード19量f差0、RF最大8.882e-16、旧TE版2/3保存7件差0。標準/独立/GUI照合/worker/改変検証/固定時/現在464source一致。out/validation-te-reflection-20260909に全ログとseed_regression.json。TE_REFLECTION_PLAN.md冒頭に実装範囲/証拠/初回失敗を集約。個別新規実行は全て終了、検証用GUI PID1064077はSIGINT停止済み。ローカルcommitにまとめる段階。
+基準be212b7。標準17381・最終数値照合4175は終了0。790件中788合格/2skip（1193.336秒/command1193.711秒）。TM seed9モード19量f差0、RF最大8.882e-16、旧TE版2/3保存7件差0。標準/独立/GUI照合/worker/改変検証/固定時/現在464source一致。out/validation-te-reflection-20260909に全ログとseed_regression.json。TE_REFLECTION_PLAN.md冒頭に実装範囲/証拠/初回失敗を集約。個別新規実行は全て終了、検証用GUI PID1064077はSIGINT停止済み。7fcf4a7としてローカルcommit済み。
 
 次工程はTE_REFLECTED_CONVERGENCE_PLAN.md。直接全領域のDuffy積分の2倍不変量は磁場の片側値等の影響で不合格（通常/対称化規則の2初回ログ保持）。元半領域方式の候補は円筒/曲面×両対称の8FEMで元の比較文書と完全一致。数値FAIL/UNVERIFIEDを維持した。一時パッケージ/tmp/superfish-te-reflected-convergence-candidate-20260909のAPI候補も4保存比較一致、out/te-reflected-convergence-adapter-candidate-20260909/candidate.patchに保持。主ツリーには未適用。次はこの限定方式の改変/混在拒否、Study/CLI/GUI、標準回帰を実装・検証する。全計画の親集計は8受入/9進行中/15他/1候補=33を維持。
 

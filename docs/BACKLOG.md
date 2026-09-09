@@ -1,5 +1,7 @@
 # 実装バックログ
 
+O02/P01 TE鏡映部分スペクトル収束比較の受入条件: 同じ元半領域物理/同じ対称条件だけを比較し、元FEMの電場/磁場/RF/ゲートと全文書一致、混在/改変拒否、完全native snapshot、4種Study/CLI/worker/GUIと既存数値回帰。主ツリーの元半領域分岐・追加5unit・独立12FEM・4Study・Chrome7操作・標準795件・旧TE/TM回帰と467source照合を限定受入。[計画](TE_REFLECTED_CONVERGENCE_PLAN.md)。
+
 O02/P01 TE鏡映の受入条件: 左右・磁気/電気対称の直線P1/P2/曲線P2、vとEφ/Hr/Hz符号、自由方程式、U/P損失2倍・f/Q/G不変、半領域sourceと部分スペクトルを保存再検証、Project/CLI/Job/GUI、改変/中止/再起動・旧TM/TE回帰。専用schema4/native・Project/Job・CLI/GUIまで接続し、直線独立16FEM・Chrome6操作・GUI/CLI/再実行一致を確認。球形独立4FEM・標準790件・旧TM/TE数値回帰と464source照合まで限定受入。次は鏡映部分スペクトルの収束比較。[計画](TE_REFLECTION_PLAN.md)。
 
 O02/P01 TE収束Studyの受入条件: 同一物理/専用nativeの完全照合、Eφ対応と縮退未確認、電場/磁場/適用RFの個別ゲート、両native分割/積分次数安定性、固定二次幾何と幾何近似変化の区別、CLI/worker/GUI・保存改変/中止/再起動・旧TM回帰。API/Study/GUIの限定受入を完了。追加10unit・4種Studyの保存再比較・独立21FEM・Chrome4項目・標準785件と数値回帰が合格。[計画](TE_CONVERGENCE_STUDY_PLAN.md)。

@@ -1246,12 +1246,17 @@ async function openStudy(id) {
   if (report.study.kind === "sweep")
     title.textContent =
       "掃引の計算完了。独立したスペクトルを表示します。収束判定・モード追跡は未実施。";
+  const reflectedTE = report.physics === "axisymmetric_m0_te" && report.study.project.reflect_full;
+  if (reflectedTE) {
+    title.textContent += " 鏡映された部分スペクトルです。番号は全空洞の周波数順位ではありません。";
+    if (report.comparisons.length) title.textContent += " 細分比較は再構成・再検証した元半領域で行います。";
+  }
   $("study-report").append(title);
   const table = document.createElement("table");
   let heading = document.createElement("tr");
   for (const label of [
     "条件値 [SI / 倍率]",
-    "周波数順番号",
+    reflectedTE ? "部分スペクトル内の番号" : "周波数順番号",
     "周波数 [MHz]",
     "R/Q acc [Ω]",
     "結果",
