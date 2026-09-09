@@ -1,6 +1,14 @@
 # ローカルCodexへの引継ぎ
 
-## 最新: D02多項式の非線形座標連動 — 2026-09-09
+## 最新: D02曲線調整のアフィン幾何基盤 — 2026-09-09
+
+[アフィン弧変換](AFFINE_CONIC_TRANSFORM.md)を限定受入。affine_conics.transform_curveは既存affine_mapで線分・回転楕円・双曲線両枝を変形し、同じfractionの対応を保持。楕円SVD角シフト、双曲線直交化の双曲線シフトでnative形式へ戻す。分解再構成/正方向/直交性と4096εの解像条件を検査、未確認を拒否。閉輪郭やCaseの妥当性は別検査であり、tune接続は未実装。
+新API未存在でred失敗。その後3検査0.400秒PASS。点/接線/曲率/面積/逆変換、strict/未解像拒否、native二次メッシュを明示2倍にした実FEM/追跡/f/RQ/Gを確認。ログはout/affine-conics-random-accepted-20260909/tests-{red,initial,native}.log。
+乱数初回は入力にNumPy scalarを使った検証器の誤りで変形前に拒否。out/affine-conics-random-20260909/failure.jsonを保持。built-in floatへ修正し、out/affine-conics-random-accepted-20260909/validation.jsonは360例/3尺度/各33fractionでPASS。位置/接線/曲率誤差最大1.777e-15/1.728e-15/2.887e-15、基準1e-10は不変。有限標本を全域証明としない。
+標準90413は終了0、out/validation-affine-conics-20260909、698件中696合格・2 skip、unittest474.010秒。seed9モード19量f差0/RF最大8.882e-16。独立/標準/終了後397対象hash一致。新規GUI/ブラウザー検証なし。全関連プロセス終了、ソース固定解除。主ツリーcb39acaを基準とする。
+次の接続点を文書化。jobs._execute_preparedはsolve(project.case)を呼び、Projectに明示元メッシュの保存項目がない。solver自体のmesh_data/native保存は既存。O02/D02の版付きProject/Jobメッシュ入力契約を先に整え、同じ元メッシュ/曲線を変形してM_current M_parent^-1で追跡する。独立再メッシュで二次境界が同じと仮定しない。RF区間・製造制約の固定/連動も明示する。曲線tune・親D02・全体計画は未完了、受入親数8を維持。
+
+## D02多項式の非線形座標連動 — 2026-09-09
 
 [多項式連動](POLYNOMIAL_TUNING.md)を限定受入。tune request版3は版2と同じ項目、bindingはpath/coefficients（定数項から昇順）。Horner評価して全profile座標を同時更新。単位はm/(変数単位)^k、変数はm/無次元。各試行で形状検査、内部不正はfailureと先行保存を残して停止。全範囲有効性/単調性/全根を証明しない。FEM/追跡/二分法/最終ゲート不変。GUI式選択・係数/単位復元と例題pillbox_radius_squaredを追加。
 初回62543は9検査中1FAIL、12.047秒。係数1e308をオーバーフローとした試験誤り（x=1.1では有限）を1.79e308へ修正。実装許容差変更なし。26008は9件12.287秒、終了0。初回/修正後ログをout/polynomial-tuning-20260909に保持。
