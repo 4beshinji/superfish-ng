@@ -1,5 +1,7 @@
 # RF制約付き2変数探索 — D03
 
+[JobManagerでの実行・中止・再起動・checkpoint再開](RF_OPTIMIZATION_JOBS.md)を接続。GUI操作は後続工程。
+
 曲線Projectのradial_scale/axial_scaleを有限範囲で探索し、各候補を実FEMと
 [RF設計評価](RF_DESIGN_CRITERIA.md)で検証する。探索に解析式や補間したRFを使用しない。
 元のProjectから毎回変形し、親候補との相対写像から保存個別IDを追跡する。
@@ -45,7 +47,7 @@ rf_coordinatesはfixed/axialで明示する。
 
 対象は全体の閉PEC・native曲線P2、未組立・未鏡映・局所細分履歴なしのProject。
 元の一様細分段数と明示元メッシュは利用できる。一般形状変数・せん断・局所細分履歴・
-半領域・追加物理への拡張、JobManager/GUI接続、一般性能の受入は残る。
+半領域・追加物理への拡張、GUI接続、一般性能の受入は残る。
 既存の物理・幾何・RF収束条件を緩和していない。
 
 ## 実行と保存再開

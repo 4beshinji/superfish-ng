@@ -1,5 +1,17 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: RF探索JobManager — 2026-09-09
+
+基準5229c33。[仕様・証拠](RF_OPTIMIZATION_JOBS.md)。rf_optimization_jobs.pyは既存自作tuning_jobsのワーカー・投入入力/実装hash・manifest・祖先/予算照合をRF探索の3水準へ適用。JobManager.start_rf_optimizationとread_jobのkind/manifest検証を追加。kind=rf_optimization、optimization_status/can_resume/computed_trials/computed_fem_solvesを照合し、numerical_validation=not_checkedを保つ。rf_optimization_checkpoints.pyは停止した当該ジョブの番号一覧（未検証）と、open時の全replay・所属/予算/祖先/リンク拒否を行う。GUI前面/HTTP操作は未追加。FEM/RF/探索の式は無変更。
+
+開始時81046終了0、既存tuning jobs7件5.571秒。新規14348終了0、3件216.357秒（実FEM中止/再起動/数値未達の再開/別ジョブ拒否/3水準manifest欠落/祖先改変、事前入力、入力race）。その後投入予算超過checkpointのguardを追加、個別1件0.043秒PASS。初回失敗なし。
+独立61057終了0、out/rf-optimization-jobs-independent-20260909。最初の管理ジョブ20260909-130739-f4f5257df0はcomplete/PAUSED/3解、再起動後の20260909-130847-4a9796230aはcomplete/SEARCH_COMPLETE/6解。再起動/全再検証PASS。初期3水準のnative Projectとmodesが既存CLI（前回のfirst-1/trial-001）と完全一致。最終球形解析f2.472e-5/RQ2.525e-6/G1.077e-7/E比2.314e-4/B比6.077e-6で既存独立許容差PASS。
+標準8265終了0、out/validation-rf-optimization-jobs-20260909、738件736合格・2skip、1202.231秒。seed9モード19量f差0/RF最大8.882e-16。標準/独立/下記単一観測/終了後426対象hash一致。全driver/logをoutへ保存。全関連実行/ワーカーは終了、ソース固定解除。新規GUI/ブラウザーなし。
+
+追加75268終了0、out/rf-optimization-job-preflight-20260909。既存requestの読み取り専用単一計測で新規preflight0.00782秒、1試行の再開preflight16.498秒。start_rf_optimizationはその間manager.lockを保持する。次はGUI接続に先立って重い検証をロック外へ移し、初期/起動直前のclosed確認と、検証中のclose/cancel/status応答をテストする。GUIで長い再検証自体をワーカーへ渡す場合も、strict入力・元requestとの一致・起動後の完全replayを維持する。現在この応答性修正は未実装。
+GUIはgui_tuning.py/web/app.jsのカードを参照し、2変数/目的関数/複数制約と尺度/予算の生成保存復元、ジョブ/数値状態の別表示、中止checkpoint選択再開を接続する。RF探索はtrial_directories配下level-0/1/2の3水準なので、単一trial_runsのtune操作をそのまま使わない。各水準の保存個別IDと実rankを確認して既存native import/field表示へ渡す。実ブラウザーで操作・出所・CLI/Python一致・外部要求なしを検証する。
+今回computed_fem_solvesは完了した試行の解数で、以前の中止/失敗した別分岐の費用をゼロとも全体予算へ算入済みとも主張しない。元部分出力・elapsed_secondsは保持。D03/全体は未完、親8受入/8進行中/16他未受入/1候補維持。
+
 ## 最新: D03 曲線2変数RF探索 — 2026-09-09
 
 基準f976091。[仕様・証拠](RF_OPTIMIZATION.md)。rf_optimization_search.pyはradial/axialの有界座標試行、明示尺度による最大制約違反の減少→実行可能時だけの目的関数改善、step半減/訪問済み除外/最終試行予約を実装。rf_optimization.pyは各候補の3水準実FEM、相対アフィン写像で全個別ID確認、RF設計評価、全試行/入力/場/判定の再構築・保存再開を接続。最終は1段細かい3水準を新規solve。max_trialsは初期/最終を含み、3*max_trialsがFEM上限。失敗はfailure文書/呼出し数を残し例外停止し、採用値/成功checkpointへ変換しない。失敗前checkpointからの別分岐は利用者全体の予算とは別。CLI optimize-rf/resume-rf-optimization/replay-rf-optimizationと合成球形の例題examples/optimization/curved_rf.jsonを追加。
