@@ -1,10 +1,12 @@
 # 実装・検証の現状
 
+[多角形の宣言相似写像](PLANAR_SIMILARITY_TRACKING.md)：明示多角形の正の尺度・回転・SI平行移動による追跡を限定受入。要求/結果版3、正逆の元電場積分、完全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準932件（930合格、2skip、1447.175秒）、追加9unit、独立64 FEM/128対応、解析32条件、縮退16 FEM、実追跡32/履歴16worker、中止/再起動、Chrome87操作とGUI56保存ジョブを確認。旧版追跡・22履歴・TM/TE/平面数値回帰と535sourceも合格。一般変形・親P02と全計画は未完。
+
 [平面追跡の保存履歴](PLANAR_TRACKING_HISTORY.md)：平面モード追跡の保存履歴を限定受入。保存場・帯域・ID集合の連続性を全再検証し、未解決・段階上限での停止、所有コピーへの追加、CLI/実worker/GUIを接続した。標準923件（921合格、2skip、1417.539秒）、追加15unit、独立18履歴worker、Chrome76操作、GUI47保存ジョブと再起動後取込を確認。532sourceと旧TM/TE/平面の保存・周波数/RF回帰も合格。親P02と全計画は未完。
 
-[明示多角形の一様尺度追跡](PLANAR_POLYGON_TRACKING.md)：明示多角形の原点一様尺度による電場モード追跡を限定受入。宣言した接続/四分割、局所精度と演算順の幾何検証、要求/結果版2、完全保存再生・実worker・CLI・GUIを接続した。標準908件（906合格、2skip、unittest1320.887秒）、追加9unit、32対応・三角形解析16条件・縮退8比較16FEM、16worker、Chrome58操作、保存22追跡/44nativeと取込10件を確認。旧矩形追跡11件・Study29件61点・細分18件54水準・平面32件/TE10件、TM seed9モード19量、527sourceも回帰合格。履歴連鎖は上記で接続。任意変形/回転、親P02と全計画は未完。
+[明示多角形の一様尺度追跡](PLANAR_POLYGON_TRACKING.md)：明示多角形の原点一様尺度による電場モード追跡を限定受入。宣言した接続/四分割、局所精度と演算順の幾何検証、要求/結果版2、完全保存再生・実worker・CLI・GUIを接続した。標準908件（906合格、2skip、unittest1320.887秒）、追加9unit、32対応・三角形解析16条件・縮退8比較16FEM、16worker、Chrome58操作、保存22追跡/44nativeと取込10件を確認。旧矩形追跡11件・Study29件61点・細分18件54水準・平面32件/TE10件、TM seed9モード19量、527sourceも回帰合格。履歴連鎖は上記で接続。回転/平行移動は上記版3で接続。任意変形、親P02と全計画は未完。
 
-[矩形平面モード追跡](PLANAR_TRACKING.md)：矩形平面RFの宣言写像による電場モード追跡を限定受入。独立格子の元要素積分、順位交差、縮退ID集合、帯域guardと有限細分空間の診断、コピー保存/再生・実worker・CLI・GUIを接続した。標準899件（897合格、2skip、unittest1302.292秒）、追加20unit、独立8比較16FEM・縮退/退出18FEM・永続8worker、Chrome51操作、保存11追跡/22スペクトルと取込6件を確認。旧Study29件61点、細分18件54水準、平面32件/TE10件、TM seed9モード19量（f差0、RF最大8.882e-16）も回帰合格。多角形の一様尺度追跡は上記で接続。履歴連鎖は上記で接続。任意変形/回転、親P02と全計画は未完。
+[矩形平面モード追跡](PLANAR_TRACKING.md)：矩形平面RFの宣言写像による電場モード追跡を限定受入。独立格子の元要素積分、順位交差、縮退ID集合、帯域guardと有限細分空間の診断、コピー保存/再生・実worker・CLI・GUIを接続した。標準899件（897合格、2skip、unittest1302.292秒）、追加20unit、独立8比較16FEM・縮退/退出18FEM・永続8worker、Chrome51操作、保存11追跡/22スペクトルと取込6件を確認。旧Study29件61点、細分18件54水準、平面32件/TE10件、TM seed9モード19量（f差0、RF最大8.882e-16）も回帰合格。多角形の一様尺度追跡は上記で接続。履歴連鎖は上記で接続。回転/平行移動は上記版3で接続。任意変形、親P02と全計画は未完。
 
 [同形状細分診断](PLANAR_CONVERGENCE.md)：平面RFの同形状細分診断を限定受入。元領域の四分割・係数移送、f/E/H/RF別判定、縮退/不足帯域UNVERIFIED、全水準保存再生・worker・CLI・GUIを接続した。標準879件（877合格、2skip、unittest1304.306秒）、追加14検査、独立16条件48FEM・特殊形状16条件48FEM、永続16worker、Chrome42操作、保存18診断54水準と取込2件を確認。旧平面32件/TE10件、TM seed9モード19量と513sourceも一致した。真の誤差上界・表面ピーク精度は保証しない。モード追跡、親P02と全計画は未完。
 
@@ -108,14 +110,14 @@
 
 [版3の表面量を含む適応停止](ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 
-確認日: 2026-09-09。曲線P2 TE追加後（直前製品基準 `e243205`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-10。平面相似写像版3の実装後。コードと最新の個別受入記録を照合した。標準検証の最終状態は冒頭と個別仕様を参照。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
 ## 互換計画の進捗
 
 33親課題のうち、C01、限定C02、ローカルO01、native R01、N01、N02、G01、G02の
-8件が記載範囲で.S/.I/.V受入済み。P01・O02・G03・D01・D02・D03・N03・N04は部分実装・部分検証、C00は調査継続中。
+8件が記載範囲で.S/.I/.V受入済み。P01・P02・O02・G03・D01・D02・D03・N03・N04は部分実装・部分検証、C00は調査継続中（計10件）。残り14件は未受入、X01の1件は必須集合外。
 他の親課題は未受入で、既存の掃引・GUI等を親課題全体の完了へ数えない。
 X01は互換必須集合外の拡張候補。課題数は工数消化率や互換率ではない。
 詳細と33件の区分は [COMPATIBILITY_PLAN.md](COMPATIBILITY_PLAN.md)。
@@ -124,12 +126,13 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 
 | 分野 | 実装・入口 | 制約・残件 | 証拠 |
 |---|---|---|---|
-| 物理 | 真空、軸接続m=0 TMと直線P1/P2・曲線P2 TE、PEC・平坦z端の電気/磁気対称 | TEのGUI/追跡等、平面RF、内導体、複数材料、静的場は未実装 | [PHYSICS.md](PHYSICS.md)、solver.py |
-| 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否 | 明示TE拡張以外の追加物理を受理する契約ではない | [MODEL_CONTRACT.md](MODEL_CONTRACT.md) |
+| 物理 | 真空、軸接続m=0 TM/TE、PEC・平坦z端の電気/磁気対称。別契約で矩形/単純多角形の平面TE/TM遮断問題 | 内導体、複数材料、静的場は未実装。平面はβ=0で、曲線・多重連結/TEMは未対応 | [PHYSICS.md](PHYSICS.md)、[AXISYMMETRIC_TE.md](AXISYMMETRIC_TE.md)、[PLANAR_POLYGON_RF.md](PLANAR_POLYGON_RF.md) |
+| TE・平面の操作 | 専用native/Project/worker・CLI/GUI、場表示とSIプローブ、独立Study・同形状細分、限定追跡。平面は所有履歴と宣言相似写像版3を接続 | TE追跡は同端条件の円筒。平面追跡は矩形宣言写像または検証済み多角形尺度/相似関係。一般形状変更の追跡・調整は未対応 | [GUI_TE.md](GUI_TE.md)、[GUI_PLANAR.md](GUI_PLANAR.md)、[PLANAR_TRACKING_HISTORY.md](PLANAR_TRACKING_HISTORY.md)、[PLANAR_SIMILARITY_TRACKING.md](PLANAR_SIMILARITY_TRACKING.md) |
+| 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否 | 軸対称TEと専用平面TE/TM以外の追加物理を受理する契約ではない | [MODEL_CONTRACT.md](MODEL_CONTRACT.md) |
 | 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 穴・内導体・任意CADなし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
 | メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLI/JobManager/GUIあり。版3の表面量停止はAPI/CLI/JobManager/GUIへ接続。曲線局所細分の空間/係数移送APIあり。曲線局所履歴の保存/CLI・曲線残差指標あり。曲線版4の五量停止/保存再開API/CLI/JobManager/GUIあり。高次積分比較も表示。物理誤差上界は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |
 | 固有値・場 | 実FEM、複数モード、残差/直交性/エネルギー検査、物理座標プローブ | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | solver.py、curved_solution.py、curved_sampling.py |
-| RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、直線/曲線の連続離散極値の囲い込み、曲線角診断 | peak phasor・RQ二規約。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
+| RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、直線/曲線の連続離散極値の囲い込み、曲線角診断 | peak phasor・RQ二規約。TE/平面の加速量は理由付きN/A。平面は単位長エネルギー[J/m]・側壁損失[W/m]。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 表面収束評価 | 固定曲線P2の3水準・追跡ID・ピーク上下界によるf/RQ/G/ピーク比判定API/CLI/GUI、元多角形角診断・追跡済み直線P1/P2の表面評価API/保存/CLI/GUI | 幾何近似誤差/一般形状の精度・効率は残件。物理誤差上界ではない | [SURFACE_CONVERGENCE.md](SURFACE_CONVERGENCE.md) |
 | 条件群・鏡映 | 掃引、同一形状細分比較、条件付きバンド同定、曲線の幾何/FEM別Study・鏡映 | D01は重み付き標本部分空間・円筒/profile写像・明示メッシュ対応による追跡と2時点保存/再検証CLI/GUIと個別IDと部分空間ID集合の順序付き履歴/再開、完了Studyの隣接点追跡と点状態表示・保存再検証GUI、追跡付き逐次計算・停止・チェックポイント再開API/CLI・JobManager・GUI、幾何掃引の適応二分と途中保存・再開API/CLI・JobManager・GUI、多対多の保守的ID集合継承とGUI方式選択/復元、同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。曲線領域の一般写像/個別枝回復は未実装。RF制約付き2変数探索は別行 | studies.py、symmetry.py、curved_reflection.py |
 | 周波数調整・設計制約 | profile座標と曲線アフィン写像の1変数追跡付き二分探索・停止・再開・最終細分API/CLI・JobManager・GUI。保存済み3水準からの複数RF設計制約評価と曲線2変数探索/最終細分/再開API・CLI・JobManager・GUI | 個別ID確認が前提。細分差は誤差上界でない。非アフィン曲線/任意関数連動・一般変数の探索は未実装 | [TUNING.md](TUNING.md)、[RF_DESIGN_CRITERIA.md](RF_DESIGN_CRITERIA.md) |

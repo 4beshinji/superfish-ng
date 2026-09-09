@@ -1,3 +1,11 @@
+相似写像版3の最終状態（下記の実行中メモを置き換える）：明示多角形の正の尺度・回転・SI平行移動による追跡を限定受入。要求/結果版3、正逆の元電場積分、完全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準932件（930合格、2skip、1447.175秒）、追加9unit、独立64 FEM/128対応、解析32条件、縮退16 FEM、実追跡32/履歴16worker、中止/再起動、Chrome87操作とGUI56保存ジョブを確認。旧版追跡・22履歴・TM/TE/平面数値回帰と535sourceも合格。一般変形・親P02と全計画は未完。 全検証とGUIは終了。最終outのverify_completion.py/seed_regression.jsonで535sourceと保存hashを照合済み。次は[同じ多角形の独立再メッシュ](PLANAR_REMESH_TRACKING_PLAN.md)を進める。隔離候補8FEM・全元要素面積一致はあるが、新版要求/製品/保存/worker/GUIは未実装。親P02と一般変形等をこの相似写像の受入で完了に数えない。標準終了時の既存.manager.lock ResourceWarningは未解決として保存。
+
+相似写像版3: 実worker workflow41291は終了0、追跡32/履歴16・中止2・再起動全再生・CLI・改変拒否が合格。GUI保存56件（6履歴）と再起動取込、CLIの新写像履歴の作成/追加/再生、72native再生も終了0。残る実行は標準57454だけ。out/validation-planar-similarity-final-20260910のverify_completion.pyとfinalize_docs.pyは未実行、標準終了後に実行する。次課題の独立再メッシュはdocs/PLANAR_REMESH_TRACKING_PLAN.mdに反例8FEMと元要素面積の隔離候補を記録、製品未接続。535sourceは引き続き固定。
+
+相似写像版3の進捗続報: 最終64 FEM / 128対応281.423秒、縮退16 FEM110.119秒、解析三角形32条件2.196秒、旧native/矩形/Study/細分/保存と旧22履歴の回帰が終了0。Chrome78項目と再起動後9項目が合格、GUI session34245/40943は終了済み。全体標準57454、実worker workflow41291（out/planar-similarity-final-workflow-20260910）、GUI保存再検証を継続中。workflow補助driverの結果キー参照誤りは隔離失敗outに保持し、実装の結果版キーresult_versionに修正して再実行。製品535sourceは固定。
+
+相似写像版3の最終検証中（2026-09-10）。基準 a2cc64a、追加9 unit は21.637秒で合格。製品535sourceを固定し、標準 session 57454 / out/validation-planar-similarity-final-20260910、64 FEM / 128対応 session 95769 / out/planar-similarity-final-independent-20260910、縮退16 FEM session 82622 / out/planar-similarity-final-subspaces-20260910 を実行中。最終GUI session 34245 / out/planar-similarity-final-gui-20260910。まだ限定受入ではない。最初のブラウザー形状拒否と成分式による完全再構築の修正、失敗出力は PLANAR_SIMILARITY_TRACKING_PLAN.md を参照。全計画は継続中。
+
 # ローカルCodexへの引継ぎ
 
 ## 2026-09-10 平面追跡履歴の限定受入

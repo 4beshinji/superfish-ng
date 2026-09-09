@@ -1,6 +1,8 @@
 # 実装バックログ
 
-平面モード追跡の保存履歴を限定受入。保存場・帯域・ID集合の連続性を全再検証し、未解決・段階上限での停止、所有コピーへの追加、CLI/実worker/GUIを接続した。標準923件（921合格、2skip、1417.539秒）、追加15unit、独立18履歴worker、Chrome76操作、GUI47保存ジョブと再起動後取込を確認。532sourceと旧TM/TE/平面の保存・周波数/RF回帰も合格。親P02と全計画は未完。 [仕様・証拠](PLANAR_TRACKING_HISTORY.md)。次の限定課題は[宣言相似写像](PLANAR_SIMILARITY_TRACKING_PLAN.md)。回転/平行移動の幾何・元ベクトル場・診断の隔離候補はあるが、版付き要求・保存・worker/CLI/GUI/履歴は未接続。
+P02宣言相似写像：明示多角形の正の尺度・回転・SI平行移動による追跡を限定受入。要求/結果版3、正逆の元電場積分、完全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準932件（930合格、2skip、1447.175秒）、追加9unit、独立64 FEM/128対応、解析32条件、縮退16 FEM、実追跡32/履歴16worker、中止/再起動、Chrome87操作とGUI56保存ジョブを確認。旧版追跡・22履歴・TM/TE/平面数値回帰と535sourceも合格。一般変形・親P02と全計画は未完。 [仕様・証拠](PLANAR_SIMILARITY_TRACKING.md)。次の限定課題は[同じ多角形の独立再メッシュ](PLANAR_REMESH_TRACKING_PLAN.md)。
+
+平面モード追跡の保存履歴を限定受入。保存場・帯域・ID集合の連続性を全再検証し、未解決・段階上限での停止、所有コピーへの追加、CLI/実worker/GUIを接続した。標準923件（921合格、2skip、1417.539秒）、追加15unit、独立18履歴worker、Chrome76操作、GUI47保存ジョブと再起動後取込を確認。532sourceと旧TM/TE/平面の保存・周波数/RF回帰も合格。親P02と全計画は未完。 [仕様・証拠](PLANAR_TRACKING_HISTORY.md)。次の限定課題は[宣言相似写像](PLANAR_SIMILARITY_TRACKING_PLAN.md)。相似写像版3の幾何・元ベクトル場・診断・保存・worker/CLI/GUI/履歴を上記のとおり接続・限定受入。
 
 P02明示多角形追跡：明示多角形の原点一様尺度による電場モード追跡を限定受入。宣言した接続/四分割、局所精度と演算順の幾何検証、要求/結果版2、完全保存再生・実worker・CLI・GUIを接続した。標準908件（906合格、2skip、unittest1320.887秒）、追加9unit、32対応・三角形解析16条件・縮退8比較16FEM、16worker、Chrome58操作、保存22追跡/44nativeと取込10件を確認。旧矩形追跡11件・Study29件61点・細分18件54水準・平面32件/TE10件、TM seed9モード19量、527sourceも回帰合格。任意変形/回転・履歴連鎖、親P02と全計画は未完。 [契約と証拠](PLANAR_POLYGON_TRACKING.md)。次は[全履歴の連鎖検証](PLANAR_TRACKING_HISTORY_PLAN.md)。
 

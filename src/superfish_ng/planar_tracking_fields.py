@@ -20,7 +20,7 @@ def verified_rectangular_solutions(previous, current):
     return verified
 
 
-def _electric_grams(previous, current, overlay, quadrature_order):
+def _electric_grams(previous, current, overlay, quadrature_order, *, current_to_previous_rotation=None):
     a_count, b_count = previous.case.modes, current.case.modes
     aa = np.zeros((a_count, a_count))
     ab = np.zeros((a_count, b_count))
@@ -36,6 +36,8 @@ def _electric_grams(previous, current, overlay, quadrature_order):
             parent_bary = np.einsum('j,njk->nk', bary, vertices)
             fields = [solution.fields_in_cells(cells, parent_bary, i) for i in range(solution.case.modes)]
             samples.append([np.column_stack([f[key] for f in fields]) for key in components])
+        if current_to_previous_rotation is not None and len(components)==2:
+            samples[1] = list(np.einsum('ij,jnm->inm', current_to_previous_rotation, np.asarray(samples[1])))
         weights = (weight*overlay.reference_determinants)[:, None]
         for a, b in zip(*samples):
             aa += a.T @ (weights*a)

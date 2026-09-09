@@ -32,14 +32,26 @@ def polygon_spectral_resolution(solution, *, max_refined_triangles=250000):
     return _spectral_resolution(solution, solution.case.mesh, max_refined_triangles=max_refined_triangles)
 
 
-def _spectral_resolution(solution, mesh, *, max_refined_triangles):
+def similarity_spectral_resolution(solution, *, max_refined_triangles=250000):
+    """Use a rotation-invariant area scale for the same enriched operator bound."""
+    from .planar_polygon import PlanarPolygonCase
+    if not isinstance(solution.case,PlanarPolygonCase):
+        raise ValueError('similarity resolution requires explicit polygon Case version 2')
+    result=_spectral_resolution(solution,solution.case.mesh,max_refined_triangles=max_refined_triangles,
+                                shift_per_m2=1/solution.case.mesh.area_m2)
+    result['shift_geometry']='inverse_polygon_area'
+    return result
+
+
+def _spectral_resolution(solution, mesh, *, max_refined_triangles, shift_per_m2=None):
     case = solution.case
     fine = refine_planar_mesh(mesh, max_triangles=max_refined_triangles)
     _, stiffness, mass, free = planar_mesh_matrices(fine, case.element_order, case.polarization)
     transfer = planar_prolongation(mesh, fine, case.element_order, case.polarization)
     vectors = (transfer @ solution.coefficients)[free]
     stiffness, mass = stiffness[free][:, free], mass[free][:, free]
-    shift = 1/max(case.width_m, case.height_m)**2
+    shift = 1/max(case.width_m, case.height_m)**2 if shift_per_m2 is None else shift_per_m2
+    if not np.isfinite(shift) or shift<=0:raise ValueError('spectral shift must be finite positive')
     matrix = (stiffness+shift*mass).tocsc()
     rhs = mass @ vectors
     inverse_vectors = splu(matrix).solve(rhs)

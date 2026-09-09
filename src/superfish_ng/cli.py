@@ -135,7 +135,7 @@ def main(argv=None):
     planar_history_extend.add_argument('--out',type=Path,required=True)
     planar_history_replay=sub.add_parser('replay-planar-history',help='recompute the full owned planar ancestry and identity chain')
     planar_history_replay.add_argument('run',type=Path)
-    planar_tracking=sub.add_parser('execute-planar-tracking',help='track physical electric subspaces between declared rectangle spectra')
+    planar_tracking=sub.add_parser('execute-planar-tracking',help='track physical electric subspaces under a declared rectangle or polygon mapping')
     planar_tracking.add_argument('previous',type=Path)
     planar_tracking.add_argument('current',type=Path)
     planar_tracking.add_argument('request',type=Path)
