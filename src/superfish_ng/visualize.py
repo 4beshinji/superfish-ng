@@ -16,6 +16,13 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     run, out = Path(run), Path(out)
     if out.exists():
         raise ValueError(f'output already exists: {out}')
+    from .project import parse_json
+    raw_case = parse_json((run/'case.json').read_text(encoding='utf-8'))
+    if isinstance(raw_case, dict) and raw_case.get('format') == 'superfish_ng_planar_case':
+        if probe_z_m is not None:
+            raise ValueError('planar plots have xy coordinates; use probe-planar with explicit xy points')
+        from .planar_visualize import plot_planar_mode
+        return plot_planar_mode(run, out, mode, show_mesh, mode_label=mode_label)
     from .config import Case
     from .te import is_te
     if is_te(Case.load(run/'case.json')):

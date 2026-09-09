@@ -1,5 +1,7 @@
 # 平面RFのProjectとローカルジョブ
 
+[平面表示/GUI](GUI_PLANAR.md)も接続・限定受入。以下は保持するProject/JobまたはFEM/nativeの契約と当時の検証記録。Study/追跡等は後続。
+
 専用PlanarProjectと `planar_solve` worker、直接/管理済み取込、再起動・再実行を接続した。主ツリーの独立物理検証・標準/既存数値回帰を確認し、以下の範囲で限定受入。[計画・受入条件](PLANAR_JOBS_PLAN.md)。矩形Case版1と単純多角形Case版2を保持し、軸対称Projectを変更せず別の文書として扱う。
 
 ## ProjectとCLI

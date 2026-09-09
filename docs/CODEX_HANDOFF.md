@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## 平面表示/GUI：限定受入
+
+基準7ae2212。平面RFのxy場表示・SIプローブ・専用GUIを限定受入。標準856件（854合格、2skip、unittest1238.757秒）、追加7unit、Chrome13操作・旧軸対称10操作・再起動後3操作、独立表示場/回転・CLI・保存/HTTP照合を確認。旧平面32件/TE10件、TM seed9モード19量（f差0、RF最大8.882e-16）、499sourceと保存hashも一致した。平面Study・収束比較・追跡等と親P02は未完。
+
+標準96991、独立表示73277（21.591秒）、GUI独立69813、旧native28962、Chrome75514/11200/21472、保存監査2096と最終照合は全て終了0。専用GUIサーバー69895/PID1453592、2157/PID1462168、92703/PID1470780はSIGINTで全て終了0。残る実行はない。証拠・失敗履歴はGUI_PLANAR.mdとout/validation-planar-gui-final-20260910。初回の管理器id比較、ブラウザー非同期待機、query付きURLの404は修正済み。製品FEMと許容差は不変。source固定を解除して次へ進む。
+
+次はPLANAR_STUDY_PLAN.md。専用文書・全点先行検証・独立掃引、同形状の場/RF収束診断、宣言写像による追跡を別に受け入れる。軸対称Study/rz重み/全長RFを流用しない。親集計8受入/10進行中/14他/1候補=33と全体目標は維持。
+
+後続の隔離候補はout/planar-study-input-candidate-20260910/planar_study.py。strict入力・全点Project生成のみで未接続。入力検証と56実FEMの相似/規格化/導電率則が終了0（99531/3071）。順位交差3FEMはout/planar-study-crossing-preflight-20260910で終了0。PLANAR_STUDY_PLAN.mdに証拠を記録し、GUI製品対応数に含めない。
+
 ## P02平面Project/Job：限定受入
 
 基準461f4c4。専用PlanarProjectと実worker、直接/管理済み取込、再起動・再実行を限定受入。標準849件（847合格、2skip、unittest1234.561秒）、新14unit、独立16条件workflow・8workerのf/場/G/Q、72保存ジョブと2同梱CLI例を確認。旧平面32件/TE10件/管理済み8件、TM seed9モード19量（f差0、RF最大8.882e-16）、491sourceと保存hashも一致した。GUI・Study・追跡等と親P02は未完。

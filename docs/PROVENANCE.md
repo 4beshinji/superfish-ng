@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-10：[平面表示/GUI](GUI_PLANAR.md)。自作平面FEMの元要素/重心座標を使って表示中心の場を評価し、既存MatplotlibとローカルHTTP/Chrome検証基盤へ接続。sin/cos解析場、回転ベクトル・相似則、B=μ0HとSI保存を独立照合した。新規外部資料・依存・legacy参照はない。
+
 2026-09-10：[平面Project/Job](PLANAR_JOBS.md)。既存自作JobManagerへ専用kind・Project/native結合・実worker・元係数を保持する取込を接続。投入後/完了中のProject変更とworker再投入の失敗反例を記録して、hash・queued条件・排他的claimを実装した。物理FEM/場/RF式は不変。独立の矩形sin/cosと三角形対称/反対称解で周波数・場・壁損失・場積分エネルギーを検証した。新規外部資料・依存・legacy参照はない。
 
 2026-09-09：[一般多角形RF](PLANAR_POLYGON_RF_PLAN.md)。自作平面K/Mへ専用Case/native版2・点検索・CLIを接続。三角形のsin反対称/cos対称の分離解と、三壁の直交性による閉形式積分を独立検証に用いる。解析値でFEMや壁損失を置換しない。辺AABBの二分木候補は総当たり集合一致・同じ厳密線分述語・大規模時の実測を確認して適用する。新規外部資料・依存・legacy参照はない。

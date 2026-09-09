@@ -115,6 +115,12 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    planar_plot=sub.add_parser('plot-planar',help='plot signed Cartesian cutoff fields from verified native coefficients')
+    planar_plot.add_argument('run',type=Path)
+    planar_plot.add_argument('--out',type=Path,required=True)
+    planar_plot.add_argument('--mode',type=int,default=1)
+    planar_plot.add_argument('--mesh',action='store_true')
+    planar_plot.add_argument('--length-unit',choices=['m','mm'],default='mm')
     planar_project=sub.add_parser('execute-planar-project',help='execute a dedicated Cartesian cutoff Project and verify native completion')
     planar_project.add_argument('project',type=Path)
     planar_project.add_argument('--out',type=Path,required=True)
@@ -168,6 +174,11 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command=='plot-planar':
+            from .planar_visualize import plot_planar_mode
+            plot_planar_mode(args.run,args.out,args.mode,args.mesh,args.length_unit)
+            print(f'WROTE: {args.out}')
+            return 0
         if args.command=='execute-planar-project':
             from .planar_project import PlanarProject
             from .planar_jobs import execute_planar_project
@@ -182,18 +193,14 @@ def main(argv=None):
                 result=save_planar_run(case,solve_planar(case),args.out)
                 print(json.dumps(result,indent=2,allow_nan=False))
             else:
-                if args.command=='probe-planar' and args.out.resolve().is_relative_to(args.run.resolve()):
-                    raise ValueError('planar probe output must be outside the native directory to preserve verified files')
-                solution=read_planar_run(args.run)
-                if args.command=='replay-planar':print(f'PASS: {args.run} (Cartesian cutoff; energy J/m; loss W/m)')
+                if args.command=='replay-planar':
+                    read_planar_run(args.run)
+                    print(f'PASS: {args.run} (Cartesian cutoff; energy J/m; loss W/m)')
                 else:
-                    import csv
+                    from .planar_display import export_planar_probe
                     from .project import parse_json
                     points=parse_json(args.points.read_text(encoding='utf-8'))
-                    fields=PlanarFieldSampler(solution).evaluate(points,args.mode-1)
-                    with args.out.open('x',newline='',encoding='utf-8') as stream:
-                        writer=csv.writer(stream);writer.writerow(['x_m','y_m',*fields])
-                        writer.writerows([*point,*(fields[key][i] for key in fields)] for i,point in enumerate(points))
+                    export_planar_probe(args.run,args.out,points,args.mode)
                     print(f'WROTE: {args.out}')
             return 0
         if args.command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):

@@ -304,3 +304,7 @@ input[aria-invalid="true"] {
 #surface-diagnostics { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 #rf-opt-diagnostics { white-space: pre-wrap; overflow-wrap: anywhere; }
+/* Cartesian workspace: native field images and long mesh documents fit the panel. */
+#image { display: block; max-width: 100%; height: auto; }
+#image[hidden] { display: none; }
+#document, #points { display: block; width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid #b8cbe0; border-radius: 4px; }

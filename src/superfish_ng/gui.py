@@ -104,11 +104,14 @@ def create_server(workspace, port=0):
         def do_GET(self):
             if not self.valid_host():
                 return self.reply({"error": "invalid host"}, 403)
+            from urllib.parse import urlsplit
             name = {
                 "/": "index.html",
                 "/app.js": "app.js",
                 "/style.css": "style.css",
-            }.get(self.path)
+                "/planar.html": "planar.html",
+                "/planar.js": "planar.js",
+            }.get(urlsplit(self.path).path)
             if name is None:
                 return self.reply({"error": "not found"}, 404)
             self.reply(
@@ -197,9 +200,15 @@ def create_server(workspace, port=0):
                     "study-result": ["id"],
                     "study-point": ["id", "index"],
                 }
+                from .gui_planar import ACTIONS, planar_response
+                allowed.update(ACTIONS)
                 if action not in allowed:
                     raise ValueError("unknown operation")
                 keys(data, ["action", *allowed[action]], ["action"], "request")
+                if action in ACTIONS:
+                    payload, media = planar_response(manager, action,
+                        {k: v for k, v in data.items() if k != 'action'}, render_lock, plot_cache)
+                    return self.reply(payload, content_type=media)
                 if action in ("assess-rf-peaks", "replay-rf-peaks"):
                     from .gui_rf_peaks import rf_peak_response
                     return self.reply(rf_peak_response(manager,action,{k:v for k,v in data.items() if k!="action"}))

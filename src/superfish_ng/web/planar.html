@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Superfish-NG — 平面RF</title><link rel="stylesheet" href="/style.css"><script defer src="/planar.js"></script></head>
+<body>
+<header><div><span class="eyebrow">CARTESIAN CUTOFF RF WORKSPACE</span><h1>平面RF</h1></div><p>xy断面の場と壁損失<br><small>真空・単一PEC境界 / TE・TM / 遮断問題</small></p></header>
+<nav aria-label="ファイル操作"><a href="/">軸対称ワークスペース</a><button id="new">矩形を新規作成</button><label class="file">Projectを開く<input id="open" type="file" accept=".json"></label><button id="save">Projectを保存</button><span id="dirty" role="status"></span></nav>
+<div id="error" role="alert" hidden></div>
+<main><div class="editor"><section><h2>断面と計算条件</h2>
+<label>名前<input id="name" type="text"></label>
+<label>表示長さ単位<select id="unit"><option value="mm">mm</option><option value="m">m</option></select></label>
+<label>偏波<select id="polarization"><option value="te">TE — 縦磁場Hz</option><option value="tm">TM — 縦電場Ez</option></select></label>
+<div id="rectangle"><label>幅 [<span class="length-unit">mm</span>]<input id="width" type="number" step="any"></label><label>高さ [<span class="length-unit">mm</span>]<input id="height" type="number" step="any"></label><label>x分割数<input id="nx" type="number" min="2" step="1"></label><label>y分割数<input id="ny" type="number" min="2" step="1"></label></div>
+<p id="polygon-note" hidden>多角形の元メッシュを保持します。形状や節点の変更は下のProject JSONで行えます。</p>
+<label>要素次数<select id="order"><option value="1">P1</option><option value="2">P2</option></select></label>
+<label>モード数<input id="modes" type="number" min="1" step="1"></label>
+<label>単位長エネルギー U′ [J/m]<input id="energy" type="number" step="any"></label>
+<label>壁導電率 [S/m]<input id="conductivity" type="number" step="any"></label>
+<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。曲線・材料・穴・伝搬・Studyは未対応です。</p>
+<details><summary>Project JSONを編集</summary><textarea id="document" rows="18" aria-label="Project JSON"></textarea><button id="apply">JSONを適用</button><p>座標は表示単位によらずSIのmです。フォームへの反映には「JSONを適用」を押してください。</p></details>
+</section><section><h2>保存結果の取込</h2><label>ローカルnativeまたはジョブのディレクトリ<input id="import-path" type="text"></label><button id="import">保存結果を取り込む</button><p>保存係数と元メッシュを保持して検証します。新たな計算は「計算を開始」で行います。</p></section></div>
+<div><section><h2>計算履歴</h2><div id="jobs"></div></section>
+<section id="result" hidden><h2>選択した結果</h2><p id="selection"></p><p>完了は保存場の整合性確認です。メッシュの精度は未検証です。番号は固有値の順序で、追跡したモード名ではありません。</p><label>モード<select id="mode"></select></label><p id="quantities"></p><p id="na"></p><label><input id="mesh" type="checkbox">表示三角形を重ねる</label><button id="plot">場を描画</button><button id="save-image" disabled>画像を保存</button><img id="image" alt="xy断面の符号付き電磁場。実部とquadratureを別表示。" hidden>
+<h3>xyプローブ</h3><label>座標の配列 [m] — [[x, y], …]<textarea id="points" rows="3">[[0.03, 0.02]]</textarea></label><button id="probe">SIプローブCSVを保存</button><button id="probe-meta">プローブ情報を保存</button><p>全E/H成分をrealと+i quadratureで保存します。B=μ0H。領域外の点は拒否します。</p>
+<h3>元の計算データ</h3><div id="files"></div></section></div></main></body></html>

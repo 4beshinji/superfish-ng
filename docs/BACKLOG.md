@@ -1,5 +1,7 @@
 # 実装バックログ
 
+P02平面表示/GUI：[受入条件](PLANAR_GUI_PLAN.md)と[証拠](GUI_PLANAR.md)。平面RFのxy場表示・SIプローブ・専用GUIを限定受入。標準856件（854合格、2skip、unittest1238.757秒）、追加7unit、Chrome13操作・旧軸対称10操作・再起動後3操作、独立表示場/回転・CLI・保存/HTTP照合を確認。旧平面32件/TE10件、TM seed9モード19量（f差0、RF最大8.882e-16）、499sourceと保存hashも一致した。平面Study・収束比較・追跡等と親P02は未完。 次は[Study・収束比較・追跡](PLANAR_STUDY_PLAN.md)を各契約ごとに進める。
+
 P02平面Project/Job：[受入条件](PLANAR_JOBS_PLAN.md)と[証拠](PLANAR_JOBS.md)。専用PlanarProjectと実worker、直接/管理済み取込、再起動・再実行を限定受入。標準849件（847合格、2skip、unittest1234.561秒）、新14unit、独立16条件workflow・8workerのf/場/G/Q、72保存ジョブと2同梱CLI例を確認。旧平面32件/TE10件/管理済み8件、TM seed9モード19量（f差0、RF最大8.882e-16）、491sourceと保存hashも一致した。GUI・Study・追跡等と親P02は未完。 次は[表示・GUI](PLANAR_GUI_PLAN.md)のxy場・位相/単位・元hash・ブラウザー/保存照合を進める。
 
 P02一般多角形RFの受入条件：[専用Case/native版2・CLI・点検索](PLANAR_POLYGON_RF_PLAN.md)のstrict/改変拒否、P1/P2・両尺度・三角形のf/全場/G、回転ベクトル/単位長規格化、旧版1/native再生、標準回帰。主ツリーへ接続し、新11unit/平面全32件・独立両尺度24FEM・全保存/CLI・標準835件・既存回帰と486source一致まで限定受入。次は[平面Project/Job](PLANAR_JOBS_PLAN.md)。親P02は継続。
