@@ -13,7 +13,7 @@ from .curved_tuning import IDENTITY
 from .saved_mode_tracking import build_saved_mode_tracking, validate_tracking_controls, _canonical
 from .mode_tracking_history import start_mode_history, extend_mode_history
 from .tracked_study import _point_sources
-from .jobs import execute_project, _implementation_hashes
+from .jobs import execute_project, _implementation_hashes, _digest
 
 
 def validate_optimization_request(request):
@@ -77,16 +77,65 @@ def _resolved(pair):
     return pair['status']=='PASS' and pair['tracking']['individual_ids_complete']
 
 
-def _assemble(request, directories):
+def _trial_sources(directory):
+    """Hash every native job file; reject links even when their bytes agree."""
+    trial=Path(directory)
+    if not trial.is_absolute() or trial.is_symlink():
+        raise ValueError('optimization requires absolute non-symlink trial directories')
+    levels=[]
+    for i in range(3):
+        run=trial/f'level-{i}'
+        if not run.is_dir() or run.is_symlink():raise ValueError('optimization level directory is missing or linked')
+        files={}
+        for path in run.rglob('*'):
+            if path.is_symlink():raise ValueError('optimization source contains a symbolic link')
+            if path.is_file():files[path.relative_to(run).as_posix()]=_digest(path)
+        levels.append(files)
+    return levels
+
+
+class _VerifiedPrefix:
+    """Private, execution-local evidence; never loaded from a saved document."""
+    def __init__(self):
+        self.implementation=_implementation_hashes()
+        self.request_key=None
+        self.directories=[]
+        self.trials=[]
+        self.sources=[]
+
+    def _check_implementation(self):
+        if self.implementation!=_implementation_hashes():
+            raise RuntimeError('implementation changed during optimization execution')
+
+    def load(self,request,directories):
+        self._check_implementation()
+        if self.request_key is not None and self.request_key!=_canonical(request):
+            raise ValueError('verified optimization prefix request changed')
+        if directories[:len(self.directories)]!=self.directories:
+            raise ValueError('verified optimization prefix ancestry changed')
+        if self.sources!=[_trial_sources(directory) for directory in self.directories]:
+            raise ValueError('prior optimization checkpoint sources changed during execution')
+        return deepcopy(self.trials),deepcopy(self.sources)
+
+    def store(self,request,directories,trials,sources):
+        self._check_implementation()
+        self.request_key=_canonical(request)
+        self.directories=list(directories)
+        self.trials=deepcopy(trials)
+        self.sources=deepcopy(sources)
+
+
+def _assemble(request, directories, *, _cache=None):
     validate_optimization_request(request)
     if (type(directories) is not list or any(type(x) is not str for x in directories)
             or len(set(directories))!=len(directories) or len(directories)>request['max_trials']):
         raise ValueError('optimization requires distinct trial directories within max_trials')
-    trials=[];sources=[];all_projects=[]
-    for index,directory in enumerate(directories):
+    trials,sources=([],[]) if _cache is None else _cache.load(request,directories)
+    for index in range(len(trials),len(directories)):
+        directory=directories[index]
         state=decision(request,trials)
         if state['status']!='PAUSED':raise ValueError('optimization contains a trial after termination')
-        trial=state['next_trial'];projects=_projects(request,trial);all_projects.append(projects)
+        trial=state['next_trial'];projects=_projects(request,trial)
         runs=[Path(directory)/f'level-{i}' for i in range(3)]
         sources.append([_point_sources(run,project) for run,project in zip(runs,projects)])
         ids=list(request['initial_ids']);tracking=None;assessment=None;history=None
@@ -109,10 +158,10 @@ def _assemble(request, directories):
             else:history=start_mode_history(pair)
         trials.append(dict(index=index,**trial,current_mode_ids=ids,tracking=tracking,
                            refinement_history=history,assessment=assessment))
-    after=[[_point_sources(Path(directory)/f'level-{i}',project) for i,project in enumerate(projects)]
-           for directory,projects in zip(directories,all_projects)]
-    if sources!=after:raise ValueError('optimization sources changed during verification')
     state=decision(request,trials)
+    if sources!=[_trial_sources(directory) for directory in directories]:
+        raise ValueError('optimization sources changed during verification')
+    if _cache is not None:_cache.store(request,directories,trials,sources)
     return dict(schema_version=1,document_type='rf_optimization_checkpoint',request=deepcopy(request),
         trial_directories=list(directories),trial_sources_sha256=sources,trials=trials,decision=state,
         status=state['status'],can_resume=state['status']=='PAUSED',completed_fem_solves=3*len(trials),
@@ -120,13 +169,17 @@ def _assemble(request, directories):
         scope='bounded two-variable coordinate polling with empirical RF constraints, individual sampled identity and a separately solved finer final assessment; budget includes initial and final three-level trials; no global/local optimality or physical-error certificate')
 
 
-def replay_rf_optimization(document):
+def _replay(document, *, _cache=None):
     fields=('schema_version','document_type','request','trial_directories','trial_sources_sha256','trials',
             'decision','status','can_resume','completed_fem_solves','max_fem_solves','scope')
     keys(document,fields,fields,'RF optimization checkpoint')
-    expected=_assemble(document['request'],document['trial_directories'])
+    expected=_assemble(document['request'],document['trial_directories'],_cache=_cache)
     if _canonical(expected)!=_canonical(document):raise ValueError('RF optimization replay differs from saved data or sources')
     return expected
+
+
+def replay_rf_optimization(document):
+    return _replay(document)
 
 
 def read_rf_optimization(path):
@@ -136,7 +189,8 @@ def read_rf_optimization(path):
 def execute_rf_optimization(request, directory, *, checkpoint=None, max_new_trials=None):
     request=deepcopy(request);validate_optimization_request(request)
     if max_new_trials is not None:integer(max_new_trials,'max_new_trials')
-    previous=_assemble(request,[]) if checkpoint is None else replay_rf_optimization(checkpoint)
+    cache=_VerifiedPrefix()
+    previous=_assemble(request,[],_cache=cache) if checkpoint is None else _replay(checkpoint,_cache=cache)
     if _canonical(previous['request'])!=_canonical(request):raise ValueError('optimization resume request differs from checkpoint')
     if checkpoint is not None and not previous['can_resume']:raise ValueError('only a PAUSED optimization may resume')
     implementation=_implementation_hashes();directories=list(previous['trial_directories'])
@@ -147,7 +201,7 @@ def execute_rf_optimization(request, directory, *, checkpoint=None, max_new_tria
             projects=_projects(request,trial)
             for i,project in enumerate(projects):
                 calls+=1;execute_project(project,run/f'level-{i}')
-            result=_assemble(request,directories+[str(run)])
+            result=_assemble(request,directories+[str(run)],_cache=cache)
             if result['trial_sources_sha256'][:-1]!=previous['trial_sources_sha256']:
                 raise ValueError('prior optimization checkpoint sources changed during execution')
             if implementation!=_implementation_hashes():raise RuntimeError('implementation changed during optimization execution')

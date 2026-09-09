@@ -1,5 +1,7 @@
 # RF制約付き2変数探索 — D03
 
+[実行内の祖先再利用](RF_OPTIMIZATION_REUSE.md)を追加。再開の完全再検証を保ち、同じ実行内の重複評価を削減する。
+
 [JobManagerでの実行・中止・再起動・checkpoint再開](RF_OPTIMIZATION_JOBS.md)を接続。[GUI操作](GUI_RF_OPTIMIZATION.md)も接続済み。
 
 曲線Projectのradial_scale/axial_scaleを有限範囲で探索し、各候補を実FEMと

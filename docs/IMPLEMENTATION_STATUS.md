@@ -1,5 +1,7 @@
 # 実装・検証の現状
 
+[RF探索の実行内再利用](RF_OPTIMIZATION_REUSE.md)を追加。再開時の完全replayと全nativeファイルの変更検出を維持し、同じ実行内の確認済み祖先の追跡/RF評価を再利用する。保存書式と数値条件は不変。一般性能の受入は継続する。
+
 [RF探索GUI](GUI_RF_OPTIMIZATION.md)を接続。2変数・目的関数・複数制約の入力保存復元、実ジョブの中止と保存再開、試行・水準ごとの個別ID確認付き場表示を行う。再開前の重い検証を管理器のロック外へ移した。開始要求自体の完全検証には引き続き時間を要する。
 
 [RF探索のローカルジョブ](RF_OPTIMIZATION_JOBS.md)を追加。JobManagerで実行・中止・再起動・停止後のcheckpoint選択/再開を行い、3水準のmanifest・祖先・投入予算・所属を再検証する。GUI操作も接続済み。
@@ -80,7 +82,7 @@
 
 [版3の表面量を含む適応停止](ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 
-確認日: 2026-09-09。RF探索GUI追加後（直前製品基準 `8b2ac14`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-09。RF探索実行内再利用追加後（直前製品基準 `9fe3ff2`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -116,8 +118,8 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 742件中740合格・NGSolve参照環境専用2件skip。RF探索GUI追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | RF探索GUI追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。標準・保存経路照合・終了後430対象hash一致 | out/validation-gui-rf-optimization-20260909、[RF探索GUI](GUI_RF_OPTIMIZATION.md) |
+| 標準unittest | 743件中741合格・NGSolve参照環境専用2件skip。RF探索実行内再利用追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | RF探索実行内再利用追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。標準・独立計算・変更後計測・終了後431対象hash一致 | out/validation-rf-optimization-reuse-20260909、[実行内再利用](RF_OPTIMIZATION_REUSE.md) |
 | N04実行内の先祖再利用 | 追加3検査PASS。出所改変拒否・独立replayを維持し重複評価を削減。版1〜4実保存の完全一致と前回対照の全水準五量差ゼロ。球形の適応全体は約119秒から約82秒の観測 | [仕様](CURVED_VERIFICATION_REUSE.md) |
 | N04曲線の効率対照 | 同一二次写像の球形で解析五量/追跡/積分/二区間停止・Ritz・誤差対DOF/時間を確認。一様1201自由度に対し適応2661自由度。この例で適応優位なし、一般効率は未受入 | [比較仕様](CURVED_REFINEMENT_EFFICIENCY.md) |
 | N04曲線適応GUI | 版4の実Chrome11項目・旧版15項目PASS。GUI実計算の独立球形五量もPASS。全ジョブ終了・検証サーバー停止済み | [GUI仕様](GUI_CURVED_ADAPTIVE_REFINEMENT.md) |

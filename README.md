@@ -1,5 +1,7 @@
 # Superfish-NG — 0.1.0 research seed
 
+[RF探索の実行内再利用](docs/RF_OPTIMIZATION_REUSE.md)を追加。再開時の完全replayと全nativeファイルの変更検出を維持し、同じ実行内の確認済み祖先の追跡/RF評価を再利用する。保存書式と数値条件は不変。一般性能の受入は継続する。
+
 [RF探索GUI](docs/GUI_RF_OPTIMIZATION.md)を接続。2変数・目的関数・複数制約の入力保存復元、実ジョブの中止と保存再開、試行・水準ごとの個別ID確認付き場表示を行う。再開前の重い検証を管理器のロック外へ移した。開始要求自体の完全検証には引き続き時間を要する。
 
 [RF探索のローカルジョブ](docs/RF_OPTIMIZATION_JOBS.md)を追加。JobManagerで実行・中止・再起動・停止後のcheckpoint選択/再開を行い、3水準のmanifest・祖先・投入予算・所属を再検証する。GUI操作も接続済み。

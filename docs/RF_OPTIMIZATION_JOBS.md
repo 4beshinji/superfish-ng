@@ -1,5 +1,7 @@
 # RF探索のローカルジョブと停止後の保存再開
 
+[実行内の祖先再利用](RF_OPTIMIZATION_REUSE.md)を追加。再開の完全再検証を保ち、同じ実行内の重複評価を削減する。
+
 `JobManager.start_rf_optimization(request, max_new_trials=None, checkpoint=None)`は
 既存の[RF探索](RF_OPTIMIZATION.md)を別のローカルPythonプロセスで実行する。
 FEM・探索・追跡・制約の式は変更しない。ジョブの完了と数値条件の合格は別に表示する。

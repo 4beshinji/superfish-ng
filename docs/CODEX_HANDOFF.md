@@ -1,5 +1,19 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: RF探索の実行内祖先再利用 — 2026-09-09
+
+基準9fe3ff2。[仕様・証拠](RF_OPTIMIZATION_REUSE.md)。rf_optimization.pyのprivate _VerifiedPrefixは実行ごとに生成し、検証済みtrial/全3水準sourceを深いコピーで保存。要求/祖先順/実装hash/全ファイル変更とリンクを検査して新試行だけを再評価する。終了時の二重native再読込は全ファイルhash一致へ置換。公開replayはcacheなしで全試行をnative場から再構築、再開は空cacheで全replayしてから追記する。式・許容差・保存schema・GUI操作は不変。
+
+開始時85668終了0、RF探索5件386.355秒。新規privateキャッシュ保護1件0.100秒PASS（合成ファイルのコピー分離・request/ancestry/implementation・内容/削除/追加/リンク変更拒否）。既存実FEMテストへ再開の評価回数3・公開replayの全3評価・新候補評価後の祖先Projectバイト変更拒否/以前checkpointとcache保持を追加。今回初回失敗なし。
+
+変更前73739終了0、out/rf-optimization-prefix-before-20260909、保存済み4試行の1/2/3/4prefix評価が220.994秒、RF評価累計10回。変更後94776終了0、out/rf-optimization-prefix-after-20260909、109.735秒/4回。全4段階の全文書が変更前後と既存CLI文書に完全一致。並行負荷は同一でない単一観測なので一般速度倍率としない。保存場の評価であり新しいFEMではない。
+
+独立6767終了0、out/rf-optimization-reuse-independent-20260909。4試行/12水準を新規FEM。両倍率[1,1]→[1.01,1]→[1.01,1.01]→最終同値、SEARCH_COMPLETE/TRIAL_LIMIT。公開replay全文書一致、既存CLIの12Project/modesと試行列/判定が完全一致。最終球形解析f2.472e-5/RQ2.525e-6/G1.077e-7/E比2.314e-4/B比6.077e-6で既存許容差PASS。
+
+標準20025終了0、out/validation-rf-optimization-reuse-20260909、743件中741合格・2skip、1161.975秒。seed9モード19量f差0/RF最大8.882e-16。標準/新規独立/変更後計測/終了後431対象hash一致。driver/logは各outへ保存。全関連実行は終了、ソース固定解除。GUI/ブラウザー・Wine・Hosted CI・他OSの新規実行はなし。
+
+D03/全体は未完。親8受入/8進行中/16他未受入/1候補=33維持。既存2変数探索のGUIと今回の実行内再利用は接続済み。次は計画の親要件と不足証拠を照合し、一般変数や追加物理など未実装の主機能へ進める。部分性能改善を重ねただけで全計画の完了とはしない。追加物理P01等ではMODEL_CONTRACTとPHYSICSを明示拡張し、独立解析の場/境界/エネルギー・保存/CLIの受入を先に定める。TMへの無言フォールバックは禁止。
+
 ## 最新: RF探索GUIとpreflightのロック解除 — 2026-09-09
 
 基準8b2ac14。[仕様・受入証拠](GUI_RF_OPTIMIZATION.md)。gui_rf_optimization.pyとwebのRF探索カードを追加し、2変数/目的関数/複数制約尺度/予算の生成・要求保存復元、ジョブ開始/中止後checkpoint選択/保存再開、数値状態/停止理由の別表示、試行3水準の個別ID実rankによるnative場取込へ接続。raw JSONはstrict parse。再開は検証済み文書の要求を使い、未確認個別IDにrankの代用を与えない。start_rf_optimizationの全preflightをmanager.lock外へ移し、前後のclosed確認と起動登録のロックを維持。開始HTTP要求そのものの同期的完全検証は重いまま。FEM/RF/探索式・許容差は変更なし。

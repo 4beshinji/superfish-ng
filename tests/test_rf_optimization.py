@@ -3,6 +3,8 @@ import json
 import math
 from copy import deepcopy
 from pathlib import Path
+from unittest.mock import patch
+from superfish_ng import rf_optimization as engine
 import tempfile
 import unittest
 from superfish_ng import Case
@@ -92,11 +94,31 @@ class RFOptimizationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);first=execute_rf_optimization(r,root/'first',max_new_trials=1)
             self.assertEqual(first['status'],'PAUSED');self.assertEqual(first['completed_fem_solves'],3)
-            final=execute_rf_optimization(r,root/'resume',checkpoint=first)
+            with patch.object(engine,'assess_rf_design',wraps=engine.assess_rf_design) as assess:
+                final=execute_rf_optimization(r,root/'resume',checkpoint=first)
+            self.assertEqual(assess.call_count,3,'resume must verify one ancestor and assess two new trials exactly once')
             self.assertEqual(final['status'],'SEARCH_COMPLETE');self.assertEqual(final['completed_fem_solves'],9)
             self.assertEqual(final['trials'][-1]['assessment']['assessment']['rows'][0]['refinement_level'],1)
             self.assertEqual(final['trial_sources_sha256'][0],first['trial_sources_sha256'][0])
-            self.assertEqual(read_rf_optimization(root/'resume/checkpoint-003.json'),final)
+            with patch.object(engine,'assess_rf_design',wraps=engine.assess_rf_design) as assess:
+                self.assertEqual(read_rf_optimization(root/'resume/checkpoint-003.json'),final)
+            self.assertEqual(assess.call_count,3,'public replay must independently rebuild every trial')
+            cache=engine._VerifiedPrefix()
+            engine._assemble(r,first['trial_directories'],_cache=cache)
+            ancestor=Path(first['trial_directories'][0])/'level-0/project.json'
+            original_bytes=ancestor.read_bytes();original_assess=engine.assess_rf_design
+            checkpoint_bytes=(root/'first/checkpoint-001.json').read_bytes()
+            def change_after_assessment(*args,**kwargs):
+                result=original_assess(*args,**kwargs)
+                ancestor.write_bytes(original_bytes+b' ')
+                return result
+            try:
+                with patch.object(engine,'assess_rf_design',side_effect=change_after_assessment):
+                    with self.assertRaisesRegex(ValueError,'sources changed during verification'):
+                        engine._assemble(r,final['trial_directories'][:2],_cache=cache)
+            finally:ancestor.write_bytes(original_bytes)
+            self.assertEqual(cache.load(r,first['trial_directories'])[0],first['trials'])
+            self.assertEqual((root/'first/checkpoint-001.json').read_bytes(),checkpoint_bytes)
             modified=deepcopy(first);modified['trials'][0]['values'][0]=1.001
             with self.assertRaisesRegex(ValueError,'differs'):replay_rf_optimization(modified)
             with self.assertRaisesRegex(ValueError,'PAUSED'):execute_rf_optimization(r,root/'terminal',checkpoint=final)
