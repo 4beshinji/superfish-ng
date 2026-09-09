@@ -50,6 +50,17 @@
 <button id="tracking-start">追跡を開始</button><button id="tracking-save">追跡要求を保存</button><label class="file">追跡要求を開く<input id="tracking-open" type="file" accept=".json"></label>
 <p>PASSは宣言写像での数値的な場・部分空間の対応です。連続した変形経路のモード同一性や、真の物理誤差の保証ではありません。</p>
 <div id="tracking-result" hidden><h3>選択した追跡結果</h3><p id="tracking-selection"></p><p id="tracking-notes"></p><div id="tracking-matches"></div><button id="tracking-result-save">追跡結果を保存</button><button id="tracking-previous-import">前の保存場を取り込む</button><button id="tracking-current-import">次の保存場を取り込む</button><button id="tracking-use-groups">次の追跡へID集合を引き継ぐ</button></div>
+</section><section><h2>モード追跡の履歴</h2>
+<p>追跡結果を順に結び、保存場・対象帯域・IDの引継ぎを毎回検証します。縮退後はID集合を保持します。UNVERIFIEDの段階で履歴を停止し、その先への追加はできません。</p>
+<label>履歴にする追跡結果のID（順序付きJSON配列）<textarea id="history-step-ids" rows="3">[]</textarea></label>
+<button id="history-select-tracking">選択した追跡結果を指定</button>
+<label>履歴の最大段階数<input id="history-budget" type="number" min="1" step="1" value="100"></label>
+<button id="history-start">履歴を作成</button><button id="history-save">履歴条件を保存</button><label class="file">履歴条件を開く<input id="history-open" type="file" accept=".json"></label>
+<p>履歴条件には段階数と上限を保存します。追跡結果のIDはこのワークスペースで指定します。</p>
+<div id="history-result" hidden><h3>選択した追跡履歴</h3><p id="history-selection"></p><p id="history-notes"></p><div id="history-steps"></div><pre id="history-identities"></pre>
+<label>次に追加する追跡結果<select id="history-next"></select></label><button id="history-extend">次の段階を追加</button>
+<button id="history-result-save">履歴結果を保存</button><button id="history-source">最後の保存場を取り込む</button><button id="history-use-groups">次の追跡へID集合を引き継ぐ</button>
+<p>追加時には全段階を含む新しい履歴を作成します。PASSは各宣言写像での離散的な対応であり、連続した物理経路の同一性や誤差限界を保証しません。</p></div>
 </section><section><h2>計算履歴</h2><div id="jobs"></div></section>
 <section id="result" hidden><h2>選択した結果</h2><p id="selection"></p><p>完了は保存場の整合性確認です。メッシュの精度は未検証です。番号は固有値の順序で、追跡したモード名ではありません。</p><label>モード<select id="mode"></select></label><p id="quantities"></p><p id="na"></p><label><input id="mesh" type="checkbox">表示三角形を重ねる</label><button id="plot">場を描画</button><button id="save-image" disabled>画像を保存</button><img id="image" alt="xy断面の符号付き電磁場。実部とquadratureを別表示。" hidden>
 <h3>xyプローブ</h3><label>座標の配列 [m] — [[x, y], …]<textarea id="points" rows="3">[[0.03, 0.02]]</textarea></label><button id="probe">SIプローブCSVを保存</button><button id="probe-meta">プローブ情報を保存</button><p>全E/H成分をrealと+i quadratureで保存します。B=μ0H。領域外の点は拒否します。</p>

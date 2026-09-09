@@ -17,6 +17,10 @@ ACTIONS = {
     'planar-study-result': ['id'], 'planar-study-point': ['id', 'index'],
     'planar-normalize-convergence': ['document'], 'planar-start-convergence': ['document'],
     'planar-convergence-result': ['id'], 'planar-convergence-point': ['id', 'index'],
+    'planar-normalize-history': ['document'],
+    'planar-start-history': ['document', 'step_ids'],
+    'planar-extend-history': ['id', 'next_id'],
+    'planar-history-result': ['id'], 'planar-history-source': ['id'],
     'planar-normalize-tracking': ['document'],
     'planar-start-tracking': ['document', 'previous_id', 'current_id'],
     'planar-tracking-result': ['id'], 'planar-tracking-source': ['id', 'side'],
@@ -32,6 +36,8 @@ ACTIONS = {
 def planar_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown planar operation')
+    if action in ('planar-normalize-history','planar-start-history','planar-extend-history','planar-history-result','planar-history-source'):
+        return planar_history_response(manager,action,data)
     if action in ('planar-normalize-tracking','planar-start-tracking','planar-tracking-result','planar-tracking-source'):
         return planar_tracking_response(manager,action,data)
     if action in ('planar-normalize-convergence','planar-start-convergence','planar-convergence-result','planar-convergence-point'):
@@ -176,4 +182,36 @@ def planar_tracking_response(manager, action, data):
         if before!=_snapshot(directory):raise ValueError('planar tracking changed before source import')
         payload={'id':manager.import_planar_result(directory/data['side'])}
     if before!=_snapshot(directory):raise ValueError('planar tracking changed during GUI response')
+    return payload,media
+
+
+def planar_history_response(manager, action, data):
+    from .planar_tracking_history import PlanarTrackingHistoryRequest
+    from .planar_tracking_history_saved import read_planar_history, history_snapshot
+    keys(data,ACTIONS[action],ACTIONS[action],'planar tracking history request')
+    media='application/json; charset=utf-8'
+    def pair_path(identifier):
+        state=manager.status(identifier,verify=True)
+        if state.get('status')!='complete' or state.get('kind')!='planar_tracking':
+            raise ValueError('select a complete verified planar tracking pair')
+        return manager.directory(identifier)
+    if action in ('planar-normalize-history','planar-start-history'):
+        raw=parse_json(data['document']) if isinstance(data['document'],str) else data['document']
+        request=PlanarTrackingHistoryRequest.from_dict(raw)
+        if action=='planar-normalize-history':return request.to_dict(),media
+        identifiers=data['step_ids']
+        if type(identifiers) is not list or len(identifiers)!=request.step_count:
+            raise ValueError('step_ids must contain exactly step_count tracking pair IDs')
+        return {'id':manager.start_planar_history([pair_path(identifier) for identifier in identifiers],request)},media
+    directory=manager.directory(data['id'])
+    if action=='planar-extend-history':
+        return {'id':manager.extend_planar_history(directory,pair_path(data['next_id']))},media
+    before=history_snapshot(directory);result=read_planar_history(directory)
+    if action=='planar-history-result':
+        payload=dict(request=result['request'],result=result,state=manager.status(data['id'],verify=True))
+    else:
+        if before!=history_snapshot(directory):raise ValueError('planar history changed before source import')
+        count=result['request']['step_count']
+        payload={'id':manager.import_planar_result(directory/f'step-{count-1:04d}'/'current')}
+    if before!=history_snapshot(directory):raise ValueError('planar history changed during GUI response')
     return payload,media

@@ -125,6 +125,16 @@ def main(argv=None):
     planar_convergence.add_argument('--out',required=True,type=Path)
     planar_convergence_replay=sub.add_parser('replay-planar-convergence',help='recompute all saved planar refinement diagnostics')
     planar_convergence_replay.add_argument('run',type=Path)
+    planar_history=sub.add_parser('execute-planar-history',help='copy and fully replay an ordered planar tracking history')
+    planar_history.add_argument('request',type=Path)
+    planar_history.add_argument('--steps',type=Path,nargs='+',required=True)
+    planar_history.add_argument('--out',type=Path,required=True)
+    planar_history_extend=sub.add_parser('extend-planar-history',help='append a saved pair into a new owned planar history')
+    planar_history_extend.add_argument('history',type=Path)
+    planar_history_extend.add_argument('next_pair',type=Path)
+    planar_history_extend.add_argument('--out',type=Path,required=True)
+    planar_history_replay=sub.add_parser('replay-planar-history',help='recompute the full owned planar ancestry and identity chain')
+    planar_history_replay.add_argument('run',type=Path)
     planar_tracking=sub.add_parser('execute-planar-tracking',help='track physical electric subspaces between declared rectangle spectra')
     planar_tracking.add_argument('previous',type=Path)
     planar_tracking.add_argument('current',type=Path)
@@ -191,6 +201,16 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('execute-planar-history','extend-planar-history','replay-planar-history'):
+            from .planar_tracking_history import PlanarTrackingHistoryRequest
+            from .planar_tracking_history_saved import execute_planar_history,extend_planar_history,read_planar_history
+            if args.command=='execute-planar-history':
+                result=execute_planar_history(args.steps,PlanarTrackingHistoryRequest.load(args.request),args.out)
+            elif args.command=='extend-planar-history':
+                result=extend_planar_history(args.history,args.next_pair,args.out)
+            else:
+                result=read_planar_history(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
         if args.command in ('execute-planar-tracking','replay-planar-tracking'):
             from .planar_tracking import PlanarTrackingRequest
             from .planar_tracking_jobs import execute_planar_tracking, read_planar_tracking

@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## 2026-09-10 平面追跡履歴の限定受入
+
+平面モード追跡の保存履歴を限定受入。保存場・帯域・ID集合の連続性を全再検証し、未解決・段階上限での停止、所有コピーへの追加、CLI/実worker/GUIを接続した。標準923件（921合格、2skip、1417.539秒）、追加15unit、独立18履歴worker、Chrome76操作、GUI47保存ジョブと再起動後取込を確認。532sourceと旧TM/TE/平面の保存・周波数/RF回帰も合格。親P02と全計画は未完。
+
+正本は[仕様・証拠](PLANAR_TRACKING_HISTORY.md)と[開発経過](PLANAR_TRACKING_HISTORY_PLAN.md)。標準outは`out/validation-planar-history-budget-fixed-final-20260910`。verify_completion.py/seed_regression.jsonでTM seed9モード19量（f差0.000e+00、RF最大8.882e-16）と全532sourceを確認した。旧未完標準54211は段階予算反例の修正前に停止・終了254。未完標準を合格に数えていない。
+
+最終実行32771、独立67986、旧回帰6457、Chrome75771、保存3692、再起動82278、取込89097は完了。GUI8524/76544は停止済み。成果物を上書きしない。標準923件のうち2件はskip、hosted CIは観測していない。終了時の既存.manager.lock ResourceWarningは残る。親課題集計8受入/10進行/14未受入/1範囲外=33は維持する。
+
+次工程はPLANAR_SIMILARITY_TRACKING_PLAN.md。主ツリーの回転/平行移動対応はまだない。out/planar-similarity-geometry-direction-20260910の明示逆方向付き幾何16条件32方向、field-candidateの8FEM/16電場比較、resolution-candidateの面積由来シフト8条件、tracking-core-candidateの16方向API候補もPASS。いずれも保存format・worker/CLI/GUI/履歴は未接続で、主ソースへ自動でコピーしない。旧geometry候補のNumPy scalar入力拒否と逆係数再計算の座標照合失敗は保持済み。許容差を広げず、元変換の向きを明示する候補へ進んだ。
+
+
 ## 明示多角形の一様尺度追跡：限定受入
 
 基準a297692。明示多角形の原点一様尺度による電場モード追跡を限定受入。宣言した接続/四分割、局所精度と演算順の幾何検証、要求/結果版2、完全保存再生・実worker・CLI・GUIを接続した。標準908件（906合格、2skip、unittest1320.887秒）、追加9unit、32対応・三角形解析16条件・縮退8比較16FEM、16worker、Chrome58操作、保存22追跡/44nativeと取込10件を確認。旧矩形追跡11件・Study29件61点・細分18件54水準・平面32件/TE10件、TM seed9モード19量、527sourceも回帰合格。任意変形/回転・履歴連鎖、親P02と全計画は未完。

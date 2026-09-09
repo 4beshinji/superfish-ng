@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_tracking_history_saved import is_planar_history, verify_planar_history
+        if is_planar_history(directory, state, manifest):
+            verify_planar_history(directory, state, manifest)
+            return state
         from .planar_tracking_jobs import is_planar_tracking, verify_planar_tracking
         if is_planar_tracking(directory, state, manifest):
             verify_planar_tracking(directory, state, manifest)
@@ -311,6 +315,16 @@ class JobManager:
         """Run same-domain refinement diagnostics in a dedicated local worker."""
         from .planar_convergence_jobs import start_planar_convergence
         return start_planar_convergence(self, request)
+
+    def extend_planar_history(self, history, next_pair):
+        """Append a verified pair to an immutable planar history in a new worker."""
+        from .planar_tracking_history_saved import start_extended_planar_history
+        return start_extended_planar_history(self, history, next_pair)
+
+    def start_planar_history(self, paths, request):
+        """Create an owned planar tracking chain in a dedicated local worker."""
+        from .planar_tracking_history_saved import start_planar_history
+        return start_planar_history(self, paths, request)
 
     def start_planar_tracking(self, previous, current, request):
         """Track two verified planar native spectra in a dedicated worker."""

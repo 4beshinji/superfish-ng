@@ -32,19 +32,19 @@ function fresh(){return {format:'superfish_ng_planar_project',project_version:1,
 function clearImage(){request++;if(imageURL)URL.revokeObjectURL(imageURL);imageURL=null;imageBlob=null;$('image').hidden=true;$('save-image').disabled=true;}
 function showQuantities(){if(!result)return;const q=result.modes[Number($('mode').value)-1];$('quantities').textContent=`f = ${(q.frequency_hz/1e6).toFixed(6)} MHz / U′ = ${q.stored_energy_j_per_m.toPrecision(6)} J/m / 壁損失 P′ = ${q.wall_loss_w_per_m.toPrecision(6)} W/m / Q0 = ${q.q0.toPrecision(6)} / G = ${q.geometry_factor_ohm.toPrecision(6)} Ω`;$('na').textContent='R/Q（加速器定義・回路定義）・加速電圧：N/A。遮断断面には有限の加速経路を定義していません。';}
 async function openResult(id){
- const jobs=await api('jobs'),kind=jobs.find(job=>job.id===id)?.kind;if(kind==='planar_study')return openStudy(id);if(kind==='planar_convergence')return openConvergence(id);if(kind==='planar_tracking')return openTracking(id);
+ const jobs=await api('jobs'),kind=jobs.find(job=>job.id===id)?.kind;if(kind==='planar_study')return openStudy(id);if(kind==='planar_convergence')return openConvergence(id);if(kind==='planar_tracking')return openTracking(id);if(kind==='planar_tracking_history')return openHistory(id);
  const sequence=++request;const data=await api('planar-result',{id});if(sequence!==request)return;
  selected=id;result=data.result;loadProject(data.project);clearImage();$('result').hidden=false;$('selection').textContent=`${result.case.name} / ${id}`;
  $('mode').replaceChildren();result.modes.forEach((q,i)=>{const option=document.createElement('option');option.value=i+1;option.textContent=`${i+1}: ${(q.frequency_hz/1e6).toFixed(6)} MHz`;$('mode').append(option);});showQuantities();
  $('files').replaceChildren();for(const file of data.files){const button=document.createElement('button');button.textContent=file;button.onclick=run(async()=>download(await api('planar-download',{id,file},true),file));$('files').append(button);}
 }
 async function refresh(){
- const jobs=(await api('jobs')).filter(job=>['planar_solve','planar_study','planar_convergence','planar_tracking'].includes(job.kind));
+ const jobs=(await api('jobs')).filter(job=>['planar_solve','planar_study','planar_convergence','planar_tracking','planar_tracking_history'].includes(job.kind));
  // Preserve focused controls when only an unrelated state changes.
  const signature=JSON.stringify(jobs);if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;
- refreshTrackingSources(jobs);$('jobs').replaceChildren();if(!jobs.length)$('jobs').textContent='平面RFの計算はまだありません。';
+ refreshTrackingSources(jobs);refreshHistorySources(jobs);$('jobs').replaceChildren();if(!jobs.length)$('jobs').textContent='平面RFの計算はまだありません。';
  for(const job of jobs){const row=document.createElement('div');row.className='job';row.dataset.job=job.id;
- const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='planar_study'?' / 独立掃引':job.kind==='planar_convergence'?' / 細分診断':job.kind==='planar_tracking'?' / モード追跡':''} / ${job.id}`;row.append(label);
+ const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='planar_study'?' / 独立掃引':job.kind==='planar_convergence'?' / 細分診断':job.kind==='planar_tracking'?' / モード追跡':job.kind==='planar_tracking_history'?' / 追跡履歴':''} / ${job.id}`;row.append(label);
  const details=document.createElement('small');details.textContent=job.error||job.stage||'';row.append(details);
  const button=document.createElement('button'),active=['queued','running'].includes(job.status);button.textContent=active?'中止':'結果を開く';button.disabled=!active&&job.status!=='complete';
  button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else await openResult(job.id);});row.append(button);$('jobs').append(row);}
@@ -132,3 +132,24 @@ for(const id of ['tracking-previous-count','tracking-current-count','tracking-id
 
 $('tracking-mapping').onchange=()=>{refreshTrackingSources(trackingJobs);$('dirty').textContent='未保存の追跡写像';};
 for(const id of ['tracking-scale','tracking-previous-refinements','tracking-current-refinements'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の追跡写像';});
+
+let currentHistory=null,selectedHistory=null;
+function historyFromForm(){const ids=JSON.parse($('history-step-ids').value);if(!Array.isArray(ids))throw Error('追跡結果IDは配列で指定してください');return {format:'superfish_ng_planar_tracking_history_request',history_version:1,step_count:ids.length,max_steps:numeric('history-budget')};}
+function refreshHistorySources(jobs){const select=$('history-next'),old=select.value;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='完了した追跡結果を選択';select.append(empty);for(const job of jobs.filter(job=>job.kind==='planar_tracking'&&job.status==='complete')){const option=document.createElement('option');option.value=job.id;option.textContent=job.id;select.append(option);}if(Array.from(select.options).some(option=>option.value===old))select.value=old;}
+async function openHistory(id){
+ const data=await api('planar-history-result',{id});currentHistory=data;selectedHistory=id;$('history-result').hidden=false;$('history-selection').textContent=`${data.result.status} / ${id}`;
+ $('history-notes').textContent=data.result.stop_reason||(data.result.individual_ids_complete?'個別IDを保持しています。':'部分空間のID集合を保持しています。個別IDは未確定です。');
+ $('history-identities').textContent=JSON.stringify({current_mode_ids:data.result.current_mode_ids,current_identity_groups:data.result.current_identity_groups},null,2);
+ const table=document.createElement('table'),head=document.createElement('tr');for(const label of ['段階','対応','写像','個別ID']){const th=document.createElement('th');th.textContent=label;head.append(th);}table.append(head);
+ data.result.steps.forEach((step,index)=>{const row=document.createElement('tr');for(const value of [index+1,step.status,JSON.stringify(step.request.mapping),step.individual_ids_complete?'確定':'未確定']){const td=document.createElement('td');td.textContent=value;row.append(td);}table.append(row);});$('history-steps').replaceChildren(table);
+ $('history-extend').disabled=!data.result.can_extend||data.request.step_count>=data.request.max_steps;$('history-use-groups').disabled=data.result.status!=='PASS';
+}
+$('history-select-tracking').onclick=run(async()=>{if(!selectedTracking)throw Error('追跡結果を選択してください');$('history-step-ids').value=JSON.stringify([selectedTracking]);});
+$('history-start').onclick=run(async()=>{const document=historyFromForm(),step_ids=JSON.parse($('history-step-ids').value);const data=await api('planar-start-history',{document,step_ids});$('dirty').textContent=`追跡履歴投入済み: ${data.id}`;await refresh();});
+$('history-save').onclick=run(async()=>{const value=await api('planar-normalize-history',{document:historyFromForm()});download(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}),'planar-history-request.json');});
+$('history-open').onchange=run(async()=>{const file=$('history-open').files[0];if(!file)return;const value=await api('planar-normalize-history',{document:await file.text()});$('history-budget').value=value.max_steps;$('history-step-ids').value=JSON.stringify(Array(value.step_count).fill(''));$('dirty').textContent='履歴条件を復元済み。各段階の追跡結果IDを指定してください。';});
+$('history-extend').onclick=run(async()=>{if(!selectedHistory||!$('history-next').value)throw Error('履歴と次の追跡結果を選択してください');const value=await api('planar-extend-history',{id:selectedHistory,next_id:$('history-next').value});$('dirty').textContent=`拡張した追跡履歴投入済み: ${value.id}`;await refresh();});
+$('history-result-save').onclick=()=>{if(currentHistory)download(new Blob([JSON.stringify(currentHistory.result,null,2)+'\n'],{type:'application/json'}),'planar-history-results.json');};
+$('history-source').onclick=run(async()=>{if(!selectedHistory)throw Error('追跡履歴を選択してください');const value=await api('planar-history-source',{id:selectedHistory});await refresh();await openResult(value.id);});
+$('history-use-groups').onclick=run(async()=>{if(currentHistory?.result.status!=='PASS')throw Error('対応が確認できた追跡履歴を選択してください');const value=await api('planar-history-source',{id:selectedHistory});loadTracking(currentHistory.result.steps.at(-1).request);await refresh();refreshTrackingSources(trackingJobs);$('tracking-previous').value=value.id;$('tracking-current').value='';$('tracking-previous-count').value=currentHistory.result.current_mode_count;$('tracking-ids').value='null';$('tracking-groups').value=JSON.stringify(currentHistory.result.current_identity_groups);$('dirty').textContent='履歴のID集合を引継ぎ済み。次の保存場と写像を指定してください。';});
+for(const id of ['history-step-ids','history-budget'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の履歴条件';});

@@ -1,10 +1,6 @@
 # 平面モード追跡履歴の全体検証計画
 
-矩形版1・多角形一様尺度版2の二スナップショット追跡の次工程。
-現在のGUIはID集合を次の要求へ引き継げるが、履歴全体の来歴連鎖を保存・再生する文書はない。
-[軸対称の履歴実装](../src/superfish_ng/mode_tracking_history.py)には
-前のcurrentと次のpreviousの一致、ID連続性、未解決での停止、全祖先再検証の構造がある。
-その検証原則を使い、軸対称の入力形式やr重みを平面へ流用しない。
+保存履歴を[契約・最終証拠](PLANAR_TRACKING_HISTORY.md)の範囲で限定受入。標準923件（921合格・2skip、1417.539秒）、15unit、18履歴worker、Chrome76操作、旧保存回帰、532sourceとTM seed/RFを確認した。以下は受入前に定めた契約と、開発中の失敗・再検証記録。親P02と全計画は未完。
 
 ## 必須の連続性
 
@@ -61,7 +57,7 @@ GUIでは現在の保存場・対象帯域・ID集合・追加可能性と停止
 `out/planar-tracking-history-preflight-20260910` で既存の実矩形追跡3件を照合する。
 merge→splitはnativeとID集合が連続する。一方crossing→mergeは、両方PASSかつ同じ二つのID名でも
 nativeが不連続である。この区別を実装前の不変量とする。
-これは履歴製品の受入ではない。新しい履歴API・保存・GUIは未実装。
+この実装前検査だけでは履歴製品の受入としない。後続の主ツリー実装は下記に記録する。
 
 ## 隔離した所有コピーと停止契約
 
@@ -73,4 +69,43 @@ nativeが不連続である。この区別を実装前の不変量とする。
 別の実二点比較でcurrent帯域を不足させたUNVERIFIEDを末尾に保存し、
 3ステップの停止履歴を完全再生した。未解決末尾より後の追加は拒否した。
 この候補のPASSを製品の履歴機能受入とはしない。
-厳密な履歴入力・実worker・途中変更・CLI/GUI・多角形履歴の全面検証は今後の作業。
+この時点では厳密な履歴入力・実worker・途中変更・CLI/GUI・多角形履歴の全面検証が残っていた。
+
+## 主ツリーで進行中の実装
+
+基準447768cの527sourceは標準908件合格時と完全一致を確認した。
+`planar_tracking_history.py` は `PlanarTrackingHistoryRequest(step_count, max_steps=100)` と
+`verify_planar_history_steps` を提供する。要求/結果は専用format・history_version 1。
+全二点文書を完全再生し、raw native5ファイルのhash・帯域数・順位付きID/ID集合を検証する。
+末尾UNVERIFIEDは証拠として保持するが、集合を確定情報として公開せず追加を拒否する。
+
+`planar_tracking_history_saved.py` は所有コピーの保存・再生・同期追加を提供する。
+`history.json`、`sources.json`、`step-NNNN`の全二点保存、結果、manifest、job状態を結合する。
+元データのコピー途中変更、完了中の入力/実装変更、追加後の元履歴欠損を検出して新出力をfailedにする。
+旧履歴を変更せず、新しい出力に追加結果を保存する。
+`JobManager.start_planar_history` は専用kindの実workerを起動し、queued条件、排他的claim、
+中止・管理再起動に対応する。汎用job readerも専用文書を識別してkind偽装を拒否する。
+
+関連10unitは59.235秒で合格。独立多角形16条件の往復2ステップを
+`out/planar-history-independent-development-20260910` の実workerと管理再起動後の全再生で確認した（782.726秒、531source一致）。
+CLI/GUI・非同期追加を接続後、関連13unitは86.167秒で合格。さらに祖先要約と全外側hashの改変拒否を加えた保存9unitは72.935秒で合格（履歴全体では14unit）。
+Chrome16操作は `out/browser-planar-history-development-20260910` で合格し、外部HTTPなし・製品source不変。
+`out/validation-planar-history-final-20260910` の標準全体、独立18worker、旧機能回帰・受入記録・コミットは残る。
+
+## 最終検証の途中経過
+
+旧native32/TE10・矩形追跡11/取込6・Study29/61点・細分18/54水準・保存追跡22/44nativeと取込10の再生回帰は合格（全体253.911秒）。旧Chrome52操作も合格した。新GUIワークスペースの46完了ジョブをサーバー停止後に完全再検証し、全保存ファイルhashの不変を確認した（46.813秒）。
+
+履歴に使った幅0.18/0.20/0.22 mの矩形の先頭2モードについて、解析周波数と余弦から導く電場二次元部分空間を独立積分した。周波数誤差最大1.599e-5、部分空間誤差最大0.005666で、事前の0.1%/1%基準に合格した。正方形の個別縮退基底を物理的IDとは扱わない。解析比較の初回補助スクリプトはCaseの属性名をJSONの量名と取り違えたAttributeErrorで終了した。失敗ログを残し、正しい`normalization_j_per_m`を読む別出力で再実行した。製品コードと数値許容差は変更していない。
+
+## 段階予算と追加可能フラグの修正
+
+最終検証中に`max_steps=1`の一段階PASS履歴を確認したところ、追加要求は拒否されるが`can_extend=true`となる不一致を検出した。`out/planar-history-budget-preflight-20260910`の失敗結果を保持する。旧最終標準`54211`は実行中の子unittestへSIGINTを送り、親が途中ログを保存して終了254。これを標準合格とは数えない。
+
+修正では数値対応のPASSと追加可能性を分離する。上限到達時は`can_extend=false`と予算停止理由を保存するが、PASSとID集合を保持する。同期/非同期追加はその停止理由を返し、新しい出力を作らない。GUIも追加を無効にしつつ、確定ID集合から別の二点追跡を準備する操作は許す。予算による停止をUNVERIFIEDとは扱わない。追加unitと実ブラウザー操作で検証し、固定した修正後sourceで最終検証を再実行する。
+
+修正前source532での独立18worker（691.437秒）、旧保存回帰、Chrome74操作と再起動後の再生は開発証拠として保持する。修正後の最終source一致の代用にはしない。
+
+## 修正後の最終確認
+
+`out/validation-planar-history-budget-fixed-final-20260910`の標準とverify_completion.pyが合格。予算修正後の18worker・旧保存・Chrome76・47 GUI保存ジョブ・再起動後の取込と全532sourceを照合した。仕様の最終受入欄を正本とする。
