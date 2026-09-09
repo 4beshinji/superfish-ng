@@ -1,5 +1,7 @@
 # 実装バックログ
 
+O02/P01 TE収束Studyの受入条件: 同一物理/専用nativeの完全照合、Eφ対応と縮退未確認、電場/磁場/適用RFの個別ゲート、両native分割/積分次数安定性、固定二次幾何と幾何近似変化の区別、CLI/worker/GUI・保存改変/中止/再起動・旧TM回帰。API/Study/GUIの限定受入を完了。追加10unit・4種Studyの保存再比較・独立21FEM・Chrome4項目・標準785件と数値回帰が合格。[計画](TE_CONVERGENCE_STUDY_PLAN.md)。
+
 O02/P01 TE掃引の受入条件: 全点事前検査、独立スペクトルUNVERIFIED、N/A理由、native/要約改変拒否、P1/P2・両尺度・規格化不変量、CLI/GUI保存一致、実worker中止/再起動、既存TM Studyと標準数値回帰。円筒/曲線の独立18FEM・GUI2項目・保存/再起動・旧TM保存Study3件・標準775件・数値回帰が合格、独立掃引を限定受入。[計画・証拠](TE_STUDY_PLAN.md)。
 
 D01/O02 TE円筒追跡の受入条件: Eφ正規化写像、P1/P2/両尺度/標本次数、順位交差・部分空間・帯域退出、符号/規格化不変、mixed/未対応写像拒否、全TE native snapshot/再検証/replay・改変拒否、CLI/API/GUI一致と標準TM回帰。[計画と進行](TE_TRACKING_PLAN.md)。API/CLI独立・Chrome8項目・全保存再検証・標準771件の限定受入を完了。一般形状/曲線写像・TE Studyは後続。

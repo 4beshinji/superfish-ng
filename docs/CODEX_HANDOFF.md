@@ -1,5 +1,46 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: TE収束Study — 2026-09-09
+
+基準9010591。TE収束比較/API/Study/GUIの限定受入を完了し、全実行終了・ソース固定解除。
+標準18688・最終照合16153は終了0。785件中783合格・2skip（unittest1181.171秒、command1181.523秒）。TM seed9モード19量の周波数差0、RF/エネルギー最大相対差8.882e-16、旧TE保存7件差0。標準・独立・GUI・固定時・終了後460対象hashが一致。out/validation-te-convergence-20260909にtests.log/command.log/validation.json/source-fixed.json/verify_completion.py/comparison.log/seed_regression.jsonを保持。
+円筒最終26448・球形2536の独立21FEM、10unit9.894秒、Chrome66312の4項目・三判定表示、CLI84435/worker86671、GUI独立74040の再起動4job/解析Case・係数・数値/比較一致、旧TM Study44586の3保存比較/追跡完全一致がPASS。CLI/GUIのCase hash差は0.0/0等の表記差、各元hashを個別検証して保持した。
+次工程: [TE鏡映](TE_REFLECTION_PLAN.md)。解析符号と直線右端4FEMの予備移送はPASSだが未実装。左右/曲線、自由方程式、専用native/元半領域/部分スペクトル・Project/CLI/GUIの契約を実装し検証する。親8受入/9進行中/15他/1候補=33を維持し、全計画は継続。以下の実行中記述は過去の経過で、すべて終了済み。
+
+## TE収束Studyの実装経過（終了済み） — 2026-09-09
+
+基準9010591（前回TE掃引775件/455source受入・commit完了）。主ツリーte_convergence.py（新規）、studies.py偏波分岐/Study全TE拒否解除/固定曲線reader、model capability、web/app.jsのTE比較表示/index説明を実装。tests/test_te_convergence.py新8件、既存TE Study/Jobの拒否テストを正しいstrictパラメータ拒否へ更新。
+API5件83855終了0（1.953秒）。Study追加8件97081終了1は曲線map.evaluateがN×2座標を要求するのにbaryN×3を渡した誤り、bary[:,1:]へ修正。3234終了0（8.917秒）。旧TM Study11件57933終了0、TE関連33件55959終了0（16.847秒）。ログout/te-convergence-development-20260909。
+独立経路49713終了0、out/te-convergence-study-kinds-20260909/verify.py/command.log/report.json。8FEM・四種Studyとnative/再比較一致。mesh/explicit PASS、fixed-curved UNVERIFIED、geometry FAIL。粗い系列の精度が未達であることを保存している。ソース前後一致。全実行終了、まだソース固定/最終標準は開始していない。
+次は[TE収束Study計画](TE_CONVERGENCE_STUDY_PLAN.md)の最終独立解析・CLI/worker/GUI・磁気対称/混合拒否・旧TM/標準回帰。元候補6FEMの解析/体積場データとredはout/te-convergence-field-candidate-20260909。新比較は両native分割全セル・次数3/5を128セルbatchで積分、電場/磁場/適用RF量別ゲート、積分安定性や縮退未達はUNVERIFIED。許容差やFEM数式変更なし。未コミットで全計画継続。
+
+
+## 独立解析・実操作の追加進捗
+
+円筒独立35049終了0、out/te-convergence-cylinder-independent-20260909。12新FEM、P1/P2×両尺度×3水準、Bessel f/電場・磁場体積L2/G誤差減少・Maxwell則・保存比較再計算一致。P1最終UNVERIFIED、P2最終PASSかつ解析精度条件を満たす。検証器はscripts/validate_te_convergence.py。
+追加の磁気対称細分/mixed TE-TM拒否で10unit31275終了0（9.894秒）。GUI66312終了0、out/browser-te-convergence-20260909、Chrome4項目/3実Study6FEM/三判定/電場・磁場/RF/N/A理由と場取込がPASS。fixed-curved.png目視。実装hash前後一致・外部要求0。driverはscripts/verify_gui_te_convergence.mjsへ保持。GUI38411/PID1008734はSIGINT終了0。
+worker86671終了0、out/te-convergence-worker-20260909、実worker中止・2点完了・管理器再起動・追跡/replayPASS。CLI84435終了0、out/te-convergence-cli-20260909、固定曲線の未確認判定を保存。
+GUI独立初回20977終了1はCase JSONの0.0/0等の表記でshaが違うため全文書比較が失敗。失敗log/driverとcase-serialization.diffを保持。修正版74040終了0、out/te-convergence-gui-independent-20260909: 再起動4job verify=True、GUI/保存要約一致、全比較再計算一致、CLI/GUIの各元case hashを個別検証し、解析Case・全係数/周波数・数値/判定が完全一致。hashを同一視していない。
+球形の両尺度/磁気半領域×3水準9FEMは2536実行中、out/te-curved-convergence-independent-20260909、log /tmp/te-curved-convergence-independent-20260909.log。scale1-full PASS出力済み、全完了はまだ確認していない。検証器scripts/validate_te_curved_convergence.py。最終ソースで円筒再検証26448も実行中、out/te-convergence-cylinder-final-20260909、log /tmp/te-convergence-cylinder-final-20260909.log。両実行が終わるまでsrc/tests/scripts/examplesの変更は保留。標準は未開始。
+
+
+円筒最終26448は終了0。12FEM・Bessel解析・両尺度・全保存比較一致PASS、460source一致。球形2536のみ継続中。両独立完了後に標準validateと最終旧TM/TE数値比較を実行し、README/対応表/実装状況/物理・来歴を更新、commitする。
+
+
+標準検証18688を開始、out/validation-te-convergence-20260909、log /tmp/validation-te-convergence-20260909.log。source-fixed.jsonの460対象を終了まで固定。球形2536も継続中。最終比較用verify_completion.pyを標準outに準備（未実行）、円筒12FEM/球形9FEM/GUI4job/旧TM Study3件/旧TE保存7件/seed9mode19量を要求する。旧TM Study再検証44586は実行中、out/te-convergence-development-20260909/old_studies.log。README/対応表/計画/実装状況・物理モデル/来歴に接続・最終検証中の範囲を追記。
+
+
+球形2536終了0、out/te-curved-convergence-independent-20260909/report.json/command.log。9FEM（両尺度の全領域・磁気半領域×3水準）で最終比較PASS、解析相対誤差最大f2.508e-5/G1.999e-3/場成分3.836e-3、Maxwell相似PASS、460source一致。旧TM Study44586終了0、3保存Studyの全細分比較と旧追跡文書full replayが完全一致。標準18688のみ継続中、ソース固定。全独立・GUI・CLI・workerは終了。
+
+
+待機中の後続設計: docs/TE_REFLECTION_PLAN.md。既存TM鏡映の符号はTEと逆なので専用符号/拘束/native部分スペクトル契約が必要。out/te-reflection-contract-20260909で現行TE拒否・円筒解析2モードのEφ/Hr/Hz偶奇を確認、新FEM0。初回ゼロ点付近の絶対SI比較失敗を保持し、成分振幅で無次元化した1e-12比較で終了0。TE鏡映は未実装。標準18688は継続中、主ツリー実装は変更していない。
+
+
+## 直線離散場の予備検証
+
+out/te-reflection-discrete-candidate-20260909/verify.py/command.log/report.jsonは終了0。P1/P2×磁気/電気対称の4実FEMを半領域で解き、右端鏡映メッシュへTE係数を直接移送した。全領域の自由方程式残差・電気エネルギー規格化/直交性、蓄積エネルギー/損失2倍、f/Q0/G不変、Eφ/Hr/Hzの鏡映符号がPASS。振幅合わせや全領域の再解はしていない。主ツリー460source不変。
+この候補は右端の直線移送の確認であり、左端/曲線・一般形状・保存契約/部分スペクトル表示・Project/GUIの製品受入ではない。移送場を通常の全スペクトルnativeとして保存していない。
+
 ## 最新: TE Study — 2026-09-09
 
 基準324dc20。TE独立掃引の実装・限定受入を完了。全関連実行は終了しソース固定を解除。追加4unit/既存TE Job8件、旧TM Study関連11件、実worker中止/2点完了/再起動/追跡replayPASS。

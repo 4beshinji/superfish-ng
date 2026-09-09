@@ -1,8 +1,10 @@
 # 実装・検証の現状
 
-[TEの独立パラメータ掃引](TE_STUDY_PLAN.md)を接続。全点の入力検証、TE native保存と別操作の円筒追跡、GUIのR/Q N/A表示を追加。円筒/曲線の独立18FEM・CLI/GUI保存一致・再起動・標準775件と数値回帰を確認。収束Studyと一般形状の追跡は未対応。
+[TEの収束Study](TE_CONVERGENCE_STUDY_PLAN.md)を接続。同一物理Caseの電場・磁場・RFを個別比較し、縮退や積分不安定時はUNVERIFIED。円筒/球形の独立21FEM・GUI三判定・CLI/worker/再起動・標準785件と数値回帰が合格。細分差は物理誤差上界や表面ピーク精度の保証ではない。
 
-[円筒TEのモード追跡](TE_TRACKING_PLAN.md)を接続。Eφによる順位交差・部分空間、全native保存/replay、CLIとGUI履歴へ接続。独立8実FEM・Chrome8項目・標準771件（769合格、2skip）と既存数値回帰を確認。収束Study・一般形状/曲線写像は後続工程。
+[TEの独立パラメータ掃引](TE_STUDY_PLAN.md)を接続。全点の入力検証、TE native保存と別操作の円筒追跡、GUIのR/Q N/A表示を追加。円筒/曲線の独立18FEM・CLI/GUI保存一致・再起動・標準775件と数値回帰を確認。一般形状の追跡は未対応。
+
+[円筒TEのモード追跡](TE_TRACKING_PLAN.md)を接続。Eφによる順位交差・部分空間、全native保存/replay、CLIとGUI履歴へ接続。独立8実FEM・Chrome8項目・標準771件（769合格、2skip）と既存数値回帰を確認。一般形状/曲線写像は後続工程。
 
 [TEのGUI接続](GUI_TE.md)を接続。Eφ/Br/Bzの場表示・SIプローブ・偏波選択とN/A理由を追加。Chrome10項目・独立保存照合/球形解析・標準766件と既存数値回帰を確認した。
 
@@ -128,8 +130,9 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 775件中773合格・NGSolve参照環境専用2件skip。TE掃引追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | TE掃引追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧直線/曲線TE7件差ゼロ。標準・独立・終了後455対象hashとブラウザー実装hash一致 | out/validation-te-study-20260909、[TE掃引仕様](TE_STUDY_PLAN.md) |
+| 標準unittest | 785件中783合格・NGSolve参照環境専用2件skip。TE収束比較追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | TE収束比較追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧直線/曲線TE7件差ゼロ。標準・独立・終了後460対象hashとブラウザー実装hash一致 | out/validation-te-convergence-20260909、[TE収束仕様](TE_CONVERGENCE_STUDY_PLAN.md) |
+| O02/P01 TE収束比較 | 独立21FEMで円筒P1/P2・球形両尺度・磁気半領域のf/電磁場/G解析、10unit・Chrome4項目・三判定表示、実worker中止/再起動、旧TM比較完全一致 | [仕様と証拠](TE_CONVERGENCE_STUDY_PLAN.md) |
 | O02/P01 TE掃引 | 独立18FEMで円筒P1/P2・両尺度・規格化・曲線P2、解析ID順位とCLI追跡4組、GUI2項目・CLI/GUI保存完全一致・管理器再起動、旧TM保存Study3件完全一致 | [仕様と証拠](TE_STUDY_PLAN.md) |
 | O02 TE GUI | Chrome10項目・追加3検査、GUI/API新規3FEMと係数/周波数一致、全3プローブ保存場照合・管理器再起動、球形3モードf/場/G解析PASS | [仕様・失敗履歴](GUI_TE.md) |
 | O02 TEジョブ | 追加8検査・独立8実FEMとCLI/API一致、直接/管理済み8取込、再起動後verify=True全8件PASS。元mesh保持・改変/検証中変更拒否。GUI/追跡は継続 | [仕様と証拠](TE_JOBS.md) |

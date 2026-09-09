@@ -1300,6 +1300,9 @@ async function openStudy(id) {
     for (const m of c.modes) {
       const p = document.createElement("p");
       p.textContent = `番号 ${m.first_mode_index} → ${m.second_mode_index}: ${m.status} / 対応一致度 ${m.field_overlap.toFixed(6)} / 周波数 ${(m.relative_changes.frequency_hz * 100).toPrecision(4)}% / 軸場 ${m.axis_relative_l2 === null ? "未判定" : (m.axis_relative_l2 * 100).toPrecision(4) + "%"} / RF ${m.gates.rf ? "PASS" : "FAIL"}。表面場の精度は保証しません。`;
+      if (c.physics === "axisymmetric_m0_te") {
+        p.textContent = `番号 ${m.first_mode_index} → ${m.second_mode_index}: ${m.status} / 対応一致度 ${m.field_overlap.toFixed(6)} / 周波数 ${(m.relative_changes.frequency_hz * 100).toPrecision(4)}% / 電場 ${(m.electric_relative_l2 * 100).toPrecision(4)}% / 磁場 ${(m.magnetic_relative_l2 * 100).toPrecision(4)}% / RF ${m.gates.rf ? "PASS" : "FAIL"} / 積分次数照合 ${m.integration_stable ? "PASS" : "UNVERIFIED"}。軸加速量はN/A。体積場の細分差は物理誤差上界ではなく、表面ピーク精度は未評価です。`;
+      }
       details.append(p);
     }
     $("study-report").append(details);

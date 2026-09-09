@@ -67,6 +67,6 @@ class TEStudyTests(unittest.TestCase):
             execute_study(self.study((1., -1.)), run)
         self.assertFalse(run.exists())
 
-    def test_convergence_requires_separate_te_contract(self):
-        with self.assertRaisesRegex(ValueError, 'TE convergence Study'):
-            Study(self.project, 'mesh_convergence', 'mesh_scale', [1, 2])
+    def test_convergence_preserves_strict_parameter_validation(self):
+        with self.assertRaisesRegex(ValueError, 'mesh convergence requires'):
+            Study(self.project, 'mesh_convergence', 'nr', [1, 2])

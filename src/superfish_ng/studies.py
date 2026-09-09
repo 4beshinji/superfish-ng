@@ -37,8 +37,6 @@ class Study:
     values: list
 
     def __post_init__(self):
-        from .te import is_te
-        if is_te(self.project.case) and self.kind != 'sweep':raise ValueError('TE convergence Study integration is pending; use an explicit TE parameter sweep')
         if self.project.mesh_data is not None and self.kind!='fixed_geometry_convergence':
             raise ValueError('explicit project meshes require fixed_geometry_convergence; geometry/mesh sweeps need a declared mesh transformation')
         if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence", "fixed_geometry_convergence"):
@@ -206,6 +204,11 @@ def compare_refinement(first_dir, second_dir):
     This sampled field criterion is a pairing diagnostic, not a mathematical
     error bound or a tracker for different shapes. Degenerate modes abstain.
     """
+    from . import Case
+    from .te import is_te
+    if any(is_te(Case.load(Path(p)/'case.json')) for p in (first_dir, second_dir)):
+        from .te_convergence import compare_te_refinement
+        return compare_te_refinement(first_dir, second_dir)
     first, second = read_solution(first_dir), read_solution(second_dir)
     if _physical_spec(first.case) != _physical_spec(second.case):
         raise ValueError("refinement comparison requires identical physical cases")
@@ -424,7 +427,8 @@ def execute_study(study, directory, prepared=False):
             if study.project.case.geometry_order==1:
                 report['geometry_refinement'] = 'same polygonal domain; uniform subdivisions of the explicit source mesh with inherited boundary tags'
             else:
-                sources = [read_solution(directory/p['directory']/'solution').source_mesh_data for p in points]
+                reader = read_te_run if is_te(study.project.case) else read_solution
+                sources = [reader(directory/p['directory']/'solution').source_mesh_data for p in points]
                 if any(source != sources[0] for source in sources[1:]):
                     raise ValueError('fixed geometry Study source meshes differ')
                 report['geometry_refinement'] = 'same verified source mesh and initial quadratic maps; uniform restrictions without curve reprojection'
