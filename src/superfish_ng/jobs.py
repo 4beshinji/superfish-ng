@@ -124,6 +124,9 @@ def read_job(directory, verify=True):
                     or state.get("computed_points") != len(result["points" if adaptive else "point_runs"])
                     or state.get("numerical_validation") != "not_checked"):
                 raise ValueError("tracked Study job summary differs from verified checkpoint")
+        if manifest.get('kind') in (None,'solve'):
+            from .te_jobs import verify_te_job_if_present
+            verify_te_job_if_present(directory,manifest)
     return state
 
 
@@ -392,6 +395,11 @@ class JobManager:
                 solution_dir = source / "solution"
             else:
                 solution_dir = source
+            from .config import Case
+            from .te import is_te
+            if is_te(Case.load(solution_dir/'case.json')):
+                from .te_jobs import import_te_result
+                return import_te_result(self,source,solution_dir,project if managed else None)
             saved = read_solution(solution_dir)
             if not managed:
                 reflected = saved.results.get("reflection_source_case")

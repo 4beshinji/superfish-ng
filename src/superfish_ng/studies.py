@@ -37,6 +37,8 @@ class Study:
     values: list
 
     def __post_init__(self):
+        from .te import is_te
+        if is_te(self.project.case):raise ValueError('TE Study/tracking integration is pending; use an ordinary TE Project solve')
         if self.project.mesh_data is not None and self.kind!='fixed_geometry_convergence':
             raise ValueError('explicit project meshes require fixed_geometry_convergence; geometry/mesh sweeps need a declared mesh transformation')
         if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence", "fixed_geometry_convergence"):

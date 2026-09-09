@@ -1,5 +1,23 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: TE Project/JobManager — 2026-09-09
+
+基準d2d53de。[仕様/受入](TE_JOBS.md)。前回は曲線TEの実装・検証・コミットで進捗あり。開始時は直前標準755件と現在440対象hash一致を確認し、同一基準の標準テストを重複実行しなかった。TE Project往復redは旧全TE拒否で終了1（/tmp/te-project-red-20260909.log）。
+
+最終標準78312終了0、独立80174終了0、追加再起動66118終了0。標準763件中761合格・2skip（unittest1158.285秒、command1158.633秒）。独立8実FEM・8取込と再起動後の明示verify=True全8件がPASS。TM seed9モード19量の周波数差0、RF最大8.882e-16、旧直線/曲線TE保存7件のRF差0。標準・独立・再起動検証・終了後443対象hash一致。最終比較もpassed=trueと末尾の全結果を出力済み（session1159は後続pollでUnknown processとなり、終了コードの再取得は不可）。出力はout/validation-te-jobs-verified-20260909とout/te-jobs-verified-independent-20260909。command.log、comparison.log、seed_regression.json、restart_verified.json、各driverを保持。検証は終了、ソース固定解除。
+
+初回独立18269は終了0・PASS（out/te-jobs-independent-final-20260909、command.log保持）、8実FEM・8取込・再起動・円筒6/球形3モード両尺度、443対象hash一致、相似最大8.194e-14。その後、native再読込後にCSVを書き換えてもread_jobがcompleteを返す実反例を確認（out/te-jobs-verification-race-20260909、driver/AssertionError保持）。初回標準53643は自分のvalidate810241/unittest810243をpsで特定しSIGTERM停止、終了143。out/validation-te-jobs-final-20260909/interruption.jsonを保持。Gateway等の他プロセスは触っていない。
+
+修正はTE job verifierの終点で全必要ファイルのhash/リンク/存在と外側manifestの一致を再検査すること。追加race検査はnative CSVと外側manifestの変更を別確認。修正版8件80160終了0・1.901秒。logはout/te-jobs-development-20260909/race-fixed-unit.log。初回独立のソースと修正版はte_jobs.py/test_te_jobs.pyが異なるので、修正版の独立と標準を上記の新出力先へ再実行しPASS。
+
+実装: ProjectはTE通常計算を受理しreflect_fullは拒否。te_jobs.pyが通常read_jobへTE専用完了/全必要ファイル・Project Case/保存Case・明示mesh/保存source一致とread_te_runを接続。JobManager.import_resultはTEを専用経路へ分岐、元ファイル/管理済みProject・manifest・job状態を前後hash照合しmarker最後のコピー。直接nativeは元meshをProject版2へ保持、管理済みは元Project維持。origin=imported/not_checkedを保持。Study/tuning/rf_optimizationでTE未接続を入口拒否。TM read_solutionはTE拒否のまま。
+
+当初のtest_te_jobs.py 7件: P1/P2/曲線Project/API/native、必要geometry非掲載/Case不一致、全hash更新済み係数不正、外部meshの直接取込/再実行と管理済み取込/不一致、実worker中止→再実行/管理器再起動、コピー中source変更、未接続workflow拒否。初回12962終了1は改変testがProject.saveの上書き禁止に抵触。write_textで意図した不正を作るtestへ修正し58162終了0・1.766秒。元mesh不一致も確認したrace修正前31590終了0・1.736秒。既存TE12件55386終了0・2.130秒、jobs7件終了0・.913秒。各logは/tmp/te-jobs-*および/tmp/te-project-existing-*にある。前回test_teのProject拒否はreflect_full拒否へ更新し、TE意味の検査を維持。
+
+GUI read-only調査: app.js applyProjectはexplicitModelをclone保持し、collectProjectは明示モデルを再保存する。TMの自動生成はexplicitModel===nullのときだけ。今回のProject許可で無言TM化するとの懸念は実コードでは成立しなかった。通常RF表もnullを未定義として表示。GUIのTE選択/成分描画等は未接続・新規Chromeなし。source固定中にGUIの未検証な変更は入れていない。
+
+実装・検証・関連文書を一つのローカル変更にまとめる。P01/O02/全体は未完、親8受入/9進行中/15他未受入/1候補=33。次はTE GUIのモデル選択・N/A理由・正しい場成分/単位での描画、実Chrome/保存/実FEMまで接続する。待機中に保存球形TEの描画だけを試作し、out/te-gui-display-accepted-candidate-20260909へdriver/fields.png/samples.npz/scope.jsonを保存して目視。80819終了0、新規FEM/GUI製品接続ではない。初回34838はNumPy scalarのprobe zが既存strict APIで拒否され、float変換した候補へ修正。初回driver/logはout/te-gui-display-candidate-20260909へ保持。将来はsigned Eの対称color範囲、TEプローブ/メタデータ/UI、GUI描画cacheの新module hashも接続する。新規依存/外部数学参照/legacy/Wine/Hosted CI/他OS/サブエージェントなし。
+
 ## 最新: 曲線P2 TEの通常solve・native接続 — 2026-09-09
 
 基準e243205。[仕様/方式/失敗履歴](CURVED_TE_PLAN.md)。前回は球形試作と受入条件の具体化で進捗あり。今回、一時コピーで実装・検証後、開始時標準session1151終了0（750件中748合格/2skip、1155.964秒）を確認して主ツリーへ反映した。主ツリーTE12件session69453終了0、2.028秒。te.py/te_curved.py/te_saved.py/curved_solution.py/model.py、tests/test_te.py/test_te_curved.py、scripts/validate_curved_te.py、examples/te/sphere.jsonが変更対象。最終検証までソースを固定し、全実行終了後に固定解除した。

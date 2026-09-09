@@ -1,6 +1,8 @@
 # 実装・検証の現状
 
-[真空m=0 TE](AXISYMMETRIC_TE.md)を追加。Eφ/rの独立未知数、TEのPEC拘束、場・エネルギー・壁損失、加速量N/A、専用保存/再検証とCLIに対応。直線P1/P2と[曲線P2](CURVED_TE_PLAN.md)に対応し、Project/GUI・追跡等の統合は継続する。
+[TEのProject・ローカルジョブ](TE_JOBS.md)を接続。通常CLI/worker、完了時の保存場再検証、直接/管理済み取込、元メッシュ保持と管理器再起動を扱う。GUIのTE専用操作・追跡等は継続する。
+
+[真空m=0 TE](AXISYMMETRIC_TE.md)を追加。Eφ/rの独立未知数、TEのPEC拘束、場・エネルギー・壁損失、加速量N/A、専用保存/再検証とCLIに対応。直線P1/P2と[曲線P2](CURVED_TE_PLAN.md)に対応し、GUI・追跡等の統合は継続する。
 
 [RF探索の実行内再利用](RF_OPTIMIZATION_REUSE.md)を追加。再開時の完全replayと全nativeファイルの変更検出を維持し、同じ実行内の確認済み祖先の追跡/RF評価を再利用する。保存書式と数値条件は不変。一般性能の受入は継続する。
 
@@ -100,7 +102,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 
 | 分野 | 実装・入口 | 制約・残件 | 証拠 |
 |---|---|---|---|
-| 物理 | 真空、軸接続m=0 TMと直線P1/P2・曲線P2 TE、PEC・平坦z端の電気/磁気対称 | TEのProject/GUI/追跡等、平面RF、内導体、複数材料、静的場は未実装 | [PHYSICS.md](PHYSICS.md)、solver.py |
+| 物理 | 真空、軸接続m=0 TMと直線P1/P2・曲線P2 TE、PEC・平坦z端の電気/磁気対称 | TEのGUI/追跡等、平面RF、内導体、複数材料、静的場は未実装 | [PHYSICS.md](PHYSICS.md)、solver.py |
 | 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否 | 明示TE拡張以外の追加物理を受理する契約ではない | [MODEL_CONTRACT.md](MODEL_CONTRACT.md) |
 | 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 穴・内導体・任意CADなし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
 | メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLI/JobManager/GUIあり。版3の表面量停止はAPI/CLI/JobManager/GUIへ接続。曲線局所細分の空間/係数移送APIあり。曲線局所履歴の保存/CLI・曲線残差指標あり。曲線版4の五量停止/保存再開API/CLI/JobManager/GUIあり。高次積分比較も表示。物理誤差上界は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |
@@ -120,10 +122,11 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 755件中753合格・NGSolve参照環境専用2件skip。曲線TE追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | 曲線TE追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧直線TE4件差ゼロ。標準・TE独立計算・終了後440対象hash一致 | out/validation-curved-te-final-20260909、[曲線TE仕様](CURVED_TE_PLAN.md) |
-| P01曲線TE | 球形3モード・2尺度の5水準と磁気対称半領域で独立f/場/G/エネルギー・相似則PASS。TE12検査（追加5件）・実二次幾何保存と再構築/局所履歴・CLI/API一致。Project/GUI/追跡は未接続 | out/curved-te-independent-final-20260909、[仕様と失敗履歴](CURVED_TE_PLAN.md) |
-| P01直線TE | P1/P2・円筒6モード・2尺度の18 API FEMと2 CLI FEM。Bessel周波数・場成分・G・電磁エネルギー・Maxwell相似がPASS。専用native/CLIと外部mesh、TE/TM誤読拒否の追加7検査PASS。曲線・Project/GUI/追跡は未接続 | out/te-independent-final-20260909、[仕様と失敗履歴](AXISYMMETRIC_TE.md) |
+| 標準unittest | 763件中761合格・NGSolve参照環境専用2件skip。TE Project/Job追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | TE Project/Job追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧直線/曲線TE7件差ゼロ。標準・独立・再起動検証・終了後443対象hash一致 | out/validation-te-jobs-verified-20260909、[TEジョブ仕様](TE_JOBS.md) |
+| O02 TEジョブ | 追加8検査・独立8実FEMとCLI/API一致、直接/管理済み8取込、再起動後verify=True全8件PASS。元mesh保持・改変/検証中変更拒否。GUI/追跡は継続 | [仕様と証拠](TE_JOBS.md) |
+| P01曲線TE | 球形3モード・2尺度の5水準と磁気対称半領域で独立f/場/G/エネルギー・相似則PASS。TE12検査（追加5件）・実二次幾何保存と再構築/局所履歴・CLI/API一致。当時Project/GUI/追跡は未接続（Project/Jobは上記で接続） | out/curved-te-independent-final-20260909、[仕様と失敗履歴](CURVED_TE_PLAN.md) |
+| P01直線TE | P1/P2・円筒6モード・2尺度の18 API FEMと2 CLI FEM。Bessel周波数・場成分・G・電磁エネルギー・Maxwell相似がPASS。専用native/CLIと外部mesh、TE/TM誤読拒否の追加7検査PASS。当時曲線・Project/GUI/追跡は未接続（曲線とProject/Jobは上記で接続） | out/te-independent-final-20260909、[仕様と失敗履歴](AXISYMMETRIC_TE.md) |
 | N04実行内の先祖再利用 | 追加3検査PASS。出所改変拒否・独立replayを維持し重複評価を削減。版1〜4実保存の完全一致と前回対照の全水準五量差ゼロ。球形の適応全体は約119秒から約82秒の観測 | [仕様](CURVED_VERIFICATION_REUSE.md) |
 | N04曲線の効率対照 | 同一二次写像の球形で解析五量/追跡/積分/二区間停止・Ritz・誤差対DOF/時間を確認。一様1201自由度に対し適応2661自由度。この例で適応優位なし、一般効率は未受入 | [比較仕様](CURVED_REFINEMENT_EFFICIENCY.md) |
 | N04曲線適応GUI | 版4の実Chrome11項目・旧版15項目PASS。GUI実計算の独立球形五量もPASS。全ジョブ終了・検証サーバー停止済み | [GUI仕様](GUI_CURVED_ADAPTIVE_REFINEMENT.md) |

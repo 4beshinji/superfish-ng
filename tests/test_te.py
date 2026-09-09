@@ -78,7 +78,7 @@ class TETests(unittest.TestCase):
         from superfish_ng.symmetry import reflect_solution
         for order in (1,2):
             c=cavity(n=6,modes=1,order=order)
-            with self.assertRaisesRegex(ValueError,'TE Project'):Project(c)
+            with self.assertRaisesRegex(ValueError,'TE reflected Project'):Project(c,reflect_full=True)
             with self.assertRaisesRegex(ValueError,'TE reflection'):reflect_solution(c,solve(c))
             with self.assertRaisesRegex(ValueError,'axial accelerating'):replace(c,active_length_m=.1)
             with tempfile.TemporaryDirectory() as tmp:

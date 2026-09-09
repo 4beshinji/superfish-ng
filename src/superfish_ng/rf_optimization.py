@@ -45,6 +45,8 @@ def validate_optimization_request(request):
             raise ValueError('optimization initial must lie inside increasing bounds')
         if variable['tolerance']>variable['step']:raise ValueError('variable tolerance must not exceed step')
     project=Project.from_dict(request['project']);case=project.case
+    from .te import is_te
+    if is_te(case):raise ValueError('TE RF optimization/tracking integration is pending; use an ordinary TE Project solve')
     if (case.curved_contour is None or case.geometry_order!=2 or case.curved_refinement_steps or
             project.sections is not None or project.reflect_full):
         raise ValueError('RF optimization requires an unassembled full native curved P2 project without marked refinement history')

@@ -1,6 +1,8 @@
 # 互換開発の作業分割 v0
 
-[真空m=0 TE](AXISYMMETRIC_TE.md)を追加。Eφ/rの独立未知数、TEのPEC拘束、場・エネルギー・壁損失、加速量N/A、専用保存/再検証とCLIに対応。直線P1/P2と[曲線P2](CURVED_TE_PLAN.md)に対応し、Project/GUI・追跡等の統合は継続する。
+[TEのProject・ローカルジョブ](TE_JOBS.md)を接続。通常CLI/worker、完了時の保存場再検証、直接/管理済み取込、元メッシュ保持と管理器再起動を扱う。GUIのTE専用操作・追跡等は継続する。
+
+[真空m=0 TE](AXISYMMETRIC_TE.md)を追加。Eφ/rの独立未知数、TEのPEC拘束、場・エネルギー・壁損失、加速量N/A、専用保存/再検証とCLIに対応。直線P1/P2と[曲線P2](CURVED_TE_PLAN.md)に対応し、GUI・追跡等の統合は継続する。
 
 [RF探索の実行内再利用](RF_OPTIMIZATION_REUSE.md)を追加。再開時の完全replayと全nativeファイルの変更検出を維持し、同じ実行内の確認済み祖先の追跡/RF評価を再利用する。保存書式と数値条件は不変。一般性能の受入は継続する。
 

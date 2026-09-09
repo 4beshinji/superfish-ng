@@ -34,6 +34,8 @@ def _request(request):
     elif type(parameter) is not str or not parameter.strip() or request['parameter_unit'] not in ('m','1'):
         raise ValueError('coupled tune requires a nonempty parameter name and parameter_unit m or 1')
     project=Project.from_dict(request['project']);case=project.case
+    from .te import is_te
+    if is_te(case):raise ValueError('TE tuning/tracking integration is pending; use an ordinary TE Project solve')
     curved=request['schema_version']==4
     if curved:
         from .curved_tuning import validate_request
