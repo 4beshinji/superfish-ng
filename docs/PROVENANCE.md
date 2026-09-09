@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-09: [TE GUI](GUI_TE.md)。既存自作TEの元FEMセル評価・点検索・native再検証を描画とSIプローブへ接続。rEφの磁束関数は既存Maxwell規約による。TM/TEモデル保持とN/A理由、GUI cacheと元native hashを独立実装。既存自作CDP検証器をTE操作へ適用した。新規物理式・外部資料・依存・legacy参照なし。
+
 2026-09-09: [TE Project/JobManager](TE_JOBS.md)。既存自作の通常worker/ProjectとTE native再検証を接続。Project/Case/元mesh/完了manifestを照合し、直接nativeの元meshをProject版2へ保持。取込の前後hash・marker最後の公開・取込originを独立実装した。数式/物理精度許容差は変更なし。独立受入に既存の円筒/球形TE解析検証を再利用し、新規外部資料・依存・legacy参照はない。
 
 2026-09-09: [曲線TEの接続計画](CURVED_TE_PLAN.md)。自作の二次幾何・物理勾配・逆写像をTE未知数へ接続する試作を実施。PECの側要素の磁場を実曲線接線へ射影して2πr dsを積分する。R36の球形TE正根/G/規格化積分を独立参照とし、1尺度・1モードの初期試作と、主ツリー3モード/2尺度・半領域・標準755件の受入証拠を区別する。依存追加・legacy参照なし。

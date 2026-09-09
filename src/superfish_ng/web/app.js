@@ -415,6 +415,8 @@ function applyProject(p) {
   $("contour-triangles").value = contourMeshOriginal?.max_triangles ?? 250000;
   $("contour-rounds").value = contourMeshOriginal?.max_rounds ?? 12;
   explicitModel = c.model ? structuredClone(c.model) : null;
+  $("polarization").value = explicitModel?.polarization || "tm";
+  $("te-model-note").hidden = $("polarization").value !== "te";
   accelerationOriginal = structuredClone(c.rf);
   for (const [id, value] of [["active-length", c.rf.active_length_m], ["phase-origin", c.rf.phase_origin_m],
       ["voltage-start", c.rf.voltage_interval_m?.[0]], ["voltage-end", c.rf.voltage_interval_m?.[1]]])
@@ -860,6 +862,11 @@ async function openResult(id, modeIndex=null) {
     p.textContent = `${key}: ${value}`;
     $("conventions").append(p);
   }
+  const teResult = r.result.physics === "axisymmetric_m0_te";
+  for (const id of ['pillbox-reference','analyze-band']) {
+    $(id).disabled = teResult;
+    $(id).title = teResult ? 'この評価はTM専用です。TEの場・プローブは通常表示から利用できます。' : '';
+  }
   renderRF();
   renderRFDetails();
   await plot();
@@ -888,7 +895,7 @@ function renderRF() {
     for (const [key] of rfColumns) {
       const td = document.createElement("td");
       td.textContent =
-        q[key] === undefined ? "未評価" : q[key] === null ? "未定義" : Number(q[key]).toPrecision(7);
+        q[key] === undefined ? "未評価" : q[key] === null ? (q.accelerating_quantities_status?.startsWith("NOT_APPLICABLE") ? "N/A（TEの軸方向電場はゼロ）" : "未定義") : Number(q[key]).toPrecision(7);
       row.append(td);
     }
     table.append(row);
@@ -1416,7 +1423,7 @@ function renderRFDetails() {
       q[key] === undefined
         ? "未評価"
         : q[key] === null
-        ? "未定義"
+        ? (q.accelerating_quantities_status?.startsWith("NOT_APPLICABLE") ? "N/A（TEの軸方向電場はゼロ）" : "未定義")
         : typeof q[key] === "number"
           ? q[key].toPrecision(8)
           : String(q[key]);
@@ -2292,13 +2299,14 @@ affineSurfaceButtons();
 
 let rfPeakResult=null,rfPeakBusy=false,rfPeakReady=false,rfPeakRequest=0;
 function rfPeakButtons() {
-  $('rf-peaks-assess').disabled=!rfPeakReady || rfPeakBusy;
-  $('rf-peaks-open').disabled=!rfPeakReady || rfPeakBusy;
+  const te = currentResult?.result.physics === 'axisymmetric_m0_te';
+  $('rf-peaks-assess').disabled=te || !rfPeakReady || rfPeakBusy;
+  $('rf-peaks-open').disabled=te || !rfPeakReady || rfPeakBusy;
   for(const id of ['save','replay'])$(`rf-peaks-${id}`).disabled=!rfPeakResult || rfPeakBusy;
 }
 function resetRFPeaks(ready=false) {
   ++rfPeakRequest;rfPeakResult=null;rfPeakBusy=false;rfPeakReady=ready;
-  $('rf-peaks-status').textContent='選択した保存結果・順位の連続離散ピークはまだ評価していません。';
+  $('rf-peaks-status').textContent=currentResult?.result.physics === 'axisymmetric_m0_te' ? 'TEの連続表面ピーク評価は未対応です。描画サンプルをピーク値として扱いません。' : '選択した保存結果・順位の連続離散ピークはまだ評価していません。';
   $('rf-peaks-values').querySelector('tbody').replaceChildren();$('rf-peaks-diagnostics').textContent='';rfPeakButtons();
 }
 function showRFPeaks(response) {
@@ -2438,3 +2446,11 @@ bind('rf-opt-open-field',async()=>{
   finally{rfOptBusy=false;rfOptButtons();}
 });
 $('rf-opt-objective').addEventListener('change',rfOptUnit);$('rf-opt-request').addEventListener('input',rfOptButtons);$('rf-opt-field-trial').addEventListener('change',rfOptButtons);rfOptUnit();rfOptButtons();
+
+$("polarization").onchange = () => {
+  const polarization = $("polarization").value;
+  explicitModel = explicitModel || {physics:"rf_eigenmode",coordinates:"axisymmetric",azimuthal_index:0,
+    materials:[{id:"vacuum",type:"vacuum"}],regions:[{id:"cavity",material:"vacuum",domain:"interior"}]};
+  explicitModel.polarization = polarization;
+  $("te-model-note").hidden = polarization !== "te";
+};

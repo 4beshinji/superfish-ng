@@ -379,7 +379,7 @@ def create_server(workspace, port=0):
 
                         render_sources = {
                             name: _digest(Path(__file__).with_name(name))
-                            for name in ("visualize.py", "sampling.py", "rf.py")
+                            for name in ("visualize.py", "display.py", "sampling.py", "rf.py", "te_visualize.py", "te_display.py", "te.py", "te_curved.py", "te_saved.py")
                         }
                         cache_spec = {
                             "view": data,
@@ -426,15 +426,17 @@ def create_server(workspace, port=0):
                                 raise ValueError(done.stderr.strip() or "plot failed")
                             from .jobs import _write_json
 
+                            from .te import is_te
+                            plot_project = Project.load(directory / "project.json")
                             _write_json(
                                 image.with_suffix(".json"),
                                 {
                                     **cache_spec,
-                                    "case_sha256": json.loads(
-                                        (
-                                            directory / "solution/results.json"
-                                        ).read_text()
-                                    )["case_sha256"],
+                                    "case_sha256": (
+                                        _digest(directory / "solution/case.json")
+                                        if is_te(plot_project.case)
+                                        else json.loads((directory / "solution/results.json").read_text())["case_sha256"]
+                                    ),
                                 },
                             )
                         return self.reply(image.read_bytes(), content_type="image/png")

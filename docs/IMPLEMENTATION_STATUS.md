@@ -1,8 +1,10 @@
 # 実装・検証の現状
 
-[TEのProject・ローカルジョブ](TE_JOBS.md)を接続。通常CLI/worker、完了時の保存場再検証、直接/管理済み取込、元メッシュ保持と管理器再起動を扱う。GUIのTE専用操作・追跡等は継続する。
+[TEのGUI接続](GUI_TE.md)を接続。Eφ/Br/Bzの場表示・SIプローブ・偏波選択とN/A理由を追加。Chrome10項目・独立保存照合/球形解析・標準766件と既存数値回帰を確認した。
 
-[真空m=0 TE](AXISYMMETRIC_TE.md)を追加。Eφ/rの独立未知数、TEのPEC拘束、場・エネルギー・壁損失、加速量N/A、専用保存/再検証とCLIに対応。直線P1/P2と[曲線P2](CURVED_TE_PLAN.md)に対応し、GUI・追跡等の統合は継続する。
+[TEのProject・ローカルジョブ](TE_JOBS.md)を接続。通常CLI/worker、完了時の保存場再検証、直接/管理済み取込、元メッシュ保持と管理器再起動を扱う。通常GUIのTE操作は上記で接続。TE追跡等は継続する。
+
+[真空m=0 TE](AXISYMMETRIC_TE.md)を追加。Eφ/rの独立未知数、TEのPEC拘束、場・エネルギー・壁損失、加速量N/A、専用保存/再検証とCLIに対応。直線P1/P2と[曲線P2](CURVED_TE_PLAN.md)に対応し、通常GUIは上記で接続し、追跡等の統合は継続する。
 
 [RF探索の実行内再利用](RF_OPTIMIZATION_REUSE.md)を追加。再開時の完全replayと全nativeファイルの変更検出を維持し、同じ実行内の確認済み祖先の追跡/RF評価を再利用する。保存書式と数値条件は不変。一般性能の受入は継続する。
 
@@ -122,8 +124,9 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 763件中761合格・NGSolve参照環境専用2件skip。TE Project/Job追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | TE Project/Job追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧直線/曲線TE7件差ゼロ。標準・独立・再起動検証・終了後443対象hash一致 | out/validation-te-jobs-verified-20260909、[TEジョブ仕様](TE_JOBS.md) |
+| 標準unittest | 766件中764合格・NGSolve参照環境専用2件skip。TE GUI追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | TE GUI追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。旧直線/曲線TE7件差ゼロ。標準・独立・終了後448対象hashとブラウザー実装hash一致 | out/validation-gui-te-20260909、[TE GUI仕様](GUI_TE.md) |
+| O02 TE GUI | Chrome10項目・追加3検査、GUI/API新規3FEMと係数/周波数一致、全3プローブ保存場照合・管理器再起動、球形3モードf/場/G解析PASS | [仕様・失敗履歴](GUI_TE.md) |
 | O02 TEジョブ | 追加8検査・独立8実FEMとCLI/API一致、直接/管理済み8取込、再起動後verify=True全8件PASS。元mesh保持・改変/検証中変更拒否。GUI/追跡は継続 | [仕様と証拠](TE_JOBS.md) |
 | P01曲線TE | 球形3モード・2尺度の5水準と磁気対称半領域で独立f/場/G/エネルギー・相似則PASS。TE12検査（追加5件）・実二次幾何保存と再構築/局所履歴・CLI/API一致。当時Project/GUI/追跡は未接続（Project/Jobは上記で接続） | out/curved-te-independent-final-20260909、[仕様と失敗履歴](CURVED_TE_PLAN.md) |
 | P01直線TE | P1/P2・円筒6モード・2尺度の18 API FEMと2 CLI FEM。Bessel周波数・場成分・G・電磁エネルギー・Maxwell相似がPASS。専用native/CLIと外部mesh、TE/TM誤読拒否の追加7検査PASS。当時曲線・Project/GUI/追跡は未接続（曲線とProject/Jobは上記で接続） | out/te-independent-final-20260909、[仕様と失敗履歴](AXISYMMETRIC_TE.md) |

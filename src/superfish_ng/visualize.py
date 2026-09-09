@@ -16,6 +16,11 @@ def plot_mode(run, out, mode=1, probe_z_m=None, show_mesh=False, mode_label=None
     run, out = Path(run), Path(out)
     if out.exists():
         raise ValueError(f'output already exists: {out}')
+    from .config import Case
+    from .te import is_te
+    if is_te(Case.load(run/'case.json')):
+        from .te_visualize import plot_te_mode
+        return plot_te_mode(run, out, mode, probe_z_m, show_mesh, mode_label)
     solution = read_solution(run, allow_quadratic=True)
     results = solution.results
     if isinstance(mode, bool) or not isinstance(mode, int) or not 1 <= mode <= len(results['modes']):

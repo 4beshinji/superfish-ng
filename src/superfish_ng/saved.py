@@ -276,6 +276,11 @@ def export_radial_probe(directory, out, z_m, mode=1):
     from .sampling import FieldSampler, solution_radial_extent
     from .constants import MU0
 
+    from .config import Case
+    from .te import is_te
+    if is_te(Case.load(Path(directory)/'case.json')):
+        from .te_probe import export_te_radial_probe
+        return export_te_radial_probe(directory, out, z_m, mode)
     saved = read_solution(directory, allow_quadratic=True)
     if type(mode) is not int or not 1 <= mode <= saved.case.modes:
         raise ValueError("probe mode must be a valid one-based integer")

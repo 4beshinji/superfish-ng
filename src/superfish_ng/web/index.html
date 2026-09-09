@@ -15,7 +15,7 @@
       </div>
       <p>
         形状から、場を理解する。<br /><small
-          >真空・閉じた軸対称空洞 / m=0 TM</small
+          >真空・閉じた軸対称空洞 / m=0 TM・TE</small
         >
       </p>
     </header>
@@ -35,6 +35,8 @@
           <h2>形状と条件</h2>
         </div>
         <label>名前<input id="name" value="新しい空洞" /></label>
+        <label>偏波<select id="polarization"><option value="tm">TM（Er・Ez・Hφ）</option><option value="te">TE（Eφ・Hr・Hz）</option></select></label>
+        <p id="te-model-note" class="hint" hidden>TEの磁場は+時間phasorのquadratureです。軸方向加速場はゼロで、R/Q・加速量はN/Aです。通常計算・保存・場表示・プローブに対応します。TEの鏡映・Study・追跡・適応・調整・最適化は未対応です。</p>
         <label
           >形状の入力方法<select id="geometry-type">
             <option value="pillbox">円筒 — 半径と長さ</option>

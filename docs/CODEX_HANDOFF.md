@@ -1,5 +1,21 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: TE GUI — 2026-09-09
+
+基準449d1ef。[仕様/失敗履歴](GUI_TE.md)。通常TE GUIの実装・拡張受入・独立照合・標準/回帰を完了し、一つのローカル変更にまとめる。全関連実行は終了、ソース固定解除。
+
+標準67203終了0、out/validation-gui-te-20260909。最終比較80319終了0。標準766件中764合格・2skip（unittest1175.340秒、command1175.692秒）。TM seed9モード19量の周波数差0、RF最大8.882e-16、旧直線/曲線TE保存7件のRF差0。標準・独立・固定時・終了後448対象hashとブラウザー実装hashが一致。
+command.log/tests.log/validation.json/source-fixed.json/verify_completion.py/comparison.log/seed_regression.jsonを標準outへ保持。検証は標準unittestで、pytest/Hosted CI/他OS/Wineの新規実行なし。
+
+拡張Chrome10868終了0、out/browser-te-expanded-wait-20260909、10項目PASS・外部要求0。P1 TE/曲線P2実FEM・画像・プローブdownload、明示モデル/strict正規化Project往復、N/A理由、TM専用reference/band/peaks無効化とTM復帰。画像を目視し日本語名表示も確認。driver.mjs保持。GUI21290/PID882385はSIGINT終了0。
+独立72935終了0、out/te-gui-independent-20260909/verify.py/command.log/report.json。新管理器全3件verify=True、download全成分/TE全native hash/規格化/B=μ0H、3新規API FEMと係数/周波数完全一致。球形3mode max相対f2.500e-5/G2.824e-3/fields1.506e-3 PASS。GUI低分割P1は操作/保存一致の検査で精度合格ではない。
+
+実装: te_display/te_visualize/te_probe、通常plot/probe分岐、GUI cache TE実装hashとTE case digest、偏波選択/N/A・未対応結果操作の理由。曲線場は基準中心写像、磁場+i quadrature、rEφ磁力線、SI CSVを保持。既存日本語font選択のみでfontを取得/配布しない。物理精度許容差/FEM数式/依存は無変更。
+初回test呼出し誤り・検証器の結果選択省略/古いDOM/未正規化比較・15秒download待機超過を記録。TE画像生成後のcacheがTM専用case_sha256を要求する実不具合を修正。詳細と全driver/reportはGUI_TE.md/各out。最後の追加3unit1.350秒、標準にも含む。
+
+次工程: [TE追跡計画](TE_TRACKING_PLAN.md)。out/te-tracking-candidate-20260909の2FEM/6mode交差候補と、out/te-tracking-crossing-scales-20260909のP1/P2×2尺度×交差前後8FEM（38529終了0）、3標本次数の全ID/符号振幅不変/Maxwell則PASSを保持。いずれも製品TE追跡ではない。混合TE/TM拒否・近接縮退/帯域退出・専用保存/replay・CLI/GUIを実装検証する必要がある。TE Study/調整/適応等も未接続。親8受入/9進行中/15他未受入/1候補=33、O02/P01と全計画は継続。
+
+
 ## 最新: TE Project/JobManager — 2026-09-09
 
 基準d2d53de。[仕様/受入](TE_JOBS.md)。前回は曲線TEの実装・検証・コミットで進捗あり。開始時は直前標準755件と現在440対象hash一致を確認し、同一基準の標準テストを重複実行しなかった。TE Project往復redは旧全TE拒否で終了1（/tmp/te-project-red-20260909.log）。
