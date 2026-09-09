@@ -106,8 +106,27 @@ def planar_matrices(case):
         boundary.extend(((p+nx,p+2*nx+1),(p+nx+1,p)))
         owners.extend((2*(j*nx+nx-1),2*j*nx+1));local.extend(((1,2),(2,0)))
     boundary=np.asarray(boundary,dtype=np.int64)
+    return _assemble_planar(points,cells,boundary,owners,local,case.element_order,case.polarization)
+
+
+def planar_mesh_matrices(mesh, element_order=2, polarization='te'):
+    """Assemble area K/M on a verified explicit polygon mesh (geometry API).
+
+    This does not constitute a polygon PlanarCase or native/CLI solve path.
+    """
+    from .planar_mesh import PlanarMesh
+    if not isinstance(mesh,PlanarMesh):raise ValueError('expected an explicit PlanarMesh')
+    integer(element_order,'element_order')
+    if element_order not in (1,2) or polarization not in ('te','tm'):
+        raise ValueError('planar mesh FEM requires P1/P2 and TE/TM')
+    verified=PlanarMesh.create(mesh.polygon_xy_m,mesh.points_xy_m,mesh.triangles)
+    return _assemble_planar(verified.points_xy_m,verified.triangles,verified.boundary_edges,
+        verified.boundary_cells,verified.boundary_local_vertices,element_order,polarization)
+
+
+def _assemble_planar(points,cells,boundary,owners,local,element_order,polarization):
     dofs=cells;dof_points=points;boundary_dofs=boundary
-    if case.element_order==2:
+    if element_order==2:
         edges,inverse=np.unique(np.sort(cells[:,[[0,1],[1,2],[2,0]]].reshape(-1,2),axis=1),axis=0,return_inverse=True)
         dofs=np.column_stack((cells,len(points)+inverse.reshape(-1,3)))
         dof_points=np.vstack((points,points[edges].mean(axis=1)))
@@ -119,14 +138,14 @@ def planar_matrices(case):
     grad=np.einsum('ij,tjk->tik',np.array([[-1.,-1.],[1.,0.],[0.,1.]]),np.linalg.inv(jac))
     dim=dofs.shape[1];k=np.zeros((len(cells),dim,dim));m=np.zeros_like(k)
     for bary,w in triangle_quadrature(4):
-        v,g=(bary,grad) if case.element_order==1 else basis_p2(bary,grad)
+        v,g=(bary,grad) if element_order==1 else basis_p2(bary,grad)
         k+=(w*det)[:,None,None]*np.einsum('tik,tjk->tij',g,g)
         m+=(w*det)[:,None,None]*np.outer(v,v)
     rows=np.repeat(dofs,dim,axis=1).ravel();cols=np.tile(dofs,(1,dim)).ravel()
     k,m=[coo_matrix((a.ravel(),(rows,cols)),shape=(len(dof_points),)*2).tocsr() for a in (k,m)]
     if not np.isfinite(k.data).all() or not np.isfinite(m.data).all():raise ValueError('planar matrix arithmetic overflow')
     space=PlanarSpace(points,cells,dof_points,dofs,boundary,np.asarray(owners),np.asarray(local),boundary_dofs,det,grad)
-    free=np.setdiff1d(np.arange(len(dof_points)),np.unique(boundary_dofs)) if case.polarization=='tm' else np.arange(len(dof_points))
+    free=np.setdiff1d(np.arange(len(dof_points)),np.unique(boundary_dofs)) if polarization=='tm' else np.arange(len(dof_points))
     return space,k,m,free
 
 

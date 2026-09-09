@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## P02多角形の明示xyメッシュ基盤：限定受入
+
+基準7bac43a。専用PlanarMeshのstrict入力、正Jacobian・連結disk・辺交差/T字/重なり拒否・全宣言境界被覆、矩形から分離した面積K/Mを実装。追加11unit、旧矩形12条件の全配列/疎行列一致、回転二尺度24条件/凹L字8パッチがPASS。標準824件（822合格、2skip、1233.985秒）、convergence、TM seed9モード19量と既存平面32件/TE10件の再生、480source一致まで確認した。
+
+標準92838、native回帰24717、費用43939と独立検証は終了0。最終seed照合も終了0。証拠はPLANAR_POLYGON_MESH.mdとout/validation-planar-polygon-mesh-final-20260909。負向き三角形の丸め反転を厳密方向/未解像Jacobian拒否で修正し、初回失敗と標準5903の意図的中断130を保持。L字期待モーメントの誤記も独立積分で修正し履歴を保持。許容差を緩めていない。
+
+次工程はPLANAR_POLYGON_RF_PLAN.md。隔離候補/tmp/planar-polygon-candidate-20260909（複製はout/planar-polygon-product-candidate-20260909/candidate-source）にCase/native版2・CLI・点検索がある。変換16FEM/4CLIと矩形10unit、strict/保存改変/薄いセル内外はPASS。三角形初回12FEMはP1精度未達で終了1、P2 n64は三ゲートを満たした。追加P1 n448/P2 n64の実行59036は実ハンドル/終了報告を確認して継続する。製品主ツリーへは未適用。一般断面のCase/solve/native/CLI、Project/GUI、曲線/材料/多重連結は残件で、親集計8受入/10進行中/14他/1候補=33と全体目標を維持する。
+
 ## P02矩形平面RFの主ツリー接続：限定受入完了
 
 基準256dc44。[矩形の平面TE/TM遮断問題](PLANAR_RF.md)を専用PlanarCase・P1/P2 FEM・場/RF・native再検証・CLIへ接続し、限定受入。U′[J/m]・側壁損失[W/m]、TE定数零空間除外、全real/quadrature成分と加速量N/Aを保持する。48 API FEM＋16 CLI計算、32 CLIプローブ/16 replay、標準813件（811合格、2skip）と既存TM/TE数値回帰を確認。一般断面・曲線・材料・伝搬・Project/GUIは未接続。
@@ -4409,3 +4417,6 @@ CIはLinux/Python 3.10と3.12を対象とする定義を同梱したが、納品
 
 最新メッシュ改善の検証: 82テスト、`out/validation-physical-mesh-final-20260906/` PASS。
 seed周波数差ゼロ、RF相対差最大6.67e-16。既存ベンチマークの更新なし。
+
+
+継続作業：辺候補のBVH試作out/planar-edge-candidates-20260909は10042/86257終了0。候補集合の総当たり一致と主ツリー11unit、全メッシュ配列一致を確認。小規模の遅化も含む実測を保持し未採用。追加三角形59036のP1 TE n448は三ゲートPASSの途中出力あり、TM以降とreport終端はまだ確認していない。標準92838は824件PASSで終了0、最終seed照合と/tmp/finalize-planar-mesh-docs.pyも実行済み。既存workspace/.manager.lockのResourceWarningは再度出たため未解決の資源解放警告として保持。

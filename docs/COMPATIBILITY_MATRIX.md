@@ -152,7 +152,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K07 | 軸対称m=0 TM基本/高次モード | L/H | 実装、演習17対象モード照合 | 形状/周波数範囲・探索条件の網羅、対応モードの判定 | A / C04,D01 |
 | K08 | 電気/磁気対称・PEC | L（全領域比較）、U（旧半領域詳細） | 部分：平坦z端・鏡映 | 旧タグ写像、任意境界への拡張要否。旧半領域を直接照合済みとはしない | A / C02,G01 |
 | K09 | 軸対称TE | D（R25相補解）、L（7.17合成円筒二尺度/二モード） | 部分：[直線P1/P2](AXISYMMETRIC_TE.md)・[曲線P2](CURVED_TE_PLAN.md)の固有値・Eφ/Hr/Hz・エネルギー/壁損失・専用native/CLI、[Project/Job](TE_JOBS.md)・[通常GUI](GUI_TE.md)・[円筒追跡](TE_TRACKING_PLAN.md)・[独立掃引](TE_STUDY_PLAN.md)・[収束比較](TE_CONVERGENCE_STUDY_PLAN.md)・[対称面鏡映](TE_REFLECTION_PLAN.md) | 一般形状の追跡等、一般形状の受入。旧版[相補解比較器](C00_TE_COMPLEMENTARY_PLAN.md)は合成円筒に限定し、一般AF入力変換は未対応 | B / P01 |
-| K10 | 平面2D RF | D（R25のCartesian遮断解説明）、U（対象版の実行） | [矩形P1/P2・専用PlanarCase・場/RF・保存/CLI](PLANAR_RF.md)を接続 | 主ツリーの両尺度/両次数8モードのf/場/G・零空間/縮退、CLI、標準813件と既存数値回帰まで限定受入。一般断面・曲線・材料・Project/GUI等、旧版Cartesian実行は未完 | B / P02 |
+| K10 | 平面2D RF | D（R25のCartesian遮断解説明）、U（対象版の実行） | [矩形P1/P2・専用PlanarCase・場/RF・保存/CLI](PLANAR_RF.md)を接続 | 主ツリーの両尺度/両次数8モードのf/場/G・零空間/縮退、CLI、標準813件と既存数値回帰まで限定受入。[一般多角形の明示メッシュ・面積行列基盤](PLANAR_POLYGON_MESH.md)は限定受入。一般断面solve・曲線・材料・Project/GUI等、旧版Cartesian実行は未完 | B / P02 |
 | K11 | 同軸共振器/TEM系 | U | 未 | 内導体、端面、零固有値と物理共振の区別 | B / P03 |
 | K12 | 複数RF材料領域 | D（MAT、MT EPSILON/MU） | 未 | epsilon/mu界面、エネルギー、対象版での材料入力・実行検証 | B / P04 |
 | K13 | f/U/壁損失/Q0/G/RQ/シャント | L | 実装、対象ケース照合 | 単位/正規化/二つのRQ規約の入出力写像 | A / R01,C03,C04 |

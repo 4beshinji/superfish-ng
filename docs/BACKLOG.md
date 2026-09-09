@@ -1,5 +1,7 @@
 # 実装バックログ
 
+P02明示xyメッシュ基盤の受入条件：[単純PEC多角形](PLANAR_POLYGON_MESH.md)の正Jacobian・連結disk・交差/T字/重なり拒否・全境界被覆、独立面積/モーメント/勾配と回転・尺度則、旧矩形行列一致、標準回帰。追加11unitと独立24変換/8凹領域パッチ、標準824件・既存数値回帰/平面保存・480source一致まで基盤を限定受入。一般断面solve/native/CLIは後続。
+
 P02の次の受入条件：[平面RF契約](PLANAR_RF_PLAN.md)のTE/TM別境界、単位長エネルギー/損失、零空間・縮退、P1/P2実細分、strict入力・保存再検証とCLI、既存TM/TE回帰。隔離候補の両次数・両尺度・矩形/正方形のf/場/GはPASS。専用PlanarCase/FEM・保存再組立/正スペクトル再検査・CLIへ接続し、追加10検査、主ツリー48 API/16 CLI計算・32プローブ/16 replay・標準813件と既存TM/TE回帰、478source一致まで限定受入。一般断面・GUI等は未接続。親集計は8受入/10調査実装中/14他/1候補=33、P02の受入ではない。
 
 C00/K09の次の受入条件：[TE相補解計画](C00_TE_COMPLEMENTARY_PLAN.md)に版・入力・場の読み替え・独立壁損失とTM回帰を固定。既存R25の説明確認後、専用の合成円筒ブラックボックス検証器を実装。二尺度・二モード・三分割12旧版計算と独立P2 FEM、追加Q照合、標準803件と旧TM/TE回帰・472source一致で比較器を限定受入。一般AF入力の製品変換は未実施。
@@ -10,7 +12,7 @@ O02/P01 TE鏡映部分スペクトル収束比較の受入条件: 同じ元半�
 
 O02/P01 TE鏡映の受入条件: 左右・磁気/電気対称の直線P1/P2/曲線P2、vとEφ/Hr/Hz符号、自由方程式、U/P損失2倍・f/Q/G不変、半領域sourceと部分スペクトルを保存再検証、Project/CLI/Job/GUI、改変/中止/再起動・旧TM/TE回帰。専用schema4/native・Project/Job・CLI/GUIまで接続し、直線独立16FEM・Chrome6操作・GUI/CLI/再実行一致を確認。球形独立4FEM・標準790件・旧TM/TE数値回帰と464source照合まで限定受入。次は鏡映部分スペクトルの収束比較。[計画](TE_REFLECTION_PLAN.md)。
 
-O02/P01 TE収束Studyの受入条件: 同一物理/専用nativeの完全照合、Eφ対応と縮退未確認、電場/磁場/適用RFの個別ゲート、両native分割/積分次数安定性、固定二次幾何と幾何近似変化の区別、CLI/worker/GUI・保存改変/中止/再起動・旧TM回帰。API/Study/GUIの限定受入を完了。追加10unit・4種Studyの保存再比較・独立21FEM・Chrome4項目・標準785件と数値回帰が合格。[計画](TE_CONVERGENCE_STUDY_PLAN.md)。
+O02/P01 TE収束Studyの受入条件: 同一物理/専用nativeの完全照合、Eφ対応と縮退未確認、電場/磁場/適用RFの個別ゲート、両native分割/積分次数安定性、固定二次幾何と幾何近似変化の区別、CLI/worker/GUI・保存改変/中止/再起動・旧TM回帰。API/Study/GUIの限定受入を完了。追加11unit・4種Studyの保存再比較・独立21FEM・Chrome4項目・標準785件と数値回帰が合格。[計画](TE_CONVERGENCE_STUDY_PLAN.md)。
 
 O02/P01 TE掃引の受入条件: 全点事前検査、独立スペクトルUNVERIFIED、N/A理由、native/要約改変拒否、P1/P2・両尺度・規格化不変量、CLI/GUI保存一致、実worker中止/再起動、既存TM Studyと標準数値回帰。円筒/曲線の独立18FEM・GUI2項目・保存/再起動・旧TM保存Study3件・標準775件・数値回帰が合格、独立掃引を限定受入。[計画・証拠](TE_STUDY_PLAN.md)。
 
