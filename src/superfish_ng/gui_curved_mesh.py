@@ -18,7 +18,9 @@ def curved_mesh_document(project, *, maximum_cells=5000):
     # geometry/history path. Never coarsen or renumber a mesh for display.
     bounded=replace(case,contour_mesh=replace(controls,max_triangles=min(controls.max_triangles,maximum_cells)))
     try:
-        space=case_curved_space(bounded,make_mesh(bounded))
+        from .mesh_input import mesh_from_dict
+        mesh=make_mesh(bounded) if project.mesh_data is None else mesh_from_dict(bounded,project.mesh_data)
+        space=case_curved_space(bounded,mesh)
     except ValueError as exc:
         raise ValueError(f'graphical mesh selection (maximum {maximum_cells} cells): {exc}') from exc
     if len(space.geometry.cell_nodes)>maximum_cells:

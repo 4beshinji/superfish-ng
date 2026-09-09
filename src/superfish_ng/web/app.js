@@ -136,6 +136,7 @@ function geometryChanged() {
   markDirty();
 }
 let contourMeshOriginal = null;
+let explicitProjectMesh = null;
 function isContour(kind) { return ["contour", "curved_contour"].includes(kind); }
 function geometryLength(g) {
   if (g.type === "curved_contour") return Math.max(...g.curves.filter((c,i)=>g.edge_tags[i]==="axis").flatMap(c=>[c.start_zr_m[0],c.end_zr_m[0]]));
@@ -363,6 +364,7 @@ function collect() {
     p.case.model = { physics: "rf_eigenmode", coordinates: "axisymmetric", polarization: "tm", azimuthal_index: 0,
       materials: [{ id: "vacuum", type: "vacuum" }], regions: [{ id: "cavity", material: "vacuum", domain: "interior" }] };
   }
+  if(explicitProjectMesh!==null) {p.project_version=2;p.mesh_data=structuredClone(explicitProjectMesh);}
   return p;
 }
 function setGeometry(g) {
@@ -393,6 +395,8 @@ function setGeometry(g) {
   showGeometry();
 }
 function applyProject(p) {
+  explicitProjectMesh=p.mesh_data ? structuredClone(p.mesh_data) : null;
+  $("explicit-project-mesh").textContent=explicitProjectMesh ? `明示元メッシュを使用: ${explicitProjectMesh.points.length}頂点 / ${explicitProjectMesh.triangles.length}三角形。通常のメッシュ生成設定では置き換えません。` : "メッシュは形状と生成設定から作成します。";
   curvedSelection = null;
   $("curved-selection-panel").hidden = true;
   const c = p.case;
@@ -2167,7 +2171,7 @@ bind('refine-prepare',async()=>{
   const project=await preview(),version=Number($('refine-version').value);
   const controls={mapping:version>=4 ? 'nested_curved':version>=2 ? 'nested_affine':'same_domain',minimum_overlap:number('refine-overlap'),minimum_assignment_margin:number('refine-margin'),relative_cluster_gap:number('refine-gap'),minimum_relative_singular_value:number('refine-rank')};
   if(version===1)controls.sample_order=number('refine-order');
-  const request={schema_version:version,case:project.case,initial_mesh:null,
+  const request={schema_version:version,case:project.case,initial_mesh:project.mesh_data ?? null,
     initial_ids:$('refine-ids').value.trim() ? JSON.parse($('refine-ids').value):Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`),
     mode_id:$('refine-mode-id').value,controls,bulk_fraction:number('refine-bulk'),max_levels:number('refine-max-levels'),max_triangles:number('refine-max-triangles'),[version>=4 ? 'minimum_corner_angle_deg':'minimum_angle_deg']:number('refine-angle'),
     relative_tolerances:Object.fromEntries(refinementQuantities.map(([key,label,id])=>[key,number(`refine-${id}`)]))};

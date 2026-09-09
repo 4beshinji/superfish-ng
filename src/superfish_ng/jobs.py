@@ -141,9 +141,10 @@ def _execute_prepared(directory):
     start = time.monotonic()
     implementation = _implementation_hashes()
     try:
+        project_hash = _digest(directory / "project.json")
         project = Project.load(directory / "project.json")
         _state(directory, "running", stage="finite element solve")
-        solution = solve(project.case)
+        solution = (solve(project.case) if project.mesh_data is None else solve(project.case,mesh_data=project.mesh_data))
         case = project.case
         if project.reflect_full:
             from .symmetry import reflect_solution
@@ -151,7 +152,9 @@ def _execute_prepared(directory):
             case, solution = reflect_solution(case, solution)
         _state(directory, "running", stage="saving fields and RF quantities")
         save_run(case, solution, directory / "solution")
-        files = {"project.json": _digest(directory / "project.json")}
+        if _digest(directory / "project.json") != project_hash:
+            raise RuntimeError("project input changed during run; retry with stable input")
+        files = {"project.json": project_hash}
         files.update(
             {
                 p.relative_to(directory).as_posix(): _digest(p)

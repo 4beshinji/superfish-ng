@@ -33,6 +33,8 @@ def _request(request):
     elif type(parameter) is not str or not parameter.strip() or request['parameter_unit'] not in ('m','1'):
         raise ValueError('coupled tune requires a nonempty parameter name and parameter_unit m or 1')
     project=Project.from_dict(request['project']);case=project.case
+    if project.mesh_data is not None:
+        raise ValueError('tuning an explicit project mesh requires a declared per-trial mesh transformation')
     if project.sections is not None or project.reflect_full or case.geometry_type!='profile' or case.z_min!='pec' or case.z_max!='pec':
         raise ValueError('tune requires an unassembled continuous positive-radius profile with closed PEC ends')
     ids=request['initial_ids']

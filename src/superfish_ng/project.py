@@ -78,6 +78,12 @@ class Project:
     sections: list | None = None
     reflect_full: bool = False
     display_length_unit: str = "mm"
+    mesh_data: dict | None = None
+
+    def __post_init__(self):
+        if self.mesh_data is not None:
+            from .mesh_input import mesh_from_dict,mesh_to_dict
+            object.__setattr__(self,'mesh_data',mesh_to_dict(mesh_from_dict(self.case,deepcopy(self.mesh_data))))
 
     @classmethod
     def from_dict(cls, data):
@@ -93,12 +99,15 @@ class Project:
                 "sections",
                 "reflect_full",
                 "display_length_unit",
+                *(["mesh_data"] if data.get('project_version')==2 else []),
             ],
-            ["project_version", "case"],
+            ["project_version", "case", *(["mesh_data"] if data.get('project_version')==2 else [])],
             "project",
         )
-        if type(data["project_version"]) is not int or data["project_version"] != 1:
-            raise ValueError("only project_version 1 is supported")
+        if type(data["project_version"]) is not int or data["project_version"] not in (1,2):
+            raise ValueError("project_version must be 1 or 2")
+        if data['project_version']==2 and not isinstance(data['mesh_data'],dict):
+            raise ValueError('project version 2 requires an explicit mesh_data object')
         case = Case.from_dict(data["case"])
         sections = data.get("sections")
         if "sections" in data:
@@ -118,7 +127,7 @@ class Project:
         unit = data.get("display_length_unit", "mm")
         if unit not in ("m", "mm"):
             raise ValueError("display_length_unit must be m or mm")
-        return cls(case, deepcopy(sections), reflect, unit)
+        return cls(case, deepcopy(sections), reflect, unit,deepcopy(data.get('mesh_data')))
 
     @classmethod
     def from_sections(cls, template, sections, **options):
@@ -136,13 +145,14 @@ class Project:
 
     def to_dict(self):
         data = {
-            "project_version": 1,
+            "project_version": 2 if self.mesh_data is not None else 1,
             "case": self.case.to_dict(),
             "reflect_full": self.reflect_full,
             "display_length_unit": self.display_length_unit,
         }
         if self.sections is not None:
             data["sections"] = deepcopy(self.sections)
+        if self.mesh_data is not None:data['mesh_data']=deepcopy(self.mesh_data)
         return data
 
     def dumps(self):

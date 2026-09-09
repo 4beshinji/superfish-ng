@@ -303,6 +303,26 @@ try {
     const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/polynomial-result.png",Buffer.from(shot.data,"base64"));
     report.polynomial_job_ids={polynomialFirst,polynomialLast};
   }
+  if(args["--mesh-project"]) {
+    const expected=JSON.parse(await readFile(args["--mesh-project"],"utf8"));
+    const {root}=await call("DOM.getDocument",{},sessionId);const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#open"},sessionId);
+    await call("DOM.setFileInputFiles",{nodeId,files:[resolve(args["--mesh-project"])]},sessionId);
+    await wait('explicitProjectMesh!==null && document.querySelector("#explicit-project-mesh").textContent.includes("明示元メッシュ")');
+    await check("project form preserves embedded mesh and version",`collect().project_version===2 && JSON.stringify(collect().mesh_data)===JSON.stringify(${JSON.stringify(expected.mesh_data)})`);
+    const launched=await ev('(async()=>{const result=await api("start",{document:await preview()});await refreshJobs();return result.id})()');
+    await wait(`document.querySelector('[data-job="${launched}"] strong')?.textContent.includes("完了")`,60000);
+    await click(`[data-job="${launched}"] button`);await wait(`currentJob===${JSON.stringify(launched)} && !document.querySelector("#field-image").hidden`,60000);
+    await check("completed explicit mesh job restores embedded input",`collect().project_version===2 && JSON.stringify(collect().mesh_data)===JSON.stringify(${JSON.stringify(expected.mesh_data)})`);
+    await click("#save");let saved;
+    for(let n=0;n<100;n++){try{for(const file of await readdir(out+"/downloads")){if(file!=="tune-checkpoint.json" && file.endsWith('.json')){const candidate=JSON.parse(await readFile(out+"/downloads/"+file,"utf8"));if(candidate.project_version===2)saved=candidate;}}if(saved)break;}catch{}await sleep(100);}
+    if(!saved || JSON.stringify(saved.mesh_data)!==JSON.stringify(expected.mesh_data))throw Error('saved project dropped explicit mesh');
+    report.checks.push({operation:"GUI download retains exact explicit mesh",passed:true});
+    await click("#refine-prepare");await wait('document.querySelector("#refine-request").value.trim().startsWith("{") && JSON.parse(document.querySelector("#refine-request").value).initial_mesh!==null');
+    await check("adaptive request retains explicitly supplied initial mesh",`JSON.stringify(JSON.parse(document.querySelector("#refine-request").value).initial_mesh)===JSON.stringify(${JSON.stringify(expected.mesh_data)})`);
+    await click("#new");await wait('explicitProjectMesh===null');
+    await check("new project clears the previous embedded mesh",'collect().project_version===1 && !("mesh_data" in collect())');
+    report.mesh_job=launched;
+  }
   report.job_ids={first,second,third,fourth,fifth};
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if(!report.passed)throw Error("tuning GUI checks failed");console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));

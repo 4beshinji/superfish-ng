@@ -1,6 +1,16 @@
 # ローカルCodexへの引継ぎ
 
-## 最新: D02曲線調整のアフィン幾何基盤 — 2026-09-09
+## 最新: O02/D02 Project第2版の明示元メッシュ — 2026-09-09
+
+[Projectメッシュ](PROJECT_MESH.md)を限定受入。版2必須mesh_dataを既存strictメッシュ検査で正規化・コピーし、通常Jobのsolveへ渡す。旧版1文書は不変。GUIフォーム/保存/実行/結果読込で保持、明示使用表示・新規時解除、曲線図上選択と適応initial_meshへ接続。固定曲線細分Studyは元メッシュを維持、他Study/tuneは試行ごとの変形契約がないため明示拒否する。完全Project例題はexamples/projects/explicit_mesh.json。メッシュ単体専用インポートや曲線tune接続は残る。
+Project試験初回はJobManagerの未対応context managerを検証器が使って1ERROR。close契約へ修正し8件0.694秒PASS。後に番号置換前とのf一致と実行中project変更の検査を追加。変更検査は旧実装でred、jobsが開始時project hashを保持し、終了時照合とmanifestへ同じhash使用を追加。9件0.761秒PASS。ログはout/project-mesh-final-20260909に保存。
+最初の標準30857は終了1、out/validation-project-mesh-20260909、701件中697合格・2ERROR・2skip、478.010秒。Project例題をCase専用examples直下へ置いたため既存Case往復検査が拒否。専用サブディレクトリへ移し、パーサーと既存検査のstrict契約を維持した。
+Chrome49357は終了1、out/browser-project-mesh-20260909。適応入力生成前の空欄をJSONとして読む待機条件の不備。製品ソースを固定し/tmpの修正版で87258再実行、21項目PASS/外部要求0/終了0。GUI70632/PID306042は正常停止終了0。初回標準終了後、待機修正をscriptsへ反映し、入力hash補強と例題移動を含めて最終検証を全て再実行した。
+最終独立62882は終了0、out/project-mesh-final-20260909。P2円筒の両尺度解析/両RQ/G相似（最大1.510e-14）、左右×両対称4曲線鏡映（既存経路f差最大6.662e-16）、曲線固定Study16→64要素/Ritz/元メッシュ保持がPASS。最終Chrome67950は終了0、out/browser-project-mesh-final-20260909の21項目PASS/外部要求0。GUI53953/PID319924は正常停止終了0。新規スクリーンショット目視なし。
+最終標準83910は終了0、out/validation-project-mesh-final-20260909、702件中700合格・2skip、unittest476.257秒。seed9モード19量f差0/RF最大8.882e-16。最終独立/標準/終了後399対象hashとChrome対象hashが一致。全関連実行は終了、ソース固定解除。主ツリー83fd8faを基準とする。
+O02着手として親集計は受入8・進行中7・他未受入17・拡張候補1、計33。O02/D02全体と全体計画は未完了。次はアフィン曲線/Case/元メッシュの同時変形とtune試行間写像の導出。Caseの自動弦分割と変形した元メッシュの境界対応が一致するかを独立に検査し、異なる二次境界を黙認しない。RF評価区間/最小曲率条件等の固定・連動も明示する。
+
+## D02曲線調整のアフィン幾何基盤 — 2026-09-09
 
 [アフィン弧変換](AFFINE_CONIC_TRANSFORM.md)を限定受入。affine_conics.transform_curveは既存affine_mapで線分・回転楕円・双曲線両枝を変形し、同じfractionの対応を保持。楕円SVD角シフト、双曲線直交化の双曲線シフトでnative形式へ戻す。分解再構成/正方向/直交性と4096εの解像条件を検査、未確認を拒否。閉輪郭やCaseの妥当性は別検査であり、tune接続は未実装。
 新API未存在でred失敗。その後3検査0.400秒PASS。点/接線/曲率/面積/逆変換、strict/未解像拒否、native二次メッシュを明示2倍にした実FEM/追跡/f/RQ/Gを確認。ログはout/affine-conics-random-accepted-20260909/tests-{red,initial,native}.log。
