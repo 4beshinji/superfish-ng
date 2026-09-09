@@ -1,5 +1,7 @@
 # 曲線Projectと元メッシュのアフィン変形
 
+後続実装: [曲線アフィンtune](CURVED_TUNING.md)へ接続。以下は一括変形基盤を受け入れた時点の記録。
+
 2026-09-09、D02の曲線調整接続に必要な一括変形を実装・限定受入。
 
 `transform_curved_project(project, affine_map, rf_coordinates=...)` は

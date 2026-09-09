@@ -1,5 +1,16 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: D02 曲線アフィンtuneと直交角の保存評価方式 — 2026-09-09
+
+[曲線tune](CURVED_TUNING.md)第4版。curved_tuning.pyの3多項式係数から同じbase Project/元メッシュを毎回変形、親試行→現在の相対写像を導出する。rf_coordinatesはfixed/axial必須、controls.mapping=affine_remeshだがユーザーaffine_mapは拒否。refinement_scaleは2の累乗で元二次写像の一様制限を追加し、局所履歴も維持する。既存tuning._request/_project/_assembleへ接続、CLI/JobManager/再起動/GUI入力復元・再開・場表示へ接続。例題examples/tuning/curved_affine_scale.json。v1～3の分岐/保存は維持。
+直前基準01f541a標準712件を確認、調整関連baseline89779終了0/32件46.019秒。新API redの後4件42.009秒、CLI/管理器再起動を足して30423終了0/5件97.049秒。最初の標準42294終了0、out/validation-curved-tuning-20260909、717件715合格/2skip、584.112秒。初回円筒独立92723終了0、out/curved-tuning-independent-20260909、m/1×尺度1/2全4系列各4試行TUNED、TM011順位3→2、最終解析f差1.393e-6、長さ差2.221e-16、f/両RQ/G相似・単位差最大1.621e-14。初回標準/独立/旧保存再検証/終了後410対象hash一致。
+Chrome初回18415終了1は私のbaseline入力を6×8へ粗くしたため既存profileがREFINEMENT_FAILED。製品/許容差を変更せず、以前の12×16/1e4 Hz入力に戻し11413終了0/20項目PASS/外部要求0。GUI73938/PID399329はSIGINT停止終了0。旧v1/v2/v3の17/15/18試行TUNED保存の完全再検証79265終了0、out/curved-tuning-legacy-replay-20260909。
+追加鏡映50932終了1はz_max半楕円の1.2倍で接続証明UNVERIFIED。半軸だけ伸縮する試作も同じ失敗で、cos(pi/2)残差が中心.12 mに加算され1 ulp端面外側へ出るためと特定。接続許容は緩和せず[直交角評価](EXACT_CARDINAL_ELLIPSE.md)を保存方式として実装。EllipseArc.parameter_evaluation省略/numpyは従来値/JSONキー不変、exact_cardinalはθが厳密にk*(pi/2)と等しいときだけsin/cosを0/±1にする。隣接floatはスナップしない。非恒等アフィン楕円に方式を明示、恒等変換/旧保存は従来どおり。
+別置き試作88574終了0/左右両対称変形と旧native読込、53165終了0/関連23件5.974秒。初回標準と円筒独立の終了後に製品へ反映。追加3検査0.757秒PASS。最終鏡映81801終了0、out/curved-tuning-reflection-accepted-20260909、同じ[1,1.2]を保ち左右×両対称の4例各2試行PAUSED/追跡/再検証/位相原点0がPASS。失敗ログも同ディレクトリへ保持。
+最終Chrome48415終了0、out/browser-curved-tuning-final-20260909、20項目PASS/外部要求0。GUI30970/PID419627はSIGINT停止終了0。新規スクリーンショット目視なし。最終再検証45953終了0、out/curved-tuning-final-replay-20260909、円筒4系列全試行と過去の楕円/双曲線/円筒nativeを現在の実装で再読込。初回円筒FEMは全てLineSegmentで、追加評価方式は使用しない。初回後の差はconics.py/affine_conics.pyと追加testのみとcoverage.jsonへ明記し、最終FEMを再実行したとは言わない。正の二乗倍率20387終了0、out/curved-tuning-polynomial-20260909、両単位表現の実FEM相似最大8.405e-14、独立べき乗和12比較PASS。
+最終標準57435終了0、out/validation-curved-tuning-final-20260909、720件中718合格/2skip、588.051秒。seed9モード19量f差0/RF最大8.882e-16。最終標準/円筒再検証・旧native/鏡映/二乗倍率/終了後411対象hashとChrome対象hashが一致。初回円筒FEMとの3ファイル差はcoverage.jsonに明記済み。全関連計算/GUI終了、固定解除。01f541a基準。
+親8受入/7進行中/17他未受入/1候補=33は維持。アフィン曲線tuneを接続したが、非アフィン曲線編集/任意関数の連動・任意局所細分の輸送・制約付き多変数最適化・全体計画は未完了。次は対応表/計画のD02残件とD03等を再照合し、実測された制約を保った次の機能へ進める。
+
 ## 最新: D02 曲線Project一括変形 — 2026-09-09
 
 [仕様・証拠](CURVED_PROJECT_TRANSFORM.md)。curved_project_transform.transform_curved_projectは元Case/メッシュを新しいProject第2版へアフィン変形し、元の自動弦分割も固定数へ確定する。元メッシュ未指定なら元形状で一度生成。rf_coordinatesは必須fixed/axial、間隙・最小曲率/生成/品質/材料/正規化条件は固定、弦/接合近似予算は最大特異値で伸縮して再検査。二次空間の各履歴prefixの接続/点/境界fractionを照合し、最長辺/対角線選択が変わる局所細分はUNVERIFIED拒否。relative_affine_mapは同じbaseからの2変形のcurrent @ inverse(previous)を導出する。

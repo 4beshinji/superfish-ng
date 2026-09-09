@@ -19,8 +19,9 @@ def _request(request):
     fields=('schema_version','project','parameter','bounds','target_hz','frequency_tolerance_hz',
         'parameter_tolerance','max_trials','initial_ids','mode_id','controls','refinement_scale','mesh_frequency_tolerance_hz')
     if isinstance(request,dict) and request.get('schema_version') in (2,3):fields+=('bindings','parameter_unit')
+    if isinstance(request,dict) and request.get('schema_version')==4:fields+=('affine_coefficients','parameter_unit','rf_coordinates')
     keys(request,fields,fields,'tune request');_canonical(request)
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3):raise ValueError('tune requires schema_version 1, 2 or 3')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3,4):raise ValueError('tune requires schema_version 1, 2, 3 or 4')
     for name in ('target_hz','frequency_tolerance_hz','parameter_tolerance','mesh_frequency_tolerance_hz'):positive(request[name],name)
     integer(request['max_trials'],'max_trials',2);integer(request['refinement_scale'],'refinement_scale',2)
     bounds=request['bounds']
@@ -33,30 +34,38 @@ def _request(request):
     elif type(parameter) is not str or not parameter.strip() or request['parameter_unit'] not in ('m','1'):
         raise ValueError('coupled tune requires a nonempty parameter name and parameter_unit m or 1')
     project=Project.from_dict(request['project']);case=project.case
-    if project.mesh_data is not None:
+    curved=request['schema_version']==4
+    if curved:
+        from .curved_tuning import validate_request
+        validate_request(request,project)
+    if not curved and project.mesh_data is not None:
         raise ValueError('tuning an explicit project mesh requires a declared per-trial mesh transformation')
-    if project.sections is not None or project.reflect_full or case.geometry_type!='profile' or case.z_min!='pec' or case.z_max!='pec':
+    if not curved and (project.sections is not None or project.reflect_full or case.geometry_type!='profile' or case.z_min!='pec' or case.z_max!='pec'):
         raise ValueError('tune requires an unassembled continuous positive-radius profile with closed PEC ends')
     ids=request['initial_ids']
     if type(ids) is not list or len(ids)!=case.modes or any(type(x) is not str or not x.strip() for x in ids) or len(set(ids))!=len(ids):
         raise ValueError('initial_ids requires one distinct nonempty string per initial frequency rank')
     if type(request['mode_id']) is not str or request['mode_id'] not in ids:raise ValueError('mode_id must occur in initial_ids')
-    validate_tracking_controls(request['controls'])
-    if request['controls']['mapping'] not in ('normalized_cylinder','normalized_profile'):
+    if not curved:validate_tracking_controls(request['controls'])
+    if not curved and request['controls']['mapping'] not in ('normalized_cylinder','normalized_profile'):
         raise ValueError('tune requires normalized_cylinder or normalized_profile; other geometry mappings need explicit per-trial support')
     endpoint_geometries=[]
     for value in bounds:
         p=_project(request,value,'search')
         if request['controls']['mapping']=='normalized_cylinder' and any(r!=p.case.profile[0][1] for _,r in p.case.profile):
             raise ValueError('normalized_cylinder tune bounds must retain constant radius')
-        _project(request,value,'refinement');endpoint_geometries.append(p.case.profile)
-    if request['schema_version'] in (2,3) and endpoint_geometries[0]==endpoint_geometries[1]:
+        _project(request,value,'refinement')
+        endpoint_geometries.append(p.case.curved_contour if curved else p.case.profile)
+    if request['schema_version'] in (2,3,4) and endpoint_geometries[0]==endpoint_geometries[1]:
         raise ValueError('bindings do not change representable geometry across bounds')
     return project
 
 
 def _project(request,value,phase):
     project=Project.from_dict(request['project'])
+    if request['schema_version']==4:
+        from .curved_tuning import trial_project
+        return trial_project(request,project,value,phase)
     if request['schema_version']==1:
         project=Study(project,'sweep',request['parameter'],[value,value]).projects()[0]
     else:
@@ -141,8 +150,12 @@ def _assemble(request,runs):
             ids=list(request['initial_ids']);frequency=float(read_solution(directory/'solution').frequencies_hz[ids.index(request['mode_id'])]);status='INITIAL'
         else:
             parent=trial['parent_index']
+            controls=request['controls']
+            if request['schema_version']==4:
+                from .curved_tuning import pair_controls
+                controls=pair_controls(request,trials[parent]['value'],trial['value'])
             pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=str(Path(runs[parent])/'solution'),
-                current_run=str(directory/'solution'),previous_ids=trials[parent]['current_mode_ids'],controls=request['controls']))
+                current_run=str(directory/'solution'),previous_ids=trials[parent]['current_mode_ids'],controls=controls))
             report=pair['tracking'];ids=report['current_mode_ids'];status='PASS'
             if report['status']!='PASS' or not report['individual_ids_complete']:status='UNVERIFIED'
             else:frequency=tracked_frequency_hz(report,request['mode_id'])

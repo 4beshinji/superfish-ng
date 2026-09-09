@@ -1744,12 +1744,12 @@ function trackingButtons() {
   $("tracking-link-label").hidden = !$("tracking-retain").checked;
   surfaceButtons();
 }
-function trackingControls() {
-  const controls = {mapping: $("tracking-mapping").value, sample_order: number("tracking-order"),
+function trackingControls(derivedAffine=false) {
+  const controls = {mapping: derivedAffine ? "affine_remesh" : $("tracking-mapping").value, sample_order: number("tracking-order"),
     minimum_overlap: number("tracking-overlap"), minimum_assignment_margin: number("tracking-margin"),
     relative_cluster_gap: number("tracking-gap"), minimum_relative_singular_value: number("tracking-rank")};
   if (controls.mapping === "piecewise_remesh") controls.comparison_meshes = JSON.parse($("tracking-comparison-json").value);
-  if (controls.mapping === "affine_remesh") controls.affine_map = {radial_scale: number("tracking-affine-radial"), axial_scale: number("tracking-affine-axial"), axial_shear: number("tracking-affine-shear")};
+  if (controls.mapping === "affine_remesh" && !derivedAffine) controls.affine_map = {radial_scale: number("tracking-affine-radial"), axial_scale: number("tracking-affine-axial"), axial_shear: number("tracking-affine-shear")};
   if (controls.mapping === "paired_mesh") controls.vertex_pairs = JSON.parse($("tracking-pairs").value);
   if ($("tracking-retain").checked) Object.assign(controls, {cluster_transition_policy: $("tracking-policy").value, minimum_cluster_link: number("tracking-link")});
   return controls;
@@ -1952,6 +1952,8 @@ function tuningParameterMode() {
   $("tune-binding-settings").hidden=!coupled;
   $("tune-linear-help").hidden=$("tune-binding-law").value!=="linear";
   $("tune-polynomial-help").hidden=$("tune-binding-law").value!=="polynomial";
+  $("tune-affine-settings").hidden=$("tune-binding-law").value!=="affine";
+  $("tune-profile-bindings").hidden=$("tune-binding-law").value==="affine";
   $("tune-vertex").disabled=coupled;$("tune-coordinate").disabled=coupled;
   for(const label of document.querySelectorAll(".tune-unit-label"))label.textContent=unit==="1" ? "無次元" : unit;
 }
@@ -1998,10 +2000,13 @@ function showTuning(response) {
     body.append(row);
   }
   $("tune-request").value=JSON.stringify(r,null,2);$("tune-coupled").checked=r.schema_version>=2;
-  $("tune-binding-law").value=r.schema_version===3 ? "polynomial" : "linear";
+  $("tune-binding-law").value=r.schema_version===4 ? "affine" : r.schema_version===3 ? "polynomial" : "linear";
   if(r.schema_version>=2) {
     $("tune-parameter-name").value=r.parameter;$("tune-parameter-unit").value=r.parameter_unit;
-    $("tune-bindings").value=JSON.stringify(r.bindings,null,2);
+    if(r.schema_version===4) {
+      $("tune-affine-coefficients").value=JSON.stringify(r.affine_coefficients,null,2);
+      $("tune-rf-coordinates").value=r.rf_coordinates;
+    } else $("tune-bindings").value=JSON.stringify(r.bindings,null,2);
   } else {
     const parts=r.parameter.split("/");$("tune-vertex").value=parts.at(-2);$("tune-coordinate").value=parts.at(-1);
   }
@@ -2025,13 +2030,16 @@ async function tuningAction(action,data) {
 async function openTuning(id) {await tuningAction("tune-result",{id});$("tuning").scrollIntoView({behavior:"smooth"});}
 bind("tune-prepare",async()=>{
   const project=await preview(),coupled=$("tune-coupled").checked,vertex=coupled ? 0 : number("tune-vertex");
+  const affine=coupled && $("tune-binding-law").value==="affine";
   if(!Number.isInteger(vertex) || vertex<0) throw Error("頂点番号は0以上の整数で指定してください");
   const initial_ids=$("tune-ids").value.trim() ? JSON.parse($("tune-ids").value) : Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`);
   const request={schema_version:1,project,parameter:`/case/geometry/points_zr_m/${vertex}/${$("tune-coordinate").value}`,
     bounds:[number("tune-low"),number("tune-high")],target_hz:number("tune-target")*1e6,frequency_tolerance_hz:number("tune-frequency-tolerance"),
     parameter_tolerance:number("tune-parameter-tolerance"),max_trials:number("tune-max-trials"),initial_ids,mode_id:$("tune-mode-id").value,
-    controls:trackingControls(),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
-  if(coupled) Object.assign(request,{schema_version:$("tune-binding-law").value==="polynomial" ? 3 : 2,parameter:$("tune-parameter-name").value,
+    controls:trackingControls(affine),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
+  if(affine) Object.assign(request,{schema_version:4,parameter:$("tune-parameter-name").value,parameter_unit:$("tune-parameter-unit").value,
+    affine_coefficients:JSON.parse($("tune-affine-coefficients").value),rf_coordinates:$("tune-rf-coordinates").value});
+  else if(coupled) Object.assign(request,{schema_version:$("tune-binding-law").value==="polynomial" ? 3 : 2,parameter:$("tune-parameter-name").value,
     parameter_unit:$("tune-parameter-unit").value,bindings:JSON.parse($("tune-bindings").value)});
   $("tune-request").value=JSON.stringify(request,null,2);
 });

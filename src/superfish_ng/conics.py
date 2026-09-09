@@ -125,8 +125,11 @@ class EllipseArc:
     start_rad: float
     sweep_rad: float
     rotation_rad: float = 0.
+    parameter_evaluation: str = "numpy"
 
     def __post_init__(self):
+        if type(self.parameter_evaluation) is not str or self.parameter_evaluation not in ("numpy","exact_cardinal"):
+            raise ValueError("ellipse parameter_evaluation must be numpy or exact_cardinal")
         for key in ('center_zr_m','semiaxes_m'):
             value = getattr(self,key)
             if (not isinstance(value,(tuple,list)) or len(value)!=2
@@ -152,8 +155,16 @@ class EllipseArc:
         a,b = self.semiaxes_m
         c,s = rotation_cos_sin(self.rotation_rad)
         rotation = np.array([[c,-s],[s,c]])
-        points = np.stack((a*np.cos(theta),b*np.sin(theta)),axis=-1) @ rotation.T
-        derivative = np.stack((-a*np.sin(theta),b*np.cos(theta)),axis=-1) @ rotation.T
+        co,si=np.cos(theta),np.sin(theta)
+        if self.parameter_evaluation=="exact_cardinal":
+            # The normalized start and sub-turn sweep bound theta to [-3pi,3pi].
+            # Exact equality only: neighboring floats keep NumPy evaluation.
+            for k in range(-6,7):
+                match=theta==k*(math.pi/2)
+                co=np.where(match,(1.,0.,-1.,0.)[k%4],co)
+                si=np.where(match,(0.,1.,0.,-1.)[k%4],si)
+        points = np.stack((a*co,b*si),axis=-1) @ rotation.T
+        derivative = np.stack((-a*si,b*co),axis=-1) @ rotation.T
         speed = np.hypot(derivative[...,0],derivative[...,1])
         return _checked_evaluation(points+np.asarray(self.center_zr_m),
                     np.sign(self.sweep_rad)*derivative/speed[...,None],
@@ -285,7 +296,7 @@ def curve_to_dict(curve):
         raise ValueError('unsupported curve primitive')
     return dict(type=kinds[type(curve)], **{
         key: list(value) if isinstance(value, tuple) else value
-        for key, value in asdict(curve).items()})
+        for key, value in asdict(curve).items() if not (key=="parameter_evaluation" and value=="numpy")})
 
 
 def curve_from_dict(row):

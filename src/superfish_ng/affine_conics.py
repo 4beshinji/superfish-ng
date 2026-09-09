@@ -35,7 +35,7 @@ def transform_curve(curve,affine_map):
             rotation[:,1]*=-1;right[1,:]*=-1
         shift=math.atan2(right[1,0],right[0,0])
         reconstructed=rotation@np.diag(axes)@np.array([[math.cos(shift),-math.sin(shift)],[math.sin(shift),math.cos(shift)]])
-        parameters=dict(start_rad=curve.start_rad+shift,sweep_rad=curve.sweep_rad)
+        parameters=dict(start_rad=curve.start_rad+shift,sweep_rad=curve.sweep_rad,parameter_evaluation="exact_cardinal")
         cls=EllipseArc
     else:
         normalized[:,0]*=curve.branch

@@ -303,6 +303,24 @@ try {
     const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/polynomial-result.png",Buffer.from(shot.data,"base64"));
     report.polynomial_job_ids={polynomialFirst,polynomialLast};
   }
+  if(args["--curved"]) {
+    const curved=JSON.parse(await readFile(args["--curved"],"utf8"));
+    await ev(`applyProject(${JSON.stringify(curved.project)})`);
+    await ev('document.querySelector("#tune-coupled").checked=true;document.querySelector("#tune-binding-law").value="affine";document.querySelector("#tune-parameter-unit").value="1";tuningParameterMode()');
+    await fill("#tune-affine-coefficients",JSON.stringify(curved.affine_coefficients));await click("#tune-prepare");
+    await wait('JSON.parse(document.querySelector("#tune-request").value).schema_version===4');
+    await check("curved form generates affine laws and derives correspondence per trial",'JSON.parse(document.querySelector("#tune-request").value).controls.mapping==="affine_remesh" && !("affine_map" in JSON.parse(document.querySelector("#tune-request").value).controls) && !document.querySelector("#tune-affine-settings").hidden && document.querySelector("#tune-profile-bindings").hidden');
+    await fill("#tune-request",JSON.stringify(curved));await fill("#tune-limit","2");
+    const curvedFirst=await launch("#tune-start");await openJob(curvedFirst,"PAUSED",2);
+    await check("curved result restores coefficients and RF coordinate policy",'document.querySelector("#tune-binding-law").value==="affine" && document.querySelector("#tune-rf-coordinates").value==="axial" && JSON.parse(document.querySelector("#tune-affine-coefficients").value).radial_scale[1]===1');
+    await fill("#tune-affine-coefficients",'{}');await fill("#tune-limit","");
+    const curvedLast=await launch("#tune-resume");await openJob(curvedLast,"TUNED",4);
+    await check("curved resume restores saved law and accepts fixed geometry refinement",'Math.abs(tuningResult.document.decision.value-1.1)<1e-12 && tuningResult.document.decision.mesh_difference_met && JSON.parse(document.querySelector("#tune-affine-coefficients").value).radial_scale[1]===1');
+    const previous=await ev('currentJob');await click("#tune-open-field");
+    await wait(`currentJob!==${JSON.stringify(previous)} && currentResult?.result.case.geometry.type==="curved_contour" && !document.querySelector("#field-image").hidden`,60000);
+    await check("curved final field retains quadratic geometry and explicit partition",'currentResult.result.case.mesh.geometry_order===2 && currentResult.result.case.geometry.segments_per_curve.length===2');
+    report.curved_job_ids={curvedFirst,curvedLast};
+  }
   if(args["--mesh-project"]) {
     const expected=JSON.parse(await readFile(args["--mesh-project"],"utf8"));
     const {root}=await call("DOM.getDocument",{},sessionId);const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#open"},sessionId);

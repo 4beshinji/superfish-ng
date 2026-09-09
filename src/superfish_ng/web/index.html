@@ -503,15 +503,20 @@
         </section>
         <section id="tuning">
           <h2>同じモードの周波数を調整する</h2>
-          <p class="hint">連続した正半径profile・閉PEC専用です。変更する頂点座標と範囲を指定し、上の形状・追跡設定から入力を作成します。円筒またはprofile写像を選び、入力を確認して開始してください。</p>
-          <label><input id="tune-coupled" type="checkbox" /> 複数の座標を一つの設計変数に連動させる</label>
+          <p class="hint">profileの頂点座標、または二次曲線形状のアフィン変形を調整します。上の形状と追跡の判定条件から入力を作成します。曲線変形の追跡写像は各試行から導出します。</p>
+          <label><input id="tune-coupled" type="checkbox" /> 一つの設計変数から形状を変更する</label>
           <div id="tune-binding-settings" hidden>
             <label>設計変数の名前<input id="tune-parameter-name" type="text" value="radius" /></label>
             <label>設計変数の単位<select id="tune-parameter-unit"><option value="m">m（長さ）</option><option value="1">無次元</option></select></label>
-            <label>座標の連動式<select id="tune-binding-law"><option value="linear">一次式</option><option value="polynomial">多項式</option></select></label>
+            <label>形状の変更方法<select id="tune-binding-law"><option value="linear">座標の一次式</option><option value="polynomial">座標の多項式</option><option value="affine">曲線のアフィン変形</option></select></label>
             <p id="tune-linear-help">各座標[m] = multiplier × 設計変数 + offset_m。multiplierは設計変数の1単位あたりの長さです。座標はすべて同時に更新します。</p>
             <p id="tune-polynomial-help" hidden>各座標[m] = c₀ + c₁x + c₂x² + …。coefficientsを定数項から順に指定します（例: [0,0,0.1] は0.1x²）。係数cₖの単位はm/(設計変数の単位)ᵏです。途中の形状が不正なら停止し、前の保存を保持します。</p>
-            <label>連動する座標と係数（JSON配列）<textarea id="tune-bindings" rows="4">[{"path":"/case/geometry/points_zr_m/0/1","multiplier":1,"offset_m":0},{"path":"/case/geometry/points_zr_m/1/1","multiplier":1,"offset_m":0}]</textarea></label>
+            <label id="tune-profile-bindings">連動する座標と係数（JSON配列）<textarea id="tune-bindings" rows="4">[{"path":"/case/geometry/points_zr_m/0/1","multiplier":1,"offset_m":0},{"path":"/case/geometry/points_zr_m/1/1","multiplier":1,"offset_m":0}]</textarea></label>
+            <div id="tune-affine-settings" hidden>
+              <p>r′=a(x)r、z′=b(x)r+c(x)z。radial_scale、axial_scale、axial_shearの係数を定数項から順に指定します。係数cₖの単位は1/(設計変数の単位)ᵏです。元メッシュの対応を保持し、最終細分の倍率には2の累乗を指定します。不正形状や細分対応の変化では停止します。</p>
+              <label>変形係数（JSONオブジェクト）<textarea id="tune-affine-coefficients" rows="4">{"radial_scale":[0,1],"axial_scale":[0,1],"axial_shear":[0]}</textarea></label>
+              <label>RF評価座標<select id="tune-rf-coordinates"><option value="axial">軸方向倍率に連動</option><option value="fixed">入力Caseの座標で固定</option></select></label>
+            </div>
           </div>
           <div class="grid">
             <label>変更する頂点（0始まり）<input id="tune-vertex" type="number" min="0" step="1" value="1" /></label>
