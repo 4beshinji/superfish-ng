@@ -167,6 +167,7 @@ def create_server(workspace, port=0):
                     "assess-surface-convergence": ["document", "mode_id"],
                     "replay-surface-convergence": ["document"],
                     "normalize": ["document"],
+                    "replace-mesh": ["document", "mesh_document"],
                     "curved-selection-mesh": ["document"],
                     "tangent": ["document", "candidate_index"],
                     "replay-tangent": ["document"],
@@ -224,6 +225,9 @@ def create_server(workspace, port=0):
                         if isinstance(data["document"], str)
                         else Project.from_dict(data["document"])
                     )
+                elif action == "replace-mesh":
+                    from .project_mesh_operations import replace_project_mesh
+                    project=replace_project_mesh(data['document'],data['mesh_document'])
                 elif action == "assemble":
                     project = Project.from_sections(
                         data["case"],

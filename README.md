@@ -1,5 +1,7 @@
 # Superfish-NG — 0.1.0 research seed
 
+[外部メッシュ単体の読込と固定形状Study](docs/EXTERNAL_MESH_WORKFLOW.md)を追加。GUIで読込/解除・不正入力時の保持を行い、P1/P2の直線元メッシュを一様細分して比較できる。曲線二次Studyも従来どおり。O02全体は継続中。
+
 [曲線アフィン周波数調整](docs/CURVED_TUNING.md)を追加。設計変数から曲線/元メッシュを変換し、試行間写像を導出して実FEM・追跡・最終細分・保存再開へ接続する。非アフィン曲線変更や制約付き多変数最適化は残る。
 
 [曲線Projectと元メッシュの一括変形](docs/CURVED_PROJECT_TRANSFORM.md)を追加。元分割・接続と二次写像の対応を検査し、RF座標方針と試行間相対写像を明示する。アフィン曲線tuneへ接続済み。一般曲線変更は残る。

@@ -205,6 +205,9 @@
         <details open>
           <summary>メッシュと正規化</summary>
           <p id="explicit-project-mesh">メッシュは形状と生成設定から作成します。</p>
+          <label>元メッシュJSONを読み込む<input id="mesh-open" type="file" accept=".json,application/json" /></label>
+          <button id="mesh-detach" type="button">明示メッシュを外して自動生成へ戻す</button>
+          <p class="hint">現在の形状に一致するSI・rz座標のタグ付き三角形JSONを読み込みます。不正な入力では現在のメッシュを保持します。局所細分履歴の元メッシュを変える場合は先に履歴を解除してください。</p>
           <div id="contour-mesh-controls" hidden>
             <p>一般輪郭は最大辺長を指定して自動生成します。品質または資源上限を満たさない場合は停止します。空欄は自動生成を指定しません。</p>
             <div class="grid">
@@ -559,7 +562,7 @@
                 <option value="sweep">パラメータ掃引</option>
                 <option value="mesh_convergence">メッシュ収束確認</option>
                 <option value="geometry_convergence">曲線の形状近似確認</option>
-                <option value="fixed_geometry_convergence">二次形状を固定した細分比較</option>
+                <option value="fixed_geometry_convergence">形状を固定した細分比較</option>
               </select></label
             ><label>変更する値<select id="study-parameter"></select></label>
           </div>

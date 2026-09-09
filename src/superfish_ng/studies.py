@@ -67,13 +67,14 @@ class Study:
                     "mesh convergence requires increasing positive integer mesh_scale values"
                 )
         elif self.kind == "fixed_geometry_convergence":
-            expected_parameter = ("additional_uniform_refinements" if has_history
+            straight_mesh = self.project.mesh_data is not None and self.project.case.geometry_order==1
+            expected_parameter = ("additional_uniform_refinements" if has_history or straight_mesh
                                   else "/case/mesh/curved_refinement_levels")
             if (self.parameter != expected_parameter
-                    or self.project.case.geometry_order != 2
+                    or (self.project.case.geometry_order != 2 and not straight_mesh)
                     or any(type(v) is not int or v < 0 for v in self.values)
                     or any(b <= a for a, b in zip(self.values, self.values[1:]))):
-                raise ValueError(f'fixed geometry convergence requires geometry_order=2 and increasing nonnegative integer {expected_parameter} values')
+                raise ValueError(f'fixed geometry convergence requires quadratic geometry or an explicit straight mesh and increasing nonnegative integer {expected_parameter} values')
             if has_history:
                 controls = self.project.case.contour_mesh
                 limit = controls.max_triangles if controls is not None else 250000
@@ -131,6 +132,9 @@ class Study:
 
     def projects(self):
         self.__post_init__()
+        if self.kind=='fixed_geometry_convergence' and self.project.case.geometry_order==1:
+            from .project_mesh_operations import _straight_mesh_refinement_projects
+            return _straight_mesh_refinement_projects(self.project,self.values)
         projects = []
         for value in self.values:
             raw = deepcopy(self.project.to_dict())
@@ -405,10 +409,13 @@ def execute_study(study, directory, prepared=False):
                 'mesh refinement may also change the quadratic geometry; '
                 'this is not a fixed-discrete-geometry FEM error estimate')
         if study.kind == 'fixed_geometry_convergence':
-            sources = [read_solution(directory/p['directory']/'solution').source_mesh_data for p in points]
-            if any(source != sources[0] for source in sources[1:]):
-                raise ValueError('fixed geometry Study source meshes differ')
-            report['geometry_refinement'] = 'same verified source mesh and initial quadratic maps; uniform restrictions without curve reprojection'
+            if study.project.case.geometry_order==1:
+                report['geometry_refinement'] = 'same polygonal domain; uniform subdivisions of the explicit source mesh with inherited boundary tags'
+            else:
+                sources = [read_solution(directory/p['directory']/'solution').source_mesh_data for p in points]
+                if any(source != sources[0] for source in sources[1:]):
+                    raise ValueError('fixed geometry Study source meshes differ')
+                report['geometry_refinement'] = 'same verified source mesh and initial quadratic maps; uniform restrictions without curve reprojection'
         if implementation != _implementation_hashes():
             raise RuntimeError(
                 "implementation changed during study; retry with stable source"

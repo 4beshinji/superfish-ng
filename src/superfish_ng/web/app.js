@@ -606,6 +606,19 @@ async function preview() {
   return r.project;
 }
 bind("preview", preview);
+async function replaceMesh(document) {
+  const r=await api("replace-mesh",{document:collect(),mesh_document:document});
+  applyProject(r.project);
+  markDirty();
+  drawOutline(r.outline_zr_m,r.outline_closed,r.geometry_approximation);
+  $("error").hidden=true;
+}
+$("mesh-open").onchange=async event=>{
+  try {if(event.target.files.length)await replaceMesh(await event.target.files[0].text());}
+  catch(error){failure(error);}
+  finally {event.target.value="";}
+};
+bind("mesh-detach",()=>replaceMesh(null));
 bind("new", async () => {
   if (dirty && !confirm("編集中の内容を保存せず新規作成しますか？")) return;
   const r = await api("normalize", {
@@ -1104,9 +1117,12 @@ async function updateStudyParameters(preferred) {
       "nr/nzを倍率倍し、指定された最大辺長を倍率で割ります。元曲線と弦誤差は固定ですが、二次境界は変わることがあります。周波数・RF・軸場を別々に判定します。";
   } else if (kind === "fixed_geometry_convergence") {
     const history = !!p.case.mesh.curved_refinement_steps?.length;
-    add(history ? "additional_uniform_refinements" : "/case/mesh/curved_refinement_levels",
-        history ? "保存履歴の後に追加する一様細分段数" : "二次形状を保つ細分段数");
-    $("study-hint").textContent = history
+    const straight=!!p.mesh_data && (p.case.mesh.geometry_order ?? 1)===1;
+    add(history || straight ? "additional_uniform_refinements" : "/case/mesh/curved_refinement_levels",
+        straight ? "元メッシュからの一様細分段数" : history ? "保存履歴の後に追加する一様細分段数" : "二次形状を保つ細分段数");
+    $("study-hint").textContent = straight
+      ? "明示した直線メッシュを一様に分割し、多角形境界とタグを保持します。0は元メッシュ、1は全要素を4分割します。P1/P2場に対応します。"
+      : history
       ? "現在の順序付き履歴を保持し、その末尾へ一様細分を追加します。0は現在の履歴のまま、1はそこから全要素を4分割します。初期メッシュと二次形状は固定です。"
       : "二次曲線要素で使用します。元メッシュと二次形状を固定し、0, 1, 2などの段数を比較します。1段で要素数は4倍になります。";
   } else if (kind === "geometry_convergence") {

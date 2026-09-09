@@ -1,5 +1,7 @@
 # Projectに明示元メッシュを保持する
 
+後続実装: [外部メッシュ単体のGUI読込/解除と直線固定Study](EXTERNAL_MESH_WORKFLOW.md)を追加。以下はProject保存契約を受け入れた時点の記録。
+
 後続実装: [曲線Project一括変形](CURVED_PROJECT_TRANSFORM.md)を追加。曲線tune接続は残る。以下はこの基盤を受け入れた時点の記録。
 
 2026-09-09、O02/D02の実行・保存基盤。

@@ -1,5 +1,15 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: O02 外部mesh単体GUIと直線固定Study — 2026-09-09
+
+[外部mesh操作](EXTERNAL_MESH_WORKFLOW.md)。project_mesh_operations.replace_project_meshはCase/Projectと新meshをstrict検証後に置換/解除。古いmeshが編集後のCaseと合わなくても置換可能で、他のCase/Projectフィールドはstrictのまま。raw JSONのduplicate keyとファイルnullは拒否し、明示null操作のみ解除。marked履歴は旧/新（自動生成へ戻す場合も）の完全一致がないと拒否し、履歴を明示解除させる。GUIreplace-mesh操作、file picker/解除・失敗時保持/保存/実計算へ接続。
+Study.fixed_geometry_convergenceはgeometry_order=1の明示meshでもadditional_uniform_refinementsの0,1,2…を受理。既存共有辺splitterで全辺を分割し、元頂点番号/境界タグ/多角形を維持。250000またはcontour_mesh.max_trianglesを事前の4^levelで検査。曲線二次の既存経路/文書は維持。追加の角度閾値を導入しない。GUI固定Studyのラベル/項目/説明も直線対応。
+基準22d51af標準720件を確認。開始時21680終了0/11件5.213秒。旧Studyモジュールに新しいP1/P2不変量試験を適用すると未対応として拒否（旧コードは/tmp別モジュールで読み、製品は巻き戻さない）。unit初回はelement_geometryの戻り値の取り違え1ERROR、次に点配列を面積にして失敗。det/2に修正し4件0.376秒PASS。ログはout/external-mesh-interface-20260909に保持。
+独立初回は保存P1解にmassがないのにquantitiesを呼んで失敗、検証器を実FEMのRF出力読込へ修正。70882終了0、out/external-mesh-study-independent-accepted-20260909、P1/P2×尺度1/2の24→96→384要素、Ritz/解析f（P1最大2.963e-5/P2最大6.788e-8）/Maxwell f・両RQ・G（最大3.709e-14）、CLI/Python Study全3段のmodes完全一致、管理器再起動PASS。失敗outは保持。
+Chrome68081終了0、out/browser-external-mesh-20260909、26項目PASS/外部要求0。単体読込/解除・不正duplicate keyで保持、Project保存/FEM/適応引継ぎ、直線Study生成/実計算/表示と既存調整を確認。GUI54203/PID448617はSIGINT停止終了0、新規画像目視なし。out/external-mesh-interface-20260909は終了0、同じGUI入力でCLI/Python/GUIのmodes/mesh完全一致、GUI/Python Studyの2段完全一致、管理器再起動PASS。独立/経路一致/終了後414対象とChrome対象hash一致を確認。
+標準15142終了0、out/validation-external-mesh-20260909、724件中722合格・2skip、579.489秒。seed9モード19量f差0/RF最大8.882e-16。標準/独立/CLI・Python・GUI経路比較/終了後414対象hashとChrome対象hashが一致。全関連実行/GUI終了、ソース固定解除。22d51af基準。
+親集計は8受入/7進行中/17他未受入/1候補=33。実装状況の進行中一覧に抜けていたO02を追加し、対応表/計画の外部mesh項目を更新した。O02全体は高次/追加物理の各統合・到達点再受入が残る。次は計画の依存と親要件を照合し、O02の残件を未実装物理から区別して進める。全体計画を完了扱いしない。
+
 ## 最新: D02 曲線アフィンtuneと直交角の保存評価方式 — 2026-09-09
 
 [曲線tune](CURVED_TUNING.md)第4版。curved_tuning.pyの3多項式係数から同じbase Project/元メッシュを毎回変形、親試行→現在の相対写像を導出する。rf_coordinatesはfixed/axial必須、controls.mapping=affine_remeshだがユーザーaffine_mapは拒否。refinement_scaleは2の累乗で元二次写像の一様制限を追加し、局所履歴も維持する。既存tuning._request/_project/_assembleへ接続、CLI/JobManager/再起動/GUI入力復元・再開・場表示へ接続。例題examples/tuning/curved_affine_scale.json。v1～3の分岐/保存は維持。

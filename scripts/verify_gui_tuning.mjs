@@ -339,6 +339,25 @@ try {
     report.checks.push({operation:"GUI download retains exact explicit mesh",passed:true});
     await click("#refine-prepare");await wait('document.querySelector("#refine-request").value.trim().startsWith("{") && JSON.parse(document.querySelector("#refine-request").value).initial_mesh!==null');
     await check("adaptive request retains explicitly supplied initial mesh",`JSON.stringify(JSON.parse(document.querySelector("#refine-request").value).initial_mesh)===JSON.stringify(${JSON.stringify(expected.mesh_data)})`);
+    if(args["--mesh-import"]) {
+      await click("#mesh-detach");await wait('explicitProjectMesh===null');
+      await check("detach restores generated mesh input",'collect().project_version===1 && !("mesh_data" in collect())');
+      const file=out+"/standalone-mesh.json";await writeFile(file,JSON.stringify(expected.mesh_data));
+      const loadMesh=async path=>{const {root}=await call("DOM.getDocument",{},sessionId);const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#mesh-open"},sessionId);await call("DOM.setFileInputFiles",{nodeId,files:[path]},sessionId);};
+      await loadMesh(file);await wait('explicitProjectMesh!==null && document.querySelector("#error").hidden');
+      await check("standalone mesh import preserves numbered connectivity",`JSON.stringify(collect().mesh_data)===JSON.stringify(${JSON.stringify(expected.mesh_data)})`);
+      const bad=out+"/duplicate-mesh.json";await writeFile(bad,'{"schema_version":1,"schema_version":1}');await loadMesh(bad);
+      await wait('!document.querySelector("#error").hidden');
+      await check("invalid duplicate-key mesh import keeps current input",`document.querySelector("#error").textContent.includes("duplicate") && JSON.stringify(collect().mesh_data)===JSON.stringify(${JSON.stringify(expected.mesh_data)})`);
+      await ev('document.querySelector("#study-kind").value="fixed_geometry_convergence";document.querySelector("#study-kind").dispatchEvent(new Event("change"))');
+      await wait('document.querySelector("#study-parameter").value==="additional_uniform_refinements"');
+      await check("straight explicit mesh exposes fixed-domain refinement",'document.querySelector("#study-hint").textContent.includes("P1/P2")');
+      const studyJob=await ev('(async()=>{const r=await api("start-study",{study:await studyDefinition()});await refreshJobs();return r.id})()');
+      await wait(`document.querySelector('[data-job="${studyJob}"] strong')?.textContent.includes("完了")`,60000);
+      await click(`[data-job="${studyJob}"] button`);await wait('activeStudy?.geometry_refinement?.includes("same polygonal domain")');
+      await check("imported mesh study computes and displays both refinements",'activeStudy.points.length===2 && activeStudy.study.project.mesh_data!==undefined && !document.querySelector("#study-chart").hidden');
+      report.mesh_study_job=studyJob;
+    }
     await click("#new");await wait('explicitProjectMesh===null');
     await check("new project clears the previous embedded mesh",'collect().project_version===1 && !("mesh_data" in collect())');
     report.mesh_job=launched;
