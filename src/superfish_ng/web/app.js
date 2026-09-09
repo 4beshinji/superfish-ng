@@ -257,6 +257,8 @@ function geometry() {
     const g = structuredClone(geometryOriginal);
     g.chord_tolerance_m = $("curve-chord").value === String(g.chord_tolerance_m * 1000) ? g.chord_tolerance_m : number("curve-chord") / 1000;
     g.chord_max_segments = number("curve-segments");
+    if($("curve-fixed-segments").value.trim())g.segments_per_curve=JSON.parse($("curve-fixed-segments").value);
+    else delete g.segments_per_curve;
     return g;
   }
   if (!geometryDirty && geometryOriginal)
@@ -374,6 +376,7 @@ function setGeometry(g) {
     $("geometry-type").value = g.type;
     $("curve-chord").value = (g.chord_tolerance_m ?? 0.001) * 1000;
     $("curve-segments").value = g.chord_max_segments ?? 20000;
+    $("curve-fixed-segments").value = g.segments_per_curve ? JSON.stringify(g.segments_per_curve) : "";
     showGeometry(); return;
   }
   const pts = g.points_zr_m;

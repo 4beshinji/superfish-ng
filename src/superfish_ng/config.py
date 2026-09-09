@@ -82,6 +82,7 @@ class Case:
     curved_contour: object | None = None
     curve_chord_tolerance_m: float | None = None
     curve_chord_max_segments: int = 20000
+    curve_segments_per_curve: tuple | None = None
     curved_refinement_steps: tuple = ()
 
     def __post_init__(self):
@@ -89,11 +90,13 @@ class Case:
             from .curved_contour import CurvedContour
             if not isinstance(self.curved_contour,CurvedContour) or self.profile:
                 raise ValueError('curved_contour requires a validated CurvedContour and empty profile')
-            approximation = self.curved_contour.linearize(self.curve_chord_tolerance_m,max_segments=self.curve_chord_max_segments)
+            if self.curve_segments_per_curve is not None and type(self.curve_segments_per_curve) is not tuple:
+                raise ValueError('curve_segments_per_curve must be an immutable tuple')
+            approximation = self.curved_contour.linearize(self.curve_chord_tolerance_m,max_segments=self.curve_chord_max_segments,segments_per_curve=self.curve_segments_per_curve)
             if self.contour is not None and self.contour != approximation.contour:
-                raise ValueError('supplied contour differs from curved geometry chords; clear contour when changing chord tolerance')
+                raise ValueError('supplied contour differs from curved geometry chords; clear contour when changing chord tolerance or partition')
             object.__setattr__(self,'contour',approximation.contour)
-        elif self.curve_chord_tolerance_m is not None or self.curve_chord_max_segments!=20000:
+        elif self.curve_chord_tolerance_m is not None or self.curve_chord_max_segments!=20000 or self.curve_segments_per_curve is not None:
             raise ValueError('curve chord controls require curved_contour')
         if self.contour_mesh is not None:
             from .mesh_controls import ContourMeshControls
@@ -279,7 +282,7 @@ class Case:
         elif g.get('type') == 'curved_contour':
             if data['schema_version']!=3 or boundaries:
                 raise ValueError('curved_contour requires v3 and edge_tags instead of boundaries')
-            keys(g,('type','curves','edge_tags','join_tolerance_m','minimum_gap_m','chord_tolerance_m','chord_max_segments','minimum_meridional_radius_m'),
+            keys(g,('type','curves','edge_tags','join_tolerance_m','minimum_gap_m','chord_tolerance_m','chord_max_segments','minimum_meridional_radius_m','segments_per_curve'),
                  ('type','curves','edge_tags','join_tolerance_m','chord_tolerance_m'),'geometry')
             profile = ()
         elif g.get("type") in ("profile", "stepped_profile", "arc_profile"):
@@ -295,9 +298,12 @@ class Case:
         geometry_options = {}
         if g['type']=='curved_contour':
             from .curved_contour import CurvedContour
+            if 'segments_per_curve' in g and type(g['segments_per_curve']) is not list:
+                raise ValueError('geometry.segments_per_curve must be an array')
             geometry_options.update(curved_contour=CurvedContour.from_dict({k:v for k,v in g.items()
-                                    if k not in ('type','chord_tolerance_m','chord_max_segments')}),
+                                    if k not in ('type','chord_tolerance_m','chord_max_segments','segments_per_curve')}),
                                     curve_chord_tolerance_m=g['chord_tolerance_m'],
+                                    curve_segments_per_curve=tuple(g['segments_per_curve']) if 'segments_per_curve' in g else None,
                                     curve_chord_max_segments=g.get('chord_max_segments',20000))
         if g['type'] == 'contour':
             from .contour import Contour
@@ -402,4 +408,5 @@ class Case:
             data['geometry'] = dict(type='curved_contour',**self.curved_contour.to_dict(),
                                     chord_tolerance_m=self.curve_chord_tolerance_m,
                                     chord_max_segments=self.curve_chord_max_segments)
+            if self.curve_segments_per_curve is not None:data['geometry']['segments_per_curve']=list(self.curve_segments_per_curve)
         return data

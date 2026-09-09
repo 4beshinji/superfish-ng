@@ -30,7 +30,7 @@ def curve_geometry_candidate(case, mesh):
         raise ValueError('curved geometry requires native curved_contour')
     source = mesh_from_dict(case,mesh_to_dict(mesh))
     approximation = case.curved_contour.linearize(case.curve_chord_tolerance_m,
-                                                  max_segments=case.curve_chord_max_segments)
+                                                  max_segments=case.curve_chord_max_segments,segments_per_curve=case.curve_segments_per_curve)
     space = quadratic_space(source)
     points = space.dof_points.copy()
     contour = np.asarray(approximation.contour.vertices_zr_m)[:,::-1]

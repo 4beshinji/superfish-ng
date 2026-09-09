@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: D02 曲線と元メッシュの固定分割契約 — 2026-09-09
+
+[弧ごとの分割数](FIXED_CURVE_PARTITIONS.md)を限定受入。Case v3 geometryの任意segments_per_curveを正整数配列としてstrict受理、Pythonではtuple。既存弦誤差上界と接合補正の予算内でuniform fraction分割を保持する。不足時は拒否し自動増加しない。曲線二次写像・native保存/再構築・鏡映・GUI入力復元/保存へ接続。例題examples/projects/curved_fixed_partition.json。
+独立不変量は非等方変形後の対応点/Jacobian、実モード追跡、Maxwell相似と鏡映。初回4検査1ERRORは細分済み辺数を元分割数と取り違えた検証入力。元ChordApproximationから数えて修正、4件1.629秒PASS。初回独立は接合許容長の尺度変換漏れで拒否、標準終了後に検証scriptだけを修正し6例PASS。製品の許容差は変更しない。失敗ログはout/curve-partitions-independent-accepted-20260909に保持。
+標準59355終了0、out/validation-curve-partitions-20260909、706件中704合格・2skip、484.571秒。9モード19量seed周波数差0/RF最大8.882e-16。修正後独立77329終了0、点尺度誤差2.776e-17/Jacobian差1.111e-15/f・RQ・G相似差5.330e-15以下、実追跡6例と保存一致PASS。standard-coverage.jsonは標準後の独立scriptだけの差を明記。現在/独立403対象とChrome対象hash一致。
+Chrome12522終了0、out/browser-curve-partitions-20260909の22項目PASS/外部要求0。GUI3237/PID342316はSIGINT停止後PID消滅を確認、終了コードの再取得は不可。新規スクリーンショット目視なし。全実行終了、固定解除。主ツリー960c9f3基準。
+次はCase/曲線/元メッシュを一括変換するProject操作と、tune各試行の写像導出。今回の明示分割は境界対応を維持するための前提のみ。RF評価区間・最小曲率/間隙条件等の固定/連動も明示してから接続する。親8受入・7進行中・17他未受入・1候補、計33は維持し、計画全体とD02は未完了。
+
 ## 最新: O02/D02 Project第2版の明示元メッシュ — 2026-09-09
 
 [Projectメッシュ](PROJECT_MESH.md)を限定受入。版2必須mesh_dataを既存strictメッシュ検査で正規化・コピーし、通常Jobのsolveへ渡す。旧版1文書は不変。GUIフォーム/保存/実行/結果読込で保持、明示使用表示・新規時解除、曲線図上選択と適応initial_meshへ接続。固定曲線細分Studyは元メッシュを維持、他Study/tuneは試行ごとの変形契約がないため明示拒否する。完全Project例題はexamples/projects/explicit_mesh.json。メッシュ単体専用インポートや曲線tune接続は残る。

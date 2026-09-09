@@ -96,7 +96,7 @@ def _write_run(case, solution, directory):
                               "vtk_coordinates": "x=r, y=z, z=0; scalar cylindrical components"},
               "modes": [quantities(case, solution, i) for i in range(case.modes)]}
     if case.curved_contour is not None:
-        approximation = case.curved_contour.linearize(case.curve_chord_tolerance_m,max_segments=case.curve_chord_max_segments)
+        approximation = case.curved_contour.linearize(case.curve_chord_tolerance_m,max_segments=case.curve_chord_max_segments,segments_per_curve=case.curve_segments_per_curve)
         result['geometry_approximation'] = dict(
             representation='straight chords of analytic primitives',geometry_order=1,
             tolerance_m=approximation.tolerance_m,

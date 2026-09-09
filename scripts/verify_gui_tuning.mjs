@@ -309,6 +309,7 @@ try {
     await call("DOM.setFileInputFiles",{nodeId,files:[resolve(args["--mesh-project"])]},sessionId);
     await wait('explicitProjectMesh!==null && document.querySelector("#explicit-project-mesh").textContent.includes("明示元メッシュ")');
     await check("project form preserves embedded mesh and version",`collect().project_version===2 && JSON.stringify(collect().mesh_data)===JSON.stringify(${JSON.stringify(expected.mesh_data)})`);
+    if(expected.case.geometry.segments_per_curve)await check("fixed native partition is restored in the form",`JSON.stringify(collect().case.geometry.segments_per_curve)===JSON.stringify(${JSON.stringify(expected.case.geometry.segments_per_curve)}) && document.querySelector("#curve-fixed-segments").value!==""`);
     const launched=await ev('(async()=>{const result=await api("start",{document:await preview()});await refreshJobs();return result.id})()');
     await wait(`document.querySelector('[data-job="${launched}"] strong')?.textContent.includes("完了")`,60000);
     await click(`[data-job="${launched}"] button`);await wait(`currentJob===${JSON.stringify(launched)} && !document.querySelector("#field-image").hidden`,60000);
@@ -316,6 +317,7 @@ try {
     await click("#save");let saved;
     for(let n=0;n<100;n++){try{for(const file of await readdir(out+"/downloads")){if(file!=="tune-checkpoint.json" && file.endsWith('.json')){const candidate=JSON.parse(await readFile(out+"/downloads/"+file,"utf8"));if(candidate.project_version===2)saved=candidate;}}if(saved)break;}catch{}await sleep(100);}
     if(!saved || JSON.stringify(saved.mesh_data)!==JSON.stringify(expected.mesh_data))throw Error('saved project dropped explicit mesh');
+    if(expected.case.geometry.segments_per_curve && JSON.stringify(saved.case.geometry.segments_per_curve)!==JSON.stringify(expected.case.geometry.segments_per_curve))throw Error('saved project dropped curve partition');
     report.checks.push({operation:"GUI download retains exact explicit mesh",passed:true});
     await click("#refine-prepare");await wait('document.querySelector("#refine-request").value.trim().startsWith("{") && JSON.parse(document.querySelector("#refine-request").value).initial_mesh!==null');
     await check("adaptive request retains explicitly supplied initial mesh",`JSON.stringify(JSON.parse(document.querySelector("#refine-request").value).initial_mesh)===JSON.stringify(${JSON.stringify(expected.mesh_data)})`);

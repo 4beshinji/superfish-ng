@@ -87,7 +87,9 @@ def reflect_solution(case, solution):
     curved = case.curved_contour.reflected() if case.curved_contour is not None else None
     if curved is not None:
         contour = None  # Derive the full polygon from retained full analytic curves.
+    from .curve_partitions import reflected_segments_per_curve
     full = replace(case, profile=profile, arcs=arcs, contour=contour, z_min='pec', z_max='pec', nz=2*case.nz,
+                   curve_segments_per_curve=reflected_segments_per_curve(case),
                    curved_contour=curved,normalization_j=2*case.normalization_j, name=case.name+' [reflected full cavity]', **acceleration)
     result = Solution(reflected, k, m, solution.eigenvalues.copy(), solution.frequencies_hz.copy(),
                       u, residuals, orthogonality,

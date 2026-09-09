@@ -115,7 +115,9 @@ REFLECTED_CONSTRUCTION = 'curved P2 symmetry reflection; parity-filtered spectru
 
 def reflected_case(case, reflection):
     from dataclasses import replace
+    from .curve_partitions import reflected_segments_per_curve
     return replace(case, contour=None, curved_contour=reflection.reflected_contour,
+                   curve_segments_per_curve=reflected_segments_per_curve(case),
                    curved_refinement_steps=(),
                    z_min='pec', z_max='pec', nz=2*case.nz,
                    normalization_j=2*case.normalization_j,

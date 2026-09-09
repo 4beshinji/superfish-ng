@@ -171,7 +171,7 @@ class CurvedContour:
             raise ValueError('minimum_meridional_radius_m must be positive when present; omit it to disable')
         return cls(tuple(curves),data['edge_tags'],data['join_tolerance_m'],data.get('minimum_gap_m',0.),data.get('minimum_meridional_radius_m'))
 
-    def linearize(self,tolerance_m,*,max_segments=20000):
+    def linearize(self,tolerance_m,*,max_segments=20000,segments_per_curve=None):
         """Produce a tagged polygon with explicit, bounded join adjustments.
 
         Original primitives remain unchanged. Any endpoint displacement is
@@ -183,6 +183,12 @@ class CurvedContour:
             raise ValueError('curve linearization tolerance must be finite and positive')
         if type(max_segments) is not int or max_segments<3:
             raise ValueError('max_segments must be an integer >= 3')
+        if segments_per_curve is not None:
+            if (type(segments_per_curve) not in (list,tuple) or len(segments_per_curve)!=len(self.curves)
+                    or any(type(n) is not int or n<1 for n in segments_per_curve)):
+                raise ValueError('segments_per_curve requires one positive integer per native curve')
+            if sum(segments_per_curve)>max_segments:
+                raise ValueError('segments_per_curve exceeds total max_segments')
         joins = []
         for i,current in enumerate(self.curves):
             previous = self.curves[i-1]
@@ -206,7 +212,16 @@ class CurvedContour:
             remaining = max_segments-len(vertices)
             if remaining<1:
                 raise ValueError('curve linearization exceeds total max_segments')
-            points = curve.linearize(chord_tolerance,max_segments=remaining).copy()
+            if segments_per_curve is None:
+                points = curve.linearize(chord_tolerance,max_segments=remaining).copy()
+            else:
+                count=segments_per_curve[i]
+                # Reuse the independently bounded native chord criterion.
+                # If its minimum count exceeds the requested count, fail.
+                try:curve.linearize(chord_tolerance,max_segments=count)
+                except ValueError as exc:
+                    raise ValueError(f'segments_per_curve[{i}] does not meet the chord tolerance: {exc}') from exc
+                points=curve.evaluate(np.linspace(0.,1.,count+1))['points_zr_m'].copy()
             points[0],points[-1] = joins[i],joins[(i+1)%len(joins)]
             vertices.extend(tuple(map(float,p)) for p in points[:-1])
             tags.extend([tag]*(len(points)-1))

@@ -190,6 +190,7 @@ def _physical_spec(case):
     raw.pop("schema_version")
     raw["geometry"].pop("chord_tolerance_m", None)
     raw["geometry"].pop("chord_max_segments", None)
+    raw["geometry"].pop("segments_per_curve", None)
     return raw
 
 
