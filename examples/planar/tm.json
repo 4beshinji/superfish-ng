@@ -1,0 +1,28 @@
+{
+  "format": "superfish_ng_planar_case",
+  "schema_version": 1,
+  "name": "Independent rectangular TM cutoff",
+  "model": {
+    "physics": "rf_eigenmode",
+    "coordinates": "cartesian",
+    "polarization": "tm",
+    "propagation_constant_per_m": 0,
+    "material": "vacuum",
+    "boundary": "pec"
+  },
+  "geometry": {
+    "type": "rectangle",
+    "width_m": 0.31,
+    "height_m": 0.2
+  },
+  "mesh": {
+    "nx": 32,
+    "ny": 32,
+    "element_order": 2
+  },
+  "modes": 8,
+  "rf": {
+    "stored_energy_j_per_m": 1.0,
+    "conductivity_s_per_m": 58000000.0
+  }
+}

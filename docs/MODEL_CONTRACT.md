@@ -44,7 +44,7 @@ TM組立にフォールバックしない。PythonのModelも不変値として�
 |---|---|---|
 | 軸対称m=0 TM RF | Hphi=r u、Er/EzはPHYSICS.mdの復元式。SI、ピークphasor、2πr体積重み、U[J]、P[W]、RQ二定義 | vacuum、単一interiorのみ |
 | 軸対称TE RF | Ephiを独立未知数とし軸/PEC条件を別設計。軸加速量はN/A | [直線P1/P2](AXISYMMETRIC_TE.md)・[曲線P2と専用保存/CLI](CURVED_TE_PLAN.md)。[通常Project/JobManager](TE_JOBS.md)も対応。[通常GUI](GUI_TE.md)を接続。追跡等は未接続 |
-| 平面RF | 偏波別未知数、体積重みは回転体にしない。U[J/m]、P[W/m]を別のキーで出力 | 拒否、P02 |
+| 平面RF | 偏波別未知数、面積dx dy、U[J/m]、P[W/m]を別のキーで出力 | [専用PlanarCase/矩形P1/P2・保存/CLI](PLANAR_RF.md)。この軸対称Model/Caseでは受理せず、別formatを要求する。一般断面/Project/GUI等はP02の後続 |
 | 同軸・多重連結RF | 零固有値と共振の区別、軸がない領域の軸積分はN/A | 拒否、P03 |
 | RF材料 | 領域別epsilon/mu、界面条件、領域エネルギーと損失モデルを明示 | 拒否、P04 |
 | 静電場 | 電位[V]、E[V/m]、電荷と容量。平面の容量[F/m]と回転体の容量[F]を別出力 | 拒否、S01 |

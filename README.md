@@ -1,5 +1,7 @@
 # Superfish-NG — 0.1.0 research seed
 
+[矩形の平面TE/TM遮断問題](docs/PLANAR_RF.md)を専用PlanarCase・P1/P2 FEM・場/RF・native再検証・CLIへ接続し、限定受入。U′[J/m]・側壁損失[W/m]、TE定数零空間除外、全real/quadrature成分と加速量N/Aを保持する。48 API FEM＋16 CLI計算、32 CLIプローブ/16 replay、標準813件（811合格、2skip）と既存TM/TE数値回帰を確認。一般断面・曲線・材料・伝搬・Project/GUIは未接続。
+
 [旧版TE相補解の比較器](docs/C00_TE_COMPLEMENTARY_PLAN.md)を追加。既設7.17の合成円筒12計算を独立解析・FEMと照合し、SF7の場から壁損失を積分する。二尺度/二モードの周波数・場・G/Qが限定PASS。標準803件（801合格、2skip）も合格。一般AF入力変換や一般形状の旧版TE互換は未対応。
 
 2026-09-09追補: [同端条件のTE円筒追跡](docs/TE_SECTOR_TRACKING_PLAN.md)を半領域・鏡映部分スペクトルへ拡張し、限定受入。同じ側の一対称面を持つ直線P1/P2円筒が対象。実Eφで対応し、異なる端条件・通常/鏡映の混在を拒否する。独立32FEM、8Study、Chrome9操作、旧追跡8文書の再生、標準801件（799合格、2skip）と既存TM/TE数値回帰を確認。一般形状の追跡・TE調整は未対応。

@@ -5,5 +5,6 @@ __version__ = "0.1.0"
 from .config import Case
 from .mesh import make_mesh
 from .solver import solve
+from .planar import PlanarCase, solve_planar
 
-__all__ = ["Case", "make_mesh", "solve", "__version__"]
+__all__ = ["Case", "make_mesh", "solve", "PlanarCase", "solve_planar", "__version__"]

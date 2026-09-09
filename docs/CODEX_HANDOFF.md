@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## P02矩形平面RFの主ツリー接続：限定受入完了
+
+基準256dc44。[矩形の平面TE/TM遮断問題](PLANAR_RF.md)を専用PlanarCase・P1/P2 FEM・場/RF・native再検証・CLIへ接続し、限定受入。U′[J/m]・側壁損失[W/m]、TE定数零空間除外、全real/quadrature成分と加速量N/Aを保持する。48 API FEM＋16 CLI計算、32 CLIプローブ/16 replay、標準813件（811合格、2skip）と既存TM/TE数値回帰を確認。一般断面・曲線・材料・伝搬・Project/GUIは未接続。
+
+最終独立33538・プローブ95874・永続曲線tune62306は終了0。標準47107は813件/811合格/2skip、1226.870秒（command1227.257秒）、最終数値照合も終了0。TM seed f差0/RF最大8.882e-16、旧TE10件差0。source478と32新規native hashを照合済み。証拠はPLANAR_RF_PLAN.md冒頭とout/validation-planar-rf-final-20260909。開始時803件は既存曲線tune一件で失敗したが、単独5件・永続worker19.881秒・再起動・固定ソースの最終全体では再現せず、原因は断定しない。初回の縮退G比較/不正出力/例配置の修正、停止/失敗ログを保持し、許容差は変更していない。関連プロセスは全て終了済み。
+
+次はPLANAR_RF_PLAN.md末尾の、宣言した単純PEC多角形と明示xyメッシュ。旧矩形native v1を保持し、一般メッシュの正Jacobian/連結disk/境界被覆、平行移動・回転・P1/P2・場・RF・保存とCLIを検証する。axis/rz readerへ偽Caseを渡さない。多重連結/TEM・曲線・材料・Project/GUIは残件。親集計は8受入/10調査実装中/14他/1候補=33を維持し、P02全体や全計画の完了ではない。
+
 最新集計は8受入/10調査実装中/14他/1候補=33。P02の仕様と隔離FEM調査を開始したため分類を更新した。以下の8/9/15/1は以前の記録。P02製品対応や親受入は未完。
 
 C00/K09の[TE相補解比較器](C00_TE_COMPLEMENTARY_PLAN.md)を限定受入。基準ff0b572。独立46759は12旧版計算＋2P2 FEM、追加Q照合47913、標準87077（803件/801合格/2skip、1237.336秒）、最終33982は全て終了0。TM seed f差0/RF最大8.882e-16、旧TE10件差0、source472一致。専用Xvfb95359/PID1203189もSIGINT終了0。生データはout/c00-te-complementary-independent-20260909、最終回帰はout/validation-c00-te-complementary-20260909。既存Wine wrapperは出力を生成せず、明示Wine/prefix＋専用画面で実行した。失敗ログは開発outに保持。

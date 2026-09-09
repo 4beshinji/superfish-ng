@@ -115,6 +115,16 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    planar=sub.add_parser('solve-planar',help='solve an explicit Cartesian vacuum TE/TM cutoff case with J/m normalization')
+    planar.add_argument('case',type=Path)
+    planar.add_argument('--out',type=Path,required=True)
+    planar_replay=sub.add_parser('replay-planar',help='reassemble and verify Cartesian native fields, positive spectrum and per-length RF')
+    planar_replay.add_argument('run',type=Path)
+    planar_probe=sub.add_parser('probe-planar',help='evaluate verified Cartesian native fields at declared xy points in metres')
+    planar_probe.add_argument('run',type=Path)
+    planar_probe.add_argument('--points',type=Path,required=True,help='JSON array of [x_m,y_m] points')
+    planar_probe.add_argument('--mode',type=int,default=1,help='one-based positive-spectrum index, not a mode label')
+    planar_probe.add_argument('--out',type=Path,required=True,help='new CSV file')
     te_replay=sub.add_parser('replay-te',help='verify TE native fields, electric-wall constraints and RF quantities')
     te_replay.add_argument('run',type=Path)
     run = sub.add_parser("solve", help="solve a JSON case and export RF quantities/fields")
@@ -155,6 +165,28 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('solve-planar','replay-planar','probe-planar'):
+            from .planar import PlanarCase,solve_planar,PlanarFieldSampler
+            from .planar_saved import save_planar_run,read_planar_run
+            if args.command=='solve-planar':
+                case=PlanarCase.load(args.case)
+                result=save_planar_run(case,solve_planar(case),args.out)
+                print(json.dumps(result,indent=2,allow_nan=False))
+            else:
+                if args.command=='probe-planar' and args.out.resolve().is_relative_to(args.run.resolve()):
+                    raise ValueError('planar probe output must be outside the native directory to preserve verified files')
+                solution=read_planar_run(args.run)
+                if args.command=='replay-planar':print(f'PASS: {args.run} (Cartesian cutoff; energy J/m; loss W/m)')
+                else:
+                    import csv
+                    from .project import parse_json
+                    points=parse_json(args.points.read_text(encoding='utf-8'))
+                    fields=PlanarFieldSampler(solution).evaluate(points,args.mode-1)
+                    with args.out.open('x',newline='',encoding='utf-8') as stream:
+                        writer=csv.writer(stream);writer.writerow(['x_m','y_m',*fields])
+                        writer.writerows([*point,*(fields[key][i] for key in fields)] for i,point in enumerate(points))
+                    print(f'WROTE: {args.out}')
+            return 0
         if args.command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
             from .adaptive_study import execute_adaptive_study,read_adaptive_study
             from .project import parse_json
