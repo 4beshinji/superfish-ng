@@ -29,7 +29,10 @@ def _job_input(data):
 def start_rf_optimization(manager,request,*,max_new_trials=None,checkpoint=None):
     with manager.lock:
         if manager.closed:raise ValueError('job manager is closed')
-        data=_job_input(deepcopy(dict(request=request,max_new_trials=max_new_trials,checkpoint=checkpoint)))
+    data=_job_input(deepcopy(dict(request=request,max_new_trials=max_new_trials,checkpoint=checkpoint)))
+    with manager.lock:
+        # Closure may have won while saved native fields were being verified.
+        if manager.closed:raise ValueError('job manager is closed')
         identifier=time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:10]
         directory=manager.directory(identifier);directory.mkdir()
         _write_json(directory/'rf-optimization-request.json',data);_state(directory,'queued',kind='rf_optimization')

@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-09: [RF探索GUI](GUI_RF_OPTIMIZATION.md)。既存自作のtune画面・CDP検証器・native import・RF探索replayを利用して接続。再開preflightは完全検証を保ち管理器ロック外へ移動し、closeとの競合を起動前に再確認する。FEM・RF・探索式と数値許容差は不変。新規資料・依存・legacy参照はない。
+
 2026-09-09: [RF探索ジョブ](RF_OPTIMIZATION_JOBS.md)。既存自作tuning_jobsのローカルワーカー・manifest・祖先/投入予算照合と停止checkpoint選択を、RF探索の3水準出力へ接続。FEM・RF・探索の式は変更しない。新規外部資料・依存・legacy参照はない。
 
 2026-09-09: [RF制約付き探索](RF_OPTIMIZATION.md)。自作の座標方向試行・有限予算管理をProjectアフィン変形/保存追跡/RF設計評価へ合成。制約違反は明示単位尺度で正規化した最大値、目的関数は既存の保守的採用値を用いる。既存球形解析とMaxwell尺度則は検証専用。新規外部資料・依存・legacy参照はない。

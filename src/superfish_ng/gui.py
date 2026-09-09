@@ -143,6 +143,14 @@ def create_server(workspace, port=0):
                     "resume-adaptive-refinement": ["document", "max_new_levels"],
                     "adaptive-refinement-result": ["id"],
                     "replay-adaptive-refinement": ["document"],
+                    'prepare-rf-optimization': ['request'],
+                    'start-rf-optimization': ['request', 'max_new_trials'],
+                    'resume-rf-optimization': ['document', 'max_new_trials'],
+                    'rf-optimization-result': ['id'],
+                    'replay-rf-optimization': ['document'],
+                    'rf-optimization-checkpoints': ['id'],
+                    'open-rf-optimization-checkpoint': ['id', 'index'],
+                    'rf-optimization-field': ['document', 'trial', 'level'],
                     "start-tune": ["request", "max_new_trials"],
                     "tune-checkpoints": ["id"],
                     "open-tune-checkpoint": ["id", "index"],
@@ -201,6 +209,9 @@ def create_server(workspace, port=0):
                 if action in ("start-adaptive-refinement", "resume-adaptive-refinement", "adaptive-refinement-result", "replay-adaptive-refinement"):
                     from .gui_adaptive_refinement import adaptive_refinement_response
                     return self.reply(adaptive_refinement_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
+                if action in ('prepare-rf-optimization','start-rf-optimization','resume-rf-optimization','rf-optimization-result','replay-rf-optimization','rf-optimization-checkpoints','open-rf-optimization-checkpoint','rf-optimization-field'):
+                    from .gui_rf_optimization import rf_optimization_response
+                    return self.reply(rf_optimization_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
                 if action in ("start-tune", "resume-tune", "tune-result", "replay-tune", "tune-checkpoints", "open-tune-checkpoint"):
                     from .gui_tuning import tuning_response
                     return self.reply(tuning_response(manager,action,{k:v for k,v in data.items() if k!='action'}))

@@ -1,10 +1,12 @@
 # 実装・検証の現状
 
-[RF探索のローカルジョブ](RF_OPTIMIZATION_JOBS.md)を追加。JobManagerで実行・中止・再起動・停止後のcheckpoint選択/再開を行い、3水準のmanifest・祖先・投入予算・所属を再検証する。GUI操作の接続は残る。
+[RF探索GUI](GUI_RF_OPTIMIZATION.md)を接続。2変数・目的関数・複数制約の入力保存復元、実ジョブの中止と保存再開、試行・水準ごとの個別ID確認付き場表示を行う。再開前の重い検証を管理器のロック外へ移した。開始要求自体の完全検証には引き続き時間を要する。
 
-[RF制約付き2変数探索](RF_OPTIMIZATION.md)を実装。各候補の3水準実FEM、相対写像による個別追跡、制約違反の改善と目的関数探索、予算内の最終細分、全試行の保存再開を接続する。一般変数・GUI・一般性能の受入は残る。
+[RF探索のローカルジョブ](RF_OPTIMIZATION_JOBS.md)を追加。JobManagerで実行・中止・再起動・停止後のcheckpoint選択/再開を行い、3水準のmanifest・祖先・投入予算・所属を再検証する。GUI操作も接続済み。
 
-[RF設計制約の評価基盤](RF_DESIGN_CRITERIA.md)を追加。保存場を再検証した3水準の包絡で目的関数・複数制約を判定し、未収束/未解決の試行に採用値を与えない。D03の探索器・初期/最終比較の自動実行は未接続。
+[RF制約付き2変数探索](RF_OPTIMIZATION.md)を実装。各候補の3水準実FEM、相対写像による個別追跡、制約違反の改善と目的関数探索、予算内の最終細分、全試行の保存再開を接続する。一般変数・一般性能の受入は残る。
+
+[RF設計制約の評価基盤](RF_DESIGN_CRITERIA.md)を追加。保存場を再検証した3水準の包絡で目的関数・複数制約を判定し、未収束/未解決の試行に採用値を与えない。D03の2変数探索器・初期/最終比較へ接続済み。
 
 [外部メッシュ単体の読込と固定形状Study](EXTERNAL_MESH_WORKFLOW.md)を追加。GUIで読込/解除・不正入力時の保持を行い、P1/P2の直線元メッシュを一様細分して比較できる。曲線二次Studyも従来どおり。O02全体は継続中。
 
@@ -78,7 +80,7 @@
 
 [版3の表面量を含む適応停止](ADAPTIVE_SURFACE_STOPPING.md)をAPI/CLI/JobManagerへ追加。最後の2回の全域細分でf/RQ/Gと連続離散ピーク比上下界を別判定する。版1/版2は維持。版3のGUI入力/表示/保存再開も接続。一般精度/効率は未完。
 
-確認日: 2026-09-09。N04曲線適応計算版4追加後（直前製品基準 `ba36a86`）。コードと最新の個別受入記録を照合した。
+確認日: 2026-09-09。RF探索GUI追加後（直前製品基準 `8b2ac14`）。コードと最新の個別受入記録を照合した。
 作業checkoutは `/home/sin/code/agent/reserch/superfish-ng`。
 過去の `/home/sin/code/superfish` は当時の配置であり、移動やルートの作り直しは行わない。
 
@@ -101,9 +103,9 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 固有値・場 | 実FEM、複数モード、残差/直交性/エネルギー検査、物理座標プローブ | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | solver.py、curved_solution.py、curved_sampling.py |
 | RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、直線/曲線の連続離散極値の囲い込み、曲線角診断 | peak phasor・RQ二規約。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 表面収束評価 | 固定曲線P2の3水準・追跡ID・ピーク上下界によるf/RQ/G/ピーク比判定API/CLI/GUI、元多角形角診断・追跡済み直線P1/P2の表面評価API/保存/CLI/GUI | 幾何近似誤差/一般形状の精度・効率は残件。物理誤差上界ではない | [SURFACE_CONVERGENCE.md](SURFACE_CONVERGENCE.md) |
-| 条件群・鏡映 | 掃引、同一形状細分比較、条件付きバンド同定、曲線の幾何/FEM別Study・鏡映 | D01は重み付き標本部分空間・円筒/profile写像・明示メッシュ対応による追跡と2時点保存/再検証CLI/GUIと個別IDと部分空間ID集合の順序付き履歴/再開、完了Studyの隣接点追跡と点状態表示・保存再検証GUI、追跡付き逐次計算・停止・チェックポイント再開API/CLI・JobManager・GUI、幾何掃引の適応二分と途中保存・再開API/CLI・JobManager・GUI、多対多の保守的ID集合継承とGUI方式選択/復元、同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。曲線領域の一般写像/個別枝回復、制約付き最適化は未実装 | studies.py、symmetry.py、curved_reflection.py |
-| 周波数調整・設計制約 | profile座標と曲線アフィン写像の1変数追跡付き二分探索・停止・再開・最終細分API/CLI・JobManager・GUI。保存済み3水準からの複数RF設計制約評価と曲線2変数探索/最終細分/再開API・CLI・JobManager | 個別ID確認が前提。細分差は誤差上界でない。非アフィン曲線/任意関数連動・一般探索/最適化GUIは未実装 | [TUNING.md](TUNING.md)、[RF_DESIGN_CRITERIA.md](RF_DESIGN_CRITERIA.md) |
-| 操作・保存 | 共通CLI/Python/GUI、曲線計算・描画・鏡映、完了公開/hash、再読込 | 外部メッシュ指定UIなし。人による使いやすさ評価、電源断/他OSは未保証 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)、[SAVE_COMPLETION.md](SAVE_COMPLETION.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
+| 条件群・鏡映 | 掃引、同一形状細分比較、条件付きバンド同定、曲線の幾何/FEM別Study・鏡映 | D01は重み付き標本部分空間・円筒/profile写像・明示メッシュ対応による追跡と2時点保存/再検証CLI/GUIと個別IDと部分空間ID集合の順序付き履歴/再開、完了Studyの隣接点追跡と点状態表示・保存再検証GUI、追跡付き逐次計算・停止・チェックポイント再開API/CLI・JobManager・GUI、幾何掃引の適応二分と途中保存・再開API/CLI・JobManager・GUI、多対多の保守的ID集合継承とGUI方式選択/復元、同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。曲線領域の一般写像/個別枝回復は未実装。RF制約付き2変数探索は別行 | studies.py、symmetry.py、curved_reflection.py |
+| 周波数調整・設計制約 | profile座標と曲線アフィン写像の1変数追跡付き二分探索・停止・再開・最終細分API/CLI・JobManager・GUI。保存済み3水準からの複数RF設計制約評価と曲線2変数探索/最終細分/再開API・CLI・JobManager・GUI | 個別ID確認が前提。細分差は誤差上界でない。非アフィン曲線/任意関数連動・一般変数の探索は未実装 | [TUNING.md](TUNING.md)、[RF_DESIGN_CRITERIA.md](RF_DESIGN_CRITERIA.md) |
+| 操作・保存 | 共通CLI/Python/GUI、曲線計算・描画・鏡映、完了公開/hash、再読込 | 外部メッシュ単体の読込/解除UIあり。人による使いやすさ評価、電源断/他OSは未保証 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)、[SAVE_COMPLETION.md](SAVE_COMPLETION.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 旧入力・出力 | 限定AF読込、原入力/hash/変換診断、NG JSON/CSV/NPZ/ASCII VTK | AFは単一真空/全PEC/軸接続TM。汎用旧入力、製品用旧テキスト変換、旧バイナリ互換は未実装 | [LEGACY_INPUT.md](LEGACY_INPUT.md)、C03/C04 |
 | 配布 | 3386a5fの決定的ZIP・wheel内容/資源・CLI/曲線native計算のローカル確認 | wheelの全機能/GUI再受入はV02。hosted CI、他OS、公開リリースは未確認 | [ローカル配布確認](LOCAL_DISTRIBUTION_20260909.md) |
 
@@ -114,8 +116,8 @@ GUIの「旧結果取込」は以前のNG出力であり、旧SUPERFISHバイナ
 
 | 種別 | 状態・範囲 | 記録 |
 |---|---|---|
-| 標準unittest | 656件中654合格・NGSolve参照環境専用2件skip。N04曲線辺候補検索追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
-| 標準数値回帰 | N04曲線辺候補検索追加後PASS。seed周波数差ゼロ、RF/エネルギー差最大8.882e-16。幾何報告と旧保存文書も完全一致 | 隔離コピーの out/validation-curved-box-tree-isolated-20260909、[引継ぎ](CODEX_HANDOFF.md) |
+| 標準unittest | 742件中740合格・NGSolve参照環境専用2件skip。RF探索GUI追加後に標準validate内で再実行 | `.venv/bin/python -m unittest discover -s tests -v`、OPENBLAS_NUM_THREADS=1 |
+| 標準数値回帰 | RF探索GUI追加後PASS。seed9モード19量の周波数差ゼロ、RF/エネルギー差最大8.882e-16。標準・保存経路照合・終了後430対象hash一致 | out/validation-gui-rf-optimization-20260909、[RF探索GUI](GUI_RF_OPTIMIZATION.md) |
 | N04実行内の先祖再利用 | 追加3検査PASS。出所改変拒否・独立replayを維持し重複評価を削減。版1〜4実保存の完全一致と前回対照の全水準五量差ゼロ。球形の適応全体は約119秒から約82秒の観測 | [仕様](CURVED_VERIFICATION_REUSE.md) |
 | N04曲線の効率対照 | 同一二次写像の球形で解析五量/追跡/積分/二区間停止・Ritz・誤差対DOF/時間を確認。一様1201自由度に対し適応2661自由度。この例で適応優位なし、一般効率は未受入 | [比較仕様](CURVED_REFINEMENT_EFFICIENCY.md) |
 | N04曲線適応GUI | 版4の実Chrome11項目・旧版15項目PASS。GUI実計算の独立球形五量もPASS。全ジョブ終了・検証サーバー停止済み | [GUI仕様](GUI_CURVED_ADAPTIVE_REFINEMENT.md) |

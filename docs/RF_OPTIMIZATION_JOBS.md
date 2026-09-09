@@ -39,9 +39,9 @@ failedとし、完了manifestを公開しない。
 含めず、保存地点から新しいジョブへ分岐する。元ジョブの部分出力・log・elapsed_secondsを
 残し、中止された計算費用をゼロとは扱わない。computed_fem_solvesは完了試行の解数で、
 途中中止/失敗した呼出しや別分岐を合算した利用者全体の予算ではない。
-GUIの入力・一覧・結果表示・時間合算への接続は後続工程。
+[GUIの入力・一覧・結果表示](GUI_RF_OPTIMIZATION.md)は接続済み。別分岐の経過時間合算は後続工程。
 
-## 次のGUI接続で検証すること（未実装）
+## GUI接続時の要件（実装記録はGUI仕様を参照）
 
 既存のgui_tuning.pyとweb/app.jsの調整結果カードを参照し、専用のRF探索操作へ接続する。
 2変数の範囲/step/tolerance、目的関数/単位、複数制約/尺度、予算を入力・復元・保存し、
@@ -54,15 +54,15 @@ startのpreflightとmanager.lockの保持範囲を確認する。
 実ブラウザーでは入力保存/復元、完了/未達、中止後のcheckpoint選択・再開、管理器再起動、
 場の出所と表示、CLI/Pythonと同じnative入力/結果、外部要求なしを確認する。
 
-## GUI前に解消する待ち時間
+## GUI接続前の待ち時間観測とロック修正
 
 `out/rf-optimization-job-preflight-20260909/timing.json`は既存の投入requestを一度ずつ
 読み取り専用で計測したもの。新規requestの検査は0.00782秒、1試行checkpointを含む
 再開requestは16.498秒だった。一般的な速度の保証ではなく、標準検証と並行した単一観測。
 新規FEMやワーカーは実行していない。
-現在start_rf_optimizationはこの検証をmanager.lock内で行うため、GUI接続前に検証を
-ロック外へ移す。検証中にmanager.close/cancel/statusが応答することと、閉じた後には
-ワーカーを作らない再チェックを検証する。この応答性の修正は今回には含まない。
+当時start_rf_optimizationはこの検証をmanager.lock内で行っていた。GUI接続時に
+完全検証をロック外へ移し、検証中のmanager.close/cancel/status応答と、close後に
+ワーカーを作らない再確認を追加した。開始要求自体の検証時間短縮は別課題。
 
 ## 受入証拠 — 2026-09-09
 

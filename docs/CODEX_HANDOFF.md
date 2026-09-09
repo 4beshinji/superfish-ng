@@ -1,5 +1,19 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: RF探索GUIとpreflightのロック解除 — 2026-09-09
+
+基準8b2ac14。[仕様・受入証拠](GUI_RF_OPTIMIZATION.md)。gui_rf_optimization.pyとwebのRF探索カードを追加し、2変数/目的関数/複数制約尺度/予算の生成・要求保存復元、ジョブ開始/中止後checkpoint選択/保存再開、数値状態/停止理由の別表示、試行3水準の個別ID実rankによるnative場取込へ接続。raw JSONはstrict parse。再開は検証済み文書の要求を使い、未確認個別IDにrankの代用を与えない。start_rf_optimizationの全preflightをmanager.lock外へ移し、前後のclosed確認と起動登録のロックを維持。開始HTTP要求そのものの同期的完全検証は重いまま。FEM/RF/探索式・許容差は変更なし。
+
+並行性red56390終了1（2件中1FAIL、2.050秒）で実際の別ローカルワーカーのstatus/cancel/close阻害を確認。green2件0.024秒、再実行2件0.027秒PASS。GUI transport2件PASS（入力往復/strictとmockによるrank3/2/4選択・未確認/不正index拒否）。実FEM経路は下記ブラウザーで検証。
+
+初回ブラウザー79579/Node597169とGUI65765/PID596792は、検証器の保存水準0省略値の扱いを修正するため明示停止（終了143/0）。out/browser-rf-optimization-20260909/interruption.jsonと部分結果を保持。全終了後、検証器の??0・画像完了/保存読込待機とフォーム幅を確定して再実行。修正版93936終了0、out/browser-rf-optimization-accepted-20260909、Chrome13項目PASS/外部要求0。フォーム完全往復/strict・実中止・候補選択/全replay・download/reload/改変拒否・編集要求と分離した再開・6解/TRIAL_LIMIT・最終1/2/3細分・初期/最終場取込/実順位/画像読込。フォームと結果表の画面を目視。GUI25233/PID606355はSIGINT停止終了0。
+
+保存経路初回64647終了1、out/gui-rf-optimization-interface-20260909。検証器が.plot-cacheをジョブとして読んだため、job.jsonがある対象だけに修正。失敗driver/log保持。修正版18868終了0、out/gui-rf-optimization-interface-accepted-20260909。再起動したJobManagerで完全再検証、GUI文書/API一致、初期3水準は既存CLI first-1/trial-001、最終3水準は前回JobManager trial-002とProject/modes完全一致。取込2件の出所/結果一致。GUIで実計算した最終球形の解析相対差f2.472e-5/RQ2.525e-6/G1.077e-7/E比2.314e-4/B比6.077e-6で既存許容差PASS。追加FEMではなく保存結果の照合。
+
+標準12165終了0、out/validation-gui-rf-optimization-20260909、742件中740合格・2skip、1219.642秒。seed9モード19量f差0/RF最大8.882e-16。標準/保存経路/終了後430対象hashとブラウザー対象hash一致。driver/logは各outへ保存。全関連実行/ワーカー/GUI終了、ソース固定解除。新規Wine/Hosted CI/他OS受入なし。
+
+D03/全体は未完、親8受入/8進行中/16他未受入/1候補=33維持。次はD03の残件と親受入条件を照合し、一般変数・反射/組立/履歴・一般性能を限定機能の合格と区別する。今回の基本GUI操作は接続済み。重い保存再検証の重複削減や別分岐経過時間合算を進める場合は、全replay/出所改変拒否・完全一致と費用の定義を保持し、独立した性能観測と受入条件を先に置く。
+
 ## 最新: RF探索JobManager — 2026-09-09
 
 基準5229c33。[仕様・証拠](RF_OPTIMIZATION_JOBS.md)。rf_optimization_jobs.pyは既存自作tuning_jobsのワーカー・投入入力/実装hash・manifest・祖先/予算照合をRF探索の3水準へ適用。JobManager.start_rf_optimizationとread_jobのkind/manifest検証を追加。kind=rf_optimization、optimization_status/can_resume/computed_trials/computed_fem_solvesを照合し、numerical_validation=not_checkedを保つ。rf_optimization_checkpoints.pyは停止した当該ジョブの番号一覧（未検証）と、open時の全replay・所属/予算/祖先/リンク拒否を行う。GUI前面/HTTP操作は未追加。FEM/RF/探索の式は無変更。

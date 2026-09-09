@@ -740,12 +740,14 @@ async function refreshJobs() {
     const title = document.createElement("strong");
     title.textContent = (statusNames[j.status] || j.status) + (["tracked_study","adaptive_study"].includes(j.kind) ? ` / ${j.kind === "adaptive_study" ? "適応" : "追跡"}Study${j.tracking_status ? " " + j.tracking_status : ""}` : "");
     if (j.kind === "adaptive_refinement") title.textContent += ` / 適応細分${j.refinement_status ? " " + j.refinement_status : ""}`;
+    if (j.kind === "rf_optimization") title.textContent += ` / RF探索${j.optimization_status ? " " + j.optimization_status : ""}`;
     if (j.kind === "tune") title.textContent += ` / 周波数調整${j.tuning_status ? " " + j.tuning_status : ""}`;
     row.append(title);
     const desc = document.createElement("small");
     const stage =
       {
         "tracked adaptive FEM refinement and RF confirmation": "メッシュを細分・対象モードのRF量を確認中",
+        "constrained RF coordinate search and final three-level refinement": "RF制約付き探索と最終細分を実行中",
         "tracked FEM frequency tuning and final mesh refinement": "追跡しながら周波数を調整・細分検査中",
         "adaptive FEM solves and saved-field tracking": "中点を追加して計算・追跡中",
         "sequential FEM solves and saved-field tracking": "各点を計算・追跡中",
@@ -770,6 +772,7 @@ async function refreshJobs() {
           await refreshJobs();
         } else if (["tracked_study","adaptive_study"].includes(j.kind)) await openTrackedExecution(j.id,j.kind === "adaptive_study");
         else if (j.kind === "adaptive_refinement") await openRefinement(j.id);
+        else if (j.kind === "rf_optimization") await openRFOptimization(j.id);
         else if (j.kind === "tune") await openTuning(j.id);
         else if (j.kind === "study") await openStudy(j.id);
         else await openResult(j.id);
@@ -778,6 +781,10 @@ async function refreshJobs() {
       }
     };
     row.append(action);
+    if(j.kind==='rf_optimization' && ['complete','cancelled','interrupted','failed'].includes(j.status)) {
+      const checkpoints=document.createElement('button');checkpoints.textContent='RF探索の途中保存を選ぶ';checkpoints.dataset.rfOptimizationCheckpoints=j.id;
+      checkpoints.onclick=async()=>{try{await openRFOptimizationCheckpoints(j.id);}catch(e){failure(e);}};row.append(checkpoints);
+    }
     if(j.kind==="tune" && ["complete","cancelled","interrupted","failed"].includes(j.status)) {
       const checkpoints=document.createElement("button");checkpoints.textContent="途中保存を選ぶ";
       checkpoints.dataset.tuneCheckpoints=j.id;
@@ -2325,3 +2332,109 @@ $('rf-peaks-open').addEventListener('change',async event=>{
   catch(e){failure(e);}finally{event.target.value='';}
 });
 rfPeakButtons();
+
+// RF design search uses three native mesh levels per trial.
+const rfOptQuantities=[['frequency_hz','周波数','Hz'],['r_over_q_accelerator_ohm','R/Q（加速器定義）','Ω'],['r_over_q_circuit_ohm','R/Q（回路定義）','Ω'],['geometry_factor_ohm','G','Ω'],['epk_over_eacc','Epk/Eacc','無次元'],['bpk_over_eacc_mt_per_mv_per_m','Bpk/Eacc','mT/(MV/m)']];
+const rfOptControlFields=[['sample_order','標本次数',3],['minimum_overlap','最小重なり',.98],['minimum_assignment_margin','対応の差',.05],['relative_cluster_gap','近接固有値の相対幅',1e-6],['minimum_relative_singular_value','最小相対特異値',1e-8]];
+let rfOptResult=null,rfOptBusy=false,rfOptControls={mapping:'affine_remesh'},rfOptConstraintOrder=rfOptQuantities.map(q=>q[0]);
+function rfOptInput(id,value) {const input=document.createElement('input');input.id=id;input.type='number';input.step='any';input.value=value;return input;}
+function rfOptCell(row,content) {const cell=document.createElement('td');if(content instanceof Node)cell.append(content);else cell.textContent=content;row.append(cell);}
+for(const [name,label] of [['radial_scale','半径'],['axial_scale','軸方向']]) {
+  const row=document.createElement('tr');rfOptCell(row,label);
+  for(const [field,value] of [['lower',1],['upper',1.01],['initial',1],['step',.01],['tolerance',.01]])rfOptCell(row,rfOptInput(`rf-opt-${name}-${field}`,value));
+  $('rf-opt-variables').querySelector('tbody').append(row);
+}
+for(const [key,label,unit] of rfOptQuantities) {
+  const option=document.createElement('option');option.value=key;option.textContent=`${label} [${unit}]`;$('rf-opt-objective').append(option);
+  const row=document.createElement('tr'),use=document.createElement('input');use.type='checkbox';use.id=`rf-opt-${key}-use`;
+  use.checked=['r_over_q_accelerator_ohm','epk_over_eacc'].includes(key);use.setAttribute('aria-label',`${label}の制約を使う`);rfOptCell(row,use);rfOptCell(row,`${label} [${unit}]`);
+  rfOptCell(row,rfOptInput(`rf-opt-${key}-lower`,key==='r_over_q_accelerator_ohm' ? 1 : ''));
+  rfOptCell(row,rfOptInput(`rf-opt-${key}-upper`,key==='r_over_q_accelerator_ohm' ? 10000 : key==='epk_over_eacc' ? 100 : ''));
+  rfOptCell(row,rfOptInput(`rf-opt-${key}-scale`,key==='r_over_q_accelerator_ohm' ? 100 : 1));
+  $('rf-opt-constraints').querySelector('tbody').append(row);
+}
+for(const [key,label,value] of rfOptControlFields) {const element=document.createElement('label');element.textContent=label;element.append(rfOptInput(`rf-opt-control-${key}`,value));$('rf-opt-controls').append(element);}
+function rfOptUnit() {$('rf-opt-objective-unit').textContent=`[${rfOptQuantities.find(q=>q[0]===$('rf-opt-objective').value)[2]}]`;}
+function rfOptButtons() {
+  for(const element of $('rf-optimization').querySelectorAll('button,input,select,textarea'))element.disabled=rfOptBusy;
+  $('rf-opt-start').disabled=rfOptBusy || !$('rf-opt-request').value.trim();$('rf-opt-request-save').disabled=$('rf-opt-start').disabled;
+  $('rf-opt-resume').disabled=rfOptBusy || !rfOptResult?.document.can_resume;
+  $('rf-opt-save').disabled=rfOptBusy || !rfOptResult;
+  $('rf-opt-checkpoint-index').disabled=rfOptBusy || !$('rf-opt-checkpoint-index').options.length;
+  $('rf-opt-checkpoint-open').disabled=$('rf-opt-checkpoint-index').disabled;
+  $('rf-opt-open-field').disabled=rfOptBusy || !rfOptResult?.document.trials[Number($('rf-opt-field-trial').value)]?.assessment;
+}
+function restoreRFOptimizationRequest(r) {
+  $('rf-opt-order').value=r.variables[0].name;
+  for(const variable of r.variables)for(const field of ['lower','upper','initial','step','tolerance'])$(`rf-opt-${variable.name}-${field}`).value=variable[field];
+  $('rf-opt-objective').value=r.criteria.objective.quantity;$('rf-opt-direction').value=r.criteria.objective.direction;rfOptUnit();
+  $('rf-opt-improvement').value=r.objective_improvement;$('rf-opt-max-trials').value=r.max_trials;$('rf-opt-rf-coordinates').value=r.rf_coordinates;
+  $('rf-opt-ids').value=JSON.stringify(r.initial_ids);$('rf-opt-mode-id').value=r.mode_id;
+  rfOptControls=structuredClone(r.controls);for(const [key] of rfOptControlFields)$(`rf-opt-control-${key}`).value=r.controls[key];
+  rfOptConstraintOrder=r.criteria.constraints.map(c=>c.quantity);
+  for(const [key] of rfOptQuantities) {const c=r.criteria.constraints.find(c=>c.quantity===key);$(`rf-opt-${key}-use`).checked=!!c;
+    for(const side of ['lower','upper'])$(`rf-opt-${key}-${side}`).value=c?.[side] ?? '';
+    $(`rf-opt-${key}-scale`).value=r.constraint_scales[key] ?? 1;
+  }
+  $('rf-opt-request').value=JSON.stringify(r,null,2);rfOptButtons();
+}
+function showRFOptimization(response) {
+  rfOptResult=response;const d=response.document,r=d.request;restoreRFOptimizationRequest(r);
+  const status={PAUSED:'保存地点で一時停止',SEARCH_COMPLETE:'最終の設計条件を確認して終了',FINAL_UNVERIFIED:'最終の対応・細分・形状条件が未確認',FINAL_CRITERIA_FAILED:'最終の設計条件が未達'};
+  $('rf-opt-status').textContent=`${d.status} — ${status[d.status]}。${d.completed_fem_solves}/${d.max_fem_solves} 完了解、対象ID ${r.mode_id}。停止理由: ${d.decision.search_stop || '探索途中'}。`;
+  const body=$('rf-opt-trials').querySelector('tbody'),select=$('rf-opt-field-trial');body.replaceChildren();select.replaceChildren();
+  for(const trial of d.trials) {
+    const values=Object.fromEntries(r.variables.map((v,i)=>[v.name,trial.values[i]])),a=trial.assessment,row=document.createElement('tr');
+    for(const value of [trial.index,trial.phase==='final' ? '最終細分' : '探索',values.radial_scale,values.axial_scale,a?.status ?? 'UNVERIFIED',a?.objective.eligible_value==null ? 'N/A' : `${a.objective.eligible_value} ${a.objective.unit}`])rfOptCell(row,value);
+    body.append(row);const option=document.createElement('option');option.value=trial.index;option.textContent=`試行 ${trial.index} (${trial.phase})`;select.append(option);
+  }
+  if(d.trials.length)select.value=d.trials.at(-1).index;
+  $('rf-opt-diagnostics').textContent=JSON.stringify({decision:d.decision,trials:d.trials.map(t=>({index:t.index,refinement_status:t.assessment?.refinement_status ?? null,constraints:t.assessment?.constraints ?? null,levels:t.assessment?.assessment.rows ?? null})),trial_directories:d.trial_directories,scope:d.scope},null,2);
+  rfOptButtons();
+}
+function rfOptLimit() {if(!$('rf-opt-limit').value.trim())return {};const n=number('rf-opt-limit');if(!Number.isInteger(n)||n<1)throw Error('今回の試行上限は正の整数で指定してください');return {max_new_trials:n};}
+async function rfOptAction(action,data) {
+  rfOptBusy=true;rfOptButtons();$('rf-opt-job').textContent='保存場・入力を検証しています。状態確認や他ジョブの中止は計算一覧から行えます。';
+  try {const response=await api(action,data);
+    if(response.document)showRFOptimization(response);
+    else {$('rf-opt-job').textContent=`RF探索ジョブ: ${response.id}。計算一覧から中止・結果表示できます。`;await refreshJobs();}
+    if(response.document)$('rf-opt-job').textContent='保存文書と場の再検証が完了しました。';return response;
+  } catch(e) {$('rf-opt-job').textContent='操作を完了できませんでした。エラーを確認してください。';throw e;} finally {rfOptBusy=false;rfOptButtons();}
+}
+async function openRFOptimization(id) {await rfOptAction('rf-optimization-result',{id});$('rf-optimization').scrollIntoView({behavior:'smooth'});}
+async function openRFOptimizationCheckpoints(id) {
+  rfOptBusy=true;rfOptButtons();
+  try {const r=await api('rf-optimization-checkpoints',{id}),select=$('rf-opt-checkpoint-index');select.replaceChildren();select.dataset.job=id;
+    for(const index of r.indices){const option=document.createElement('option');option.value=index;option.textContent=`${index}試行の保存（未検証）`;select.append(option);}
+    if(r.indices.length)select.value=r.indices.at(-1);$('rf-opt-checkpoint-job').textContent=`${id}: ${r.indices.length ? '保存地点を選んで再検証してください。' : '保存済み試行はありません。'}`;$('rf-optimization').scrollIntoView({behavior:'smooth'});
+  }finally{rfOptBusy=false;rfOptButtons();}
+}
+bind('rf-opt-prepare',async()=>{
+  const project=await preview(),order=$('rf-opt-order').value==='radial_scale' ? ['radial_scale','axial_scale'] : ['axial_scale','radial_scale'];
+  const variables=order.map(name=>Object.assign({name},Object.fromEntries(['lower','upper','initial','step','tolerance'].map(k=>[k,number(`rf-opt-${name}-${k}`)]))));
+  const constraints=[],constraint_scales={},keys=[...rfOptConstraintOrder,...rfOptQuantities.map(q=>q[0]).filter(q=>!rfOptConstraintOrder.includes(q))];
+  for(const key of keys)if($(`rf-opt-${key}-use`).checked){const c={quantity:key};for(const side of ['lower','upper'])if($(`rf-opt-${key}-${side}`).value.trim())c[side]=number(`rf-opt-${key}-${side}`);constraints.push(c);constraint_scales[key]=number(`rf-opt-${key}-scale`);}
+  const controls={...rfOptControls,mapping:'affine_remesh',...Object.fromEntries(rfOptControlFields.map(([key])=>[key,number(`rf-opt-control-${key}`)]))};
+  const initial_ids=$('rf-opt-ids').value.trim() ? JSON.parse($('rf-opt-ids').value) : Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`);
+  const request={schema_version:1,project,variables,criteria:{schema_version:1,objective:{quantity:$('rf-opt-objective').value,direction:$('rf-opt-direction').value},constraints},constraint_scales,objective_improvement:number('rf-opt-improvement'),max_trials:number('rf-opt-max-trials'),initial_ids,mode_id:$('rf-opt-mode-id').value,controls,rf_coordinates:$('rf-opt-rf-coordinates').value};
+  const r=await api('prepare-rf-optimization',{request});$('rf-opt-request').value=r.serialized;rfOptButtons();
+});
+bind('rf-opt-start',()=>rfOptAction('start-rf-optimization',{request:$('rf-opt-request').value,...rfOptLimit()}));
+bind('rf-opt-resume',()=>rfOptAction('resume-rf-optimization',{document:rfOptResult.serialized,...rfOptLimit()}));
+bind('rf-opt-save',()=>download('rf-optimization-checkpoint.json',rfOptResult.serialized));
+bind('rf-opt-request-save',async()=>{const r=await api('prepare-rf-optimization',{request:$('rf-opt-request').value});download('rf-optimization-request.json',r.serialized);});
+bind('rf-opt-checkpoint-open',()=>rfOptAction('open-rf-optimization-checkpoint',{id:$('rf-opt-checkpoint-index').dataset.job,index:Number($('rf-opt-checkpoint-index').value)}));
+for(const [id,action] of [['rf-opt-open','replay-rf-optimization'],['rf-opt-request-open','prepare-rf-optimization']])$(id).addEventListener('change',async event=>{
+  const file=event.target.files[0];if(!file)return;
+  try {$('error').hidden=true;
+    if(action==='replay-rf-optimization')await rfOptAction(action,{document:await file.text()});
+    else {const r=await api(action,{request:await file.text()}),p=await api('normalize',{document:r.request.project});applyProject(p.project);drawOutline(p.outline_zr_m,p.outline_closed,p.geometry_approximation);restoreRFOptimizationRequest(r.request);}
+  }catch(e){failure(e);}finally{event.target.value='';}
+});
+bind('rf-opt-open-field',async()=>{
+  const data={document:rfOptResult.serialized,trial:Number($('rf-opt-field-trial').value),level:Number($('rf-opt-field-level').value)};
+  rfOptBusy=true;rfOptButtons();
+  try {const result=await api('rf-optimization-field',data);await refreshJobs();await openResult(result.id,result.mode);$('rf-opt-job').textContent=`試行 ${result.trial} の水準 ${result.level+1}、ID ${result.mode_id}、順位 ${result.mode} の保存場を表示しました。`;}
+  finally{rfOptBusy=false;rfOptButtons();}
+});
+$('rf-opt-objective').addEventListener('change',rfOptUnit);$('rf-opt-request').addEventListener('input',rfOptButtons);$('rf-opt-field-trial').addEventListener('change',rfOptButtons);rfOptUnit();rfOptButtons();
