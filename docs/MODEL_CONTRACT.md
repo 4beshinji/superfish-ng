@@ -1,5 +1,7 @@
 # C01: 物理・材料・領域と入力版の共通契約
 
+2026-09-09追補: [TE円筒追跡](TE_TRACKING_PLAN.md)を閉PEC・直線P1/P2・normalized_cylinderに限定して接続。Eφの実ピークを比較し、TE/TM混在と他の写像は拒否する。縮退の個別IDと周波数は未確定として保持する。TE Study/調整等の未対応は継続。
+
 2026-09-09追補: [P01 TE](AXISYMMETRIC_TE.md) により明示v3モデルのpolarizationはtm/teを受理する。TEは直線P1/P2・曲線P2のsolve・専用native読込に対応し、通常Project/JobManagerにも対応する。未接続のStudy/追跡・調整・最適化は拒否し、[通常GUI](GUI_TE.md)のTE選択・場表示・SIプローブ・N/A理由表示を接続した。旧v1/v2はTMのまま。以下の初期TM契約はTE追補の範囲を除き維持する。
 
 2026-09-07仕様。C00の確認済みTM部分集合から開始する。追加物理の数式と受入は

@@ -36,7 +36,7 @@
         </div>
         <label>名前<input id="name" value="新しい空洞" /></label>
         <label>偏波<select id="polarization"><option value="tm">TM（Er・Ez・Hφ）</option><option value="te">TE（Eφ・Hr・Hz）</option></select></label>
-        <p id="te-model-note" class="hint" hidden>TEの磁場は+時間phasorのquadratureです。軸方向加速場はゼロで、R/Q・加速量はN/Aです。通常計算・保存・場表示・プローブに対応します。TEの鏡映・Study・追跡・適応・調整・最適化は未対応です。</p>
+        <p id="te-model-note" class="hint" hidden>TEの磁場は+時間phasorのquadratureです。軸方向加速場はゼロで、R/Q・加速量はN/Aです。通常計算・保存・場表示・プローブに対応します。TEの保存場比較は閉PEC円筒のEφに対応します。鏡映・Study・一般形状の追跡・適応・調整・最適化は未対応です。</p>
         <label
           >形状の入力方法<select id="geometry-type">
             <option value="pillbox">円筒 — 半径と長さ</option>
@@ -331,7 +331,7 @@
         </section>
         <section id="mode-tracking">
           <div class="section-title"><h2>モード対応と追跡履歴</h2></div>
-          <p class="hint">完了した計算結果を選び、保存場を比較します。周波数順位とモードIDは別です。</p>
+          <p class="hint">完了した計算結果を選び、保存場を比較します。周波数順位とモードIDは別です。TEは閉PEC円筒のEφを比較し、TE/TMの混在は受理しません。</p>
           <div class="grid">
             <label>以前の結果<select id="tracking-previous"><option value="">結果を選択</option></select></label>
             <label>現在・次の結果<select id="tracking-current"><option value="">結果を選択</option></select></label>

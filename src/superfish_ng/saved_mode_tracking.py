@@ -17,6 +17,18 @@ def _canonical(value):
 
 
 def _snapshot(directory):
+    from .config import Case
+    from .te import is_te
+    if is_te(Case.load(directory/'case.json')):
+        from .te_saved import _names
+        names = _names(Case.load(directory/'case.json')) | {'te_complete.json'}
+        result={}
+        for name in sorted(names):
+            path=directory/name
+            if not path.is_file() or path.is_symlink():
+                raise ValueError(f'TE tracking requires complete regular native files: {path}')
+            result[name]=digest(path)
+        return dict(directory=str(directory),sha256=result)
     required=('case.json','results.json','fields.npz')
     optional=('mesh.json','save_protocol.json','save_complete.json')
     result={}
@@ -86,7 +98,18 @@ def build_saved_mode_tracking(request,*,base_directory=None):
         path=Path(value);path=(path if path.is_absolute() else root/path).resolve()
         directories.append(path);normalized[name]=str(path)
     before=[_snapshot(path) for path in directories]
-    solutions=[read_solution(path) for path in directories]
+    from .config import Case
+    from .te import is_te
+    polarizations=[is_te(Case.load(path/'case.json')) for path in directories]
+    if any(polarizations):
+        if not all(polarizations):
+            raise ValueError('mixed TE/TM tracking is unsupported; use two results with the same polarization')
+        if controls['mapping'] != 'normalized_cylinder':
+            raise ValueError('TE saved tracking currently requires normalized_cylinder mapping')
+        from .te_saved import read_te_run
+        solutions=[read_te_run(path) for path in directories]
+    else:
+        solutions=[read_solution(path) for path in directories]
     tracker=track_cylindrical_modes
     if controls['mapping']=='normalized_profile':
         from .profile_mode_tracking import track_profile_modes

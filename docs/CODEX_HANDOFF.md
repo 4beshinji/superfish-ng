@@ -1,5 +1,18 @@
 # ローカルCodexへの引継ぎ
 
+## 最新: TE円筒追跡 — 2026-09-09
+
+基準c5b4409。TE円筒追跡API/保存/CLI/GUI履歴の限定受入を完了。[計画・失敗履歴](TE_TRACKING_PLAN.md)。全関連実行は終了し、ソース固定を解除。
+標準9994・最終比較40142とも終了0。標準771件中769合格・2skip（unittest1200.915秒、command1201.284秒）。TM seed9モード19量の周波数差0、RF/エネルギー差最大8.882e-16、旧TE保存7件の差0。標準・独立・固定時・終了後452対象hashとブラウザー実装hashが一致。out/validation-te-tracking-20260909に全ログ・比較結果を保持。
+最終独立84610終了0、out/te-tracking-final-independent-20260909/report.json/command.log。8FEM/両次数/両尺度/3標本次数、全6ID解析順位/符号振幅/Maxwell、4組CLI/save/replay/API全文書一致PASS。452source前後一致。
+Chrome2587終了0、out/browser-te-tracking-20260909、8項目PASS・外部要求0・実装hash一致、driver.mjsとtracking-history.png保持/目視。独立3FEMの取込、merge/splitで個別ID未確定の集合保持、保存replay/改変拒否、UNVERIFIED継続禁止。GUI86416/PID925463はSIGINT終了0。
+GUI独立48208終了0、out/te-tracking-gui-independent-20260909/verify.py/command.log/report.json。新管理器取込3件verify=True、元TE全係数/周波数/RF/Projectmesh一致、download履歴全replay、部分空間IDへ個別周波数拒否。旧TM profile pair/historyと円筒merge/split historyの3文書も全文書一致、old_tm_tracking.jsonへ保持。
+実装: te_mode_tracking.py専用Eφ正規化円筒比較、mode_trackingのTE分岐、saved_mode_tracking TE全native/marker snapshot/read_te_run・混合TE/TMと他mapping拒否、model capability文言/GUI説明。新test_te_mode_tracking5件1.447秒PASS・旧TM保存追跡6件.277秒PASS。初回unit16689のTM生Solutionにcaseがないテスト誤りは保存TMへ修正。独立初版11411もPASSだがGUI説明前の451sourceなので最終版は84610を使う。
+待機中の次工程候補: /tmp/superfish-te-study-candidate-20260909にsrcコピーを作り、studies.pyとstudy_mode_tracking.pyだけTEパラメータ掃引/TE読込の試作を実施。主ツリーへ未適用。初回NumPy scalar拒否・修正版12908の追跡TMreader拒否を経て82377終了0、out/te-study-tracking-candidate-20260909の2FEM/6mode解析/N/A/独立スペクトルUNVERIFIED/別途trackingPASS。candidate.patch/driver/report/log保持。main452hash不変。追加44311終了0、out/te-study-worker-candidate-20260909で実worker中止→2点完了→再起動→Study tracking/replayがPASS。既存Study表はnull R/Qを0.000000と表示する実反例を確認し、一時web/app.jsだけN/A理由へ修正。3ファイルcandidate.patchとgui-null-red.json保持、その後候補GUI69859終了0、out/browser-te-study-candidate-20260909でChrome2項目（2点実FEM/全R/Q N/A・独立スペクトル説明、点取込/TE描画）PASS/目視。配信したtmp実装hash前後一致、外部要求0。GUI38921/PID940536はSIGINT終了0。最新4ファイルcandidate.patch/driverはout/te-study-gui-candidate-20260909。後続Studyの実装をこの候補から進められるが、製品受入は未完了。
+[後続TE Study計画](TE_STUDY_PLAN.md)に候補の範囲と証拠を整理。追加75271終了0、out/te-study-integrity-candidate-20260909で未対応収束/後続不正値拒否、N/A→0の要約改変をouter hash更新後も拒否、復元replayPASS。候補の全実行終了。
+次工程: [TE Study計画](TE_STUDY_PLAN.md)。上記候補を主ツリーへ適用し、標準・独立解析・保存/CLI/GUI・既存TM Studyの受入を実施する。TE一般形状/曲線tracking/調整等と親D01/O02/P01・全計画は継続。親8/9/15/1=33維持。
+
+
 ## 最新: TE GUI — 2026-09-09
 
 基準449d1ef。[仕様/失敗履歴](GUI_TE.md)。通常TE GUIの実装・拡張受入・独立照合・標準/回帰を完了し、一つのローカル変更にまとめる。全関連実行は終了、ソース固定解除。

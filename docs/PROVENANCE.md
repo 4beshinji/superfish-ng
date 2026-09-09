@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-09: [TE円筒追跡](TE_TRACKING_PLAN.md)。既存自作の重み付き標本部分空間追跡へTE実ピークEφの正規化円筒写像を接続。全TE native/完了markerの前後snapshotと専用reader、既存CLI/GUI履歴へ独立に組み込んだ。交差は既存R35のBessel正零点式で独立検証。新規外部資料・依存・FEM数式・物理精度許容差の変更なし。
+
 2026-09-09: [TE GUI](GUI_TE.md)。既存自作TEの元FEMセル評価・点検索・native再検証を描画とSIプローブへ接続。rEφの磁束関数は既存Maxwell規約による。TM/TEモデル保持とN/A理由、GUI cacheと元native hashを独立実装。既存自作CDP検証器をTE操作へ適用した。新規物理式・外部資料・依存・legacy参照なし。
 
 2026-09-09: [TE Project/JobManager](TE_JOBS.md)。既存自作の通常worker/ProjectとTE native再検証を接続。Project/Case/元mesh/完了manifestを照合し、直接nativeの元meshをProject版2へ保持。取込の前後hash・marker最後の公開・取込originを独立実装した。数式/物理精度許容差は変更なし。独立受入に既存の円筒/球形TE解析検証を再利用し、新規外部資料・依存・legacy参照はない。

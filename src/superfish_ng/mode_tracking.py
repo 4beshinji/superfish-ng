@@ -178,6 +178,10 @@ def track_cylindrical_modes(previous,current,previous_ids,*,mapping,sample_order
     The constant volume Jacobian cancels from each normalized inner product.
     Variable-radius or folded contours need a separately specified mapping.
     """
+    from .te import is_te
+    if any(is_te(s.case) for s in (previous,current)):
+        from .te_mode_tracking import track_te_cylindrical_modes
+        return track_te_cylindrical_modes(previous,current,previous_ids,mapping=mapping,sample_order=sample_order,**controls)
     from .sampling import FieldSampler
     if mapping!='normalized_cylinder':raise ValueError('explicit mapping must be normalized_cylinder')
     if type(sample_order) is not int or not 2<=sample_order<=256:
