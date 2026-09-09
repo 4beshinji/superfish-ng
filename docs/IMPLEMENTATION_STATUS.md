@@ -1,6 +1,8 @@
 # 実装・検証の現状
 
-[周波数調整の途中保存選択](GUI_TUNING_CHECKPOINTS.md)をGUIへ追加。中止したジョブの保存済み試行を一覧から選び、元ジョブと保存場を再検証して再開できる。一般形状/非線形変数・制約付き最適化は残る。
+[多項式による非線形座標連動](POLYNOMIAL_TUNING.md)を周波数調整へ追加。設計変数の多項式からprofile座標を作り、実FEM・追跡・二分法・最終細分を行う。両単位表現/両尺度の円筒解析対照がPASS。一般曲線・非多項式関数・制約付き最適化は残る。
+
+[周波数調整の途中保存選択](GUI_TUNING_CHECKPOINTS.md)をGUIへ追加。中止したジョブの保存済み試行を一覧から選び、元ジョブと保存場を再検証して再開できる。一般形状/非多項式連動・制約付き最適化は残る。
 
 [二次境界の空間候補選別](QUADRATIC_BOUNDARY_CANDIDATES.md)を追加。旧自作実装との証明・交差等の最初の拒否理由を維持し、保存済み2,744境界辺の検査単体を中央値23.975秒から0.203秒へ短縮した。全FEM実行や一般形状の速度倍率とは区別する。
 
@@ -82,7 +84,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、直線/曲線の連続離散極値の囲い込み、曲線角診断 | peak phasor・RQ二規約。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 表面収束評価 | 固定曲線P2の3水準・追跡ID・ピーク上下界によるf/RQ/G/ピーク比判定API/CLI/GUI、元多角形角診断・追跡済み直線P1/P2の表面評価API/保存/CLI/GUI | 幾何近似誤差/一般形状の精度・効率は残件。物理誤差上界ではない | [SURFACE_CONVERGENCE.md](SURFACE_CONVERGENCE.md) |
 | 条件群・鏡映 | 掃引、同一形状細分比較、条件付きバンド同定、曲線の幾何/FEM別Study・鏡映 | D01は重み付き標本部分空間・円筒/profile写像・明示メッシュ対応による追跡と2時点保存/再検証CLI/GUIと個別IDと部分空間ID集合の順序付き履歴/再開、完了Studyの隣接点追跡と点状態表示・保存再検証GUI、追跡付き逐次計算・停止・チェックポイント再開API/CLI・JobManager・GUI、幾何掃引の適応二分と途中保存・再開API/CLI・JobManager・GUI、多対多の保守的ID集合継承とGUI方式選択/復元、同一多角形領域の独立再メッシュ比較API/CLI/GUIと明示アフィン変形の比較API/CLI/GUI、明示比較メッシュによる区分アフィン変形の比較API/CLI/GUIと同一二次曲線領域の比較API/CLI/GUIを追加。曲線P2の明示アフィン変形にも、変換後の二次境界全体が一致する条件で対応。曲線領域の一般写像/個別枝回復、制約付き最適化は未実装 | studies.py、symmetry.py、curved_reflection.py |
-| 周波数調整 | 単一/連動profile座標・明示円筒/profile写像の1変数二分探索・停止・再開・最終細メッシュ判定API/CLI・JobManager・GUI、対象の場表示 | 全個別ID確認が前提。二水準差は誤差上界でない。曲線/非線形変数/最適化は未実装 | [TUNING.md](TUNING.md) |
+| 周波数調整 | 単一/一次式・多項式連動profile座標・明示円筒/profile写像の1変数二分探索・停止・再開・最終細メッシュ判定API/CLI・JobManager・GUI、対象の場表示 | 全個別ID確認が前提。二水準差は誤差上界でない。曲線/非多項式連動/最適化は未実装 | [TUNING.md](TUNING.md) |
 | 操作・保存 | 共通CLI/Python/GUI、曲線計算・描画・鏡映、完了公開/hash、再読込 | 外部メッシュ指定UIなし。人による使いやすさ評価、電源断/他OSは未保証 | [GUI_ACCEPTANCE.md](GUI_ACCEPTANCE.md)、[SAVE_COMPLETION.md](SAVE_COMPLETION.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
 | 旧入力・出力 | 限定AF読込、原入力/hash/変換診断、NG JSON/CSV/NPZ/ASCII VTK | AFは単一真空/全PEC/軸接続TM。汎用旧入力、製品用旧テキスト変換、旧バイナリ互換は未実装 | [LEGACY_INPUT.md](LEGACY_INPUT.md)、C03/C04 |
 | 配布 | 3386a5fの決定的ZIP・wheel内容/資源・CLI/曲線native計算のローカル確認 | wheelの全機能/GUI再受入はV02。hosted CI、他OS、公開リリースは未確認 | [ローカル配布確認](LOCAL_DISTRIBUTION_20260909.md) |

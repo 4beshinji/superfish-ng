@@ -505,7 +505,9 @@
           <div id="tune-binding-settings" hidden>
             <label>設計変数の名前<input id="tune-parameter-name" type="text" value="radius" /></label>
             <label>設計変数の単位<select id="tune-parameter-unit"><option value="m">m（長さ）</option><option value="1">無次元</option></select></label>
-            <p>各座標[m] = multiplier × 設計変数 + offset_m。multiplierは設計変数の1単位あたりの長さです。座標はすべて同時に更新します。</p>
+            <label>座標の連動式<select id="tune-binding-law"><option value="linear">一次式</option><option value="polynomial">多項式</option></select></label>
+            <p id="tune-linear-help">各座標[m] = multiplier × 設計変数 + offset_m。multiplierは設計変数の1単位あたりの長さです。座標はすべて同時に更新します。</p>
+            <p id="tune-polynomial-help" hidden>各座標[m] = c₀ + c₁x + c₂x² + …。coefficientsを定数項から順に指定します（例: [0,0,0.1] は0.1x²）。係数cₖの単位はm/(設計変数の単位)ᵏです。途中の形状が不正なら停止し、前の保存を保持します。</p>
             <label>連動する座標と係数（JSON配列）<textarea id="tune-bindings" rows="4">[{"path":"/case/geometry/points_zr_m/0/1","multiplier":1,"offset_m":0},{"path":"/case/geometry/points_zr_m/1/1","multiplier":1,"offset_m":0}]</textarea></label>
           </div>
           <div class="grid">

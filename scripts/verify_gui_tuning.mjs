@@ -283,6 +283,26 @@ try {
     const image=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/coupled-result.png",Buffer.from(image.data,"base64"));
     report.coupled_job_ids={coupledFirst,coupledLast};
   }
+  if(args["--polynomial"]) {
+    const polynomial=JSON.parse(await readFile(args["--polynomial"],"utf8"));
+    await ev('document.querySelector("#tune-coupled").checked=true;document.querySelector("#tune-binding-law").value="polynomial";document.querySelector("#tune-binding-law").dispatchEvent(new Event("change"));document.querySelector("#tune-parameter-unit").value="1"');
+    await fill("#tune-bindings",JSON.stringify(polynomial.bindings));await click("#tune-prepare");
+    await wait('JSON.parse(document.querySelector("#tune-request").value).schema_version===3');
+    await check("polynomial form creates ascending-power coefficients and shows units",'JSON.parse(document.querySelector("#tune-request").value).bindings[0].coefficients[2]===.1 && !document.querySelector("#tune-polynomial-help").hidden');
+    await fill("#tune-request",JSON.stringify(polynomial));await fill("#tune-limit","2");
+    const polynomialFirst=await launch("#tune-start");await openJob(polynomialFirst,"PAUSED",2);
+    await check("polynomial result restores law and coefficients",'document.querySelector("#tune-binding-law").value==="polynomial" && JSON.parse(document.querySelector("#tune-bindings").value)[0].coefficients[2]===.1');
+    await ev('document.querySelector("#tune-binding-law").value="linear"');await fill("#tune-request",'{}');await fill("#tune-limit","");
+    const polynomialLast=await launch("#tune-resume");
+    await wait(`document.querySelector('[data-job="${polynomialLast}"] strong')?.textContent.includes("TUNED")`,60000);
+    await click(`[data-job="${polynomialLast}"] button`);await wait('!tuningBusy && tuningResult.document.status==="TUNED"');
+    await check("polynomial resume retains saved nonlinear law and refinement gates",'document.querySelector("#tune-binding-law").value==="polynomial" && Math.abs(tuningResult.document.decision.value/Math.sqrt(.93)-1)<.00002 && tuningResult.document.decision.mesh_difference_met');
+    await click("#tune-open-field");await wait('document.querySelector("#mode").value==="1" && Math.abs(currentResult.result.case.geometry.points_zr_m[0][1]/.093-1)<.00002 && !document.querySelector("#field-image").hidden',60000);
+    await check("polynomial tuning final field has the independently expected radius",'currentResult.result.case.geometry.points_zr_m[0][1]===currentResult.result.case.geometry.points_zr_m[1][1]');
+    const rect=await ev('(()=>{const a=document.querySelector("#tune-status").getBoundingClientRect(),b=document.querySelector("#tune-trials").getBoundingClientRect();return {x:a.x+scrollX,y:a.y+scrollY,width:a.width,height:b.bottom-a.top,scale:1}})()');
+    const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/polynomial-result.png",Buffer.from(shot.data,"base64"));
+    report.polynomial_job_ids={polynomialFirst,polynomialLast};
+  }
   report.job_ids={first,second,third,fourth,fifth};
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if(!report.passed)throw Error("tuning GUI checks failed");console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));

@@ -1943,6 +1943,8 @@ let tuningResult=null, tuningBusy=false;
 function tuningParameterMode() {
   const coupled=$("tune-coupled").checked,unit=coupled ? $("tune-parameter-unit").value : "m";
   $("tune-binding-settings").hidden=!coupled;
+  $("tune-linear-help").hidden=$("tune-binding-law").value!=="linear";
+  $("tune-polynomial-help").hidden=$("tune-binding-law").value!=="polynomial";
   $("tune-vertex").disabled=coupled;$("tune-coordinate").disabled=coupled;
   for(const label of document.querySelectorAll(".tune-unit-label"))label.textContent=unit==="1" ? "無次元" : unit;
 }
@@ -1988,15 +1990,16 @@ function showTuning(response) {
     }
     body.append(row);
   }
-  $("tune-request").value=JSON.stringify(r,null,2);$("tune-coupled").checked=r.schema_version===2;
-  if(r.schema_version===2) {
+  $("tune-request").value=JSON.stringify(r,null,2);$("tune-coupled").checked=r.schema_version>=2;
+  $("tune-binding-law").value=r.schema_version===3 ? "polynomial" : "linear";
+  if(r.schema_version>=2) {
     $("tune-parameter-name").value=r.parameter;$("tune-parameter-unit").value=r.parameter_unit;
     $("tune-bindings").value=JSON.stringify(r.bindings,null,2);
   } else {
     const parts=r.parameter.split("/");$("tune-vertex").value=parts.at(-2);$("tune-coordinate").value=parts.at(-1);
   }
   tuningParameterMode();
-  $("tune-variable-heading").textContent=r.schema_version===2 ? `${r.parameter} [${r.parameter_unit==="1" ? "無次元" : "m"}]` : "座標 [m]";
+  $("tune-variable-heading").textContent=r.schema_version>=2 ? `${r.parameter} [${r.parameter_unit==="1" ? "無次元" : "m"}]` : "座標 [m]";
   $("tune-low").value=r.bounds[0];$("tune-high").value=r.bounds[1];$("tune-target").value=r.target_hz/1e6;
   for (const [id,key] of [["frequency-tolerance","frequency_tolerance_hz"],["parameter-tolerance","parameter_tolerance"],["max-trials","max_trials"],["refinement","refinement_scale"],["mesh-tolerance","mesh_frequency_tolerance_hz"]]) $(`tune-${id}`).value=r[key];
   $("tune-ids").value=JSON.stringify(r.initial_ids);$("tune-mode-id").value=r.mode_id;
@@ -2021,7 +2024,7 @@ bind("tune-prepare",async()=>{
     bounds:[number("tune-low"),number("tune-high")],target_hz:number("tune-target")*1e6,frequency_tolerance_hz:number("tune-frequency-tolerance"),
     parameter_tolerance:number("tune-parameter-tolerance"),max_trials:number("tune-max-trials"),initial_ids,mode_id:$("tune-mode-id").value,
     controls:trackingControls(),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
-  if(coupled) Object.assign(request,{schema_version:2,parameter:$("tune-parameter-name").value,
+  if(coupled) Object.assign(request,{schema_version:$("tune-binding-law").value==="polynomial" ? 3 : 2,parameter:$("tune-parameter-name").value,
     parameter_unit:$("tune-parameter-unit").value,bindings:JSON.parse($("tune-bindings").value)});
   $("tune-request").value=JSON.stringify(request,null,2);
 });
@@ -2042,6 +2045,7 @@ bind("tune-open-field",async()=>{
 tuningButtons();
 
 $("tune-coupled").addEventListener("change",tuningParameterMode);
+$("tune-binding-law").addEventListener("change",tuningParameterMode);
 $("tune-parameter-unit").addEventListener("change",tuningParameterMode);
 tuningParameterMode();
 

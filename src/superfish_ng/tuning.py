@@ -18,9 +18,9 @@ from .mode_tracking import tracked_frequency_hz
 def _request(request):
     fields=('schema_version','project','parameter','bounds','target_hz','frequency_tolerance_hz',
         'parameter_tolerance','max_trials','initial_ids','mode_id','controls','refinement_scale','mesh_frequency_tolerance_hz')
-    if isinstance(request,dict) and request.get('schema_version')==2:fields+=('bindings','parameter_unit')
+    if isinstance(request,dict) and request.get('schema_version') in (2,3):fields+=('bindings','parameter_unit')
     keys(request,fields,fields,'tune request');_canonical(request)
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2):raise ValueError('tune requires schema_version 1 or 2')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3):raise ValueError('tune requires schema_version 1, 2 or 3')
     for name in ('target_hz','frequency_tolerance_hz','parameter_tolerance','mesh_frequency_tolerance_hz'):positive(request[name],name)
     integer(request['max_trials'],'max_trials',2);integer(request['refinement_scale'],'refinement_scale',2)
     bounds=request['bounds']
@@ -48,7 +48,7 @@ def _request(request):
         if request['controls']['mapping']=='normalized_cylinder' and any(r!=p.case.profile[0][1] for _,r in p.case.profile):
             raise ValueError('normalized_cylinder tune bounds must retain constant radius')
         _project(request,value,'refinement');endpoint_geometries.append(p.case.profile)
-    if request['schema_version']==2 and endpoint_geometries[0]==endpoint_geometries[1]:
+    if request['schema_version'] in (2,3) and endpoint_geometries[0]==endpoint_geometries[1]:
         raise ValueError('bindings do not change representable geometry across bounds')
     return project
 
@@ -62,7 +62,9 @@ def _project(request,value,phase):
         bindings=request['bindings'];seen=set();active=False
         if type(bindings) is not list or not bindings:raise ValueError('bindings must be a nonempty list')
         for binding in bindings:
-            names=('path','multiplier','offset_m');keys(binding,names,names,'tune binding')
+            polynomial=request['schema_version']==3
+            names=('path','coefficients') if polynomial else ('path','multiplier','offset_m')
+            keys(binding,names,names,'tune binding')
             path=binding['path']
             match=re.fullmatch(r'/case/geometry/points_zr_m/(0|[1-9][0-9]*)/([01])',path) if type(path) is str else None
             if match is None:raise ValueError('binding path must name a canonical profile vertex coordinate')
@@ -70,15 +72,20 @@ def _project(request,value,phase):
             if target in seen:raise ValueError('duplicate binding target coordinate')
             if index>=len(points):raise ValueError('binding vertex does not exist in the project')
             seen.add(target)
-            for name in ('multiplier','offset_m'):
-                try:finite=type(binding[name]) in (int,float) and math.isfinite(binding[name])
+            coefficients=binding['coefficients'] if polynomial else [binding['offset_m'],binding['multiplier']]
+            if type(coefficients) is not list or not coefficients:raise ValueError('binding coefficients must be a nonempty list in ascending power order')
+            for coefficient in coefficients:
+                try:finite=type(coefficient) in (int,float) and math.isfinite(coefficient)
                 except OverflowError:finite=False
-                if not finite:raise ValueError(f'binding {name} must be finite')
-            active=active or binding['multiplier']!=0
-            mapped=binding['multiplier']*value+binding['offset_m']
+                if not finite:raise ValueError('binding coefficients, multiplier and offset must be finite numbers')
+            active=active or any(c!=0 for c in coefficients[1:])
+            if polynomial:
+                mapped=coefficients[-1]
+                for coefficient in reversed(coefficients[:-1]):mapped=mapped*value+coefficient
+            else:mapped=binding['multiplier']*value+binding['offset_m']
             if not math.isfinite(mapped):raise ValueError('binding produces a nonfinite coordinate')
             points[index][coordinate]=mapped
-        if not active:raise ValueError('at least one binding multiplier must be nonzero')
+        if not active:raise ValueError('at least one binding must have a nonzero nonconstant coefficient or multiplier')
         # Validate the combined shape once, never an arbitrary intermediate order.
         project=Project.from_dict(raw)
     if phase=='refinement':project=Study(project,'mesh_convergence','mesh_scale',[1,request['refinement_scale']]).projects()[1]
