@@ -1,5 +1,7 @@
 # 実装バックログ
 
+C00/K09の次の受入条件：[TE相補解計画](C00_TE_COMPLEMENTARY_PLAN.md)に版・入力・場の読み替え・独立壁損失とTM回帰を固定。既存R25の説明を確認した段階で、新規旧版実行/製品変換は未実施。
+
 D01/O02 TE対称面円筒追跡の受入条件: 同じ端条件・一対称面の半領域/鏡映に限定、通常/鏡映や異種端条件拒否、実Eφの正規化写像、両次数/相似則/解析交差/縮退/帯域退出/符号振幅、完全native再生と元ファイル変更拒否、従来閉PEC文書の維持、CLI/Study/GUIと標準回帰。API/GUIへ接続し、新6unit/TE全58件、独立32FEM/8CLI、8Study/16FEM、Chrome9操作、標準801件と旧数値回帰・470source一致を確認して限定受入。[計画](TE_SECTOR_TRACKING_PLAN.md)。
 
 O02/P01 TE鏡映部分スペクトル収束比較の受入条件: 同じ元半領域物理/同じ対称条件だけを比較し、元FEMの電場/磁場/RF/ゲートと全文書一致、混在/改変拒否、完全native snapshot、4種Study/CLI/worker/GUIと既存数値回帰。主ツリーの元半領域分岐・追加5unit・独立12FEM・4Study・Chrome7操作・標準795件・旧TE/TM回帰と467source照合を限定受入。[計画](TE_REFLECTED_CONVERGENCE_PLAN.md)。
