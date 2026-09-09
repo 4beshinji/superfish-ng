@@ -2,7 +2,7 @@
 """Explicit xy triangulations of a declared simple PEC polygon.
 
 This geometry contract is independent of axisymmetric Case/mesh readers.
-It does not yet enable polygon RF cases in the product solver.
+Polygon RF cases reuse this strict geometry contract.
 """
 from dataclasses import dataclass
 from fractions import Fraction
@@ -43,31 +43,42 @@ def _on_segment(a, b, p):
     return _orient(a, b, p) == 0 and np.all(p >= np.minimum(a,b)) and np.all(p <= np.maximum(a,b))
 
 
+def _edge_pairs(low,high):
+    # Keep the cheaper sweep for small edge sets; the BVH avoids scanning
+    # entire columns in fine structured/explicit meshes. Both include all
+    # closed AABB overlaps and retain the same exact segment predicates.
+    if len(low)>=32768:
+        from .planar_edge_bounds import edge_pairs
+        yield from edge_pairs(low,high)
+        return
+    active=[]
+    for index in np.argsort(low[:,0],kind='stable'):
+        active=[j for j in active if high[j,0]>=low[index,0]]
+        for j in active:
+            if high[j,1]>=low[index,1] and high[index,1]>=low[j,1]:yield j,index
+        active.append(index)
+
+
 def _check_edges(points, edges, name):
-    """AABB sweep; all remaining candidates receive a segment predicate."""
+    """Conservative AABB candidates followed by exact segment predicates."""
     endpoints = points[edges]
     low, high = endpoints.min(axis=1), endpoints.max(axis=1)
-    active = []
-    for index in np.argsort(low[:,0], kind='stable'):
-        active = [j for j in active if high[j,0] >= low[index,0]]
-        a, b = endpoints[index]
-        for j in active:
-            if high[j,1] < low[index,1] or high[index,1] < low[j,1]:
-                continue
-            c, d = endpoints[j]
-            common = set(edges[index]) & set(edges[j])
-            if common:
-                shared = common.pop()
-                other_a = next(v for v in edges[index] if v != shared)
-                other_b = next(v for v in edges[j] if v != shared)
-                p, q, r = points[[shared,other_a,other_b]]
-                if _orient(p,q,r) == 0 and (_on_segment(p,q,r) or _on_segment(p,r,q)):
-                    raise ValueError(f'{name} edges overlap at vertex {shared}')
-                continue
-            s, t, u, v = _orient(a,b,c), _orient(a,b,d), _orient(c,d,a), _orient(c,d,b)
-            if (s*t < 0 and u*v < 0) or any((sign == 0 and _on_segment(x,y,p)) for sign,x,y,p in ((s,a,b,c),(t,a,b,d),(u,c,d,a),(v,c,d,b))):
-                raise ValueError(f'{name} edges intersect or form an unshared T junction: {j}, {index}')
-        active.append(index)
+    for j,index in _edge_pairs(low,high):
+        a,b=endpoints[index]
+        c, d = endpoints[j]
+        common = set(edges[index]) & set(edges[j])
+        if common:
+            shared = common.pop()
+            other_a = next(v for v in edges[index] if v != shared)
+            other_b = next(v for v in edges[j] if v != shared)
+            p, q, r = points[[shared,other_a,other_b]]
+            if _orient(p,q,r) == 0 and (_on_segment(p,q,r) or _on_segment(p,r,q)):
+                raise ValueError(f'{name} edges overlap at vertex {shared}')
+            continue
+        s, t, u, v = _orient(a,b,c), _orient(a,b,d), _orient(c,d,a), _orient(c,d,b)
+        if (s*t < 0 and u*v < 0) or any((sign == 0 and _on_segment(x,y,p)) for sign,x,y,p in ((s,a,b,c),(t,a,b,d),(u,c,d,a),(v,c,d,b))):
+            raise ValueError(f'{name} edges intersect or form an unshared T junction: {j}, {index}')
+
 
 
 @dataclass(frozen=True)

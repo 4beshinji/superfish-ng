@@ -91,7 +91,9 @@ class PlanarSpace:
 
 
 def planar_matrices(case):
-    if not isinstance(case,PlanarCase):raise ValueError('planar FEM requires an explicit PlanarCase')
+    from .planar_polygon import PlanarPolygonCase
+    if isinstance(case,PlanarPolygonCase):return planar_mesh_matrices(case.mesh,case.element_order,case.polarization)
+    if not isinstance(case,PlanarCase):raise ValueError('planar FEM requires an explicit PlanarCase or PlanarPolygonCase')
     nx,ny=case.nx,case.ny
     x,y=np.meshgrid(np.linspace(0,case.width_m,nx+1),np.linspace(0,case.height_m,ny+1))
     points=np.column_stack((x.ravel(),y.ravel()))
@@ -112,7 +114,7 @@ def planar_matrices(case):
 def planar_mesh_matrices(mesh, element_order=2, polarization='te'):
     """Assemble area K/M on a verified explicit polygon mesh (geometry API).
 
-    This does not constitute a polygon PlanarCase or native/CLI solve path.
+    Polygon cases and native replay retain and revalidate this explicit mesh.
     """
     from .planar_mesh import PlanarMesh
     if not isinstance(mesh,PlanarMesh):raise ValueError('expected an explicit PlanarMesh')
@@ -242,7 +244,10 @@ def solve_planar(case):
 
 
 class PlanarFieldSampler:
-    def __init__(self,solution):self.solution=solution
+    def __init__(self,solution):
+        self.solution=solution
+        from .planar_polygon import PlanarPolygonCase,PolygonLocator
+        self.locator=PolygonLocator(solution.space) if isinstance(solution.case,PlanarPolygonCase) else None
 
     def evaluate(self,points_xy_m,mode=0):
         try:
@@ -252,6 +257,10 @@ class PlanarFieldSampler:
             points=raw.astype(float)
         except (TypeError,OverflowError) as exc:
             raise ValueError('planar probes require finite numeric xy coordinates') from exc
+        if self.locator is not None:
+            if not np.isfinite(points).all():raise ValueError('planar probes require finite xy coordinates')
+            cells,bary=self.locator.locate(points)
+            return self.solution.fields_in_cells(cells,bary,mode)
         case=self.solution.case
         if (points.ndim!=2 or points.shape[1]!=2 or not np.isfinite(points).all()
                 or np.any(points<0) or np.any(points>[case.width_m,case.height_m])):

@@ -1,6 +1,8 @@
 # 実装バックログ
 
-P02明示xyメッシュ基盤の受入条件：[単純PEC多角形](PLANAR_POLYGON_MESH.md)の正Jacobian・連結disk・交差/T字/重なり拒否・全境界被覆、独立面積/モーメント/勾配と回転・尺度則、旧矩形行列一致、標準回帰。追加11unitと独立24変換/8凹領域パッチ、標準824件・既存数値回帰/平面保存・480source一致まで基盤を限定受入。一般断面solve/native/CLIは後続。
+P02一般多角形RFの受入条件：[専用Case/native版2・CLI・点検索](PLANAR_POLYGON_RF_PLAN.md)のstrict/改変拒否、P1/P2・両尺度・三角形のf/全場/G、回転ベクトル/単位長規格化、旧版1/native再生、標準回帰。主ツリーへ接続し、新11unit/平面全32件・独立両尺度24FEM・全保存/CLI・標準835件・既存回帰と486source一致まで限定受入。次は[平面Project/Job](PLANAR_JOBS_PLAN.md)。親P02は継続。
+
+P02明示xyメッシュ基盤の受入条件：[単純PEC多角形](PLANAR_POLYGON_MESH.md)の正Jacobian・連結disk・交差/T字/重なり拒否・全境界被覆、独立面積/モーメント/勾配と回転・尺度則、旧矩形行列一致、標準回帰。追加11unitと独立24変換/8凹領域パッチ、標準824件・既存数値回帰/平面保存・480source一致まで基盤を限定受入。一般断面solve/native/CLIは専用版2へ接続。Project/Job/GUIは後続。
 
 P02の次の受入条件：[平面RF契約](PLANAR_RF_PLAN.md)のTE/TM別境界、単位長エネルギー/損失、零空間・縮退、P1/P2実細分、strict入力・保存再検証とCLI、既存TM/TE回帰。隔離候補の両次数・両尺度・矩形/正方形のf/場/GはPASS。専用PlanarCase/FEM・保存再組立/正スペクトル再検査・CLIへ接続し、追加10検査、主ツリー48 API/16 CLI計算・32プローブ/16 replay・標準813件と既存TM/TE回帰、478source一致まで限定受入。一般断面・GUI等は未接続。親集計は8受入/10調査実装中/14他/1候補=33、P02の受入ではない。
 

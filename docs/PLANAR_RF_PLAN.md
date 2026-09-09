@@ -1,5 +1,7 @@
 # P02：平面RF断面の独立実装契約
 
+2026-09-10、[単純多角形の専用Case/native版2・CLI・点検索](PLANAR_POLYGON_RF.md)も独立両尺度f/場/G・標準835件・既存回帰まで限定受入。次は[平面Project/Job](PLANAR_JOBS_PLAN.md)。親P02全体は継続する。
+
 2026-09-09、基準256dc44からの矩形P1/P2の主ツリー接続を限定受入。[矩形の平面TE/TM遮断問題](PLANAR_RF.md)を専用PlanarCase・P1/P2 FEM・場/RF・native再検証・CLIへ接続し、限定受入。U′[J/m]・側壁損失[W/m]、TE定数零空間除外、全real/quadrature成分と加速量N/Aを保持する。48 API FEM＋16 CLI計算、32 CLIプローブ/16 replay、標準813件（811合格、2skip）と既存TM/TE数値回帰を確認。一般断面・曲線・材料・伝搬・Project/GUIは未接続。 親C00/C01との依存とP02全体の残件は維持する。
 
 標準 `out/validation-planar-rf-final-20260909` は813件中811合格/2skip、unittest1226.870秒、command1227.257秒。convergenceと最終seed照合も終了0。TM seed9モード19量の周波数差0/RF最大8.882e-16、既存TE通常7件＋鏡映3件のRF差0。標準開始時/完了、最終独立、CLIプローブ、既存曲線tune再現、補助メッシュ検査と現在478sourceが一致した。

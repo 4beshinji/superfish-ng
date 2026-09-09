@@ -64,11 +64,11 @@ def upgrade_case(data):
 def capabilities():
     """Machine-readable capabilities of this implementation, not its roadmap."""
     return {'capabilities_version': 1,
-            'planar_cutoff': {'case_format': 'superfish_ng_planar_case', 'schema_version': 1,
-                'polarizations': ['te','tm'], 'geometry': 'rectangle', 'element_orders': [1,2],
+            'planar_cutoff': {'case_format': 'superfish_ng_planar_case', 'schema_version': 1, 'schema_versions': [1,2],
+                'polarizations': ['te','tm'], 'geometry': 'rectangle', 'geometries': ['rectangle', 'simple_polygon_with_explicit_xy_mesh'], 'element_orders': [1,2],
                 'coordinates': 'cartesian xy; beta_z=0', 'energy_unit': 'J/m', 'wall_loss_unit': 'W/m',
                 'commands': ['solve-planar','replay-planar','probe-planar'],
-                'limits': 'vacuum PEC side walls; no general mesh, curved geometry, propagation, Project/Job/GUI integration'}, 'case_schema_versions': [1, 2, 3],
+                'limits': 'vacuum single PEC boundary; straight P1/P2; no holes, curved geometry, materials, propagation, Project/Job/GUI integration'}, 'case_schema_versions': [1, 2, 3],
             'supported_models': [Model().to_dict(), Model(polarization='te').to_dict()],
             'model_limits': {'te': 'vacuum m=0, straight P1/P2 and curved P2, solve/TE native read/Project/JobManager/GUI; symmetry reflection with source provenance and partial spectrum; matching-end-cylinder tracking including one symmetry plane and reflected sectors; parameter sweeps and same-physics refinement diagnostics; other tracking pending'},
             'geometry_types': ['pillbox', 'profile', 'stepped_profile', 'arc_profile', 'contour'],

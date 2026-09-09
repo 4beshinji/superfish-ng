@@ -1,5 +1,13 @@
 # ローカルCodexへの引継ぎ
 
+## P02単純多角形RFの主ツリー接続：限定受入
+
+基準c2e5679。PlanarPolygonCase/Case-native版2・load dispatcher・CLI・厳密点検索、大規模辺集合のBVH（同じ厳密線分述語）を接続。旧矩形版1を保持。標準835件（833合格、2skip、unittest1233.849秒）、独立三角形24FEM、回転/尺度16FEM＋参照4FEM、CLI・32プローブ/16replay・凹L字・規格化を確認。旧平面32件/TE10件、TM seed9モード19量と486source、36新規native hashも照合した。
+
+標準41902、物理65542（691.829秒）、変換29034、旧保存36570、全probe34550、凹L字64092は全て終了0。規格化4FEM/4native再生と例題2CLI/API、最終seed照合も終了0。残る実行はない。 最終照合driverの生成時SyntaxErrorは元ファイルを保持して修正し、照合終了0。製品ソースと条件は不変。標準末尾の既存.manager.lockのResourceWarningは未解決。主ツリーの証拠と最大誤差はPLANAR_POLYGON_RF.md末尾。ソース486は全最終報告/標準/現在で一致。旧隔離59036は859.563秒で終了0、初回P1粗分割未達と本体smokeの未達は保持して許容差を維持した。
+
+次はPLANAR_JOBS_PLAN.md。専用PlanarProject、planar_solve worker・state/manifest/Project/nativeの完全結合、JobManager start/import、実中止/再起動/再実行、既存数値回帰を実装する。現行軸対称ProjectにダミーCaseを渡さず、平面nativeにないmodes.csvを要求しない。Project/Job/GUI・曲線/材料/穴/伝搬などと親P02全体は未完。親8受入/10進行中/14他/1候補=33と全体目標を維持する。
+
 ## P02多角形の明示xyメッシュ基盤：限定受入
 
 基準7bac43a。専用PlanarMeshのstrict入力、正Jacobian・連結disk・辺交差/T字/重なり拒否・全宣言境界被覆、矩形から分離した面積K/Mを実装。追加11unit、旧矩形12条件の全配列/疎行列一致、回転二尺度24条件/凹L字8パッチがPASS。標準824件（822合格、2skip、1233.985秒）、convergence、TM seed9モード19量と既存平面32件/TE10件の再生、480source一致まで確認した。

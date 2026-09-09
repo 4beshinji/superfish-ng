@@ -1,8 +1,10 @@
 # Superfish-NG — 0.1.0 research seed
 
-[一般多角形の明示xyメッシュ基盤](docs/PLANAR_POLYGON_MESH.md)を追加。単一PEC多角形の接続・交差・全境界被覆を検査し、P1/P2面積行列を組み立てる。標準824件（822合格、2skip、1233.985秒）、convergence、TM seed9モード19量と既存平面32件/TE10件の再生、480source一致まで確認した。 一般断面のCase/solve/native/CLIは隔離試作中で、製品対応は矩形のまま。
+[一般多角形の平面TE/TM](docs/PLANAR_POLYGON_RF.md)を専用Case/native版2・CLI・点検索へ接続し、限定受入。標準835件（833合格、2skip、unittest1233.849秒）、独立三角形24FEM、回転/尺度16FEM＋参照4FEM、CLI・32プローブ/16replay・凹L字・規格化を確認。旧平面32件/TE10件、TM seed9モード19量と486source、36新規native hashも照合した。矩形版1は保持する。Project/GUI・曲線・材料・伝搬・多重連結は未対応。
 
-[矩形の平面TE/TM遮断問題](docs/PLANAR_RF.md)を専用PlanarCase・P1/P2 FEM・場/RF・native再検証・CLIへ接続し、限定受入。U′[J/m]・側壁損失[W/m]、TE定数零空間除外、全real/quadrature成分と加速量N/Aを保持する。48 API FEM＋16 CLI計算、32 CLIプローブ/16 replay、標準813件（811合格、2skip）と既存TM/TE数値回帰を確認。一般断面・曲線・材料・伝搬・Project/GUIは未接続。
+[一般多角形の明示xyメッシュ基盤](docs/PLANAR_POLYGON_MESH.md)を追加。単一PEC多角形の接続・交差・全境界被覆を検査し、P1/P2面積行列を組み立てる。標準824件（822合格、2skip、1233.985秒）、convergence、TM seed9モード19量と既存平面32件/TE10件の再生、480source一致まで確認した。 一般断面のCase/native/CLIは専用版2へ接続。Project/Job/GUIは後続。
+
+[矩形の平面TE/TM遮断問題](docs/PLANAR_RF.md)を専用PlanarCase・P1/P2 FEM・場/RF・native再検証・CLIへ接続し、限定受入。U′[J/m]・側壁損失[W/m]、TE定数零空間除外、全real/quadrature成分と加速量N/Aを保持する。48 API FEM＋16 CLI計算、32 CLIプローブ/16 replay、標準813件（811合格、2skip）と既存TM/TE数値回帰を確認。曲線・材料・伝搬・Project/GUIは未接続。
 
 [旧版TE相補解の比較器](docs/C00_TE_COMPLEMENTARY_PLAN.md)を追加。既設7.17の合成円筒12計算を独立解析・FEMと照合し、SF7の場から壁損失を積分する。二尺度/二モードの周波数・場・G/Qが限定PASS。標準803件（801合格、2skip）も合格。一般AF入力変換や一般形状の旧版TE互換は未対応。
 

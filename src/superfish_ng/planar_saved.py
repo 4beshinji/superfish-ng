@@ -11,6 +11,7 @@ import numpy as np
 from .config import keys
 from .planar import PlanarCase, PlanarSolution, planar_matrices, _restore, planar_quantities
 from .project import parse_json
+from .planar_polygon import planar_case_from_dict
 
 FILES={'case.json','mesh.npz','fields.npz','results.json'}
 
@@ -24,7 +25,7 @@ def _mesh_arrays(space):
 
 
 def planar_result(solution):
-    return dict(format='superfish_ng_planar_result',schema_version=1,physics='cartesian_cutoff_rf',case=solution.case.to_dict(),
+    return dict(format='superfish_ng_planar_result',schema_version=solution.case.to_dict()['schema_version'],physics='cartesian_cutoff_rf',case=solution.case.to_dict(),
         conventions=dict(coordinates='x,y in metres; uniform longitudinal z; beta_z=0',volume_measure='dx dy; per unit z length',
             phasor='peak exp(+i omega t); real and +i quadrature fields explicitly named',
             normalization='total time-averaged energy in J/m',wall_loss='PEC side walls only, W/m; no finite-length end plates',
@@ -38,14 +39,14 @@ def save_planar_run(case,solution,directory):
     if not isinstance(solution,PlanarSolution) or solution.case!=case:raise ValueError('planar case and solution disagree')
     space,k,m,free=planar_matrices(case)
     for name,array in _mesh_arrays(space).items():
-        if not np.array_equal(array,getattr(solution.space,name)):raise ValueError('planar solution mesh differs from its declared rectangle')
+        if not np.array_equal(array,getattr(solution.space,name)):raise ValueError('planar solution mesh differs from its declared geometry')
     verified=_restore(case,space,k,m,free,solution.coefficients,solution.frequencies_hz,verify_spectrum=True)
     result=planar_result(verified);directory=Path(directory);directory.mkdir(parents=True,exist_ok=False)
     with tempfile.TemporaryDirectory(prefix='.planar-staging-',dir=directory) as temporary:
         stage=Path(temporary);_json(stage/'case.json',case.to_dict());_json(stage/'results.json',result)
         np.savez_compressed(stage/'mesh.npz',**_mesh_arrays(space))
         np.savez_compressed(stage/'fields.npz',coefficients=verified.coefficients,frequencies_hz=verified.frequencies_hz)
-        manifest=dict(format='superfish_ng_planar_manifest',schema_version=1,
+        manifest=dict(format='superfish_ng_planar_manifest',schema_version=case.to_dict()['schema_version'],
             files={name:hashlib.sha256((stage/name).read_bytes()).hexdigest() for name in sorted(FILES)})
         _json(stage/'manifest.json',manifest)
         for name in sorted(FILES):os.replace(stage/name,directory/name)
@@ -74,11 +75,12 @@ def read_planar_run(directory):
     directory=Path(directory);raw=_snapshot(directory)
     manifest=parse_json(raw['manifest.json'].decode('utf-8'))
     keys(manifest,['format','schema_version','files'],['format','schema_version','files'],'planar manifest')
-    if manifest['format']!='superfish_ng_planar_manifest' or type(manifest['schema_version']) is not int or manifest['schema_version']!=1:
+    if manifest['format']!='superfish_ng_planar_manifest' or type(manifest['schema_version']) is not int or manifest['schema_version'] not in (1,2):
         raise ValueError('unsupported planar manifest format')
     if manifest['files']!={name:hashlib.sha256(raw[name]).hexdigest() for name in sorted(FILES)}:
         raise ValueError('planar native content hash mismatch')
-    case=PlanarCase.from_dict(parse_json(raw['case.json'].decode('utf-8')))
+    case=planar_case_from_dict(parse_json(raw['case.json'].decode('utf-8')))
+    if manifest['schema_version']!=case.to_dict()['schema_version']:raise ValueError('planar manifest and case versions disagree')
     space,k,m,free=planar_matrices(case);mesh=_arrays(raw['mesh.npz']);expected=_mesh_arrays(space)
     if mesh.keys()!=expected.keys() or any(mesh[name].dtype.kind!=value.dtype.kind or not np.array_equal(mesh[name],value) for name,value in expected.items()):
         raise ValueError('saved planar mesh does not match declared Cartesian geometry and FEM space')

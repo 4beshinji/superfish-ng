@@ -169,7 +169,8 @@ def main(argv=None):
             from .planar import PlanarCase,solve_planar,PlanarFieldSampler
             from .planar_saved import save_planar_run,read_planar_run
             if args.command=='solve-planar':
-                case=PlanarCase.load(args.case)
+                from .planar_polygon import load_planar_case
+                case=load_planar_case(args.case)
                 result=save_planar_run(case,solve_planar(case),args.out)
                 print(json.dumps(result,indent=2,allow_nan=False))
             else:
