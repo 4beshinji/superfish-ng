@@ -1,5 +1,7 @@
 # 互換対応表 v0
 
+[矩形平面モード追跡](PLANAR_TRACKING.md)：矩形平面RFの宣言写像による電場モード追跡を限定受入。独立格子の元要素積分、順位交差、縮退ID集合、帯域guardと有限細分空間の診断、コピー保存/再生・実worker・CLI・GUIを接続した。標準899件（897合格、2skip、unittest1302.292秒）、追加20unit、独立8比較16FEM・縮退/退出18FEM・永続8worker、Chrome51操作、保存11追跡/22スペクトルと取込6件を確認。旧Study29件61点、細分18件54水準、平面32件/TE10件、TM seed9モード19量（f差0、RF最大8.882e-16）も回帰合格。一般多角形の追跡・履歴連鎖、親P02と全計画は未完。
+
 [同形状細分診断](PLANAR_CONVERGENCE.md)：平面RFの同形状細分診断を限定受入。元領域の四分割・係数移送、f/E/H/RF別判定、縮退/不足帯域UNVERIFIED、全水準保存再生・worker・CLI・GUIを接続した。標準879件（877合格、2skip、unittest1304.306秒）、追加14検査、独立16条件48FEM・特殊形状16条件48FEM、永続16worker、Chrome42操作、保存18診断54水準と取込2件を確認。旧平面32件/TE10件、TM seed9モード19量と513sourceも一致した。真の誤差上界・表面ピーク精度は保証しない。モード追跡、親P02と全計画は未完。
 
 2026-09-09追補: [同端条件のTE円筒追跡](TE_SECTOR_TRACKING_PLAN.md)を半領域・鏡映部分スペクトルへ拡張し、限定受入。同じ側の一対称面を持つ直線P1/P2円筒が対象。実Eφで対応し、異なる端条件・通常/鏡映の混在を拒否する。独立32FEM、8Study、Chrome9操作、旧追跡8文書の再生、標準801件（799合格、2skip）と既存TM/TE数値回帰を確認。一般形状の追跡・TE調整は未対応。
@@ -154,7 +156,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K07 | 軸対称m=0 TM基本/高次モード | L/H | 実装、演習17対象モード照合 | 形状/周波数範囲・探索条件の網羅、対応モードの判定 | A / C04,D01 |
 | K08 | 電気/磁気対称・PEC | L（全領域比較）、U（旧半領域詳細） | 部分：平坦z端・鏡映 | 旧タグ写像、任意境界への拡張要否。旧半領域を直接照合済みとはしない | A / C02,G01 |
 | K09 | 軸対称TE | D（R25相補解）、L（7.17合成円筒二尺度/二モード） | 部分：[直線P1/P2](AXISYMMETRIC_TE.md)・[曲線P2](CURVED_TE_PLAN.md)の固有値・Eφ/Hr/Hz・エネルギー/壁損失・専用native/CLI、[Project/Job](TE_JOBS.md)・[通常GUI](GUI_TE.md)・[円筒追跡](TE_TRACKING_PLAN.md)・[独立掃引](TE_STUDY_PLAN.md)・[収束比較](TE_CONVERGENCE_STUDY_PLAN.md)・[対称面鏡映](TE_REFLECTION_PLAN.md) | 一般形状の追跡等、一般形状の受入。旧版[相補解比較器](C00_TE_COMPLEMENTARY_PLAN.md)は合成円筒に限定し、一般AF入力変換は未対応 | B / P01 |
-| K10 | 平面2D RF | D（R25のCartesian遮断解説明）、U（対象版の実行） | [矩形版1](PLANAR_RF.md)と[単純多角形版2・場/RF・保存/CLI](PLANAR_POLYGON_RF.md)を接続 | 主ツリーの両尺度/両次数8モードのf/場/G・零空間/縮退、CLI、標準813件と既存数値回帰まで限定受入。[一般多角形の明示メッシュ・面積行列基盤](PLANAR_POLYGON_MESH.md)は限定受入。単純多角形solve/保存/CLIは標準835件と両尺度f/場/Gまで限定受入。[平面Project/Job](PLANAR_JOBS.md)は標準849件・独立workerのf/場/G/Q・取込/中止/再起動まで限定受入。[表示/GUI](GUI_PLANAR.md)は標準856件・独立場/回転・Chrome/保存再起動まで限定受入。[独立Study](PLANAR_STUDY.md)は標準865件・独立則・実worker/GUI/保存まで限定受入。曲線・材料・収束診断/追跡等、旧版Cartesian実行は未完 | B / P02 |
+| K10 | 平面2D RF | D（R25のCartesian遮断解説明）、U（対象版の実行） | [矩形版1](PLANAR_RF.md)と[単純多角形版2・場/RF・保存/CLI](PLANAR_POLYGON_RF.md)を接続 | 主ツリーの両尺度/両次数8モードのf/場/G・零空間/縮退、CLI、標準813件と既存数値回帰まで限定受入。[一般多角形の明示メッシュ・面積行列基盤](PLANAR_POLYGON_MESH.md)は限定受入。単純多角形solve/保存/CLIは標準835件と両尺度f/場/Gまで限定受入。[平面Project/Job](PLANAR_JOBS.md)は標準849件・独立workerのf/場/G/Q・取込/中止/再起動まで限定受入。[表示/GUI](GUI_PLANAR.md)は標準856件・独立場/回転・Chrome/保存再起動まで限定受入。[独立Study](PLANAR_STUDY.md)は標準865件・独立則・実worker/GUI/保存まで限定受入。[同形状細分診断](PLANAR_CONVERGENCE.md)と[矩形の宣言写像追跡](PLANAR_TRACKING.md)は限定受入。曲線・材料・一般多角形追跡・履歴連鎖、旧版Cartesian実行は未完 | B / P02 |
 | K11 | 同軸共振器/TEM系 | U | 未 | 内導体、端面、零固有値と物理共振の区別 | B / P03 |
 | K12 | 複数RF材料領域 | D（MAT、MT EPSILON/MU） | 未 | epsilon/mu界面、エネルギー、対象版での材料入力・実行検証 | B / P04 |
 | K13 | f/U/壁損失/Q0/G/RQ/シャント | L | 実装、対象ケース照合 | 単位/正規化/二つのRQ規約の入出力写像 | A / R01,C03,C04 |

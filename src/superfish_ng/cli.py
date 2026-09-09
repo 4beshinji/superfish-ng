@@ -125,6 +125,13 @@ def main(argv=None):
     planar_convergence.add_argument('--out',required=True,type=Path)
     planar_convergence_replay=sub.add_parser('replay-planar-convergence',help='recompute all saved planar refinement diagnostics')
     planar_convergence_replay.add_argument('run',type=Path)
+    planar_tracking=sub.add_parser('execute-planar-tracking',help='track physical electric subspaces between declared rectangle spectra')
+    planar_tracking.add_argument('previous',type=Path)
+    planar_tracking.add_argument('current',type=Path)
+    planar_tracking.add_argument('request',type=Path)
+    planar_tracking.add_argument('--out',required=True,type=Path)
+    planar_tracking_replay=sub.add_parser('replay-planar-tracking',help='verify both copied native spectra and recompute their correspondence')
+    planar_tracking_replay.add_argument('run',type=Path)
     planar_plot=sub.add_parser('plot-planar',help='plot signed Cartesian cutoff fields from verified native coefficients')
     planar_plot.add_argument('run',type=Path)
     planar_plot.add_argument('--out',type=Path,required=True)
@@ -184,6 +191,12 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('execute-planar-tracking','replay-planar-tracking'):
+            from .planar_tracking import PlanarTrackingRequest
+            from .planar_tracking_jobs import execute_planar_tracking, read_planar_tracking
+            result=(execute_planar_tracking(args.previous,args.current,PlanarTrackingRequest.load(args.request),args.out)
+                    if args.command=='execute-planar-tracking' else read_planar_tracking(args.run))
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
         if args.command in ('execute-planar-convergence','replay-planar-convergence'):
             from .planar_convergence import PlanarConvergence
             from .planar_convergence_jobs import execute_planar_convergence, read_planar_convergence

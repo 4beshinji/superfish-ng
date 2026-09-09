@@ -17,6 +17,9 @@ ACTIONS = {
     'planar-study-result': ['id'], 'planar-study-point': ['id', 'index'],
     'planar-normalize-convergence': ['document'], 'planar-start-convergence': ['document'],
     'planar-convergence-result': ['id'], 'planar-convergence-point': ['id', 'index'],
+    'planar-normalize-tracking': ['document'],
+    'planar-start-tracking': ['document', 'previous_id', 'current_id'],
+    'planar-tracking-result': ['id'], 'planar-tracking-source': ['id', 'side'],
     'planar-normalize': ['document'], 'planar-start': ['document'],
     'planar-import': ['path'], 'planar-result': ['id'],
     'planar-plot': ['id', 'mode', 'mesh', 'length_unit'],
@@ -29,6 +32,8 @@ ACTIONS = {
 def planar_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown planar operation')
+    if action in ('planar-normalize-tracking','planar-start-tracking','planar-tracking-result','planar-tracking-source'):
+        return planar_tracking_response(manager,action,data)
     if action in ('planar-normalize-convergence','planar-start-convergence','planar-convergence-result','planar-convergence-point'):
         return planar_convergence_response(manager,action,data)
     if action in ('planar-normalize-study','planar-start-study','planar-study-result','planar-study-point'):
@@ -144,4 +149,31 @@ def planar_convergence_response(manager, action, data):
         if before!=_snapshot(directory,request):raise ValueError('planar convergence changed before level import')
         payload={'id':manager.import_planar_result(directory/_point_name(index))}
     if before!=_snapshot(directory,request):raise ValueError('planar convergence changed during GUI response')
+    return payload,media
+
+
+def planar_tracking_response(manager, action, data):
+    from .planar_tracking import PlanarTrackingRequest
+    from .planar_tracking_jobs import read_planar_tracking, _snapshot
+    keys(data,ACTIONS[action],ACTIONS[action],'planar tracking request')
+    media='application/json; charset=utf-8'
+    if action in ('planar-normalize-tracking','planar-start-tracking'):
+        raw=parse_json(data['document']) if isinstance(data['document'],str) else data['document']
+        request=PlanarTrackingRequest.from_dict(raw)
+        if action=='planar-normalize-tracking':return request.to_dict(),media
+        paths=[]
+        for key in ('previous_id','current_id'):
+            state=manager.status(data[key],verify=True)
+            if state.get('status')!='complete' or state.get('kind')!='planar_solve':
+                raise ValueError('select complete individual planar spectra; import a Study point first')
+            paths.append(manager.directory(data[key]))
+        return {'id':manager.start_planar_tracking(*paths,request)},media
+    directory=manager.directory(data['id']);before=_snapshot(directory);result=read_planar_tracking(directory)
+    if action=='planar-tracking-result':
+        payload=dict(request=result['request'],result=result,state=manager.status(data['id'],verify=True))
+    else:
+        if data['side'] not in ('previous','current'):raise ValueError('tracking side must be previous or current')
+        if before!=_snapshot(directory):raise ValueError('planar tracking changed before source import')
+        payload={'id':manager.import_planar_result(directory/data['side'])}
+    if before!=_snapshot(directory):raise ValueError('planar tracking changed during GUI response')
     return payload,media

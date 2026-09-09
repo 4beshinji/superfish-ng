@@ -15,7 +15,7 @@
 <label>モード数<input id="modes" type="number" min="1" step="1"></label>
 <label>単位長エネルギー U′ [J/m]<input id="energy" type="number" step="any"></label>
 <label>壁導電率 [S/m]<input id="conductivity" type="number" step="any"></label>
-<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。曲線・材料・穴・伝搬・モード追跡は未対応です。</p>
+<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。曲線・材料・穴・伝搬は未対応です。矩形のモード追跡は下の専用操作で行います。</p>
 <details><summary>Project JSONを編集</summary><textarea id="document" rows="18" aria-label="Project JSON"></textarea><button id="apply">JSONを適用</button><p>座標は表示単位によらずSIのmです。フォームへの反映には「JSONを適用」を押してください。</p></details>
 </section><section><h2>保存結果の取込</h2><label>ローカルnativeまたはジョブのディレクトリ<input id="import-path" type="text"></label><button id="import">保存結果を取り込む</button><p>保存係数と元メッシュを保持して検証します。新たな計算は「計算を開始」で行います。</p></section></div>
 <div><section><h2>独立パラメータ掃引</h2>
@@ -33,7 +33,19 @@
 <details><summary>比較の閾値</summary><label>無次元の相対差・内積条件<textarea id="convergence-thresholds" rows="9">{"frequency_relative":0.0001,"electric_field_relative":0.01,"magnetic_field_relative":0.01,"rf_relative":0.005,"spectral_gap_relative":0.001,"minimum_overlap":0.9,"overlap_margin":0.1}</textarea></label></details>
 <button id="convergence-start">細分診断を開始</button><button id="convergence-save">細分要求を保存</button><label class="file">細分要求を開く<input id="convergence-open" type="file" accept=".json"></label>
 <div id="convergence-result" hidden><h3>選択した細分診断</h3><p id="convergence-selection"></p><div id="convergence-checks"></div><div id="convergence-points"></div><button id="convergence-result-save">診断結果を保存</button></div>
+</section><section><h2>矩形のモード追跡</h2>
+<p>保存済みの矩形自動メッシュ（Case版1）を比較します。原点とxy軸をそろえた単位正方形の写像で、元の電場を積分します。各対象帯域の上に、少なくとも1モードを計算しておいてください。</p>
+<label>前の場<select id="tracking-previous"></select></label><label>次の場<select id="tracking-current"></select></label>
+<label>前の対象モード数（正の固有値の先頭から）<input id="tracking-previous-count" type="number" min="1" step="1" value="2"></label>
+<label>次の対象モード数（正の固有値の先頭から）<input id="tracking-current-count" type="number" min="1" step="1" value="2"></label>
+<label>前のモードIDの配列<textarea id="tracking-ids" rows="2">["mode-1", "mode-2"]</textarea></label>
+<details><summary>部分空間と追跡条件</summary><p>部分空間を引き継ぐ場合はモードIDをnullとし、以下に前の順位とID集合を指定します。縮退した個別IDは自動で復元しません。</p>
+<label>前の部分空間（未指定ならnull）<textarea id="tracking-groups" rows="3">null</textarea></label>
+<label>条件<textarea id="tracking-controls" rows="9">{"minimum_overlap":0.9,"minimum_assignment_margin":0.1,"relative_cluster_gap":0.001,"minimum_relative_singular_value":1e-8,"minimum_cluster_link":0.7,"max_overlay_triangles":250000,"max_refined_triangles":250000}</textarea></label></details>
+<button id="tracking-start">追跡を開始</button><button id="tracking-save">追跡要求を保存</button><label class="file">追跡要求を開く<input id="tracking-open" type="file" accept=".json"></label>
+<p>PASSは宣言写像での数値的な場・部分空間の対応です。連続した変形経路のモード同一性や、真の物理誤差の保証ではありません。</p>
+<div id="tracking-result" hidden><h3>選択した追跡結果</h3><p id="tracking-selection"></p><p id="tracking-notes"></p><div id="tracking-matches"></div><button id="tracking-result-save">追跡結果を保存</button><button id="tracking-previous-import">前の保存場を取り込む</button><button id="tracking-current-import">次の保存場を取り込む</button><button id="tracking-use-groups">次の追跡へID集合を引き継ぐ</button></div>
 </section><section><h2>計算履歴</h2><div id="jobs"></div></section>
 <section id="result" hidden><h2>選択した結果</h2><p id="selection"></p><p>完了は保存場の整合性確認です。メッシュの精度は未検証です。番号は固有値の順序で、追跡したモード名ではありません。</p><label>モード<select id="mode"></select></label><p id="quantities"></p><p id="na"></p><label><input id="mesh" type="checkbox">表示三角形を重ねる</label><button id="plot">場を描画</button><button id="save-image" disabled>画像を保存</button><img id="image" alt="xy断面の符号付き電磁場。実部とquadratureを別表示。" hidden>
 <h3>xyプローブ</h3><label>座標の配列 [m] — [[x, y], …]<textarea id="points" rows="3">[[0.03, 0.02]]</textarea></label><button id="probe">SIプローブCSVを保存</button><button id="probe-meta">プローブ情報を保存</button><p>全E/H成分をrealと+i quadratureで保存します。B=μ0H。領域外の点は拒否します。</p>
-<h3>元の計算データ</h3><div id="files"></div></section></div></main></body></html>
+<button id="tracking-select-previous">追跡の前の場に指定</button><button id="tracking-select-current">追跡の次の場に指定</button><h3>元の計算データ</h3><div id="files"></div></section></div></main></body></html>

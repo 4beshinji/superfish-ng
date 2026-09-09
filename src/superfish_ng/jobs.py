@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_tracking_jobs import is_planar_tracking, verify_planar_tracking
+        if is_planar_tracking(directory, state, manifest):
+            verify_planar_tracking(directory, state, manifest)
+            return state
         from .planar_convergence_jobs import is_planar_convergence, verify_planar_convergence
         if is_planar_convergence(directory, state, manifest):
             verify_planar_convergence(directory, state, manifest)
@@ -307,6 +311,11 @@ class JobManager:
         """Run same-domain refinement diagnostics in a dedicated local worker."""
         from .planar_convergence_jobs import start_planar_convergence
         return start_planar_convergence(self, request)
+
+    def start_planar_tracking(self, previous, current, request):
+        """Track two verified planar native spectra in a dedicated worker."""
+        from .planar_tracking_jobs import start_planar_tracking
+        return start_planar_tracking(self, previous, current, request)
 
     def import_planar_result(self, source):
         """Import verified planar native bytes, preserving their explicit mesh."""

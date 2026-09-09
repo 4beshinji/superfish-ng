@@ -100,3 +100,22 @@ class PlanarGuiTests(unittest.TestCase):
         imported=self.request('planar-convergence-point',id=identifier,index=2)[0]['id']
         result=self.request('planar-result',id=imported)[0]
         self.assertEqual(result['project'],request.projects()[2].to_dict())
+
+    def test_tracking_worker_request_result_and_copied_source(self):
+        from superfish_ng.planar_tracking import PlanarTrackingRequest
+        from superfish_ng.planar_jobs import execute_planar_project
+        identifiers=[]
+        for index,width in enumerate((.18,.22)):
+            directory=self.root/f'input-{index}';project=PlanarProject(PlanarCase(width,.2,nx=4,ny=4,modes=3))
+            execute_planar_project(project,directory);identifiers.append(self.manager.import_planar_result(directory))
+        request=PlanarTrackingRequest()
+        self.assertEqual(self.request('planar-normalize-tracking',document=request.to_dict())[0],request.to_dict())
+        identifier=self.request('planar-start-tracking',previous_id=identifiers[0],current_id=identifiers[1],document=request.to_dict())[0]['id']
+        self.assertEqual(self.manager.processes[identifier].wait(timeout=60),0)
+        data,media=self.request('planar-tracking-result',id=identifier)
+        self.assertEqual(data['result']['current_mode_ids'],['mode-2','mode-1'])
+        self.assertEqual(data['request'],request.to_dict());self.assertIn('application/json',media)
+        with self.assertRaises(ValueError):self.request('planar-tracking-source',id=identifier,side='unknown')
+        imported=self.request('planar-tracking-source',id=identifier,side='current')[0]['id']
+        result=self.request('planar-result',id=imported)[0]
+        self.assertEqual(result['project']['case']['geometry']['width_m'],.22)

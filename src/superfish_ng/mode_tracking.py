@@ -69,7 +69,7 @@ def _identity_groups(groups,count):
 def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous_frequencies_hz,current_frequencies_hz,
                                  previous_ids,*,comparison_description,minimum_overlap,minimum_assignment_margin,
                                  relative_cluster_gap,minimum_relative_singular_value=1e-8,previous_identity_groups=None,
-                                 cluster_transition_policy=None,minimum_cluster_link=None):
+                                 cluster_transition_policy=None,minimum_cluster_link=None,current_frequency_groups=None):
     """Match equal-dimensional frequency clusters by their worst principal overlap.
 
     PASS means all previous and current clusters have unambiguous matches.
@@ -103,7 +103,16 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
     elif cluster_transition_policy not in ('retain_subspace','retain_connected_subspace'):raise ValueError('cluster_transition_policy must be retain_subspace or retain_connected_subspace')
     else:minimum_cluster_link=_control(minimum_cluster_link,'minimum_cluster_link')
     effective_margin=max(margin,32*np.finfo(float).eps*max(len(w),len(f),len(g)))
-    old=_clusters(f,gap) if groups is None else [[k-1 for k in c['indices']] for c in groups];new=_clusters(g,gap)
+    old=_clusters(f,gap) if groups is None else [[k-1 for k in c['indices']] for c in groups]
+    if current_frequency_groups is None:
+        new=_clusters(g,gap)
+    else:
+        declared=current_frequency_groups
+        if (type(declared) is not list or not declared
+                or any(type(c) is not list or not c or any(type(i) is not int for i in c) for c in declared)
+                or [i for c in declared for i in c]!=list(range(1,len(g)+1))):
+            raise ValueError('current_frequency_groups must partition the ordered frequency ranks into contiguous groups')
+        new=[[i-1 for i in c] for c in declared]
     left=[_basis(a,w,c,rank_threshold) for c in old];right=[_basis(b,w,c,rank_threshold) for c in new]
     identities=[sorted(previous_ids[k] for k in c) for c in old] if groups is None else [c['ids'] for c in groups]
     transitions=None
@@ -154,6 +163,7 @@ def track_sampled_mode_subspaces(previous_fields,current_fields,weights,previous
                 scope='numerical weighted sample/subspace correspondence; mode_index remains frequency rank; no proof of continuous-path identity, mapping accuracy or FEM convergence')
 
     if groups is not None:result['previous_identity_groups']=groups
+    if current_frequency_groups is not None:result['current_frequency_groups']=[list(c) for c in current_frequency_groups]
     if transitions is not None:
         for event in transitions['events']:
             event['status']='PASS' if any(m['previous_indices']==event['previous_indices'] and m['current_indices']==event['current_indices'] for m in matches) else 'UNVERIFIED'

@@ -1,0 +1,180 @@
+# SPDX-License-Identifier: Apache-2.0
+"""Declared rectangle electric-field correspondence with guarded mode bands."""
+from dataclasses import dataclass, field
+import json
+from pathlib import Path
+import numpy as np
+from .config import integer, keys
+from .project import parse_json
+from .mode_tracking import _control, _identity_groups, track_sampled_mode_subspaces
+from .planar_tracking_fields import verified_rectangular_solutions, _electric_grams, electric_gram_features
+from .planar_tracking_overlap import rectangle_tracking_overlay
+from .planar_tracking_resolution import rectangle_spectral_resolution, resolution_frequency_groups
+
+
+@dataclass(frozen=True)
+class PlanarTrackingControls:
+    minimum_overlap: float = .9
+    minimum_assignment_margin: float = .1
+    relative_cluster_gap: float = .001
+    minimum_relative_singular_value: float = 1e-8
+    minimum_cluster_link: float = .7
+    max_overlay_triangles: int = 250000
+    max_refined_triangles: int = 250000
+
+    def __post_init__(self):
+        for name in self.__dataclass_fields__:
+            value = getattr(self, name)
+            if name.startswith('max_'):
+                integer(value, name)
+            else:
+                object.__setattr__(self, name, _control(value, name,
+                    zero=name in ('minimum_assignment_margin', 'relative_cluster_gap'),
+                    one=name != 'relative_cluster_gap'))
+
+    def to_dict(self):
+        return {name: getattr(self, name) for name in self.__dataclass_fields__}
+
+    @classmethod
+    def from_dict(cls, data):
+        names = list(cls.__dataclass_fields__)
+        keys(data, names, names, 'planar tracking controls')
+        return cls(**data)
+
+
+@dataclass(frozen=True)
+class PlanarTrackingRequest:
+    previous_mode_count: int = 2
+    current_mode_count: int = 2
+    previous_mode_ids: object = ('mode-1', 'mode-2')
+    previous_identity_groups: object = None
+    mapping: str = 'normalized_rectangle'
+    controls: PlanarTrackingControls = field(default_factory=PlanarTrackingControls)
+
+    def __post_init__(self):
+        integer(self.previous_mode_count, 'previous_mode_count')
+        integer(self.current_mode_count, 'current_mode_count')
+        if self.mapping != 'normalized_rectangle':
+            raise ValueError('planar tracking currently requires explicit normalized_rectangle mapping')
+        if not isinstance(self.controls, PlanarTrackingControls):
+            raise ValueError('expected PlanarTrackingControls')
+        ids, groups = self.previous_mode_ids, self.previous_identity_groups
+        if groups is not None:
+            if ids is not None:
+                raise ValueError('supply previous_mode_ids or previous_identity_groups, never both')
+            object.__setattr__(self, 'previous_identity_groups', _identity_groups(groups, self.previous_mode_count))
+        elif (not isinstance(ids, (list, tuple)) or len(ids) != self.previous_mode_count
+              or any(type(v) is not str or not v.strip() for v in ids) or len(set(ids)) != len(ids)):
+            raise ValueError('previous_mode_ids requires one distinct nonempty ID for each previous band rank')
+        else:
+            object.__setattr__(self, 'previous_mode_ids', tuple(ids))
+
+    def to_dict(self):
+        return dict(format='superfish_ng_planar_tracking_request', tracking_version=1,
+                    mapping=self.mapping, previous_mode_count=self.previous_mode_count,
+                    current_mode_count=self.current_mode_count,
+                    previous_mode_ids=list(self.previous_mode_ids) if self.previous_mode_ids is not None else None,
+                    previous_identity_groups=json.loads(json.dumps(self.previous_identity_groups)),
+                    controls=self.controls.to_dict())
+
+    @classmethod
+    def from_dict(cls, data):
+        names = ['format', 'tracking_version', 'mapping', 'previous_mode_count', 'current_mode_count',
+                 'previous_mode_ids', 'previous_identity_groups', 'controls']
+        keys(data, names, names, 'planar tracking request')
+        if (data['format'] != 'superfish_ng_planar_tracking_request'
+                or type(data['tracking_version']) is not int or data['tracking_version'] != 1):
+            raise ValueError('expected superfish_ng_planar_tracking_request tracking_version 1')
+        if data['previous_mode_ids'] is not None and type(data['previous_mode_ids']) is not list:
+            raise ValueError('previous_mode_ids must be a JSON list or null')
+        return cls(data['previous_mode_count'], data['current_mode_count'], data['previous_mode_ids'],
+                   data['previous_identity_groups'], data['mapping'], PlanarTrackingControls.from_dict(data['controls']))
+
+    @classmethod
+    def load(cls, path):
+        return cls.from_dict(parse_json(Path(path).read_text(encoding='utf-8')))
+
+    def save(self, path):
+        with Path(path).open('x', encoding='utf-8') as stream:
+            stream.write(json.dumps(self.to_dict(), ensure_ascii=False, indent=2, allow_nan=False)+'\n')
+
+
+def _previous_groups(request, resolved_groups):
+    count = request.previous_mode_count
+    declared = request.previous_identity_groups
+    if declared is None:
+        declared = [dict(indices=[i+1], ids=[v]) for i, v in enumerate(request.previous_mode_ids)]
+    parent = list(range(count))
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    for group in [g['indices'] for g in declared]+resolved_groups:
+        ranks = [i-1 for i in group if i <= count]
+        for i in ranks[1:]:
+            parent[find(i)] = find(ranks[0])
+    components = {}
+    for i in range(count):
+        components.setdefault(find(i), []).append(i+1)
+    return [dict(indices=indices, ids=sorted(v for g in declared if set(g['indices']) <= set(indices) for v in g['ids']))
+            for indices in sorted(components.values())]
+
+
+def track_planar_modes(previous, current, request):
+    """Compare finite FEM subspaces; a passed match is not a continuous-path proof."""
+    if not isinstance(request, PlanarTrackingRequest):
+        raise ValueError('expected PlanarTrackingRequest')
+    request = PlanarTrackingRequest.from_dict(request.to_dict())
+    previous, current = verified_rectangular_solutions(previous, current)
+    counts = (request.previous_mode_count, request.current_mode_count)
+    if any(count >= solution.case.modes for count, solution in zip(counts, (previous, current))):
+        raise ValueError('each tracked positive prefix band requires at least one computed upper guard mode')
+    controls = request.controls
+    overlay = rectangle_tracking_overlay((previous.case.nx, previous.case.ny), (current.case.nx, current.case.ny),
+                                         max_overlay_triangles=controls.max_overlay_triangles)
+    grams = _electric_grams(previous, current, overlay, 3)
+    higher = _electric_grams(previous, current, overlay, 5)
+    a_norm, b_norm = np.sqrt(np.diag(grams[0])), np.sqrt(np.diag(grams[2]))
+    discrepancies = [float(np.max(abs(a-b)/left[:, None]/right[None, :]))
+                     for a, b, left, right in zip(grams, higher,
+                        (a_norm, a_norm, b_norm), (a_norm, b_norm, b_norm))]
+    resolutions = [rectangle_spectral_resolution(s, max_refined_triangles=controls.max_refined_triangles)
+                   for s in (previous, current)]
+    groups = [resolution_frequency_groups(s.frequencies_hz, r, controls.relative_cluster_gap)
+              for s, r in zip((previous, current), resolutions)]
+    edge_unresolved = [any(min(group) <= count < max(group) for group in partition)
+                       for count, partition in zip(counts, groups)]
+    na, nb = counts
+    numerical_margin_floor = max(1e-10, 32*np.finfo(float).eps*len(overlay.previous_cells)*25)
+    features = electric_gram_features(grams[0][:na, :na], grams[1][:na, :nb], grams[2][:nb, :nb])
+    result = track_sampled_mode_subspaces(*features, np.ones(len(features[0])),
+        previous.frequencies_hz[:na], current.frequencies_hz[:nb], None,
+        comparison_description='all physical peak E components pulled back by x=a*rho, y=b*eta; exact rectangle triangle intersections; reference area d_rho d_eta',
+        minimum_overlap=controls.minimum_overlap, minimum_assignment_margin=max(controls.minimum_assignment_margin, numerical_margin_floor),
+        relative_cluster_gap=controls.relative_cluster_gap,
+        minimum_relative_singular_value=controls.minimum_relative_singular_value,
+        previous_identity_groups=_previous_groups(request, groups[0]),
+        current_frequency_groups=[[i for i in group if i <= nb] for group in groups[1] if min(group) <= nb],
+        cluster_transition_policy='retain_connected_subspace', minimum_cluster_link=controls.minimum_cluster_link)
+    reasons = []
+    if max(discrepancies) > 1e-10:
+        reasons.append('electric Gram integration is not stable between orders 3 and 5')
+    if any(edge_unresolved):
+        reasons.append('spectral resolution group reaches beyond a tracked band into its guard mode')
+    for match in result['matches']:
+        match['previous_phase_multiplier'] = (int(np.sign(grams[1][match['previous_indices'][0]-1, match['current_indices'][0]-1]))
+                                              if match['dimension'] == 1 else None)
+    if reasons:
+        result.update(status='UNVERIFIED', individual_ids_complete=False, current_mode_ids=[None]*nb)
+    result.update(format='superfish_ng_planar_tracking_result', result_version=1, request=request.to_dict(),
+                  verification_reasons=reasons, spectral_resolution=resolutions,
+                  spectral_resolution_groups=groups, guard_overlap=edge_unresolved,
+                  physical_mapping=dict(name=request.mapping, physics='cartesian_cutoff_rf', polarization=previous.case.polarization,
+                      previous_case=previous.case.to_dict(), current_case=current.case.to_dict(),
+                      overlay_triangles=len(overlay.previous_cells), integration_orders=[3, 5],
+                      maximum_normalized_gram_discrepancy=max(discrepancies), integration_tolerance=1e-10,
+                      minimum_numerical_assignment_margin=numerical_margin_floor,
+                      electric_gram_previous=grams[0].tolist(), electric_gram_cross=grams[1].tolist(), electric_gram_current=grams[2].tolist()),
+                  scope='numerical electric-field subspace correspondence on a declared rectangle map; finite-enrichment resolution diagnostic only; no continuum error bound, surface-peak guarantee or continuous-path mode identity')
+    return result
