@@ -1,5 +1,7 @@
 # 実装バックログ
 
+P02同形状細分診断：平面RFの同形状細分診断を限定受入。元領域の四分割・係数移送、f/E/H/RF別判定、縮退/不足帯域UNVERIFIED、全水準保存再生・worker・CLI・GUIを接続した。標準879件（877合格、2skip、unittest1304.306秒）、追加14検査、独立16条件48FEM・特殊形状16条件48FEM、永続16worker、Chrome42操作、保存18診断54水準と取込2件を確認。旧平面32件/TE10件、TM seed9モード19量と513sourceも一致した。真の誤差上界・表面ピーク精度は保証しない。モード追跡、親P02と全計画は未完。 [契約・証拠](PLANAR_CONVERGENCE.md)。次は[宣言写像によるモード追跡](PLANAR_TRACKING_PLAN.md)。
+
 P02平面独立Study：[契約](PLANAR_STUDY_PLAN.md)と[証拠](PLANAR_STUDY.md)。平面RFの独立Studyを限定受入。全点先行検証・実worker・完全保存再生・CLI/GUI・点取込を接続し、標準865件（863合格、2skip、unittest1238.644秒）、追加9検査、独立24掃引48点＋参照8FEM、交差/例題CLI、Chrome35操作と保存29Study/61点を確認。旧平面32件/TE10件、TM seed9モード19量f差0/RF最大8.882e-16、505sourceと保存hashも一致した。収束診断・追跡、親P02と全計画は未完。 次は[同形状細分診断](PLANAR_CONVERGENCE_PLAN.md)の幾何・係数移送・全場/RF・縮退・保存再生を進める。
 
 P02平面表示/GUI：[受入条件](PLANAR_GUI_PLAN.md)と[証拠](GUI_PLANAR.md)。平面RFのxy場表示・SIプローブ・専用GUIを限定受入。標準856件（854合格、2skip、unittest1238.757秒）、追加7unit、Chrome13操作・旧軸対称10操作・再起動後3操作、独立表示場/回転・CLI・保存/HTTP照合を確認。旧平面32件/TE10件、TM seed9モード19量（f差0、RF最大8.882e-16）、499sourceと保存hashも一致した。平面Study・収束比較・追跡等と親P02は未完。 次は[Study・収束比較・追跡](PLANAR_STUDY_PLAN.md)を各契約ごとに進める。

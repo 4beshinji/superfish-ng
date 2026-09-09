@@ -85,3 +85,18 @@ class PlanarGuiTests(unittest.TestCase):
         source=self.manager.directory(identifier)/'point-0001/solution'
         target=self.manager.directory(imported)/'solution'
         self.assertEqual({p.name:p.read_bytes() for p in source.iterdir()},{p.name:p.read_bytes() for p in target.iterdir()})
+
+    def test_convergence_worker_diagnostics_and_level_import(self):
+        from superfish_ng.planar_convergence import PlanarConvergence
+        request=PlanarConvergence(PlanarProject(PlanarCase(.31,.2,nx=2,ny=2,modes=2)))
+        self.assertEqual(self.request('planar-normalize-convergence',document=request.to_dict())[0],request.to_dict())
+        identifier=self.request('planar-start-convergence',document=request.to_dict())[0]['id']
+        self.assertEqual(self.manager.processes[identifier].wait(timeout=60),0)
+        data,media=self.request('planar-convergence-result',id=identifier)
+        self.assertEqual(data['request'],request.to_dict())
+        self.assertEqual(len(data['result']['comparisons']),2)
+        self.assertIn('application/json',media)
+        with self.assertRaises(ValueError):self.request('planar-convergence-point',id=identifier,index=True)
+        imported=self.request('planar-convergence-point',id=identifier,index=2)[0]['id']
+        result=self.request('planar-result',id=imported)[0]
+        self.assertEqual(result['project'],request.projects()[2].to_dict())

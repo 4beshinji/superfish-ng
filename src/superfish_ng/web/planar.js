@@ -32,19 +32,19 @@ function fresh(){return {format:'superfish_ng_planar_project',project_version:1,
 function clearImage(){request++;if(imageURL)URL.revokeObjectURL(imageURL);imageURL=null;imageBlob=null;$('image').hidden=true;$('save-image').disabled=true;}
 function showQuantities(){if(!result)return;const q=result.modes[Number($('mode').value)-1];$('quantities').textContent=`f = ${(q.frequency_hz/1e6).toFixed(6)} MHz / U′ = ${q.stored_energy_j_per_m.toPrecision(6)} J/m / 壁損失 P′ = ${q.wall_loss_w_per_m.toPrecision(6)} W/m / Q0 = ${q.q0.toPrecision(6)} / G = ${q.geometry_factor_ohm.toPrecision(6)} Ω`;$('na').textContent='R/Q（加速器定義・回路定義）・加速電圧：N/A。遮断断面には有限の加速経路を定義していません。';}
 async function openResult(id){
- const jobs=await api('jobs');if(jobs.find(job=>job.id===id)?.kind==='planar_study')return openStudy(id);
+ const jobs=await api('jobs'),kind=jobs.find(job=>job.id===id)?.kind;if(kind==='planar_study')return openStudy(id);if(kind==='planar_convergence')return openConvergence(id);
  const sequence=++request;const data=await api('planar-result',{id});if(sequence!==request)return;
  selected=id;result=data.result;loadProject(data.project);clearImage();$('result').hidden=false;$('selection').textContent=`${result.case.name} / ${id}`;
  $('mode').replaceChildren();result.modes.forEach((q,i)=>{const option=document.createElement('option');option.value=i+1;option.textContent=`${i+1}: ${(q.frequency_hz/1e6).toFixed(6)} MHz`;$('mode').append(option);});showQuantities();
  $('files').replaceChildren();for(const file of data.files){const button=document.createElement('button');button.textContent=file;button.onclick=run(async()=>download(await api('planar-download',{id,file},true),file));$('files').append(button);}
 }
 async function refresh(){
- const jobs=(await api('jobs')).filter(job=>['planar_solve','planar_study'].includes(job.kind));
+ const jobs=(await api('jobs')).filter(job=>['planar_solve','planar_study','planar_convergence'].includes(job.kind));
  // Preserve focused controls when only an unrelated state changes.
  const signature=JSON.stringify(jobs);if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;
  $('jobs').replaceChildren();if(!jobs.length)$('jobs').textContent='平面RFの計算はまだありません。';
  for(const job of jobs){const row=document.createElement('div');row.className='job';row.dataset.job=job.id;
- const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='planar_study'?' / 独立掃引':''} / ${job.id}`;row.append(label);
+ const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='planar_study'?' / 独立掃引':job.kind==='planar_convergence'?' / 細分診断':''} / ${job.id}`;row.append(label);
  const details=document.createElement('small');details.textContent=job.error||job.stage||'';row.append(details);
  const button=document.createElement('button'),active=['queued','running'].includes(job.status);button.textContent=active?'中止':'結果を開く';button.disabled=!active&&job.status!=='complete';
  button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else await openResult(job.id);});row.append(button);$('jobs').append(row);}
@@ -80,3 +80,27 @@ $('study-save').onclick=run(async()=>{const study=await api('planar-normalize-st
 $('study-open').onchange=run(async()=>{const file=$('study-open').files[0];if(file)loadStudy(await api('planar-normalize-study',{document:await file.text()}));});
 
 for(const id of ["study-parameter","study-values"])$(id).addEventListener("input",()=>{$("dirty").textContent="未保存のStudy編集";});
+
+let currentConvergence=null;
+function convergenceFromForm(){return {format:'superfish_ng_planar_convergence',convergence_version:1,project:documentFromForm(),levels:numeric('convergence-levels'),mode_ranks:JSON.parse($('convergence-ranks').value),max_triangles:numeric('convergence-budget'),thresholds:JSON.parse($('convergence-thresholds').value)};}
+function loadConvergence(value){loadProject(value.project);$('convergence-levels').value=value.levels;$('convergence-ranks').value=JSON.stringify(value.mode_ranks);$('convergence-budget').value=value.max_triangles;$('convergence-thresholds').value=JSON.stringify(value.thresholds,null,2);}
+async function openConvergence(id){
+ const data=await api('planar-convergence-result',{id});currentConvergence=data;loadConvergence(data.request);$('convergence-result').hidden=false;$('convergence-selection').textContent=`${data.result.status} / ${id}`;
+ $('convergence-checks').replaceChildren();
+ const labels={frequency_relative:'周波数',electric_field_relative:'電場',magnetic_field_relative:'磁場',rf_max_relative:'単位長RF（最大差）'};
+ for(const decision of data.result.decisions){
+  const title=document.createElement('h4');title.textContent=`順位 ${decision.mode_rank}: ${decision.status}`;$('convergence-checks').append(title);
+  const table=document.createElement('table'),head=document.createElement('tr');
+  for(const label of ['量','前回の相対差','最後の相対差','閾値','判定']){const th=document.createElement('th');th.textContent=label;head.append(th);}table.append(head);
+  for(const [name,check] of Object.entries(decision.checks)){const row=document.createElement('tr');for(const value of [labels[name],check.previous.toExponential(4),check.last.toExponential(4),check.threshold,check.passed?'PASS':'UNVERIFIED']){const td=document.createElement('td');td.textContent=value;row.append(td);}table.append(row);}$('convergence-checks').append(table);
+  const reasons=new Set(data.result.comparisons.slice(-2).flatMap(pair=>pair.modes.find(mode=>mode.mode_rank===decision.mode_rank).reasons));
+  if(reasons.size){const note=document.createElement('p');note.textContent=Array.from(reasons).join(' / ');$('convergence-checks').append(note);}
+ }
+ $('convergence-points').replaceChildren();
+ for(let index=0;index<data.request.levels;index++){const button=document.createElement('button');button.dataset.level=index;button.textContent=`水準 ${index+1} の結果を取り込む`;button.onclick=run(async()=>{const imported=await api('planar-convergence-point',{id,index});await refresh();await openResult(imported.id);});$('convergence-points').append(button);}
+}
+$('convergence-start').onclick=run(async()=>{const data=await api('planar-start-convergence',{document:convergenceFromForm()});$('dirty').textContent=`細分診断投入済み: ${data.id}`;await refresh();});
+$('convergence-save').onclick=run(async()=>{const value=await api('planar-normalize-convergence',{document:convergenceFromForm()});loadConvergence(value);download(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}),'planar-convergence.json');});
+$('convergence-open').onchange=run(async()=>{const file=$('convergence-open').files[0];if(file)loadConvergence(await api('planar-normalize-convergence',{document:await file.text()}));});
+$('convergence-result-save').onclick=()=>{if(currentConvergence)download(new Blob([JSON.stringify(currentConvergence.result,null,2)+'\n'],{type:'application/json'}),'planar-convergence-results.json');};
+for(const id of ['convergence-levels','convergence-ranks','convergence-budget','convergence-thresholds'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の細分要求';});

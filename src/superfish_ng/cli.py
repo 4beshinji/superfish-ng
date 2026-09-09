@@ -120,6 +120,11 @@ def main(argv=None):
     planar_study.add_argument('--out',required=True,type=Path)
     planar_study_replay=sub.add_parser('replay-planar-study',help='fully verify every saved Cartesian sweep point')
     planar_study_replay.add_argument('run',type=Path)
+    planar_convergence=sub.add_parser('execute-planar-convergence',help='diagnose same-domain planar mesh refinement; not an error bound')
+    planar_convergence.add_argument('request',type=Path)
+    planar_convergence.add_argument('--out',required=True,type=Path)
+    planar_convergence_replay=sub.add_parser('replay-planar-convergence',help='recompute all saved planar refinement diagnostics')
+    planar_convergence_replay.add_argument('run',type=Path)
     planar_plot=sub.add_parser('plot-planar',help='plot signed Cartesian cutoff fields from verified native coefficients')
     planar_plot.add_argument('run',type=Path)
     planar_plot.add_argument('--out',type=Path,required=True)
@@ -179,6 +184,12 @@ def main(argv=None):
     reference.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('execute-planar-convergence','replay-planar-convergence'):
+            from .planar_convergence import PlanarConvergence
+            from .planar_convergence_jobs import execute_planar_convergence, read_planar_convergence
+            result=(execute_planar_convergence(PlanarConvergence.load(args.request),args.out)
+                    if args.command=='execute-planar-convergence' else read_planar_convergence(args.run))
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
         if args.command in ('execute-planar-study','replay-planar-study'):
             from .planar_study import PlanarStudy
             from .planar_study_jobs import execute_planar_study, read_planar_study

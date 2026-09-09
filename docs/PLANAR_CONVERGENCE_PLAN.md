@@ -21,3 +21,7 @@ API/CLI・実worker/中止/再起動・GUIへ接続し、矩形と三角形の�
 ## 隔離した細分/移送の候補
 
 out/planar-refinement-candidate-20260910に四分割と疎な係数移送の候補を隔離。矩形/三角形、二角度・二尺度、P1/P2、TE/TMの32条件で、元点保持、子の重心写像、定数/一次/二次多項式、PEC自由度、上記M/K恒等式がPASS。verify.py/report.json/execution.logと505source不変を保持する。これは行列・幾何基盤の候補検証で、収束診断・保存形式・製品API/CLI/GUIは未接続。
+
+## 主ツリーの実装状況
+
+[専用API/CLI/worker/GUIと判定契約](PLANAR_CONVERGENCE.md)を限定受入。平面RFの同形状細分診断を限定受入。元領域の四分割・係数移送、f/E/H/RF別判定、縮退/不足帯域UNVERIFIED、全水準保存再生・worker・CLI・GUIを接続した。標準879件（877合格、2skip、unittest1304.306秒）、追加14検査、独立16条件48FEM・特殊形状16条件48FEM、永続16worker、Chrome42操作、保存18診断54水準と取込2件を確認。旧平面32件/TE10件、TM seed9モード19量と513sourceも一致した。真の誤差上界・表面ピーク精度は保証しない。モード追跡、親P02と全計画は未完。

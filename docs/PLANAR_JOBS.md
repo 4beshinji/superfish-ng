@@ -1,6 +1,6 @@
 # 平面RFのProjectとローカルジョブ
 
-[平面表示/GUI](GUI_PLANAR.md)も接続・限定受入。以下は保持するProject/JobまたはFEM/nativeの契約と当時の検証記録。Study/追跡等は後続。
+[平面表示/GUI](GUI_PLANAR.md)も接続・限定受入。以下は保持するProject/JobまたはFEM/nativeの契約と当時の検証記録。[独立Study](PLANAR_STUDY.md)と[同形状細分診断](PLANAR_CONVERGENCE.md)は別の契約・検証記録を参照。追跡等は後続。
 
 専用PlanarProjectと `planar_solve` worker、直接/管理済み取込、再起動・再実行を接続した。主ツリーの独立物理検証・標準/既存数値回帰を確認し、以下の範囲で限定受入。[計画・受入条件](PLANAR_JOBS_PLAN.md)。矩形Case版1と単純多角形Case版2を保持し、軸対称Projectを変更せず別の文書として扱う。
 
@@ -44,4 +44,4 @@ ProjectとnativeのCase・元メッシュの一致、hash、正スペクトル�
 
 保存再起動の最終監査out/planar-jobs-persistence-final-20260910で72ジョブ・2同梱Projectの実CLIと全native hashがPASS。監査driverの初回はJobManagerにないcontext managerを使用して失敗したため、try/finally closeへ修正し、両ログを保持した。製品ソースは変更していない。旧平面32件・TE10件の再生out/planar-jobs-native-regression-final-20260910もPASS。標準out/validation-planar-jobs-final-20260910は849件（847合格、2skip、unittest1234.561秒）で終了0。旧TE管理済み8件の再起動検証、TM seed9モード19量f差0/RF最大8.882e-16、標準/独立報告/現在491source一致もPASS。最終seed_regression.jsonとverify_completion.pyを同標準ディレクトリへ保持。全関連実行は終了0。既存.manager.lockのResourceWarningは原因未確定のまま保持する。
 
-[次のGUI工程](PLANAR_GUI_PLAN.md)の受入条件を整理した。GUI、平面Study、追跡・調整・最適化は未接続。曲線・材料・穴/TEM・伝搬は引き続き未対応。
+[次のGUI工程](PLANAR_GUI_PLAN.md)の受入条件を整理した。当時未接続だったGUI・独立Study・細分診断の現状は冒頭リンクを参照。追跡・調整・最適化は未接続。曲線・材料・穴/TEM・伝搬は引き続き未対応。

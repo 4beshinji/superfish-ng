@@ -15,7 +15,7 @@
 <label>モード数<input id="modes" type="number" min="1" step="1"></label>
 <label>単位長エネルギー U′ [J/m]<input id="energy" type="number" step="any"></label>
 <label>壁導電率 [S/m]<input id="conductivity" type="number" step="any"></label>
-<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。曲線・材料・穴・伝搬・収束診断・追跡は未対応です。</p>
+<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。曲線・材料・穴・伝搬・モード追跡は未対応です。</p>
 <details><summary>Project JSONを編集</summary><textarea id="document" rows="18" aria-label="Project JSON"></textarea><button id="apply">JSONを適用</button><p>座標は表示単位によらずSIのmです。フォームへの反映には「JSONを適用」を押してください。</p></details>
 </section><section><h2>保存結果の取込</h2><label>ローカルnativeまたはジョブのディレクトリ<input id="import-path" type="text"></label><button id="import">保存結果を取り込む</button><p>保存係数と元メッシュを保持して検証します。新たな計算は「計算を開始」で行います。</p></section></div>
 <div><section><h2>独立パラメータ掃引</h2>
@@ -24,6 +24,15 @@
 <label>値の配列（SI、2点以上）<textarea id="study-values" rows="2">[1, 2]</textarea></label>
 <button id="study-start">掃引を開始</button><button id="study-save">Studyを保存</button><label class="file">Studyを開く<input id="study-open" type="file" accept=".json"></label>
 <div id="study-result" hidden><h3>選択した掃引</h3><p id="study-selection"></p><p>独立スペクトル：追跡未実施・精度未検証。各点の「結果を取り込む」で元メッシュと保存係数を持つ結果を開きます。</p><div id="study-points"></div></div>
+</section><section><h2>同じ断面の細分診断</h2>
+<p>現在のProjectの各三角形を四分割して、3水準以上を実計算します。周波数・電場・磁場・RFの細分差を個別に確認します。真の誤差上界や角の表面ピーク精度の保証ではありません。</p>
+<label>水準数（元メッシュを含む）<input id="convergence-levels" type="number" min="3" step="1" value="3"></label>
+<label>対象順位の配列（1始まり）<input id="convergence-ranks" value="[1]"></label>
+<label>最大三角形数<input id="convergence-budget" type="number" min="1" step="1" value="250000"></label>
+<p>対応が曖昧な縮退モードや上側の隣接モードが未計算の場合はUNVERIFIEDになります。</p>
+<details><summary>比較の閾値</summary><label>無次元の相対差・内積条件<textarea id="convergence-thresholds" rows="9">{"frequency_relative":0.0001,"electric_field_relative":0.01,"magnetic_field_relative":0.01,"rf_relative":0.005,"spectral_gap_relative":0.001,"minimum_overlap":0.9,"overlap_margin":0.1}</textarea></label></details>
+<button id="convergence-start">細分診断を開始</button><button id="convergence-save">細分要求を保存</button><label class="file">細分要求を開く<input id="convergence-open" type="file" accept=".json"></label>
+<div id="convergence-result" hidden><h3>選択した細分診断</h3><p id="convergence-selection"></p><div id="convergence-checks"></div><div id="convergence-points"></div><button id="convergence-result-save">診断結果を保存</button></div>
 </section><section><h2>計算履歴</h2><div id="jobs"></div></section>
 <section id="result" hidden><h2>選択した結果</h2><p id="selection"></p><p>完了は保存場の整合性確認です。メッシュの精度は未検証です。番号は固有値の順序で、追跡したモード名ではありません。</p><label>モード<select id="mode"></select></label><p id="quantities"></p><p id="na"></p><label><input id="mesh" type="checkbox">表示三角形を重ねる</label><button id="plot">場を描画</button><button id="save-image" disabled>画像を保存</button><img id="image" alt="xy断面の符号付き電磁場。実部とquadratureを別表示。" hidden>
 <h3>xyプローブ</h3><label>座標の配列 [m] — [[x, y], …]<textarea id="points" rows="3">[[0.03, 0.02]]</textarea></label><button id="probe">SIプローブCSVを保存</button><button id="probe-meta">プローブ情報を保存</button><p>全E/H成分をrealと+i quadratureで保存します。B=μ0H。領域外の点は拒否します。</p>

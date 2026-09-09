@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_convergence_jobs import is_planar_convergence, verify_planar_convergence
+        if is_planar_convergence(directory, state, manifest):
+            verify_planar_convergence(directory, state, manifest)
+            return state
         from .planar_study_jobs import is_planar_study, verify_planar_study
         if is_planar_study(directory, state, manifest):
             verify_planar_study(directory, state, manifest)
@@ -298,6 +302,11 @@ class JobManager:
         """Run an independent Cartesian sweep; point ranks are not mode identities."""
         from .planar_study_jobs import start_planar_study
         return start_planar_study(self, study)
+
+    def start_planar_convergence(self, request):
+        """Run same-domain refinement diagnostics in a dedicated local worker."""
+        from .planar_convergence_jobs import start_planar_convergence
+        return start_planar_convergence(self, request)
 
     def import_planar_result(self, source):
         """Import verified planar native bytes, preserving their explicit mesh."""

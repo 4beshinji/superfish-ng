@@ -15,6 +15,8 @@ from .project import parse_json
 ACTIONS = {
     'planar-normalize-study': ['document'], 'planar-start-study': ['document'],
     'planar-study-result': ['id'], 'planar-study-point': ['id', 'index'],
+    'planar-normalize-convergence': ['document'], 'planar-start-convergence': ['document'],
+    'planar-convergence-result': ['id'], 'planar-convergence-point': ['id', 'index'],
     'planar-normalize': ['document'], 'planar-start': ['document'],
     'planar-import': ['path'], 'planar-result': ['id'],
     'planar-plot': ['id', 'mode', 'mesh', 'length_unit'],
@@ -27,6 +29,8 @@ ACTIONS = {
 def planar_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown planar operation')
+    if action in ('planar-normalize-convergence','planar-start-convergence','planar-convergence-result','planar-convergence-point'):
+        return planar_convergence_response(manager,action,data)
     if action in ('planar-normalize-study','planar-start-study','planar-study-result','planar-study-point'):
         return planar_study_response(manager,action,data)
     required = ['document'] if action in ('planar-normalize', 'planar-start') else ['path'] if action=='planar-import' else ['id']
@@ -115,4 +119,29 @@ def planar_study_response(manager, action, data):
         if before!=_snapshot(directory,study):raise ValueError('planar Study changed before point import')
         payload={'id':manager.import_planar_result(directory/result['points'][index]['directory'])}
     if before!=_snapshot(directory,study):raise ValueError('planar Study changed during GUI response')
+    return payload,media
+
+
+def planar_convergence_response(manager, action, data):
+    from .planar_convergence import PlanarConvergence
+    from .planar_convergence_jobs import read_planar_convergence, _snapshot, _point_name
+    required=['document'] if action.endswith(('normalize-convergence','start-convergence')) else ['id']
+    if action=='planar-convergence-point':required.append('index')
+    keys(data,ACTIONS[action],required,'planar convergence request')
+    media='application/json; charset=utf-8'
+    if 'document' in required:
+        raw=parse_json(data['document']) if isinstance(data['document'],str) else data['document']
+        request=PlanarConvergence.from_dict(raw)
+        request.projects()
+        return ({'id':manager.start_planar_convergence(request)} if action=='planar-start-convergence' else request.to_dict()),media
+    directory=manager.directory(data['id']);request=PlanarConvergence.load(directory/'convergence.json');before=_snapshot(directory,request)
+    result=read_planar_convergence(directory)
+    if action=='planar-convergence-result':
+        payload=dict(request=request.to_dict(),result=result,state=manager.status(data['id'],verify=True))
+    else:
+        index=data['index']
+        if type(index) is not int or not 0<=index<request.levels:raise ValueError('planar convergence level index is out of range')
+        if before!=_snapshot(directory,request):raise ValueError('planar convergence changed before level import')
+        payload={'id':manager.import_planar_result(directory/_point_name(index))}
+    if before!=_snapshot(directory,request):raise ValueError('planar convergence changed during GUI response')
     return payload,media

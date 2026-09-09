@@ -1,6 +1,6 @@
 # 平面RFの表示とGUI
 
-[平面独立Study](PLANAR_STUDY.md)を追加。現在のProjectからの掃引、条件保存/読込、各点のRF表示・結果取込に対応する。収束診断・追跡は未実装。
+[平面独立Study](PLANAR_STUDY.md)を追加。現在のProjectからの掃引、条件保存/読込、各点のRF表示・結果取込に対応する。[同形状細分診断](PLANAR_CONVERGENCE.md)も専用操作へ接続・限定受入。追跡は未実装。
 
 専用xy表示・SIプローブと `/planar.html` を接続した。独立場・ブラウザー操作・保存再起動・標準/既存数値回帰を確認し、以下の範囲で限定受入。[受入条件](PLANAR_GUI_PLAN.md)。矩形Case版1・明示単純多角形版2、TE/TM、P1/P2と専用PlanarProjectを保持する。
 
@@ -14,7 +14,7 @@ python -m superfish_ng probe-planar out/my-planar-job/solution --points points.j
 
 GUI起動URLを開き「平面RFワークスペース」へ移動する。同じローカルセッション・workspace所有・実workerを使う。平面画面から軸対称画面へ戻れる。軸対称履歴の平面ジョブはジョブID付きURLで専用画面へ開き、軸対称モード追跡の候補には含めない。
 
-矩形は名前、表示単位m/mm、寸法、分割数、次数、モード数、TE/TM、単位長エネルギー、壁導電率を編集する。表示単位の切替でSI座標を変えない。多角形は読み込んだ元メッシュを保持し、共通物理条件を編集できる。元座標/接続変更は「Project JSONを編集」で全文を編集して明示適用する。JSONの座標は常にm。未知キーを含む不正文書は現入力を置換しない。曲線・材料・穴・伝搬・平面収束診断/追跡/調整は未対応。
+矩形は名前、表示単位m/mm、寸法、分割数、次数、モード数、TE/TM、単位長エネルギー、壁導電率を編集する。表示単位の切替でSI座標を変えない。多角形は読み込んだ元メッシュを保持し、共通物理条件を編集できる。元座標/接続変更は「Project JSONを編集」で全文を編集して明示適用する。JSONの座標は常にm。未知キーを含む不正文書は現入力を置換しない。曲線・材料・穴・伝搬・平面追跡/調整は未対応。
 
 結果取込は直接nativeまたは管理済み平面ジョブを指定する。元係数と元メッシュを保存して再検証し、新しい計算とは区別する。結果を開くと保存Projectを復元し、「計算を開始」で新しい実workerに投入できる。履歴から中止と完了結果の選択を行う。完了は整合性確認であり、メッシュ精度合格とは表示しない。
 
@@ -43,4 +43,4 @@ GUI描画cacheは全native・実装hash、依存版、モード・表示単位�
 
 既存軸対称GUIはout/browser-axis-regression-planar-20260910で10操作PASS（TM/TE/曲線TE、画像・プローブ・Project往復）。再起動後Chromeはout/browser-planar-restarted-20260910で3保存ジョブを復元して第2モードを描画しPASS。専用サーバーは正常終了し、out/planar-gui-restart-20260910で平面5件/軸対称3件と保存画像/プローブの再検証がPASS。標準out/validation-planar-gui-final-20260910は856件（854合格、2skip、unittest1238.757秒）で終了0。旧平面32件/TE10件のnative再生はout/planar-gui-native-regression-final-20260910でPASS。TM seed9モード19量f差0/RF最大8.882e-16と499source、独立24表示出力・保存ジョブ/画像のhashを最終照合してPASS。標準ディレクトリにverify_completion.pyとseed_regression.jsonを保持。全関連実行と専用GUIサーバーは終了済み。既存.manager.lockのResourceWarningは原因未確定のまま残る。親P02・全計画の受入は未完。
 
-[後続の平面Study・収束比較・追跡](PLANAR_STUDY_PLAN.md)は設計段階。現行GUIの受入に含めない。
+上記は単体表示の受入記録。[独立Study](PLANAR_STUDY.md)と[同形状細分診断](PLANAR_CONVERGENCE.md)は別工程の契約・証拠を参照。追跡は[次工程](PLANAR_TRACKING_PLAN.md)。
