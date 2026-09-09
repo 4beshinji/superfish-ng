@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-09-09",
+  "base_commit": "ff0b572",
+  "scope": "synthetic closed vacuum cylinder radial 1 axial 1/2; two scales and three legacy mesh sizes; independent P2 FEM",
+  "new_legacy_execution": true,
+  "allowed_redistribution": false,
+  "compatibility_acceptance": "LIMITED_NUMERICAL_PASS; general C00/K09 acceptance remains UNVERIFIED",
+  "reference_specification": {
+    "inventory": "compatibility_reference_inventory.json",
+    "sha256": "8203169713608903bcf5d4ac600efd2b98f221af9ab8856213ea306eab675627",
+    "document_revision": null,
+    "consulted_sections": [
+      "H: coordinate systems",
+      "I: complementary solutions for RF cavities"
+    ],
+    "extracted_line_numbers": [
+      1365,
+      1388
+    ]
+  },
+  "observed_tool_versions": {
+    "Automesh": "7.17 released 1-13-2006",
+    "Fish": "7.17 released 1-13-2006",
+    "SFO": "7.17 released 1-13-2006",
+    "SF7": "7.17 released 1-13-2006"
+  },
+  "wine_version": "wine-9.0 (Ubuntu 9.0~repack-4build3)",
+  "artifacts": [
+    {
+      "path": "out/c00-te-complementary-independent-20260909/report.json",
+      "sha256": "afffcbc57afda9c39902e68cef675f894efb165cb9089e6c7362e56e649fd4ef"
+    },
+    {
+      "path": "out/c00-te-complementary-development-20260909/versions-and-units.json",
+      "sha256": "4db27f68be74511597a13fc012f93152737bc8a5b71f2decc629a6b833f2ef3d"
+    },
+    {
+      "path": "out/c00-te-complementary-development-20260909/corrected_q.json",
+      "sha256": "24b67297991c75a88d5c6b7a722b66a2c0d6faa47cd8d713cb537a354d84affa"
+    }
+  ],
+  "legacy_runs": 12,
+  "source_sha256": "d6499222570fc26852a7e4598ed6345751014053abea9df42fd5fe44cbd2f4f8",
+  "remaining": [
+    "document revision and installation identity",
+    "general geometry and symmetry domains",
+    "general AF input conversion",
+    "material complementarity"
+  ]
+}
