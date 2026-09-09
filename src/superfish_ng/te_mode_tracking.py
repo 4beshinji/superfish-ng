@@ -13,6 +13,8 @@ def track_te_cylindrical_modes(previous, current, previous_ids, *, mapping, samp
     from .mode_tracking import track_sampled_mode_subspaces
     if not all(is_te(s.case) for s in (previous,current)):
         raise ValueError('TE tracking requires two TE solutions; mixed TE/TM correspondence is unsupported')
+    if any(s.reflection_source_case is not None for s in (previous,current)):
+        raise ValueError('TE tracking of reflected partial spectra is pending; track the source half domains')
     if mapping != 'normalized_cylinder':
         raise ValueError('TE tracking currently requires normalized_cylinder mapping')
     if type(sample_order) is not int or not 2 <= sample_order <= 256:

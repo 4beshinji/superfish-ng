@@ -15,7 +15,9 @@ def reflect_solution(case, solution):
     subset of the full spectrum, not its global frequency ranks.
     """
     from .te import is_te
-    if is_te(case):raise ValueError('TE reflection is pending; solve the full TE cavity explicitly')
+    if is_te(case):
+        from .te_reflection import reflect_te_solution
+        return reflect_te_solution(case, solution)
     order = getattr(solution, 'element_order', 1)
     if case.geometry_order == 2:
         from .curved_reflection import reflect_curved_solution

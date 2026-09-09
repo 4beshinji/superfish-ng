@@ -82,7 +82,8 @@ class Project:
 
     def __post_init__(self):
         from .te import is_te
-        if is_te(self.case) and self.reflect_full:raise ValueError('TE reflected Project fields are not implemented; provide the full TE domain explicitly')
+        if is_te(self.case) and self.reflect_full and sum(getattr(self.case,side)!='pec' for side in ('z_min','z_max'))!=1:
+            raise ValueError('TE reflected Project requires exactly one symmetry end and one PEC end')
         if self.mesh_data is not None:
             from .mesh_input import mesh_from_dict,mesh_to_dict
             object.__setattr__(self,'mesh_data',mesh_to_dict(mesh_from_dict(self.case,deepcopy(self.mesh_data))))

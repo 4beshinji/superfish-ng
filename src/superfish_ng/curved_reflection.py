@@ -31,7 +31,7 @@ class CurvedReflection:
         return self.coefficient_map@values
 
 
-def reflect_curved_space(case, parent):
+def reflect_curved_space(case, parent, *, coefficient_parity=None):
     """Join a half space to its mirror, retaining every quadratic cell map.
 
     Coefficients on a magnetic seam must be zero before applying coefficient_map.
@@ -46,7 +46,9 @@ def reflect_curved_space(case, parent):
         raise ValueError('curved reflection requires exactly one symmetry end and one PEC end')
     side = sides[0]
     tag = getattr(case, side)
-    parity = 1 if tag == 'electric_symmetry' else -1
+    if coefficient_parity is not None and (type(coefficient_parity) is not int or coefficient_parity not in (-1, 1)):
+        raise ValueError('reflection coefficient_parity must be -1 or 1')
+    parity = (1 if tag == 'electric_symmetry' else -1) if coefficient_parity is None else coefficient_parity
     contour = case.curved_contour
     full_contour = contour.reflected()  # Validates a complete connected seam.
     geometry = parent.geometry

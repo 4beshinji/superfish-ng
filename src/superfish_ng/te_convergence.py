@@ -8,14 +8,14 @@ from .completion import digest
 from .fem import triangle_quadrature
 from .mesh import element_geometry
 from .te import TEFieldSampler, is_te
-from .te_saved import read_te_run, _names
+from .te_saved import read_te_run, _run_names
 
 RF_KEYS = ('geometry_factor_ohm', 'q0', 'wall_loss_w',
            'stored_energy_j', 'electric_energy_j', 'magnetic_energy_j')
 
 
 def _snapshot(directory, case):
-    return {name: digest(directory/name) for name in _names(case) | {'te_complete.json'}}
+    return {name: digest(directory/name) for name in _run_names(directory,case) | {'te_complete.json'}}
 
 
 def _integrals(first, second, order):
@@ -77,6 +77,8 @@ def compare_te_refinement(first_directory, second_directory):
         raise ValueError('TE refinement cannot compare mixed TE/TM physics')
     snapshots = [_snapshot(p, c) for p, c in zip(paths, cases)]
     first, second = [read_te_run(p) for p in paths]
+    if any(s.reflection_source_case is not None for s in (first,second)):
+        raise ValueError('TE refinement of reflected partial spectra is pending; compare the source half domains')
     if _physical_spec(first.case) != _physical_spec(second.case):
         raise ValueError('TE refinement requires identical physical cases')
     results = [json.loads((p/'results.json').read_text()) for p in paths]

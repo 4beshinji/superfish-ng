@@ -1,12 +1,14 @@
 # 物理・数値仕様 — canonical specification v4（v1/v2/v3入力）
 
+2026-09-09追補: [TE対称面鏡映](TE_REFLECTION_PLAN.md)を接続。TEのEφは磁気対称面で偶、電気対称面で奇、Hrは逆符号、Hzは同符号。元振幅を維持しU/PEC損失は2倍、f/Q0/Gは不変。専用native版4で元半領域から再構成・再検証し、API/CLI/Project/Job/GUIで部分スペクトルと明示する。鏡映結果の追跡/収束比較は未対応。標準790件（788合格、2skip）と既存TM/TE数値回帰まで限定受入済み。
+
 2026-09-09追補: [TE収束Study](TE_CONVERGENCE_STUDY_PLAN.md)を接続・限定受入済み。両native分割の全セルでEφ/Hr/Hzの体積内積を評価し、電場と磁場の相対L2、周波数、適用可能なRF量を別判定する。積分次数3/5の差・共通体積・近接縮退を確認し、未確認時はUNVERIFIED。R/Q/軸加速量はN/Aを保持する。幾何近似変更と元二次写像固定を区別し、表面ピーク精度を保証しない。
 
 2026-09-09追補: [TE Study](TE_STUDY_PLAN.md)の独立パラメータ掃引を接続・限定受入済み。全点の物理入力を実行前に検査する。各順位の独立スペクトルは収束・追跡の合格を意味せずUNVERIFIEDを保持する。軸加速量/RQはnull/N/Aを保持し、追跡は別の保存再検証操作である。未宣言の元メッシュ変形は拒否する。
 
 2026-09-09追補: [TE円筒追跡](TE_TRACKING_PLAN.md)を閉PEC・直線P1/P2・normalized_cylinderに限定して接続。Eφの実ピークを比較し、TE/TM混在と他の写像は拒否する。縮退の個別IDと周波数は未確定として保持する。TE調整等の未対応は継続。
 
-第4版では [真空m=0 TEの明示拡張](AXISYMMETRIC_TE.md) を追加する。以下の既存TMの式・規約は保持し、TEの未知数/PEC拘束・磁場phasor・加速量N/A・結果版を別契約にする。TEは直線P1/P2と[曲線P2](CURVED_TE_PLAN.md)に対応する。[通常Project/JobManager](TE_JOBS.md)も対応する。TE一般形状追跡・調整・最適化・場の鏡映は未接続として拒否する。[通常GUI](GUI_TE.md)のTE選択・場表示・SIプローブ・N/A理由表示を接続した。
+第4版では [真空m=0 TEの明示拡張](AXISYMMETRIC_TE.md) を追加する。以下の既存TMの式・規約は保持し、TEの未知数/PEC拘束・磁場phasor・加速量N/A・結果版を別契約にする。TEは直線P1/P2と[曲線P2](CURVED_TE_PLAN.md)に対応する。[通常Project/JobManager](TE_JOBS.md)も対応する。TE一般形状追跡・調整・最適化は未接続として拒否する。場の鏡映は上記の専用経路へ接続した。[通常GUI](GUI_TE.md)のTE選択・場表示・SIプローブ・N/A理由表示を接続した。
 
 v3の明示物理モデルは [MODEL_CONTRACT.md](MODEL_CONTRACT.md)。本書の真空TM物理・
 数式は変更せず、入力の版と物理モデルの版を区別する。

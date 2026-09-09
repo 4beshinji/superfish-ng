@@ -35,6 +35,8 @@ class TESolution:
     residuals: np.ndarray
     orthogonality_error: float
     source_mesh_data: dict
+    reflection_source_case: object | None = None
+    reflection_source_coefficients: np.ndarray | None = None
 
     @property
     def element_order(self):return self.case.element_order

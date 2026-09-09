@@ -1,5 +1,34 @@
 # ローカルCodexへの引継ぎ
 
+## TE鏡映の限定受入完了 — 2026-09-09
+
+基準be212b7。標準17381・最終数値照合4175は終了0。790件中788合格/2skip（1193.336秒/command1193.711秒）。TM seed9モード19量f差0、RF最大8.882e-16、旧TE版2/3保存7件差0。標準/独立/GUI照合/worker/改変検証/固定時/現在464source一致。out/validation-te-reflection-20260909に全ログとseed_regression.json。TE_REFLECTION_PLAN.md冒頭に実装範囲/証拠/初回失敗を集約。個別新規実行は全て終了、検証用GUI PID1064077はSIGINT停止済み。ローカルcommitにまとめる段階。
+
+次工程はTE_REFLECTED_CONVERGENCE_PLAN.md。直接全領域のDuffy積分の2倍不変量は磁場の片側値等の影響で不合格（通常/対称化規則の2初回ログ保持）。元半領域方式の候補は円筒/曲面×両対称の8FEMで元の比較文書と完全一致。数値FAIL/UNVERIFIEDを維持した。一時パッケージ/tmp/superfish-te-reflected-convergence-candidate-20260909のAPI候補も4保存比較一致、out/te-reflected-convergence-adapter-candidate-20260909/candidate.patchに保持。主ツリーには未適用。次はこの限定方式の改変/混在拒否、Study/CLI/GUI、標準回帰を実装・検証する。全計画の親集計は8受入/9進行中/15他/1候補=33を維持。
+
+## TE鏡映API初期の経過（現在の状態は冒頭を優先） — 2026-09-09
+
+基準be212b7（TE収束785件/460source/独立21FEM・回帰受入commit完了）。te_reflection.py新規、TESolution.reflection_source_case、symmetryのTE分岐、reflect_curved_spaceの明示coefficient_parityを実装。直線P1/P2/曲線P2・左右/両対称で元振幅の係数移送、TE拘束/free残差/EPS0規格化と元Case保持。TE通常nativeへの誤保存はsave_te_runで作成前拒否。Project.reflect_fullはまだTE拒否。
+新3unit6788終了0（1.606秒）、既存TM含むreflection11件92484終了0（9.558秒）。out/te-reflection-development-20260909にログ。TE全体のsessionは次の追記参照。未コミット、標準は未開始。
+TE全体31116終了0、45件19.720秒PASS。全実行終了。その後公開API docstringに部分スペクトル番号とエネルギー/損失を明記した（挙動変更なし）。
+次は[TE鏡映計画](TE_REFLECTION_PLAN.md)の専用native版を実装。半領域Case/mesh/係数と反射後係数/幾何を保存し、読込で半領域行列・境界条件・規格化を再検証して反射再構成を完全照合する。全必要ファイルをsnapshotsへ追加、Project/Job取込とrerun、GUI部分スペクトル表示を接続。既存TE版2/3とTMは維持。現段階はAPIのみで、実装全体の完了ではない。
+
+
+## 専用nativeとProject接続中
+
+結果版4を鏡映TE専用とし、results.reflectionに元半領域Case・side/parity・mesh役割・部分スペクトル番号/規格化を明記。mesh.jsonは元半領域、source_fields.npzは元係数/周波数、fields.npzと曲線geometry.npzは反射後を保存する。完了manifestに元係数を必須追加。通常TE版2/3は保持する。
+
+read_te_runは元Case/meshでFEM行列・拘束・規格化を再検証し、同じ反射APIで全Case/係数/曲線幾何を再構成して保存値と照合する。再固有値計算や振幅合わせはない。共通の_restore_fieldsへ通常TE読込の数値検査を移した。source_fieldsを_run_namesでprobe/Job/保存追跡/収束の前後snapshotにも含める。probe metadataにも部分スペクトルのreflectionを保持。
+
+Project.reflect_fullのTE拒否を、対称面一つ/もう一端PECの検査に変更。Job検証は元半領域とreflect_fullを照合し、直接取込は元Case/meshとreflect_fullを保持する。GUI結果の要約とRF詳細に部分スペクトルを表示する。部分スペクトル自体の追跡/収束比較は未接続として拒否し、元半領域の比較を案内する。
+
+69316終了0、native往復3件3.160秒PASS（直線8/曲線4条件）。追加Project/改変テストの25119はJobManagerを未対応with構文で使ったテスト誤りで終了1、初回log保持。closingで明示closeへ修正し85589終了0、5件3.375秒PASS。TE全体41861終了0、47件21.485秒PASS。out/te-reflection-development-20260909へ保持。全native/Project単体検証は終了、標準はまだ未開始。
+
+CLI/API6FEMは74235実行中、out/te-reflection-cli-20260909/verify.py/command.log。P1磁気・P2電気・曲線磁気の3条件でsolve --reflect-full/専用read/API係数一致を検査する。case/project JSONもGUI検証用に生成。終了までソース変更を保留する。GUI実操作・独立物理解析・全保存改変/再起動・旧TM/TE/標準回帰・文書確定/commitは継続中。
+
+
+CLI74235は終了0、3条件（P1磁気/P2電気/曲線磁気）・計6FEMで版4保存/read/API係数と周波数が完全一致。report.json/source_sha256保持。全実行終了、ソース固定は解除できる。次は生成済み3project JSONを用いたGUI実操作、独立解析/全domain比較、改変・再起動・標準回帰。
+
 ## 最新: TE収束Study — 2026-09-09
 
 基準9010591。TE収束比較/API/Study/GUIの限定受入を完了し、全実行終了・ソース固定解除。

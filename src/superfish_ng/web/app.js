@@ -844,6 +844,7 @@ async function openResult(id, modeIndex=null) {
   $("result-state").textContent =
     (r.state.origin === "imported" ? "取込結果（再計算なし）。" : "") +
     "保存済みの結果を表示中。編集中の条件とは独立しています。メッシュ収束は未検証。";
+  if (r.result.reflection) $("result-state").textContent += " 鏡映された部分スペクトルです。番号は全空洞の周波数順位ではありません。";
   $("mode").replaceChildren();
   for (const q of r.result.modes) {
     const opt = document.createElement("option");
@@ -931,6 +932,7 @@ async function plot() {
       (currentResult.state.origin === "imported"
         ? "取込結果（再計算なし）。"
         : "") + "保存されたFEM場。計算完了 / メッシュ収束は未検証。";
+    if (currentResult.result.reflection) $("result-state").textContent += " 鏡映された部分スペクトルです。番号は全空洞の周波数順位ではありません。";
   } catch (error) {
     if (request === plotRequest && job === currentJob) throw error;
   } finally {

@@ -20,8 +20,8 @@ def _snapshot(directory):
     from .config import Case
     from .te import is_te
     if is_te(Case.load(directory/'case.json')):
-        from .te_saved import _names
-        names = _names(Case.load(directory/'case.json')) | {'te_complete.json'}
+        from .te_saved import _run_names
+        names = _run_names(directory,Case.load(directory/'case.json')) | {'te_complete.json'}
         result={}
         for name in sorted(names):
             path=directory/name

@@ -11,7 +11,7 @@ from .config import Case
 from .project import Project, parse_json
 from .saved_mode_tracking import _canonical
 from .te import is_te
-from .te_saved import read_te_run, _names
+from .te_saved import read_te_run, _run_names
 
 
 def verify_te_job_if_present(directory, manifest):
@@ -27,11 +27,13 @@ def verify_te_job_if_present(directory, manifest):
     project = Project.from_dict(data)
     if not is_te(project.case):
         raise ValueError('TE job output requires a TE project declaration')
-    required = {'project.json', *(f'solution/{name}' for name in _names(project.case)), 'solution/te_complete.json'}
+    required = {'project.json', *(f'solution/{name}' for name in _run_names(result_dir,project.case)), 'solution/te_complete.json'}
     if not required.issubset(manifest['files']):
         raise ValueError('TE job manifest is missing native completion, geometry or required output')
     solution = read_te_run(result_dir)
-    if solution.case != project.case:
+    reflected=solution.reflection_source_case is not None
+    expected_source=solution.reflection_source_case if reflected else solution.case
+    if reflected != project.reflect_full or expected_source != project.case:
         raise ValueError('TE saved case differs from the job project')
     if project.mesh_data is not None and _canonical(project.mesh_data) != _canonical(solution.source_mesh_data):
         raise ValueError('TE saved source mesh differs from the explicit project mesh')
@@ -50,7 +52,7 @@ def import_te_result(manager, source, solution_dir, managed_project=None):
     source, solution_dir = Path(source), Path(solution_dir)
     managed = managed_project is not None
     case = Case.load(solution_dir/'case.json')
-    names = _names(case) | {'te_complete.json'}
+    names = _run_names(solution_dir,case) | {'te_complete.json'}
     paths = [solution_dir/name for name in sorted(names)]
     if managed:
         paths += [source/name for name in ('project.json', 'manifest.json', 'job.json')]
@@ -67,7 +69,7 @@ def import_te_result(manager, source, solution_dir, managed_project=None):
         if _canonical(project.to_dict()) != _canonical(managed_project.to_dict()):
             raise ValueError('TE source project changed before import')
     else:
-        project = Project(saved.case, mesh_data=saved.source_mesh_data)
+        project = Project(saved.reflection_source_case or saved.case, reflect_full=saved.reflection_source_case is not None, mesh_data=saved.source_mesh_data)
     if snapshot() != before:
         raise ValueError('TE import source changed during verification')
     identifier = time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:10]

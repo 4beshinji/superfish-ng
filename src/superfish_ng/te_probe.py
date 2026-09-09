@@ -7,7 +7,7 @@ from .completion import digest
 from .constants import MU0
 from .sampling import solution_radial_extent
 from .te import TEFieldSampler, te_quantities
-from .te_saved import read_te_run, _names, _conventions
+from .te_saved import read_te_run, _run_names, _conventions, _reflection_metadata
 
 
 def export_te_radial_probe(directory, out, z_m, mode=1):
@@ -17,7 +17,7 @@ def export_te_radial_probe(directory, out, z_m, mode=1):
         raise FileExistsError(f'probe output already exists: {out}')
     from .config import Case
     case = Case.load(directory/"case.json")
-    names = _names(case) | {"te_complete.json"}
+    names = _run_names(directory,case) | {"te_complete.json"}
     sources = {name: digest(directory/name) for name in sorted(names)}
     saved = read_te_run(directory)
     if type(mode) is not int or not 1 <= mode <= saved.case.modes:
@@ -39,6 +39,8 @@ def export_te_radial_probe(directory, out, z_m, mode=1):
                     conventions=_conventions(saved.case.geometry_order==2),
                     outside_policy='NaN fields with inside=0 in radial gaps',
                     outside_samples=int(np.count_nonzero(~fields['inside'])))
+    if saved.reflection_source_case is not None:
+        metadata['reflection']=_reflection_metadata(saved.reflection_source_case)
     if any((directory/name).is_symlink() or digest(directory/name) != value for name,value in sources.items()):
         raise ValueError('TE probe source changed during sampling')
     with out.open('x', encoding='utf-8') as stream:

@@ -30,8 +30,41 @@ def _json(path,data):
     with Path(path).open('x',encoding='utf-8') as stream:json.dump(data,stream,indent=2,allow_nan=False)
 
 
-def _names(case):
-    return ({'geometry.npz'} if case.geometry_order==2 else set()) | {'case.json','mesh.json','fields.npz','results.json','modes.csv',*(f'axis_{i:03d}.csv' for i in range(1,case.modes+1)),*(f'mode_{i:03d}.vtk' for i in range(1,case.modes+1))}
+def _names(case, *, reflected=False):
+    return ({'source_fields.npz'} if reflected else set()) | ({'geometry.npz'} if case.geometry_order==2 else set()) | {'case.json','mesh.json','fields.npz','results.json','modes.csv',*(f'axis_{i:03d}.csv' for i in range(1,case.modes+1)),*(f'mode_{i:03d}.vtk' for i in range(1,case.modes+1))}
+
+
+def _run_names(directory, case):
+    result=parse_json((Path(directory)/'results.json').read_text())
+    if not isinstance(result,dict):raise ValueError('TE results must be an object')
+    return _names(case, reflected=result.get('schema_version')==4)
+
+
+def _reflection_metadata(source):
+    sides=[side for side in ('z_min','z_max') if getattr(source,side)!='pec']
+    if len(sides)!=1:raise ValueError('TE reflection source requires one symmetry end')
+    side=sides[0]
+    return dict(version=1, source_case=source.to_dict(), side=side,
+                parity=1 if getattr(source,side)=='magnetic_symmetry' else -1,
+                mesh_role='source half-domain mesh; full geometry is reconstructed by reflection',
+                mode_indices='source parity-filtered order; NOT full-spectrum frequency ranks',
+                normalization='unchanged field amplitude; full energy and PEC loss double')
+
+
+def _restore_fields(case, mesh_data, v, f):
+    validate_te_case(case)
+    mesh=mesh_from_dict(case,mesh_data);space,k,m,free=te_matrices(case,mesh)
+    if v.dtype.kind!='f' or f.dtype.kind!='f' or v.shape!=(k.shape[0],case.modes) or f.shape!=(case.modes,) or not np.isfinite(v).all() or not np.isfinite(f).all() or np.any(f<=0) or np.any(np.diff(f)<0):
+        raise ValueError('invalid TE saved arrays')
+    constrained=np.setdiff1d(np.arange(len(v)),free)
+    if np.any(v[constrained]!=0):raise ValueError('TE essential electric-wall coefficients must be zero')
+    lam=(TAU*f/C0)**2;res=[]
+    for i,value in enumerate(lam):
+        kv,mv=(k@v[:,i])[free],(m@v[:,i])[free]
+        res.append(np.linalg.norm(kv-value*mv)/(np.linalg.norm(kv)+value*np.linalg.norm(mv)))
+    orth=float(np.max(abs(v.T@(m@v)*(EPS0*np.pi/case.normalization_j)-np.eye(case.modes))))
+    if not np.isfinite(res).all() or max(res)>1e-7 or orth>1e-8:raise ValueError('TE saved FEM residual or normalization/orthogonality failed')
+    return TESolution(case,mesh,space,k,m,lam,f,v,np.asarray(res),orth,mesh_data)
 
 
 def _vtk(path,solution,mode):
@@ -58,15 +91,21 @@ def _geometry_arrays(space):
 def save_te_run(case,solution,directory):
     validate_te_case(case)
     if not isinstance(solution,TESolution) or solution.case!=case:raise ValueError('TE case and solution disagree')
+    reflected=solution.reflection_source_case is not None
+    if reflected and solution.reflection_source_coefficients is None:
+        raise ValueError('TE reflected save requires the original half-domain coefficients')
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=False)
     with tempfile.TemporaryDirectory(prefix='.te-staging-',dir=directory) as temporary:
         stage=Path(temporary);modes=[te_quantities(solution,i) for i in range(case.modes)]
-        result=dict(schema_version=3 if case.geometry_order==2 else 2,physics='axisymmetric_m0_te',case=case.to_dict(),
+        result=dict(schema_version=4 if reflected else (3 if case.geometry_order==2 else 2),physics='axisymmetric_m0_te',case=case.to_dict(),
             software=dict(name='Superfish-NG',version=__version__),
             environment=dict(python=platform.python_version(),numpy=np.__version__,scipy=scipy.__version__,platform=platform.platform()),
             field_space=dict(element_order=case.element_order,geometry_order=case.geometry_order,basis='Lagrange v=Ephi/r',coefficient_unit='V/m^2'),
             conventions=_conventions(case.geometry_order==2),modes=modes,
             normalization_j=case.normalization_j,algebraic_residuals=solution.residuals.tolist(),orthogonality_error=solution.orthogonality_error)
+        if reflected:
+            result['reflection']=_reflection_metadata(solution.reflection_source_case)
+            np.savez_compressed(stage/'source_fields.npz',coefficients_v_per_m2=solution.reflection_source_coefficients,frequencies_hz=solution.frequencies_hz)
         _json(stage/'case.json',case.to_dict());_json(stage/'mesh.json',solution.source_mesh_data);_json(stage/'results.json',result)
         if case.geometry_order==2:
             np.savez_compressed(stage/'geometry.npz',**_geometry_arrays(solution.space))
@@ -82,7 +121,7 @@ def save_te_run(case,solution,directory):
                 writer=csv.writer(f);writer.writerow(['z_m','Ephi_V_per_m','Hr_quadrature_A_per_m','Hz_quadrature_A_per_m'])
                 writer.writerows(zip(axis[:,1],fields['Ephi_V_per_m'],fields['Hr_quadrature_A_per_m'],fields['Hz_quadrature_A_per_m']))
             _vtk(stage/f'mode_{i+1:03d}.vtk',solution,i)
-        names=_names(case)
+        names=_names(case, reflected=reflected)
         for name in sorted(names):os.link(stage/name,directory/name)
         _json(stage/'te_complete.json',dict(te_completion_version=1,files={name:digest(directory/name) for name in sorted(names)}))
         os.link(stage/'te_complete.json',directory/'te_complete.json')
@@ -104,17 +143,40 @@ def read_te_run(directory):
     before=hashlib.sha256(raw).hexdigest()
     if snapshot()!=before:raise ValueError('TE completion changed before verification')
     case=Case.load(directory/'case.json');validate_te_case(case)
-    if set(marker['files'])!=_names(case):raise ValueError('TE completion must contain exactly the required files')
     result=parse_json((directory/'results.json').read_text())
+    if not isinstance(result,dict):raise ValueError('TE results must be an object')
+    reflected=result.get('schema_version')==4
+    if set(marker['files'])!=_names(case,reflected=reflected):raise ValueError('TE completion must contain exactly the required files')
     names=('software','environment','schema_version','physics','case','field_space','conventions','modes','normalization_j','algebraic_residuals','orthogonality_error')
+    if reflected:names=(*names,'reflection')
     keys(result,names,names,'TE results')
     for name,fields in (('software',('name','version')),('environment',('python','numpy','scipy','platform'))):
         keys(result[name],fields,fields,'TE '+name)
         if any(type(value) is not str or not value for value in result[name].values()):raise ValueError('TE software/environment values must be nonempty strings')
     if result['software']['name']!='Superfish-NG':raise ValueError('unknown TE producer')
     if result['conventions']!=_conventions(case.geometry_order==2):raise ValueError('TE phasor/energy conventions disagree')
-    if type(result.get('schema_version')) is not int or result['schema_version']!=(3 if case.geometry_order==2 else 2) or result.get('physics')!='axisymmetric_m0_te' or Case.from_dict(result.get('case'))!=case:raise ValueError('TE result physics, version or case disagrees')
-    mesh_data=parse_json((directory/'mesh.json').read_text());mesh=mesh_from_dict(case,mesh_data);space,k,m,free=te_matrices(case,mesh)
+    if type(result.get('schema_version')) is not int or result['schema_version']!=(4 if reflected else (3 if case.geometry_order==2 else 2)) or result.get('physics')!='axisymmetric_m0_te' or Case.from_dict(result.get('case'))!=case:raise ValueError('TE result physics, version or case disagrees')
+    mesh_data=parse_json((directory/'mesh.json').read_text())
+    with np.load(directory/'fields.npz',allow_pickle=False) as data:
+        if set(data.files)!={'coefficients_v_per_m2','frequencies_hz'}:raise ValueError('TE requires electric coefficients and frequencies only')
+        v=data['coefficients_v_per_m2'];f=data['frequencies_hz']
+    if reflected:
+        reflection=result['reflection']
+        if not isinstance(reflection,dict):raise ValueError('TE reflection metadata must be an object')
+        source=Case.from_dict(reflection.get('source_case'))
+        if _canonical(reflection)!=_canonical(_reflection_metadata(source)):raise ValueError('TE reflection metadata disagrees')
+        with np.load(directory/'source_fields.npz',allow_pickle=False) as data:
+            if set(data.files)!={'coefficients_v_per_m2','frequencies_hz'}:raise ValueError('invalid TE reflection source arrays')
+            source_v=data['coefficients_v_per_m2'];source_f=data['frequencies_hz']
+        if f.dtype.kind!='f' or not np.array_equal(source_f,f):raise ValueError('TE reflected frequencies differ from source')
+        half=_restore_fields(source,mesh_data,source_v,source_f)
+        from .te_reflection import reflect_te_solution
+        full,sol=reflect_te_solution(source,half)
+        if full!=case or v.dtype.kind!='f' or not np.array_equal(v,sol.coefficients_v_per_m2):
+            raise ValueError('TE reflected Case or coefficients differ from source reconstruction')
+    else:
+        sol=_restore_fields(case,mesh_data,v,f)
+    space=sol.space;res=sol.residuals;orth=sol.orthogonality_error
     if case.geometry_order==2:
         with np.load(directory/'geometry.npz',allow_pickle=False) as saved_geometry:
             expected_geometry=_geometry_arrays(space)
@@ -122,22 +184,9 @@ def read_te_run(directory):
             for name,expected in expected_geometry.items():
                 actual=saved_geometry[name]
                 if actual.dtype!=expected.dtype or not np.array_equal(actual,expected):raise ValueError('TE saved curved geometry differs from reconstruction: '+name)
-    with np.load(directory/'fields.npz',allow_pickle=False) as data:
-        if set(data.files)!={'coefficients_v_per_m2','frequencies_hz'}:raise ValueError('TE requires electric coefficients and frequencies only')
-        v=data['coefficients_v_per_m2'];f=data['frequencies_hz']
-    if v.dtype.kind!='f' or f.dtype.kind!='f' or v.shape!=(k.shape[0],case.modes) or f.shape!=(case.modes,) or not np.isfinite(v).all() or not np.isfinite(f).all() or np.any(f<=0) or np.any(np.diff(f)<0):raise ValueError('invalid TE saved arrays')
-    constrained=np.setdiff1d(np.arange(len(v)),free)
-    if np.any(v[constrained]!=0):raise ValueError('TE essential electric-wall coefficients must be zero')
-    lam=(TAU*f/C0)**2;res=[]
-    for i,value in enumerate(lam):
-        kv,mv=(k@v[:,i])[free],(m@v[:,i])[free]
-        res.append(np.linalg.norm(kv-value*mv)/(np.linalg.norm(kv)+value*np.linalg.norm(mv)))
-    orth=float(np.max(abs(v.T@(m@v)*(EPS0*np.pi/case.normalization_j)-np.eye(case.modes))))
-    if not np.isfinite(res).all() or max(res)>1e-7 or orth>1e-8:raise ValueError('TE saved FEM residual or normalization/orthogonality failed')
     reported=np.asarray(result['algebraic_residuals']);reported_orth=result['orthogonality_error']
     if reported.shape!=(case.modes,) or reported.dtype.kind not in 'fi' or not np.isfinite(reported).all() or not np.allclose(reported,res,rtol=0,atol=1e-10):raise ValueError('TE reported residuals disagree')
     if type(reported_orth) not in (int,float) or not np.isfinite(reported_orth) or abs(reported_orth-orth)>1e-10:raise ValueError('TE reported orthogonality disagrees')
-    sol=TESolution(case,mesh,space,k,m,lam,f,v,np.asarray(res),orth,mesh_data)
     expected_space=dict(element_order=case.element_order,geometry_order=case.geometry_order,basis='Lagrange v=Ephi/r',coefficient_unit='V/m^2')
     if _canonical(result.get('field_space'))!=_canonical(expected_space) or type(result.get('normalization_j')) not in (int,float) or result.get('normalization_j')!=case.normalization_j:raise ValueError('TE field metadata disagrees')
     modes=[te_quantities(sol,i) for i in range(case.modes)]
