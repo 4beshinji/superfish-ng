@@ -132,15 +132,24 @@ def _prepare(previous, current, request, directory):
     request = PlanarTrackingRequest.from_dict(request.to_dict())
     sources = [_source(path) for path in (previous, current)]
     cases = [source[1].case for source in sources]
-    if not all(isinstance(case, PlanarCase) for case in cases) or cases[0].polarization != cases[1].polarization:
-        raise ValueError('planar tracking requires matching TE/TM rectangle Case schema_version 1; explicit polygon mappings are unsupported')
+    from .planar_polygon import PlanarPolygonCase
+    from .planar_tracking_polygon import PolygonScaleMapping, polygon_scale_overlay
+    polygon = isinstance(request.mapping, PolygonScaleMapping)
+    required = PlanarPolygonCase if polygon else PlanarCase
+    if not all(isinstance(case, required) for case in cases) or cases[0].polarization != cases[1].polarization:
+        raise ValueError('planar tracking source Case types and TE/TM polarization must match the declared mapping')
     for count, case in zip((request.previous_mode_count, request.current_mode_count), cases):
         if count >= case.modes: raise ValueError('tracked band requires a computed upper guard mode')
-        if 8*case.nx*case.ny > request.controls.max_refined_triangles:
+        refined_count = 4*len(case.mesh.triangles) if polygon else 8*case.nx*case.ny
+        if refined_count > request.controls.max_refined_triangles:
             raise ValueError('spectral-resolution refinement exceeds max_refined_triangles')
-    from .planar_tracking_overlap import rectangle_tracking_overlay
-    rectangle_tracking_overlay((cases[0].nx, cases[0].ny), (cases[1].nx, cases[1].ny),
-                               max_overlay_triangles=request.controls.max_overlay_triangles)
+    if polygon:
+        polygon_scale_overlay(cases[0].mesh, cases[1].mesh, request.mapping,
+                              max_overlay_triangles=request.controls.max_overlay_triangles)
+    else:
+        from .planar_tracking_overlap import rectangle_tracking_overlay
+        rectangle_tracking_overlay((cases[0].nx, cases[0].ny), (cases[1].nx, cases[1].ny),
+                                   max_overlay_triangles=request.controls.max_overlay_triangles)
     source_document = dict(format='superfish_ng_planar_tracking_sources', sources_version=1,
                            previous=sources[0][2], current=sources[1][2])
     raw = json.dumps(request.to_dict(), ensure_ascii=False, indent=2, allow_nan=False)+'\n'

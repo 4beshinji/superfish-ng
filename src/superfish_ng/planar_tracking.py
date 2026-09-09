@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Declared rectangle electric-field correspondence with guarded mode bands."""
+"""Declared planar electric-field correspondence with guarded mode bands."""
 from dataclasses import dataclass, field
 import json
 from pathlib import Path
@@ -9,7 +9,8 @@ from .project import parse_json
 from .mode_tracking import _control, _identity_groups, track_sampled_mode_subspaces
 from .planar_tracking_fields import verified_rectangular_solutions, _electric_grams, electric_gram_features
 from .planar_tracking_overlap import rectangle_tracking_overlay
-from .planar_tracking_resolution import rectangle_spectral_resolution, resolution_frequency_groups
+from .planar_tracking_resolution import rectangle_spectral_resolution, polygon_spectral_resolution, resolution_frequency_groups
+from .planar_tracking_polygon import PolygonScaleMapping, polygon_scale_overlay
 
 
 @dataclass(frozen=True)
@@ -48,14 +49,14 @@ class PlanarTrackingRequest:
     current_mode_count: int = 2
     previous_mode_ids: object = ('mode-1', 'mode-2')
     previous_identity_groups: object = None
-    mapping: str = 'normalized_rectangle'
+    mapping: object = 'normalized_rectangle'
     controls: PlanarTrackingControls = field(default_factory=PlanarTrackingControls)
 
     def __post_init__(self):
         integer(self.previous_mode_count, 'previous_mode_count')
         integer(self.current_mode_count, 'current_mode_count')
-        if self.mapping != 'normalized_rectangle':
-            raise ValueError('planar tracking currently requires explicit normalized_rectangle mapping')
+        if not isinstance(self.mapping, PolygonScaleMapping) and self.mapping != 'normalized_rectangle':
+            raise ValueError('planar tracking requires normalized_rectangle or a declared PolygonScaleMapping')
         if not isinstance(self.controls, PlanarTrackingControls):
             raise ValueError('expected PlanarTrackingControls')
         ids, groups = self.previous_mode_ids, self.previous_identity_groups
@@ -70,8 +71,8 @@ class PlanarTrackingRequest:
             object.__setattr__(self, 'previous_mode_ids', tuple(ids))
 
     def to_dict(self):
-        return dict(format='superfish_ng_planar_tracking_request', tracking_version=1,
-                    mapping=self.mapping, previous_mode_count=self.previous_mode_count,
+        return dict(format='superfish_ng_planar_tracking_request', tracking_version=2 if isinstance(self.mapping, PolygonScaleMapping) else 1,
+                    mapping=self.mapping.to_dict() if isinstance(self.mapping, PolygonScaleMapping) else self.mapping, previous_mode_count=self.previous_mode_count,
                     current_mode_count=self.current_mode_count,
                     previous_mode_ids=list(self.previous_mode_ids) if self.previous_mode_ids is not None else None,
                     previous_identity_groups=json.loads(json.dumps(self.previous_identity_groups)),
@@ -83,12 +84,15 @@ class PlanarTrackingRequest:
                  'previous_mode_ids', 'previous_identity_groups', 'controls']
         keys(data, names, names, 'planar tracking request')
         if (data['format'] != 'superfish_ng_planar_tracking_request'
-                or type(data['tracking_version']) is not int or data['tracking_version'] != 1):
-            raise ValueError('expected superfish_ng_planar_tracking_request tracking_version 1')
+                or type(data['tracking_version']) is not int or data['tracking_version'] not in (1, 2)):
+            raise ValueError('expected superfish_ng_planar_tracking_request tracking_version 1 or 2')
+        mapping = (PolygonScaleMapping.from_dict(data['mapping']) if data['tracking_version'] == 2 else data['mapping'])
+        if data['tracking_version'] == 1 and mapping != 'normalized_rectangle':
+            raise ValueError('tracking_version 1 requires normalized_rectangle mapping')
         if data['previous_mode_ids'] is not None and type(data['previous_mode_ids']) is not list:
             raise ValueError('previous_mode_ids must be a JSON list or null')
         return cls(data['previous_mode_count'], data['current_mode_count'], data['previous_mode_ids'],
-                   data['previous_identity_groups'], data['mapping'], PlanarTrackingControls.from_dict(data['controls']))
+                   data['previous_identity_groups'], mapping, PlanarTrackingControls.from_dict(data['controls']))
 
     @classmethod
     def load(cls, path):
@@ -126,20 +130,36 @@ def track_planar_modes(previous, current, request):
     if not isinstance(request, PlanarTrackingRequest):
         raise ValueError('expected PlanarTrackingRequest')
     request = PlanarTrackingRequest.from_dict(request.to_dict())
-    previous, current = verified_rectangular_solutions(previous, current)
+    polygon = isinstance(request.mapping, PolygonScaleMapping)
+    if polygon:
+        from .planar import PlanarSolution
+        from .planar_polygon import PlanarPolygonCase
+        from .planar_project import PlanarProject
+        from .planar_convergence_compare import _verified_solution
+        if any(not isinstance(s, PlanarSolution) or not isinstance(s.case, PlanarPolygonCase) for s in (previous, current)):
+            raise ValueError('polygon_uniform_scale requires explicit polygon Case schema_version 2 on both sides')
+        previous, current = [_verified_solution(s, PlanarProject(s.case)) for s in (previous, current)]
+        if previous.case.polarization != current.case.polarization:
+            raise ValueError('planar tracking cannot mix TE and TM polarizations')
+    else:
+        previous, current = verified_rectangular_solutions(previous, current)
     counts = (request.previous_mode_count, request.current_mode_count)
     if any(count >= solution.case.modes for count, solution in zip(counts, (previous, current))):
         raise ValueError('each tracked positive prefix band requires at least one computed upper guard mode')
     controls = request.controls
-    overlay = rectangle_tracking_overlay((previous.case.nx, previous.case.ny), (current.case.nx, current.case.ny),
-                                         max_overlay_triangles=controls.max_overlay_triangles)
+    if polygon:
+        overlay = polygon_scale_overlay(previous.case.mesh, current.case.mesh, request.mapping,
+                                        max_overlay_triangles=controls.max_overlay_triangles)
+    else:
+        overlay = rectangle_tracking_overlay((previous.case.nx, previous.case.ny), (current.case.nx, current.case.ny),
+                                             max_overlay_triangles=controls.max_overlay_triangles)
     grams = _electric_grams(previous, current, overlay, 3)
     higher = _electric_grams(previous, current, overlay, 5)
     a_norm, b_norm = np.sqrt(np.diag(grams[0])), np.sqrt(np.diag(grams[2]))
     discrepancies = [float(np.max(abs(a-b)/left[:, None]/right[None, :]))
                      for a, b, left, right in zip(grams, higher,
                         (a_norm, a_norm, b_norm), (a_norm, b_norm, b_norm))]
-    resolutions = [rectangle_spectral_resolution(s, max_refined_triangles=controls.max_refined_triangles)
+    resolutions = [(polygon_spectral_resolution if polygon else rectangle_spectral_resolution)(s, max_refined_triangles=controls.max_refined_triangles)
                    for s in (previous, current)]
     groups = [resolution_frequency_groups(s.frequencies_hz, r, controls.relative_cluster_gap)
               for s, r in zip((previous, current), resolutions)]
@@ -150,7 +170,7 @@ def track_planar_modes(previous, current, request):
     features = electric_gram_features(grams[0][:na, :na], grams[1][:na, :nb], grams[2][:nb, :nb])
     result = track_sampled_mode_subspaces(*features, np.ones(len(features[0])),
         previous.frequencies_hz[:na], current.frequencies_hz[:nb], None,
-        comparison_description='all physical peak E components pulled back by x=a*rho, y=b*eta; exact rectangle triangle intersections; reference area d_rho d_eta',
+        comparison_description=('all physical peak E components composed with the declared origin polygon scale; verified nested original elements; previous physical xy area' if polygon else 'all physical peak E components pulled back by x=a*rho, y=b*eta; exact rectangle triangle intersections; reference area d_rho d_eta'),
         minimum_overlap=controls.minimum_overlap, minimum_assignment_margin=max(controls.minimum_assignment_margin, numerical_margin_floor),
         relative_cluster_gap=controls.relative_cluster_gap,
         minimum_relative_singular_value=controls.minimum_relative_singular_value,
@@ -167,14 +187,19 @@ def track_planar_modes(previous, current, request):
                                               if match['dimension'] == 1 else None)
     if reasons:
         result.update(status='UNVERIFIED', individual_ids_complete=False, current_mode_ids=[None]*nb)
-    result.update(format='superfish_ng_planar_tracking_result', result_version=1, request=request.to_dict(),
+    result.update(format='superfish_ng_planar_tracking_result', result_version=2 if polygon else 1, request=request.to_dict(),
                   verification_reasons=reasons, spectral_resolution=resolutions,
                   spectral_resolution_groups=groups, guard_overlap=edge_unresolved,
-                  physical_mapping=dict(name=request.mapping, physics='cartesian_cutoff_rf', polarization=previous.case.polarization,
+                  physical_mapping=dict(name='polygon_uniform_scale' if polygon else request.mapping, physics='cartesian_cutoff_rf', polarization=previous.case.polarization,
                       previous_case=previous.case.to_dict(), current_case=current.case.to_dict(),
                       overlay_triangles=len(overlay.previous_cells), integration_orders=[3, 5],
                       maximum_normalized_gram_discrepancy=max(discrepancies), integration_tolerance=1e-10,
                       minimum_numerical_assignment_margin=numerical_margin_floor,
                       electric_gram_previous=grams[0].tolist(), electric_gram_cross=grams[1].tolist(), electric_gram_current=grams[2].tolist()),
                   scope='numerical electric-field subspace correspondence on a declared rectangle map; finite-enrichment resolution diagnostic only; no continuum error bound, surface-peak guarantee or continuous-path mode identity')
+    if polygon:
+        result['physical_mapping'].update(declaration=request.mapping.to_dict(), reference_measure='previous physical xy area in m^2',
+                                         coordinate_roundoff_relative_tolerance=16*np.finfo(float).eps,
+                                         coordinate_roundoff_scale='minimum of coordinate magnitude and shortest incident mesh edge; exact alternate scale/refinement construction also accepted')
+        result['scope']='numerical electric-field subspace correspondence on a declared polygon origin scale and nested mesh relation; finite-enrichment resolution diagnostic only; no continuum error bound, surface-peak guarantee or continuous-path mode identity'
     return result

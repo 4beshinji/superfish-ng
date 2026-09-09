@@ -21,6 +21,19 @@ def rectangle_spectral_resolution(solution, *, max_refined_triangles=250000):
     mesh = PlanarMesh.create([[0., 0.], [case.width_m, 0.],
                               [case.width_m, case.height_m], [0., case.height_m]],
                              solution.space.points_xy_m, solution.space.triangles)
+    return _spectral_resolution(solution, mesh, max_refined_triangles=max_refined_triangles)
+
+
+def polygon_spectral_resolution(solution, *, max_refined_triangles=250000):
+    """Diagnose the supplied verified polygon in its own refined FEM space."""
+    from .planar_polygon import PlanarPolygonCase
+    if not isinstance(solution.case, PlanarPolygonCase):
+        raise ValueError('polygon spectral resolution requires explicit polygon Case version 2')
+    return _spectral_resolution(solution, solution.case.mesh, max_refined_triangles=max_refined_triangles)
+
+
+def _spectral_resolution(solution, mesh, *, max_refined_triangles):
+    case = solution.case
     fine = refine_planar_mesh(mesh, max_triangles=max_refined_triangles)
     _, stiffness, mass, free = planar_mesh_matrices(fine, case.element_order, case.polarization)
     transfer = planar_prolongation(mesh, fine, case.element_order, case.polarization)
