@@ -105,25 +105,27 @@ $('convergence-open').onchange=run(async()=>{const file=$('convergence-open').fi
 $('convergence-result-save').onclick=()=>{if(currentConvergence)download(new Blob([JSON.stringify(currentConvergence.result,null,2)+'\n'],{type:'application/json'}),'planar-convergence-results.json');};
 for(const id of ['convergence-levels','convergence-ranks','convergence-budget','convergence-thresholds'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の細分要求';});
 
-let currentTracking=null,selectedTracking=null,trackingJobs=[];
-function refreshTrackingSources(jobs){
- trackingJobs=jobs;const kind=$('tracking-mapping').value,polygon=kind!=='normalized_rectangle',similarity=kind==='polygon_similarity',remesh=kind==='polygon_same_domain';$('tracking-polygon-options').hidden=!polygon||remesh;$('tracking-remesh-options').hidden=!remesh;$('tracking-origin-note').hidden=similarity;$('tracking-similarity-options').hidden=!similarity;
- const candidates=jobs.filter(job=>job.kind==='planar_solve'&&job.status==='complete'&&job.case_schema_version===(polygon?2:1));
- for(const id of ['tracking-previous','tracking-current']){const select=$(id),old=select.value;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent=polygon?'保存済みの明示多角形を選択':'保存済みの矩形を選択';select.append(empty);for(const job of candidates){const option=document.createElement('option');option.value=job.id;option.textContent=`${job.id} / ${job.modes}モード`;select.append(option);}if(candidates.some(job=>job.id===old))select.value=old;}
-}
-function trackingFromForm(){
- const kind=$('tracking-mapping').value,polygon=kind!=='normalized_rectangle',similarity=kind==='polygon_similarity',remesh=kind==='polygon_same_domain';
- const mapping=remesh?{name:kind,max_candidate_tests:numeric('tracking-candidate-tests')}:polygon?{name:kind,scale:numeric('tracking-scale'),previous_refinements:numeric('tracking-previous-refinements'),current_refinements:numeric('tracking-current-refinements')}:'normalized_rectangle';
- if(similarity)Object.assign(mapping,{rotation_radians:numeric('tracking-angle'),translation_xy_m:[numeric('tracking-translation-x'),numeric('tracking-translation-y')],inverse:$('tracking-inverse').checked});
- return {format:'superfish_ng_planar_tracking_request',tracking_version:remesh?4:similarity?3:polygon?2:1,mapping,previous_mode_count:numeric('tracking-previous-count'),current_mode_count:numeric('tracking-current-count'),previous_mode_ids:JSON.parse($('tracking-ids').value),previous_identity_groups:JSON.parse($('tracking-groups').value),controls:JSON.parse($('tracking-controls').value)};
-}
-function loadTracking(request){
- const polygon=[2,3,4].includes(request.tracking_version);$('tracking-mapping').value=polygon?request.mapping.name:'normalized_rectangle';
- if(polygon&&request.tracking_version!==4){$('tracking-scale').value=request.mapping.scale;$('tracking-previous-refinements').value=request.mapping.previous_refinements;$('tracking-current-refinements').value=request.mapping.current_refinements;}
- if(request.tracking_version===4)$('tracking-candidate-tests').value=request.mapping.max_candidate_tests;
- if(request.tracking_version===3){$('tracking-angle').value=request.mapping.rotation_radians;$('tracking-translation-x').value=request.mapping.translation_xy_m[0];$('tracking-translation-y').value=request.mapping.translation_xy_m[1];$('tracking-inverse').checked=request.mapping.inverse;}
- refreshTrackingSources(trackingJobs);$('tracking-previous-count').value=request.previous_mode_count;$('tracking-current-count').value=request.current_mode_count;$('tracking-ids').value=JSON.stringify(request.previous_mode_ids);$('tracking-groups').value=JSON.stringify(request.previous_identity_groups);$('tracking-controls').value=JSON.stringify(request.controls,null,2);
-}
+ let currentTracking=null,selectedTracking=null,trackingJobs=[];
+ function refreshTrackingSources(jobs){
+  trackingJobs=jobs;const kind=$('tracking-mapping').value,polygon=kind!=='normalized_rectangle',similarity=kind==='polygon_similarity',remesh=kind==='polygon_same_domain',composed=kind==='polygon_similarity_remesh';$('tracking-polygon-options').hidden=!polygon||remesh;$('tracking-remesh-options').hidden=!(remesh||composed);$('tracking-origin-note').hidden=similarity||composed;$('tracking-similarity-options').hidden=!(similarity||composed);$('tracking-refinement-options').hidden=composed;$('tracking-remesh-note').textContent=composed?'宣言変換で前の境界節点列を厳密に写し、内部の節点・対角線・接続は独立に選べます。境界節点の列は変換後の値と完全一致させる必要があります。':'同じ多角形の元要素どうしを比較します。節点番号や分割は異なって構いません。形状の変更は受け付けません。';
+  const candidates=jobs.filter(job=>job.kind==='planar_solve'&&job.status==='complete'&&job.case_schema_version===(polygon?2:1));
+  for(const id of ['tracking-previous','tracking-current']){const select=$(id),old=select.value;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent=polygon?'保存済みの明示多角形を選択':'保存済みの矩形を選択';select.append(empty);for(const job of candidates){const option=document.createElement('option');option.value=job.id;option.textContent=`${job.id} / ${job.modes}モード`;select.append(option);}if(candidates.some(job=>job.id===old))select.value=old;}
+ }
+ function trackingFromForm(){
+  const kind=$('tracking-mapping').value,polygon=kind!=='normalized_rectangle',similarity=kind==='polygon_similarity',remesh=kind==='polygon_same_domain',composed=kind==='polygon_similarity_remesh';
+  const mapping=remesh?{name:kind,max_candidate_tests:numeric('tracking-candidate-tests')}
+   :composed?{name:kind,scale:numeric('tracking-scale'),rotation_radians:numeric('tracking-angle'),translation_xy_m:[numeric('tracking-translation-x'),numeric('tracking-translation-y')],inverse:$('tracking-inverse').checked,max_candidate_tests:numeric('tracking-candidate-tests')}
+   :polygon?{name:kind,scale:numeric('tracking-scale'),previous_refinements:numeric('tracking-previous-refinements'),current_refinements:numeric('tracking-current-refinements')}:'normalized_rectangle';
+  if(similarity)Object.assign(mapping,{rotation_radians:numeric('tracking-angle'),translation_xy_m:[numeric('tracking-translation-x'),numeric('tracking-translation-y')],inverse:$('tracking-inverse').checked});
+  return {format:'superfish_ng_planar_tracking_request',tracking_version:composed?5:remesh?4:similarity?3:polygon?2:1,mapping,previous_mode_count:numeric('tracking-previous-count'),current_mode_count:numeric('tracking-current-count'),previous_mode_ids:JSON.parse($('tracking-ids').value),previous_identity_groups:JSON.parse($('tracking-groups').value),controls:JSON.parse($('tracking-controls').value)};
+ }
+ function loadTracking(request){
+  const polygon=[2,3,4,5].includes(request.tracking_version);$('tracking-mapping').value=polygon?request.mapping.name:'normalized_rectangle';
+  if(polygon&&request.tracking_version!==4){$('tracking-scale').value=request.mapping.scale;$('tracking-previous-refinements').value=request.mapping.previous_refinements??0;$('tracking-current-refinements').value=request.mapping.current_refinements??0;}
+  if(request.tracking_version===4||request.tracking_version===5)$('tracking-candidate-tests').value=request.mapping.max_candidate_tests;
+  if(request.tracking_version===3||request.tracking_version===5){$('tracking-angle').value=request.mapping.rotation_radians;$('tracking-translation-x').value=request.mapping.translation_xy_m[0];$('tracking-translation-y').value=request.mapping.translation_xy_m[1];$('tracking-inverse').checked=request.mapping.inverse;}
+  refreshTrackingSources(trackingJobs);$('tracking-previous-count').value=request.previous_mode_count;$('tracking-current-count').value=request.current_mode_count;$('tracking-ids').value=JSON.stringify(request.previous_mode_ids);$('tracking-groups').value=JSON.stringify(request.previous_identity_groups);$('tracking-controls').value=JSON.stringify(request.controls,null,2);
+ }
 async function openTracking(id){
  const data=await api('planar-tracking-result',{id});currentTracking=data;selectedTracking=id;loadTracking(data.request);$('tracking-result').hidden=false;$('tracking-selection').textContent=`${data.result.status} / ${id}`;
  $('tracking-notes').textContent=(data.result.individual_ids_complete?'対象帯域の個別IDが対応しました。':'個別IDが未確定です。部分空間のID集合と未解決の対応を区別してください。')+' '+data.result.verification_reasons.join(' / ');

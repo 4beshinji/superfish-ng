@@ -87,26 +87,18 @@ def _candidate_pairs(previous, current, budget):
                     yield i, int(j)
 
 
-def polygon_remesh_overlay(previous, current, mapping, *, max_overlay_triangles=250000):
-    """Integrate original element polynomials over exact triangle intersections."""
-    if not isinstance(mapping, PolygonRemeshMapping):
-        raise ValueError('expected PolygonRemeshMapping')
-    mapping = PolygonRemeshMapping.from_dict(mapping.to_dict())
-    integer(max_overlay_triangles, 'max_overlay_triangles')
-    if any(not isinstance(mesh, PlanarMesh) for mesh in (previous, current)):
-        raise ValueError('same-domain comparison requires two PlanarMesh objects')
-    if max(len(previous.triangles), len(current.triangles)) > max_overlay_triangles:
-        raise ValueError('input meshes already exceed max_overlay_triangles')
-    previous, current = [PlanarMesh.create(mesh.polygon_xy_m, mesh.points_xy_m, mesh.triangles)
-                         for mesh in (previous, current)]
-    if _polygon_corners(previous) != _polygon_corners(current):
-        raise ValueError('same-domain tracking requires exactly the same physical polygon')
+def _same_polygon_overlay(previous, current, max_candidate_tests, max_overlay_triangles):
+    """Clip two triangulations of the same polygon into exact common elements.
+
+    Cell numbers index each input mesh's own triangle array. The caller has
+    already verified that both meshes cover the same physical polygon.
+    """
     points = [_rational_points(mesh.points_xy_m) for mesh in (previous, current)]
     triangles = [[[p[int(index)] for index in tri] for tri in mesh.triangles]
                  for p, mesh in zip(points, (previous, current))]
     covered = [[Fraction(0) for _ in ts] for ts in triangles]
     parts = [[], [], [], [], [], []]
-    for i, j in _candidate_pairs(previous, current, mapping.max_candidate_tests):
+    for i, j in _candidate_pairs(previous, current, max_candidate_tests):
         a, b = triangles[0][i], triangles[1][j]
         polygon = _clip(a, b)
         for k in range(1, len(polygon)-1):
@@ -133,3 +125,20 @@ def polygon_remesh_overlay(previous, current, mapping, *, max_overlay_triangles=
     for array in arrays:
         array.setflags(write=False)
     return PlanarTrackingOverlay(*arrays)
+
+
+def polygon_remesh_overlay(previous, current, mapping, *, max_overlay_triangles=250000):
+    """Integrate original element polynomials over exact triangle intersections."""
+    if not isinstance(mapping, PolygonRemeshMapping):
+        raise ValueError('expected PolygonRemeshMapping')
+    mapping = PolygonRemeshMapping.from_dict(mapping.to_dict())
+    integer(max_overlay_triangles, 'max_overlay_triangles')
+    if any(not isinstance(mesh, PlanarMesh) for mesh in (previous, current)):
+        raise ValueError('same-domain comparison requires two PlanarMesh objects')
+    if max(len(previous.triangles), len(current.triangles)) > max_overlay_triangles:
+        raise ValueError('input meshes already exceed max_overlay_triangles')
+    previous, current = [PlanarMesh.create(mesh.polygon_xy_m, mesh.points_xy_m, mesh.triangles)
+                         for mesh in (previous, current)]
+    if _polygon_corners(previous) != _polygon_corners(current):
+        raise ValueError('same-domain tracking requires exactly the same physical polygon')
+    return _same_polygon_overlay(previous, current, mapping.max_candidate_tests, max_overlay_triangles)

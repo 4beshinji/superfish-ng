@@ -136,9 +136,11 @@ def _prepare(previous, current, request, directory):
     from .planar_tracking_polygon import PolygonScaleMapping, polygon_scale_overlay
     from .planar_tracking_similarity import PolygonSimilarityMapping, polygon_similarity_overlay
     from .planar_tracking_remesh import PolygonRemeshMapping, polygon_remesh_overlay
+    from .planar_tracking_similarity_remesh import PolygonSimilarityRemeshMapping, polygon_similarity_remesh_overlay
     remesh = isinstance(request.mapping, PolygonRemeshMapping)
     similarity = isinstance(request.mapping, PolygonSimilarityMapping)
-    polygon = isinstance(request.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping))
+    composed = isinstance(request.mapping, PolygonSimilarityRemeshMapping)
+    polygon = isinstance(request.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping, PolygonSimilarityRemeshMapping))
     required = PlanarPolygonCase if polygon else PlanarCase
     if not all(isinstance(case, required) for case in cases) or cases[0].polarization != cases[1].polarization:
         raise ValueError('planar tracking source Case types and TE/TM polarization must match the declared mapping')
@@ -148,7 +150,7 @@ def _prepare(previous, current, request, directory):
         if refined_count > request.controls.max_refined_triangles:
             raise ValueError('spectral-resolution refinement exceeds max_refined_triangles')
     if polygon:
-        (polygon_remesh_overlay if remesh else polygon_similarity_overlay if similarity else polygon_scale_overlay)(cases[0].mesh, cases[1].mesh, request.mapping,
+        (polygon_similarity_remesh_overlay if composed else polygon_remesh_overlay if remesh else polygon_similarity_overlay if similarity else polygon_scale_overlay)(cases[0].mesh, cases[1].mesh, request.mapping,
                               max_overlay_triangles=request.controls.max_overlay_triangles)
     else:
         from .planar_tracking_overlap import rectangle_tracking_overlay

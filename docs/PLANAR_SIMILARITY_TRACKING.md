@@ -67,7 +67,7 @@ python -m superfish_ng replay-planar-tracking new-tracking
 
 ## 受入証拠（2026-09-10）
 
-明示多角形の正の尺度・回転・SI平行移動による追跡を限定受入。要求/結果版3、正逆の元電場積分、完全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準932件（930合格、2skip、1447.175秒）、追加9unit、独立64 FEM/128対応、解析32条件、縮退16 FEM、実追跡32/履歴16worker、中止/再起動、Chrome87操作とGUI56保存ジョブを確認。旧版追跡・22履歴・TM/TE/平面数値回帰と535sourceも合格。一般変形・親P02と全計画は未完。
+明示多角形の正の尺度・回転・SI平行移動による追跡を限定受入。要求/結果版3、正逆の元電場積分、完全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準932件（930合格、2skip、1447.175秒）、追加9unit、独立64 FEM/128対応、解析32条件、縮退16 FEM、実追跡32/履歴16worker、中止/再起動、Chrome87操作とGUI56保存ジョブを確認。旧版追跡・22履歴・TM/TE/平面数値回帰と535sourceも合格。独立内部メッシュとの合成は[合成追跡版5](PLANAR_SIMILARITY_REMESH_TRACKING.md)として限定受入済み。一般変形・境界密度独立の合成・親P02と全計画は未完。
 
 - 標準・535source・TM seed9モード19量: `out/validation-planar-similarity-final-20260910`
 - 64 FEM・正逆128対応: `out/planar-similarity-final-independent-20260910`
