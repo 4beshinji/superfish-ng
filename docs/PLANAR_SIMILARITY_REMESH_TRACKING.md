@@ -6,7 +6,7 @@
 
 ## 対象と宣言
 
-対象は、同じ偏波のCartesian遮断TE/TM、直線P1/P2の明示多角形Case版2である。前後の保存場は同じ物理多角形の相似像で、三角形数・節点番号・対角線・内部節点位置は異なってよい。せん断、異方尺度、鏡映、任意の頂点移動、異なる多角形形状は未対応。
+対象は、同じ偏波のCartesian遮断TE/TM、直線P1/P2の明示多角形Case版2である。前後の保存場は同じ物理多角形の相似像で、三角形数・節点番号・対角線・内部節点位置は異なってよい。せん断、異方尺度、鏡映は[可逆アフィン合成追跡](PLANAR_AFFINE_REMESH_TRACKING.md)（要求/結果版6）で対応。非線形変形、異なる多角形形状は未対応。
 
 宣言は `x_current = scale × R(rotation_radians) × x_previous + translation_xy_m`。`scale > 0`、`rotation_radians` は rad、`translation_xy_m` は m の二成分。`inverse: true` は同じ宣言を逆方向 `x_current = R(θ)^T (x_previous - t) / scale` に使う。逆係数を別の丸めた値へ展開しない。
 
@@ -70,7 +70,7 @@ python -m superfish_ng replay-planar-tracking new-tracking
 
 ## 限界
 
-- せん断・鏡映・任意変形・異なる多角形形状は未対応。
+- せん断・鏡映・異方尺度は[可逆アフィン合成追跡](PLANAR_AFFINE_REMESH_TRACKING.md)（要求/結果版6）で対応。非線形変形・異なる多角形形状は未対応。
 - 境界節点列の厳密一致が必要で、境界の分割密度は独立に選べない。内部のみ独立である。
 - 二状態の数値対応であり、連続経路のモード同一性、物理誤差上界、表面ピーク収束の保証ではない。
 - 一般の多次元写像・曲線断面・親P02全体は継続する。

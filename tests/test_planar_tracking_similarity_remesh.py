@@ -62,7 +62,7 @@ class PlanarSimilarityRemeshGeometryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             PlanarTrackingRequest.from_dict({**request,'tracking_version':4})
         with self.assertRaises(ValueError):
-            PlanarTrackingRequest.from_dict({**request,'tracking_version':6})
+            PlanarTrackingRequest.from_dict({**request,'tracking_version':7})
 
     def test_transformed_boundary_recognition_and_independent_interior(self):
         mapping=PolygonSimilarityRemeshMapping(.37,.371,(.13,-.08))
