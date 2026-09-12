@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .hphi_jobs import is_hphi_job, verify_hphi_job
+        if is_hphi_job(directory, state, manifest):
+            verify_hphi_job(directory, state, manifest)
+            return state
         from .planar_tracking_history_saved import is_planar_history, verify_planar_history
         if is_planar_history(directory, state, manifest):
             verify_planar_history(directory, state, manifest)
@@ -309,6 +313,16 @@ class JobManager:
                 _state(directory, "failed", error=str(exc))
                 raise
             return identifier
+
+    def start_hphi(self, project):
+        """Execute a positive-radius Hphi Project in a dedicated local worker."""
+        from .hphi_jobs import start_hphi
+        return start_hphi(self,project)
+
+    def import_hphi_result(self, source):
+        """Import verified coaxial or Hphi mesh native bytes without changing geometry."""
+        from .hphi_jobs import import_hphi_result
+        return import_hphi_result(self,source)
 
     def start_planar(self, project):
         """Execute a dedicated Cartesian cutoff Project in a local worker."""

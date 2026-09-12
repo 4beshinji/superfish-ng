@@ -151,6 +151,9 @@ def main(argv=None):
     planar_project=sub.add_parser('execute-planar-project',help='execute a dedicated Cartesian cutoff Project and verify native completion')
     planar_project.add_argument('project',type=Path)
     planar_project.add_argument('--out',type=Path,required=True)
+    hphi_project=sub.add_parser('execute-hphi-project',help='execute a dedicated positive-radius Hphi Project with verified native completion')
+    hphi_project.add_argument('project',type=Path)
+    hphi_project.add_argument('--out',type=Path,required=True)
     hphi=sub.add_parser('solve-hphi-mesh',help='solve explicit positive-radius vacuum Hphi mesh, including PEC holes')
     hphi.add_argument('case',type=Path)
     hphi.add_argument('--out',required=True,type=Path)
@@ -258,6 +261,11 @@ def main(argv=None):
             from .planar_project import PlanarProject
             from .planar_jobs import execute_planar_project
             print(json.dumps(execute_planar_project(PlanarProject.load(args.project),args.out),indent=2,allow_nan=False))
+            return 0
+        if args.command=='execute-hphi-project':
+            from .hphi_project import HphiProject
+            from .hphi_jobs import execute_hphi_project
+            print(json.dumps(execute_hphi_project(HphiProject.load(args.project),args.out),indent=2,allow_nan=False))
             return 0
         if args.command in ('solve-hphi-mesh','replay-hphi-mesh','probe-hphi-mesh'):
             from .hphi_mesh import HphiMeshCase,solve_hphi_mesh

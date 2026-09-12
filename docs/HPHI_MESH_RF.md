@@ -1,5 +1,6 @@
 # P03：軸を含まない一般断面と複数PEC境界のHφ FEM
 
+専用[Hφ Project/Job](HPHI_JOBS.md)の入力・実worker・保存/取込・中止/再起動を後続工程で接続・限定受入した。GUIは[別計画](HPHI_GUI_PLAN.md)。
 2026-09-12、基準f4b8cc3。[一般断面計画](COAXIAL_GENERAL_MESH_PLAN.md)を実装・限定受入した。
 追加12unit・独立細分・標準回帰と専用native/CLIまで確認し、以下の範囲で限定受入した。
 
@@ -120,4 +121,4 @@ U以外の各誤差が実細分で減少し、二尺度のf/G/Q/P/U則は相対1
 既存seed9モード19量は周波数差0e+00・最大相対差8.882e-16。ベンチマークは更新していない。
 証拠はout/hphi-mesh-development-20260912、out/hphi-mesh-independent-20260912、out/hphi-mesh-geometry-20260912、
 out/hphi-mesh-examples-20260912、out/validation-hphi-mesh-20260912/seed_regression.json。hosted CIと新しい旧版実行は行っていない。
-Project/Jobは別コピーで検証中。次の表示/GUI契約は[HPHI_GUI_PLAN.md](HPHI_GUI_PLAN.md)。親33課題の8受入/11進行/13他未受入/1範囲外は維持する。
+Project/Jobは[専用契約](HPHI_JOBS.md)で限定受入。次の表示/GUI契約は[HPHI_GUI_PLAN.md](HPHI_GUI_PLAN.md)。親33課題の8受入/11進行/13他未受入/1範囲外は維持する。
