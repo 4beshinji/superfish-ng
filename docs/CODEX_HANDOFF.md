@@ -1,3 +1,15 @@
+2026-09-12 P02：境界分割独立の厳密アフィン共通分割APIを限定受入。
+`planar_tracking_exact_affine.exact_affine_polygon_overlay` は、写像/逆写像・BVH・交差を有理数で評価し、
+元要素ごとの厳密面積被覆を確認する。反射でも元の要素番号/重心座標列を保持し、正逆とも現在xy面積で積分する。
+追加8unit（1.414秒）、独立16条件32FEM/32native（158.862秒）、標準964件（962合格・2skip、1523.747秒）でPASS。
+P2最終最大はf 4.506e-7、E L2 3.583e-4、H L2 9.495e-4、G 2.394e-3、Q 2.395e-3、壁損失2.401e-3、Gram 7.531e-8。
+二尺度相似最大5.029e-14。seed9モード19量はf差0・最大相対差8.882e-16。標準/独立551source一致、旧548sourceは全て不変。
+証拠は `out/exact-affine-overlay-20260912` と `out/validation-exact-affine-overlay-20260912`。
+契約・反例・失敗履歴は[PLANAR_EXACT_AFFINE_OVERLAY.md](PLANAR_EXACT_AFFINE_OVERLAY.md)。
+初回標準はソース追加中の検出と既存RF最適化replay不一致で2 error。ソース固定/OPENBLAS_NUM_THREADS=1の最終標準は合格し、RFジョブ個別4件も合格（206.014秒）。未固定環境の不一致原因と既存.manager.lock警告は未解決として保持する。
+既存追跡版1〜6の意味は変更していない。次工程は厳密写像の専用要求/結果版、場の正逆移送・有限細分診断、全保存再検証、worker/CLI/GUI/所有履歴への接続。一般の丸めた境界・非線形/曲線・親P02と全計画は未完。
+この作業環境は `/home/sin/code/agent/reserch/superfish-ng`。旧記載の `/home/sin/code/superfish` は存在せず、移動/入れ子作成は行っていない。Pythonは `.venv/bin/python`（3.12.3、NumPy 2.5.2、SciPy 1.18.1）を使った。
+
 2026-09-11 可逆アフィン＋独立内部メッシュの合成追跡（要求/結果版6）の最終状態：明示多角形の厳密に可逆な宣言アフィン写像（せん断・異方尺度・鏡映・一般成分を含む）と独立内部メッシュの元電場追跡を限定受入。要求/結果版6、余因子 `adj(E)=det(E)E^{-1}` によるTE移送、向き反転時の境界・三角形正規化とbarycentric復元、正逆の元電場積分、完全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準956件（954合格、2skip、1513.289秒）、追加9unit（26.041秒）、独立解析26条件（反射8・異方8・順位交差2・せん断8、75.754秒、解析恒等残差最大2.221e-16、P2最終FEM Gram最大1.038e-4・周波数3.335e-4、P1最終cross最大4.669e-3、異方P2周波数8.785e-5、せん断P2移送2.908e-16、モーメント1.554e-15）、6拒否、実Chrome9操作（外部HTTP 0、source不変）を確認。証拠は`out/planar-affine-remesh-independent-20260911`、`out/browser-planar-affine-remesh-20260911`、標準`out/validation-planar-affine-remesh-final-20260911`。seed9モード19量は周波数差0・最大相対差8.882e-16。境界密度独立の一般合成・非線形変形・異なる多角形形状・曲線・親P02と全計画は未完。契約はPLANAR_AFFINE_REMESH_TRACKING.md、経過はPLANAR_AFFINE_REMESH_TRACKING_PLAN.md。既存`.manager.lock`のResourceWarningは未解決として保持する。
 
 2026-09-11 相似変換＋独立内部メッシュの合成追跡（要求/結果版5）の最終状態：宣言相似変換で前の境界節点列を厳密に写し、内部の節点・対角線・接続だけを独立に再メッシュした元電場追跡を限定受入。正逆の元電場積分、完全保存再生・CLI/実worker/GUI・所有履歴を接続した。標準947件（945合格、2skip、1514.373秒）、追加8unit、独立解析16条件、Chrome9操作を確認。最初の「前のメッシュ全体を変換して厳密被覆」案は境界節点のbinary64丸めでスリヴァーを残すため拒否し、その反例を`out/planar-similarity-remesh-boundary-sliver-20260911`へ保持した。せん断・鏡映・異方尺度は[可逆アフィン合成追跡](PLANAR_AFFINE_REMESH_TRACKING.md)（版6）として限定受入済み。境界密度を独立に選ぶ一般合成・非線形変形・曲線・親P02と全計画は未完。証拠は`out/planar-similarity-remesh-independent-final-20260911`（70.0秒）、`out/browser-planar-similarity-remesh-20260911`（9項目、外部HTTP 0）、標準`out/validation-planar-similarity-remesh-final-20260911`。契約はPLANAR_SIMILARITY_REMESH_TRACKING.md、経過はPLANAR_SIMILARITY_REMESH_TRACKING_PLAN.md。既存`.manager.lock`のResourceWarningは未解決として保持する。
