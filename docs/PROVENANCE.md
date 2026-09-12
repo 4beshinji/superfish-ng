@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[平面反跳材料弱形式](PLANAR_RECOIL_FORMS.md)。[COMSOL 6.4 Ampere's Law](https://doc.comsol.com/6.4/doc/com.comsol.help.acdc/acdc_ug_magnetic_fields.08.034.html)の線形B-H構成則/方向と、[MFEM Magnetostatic Equations](https://mfem.org/tesla-notes/)のcurl-curl/残留磁化源の公開数学を確認した。数式のみを照合し、掲載コード・材料表・例・外部ソルバーは転用・導入していない。MFEMノートの境界条件の近道と残留磁束を省いたH復元は使用しない。基準を明示した二つの構成ポテンシャルは構成則を独自に積分して導出した。自前の中立幾何/所有検証を共有し、独立Gauss/Vandermondeと解析モーメントで確認。新規依存・旧版実行なし。
+
 2026-09-13：[軸非接続の磁静保存・再構築・CLI](OFF_AXIS_MAGNETOSTATIC_NATIVE.md)。軸非接続native/CLIは基準psiと相対/絶対psi、全mu_r/Jphi/境界/穴を保存し、同じ実FEMで元6場とJ/Wb/Aの量・規約を再検証する。基準と領域内磁束差を保持し、領域外の軸を貫く磁束を補わない。自前の中立幾何/厳密保存手順を共有し、独立解析はcurlとエネルギー積分から導出した。新規依存・外部資料・旧版実行なし。
 
 2026-09-13：[軸非接続の境界付き磁静FEM・元6場/J/Wb](OFF_AXIS_MAGNETOSTATIC_SOLVE.md)。第16版は軸非接続psiの固定値/Ht境界付き実FEMを接続する。自然荷重+2π∫Ht Ni ds[A]、全Jエネルギー/Wb磁束とA電流/反力を別に保持する。基準変更はAphiにC/rを加えるがB/H/Uは不変。領域外の絶対磁束と巻線インダクタンスは推定しない。自前の中立幾何/厳密保存手順を共有し、独立解析はcurlとエネルギー積分から導出した。新規依存・外部資料・旧版実行なし。

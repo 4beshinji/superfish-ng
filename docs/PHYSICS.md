@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v16（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[平面の線形反跳材料弱形式](PLANAR_RECOIL_FORMS.md)を専用APIに追加する。B=mu0*mu_rec*H+Brem、nu=(mu0*mu_rec)^−1、Kij=∫curl(Ni ez)ᵀnu curl(Nj ez)、frem=∫curl(Ni ez)ᵀnu Brem。主軸tensorと残留Bを同じ領域向きへ回転する。w0=Bᵀnu B/2−Bᵀnu Brem（B=0基準）とws=(B−Brem)ᵀnu(B−Brem)/2（H=0基準）は定数差を持ち、両者のB微分はH。絶対磁石内部エネルギーを定義しない。境界付き解は後続工程。
+
 [軸非接続の磁静保存・再構築・CLI](OFF_AXIS_MAGNETOSTATIC_NATIVE.md)。軸非接続native/CLIは基準psiと相対/絶対psi、全mu_r/Jphi/境界/穴を保存し、同じ実FEMで元6場とJ/Wb/Aの量・規約を再検証する。基準と領域内磁束差を保持し、領域外の軸を貫く磁束を補わない。
 
 [軸非接続の境界付き磁静FEM・元6場/J/Wb](OFF_AXIS_MAGNETOSTATIC_SOLVE.md)。第16版は軸非接続psiの固定値/Ht境界付き実FEMを接続する。自然荷重+2π∫Ht Ni ds[A]、全Jエネルギー/Wb磁束とA電流/反力を別に保持する。基準変更はAphiにC/rを加えるがB/H/Uは不変。領域外の絶対磁束と巻線インダクタンスは推定しない。

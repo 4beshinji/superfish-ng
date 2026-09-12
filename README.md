@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[平面の反跳透磁率テンソル・残留磁束弱形式](docs/PLANAR_RECOIL_FORMS.md)を主ツリーへ統合・限定受入。
+主軸mu_rと残留B、領域の向きを明示し、tensor K・Jz荷重・残留荷重を分離する。B=0とH=0を零点とする構成ポテンシャルを区別し、定数Az核を保持する。
+標準1213件（1210合格・3skip）、追加5unitと主5unit、独立72例216多項式・零H24条件がPASS。固定754sourceを主760sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+S03を進行中へ移し、親33=8受入/15進行/9他未受入/1範囲外。境界付き解・保存・軸対称・対象版のモデル確認、S03と全計画は未完。
+
+
 2026-09-13：[軸非接続の磁静保存・再構築・CLI](docs/OFF_AXIS_MAGNETOSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
 基準と相対/絶対psi、全mu_r/Jphi/境界/穴を保存し、同じ実FEM再求解で元6場とJ/Wb/Aの全量を照合する。独立24例48native/80CLIがPASSし、API/CLIの5ファイル・全プローブJSONが一致、元240native/90参照ファイルは不変。
 標準1208件（1205合格・3skip）、追加4unitと主4unitがPASS。固定749sourceを主755sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
