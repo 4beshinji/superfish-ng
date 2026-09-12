@@ -13,6 +13,9 @@ from .hphi_project import HphiProject
 from .project import parse_json
 
 ACTIONS = {
+    'hphi-normalize-history': ['document'], 'hphi-start-history': ['document','step_ids'],
+    'hphi-extend-history': ['id','next_id'], 'hphi-history-result': ['id'],
+    'hphi-history-source': ['id','index','side'],
     'hphi-normalize-tracking': ['document'], 'hphi-start-tracking': ['previous_id','current_id','document'],
     'hphi-tracking-result': ['id'], 'hphi-tracking-side': ['id','side'], 'hphi-repeat-tracking': ['id','document'],
     'hphi-normalize-convergence': ['document'], 'hphi-start-convergence': ['document'],
@@ -31,6 +34,8 @@ ACTIONS = {
 def hphi_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown hphi operation')
+    if action in ('hphi-normalize-history','hphi-start-history','hphi-extend-history','hphi-history-result','hphi-history-source'):
+        return hphi_history_response(manager,action,data)
     if action in ('hphi-normalize-tracking','hphi-start-tracking','hphi-tracking-result','hphi-tracking-side','hphi-repeat-tracking'):
         return hphi_tracking_response(manager,action,data)
     if action in ('hphi-normalize-convergence','hphi-start-convergence','hphi-convergence-result','hphi-convergence-point'):
@@ -174,4 +179,39 @@ def hphi_convergence_response(manager,action,data):
         if before!=_snapshot(directory,request):raise ValueError('Hphi convergence changed before level import')
         payload={'id':manager.import_hphi_result(directory/_point_name(index))}
     if before!=_snapshot(directory,request):raise ValueError('Hphi convergence changed during GUI response')
+    return payload,media
+
+
+def hphi_history_response(manager, action, data):
+    from .hphi_tracking_history import HphiTrackingHistoryRequest
+    from .hphi_tracking_history_saved import read_hphi_history, history_snapshot
+    keys(data,ACTIONS[action],ACTIONS[action],'hphi tracking history request')
+    media='application/json; charset=utf-8'
+    def pair_path(identifier):
+        state=manager.status(identifier,verify=True)
+        if state.get('status')!='complete' or state.get('kind')!='hphi_tracking':
+            raise ValueError('select a complete verified hphi tracking pair')
+        return manager.directory(identifier)
+    if action in ('hphi-normalize-history','hphi-start-history'):
+        raw=parse_json(data['document']) if isinstance(data['document'],str) else data['document']
+        request=HphiTrackingHistoryRequest.from_dict(raw)
+        if action=='hphi-normalize-history':return request.to_dict(),media
+        identifiers=data['step_ids']
+        if type(identifiers) is not list or len(identifiers)!=request.step_count:
+            raise ValueError('step_ids must contain exactly step_count tracking pair IDs')
+        return {'id':manager.start_hphi_history([pair_path(identifier) for identifier in identifiers],request)},media
+    directory=manager.directory(data['id'])
+    if action=='hphi-extend-history':
+        return {'id':manager.extend_hphi_history(directory,pair_path(data['next_id']))},media
+    before=history_snapshot(directory);result=read_hphi_history(directory)
+    if action=='hphi-history-result':
+        payload=dict(request=result['request'],result=result,state=manager.status(data['id'],verify=True),sources=parse_json((directory/'sources.json').read_text()))
+    else:
+        if before!=history_snapshot(directory):raise ValueError('hphi history changed before source import')
+        index=data['index'];side=data['side']
+        if type(index) is not int or not 0<=index<result['request']['step_count']:
+            raise ValueError('Hphi history step index is out of range')
+        if side not in ('previous','current'):raise ValueError('Hphi history side must be previous or current')
+        payload={'id':manager.import_hphi_result(directory/f'step-{index:04d}'/side)}
+    if before!=history_snapshot(directory):raise ValueError('hphi history changed during GUI response')
     return payload,media

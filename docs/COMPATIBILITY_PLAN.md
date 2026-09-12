@@ -1,5 +1,11 @@
 # 互換開発の作業分割 v0
 
+2026-09-12：[Hφ追跡の所有履歴](HPHI_TRACKING_HISTORY.md)を主ツリーへ統合・限定受入。
+保存場・帯域・個別ID/ID集合の連続性を全再生し、所有コピーへの延長、CLI・worker・取消/再起動・GUIの各段階の元場取込まで接続した。
+標準1082件（1079合格・3skip）、独立8チェーン/21履歴worker/39再起動/5CLI、Chrome新16/復元8/旧19、主9unit/28保存ジョブ/5CLIがPASS。元286native・6履歴は不変、PNG/CSVはbyte一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。形状写像・曲線内導体・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+
+
 2026-09-12：[Hφ細分差診断のworker・GUI](HPHI_CONVERGENCE_WORKSPACE.md)を主ツリーへ統合・限定受入。
 明示Project列の実行/取消、全水準の所有保存・完全再生、要求と各量の判定理由の復元、元水準の場・全成分CSVを接続した。
 標準1057件（1054合格・3skip）、独立7worker/21水準、Chrome新14/復元6/旧25操作、主2unit/26保存ジョブ/4CLIがPASS。元180nativeは不変、PNG/CSVはブラウザー・CLI・再起動後で一致した。
@@ -184,7 +190,7 @@ V02の[ローカル配布確認](LOCAL_DISTRIBUTION_20260909.md)として3386a5f
 | 状態 | 件数 | 親課題と範囲 |
 |---|---:|---|
 | .S/.I/.V受入済み | 8 | C01、C02（初期AF部分集合）、O01（ローカル保存）、R01（native規約）、N01/N02（直線P2）、G01/G02（軸接続単一輪郭・自動メッシュ） |
-| 調査・実装進行中、親課題全体は未受入 | 11 | P03（[閉同軸円筒](COAXIAL_RF.md)、[正半径の一般断面・複数穴](HPHI_MESH_RF.md)、[軸接続のPEC穴付き断面](AXIS_HPHI_RF.md)のHφ FEM・各空間の零モード処理・全壁RF・native/CLIを限定受入。[軸接続のProject/GUI/独立Study](AXIS_HPHI_WORKSPACE.md)も限定受入。[明示メッシュ列の細分差診断](HPHI_CONVERGENCE.md)も限定受入。曲線内導体・部分空間追跡・旧版照合等は未完）、 P02（[矩形P1/P2と専用入力・保存/CLI](PLANAR_RF.md)を限定受入。単純多角形版2/CLIと[専用Project/Job](PLANAR_JOBS.md)を限定受入、[平面表示/GUI](GUI_PLANAR.md)を限定受入、[独立Study](PLANAR_STUDY.md)、[同形状細分診断](PLANAR_CONVERGENCE.md)、[矩形追跡](PLANAR_TRACKING.md)、[多角形一様尺度追跡](PLANAR_POLYGON_TRACKING.md)を限定受入。[保存履歴](PLANAR_TRACKING_HISTORY.md)、[宣言相似写像](PLANAR_SIMILARITY_TRACKING.md)、[同じ多角形の独立再メッシュ](PLANAR_REMESH_TRACKING.md)、[相似変換＋独立内部メッシュの合成](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[可逆アフィン＋独立内部メッシュの合成](PLANAR_AFFINE_REMESH_TRACKING.md)、[厳密アフィン＋境界/内部の独立メッシュ](PLANAR_EXACT_AFFINE_TRACKING.md)も限定受入。一般の丸めた境界・非線形変形・曲線断面等は未完）、P01（直線P1/P2と曲線P2のTE固有値・場・RF・専用native/CLI）、 D03（保存RF制約評価・曲線2変数探索の実FEM/予算/最終細分/保存再開API・CLI・JobManagerを部分実装）、O02（外部mesh単体GUI読込/解除・通常Job/保存・直線P1/P2および曲線固定Study、TE通常Project/Job/GUIを部分実装）、C00（対象版/必須集合未確定）、G03（曲線FEM等を部分受入、弧端/退化分類・全要件照合が残る）、D01（標本部分空間追跡・円筒/profile写像・明示メッシュ対応を部分実装）、D02（追跡付き1変数tuneと再開・細分判定API/CLI・JobManager・GUIを部分実装）、N03（通常RFの上下界評価API/保存/CLI/GUI、固定曲線幾何の追跡済み表面収束評価API/CLI/GUI、直線P1/P2の連続離散ピーク囲い込み・元多角形角診断・表面収束評価API/保存/CLI/GUI）、N04（曲線適応版4の五量停止/保存再開API/CLI/JobManager、曲線親子質量内積追跡、曲線残差指標、曲線局所細分の基盤APIとCase履歴/native保存/CLI、適合細分・係数移送・残差指標、追跡付きf/RQ/G適応停止・保存再開API/CLI/JobManager/GUI。版2全域確認で円筒P1のRF改善検査もPASS。版3のピーク比停止はAPI/CLI/JobManagerへ追加。一般形状/効率は未受入） |
+| 調査・実装進行中、親課題全体は未受入 | 11 | P03（[閉同軸円筒](COAXIAL_RF.md)、[正半径の一般断面・複数穴](HPHI_MESH_RF.md)、[軸接続のPEC穴付き断面](AXIS_HPHI_RF.md)のHφ FEM・各空間の零モード処理・全壁RF・native/CLIを限定受入。[軸接続のProject/GUI/独立Study](AXIS_HPHI_WORKSPACE.md)も限定受入。[明示メッシュ列の細分差診断](HPHI_CONVERGENCE.md)、[同領域のE/H部分空間対応](HPHI_SAME_DOMAIN_TRACKING.md)、[所有保存/worker/CLI](HPHI_TRACKING_JOBS.md)、[追跡GUI](GUI_HPHI_TRACKING.md)、[所有履歴](HPHI_TRACKING_HISTORY.md)も限定受入。曲線内導体・一般の形状写像・旧版照合等は未完）、 P02（[矩形P1/P2と専用入力・保存/CLI](PLANAR_RF.md)を限定受入。単純多角形版2/CLIと[専用Project/Job](PLANAR_JOBS.md)を限定受入、[平面表示/GUI](GUI_PLANAR.md)を限定受入、[独立Study](PLANAR_STUDY.md)、[同形状細分診断](PLANAR_CONVERGENCE.md)、[矩形追跡](PLANAR_TRACKING.md)、[多角形一様尺度追跡](PLANAR_POLYGON_TRACKING.md)を限定受入。[保存履歴](PLANAR_TRACKING_HISTORY.md)、[宣言相似写像](PLANAR_SIMILARITY_TRACKING.md)、[同じ多角形の独立再メッシュ](PLANAR_REMESH_TRACKING.md)、[相似変換＋独立内部メッシュの合成](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[可逆アフィン＋独立内部メッシュの合成](PLANAR_AFFINE_REMESH_TRACKING.md)、[厳密アフィン＋境界/内部の独立メッシュ](PLANAR_EXACT_AFFINE_TRACKING.md)も限定受入。一般の丸めた境界・非線形変形・曲線断面等は未完）、P01（直線P1/P2と曲線P2のTE固有値・場・RF・専用native/CLI）、 D03（保存RF制約評価・曲線2変数探索の実FEM/予算/最終細分/保存再開API・CLI・JobManagerを部分実装）、O02（外部mesh単体GUI読込/解除・通常Job/保存・直線P1/P2および曲線固定Study、TE通常Project/Job/GUIを部分実装）、C00（対象版/必須集合未確定）、G03（曲線FEM等を部分受入、弧端/退化分類・全要件照合が残る）、D01（標本部分空間追跡・円筒/profile写像・明示メッシュ対応を部分実装）、D02（追跡付き1変数tuneと再開・細分判定API/CLI・JobManager・GUIを部分実装）、N03（通常RFの上下界評価API/保存/CLI/GUI、固定曲線幾何の追跡済み表面収束評価API/CLI/GUI、直線P1/P2の連続離散ピーク囲い込み・元多角形角診断・表面収束評価API/保存/CLI/GUI）、N04（曲線適応版4の五量停止/保存再開API/CLI/JobManager、曲線親子質量内積追跡、曲線残差指標、曲線局所細分の基盤APIとCase履歴/native保存/CLI、適合細分・係数移送・残差指標、追跡付きf/RQ/G適応停止・保存再開API/CLI/JobManager/GUI。版2全域確認で円筒P1のRF改善検査もPASS。版3のピーク比停止はAPI/CLI/JobManagerへ追加。一般形状/効率は未受入） |
 | 親課題として未受入 | 13 | C03/C04、P04、S01〜S05、A01、V01/V02、L01/L02。既存プローブ/GUI/掃引や個別統合はあるが、各親課題の完了ではない |
 | 互換必須集合外の拡張候補 | 1 | X01。本v0の実装予定には組み込まない |
 

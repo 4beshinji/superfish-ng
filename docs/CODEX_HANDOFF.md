@@ -1,3 +1,22 @@
+2026-09-12：[Hφ追跡の所有履歴](HPHI_TRACKING_HISTORY.md)を主ツリーへ統合・限定受入。
+保存場・帯域・個別ID/ID集合の連続性を全再生し、所有コピーへの延長、CLI・worker・取消/再起動・GUIの各段階の元場取込まで接続した。
+標準1082件（1079合格・3skip）、独立8チェーン/21履歴worker/39再起動/5CLI、Chrome新16/復元8/旧19、主9unit/28保存ジョブ/5CLIがPASS。元286native・6履歴は不変、PNG/CSVはbyte一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。形状写像・曲線内導体・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+履歴標準96229は終了0・2211.843秒、主9unit/28保存ジョブ/5CLIも終了0。主645source。
+/tmp/integrate-hphi-tracking-history-20260912.py、/tmp/finalize-hphi-tracking-history-docs-20260912.py、/tmp/prepare-hphi-history-gui-restart-20260912.pyは実行済み。再実行しない。
+全worker・ブラウザー・サーバーは停止済み。未終了検証なし。履歴ROOT=out/hphi-tracking-history-browser-server-20260912は元追跡/親履歴の2保存先をmoved-original-sourcesへ移動した検証状態を保持する。
+固定候補の追加9unit421.101秒、独立1111.930秒、artifact142.123秒。主9unit377.836秒、主artifact139.450秒。初回unitの編集中hash検知と独立検証器の終了順序失敗を保持する。
+次のP03曲線内導体は[幾何計画](CURVED_MERIDIONAL_GEOMETRY_PLAN.md)を作成し、別候補/tmp/superfish-curved-meridional-geometry-20260912で実装中、未受入。現候補643source、追加5unit0.807秒、関連18unit1.308秒、独立72幾何/JSON往復11.524秒がPASS（面積/体積相対差最大1.111e-15、座標patch最大2.532e-14）。標準回帰と本体統合はまだ。候補に大域閉路/Euler、厳密半径/Jacobian最小と全要素/境界の厳密モーメント照合を実装した。旧円板既定の契約と出力キーを保った。幾何正本は二次多項式で、円/楕円の厳密表現や曲線Hφ solveではない。
+Wine本体/usr/lib/wine/wine64は存在する（wine-9.0）。既知の/tmp/superfish-wine-runtime、/home/sin/.wine-superfish、/home/sin/code/superfishはホスト読取確認でも見つからなかった。ユーザーの環境が存在しないと断定しない。追加探索の権限不足等はout/wine-runtime-additional-location-scan-20260912へ保持。旧版比較は今回未実行、コード/バイナリ内容は未参照。
+以下よりこの冒頭を優先する。
+
+2026-09-12 14:00 UTC 続報：主f8486a0・640source。追跡API/保存/CLI/GUIは限定受入済み。
+履歴候補/tmp/superfish-hphi-tracking-history-20260912は639source固定。9unit67890は421.101秒、独立再実行74139は1111.930秒で終了0。独立8チェーン/21履歴・11追跡・2Project worker/39再起動/5CLIがPASS。初回の検証器終了順序の失敗を保持、製品/testsは不変。
+履歴Chrome新16/復元8/旧追跡14/旧TM・TE・平面5は全PASS。全ブラウザー/サーバーは終了。artifact92787も終了済みでreport PASS（142.123秒）、28保存ジョブ・286元native・6元履歴・5CLIを照合した。
+標準96229だけが継続中。期待1082件、未終了を合格に数えない。候補を変更しない。
+/tmp/integrate-hphi-tracking-history-20260912.pyは未実行、標準終了後に証拠を検査して645sourceへ統合する。/tmp/verify-hphi-history-main-artifacts-20260912.pyは未実行、統合後の9unitと別出力の主artifact確認に使う。
+履歴の実行済み8helperをout/hphi-tracking-history-development-20260912/operation-helpersへ保存した。再起動前準備helperは実行済み、再実行しない。全計画は未完。以下よりこの冒頭を優先する。
+
 2026-09-12：[Hφ部分空間対応のGUI](GUI_HPHI_TRACKING.md)を主ツリーへ統合・限定受入。
 個別ID/縮退ID集合、E/H対応とguard等の理由、所有した元場の取込・再比較、要求/結果・URL復元を接続した。
 標準1073件（1070合格・3skip）、独立6GUI/18再起動/6CLI、Chrome新14/復元8/旧40、主2unit/33保存ジョブ/5CLIがPASS。元226native不変、PNG/CSVはbyte一致。

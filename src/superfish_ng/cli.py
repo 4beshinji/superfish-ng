@@ -148,6 +148,16 @@ def main(argv=None):
     planar_history_extend.add_argument('--out',type=Path,required=True)
     planar_history_replay=sub.add_parser('replay-planar-history',help='recompute the full owned planar ancestry and identity chain')
     planar_history_replay.add_argument('run',type=Path)
+    hphi_history=sub.add_parser('execute-hphi-history',help='copy and fully replay an ordered hphi tracking history')
+    hphi_history.add_argument('request',type=Path)
+    hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
+    hphi_history.add_argument('--out',type=Path,required=True)
+    hphi_history_extend=sub.add_parser('extend-hphi-history',help='append a saved pair into a new owned hphi history')
+    hphi_history_extend.add_argument('history',type=Path)
+    hphi_history_extend.add_argument('next_pair',type=Path)
+    hphi_history_extend.add_argument('--out',type=Path,required=True)
+    hphi_history_replay=sub.add_parser('replay-hphi-history',help='recompute the full owned hphi ancestry and identity chain')
+    hphi_history_replay.add_argument('run',type=Path)
     planar_tracking=sub.add_parser('execute-planar-tracking',help='track physical electric subspaces under a declared rectangle or polygon mapping')
     planar_tracking.add_argument('previous',type=Path)
     planar_tracking.add_argument('current',type=Path)
@@ -267,6 +277,16 @@ def main(argv=None):
                 result=extend_planar_history(args.history,args.next_pair,args.out)
             else:
                 result=read_planar_history(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-hphi-history','extend-hphi-history','replay-hphi-history'):
+            from .hphi_tracking_history import HphiTrackingHistoryRequest
+            from .hphi_tracking_history_saved import execute_hphi_history,extend_hphi_history,read_hphi_history
+            if args.command=='execute-hphi-history':
+                result=execute_hphi_history(args.steps,HphiTrackingHistoryRequest.load(args.request),args.out)
+            elif args.command=='extend-hphi-history':
+                result=extend_hphi_history(args.history,args.next_pair,args.out)
+            else:
+                result=read_hphi_history(args.run)
             print(json.dumps(result,indent=2,allow_nan=False));return 0
         if args.command in ('execute-hphi-tracking','replay-hphi-tracking'):
             from .hphi_tracking import HphiTrackingRequest

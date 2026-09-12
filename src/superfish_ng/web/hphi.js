@@ -58,14 +58,14 @@ async function openResult(id){
  history.replaceState(null,'',`/hphi.html?job=${encodeURIComponent(id)}`);
 }
 async function refresh(){
- const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study','hphi_convergence','hphi_tracking'].includes(job.kind)),signature=JSON.stringify(jobs);
- trackingCandidates(jobs);if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;$('jobs').replaceChildren();
+ const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study','hphi_convergence','hphi_tracking','hphi_tracking_history'].includes(job.kind)),signature=JSON.stringify(jobs);
+ trackingCandidates(jobs);historyCandidates(jobs);if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;$('jobs').replaceChildren();
  if(!jobs.length)$('jobs').textContent='Hφの計算はまだありません。';
  for(const job of jobs){const row=document.createElement('div');row.className='job';row.dataset.job=job.id;
- const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='hphi_study'?' / 独立掃引':job.kind==='hphi_convergence'?' / 細分差診断':job.kind==='hphi_tracking'?' / 部分空間対応':''} / ${job.id}`;row.append(label);
+ const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='hphi_study'?' / 独立掃引':job.kind==='hphi_convergence'?' / 細分差診断':job.kind==='hphi_tracking_history'?' / 追跡履歴':job.kind==='hphi_tracking'?' / 部分空間対応':''} / ${job.id}`;row.append(label);
  const details=document.createElement('small');details.textContent=job.error||job.stage||'';row.append(details);
  const button=document.createElement('button'),active=['queued','running'].includes(job.status);button.textContent=active?'中止':'結果を開く';button.disabled=!active&&job.status!=='complete';
- button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(job.kind==='hphi_study')await openStudy(job.id);else if(job.kind==='hphi_convergence')await openConvergence(job.id);else if(job.kind==='hphi_tracking')await openTracking(job.id);else await openResult(job.id);});row.append(button);$('jobs').append(row);}
+ button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(job.kind==='hphi_study')await openStudy(job.id);else if(job.kind==='hphi_convergence')await openConvergence(job.id);else if(job.kind==='hphi_tracking_history')await openHphiHistory(job.id);else if(job.kind==='hphi_tracking')await openTracking(job.id);else await openResult(job.id);});row.append(button);$('jobs').append(row);}
 }
 $('new').onclick=run(async()=>loadProject(await api('hphi-normalize',{document:fresh()})));
 $('open').onchange=run(async()=>{const file=$('open').files[0];if(file)loadProject(await api('hphi-normalize',{document:await file.text()}));});
@@ -190,5 +190,36 @@ $('tracking-repeat').onclick=run(async()=>{if(!currentTracking)throw Error('保�
 $('tracking-result-save').onclick=run(async()=>{if(!currentTracking)throw Error('対応結果を選択してください');download(new Blob([JSON.stringify(currentTracking.result,null,2)+'\n'],{type:'application/json'}),'hphi-tracking-results.json');});
 for(const id of ['tracking-previous-count','tracking-current-count','tracking-ids','tracking-groups'])$(id).oninput=()=>{$('tracking-dirty').textContent='未保存の追跡条件';};
 
-run(async()=>{loadProject(await api('hphi-normalize',{document:fresh()}));await refresh();const parameters=new URLSearchParams(location.search),id=parameters.get('job'),studyId=parameters.get('study'),convergenceId=parameters.get('convergence'),trackingId=parameters.get('tracking');if(trackingId)await openTracking(trackingId);else if(convergenceId)await openConvergence(convergenceId);else if(studyId)await openStudy(studyId);else if(id)await openResult(id);})();// Explicit operations retain errors; background refresh does not clear them.
+let currentHphiHistory=null,historyPairJobs=[];
+function historyCandidates(jobs){
+ historyPairJobs=jobs.filter(j=>j.kind==='hphi_tracking'&&j.status==='complete');const signature=JSON.stringify(historyPairJobs.map(j=>j.id));
+ for(const name of ['history-pair','history-next']){const select=$(name);if(select.dataset.signature===signature)continue;const selected=select.value;select.dataset.signature=signature;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='保存した部分空間対応を選択';select.append(empty);for(const job of historyPairJobs){const option=document.createElement('option');option.value=job.id;option.textContent=job.id;select.append(option);}if(historyPairJobs.some(j=>j.id===selected))select.value=selected;}
+}
+function historyFromForm(){return {format:'superfish_ng_hphi_tracking_history_request',history_version:1,step_count:numeric('history-count'),max_steps:numeric('history-max')};}
+function loadHistoryRequest(q){$('history-count').value=q.step_count;$('history-max').value=q.max_steps;$('history-note').textContent='履歴の段階数と上限を復元済み';}
+async function openHphiHistory(id){
+ const data=await api('hphi-history-result',{id});currentHphiHistory={id,...data};loadHistoryRequest(data.request);history.replaceState(null,'',`/hphi.html?history=${encodeURIComponent(id)}`);const r=data.result;
+ $('history-result').hidden=false;$('history-selection').textContent=id;$('history-status').textContent=`実行・保存: ${data.state.status} / 最終E/H対応: ${r.status} / 個別ID: ${r.individual_ids_complete?'全て対応済み':'未確定の順位あり'}`;
+ $('history-current-ids').textContent='現在の順位と個別ID：'+r.current_mode_ids.map((v,i)=>`${i+1}: ${v??'未確定'}`).join(' / ');
+ $('history-stop').textContent=r.can_extend?'保存場・帯域・ID集合がつながる次の比較を追加できます。':r.status!=='PASS'?'最終の対応がUNVERIFIEDのため延長できません。':'履歴の段階上限に達したため延長できません。';$('history-extend').disabled=!r.can_extend;$('history-next').disabled=!r.can_extend;
+ const sourceIds=data.sources.steps.map(s=>s.path.split('/').pop()),available=sourceIds.every(id=>historyPairJobs.some(j=>j.id===id));$('history-step-ids').value=JSON.stringify(available?sourceIds:[]);
+ if(!available)$('history-note').textContent='元の段階一覧に選択できない保存先があります。所有した履歴の表示・元場取込・延長は利用できます。';
+ $('history-steps').replaceChildren();r.steps.forEach((step,index)=>{
+  const section=document.createElement('section'),title=document.createElement('h4');title.textContent=`段階 ${index+1} / ${step.status} / ${step.individual_ids_complete?'個別IDを保持':'ID集合または未確定'}`;section.append(title);
+  const reasons=document.createElement('p');reasons.textContent=step.verification_reasons.map(x=>trackingReasonLabels[x]||x).join(' / ');section.append(reasons);
+  const table=trackingTable(['前の順位','現在の順位','ID / ID集合','Eの最小主内積','Hの最小主内積','係数位相']);for(const match of step.matches)trackingRow(table,[match.previous_indices.join(', '),match.current_indices.join(', '),match.previous_ids.join(', '),Math.min(...match.principal_overlaps).toPrecision(6),match.magnetic_principal_overlaps?Math.min(...match.magnetic_principal_overlaps).toPrecision(6):'未確定',step.status!=='PASS'?'未確定':match.previous_phase_multiplier===null?'集合のため未定義':String(match.previous_phase_multiplier)]);section.append(table);
+  for(const [name,value,label] of [['request',step.request,'この段階の追跡要求を保存'],['result',step,'この段階の対応結果を保存']]){const button=document.createElement('button');button.textContent=label;button.dataset.historyDownload=`${index}-${name}`;button.onclick=()=>download(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}),`hphi-history-step-${index+1}-${name}.json`);section.append(button);}
+  for(const side of ['previous','current']){const button=document.createElement('button');button.textContent=(side==='previous'?'前':'現在')+'の元場を取り込む';button.dataset.historySource=`${index}-${side}`;button.onclick=run(async()=>{const imported=await api('hphi-history-source',{id,index,side});await refresh();await openResult(imported.id);});section.append(button);}
+  $('history-steps').append(section);
+ });
+}
+$('history-add-pair').onclick=run(async()=>{const id=$('history-pair').value;if(!id)throw Error('段階に追加する保存済みの対応を選択してください');const ids=JSON.parse($('history-step-ids').value);if(!Array.isArray(ids))throw Error('段階一覧はIDの配列です');ids.push(id);$('history-step-ids').value=JSON.stringify(ids);$('history-count').value=ids.length;});
+$('history-open').onchange=run(async()=>{const file=$('history-open').files[0];if(file)loadHistoryRequest(await api('hphi-normalize-history',{document:await file.text()}));});
+$('history-save').onclick=run(async()=>{const q=await api('hphi-normalize-history',{document:historyFromForm()});loadHistoryRequest(q);download(new Blob([JSON.stringify(q,null,2)+'\n'],{type:'application/json'}),'hphi-history.json');});
+$('history-start').onclick=run(async()=>{const reply=await api('hphi-start-history',{document:historyFromForm(),step_ids:JSON.parse($('history-step-ids').value)});$('history-note').textContent=`履歴を投入済み: ${reply.id}`;await refresh();});
+$('history-extend').onclick=run(async()=>{if(!currentHphiHistory||!$('history-next').value)throw Error('保存した履歴と次の比較を選択してください');const reply=await api('hphi-extend-history',{id:currentHphiHistory.id,next_id:$('history-next').value});$('history-note').textContent=`新しい保存先へ延長: ${reply.id}`;await refresh();});
+$('history-result-save').onclick=run(async()=>{if(!currentHphiHistory)throw Error('履歴を選択してください');download(new Blob([JSON.stringify(currentHphiHistory.result,null,2)+'\n'],{type:'application/json'}),'hphi-history-results.json');});
+
+
+run(async()=>{loadProject(await api('hphi-normalize',{document:fresh()}));await refresh();const parameters=new URLSearchParams(location.search),id=parameters.get('job'),studyId=parameters.get('study'),convergenceId=parameters.get('convergence'),trackingId=parameters.get('tracking'),historyId=parameters.get('history');if(historyId)await openHphiHistory(historyId);else if(trackingId)await openTracking(trackingId);else if(convergenceId)await openConvergence(convergenceId);else if(studyId)await openStudy(studyId);else if(id)await openResult(id);})();// Explicit operations retain errors; background refresh does not clear them.
 setInterval(()=>refresh().catch(failure),2000);

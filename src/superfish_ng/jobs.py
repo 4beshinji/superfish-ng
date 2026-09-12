@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .hphi_tracking_history_saved import is_hphi_history, verify_hphi_history
+        if is_hphi_history(directory, state, manifest):
+            verify_hphi_history(directory, state, manifest)
+            return state
         from .hphi_tracking_jobs import is_hphi_tracking, verify_hphi_tracking
         if is_hphi_tracking(directory, state, manifest):
             verify_hphi_tracking(directory, state, manifest)
@@ -325,6 +329,16 @@ class JobManager:
                 _state(directory, "failed", error=str(exc))
                 raise
             return identifier
+
+    def extend_hphi_history(self, history, next_pair):
+        """Append a verified pair to an immutable hphi history in a new worker."""
+        from .hphi_tracking_history_saved import start_extended_hphi_history
+        return start_extended_hphi_history(self, history, next_pair)
+
+    def start_hphi_history(self, paths, request):
+        """Create an owned hphi tracking chain in a dedicated local worker."""
+        from .hphi_tracking_history_saved import start_hphi_history
+        return start_hphi_history(self, paths, request)
 
     def start_hphi_tracking(self, previous, current, request):
         """Compare owned original Hphi E/H subspaces with explicit comparison meshes."""
