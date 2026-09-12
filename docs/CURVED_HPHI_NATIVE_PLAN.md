@@ -1,6 +1,6 @@
 # 明示曲線Hφのnative・CLI
 
-[専用FEM/RF API](CURVED_HPHI_RF_PLAN.md)に続く保存工程。未実装・未受入。
+[専用FEM/RF API](CURVED_HPHI_RF_PLAN.md)に続く保存工程。[実装記録](CURVED_HPHI_NATIVE.md)の範囲で限定受入。
 既存native形式とは区別した専用schema 1で、case/mesh/fields/resultsと最後に公開するmanifestの5ファイルを保存する。
 
 受入条件：
@@ -12,3 +12,5 @@
 - 軸あり/なし・穴・曲線・P1/P2・複数尺度の独立FEM/RF・保存往復・実CLIを照合する。元入力/nativeの不変と標準f/RFを確認する。
 
 Project・Job・GUI・Study・追跡への統合は後続。既存の保存共通処理とCLIを再利用し、新規外部資料・依存・旧版参照は予定しない。
+
+標準1099件、関連30unit、独立24ケース/48保存/74CLIと主4unit/同照合、追加半径非線形24ケースがPASS。主659sourceへ統合済み。

@@ -188,6 +188,14 @@ def main(argv=None):
     hphi_project=sub.add_parser('execute-hphi-project',help='execute a dedicated regular-axis or positive-radius Hphi Project with verified native completion')
     hphi_project.add_argument('project',type=Path)
     hphi_project.add_argument('--out',type=Path,required=True)
+    curved_hphi=sub.add_parser('solve-curved-hphi',help='solve an explicit quadratic vacuum Hphi geometry with verified native output')
+    curved_hphi.add_argument('case',type=Path);curved_hphi.add_argument('--out',required=True,type=Path)
+    curved_hphi_replay=sub.add_parser('replay-curved-hphi',help='reconstruct curved geometry, lowest positive FEM and all RF, and emit verified JSON')
+    curved_hphi_replay.add_argument('run',type=Path)
+    curved_hphi_probe=sub.add_parser('probe-curved-hphi',help='export original signed E/H/B fields at curved vacuum [r_m,z_m] points')
+    curved_hphi_probe.add_argument('run',type=Path);curved_hphi_probe.add_argument('--points',required=True,type=Path)
+    curved_hphi_probe.add_argument('--mode',type=int,default=1,help='one-based positive-spectrum rank, not a mode identity')
+    curved_hphi_probe.add_argument('--out',required=True,type=Path)
     hphi=sub.add_parser('solve-axis-hphi',help='solve explicit axis-connected vacuum Hphi mesh, including PEC holes')
     hphi.add_argument('case',type=Path)
     hphi.add_argument('--out',required=True,type=Path)
@@ -346,6 +354,19 @@ def main(argv=None):
             from .hphi_project import HphiProject
             from .hphi_jobs import execute_hphi_project
             print(json.dumps(execute_hphi_project(HphiProject.load(args.project),args.out),indent=2,allow_nan=False))
+            return 0
+        if args.command in ('solve-curved-hphi','replay-curved-hphi','probe-curved-hphi'):
+            from .curved_hphi import CurvedHphiCase,solve_curved_hphi
+            from .curved_hphi_saved import save_curved_hphi_run,read_curved_hphi_run,curved_hphi_result,export_curved_hphi_probe
+            if args.command=='solve-curved-hphi':
+                case=CurvedHphiCase.load(args.case)
+                print(json.dumps(save_curved_hphi_run(case,solve_curved_hphi(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-curved-hphi':
+                print(json.dumps(curved_hphi_result(read_curved_hphi_run(args.run)),indent=2,allow_nan=False))
+            else:
+                from .project import parse_json
+                export_curved_hphi_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')),args.mode)
+                print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-axis-hphi','replay-axis-hphi','probe-axis-hphi'):
             from .axis_hphi import AxisHphiCase,solve_axis_hphi

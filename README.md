@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-12：[明示曲線Hφのnative・CLI](docs/CURVED_HPHI_NATIVE.md)を主ツリーへ統合・限定受入。
+二次幾何・元係数・最低正帯域・全RFとq/u/phasor/R/Q規約を5ファイルへ保持し、完全再生と専用solve/replay/probeを接続した。
+標準1099件（1096合格・3skip）、関連30unit、独立24ケース/48保存/74CLIと主4unit/同保存CLI照合がPASS。元240native不変、API/CLIのnative5はbyte一致、全プローブJSON一致。追加の半径非線形24ケース/48RF/12CLIもPASS。
+旧seed9モード19量はf差0、最大相対差8.882e-16。Project/GUI・一般写像・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+
+
 2026-09-12：[明示曲線Hφの固有解・場・RF](docs/CURVED_HPHI_RF.md)を主ツリーへ統合・限定受入。
 正半径qの静的循環と軸接続uを分け、元物理微分・逆写像プローブ、全曲線壁損失、明示軸の複素Vaccと両R/Qを専用APIへ接続した。
 標準1095件（1092合格・3skip）、関連26unit、独立48 FEM/144 RFと主4unit/同独立検証がPASS。半径非線形写像の追加24ケース/48RF/12CLIもPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
