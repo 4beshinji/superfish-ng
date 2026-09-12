@@ -1,5 +1,12 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[軸対称静電の専用保存・再構築・CLI](docs/ELECTROSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+誘電体/電荷/全境界・基準電位・元係数を保存し、同じPoisson問題の再構築/再求解と元Phi/E/D・電荷/エネルギー/容量を全再生する。
+標準1142件（1139合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/79CLIと主4unit/同照合がPASS。API/CLIの5ファイル・プローブJSONが一致、元240native不変。
+capabilitiesへ静電の専用入口・SI単位・境界/容量の制約を追加。旧seed9モード19量はf差0、最大相対差8.882e-16。
+静電Project/GUI/Study・平面・純Neumann等、S01と全計画は未完。親33=8受入/13進行/11他未受入/1範囲外。
+
+
 2026-09-13：[軸対称静電Poisson解・元E/D・電荷/容量](docs/ELECTROSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
 全境界を固定電位/外向きDn/対称軸へ明示し、基準電極からの電位差を実FEMで解く。元場・領域エネルギー、離散反力と元Dによる電極電荷を別々に評価する。
 標準1138件（1135合格・3skip）、追加6unit、二層32/製造解48/同軸24の独立104例と主6unitがPASS。固定684sourceと主690sourceの一致を確認した。

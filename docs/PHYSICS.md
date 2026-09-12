@@ -5,7 +5,7 @@
 D=-epsilon grad(Phi)、div(D)=rho、Neumann荷重は-∫Dn Ni dS。最低一つの固定電極を必要とし、全軸DOFを保持する。
 基準電極からの電位差を解き、絶対電位を別に保持する。静電エネルギーは∫epsilon E²/2、電極電荷は反力と元Dの表面積分を分ける。
 二端子容量は電極2つ・電荷0・他の非軸境界Dn=0・電位差非0に限定する。小さな離散残差は元場/表面電荷の誤差上界ではない。
-既存のRF ModelとCaseは不変。静電native/CLI/GUIは別の受入工程とする。
+既存のRF ModelとCaseは不変。[専用静電native/CLI](ELECTROSTATIC_NATIVE.md)は全再構築/再求解と元係数・静電量の再生まで限定受入。Project/GUI/Studyは別工程。
 
 
 [静電弱形式](ELECTROSTATIC_FORMS.md)は独立APIとして全3Dのepsilon grad(Phi)形式と符号付き体積電荷を組み立てる。定数電位核を保持し、RF入力・peak phasor・固有値の規約を流用しない。この段階では境界条件も静電解法も適用しない。

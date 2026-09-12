@@ -1,3 +1,12 @@
+最新：軸対称静電native標準51514終了0（1142=1139合格+3skip、2255.990秒）、主4unit/24例79CLIはPASS（独立99.195秒）。統合/finalizer実行済み・再実行禁止、主693source。残る標準は平面forms73191だけ。平面solve候補は関連18unit PASSで未固定。混在boolの入力漏れを再現し、electrostatic_boundary.py共通入力検査と軸/平面の2ソルバーへ修正した。軸の既存2src変更を含むので、次の独立検証で既存24軸native/全240ファイル/プローブを再生して数値不変を確認する。全計画未完、親33=8/13/11/1。
+
+2026-09-13：[軸対称静電の専用保存・再構築・CLI](ELECTROSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+誘電体/電荷/全境界・基準電位・元係数を保存し、同じPoisson問題の再構築/再求解と元Phi/E/D・電荷/エネルギー/容量を全再生する。
+標準1142件（1139合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/79CLIと主4unit/同照合がPASS。API/CLIの5ファイル・プローブJSONが一致、元240native不変。
+capabilitiesへ静電の専用入口・SI単位・境界/容量の制約を追加。旧seed9モード19量はf差0、最大相対差8.882e-16。
+静電Project/GUI/Study・平面・純Neumann等、S01と全計画は未完。親33=8受入/13進行/11他未受入/1範囲外。
+静電native統合/finalizerは実行済み、再実行しない。主693source。全計画は未完。次の限定課題はBACKLOGの最新記載を確認する。以下よりこの冒頭を優先。
+
 最新：軸対称静電solve標準1962は終了0（1138=1135合格+3skip、2261.456秒）。主6unit PASSで統合/finalizer実行済み、主690source。残る標準はnative51514と平面forms73191。両統合/finalizerは準備済み未実行。native本体は4unit+24例79CLI、平面forms本体は5unit+72例。平面solveは新planar_electrostatic.pyとscripts/planar_electrostatic_reference.pyを実装しsmoke PASS、6例の矩形Poisson細分の予備調査が完了（本体未統合・未受入）。次はこの平面solveの正式unit/独立検証。全計画未完、親33=8/13/11/1。
 
 2026-09-13：[軸対称静電Poisson解・元E/D・電荷/容量](ELECTROSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。

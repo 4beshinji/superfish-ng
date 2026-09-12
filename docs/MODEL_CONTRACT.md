@@ -1,5 +1,7 @@
 # C01: 物理・材料・領域と入力版の共通契約
 
+2026-09-13：[軸対称静電専用native/CLI](ELECTROSTATIC_NATIVE.md)。capabilities.axisymmetric_electrostaticへ専用Case/誘電体分割/native版1、3 CLI、静電SI単位と境界・容量の適用条件を追加した。RFのcanonical Modelや専用Hφ入力は不変。Project/GUI/Studyは未対応。
+
 2026-09-13：[材料Hφ操作系](MATERIAL_HPHI_WORKSPACE.md)。専用材料Caseを共通Hφ Project版1へ接続し、capabilities.material_hphi_rfへProject/GUI/独立Studyと25列の材料CSVを記載した。材料の全分割と真空軸区間をstrict再検証する。真空の4形式とcanonical Modelは不変、材料比較/追跡は拒否する。
 
 2026-09-13：[材料Hφ専用native/CLI](MATERIAL_HPHI_NATIVE.md)。capabilities.material_hphi_rfに専用Case/材料分割/native版1、3コマンド、材料重み付きE/H/B・エネルギー、非磁性壁と真空軸経路の制約を記載する。canonical Modelと真空Hφの4形式は不変。材料Project/GUI/Study/追跡は未対応と明記する。

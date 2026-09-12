@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Public inventory for dedicated Hphi inputs and versioned planar mappings.
+"""Public inventory for dedicated RF/static inputs and planar mappings.
 
 This is descriptive metadata. Case parsers and numerical validators remain the
 authority for accepting any input; adding an entry never enables a solver.
@@ -94,6 +94,29 @@ def material_hphi_capabilities():
             'No material coefficient sweeps, field comparison, convergence diagnostics or tracking',
             'No open ports, azimuthal m>0 or static-field solver',
             'No continuum error bound or surface-peak accuracy guarantee; mode rank is not identity'])
+
+
+def electrostatic_capabilities():
+    return dict(case_format='superfish_ng_axisymmetric_electrostatic_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_axisymmetric_electrostatic_manifest',native_schema_versions=[1],
+        result_format='superfish_ng_axisymmetric_electrostatic_result',result_schema_versions=[1],
+        partition_format='superfish_ng_axisymmetric_dielectric_partition',partition_schema_versions=[1],
+        commands=['solve-electrostatic','replay-electrostatic','probe-electrostatic'],physics='linear_electrostatic',
+        coordinates='axisymmetric r,z',geometry='explicit straight dielectric-conforming meridional triangles, optional axis and holes',
+        element_orders=[1,2],axis_connected=[False,True],material='positive real isotropic linear epsilon_r, explicit in every cell',
+        volume_charge='signed rho [C/m^3], explicit in every region',
+        boundaries=['electrode_potential [V]','outward_displacement [C/m^2]','axis_symmetry'],
+        boundary_policy='every edge explicit, at least one electrode; connected conductor edges share one electrode id',
+        potential='Phi [V], coefficients relative to first fixed electrode; retain all axis DOFs',
+        fields='static real E=-grad(Phi) [V/m], D=epsilon0*epsilon_r(original cell)*E [C/m^2]',
+        probes='original Phi/Er/Ez/Dr/Dz, cell/region/material IDs and epsilon_r; lowest cell at interfaces, no averaging',
+        volume_measure='2*pi*r dr dz; full 3D',energy='integral epsilon*|E|^2/2 dV [J]',charge_unit='C',
+        electrode_charge='separate discrete reaction and minus original outward D flux into electrode',
+        capacitance='F, only two unequal fixed electrodes with rho=0 and other non-axis Dn=0; reaction, energy and original-field definitions separate',
+        project=False,gui=False,study=False,
+        limits=['No planar/curved geometry, nonlinear/anisotropic/complex permittivity or RF phasors',
+            'No pure Neumann/gauge, floating electrodes, multi-terminal capacitance matrix or exact open boundary',
+            'Discrete residual and reaction conservation do not bound original field or surface-flux error'])
 
 
 def planar_tracking_mappings():

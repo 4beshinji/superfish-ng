@@ -196,6 +196,13 @@ def main(argv=None):
     curved_hphi_probe.add_argument('run',type=Path);curved_hphi_probe.add_argument('--points',required=True,type=Path)
     curved_hphi_probe.add_argument('--mode',type=int,default=1,help='one-based positive-spectrum rank, not a mode identity')
     curved_hphi_probe.add_argument('--out',required=True,type=Path)
+    electrostatic=sub.add_parser('solve-electrostatic',help='solve an explicit axisymmetric dielectric/electrode Poisson case with verified native output')
+    electrostatic.add_argument('case',type=Path);electrostatic.add_argument('--out',required=True,type=Path)
+    electrostatic_replay=sub.add_parser('replay-electrostatic',help='reconstruct static materials, signed charges, electrode boundary conditions, Phi/E/D and all integral quantities')
+    electrostatic_replay.add_argument('run',type=Path)
+    electrostatic_probe=sub.add_parser('probe-electrostatic',help='export original static Phi/E/D at dielectric [r_m,z_m] points with one-sided region metadata')
+    electrostatic_probe.add_argument('run',type=Path);electrostatic_probe.add_argument('--points',required=True,type=Path)
+    electrostatic_probe.add_argument('--out',required=True,type=Path)
     material_hphi=sub.add_parser('solve-material-hphi',help='solve an explicit piecewise lossless material Hphi case with verified native output')
     material_hphi.add_argument('case',type=Path);material_hphi.add_argument('--out',required=True,type=Path)
     material_hphi_replay=sub.add_parser('replay-material-hphi',help='reconstruct materials and geometry, lowest positive FEM and all RF, and emit verified JSON')
@@ -374,6 +381,19 @@ def main(argv=None):
             else:
                 from .project import parse_json
                 export_curved_hphi_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')),args.mode)
+                print(f'WROTE: {args.out}')
+            return 0
+        if args.command in ('solve-electrostatic','replay-electrostatic','probe-electrostatic'):
+            from .electrostatic import AxisymmetricElectrostaticCase,solve_axisymmetric_electrostatic
+            from .electrostatic_saved import save_electrostatic_run,read_electrostatic_run,electrostatic_result,export_electrostatic_probe
+            from .project import parse_json
+            if args.command=='solve-electrostatic':
+                case=AxisymmetricElectrostaticCase.from_dict(parse_json(args.case.read_text(encoding='utf-8')))
+                print(json.dumps(save_electrostatic_run(case,solve_axisymmetric_electrostatic(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-electrostatic':
+                print(json.dumps(electrostatic_result(read_electrostatic_run(args.run)),indent=2,allow_nan=False))
+            else:
+                export_electrostatic_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-material-hphi','replay-material-hphi','probe-material-hphi'):

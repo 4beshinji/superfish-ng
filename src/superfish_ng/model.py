@@ -2,7 +2,7 @@
 """Explicit supported physics; planned solvers never fall back to vacuum TM."""
 from dataclasses import dataclass, replace
 from .config import Case, integer, keys
-from .capability_inventory import hphi_capabilities, material_hphi_capabilities, planar_tracking_mappings
+from .capability_inventory import hphi_capabilities, material_hphi_capabilities, planar_tracking_mappings, electrostatic_capabilities
 
 
 @dataclass(frozen=True)
@@ -67,6 +67,7 @@ def capabilities():
     return {'capabilities_version': 1,
             'hphi_rf': hphi_capabilities(),
             'material_hphi_rf': material_hphi_capabilities(),
+            'axisymmetric_electrostatic': electrostatic_capabilities(),
             'planar_cutoff': {'case_format': 'superfish_ng_planar_case', 'schema_version': 1, 'schema_versions': [1,2],
                 'polarizations': ['te','tm'], 'geometry': 'rectangle', 'geometries': ['rectangle', 'simple_polygon_with_explicit_xy_mesh'], 'element_orders': [1,2],
                 'coordinates': 'cartesian xy; beta_z=0', 'energy_unit': 'J/m', 'wall_loss_unit': 'W/m',
