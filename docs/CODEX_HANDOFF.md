@@ -1,3 +1,23 @@
+2026-09-12：[同領域Hφの質量内積とL2射影](HPHI_MASS_PROJECTION.md)を主ツリーへ統合・限定受入。
+独立P1/P2メッシュの元q/uを、全穴・軸を保つ質量内積で射影し、失った場を元要素から直接積分する。
+標準1061件（1058合格・3skip）、独立48比較/144係数列、主4unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+射影係数は新しい固有解ではなく、周波数/RF/IDを付与しない。親33課題の8受入/11進行/13他未受入/1範囲外と全計画未完を維持する。
+質量射影標準48376は終了0・1847.094秒、主4unit4983も終了0・4.626秒。主629source。
+/tmp/integrate-hphi-mass-projection-20260912.pyと/tmp/finalize-hphi-mass-projection-docs-20260912.pyは実行済み。再実行しない。
+有限スペクトル626source標準71526、同領域追跡629source標準64006は継続中。各候補を変更しない。主には未統合。
+追跡APIは4unit22.137秒、独立48FEM/native・36比較148.283秒、縮退/実順位逆転12FEMと正逆12比較58.292秒でPASS。縮退helper84290も終了0、source629一致。個別IDは未分離のままID集合を保持する。
+次の保存/worker/CLI候補/tmp/superfish-hphi-tracking-jobs-20260912は編集中、未freeze。両元Projectとnativeを所有したHphi取込ジョブとして保存し、元パス非依存で再生する。追加3unit82077は47.991秒で終了0。独立操作検証と標準はまだ。
+全ブラウザー/サーバーは停止済み。UIの丸め許容表示修正は未実施。元の完走要求と全計画未完を維持し、以下よりこの冒頭を優先する。
+
+2026-09-12 12:05 UTC続報：主fe6379d・626source。細分差のAPI/保存/CLI/worker/GUIは限定受入済み。
+質量射影623sourceの標準48376、有限スペクトル626sourceの標準71526が継続中。候補は不変、本体へ未統合。
+スペクトル追加3unit0.716秒と独立24FEM/native・48全固有分解31.978秒は終了0。有限区間とスペクトル展開が一致、120native不変。製品判定は34PASS/14UNVERIFIED。
+後続の同領域E/H部分空間対応は/tmp/superfish-hphi-same-domain-tracking-20260912（現在629source、未freeze）。追加4unit74020は22.137秒、独立48FEM/native・36比較39604は148.283秒で終了0。元物理Gram差3.243e-15、主内積差2.554e-15、相似差1.219e-13。
+同軸の試行70888は終了0：6x12と12x6でTEMの順位が1→2へ実際に逆転し、二次元SUBSPACEを保持して個別IDを未確定にした。正式な二尺度/P1/P2同軸と軸TM011/TM020縮退検証84290が継続中（out/hphi-tracking-degeneracy-20260912）。API検証器の失敗があれば出力を保持し、実装のしきい値を緩めない。
+/tmp/integrate-hphi-{mass-projection,spectral-resolution,same-domain-tracking}-20260912.pyは準備済み・未実行。先行主626→629→632→635の順で、標準実終了/seed/source照合後に各3sourceだけ統合し主unitを行う。期待標準1061/1064/1068、未終了を合格に数えない。
+Wine追加探索では両既存prefixをfilename-onlyで--no-ignore検索し、対象名のregistry設定だけを確認した。SUPERFISH本体/設定登録は未特定、/opt/containerdの権限エラーで完全探索ではない。存在しないと断定しない。out/wine-runtime-location-extra-scan-20260912/report.json。旧版のコード/バイナリ内容は未参照。
+GUI表の「差の減少」は丸め許容を明確化する後続表示修正が残る。全ブラウザー/サーバーは停止済み。元要求と全計画未完を維持し、以下よりこの冒頭を優先する。
+
 2026-09-12：[Hφ細分差診断のworker・GUI](HPHI_CONVERGENCE_WORKSPACE.md)を主ツリーへ統合・限定受入。
 明示Project列の実行/取消、全水準の所有保存・完全再生、要求と各量の判定理由の復元、元水準の場・全成分CSVを接続した。
 標準1057件（1054合格・3skip）、独立7worker/21水準、Chrome新14/復元6/旧25操作、主2unit/26保存ジョブ/4CLIがPASS。元180nativeは不変、PNG/CSVはブラウザー・CLI・再起動後で一致した。
