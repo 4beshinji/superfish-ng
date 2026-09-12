@@ -1,3 +1,10 @@
+2026-09-13：[平面磁静の材料・Jz・Az弱形式](PLANAR_MAGNETOSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
+正値実数mu_r・全領域電流から、reluctivityによるK[m/H]と荷重[A]を組み立て、全DOFと定数Azのgauge核を保持する。
+標準1166件（1163合格・3skip）、追加5unit/旧RF移行2unit、独立72例216多項式・72mu逆比例/一様Bエネルギー、主5unit/同独立照合がPASS。固定710sourceと主716sourceが一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。境界付き磁静解・元B/H/磁束・保存/CLIは後続工程。
+S02を進行中へ移し、親33=8受入/14進行/10他未受入/1範囲外。S02と全計画は未完。
+磁静forms統合/finalizer実行済み・再実行禁止。主716source。次は平面磁静の境界付き解法。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
 最新：境界studyは最終144例/4unit PASS、主711sourceと4unitもPASS。初回integratorは新examples/electrostaticディレクトリ未作成で3検証ファイルだけコピーして停止。resume-electrostatic-boundary-study-integration-20260913.pyで全partial hashを照合し、例2ファイルだけ追加して復旧済み。元integrator/resume/finalizerはすべて再実行禁止。主711source、次は磁静forms-final710の標準58978（1166件）。磁静formsは5新+2RF移行unit/独立72例216多項式PASS、本体未統合、integrator/finalizer未作成。全GUI停止、全計画未完、親33=8/13/11/1。
 
 2026-09-13：[静電の境界距離とメッシュ細分の分離検証](ELECTROSTATIC_BOUNDARY_STUDY.md)を主ツリーへ統合・限定受入。

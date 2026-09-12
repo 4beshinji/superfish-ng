@@ -1,5 +1,12 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[平面磁静の材料・Jz・Az弱形式](docs/PLANAR_MAGNETOSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
+正値実数mu_r・全領域電流から、reluctivityによるK[m/H]と荷重[A]を組み立て、全DOFと定数Azのgauge核を保持する。
+標準1166件（1163合格・3skip）、追加5unit/旧RF移行2unit、独立72例216多項式・72mu逆比例/一様Bエネルギー、主5unit/同独立照合がPASS。固定710sourceと主716sourceが一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。境界付き磁静解・元B/H/磁束・保存/CLIは後続工程。
+S02を進行中へ移し、親33=8受入/14進行/10他未受入/1範囲外。S02と全計画は未完。
+
+
 2026-09-13：[静電の境界距離とメッシュ細分の分離検証](docs/ELECTROSTATIC_BOUNDARY_STUDY.md)を主ツリーへ統合・限定受入。
 固定電荷の平面帯/同軸領域144例で、48固定境界細分系列と32境界移動を解析照合した。共通場が不変でも絶対電位が距離/対数で増えることを明記し、厳密開放境界の収束とは扱わない。
 追加2unit/旧RF移行2unit・主4unit、入力例2つの6CLI/4nativeがPASS。API/CLIの5ファイルと全プローブJSONが一致、元20native不変。製品ソース変更なし、固定705sourceを主711sourceへ統合した。

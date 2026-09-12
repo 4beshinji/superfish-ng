@@ -1,5 +1,12 @@
 # 実装・検証の現状
 
+2026-09-13：[平面磁静の材料・Jz・Az弱形式](PLANAR_MAGNETOSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
+正値実数mu_r・全領域電流から、reluctivityによるK[m/H]と荷重[A]を組み立て、全DOFと定数Azのgauge核を保持する。
+標準1166件（1163合格・3skip）、追加5unit/旧RF移行2unit、独立72例216多項式・72mu逆比例/一様Bエネルギー、主5unit/同独立照合がPASS。固定710sourceと主716sourceが一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。境界付き磁静解・元B/H/磁束・保存/CLIは後続工程。
+S02を進行中へ移し、親33=8受入/14進行/10他未受入/1範囲外。S02と全計画は未完。
+
+
 2026-09-13：[静電の境界距離とメッシュ細分の分離検証](ELECTROSTATIC_BOUNDARY_STUDY.md)を主ツリーへ統合・限定受入。
 固定電荷の平面帯/同軸領域144例で、48固定境界細分系列と32境界移動を解析照合した。共通場が不変でも絶対電位が距離/対数で増えることを明記し、厳密開放境界の収束とは扱わない。
 追加2unit/旧RF移行2unit・主4unit、入力例2つの6CLI/4nativeがPASS。API/CLIの5ファイルと全プローブJSONが一致、元20native不変。製品ソース変更なし、固定705sourceを主711sourceへ統合した。
@@ -300,9 +307,10 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 
 | 分野 | 実装・入口 | 制約・残件 | 証拠 |
 |---|---|---|---|
-| 物理 | 真空、軸接続m=0 TM/TE、PEC・平坦z端の電気/磁気対称。別契約で矩形/単純多角形の平面TE/TM遮断問題と閉同軸円筒/正半径・軸接続の穴付き断面/明示二次曲線のHφ族 | 複数材料は別の専用APIに限定。軸対称の線形静電を固定電極付き専用APIで追加。磁静場は未実装。平面はβ=0で、曲線・多重連結/TEMは未対応 | [PHYSICS.md](PHYSICS.md)、[AXISYMMETRIC_TE.md](AXISYMMETRIC_TE.md)、[PLANAR_POLYGON_RF.md](PLANAR_POLYGON_RF.md)、[COAXIAL_RF.md](COAXIAL_RF.md)、[HPHI_MESH_RF.md](HPHI_MESH_RF.md) |
+| 物理 | 真空、軸接続m=0 TM/TE、PEC・平坦z端の電気/磁気対称。別契約で矩形/単純多角形の平面TE/TM遮断問題と閉同軸円筒/正半径・軸接続の穴付き断面/明示二次曲線のHφ族 | 複数材料は別の専用APIに限定。平面/軸対称の線形静電を固定電極付き専用API/CLIで追加。磁静場は平面の材料/電流/弱形式だけを追加し、場の解法は未実装。平面はβ=0で、曲線・多重連結/TEMは未対応 | [PHYSICS.md](PHYSICS.md)、[AXISYMMETRIC_TE.md](AXISYMMETRIC_TE.md)、[PLANAR_POLYGON_RF.md](PLANAR_POLYGON_RF.md)、[COAXIAL_RF.md](COAXIAL_RF.md)、[HPHI_MESH_RF.md](HPHI_MESH_RF.md) |
 | TE・平面の操作 | 専用native/Project/worker・CLI/GUI、場表示とSIプローブ、独立Study・同形状細分、限定追跡。平面は所有履歴、宣言相似写像版3、同一領域再メッシュ版4、相似変換＋独立内部メッシュ版5、可逆アフィン＋独立内部メッシュ版6、厳密アフィン＋境界/内部独立メッシュ版7を接続 | TE追跡は同端条件の円筒。平面追跡は矩形宣言写像または検証済み多角形尺度/相似関係、同一多角形の独立メッシュ、厳密に写した境界上の独立内部メッシュ（相似または可逆アフィン）。境界密度が独立した厳密アフィン写像にも限定対応。一般の丸めた境界・非線形変形の追跡・調整は未対応 | [GUI_TE.md](GUI_TE.md)、[GUI_PLANAR.md](GUI_PLANAR.md)、[PLANAR_TRACKING_HISTORY.md](PLANAR_TRACKING_HISTORY.md)、[PLANAR_SIMILARITY_TRACKING.md](PLANAR_SIMILARITY_TRACKING.md)、[PLANAR_SIMILARITY_REMESH_TRACKING.md](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[PLANAR_AFFINE_REMESH_TRACKING.md](PLANAR_AFFINE_REMESH_TRACKING.md)、[PLANAR_EXACT_AFFINE_TRACKING.md](PLANAR_EXACT_AFFINE_TRACKING.md) |
 | 専用Hφの操作 | 4種類のCase/native、Project/worker/取込・取消・再起動、曲線パッチを含む元場表示、全E/H/BのSI CSV、独立Study。直線の元場比較・細分差診断・部分空間追跡・所有履歴 | 曲線の比較/追跡、一般の形状写像、材料、表面ピーク精度は未対応。capabilitiesは専用入口と未対応範囲を明記 | [CAPABILITY_INVENTORY.md](CAPABILITY_INVENTORY.md)、[CURVED_HPHI_WORKSPACE.md](CURVED_HPHI_WORKSPACE.md)、[HPHI_TRACKING_HISTORY.md](HPHI_TRACKING_HISTORY.md) |
+| 平面磁静の弱形式 | 明示mu_r/Jz、Azのreluctivity K[m/H]と電流荷重[A]、全DOF/定数gauge核、一様Bのエネルギー形式 | 境界/解法・元B/H/磁束・保存/CLI/GUI・軸対称は未実装 | [PLANAR_MAGNETOSTATIC_FORMS.md](PLANAR_MAGNETOSTATIC_FORMS.md) |
 | 平面静電 | 単純多角形P1/P2、全epsilon_r/rhoと固定電極/Dn、実Poisson解、元E/D、J/mエネルギー・C/m電荷・F/m二端子容量、専用native/CLIと全Poisson再構築 | Project/GUI/Study・曲線/穴・純Neumann・浮遊電極・一般の自動外部境界診断は未実装 | [PLANAR_ELECTROSTATIC_FORMS.md](PLANAR_ELECTROSTATIC_FORMS.md)、[PLANAR_ELECTROSTATIC_SOLVE.md](PLANAR_ELECTROSTATIC_SOLVE.md)、[PLANAR_ELECTROSTATIC_NATIVE.md](PLANAR_ELECTROSTATIC_NATIVE.md) |
 | 軸対称静電 | 直線P1/P2、全材料/rhoと明示固定電極/Dn/軸、実Poisson解、元E/D・領域エネルギー・電荷・二端子容量 | 専用native/CLI対応。純Neumann/gauge・浮遊電極・Project/GUI/Study・平面は未実装 | [ELECTROSTATIC_FORMS.md](ELECTROSTATIC_FORMS.md)、[ELECTROSTATIC_SOLVE.md](ELECTROSTATIC_SOLVE.md) |
 | 線形RF材料 | 全直線セルを明示材料領域へ割当、q/uの材料重み付き実FEM、元E/H/B・領域エネルギー・非磁性壁損失、真空軸区間の加速量 | 正値・実数・等方・無損失のみ。材料native/CLI・Project/GUI・尺度/U/導電率の独立Studyに対応。材料比較/追跡・体積損失・分散等は未実装 | [MATERIAL_HPHI_FORMS.md](MATERIAL_HPHI_FORMS.md)、[MATERIAL_HPHI_RF.md](MATERIAL_HPHI_RF.md) |
