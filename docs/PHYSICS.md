@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v15（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[固定電流の外部境界距離](MAGNETOSTATIC_BOUNDARY_STUDY.md)をメッシュ細分と別に検証した。平面スラブでは共通B/Hは変わらずAz基準と全J/mエネルギーが増える。軸電流核では外周Aphi/r=0により一様戻りH=−Jphi a³/(3b²)が生じ、同じ有限L/端面条件の径方向∞参照との差をFEM差と分ける。aの定数差はBを変えるためgaugeとしない。一般の厳密開放境界ソルバーは導入していない。
+
 [軸接続磁静native/CLI](AXIS_MAGNETOSTATIC_NATIVE.md)は元a[T]と全軸DOF、mu_r/reluctivity/Jphi/境界荷重を保存し、同じ実FEMの再求解で元6場・J/Wb/A/A m²の各物理量と規約を照合する。軸の正則値を保持し、aの定数をgauge移動しない。
 
 第15版は[軸接続磁静の実FEM](AXIS_MAGNETOSTATIC_SOLVE.md)を接続する。正則a=Aphi/r[T]の固定値と+2π∫r²Ht Ni ds[A m²]を明示する。全非軸Htでも一意に解き、定数aをgaugeとして除去しない。元a/Aphi/Br/Bz/Hr/Hz、Jエネルギー・Wb磁束を保持し、H周回+Jphi断面電流[A]と固定a反力[A m²]を区別する。軸非接続と一般外部境界診断は未対応。
