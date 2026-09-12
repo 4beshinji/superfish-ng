@@ -1,3 +1,14 @@
+2026-09-12：[同じ真空領域のHφ部分空間対応](HPHI_SAME_DOMAIN_TRACKING.md)を主ツリーへ統合・限定受入。
+元E/Hの全方向の対応と有限比較空間・guardを確認し、縮退群はID集合として保持する。
+標準1068件（1065合格・3skip）、独立36比較と縮退/順位逆転12正逆比較、主4unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+有限FEM間の数値対応で、連続した変形の同一性や誤差上界は保証しない。親33課題の8受入/11進行/13他未受入/1範囲外と全計画未完を維持する。
+追跡API標準64006は終了0・2284.575秒、主4unitは終了0・22.281秒。主635source。
+/tmp/integrate-hphi-same-domain-tracking-20260912.pyと/tmp/finalize-hphi-same-domain-tracking-docs-20260912.pyは実行済み。再実行しない。
+保存/worker/CLI候補632sourceは固定、標準91811が継続中。3unitと10worker/34再起動/10CLI独立は合格、未統合。
+GUI候補/tmp/superfish-hphi-tracking-gui-20260912は現在634source。API2unitと新Chrome14は合格、独立/旧画面/再起動の進捗と稼働ハンドルは最新ツール結果を参照。
+GUI server 99337、ROOT=out/hphi-tracking-gui-browser-server-20260912。候補の数値実装は不変。全計画は未完。
+以下よりこの冒頭を優先する。
+
 2026-09-12：[Hφの有限比較空間スペクトル診断](HPHI_SPECTRAL_RESOLUTION.md)を主ツリーへ統合・限定受入。
 元場のL2射影とシフト逆行列のM残差から、明示した比較空間の近傍固有値の数値区間を求める。
 標準1064件（1061合格・3skip）、独立24FEM/native・48全固有分解、主3unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
