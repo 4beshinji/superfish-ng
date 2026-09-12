@@ -1,4 +1,6 @@
-# 物理・数値仕様 — canonical specification v12（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
+# 物理・数値仕様 — canonical specification v13（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
+
+第13版は[平面線形静電の専用Case/Poisson API](PLANAR_ELECTROSTATIC_SOLVE.md)を接続する。直線の単純多角形P1/P2、全材料/rhoと全境界の固定電位または外向きDnを明示する。K[F/m]と荷重[C/m]から相対電位を実FEMで解き、元Phi/Ex/Ey/Dx/DyとJ/mエネルギー・C/m電極電荷・F/m二端子容量を評価する。静電の1/2係数を使い、2πr・厚さ・RF phasorを仮定しない。有限外部境界であり、純Neumann/浮遊電極と厳密開放境界は未対応。軸/平面の数値入力はbool混在を変換前に拒否する。
 
 [平面静電弱形式](PLANAR_ELECTROSTATIC_FORMS.md)は単位長さのK[F/m]と体積荷重[C/m]を別APIで組み立てる。rhoはC/m³、測度はdxdyであり、厚さ・回転軸・2πrを仮定しない。定数電位核と全DOFを保持する。平面の境界/Poisson解/元場は後続工程。
 

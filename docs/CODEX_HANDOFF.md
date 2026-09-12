@@ -1,3 +1,16 @@
+最新：平面solveは主18unit PASS、統合/finalizer実行済み・再実行禁止。主703source、標準55579終了0（1155=1152+3skip、2268.227秒）、独立71566終了0（88例1030.401秒、既存軸24native/240ファイル/プローブ不変）。native独立88424/標準6986は実行中、統合/finalizer未実行。境界例のroot配置で旧RF移行2検査が4errorsになることを確認。専用examples/electrostatic/へ移した-final候補705で追加2+旧移行2unit PASS、独立7049（144例）実行中。境界統合/finalizerの旧版はまだ新配置へ要更新。磁静formsも-final710へ継承し5新+2移行unit/独立72例PASSで固定、標準58978実行中（1166件）。旧標準50194は失敗が既知のため自分のunittest子だけSIGTERMで停止し終了241、partial log保持。磁静forms統合/finalizer未作成。全GUI停止、全計画未完、親33=8/13/11/1。
+
+2026-09-13：[平面静電Poisson解・元E/D・電荷/容量](PLANAR_ELECTROSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
+全境界の固定電位/Dn、単位長さの実FEMと元Phi/Ex/Ey/Dx/Dy、J/mエネルギー、反力/元場電荷とF/m容量を接続した。
+標準1155件（1152合格・3skip）、追加8unitと既存10unit、独立88例、既存軸24native/240ファイル/プローブ不変、主18unitがPASS。固定697sourceと主703sourceは一致。
+軸/平面の混在bool入力漏れを修正。Fourier参照の打切り差の未達は、許容差不変で2048/4096項へ増やして解消した。
+旧seed9モード19量はf差0、最大相対差8.882e-16。平面保存/CLI・静電GUI・外部境界診断等、S01と全計画は未完。親33=8受入/13進行/11他未受入/1範囲外。
+平面solve統合/finalizer実行済み・再実行禁止。主703source。次は平面専用native/CLI。実ハンドルの最新状態を確認する。以下よりこの冒頭を優先。
+
+最新19:30 UTC前後：主2545745/698source。平面solve独立71566（-refined697、P2最細n80）、元標準55579、native元標準6986は実行中。native-refined700の独立24例80CLIは71566 PASS待ち。2組integrator/finalizerは準備済み未実行、標準との差は別の独立検証スクリプト1件だけとして監査する。境界study88105は144例PASS/163.018秒、2unit PASS、705source固定（独立時との差も同じ別検証スクリプト1件）。境界integrator/finalizerも準備済み未実行、本体は2unitだけ。平面磁静forms候補710sourceは5unit/72例216多項式・72mu逆比例/一様B PASS、固定して標準50194を開始（1166件）。どの固定候補も編集禁止。磁静forms統合/finalizerは未作成。S01原要件照合は docs/S01_ACCEPTANCE.md、C00未確定で親受入数は維持。全GUI停止、全計画未完、親33=8/13/11/1。
+
+最新：主2545745/698source。平面solveの独立93588はP2n64元E/D差0.000520161>0.0005で終了1。許容差不変で最細n80へ増やした別固定候補 /tmp/superfish-planar-electrostatic-solve-refined-20260913（697source）で独立71566を開始。元標準55579とnative標準6986は元候補のまま継続。nativeも別固定-refined候補700へ検証スクリプト1件だけ更新、独立24例80CLIは新88例PASS待ち。2組integrator/finalizerはこの一差分を監査するよう更新済み・未実行。境界遠方化の別候補 /tmp/superfish-electrostatic-boundary-study-20260913 は2unit PASS、独立144例88105実行中、未固定。ソルバー変更なし、新3検証ファイル+2実行例だけ。全GUI停止、全計画未完、親33=8/13/11/1。
+
 最新：平面formsは主5unit/72例216多項式PASS、標準73191終了0（1147=1144合格+3skip、2229.919秒）。統合/finalizer実行済み・再実行禁止、主698source。平面solve固定697は独立93588（88例と既存軸24native）/標準55579（1155件）、native固定700は標準6986（1159件）。独立参照のFourier初回512/1024項の未達を保存し、しきい値不変で2048/4096項へ増やした。nativeは4unit/旧能力表3unit/3CLI smoke PASS、独立24例80CLIはsolve独立PASS待ちで未実行。両候補src/tests/scripts/examplesを変更しない。solve/native統合ヘルパーは準備済み未実行、doc finalizerはまだ未作成。全GUI停止、全計画未完、親33=8/13/11/1。
 
 2026-09-13：[平面静電の誘電体・電荷・弱形式](PLANAR_ELECTROSTATIC_FORMS.md)を主ツリーへ統合・限定受入。

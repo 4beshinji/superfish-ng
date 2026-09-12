@@ -13,6 +13,19 @@ def finite_signed(value,name):
     return float(value)
 
 
+def static_field_coordinates(cell_indices,barycentric,cell_count):
+    from .coaxial import _numeric_coordinates
+    typed=isinstance(cell_indices,np.ndarray) and cell_indices.dtype.kind in 'iu'
+    raw=cell_indices if typed else np.asarray(cell_indices,dtype=object)
+    if (raw.ndim!=1 or not len(raw) or (not typed and any(isinstance(v,(bool,np.bool_)) or not isinstance(v,(int,np.integer)) for v in raw))
+        or np.any(raw<0) or np.any(raw>=cell_count)):
+        raise ValueError('electrostatic original cell indices must be nonempty integers in range, without booleans')
+    cells=raw.astype(np.int64);bary=_numeric_coordinates(barycentric,3,'electrostatic barycentric points')
+    if bary.shape!=(len(cells),3) or np.any(bary<-1e-12) or not np.allclose(bary.sum(axis=1),1.,rtol=0,atol=1e-12):
+        raise ValueError('electrostatic fields require one closed reference-triangle point per original cell')
+    return cells,bary
+
+
 @dataclass(frozen=True)
 class ElectrostaticBoundary:
     id: str
