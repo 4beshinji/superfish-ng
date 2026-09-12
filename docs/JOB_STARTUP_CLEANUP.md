@@ -44,5 +44,7 @@
 証拠は `out/job-startup-cleanup-20260912`。`warning-before.log` と `failures-before.log` が先行反例、
 `related-final-2.log` が29件、`live-final/report.json` が実HTTPの記録。
 直前の全体973件・独立数値検証は[厳密アフィン追跡](PLANAR_EXACT_AFFINE_TRACKING.md)の記録。
-この非数値修正後に全体979件を再実行したという主張ではない。
+修正直後は関連検証までだった。その後、P03開始時に変更前の主ツリーで全体979件を実行し、
+977合格・2skip（1595.088秒）、ResourceWarningなしを確認した。
+証拠は `out/coaxial-development-20260912/baseline-final.log`。この標準実行には新しい同軸実装を含まない。
 新規外部資料・依存はなく、Python標準の終了処理と既存のPOSIXロック契約だけを使用した。

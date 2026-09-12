@@ -1,0 +1,30 @@
+{
+  "format": "superfish_ng_coaxial_case",
+  "schema_version": 1,
+  "name": "closed vacuum coaxial resonator",
+  "model": {
+    "physics": "rf_eigenmode",
+    "coordinates": "axisymmetric",
+    "azimuthal_index": 0,
+    "field_family": "Hphi",
+    "material": "vacuum",
+    "boundary": "closed_pec"
+  },
+  "geometry": {
+    "type": "coaxial_cylinder",
+    "inner_radius_m": 0.025,
+    "outer_radius_m": 0.05,
+    "length_m": 0.18
+  },
+  "mesh": {
+    "nr": 16,
+    "nz": 32,
+    "element_order": 2,
+    "quadrature_order": 8
+  },
+  "modes": 4,
+  "rf": {
+    "stored_energy_j": 1.0,
+    "conductivity_s_per_m": 58000000.0
+  }
+}

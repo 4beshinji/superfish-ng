@@ -151,6 +151,16 @@ def main(argv=None):
     planar_project=sub.add_parser('execute-planar-project',help='execute a dedicated Cartesian cutoff Project and verify native completion')
     planar_project.add_argument('project',type=Path)
     planar_project.add_argument('--out',type=Path,required=True)
+    coaxial=sub.add_parser('solve-coaxial',help='solve a closed vacuum coaxial m=0 Hphi case; exclude static circulation')
+    coaxial.add_argument('case',type=Path)
+    coaxial.add_argument('--out',required=True,type=Path)
+    coaxial_replay=sub.add_parser('replay-coaxial',help='reassemble and verify coaxial native fields, positive spectrum and full-cavity RF')
+    coaxial_replay.add_argument('run',type=Path)
+    coaxial_probe=sub.add_parser('probe-coaxial',help='export signed E/H/B at declared vacuum [r_m,z_m] points to new JSON')
+    coaxial_probe.add_argument('run',type=Path)
+    coaxial_probe.add_argument('--points',type=Path,required=True)
+    coaxial_probe.add_argument('--mode',type=int,default=1,help='one-based positive-spectrum index, not a TEM/TM label')
+    coaxial_probe.add_argument('--out',type=Path,required=True)
     planar=sub.add_parser('solve-planar',help='solve an explicit Cartesian vacuum TE/TM cutoff case with J/m normalization')
     planar.add_argument('case',type=Path)
     planar.add_argument('--out',type=Path,required=True)
@@ -238,6 +248,20 @@ def main(argv=None):
             from .planar_project import PlanarProject
             from .planar_jobs import execute_planar_project
             print(json.dumps(execute_planar_project(PlanarProject.load(args.project),args.out),indent=2,allow_nan=False))
+            return 0
+        if args.command in ('solve-coaxial','replay-coaxial','probe-coaxial'):
+            from .coaxial import CoaxialCase,solve_coaxial
+            from .coaxial_saved import save_coaxial_run,read_coaxial_run,export_coaxial_probe
+            if args.command=='solve-coaxial':
+                case=CoaxialCase.load(args.case)
+                print(json.dumps(save_coaxial_run(case,solve_coaxial(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-coaxial':
+                read_coaxial_run(args.run)
+                print(f'PASS: {args.run} (closed coaxial Hphi; static circulation excluded; energy J; loss W)')
+            else:
+                from .project import parse_json
+                export_coaxial_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')),args.mode)
+                print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-planar','replay-planar','probe-planar'):
             from .planar import PlanarCase,solve_planar,PlanarFieldSampler

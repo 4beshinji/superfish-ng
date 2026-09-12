@@ -1,3 +1,19 @@
+2026-09-12：[閉じた真空同軸円筒のm=0 Hφ族](COAXIAL_RF.md)を限定受入。
+q=rHφのP1/P2 FEM、静的循環零空間の除外、全E/H・内外導体/両端板損失、専用native/CLI・SIプローブを接続した。
+追加8unit、独立16FEM/native・TEM/TMの64モード比較、主例題2件の6CLI操作、全体987件（985合格・2skip）でPASS。
+seed9モード19量はf差0e+00・最大相対差8.882e-16。
+一般内導体・複数断面境界・Project/Job/GUI・旧版照合等、親P03と全計画は未完。
+標準987件は1626.390秒、独立16件は66.247秒、主8unitは1.968秒。全実行は終了済み。
+標準26364・旧標準19541・独立56227・主unit87822・例題36857は完了。関連サーバーや旧版実行はない。
+固定一時コピーの全標準と主ツリー556sourceの同一性、旧6egg-info不変を記録し、主ツリーでも新unit/例題を再実行した。
+証拠はCOAXIAL_RF.mdとout/validation-coaxial-frozen-candidate-20260912/seed_regression.json。旧ベンチマーク不変。
+親33課題は8受入/11進行/13他未受入/1範囲外へ更新。P03を進行へ移し、完了には数えない。
+次はCOAXIAL_GENERAL_MESH_PLAN.md。穴付き矩形断面のq=cos(3πz/L)という独立解析例を用意し、積分恒等式だけ確認済み。
+一般メッシュ/複数境界、Project/Job/GUI、旧版照合は未実装・未確認。全計画goalはactiveのまま。
+ユーザーはこのマシンにも実行環境があると回答。/usr/lib/wine/wine64でWine 9.0の起動を確認した。SUPERFISHのdesktop設定は以前の/tmp/superfish-wine-runtime/prefix-readyを指し、そのパスは現在見つからない。現存SUPERFISH本体と対応prefixは引き続き所在確認。旧版ソース/バイナリの内容閲覧・複製は禁止のまま。
+
+以下は各工程完了時の履歴。現在の検証結果・環境確認・次工程は冒頭を優先する。
+
 2026-09-12 O01運用修正：ジョブ管理/GUIの起動失敗・中断時にもOSロックを解放する。
 既存ResourceWarningはtest_gui_mode_trackingのクラスcleanup漏れと特定し、5件だけの再現ログを保持して修正した。
 別途、壊れたjob.json・復旧書込失敗/中断・GUIキャッシュ競合・ブラウザー失敗でロックが残る先行反例を確認。

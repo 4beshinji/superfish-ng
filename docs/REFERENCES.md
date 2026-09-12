@@ -188,6 +188,18 @@ m=0の正のJ1零点とp≥1を使い、零点0をTE共振へ含めない。製�
 式9直前のTE表記はTM式の誤記と判断し、TEには式8を使う。場の+時間phasor・SI規格化と円筒座標への変換は独立に導出。
 本文・図・コード・PDFの転載なし。製品FEMの代わりに解析値を返さない。曲線TEの試作と製品受入を区別する。
 
+**R37. David Staelin, MIT 6.013 Electromagnetics and Applications, Lecture 15 (Spring 2009).**
+[MIT公開講義](https://ocw.mit.edu/courses/6-013-electromagnetics-and-applications-spring-2009/resources/mit6_013s09_lec15/)
+— 2026-09-12閲覧。PDF pp.1–2の短絡TEM定在波・正周波数とDC循環電流の区別、p.4の電磁エネルギーを参照。
+同軸q=rHφの弱形式、SI/phasorの成分、内外導体と端板の壁積分は独立に導出した。
+図・本文・PDF・コードは転載せず、検証用の公開数学としてのみ使用。製品は実FEMを解く。
+
+**R38. NIST Digital Library of Mathematical Functions, §§10.2, 10.6.**
+[Bessel方程式](https://dlmf.nist.gov/10.2)、[漸化式・導関数](https://dlmf.nist.gov/10.6)
+— 2026-09-12閲覧。円筒関数の方程式とd[x C1(x)]/dx=x C0(x)を、環状円筒TMの独立解析に参照。
+内外PECの零点条件・軸方向分離・場規格化は独立導出。根検索と場比較は検証器だけに置き、FEMへ解析値を注入しない。
+資料やライブラリーの実装コードは転載していない。
+
 ## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、
