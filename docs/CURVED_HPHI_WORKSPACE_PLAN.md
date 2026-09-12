@@ -1,6 +1,6 @@
 # 明示曲線HφのProject・表示・独立掃引
 
-[専用native・CLI](CURVED_HPHI_NATIVE_PLAN.md)に続く操作工程。未受入。
+[専用native・CLI](CURVED_HPHI_NATIVE_PLAN.md)に続く操作工程。[実装記録](CURVED_HPHI_WORKSPACE.md)の範囲で限定受入。
 
 受入条件：
 
@@ -13,3 +13,5 @@
 - 軸あり/なし、P1/P2、複数穴、半径も非線形な曲線、実GUI・CLI・worker・標準周波数/RFを検証する。
 
 一般曲線の自動生成・正確な円錐曲線・形状写像の追跡・表面ピーク精度・旧版照合は別工程。新規依存、外部サービス、旧版ソース参照は追加しない。
+
+標準1104件・独立12ケース・Chrome39操作と主ツリー照合がPASS。主662sourceへ統合済み。

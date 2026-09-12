@@ -5,7 +5,7 @@
 元要素の物理微分からpeak exp(+iωt)のHφ real・Er/Ez quadratureを求め、全曲線壁の損失と元場の電磁エネルギーを積分する。
 軸経路は明示区間・beta・位相原点に限定する。逆写像の軸上丸めは検証済み直線軸の直接変換で避ける。
 K/MとRFの二重積分次数診断は有限数値積分の比較で、離散化誤差上界や表面ピーク精度を保証しない。
-既存の全形式・物理式・規格化は不変。[専用native/CLI](CURVED_HPHI_NATIVE.md)は全幾何/FEM/RF/規約再生まで限定受入。Project/GUIは別の操作受入とする。
+既存の全形式・物理式・規格化は不変。[専用native/CLI](CURVED_HPHI_NATIVE.md)は全幾何/FEM/RF/規約再生まで限定受入。[Project/GUI/独立Study](CURVED_HPHI_WORKSPACE.md)は全二次幾何・元場/壁/軸と尺度則を保持して限定受入。曲線の比較/追跡は未対応。
 
 
 第9版は[軸接続の直線PEC穴付き断面](AXIS_HPHI_RF.md)に、canonicalと同じ正則u=Hφ/r空間を専用入力で接続する。

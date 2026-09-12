@@ -1,5 +1,12 @@
 # 実装・検証の現状
 
+2026-09-13：[明示曲線HφのProject・表示・独立掃引](CURVED_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
+二次の全幾何を保持するProject/worker、曲線パッチで穴を除く元場表示、全18成分CSV、全中点/軸経路を変換する独立Studyを接続した。
+標準1104件（1101合格・3skip）、独立12ケース/24Study FEM/24取込/12再起動、Chrome新18/復元8/旧13、主5unit/同独立照合/17保存ジョブ6CLIがPASS。
+元300nativeとGUI元80nativeは不変。曲線PNG/CSVはCLI/GUI/復元後で一致し、旧同軸PNG/CSVは変更前とbyte一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+曲線比較/追跡・一般写像・材料/静的場・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+
+
 2026-09-12：[明示曲線Hφのnative・CLI](CURVED_HPHI_NATIVE.md)を主ツリーへ統合・限定受入。
 二次幾何・元係数・最低正帯域・全RFとq/u/phasor/R/Q規約を5ファイルへ保持し、完全再生と専用solve/replay/probeを接続した。
 標準1099件（1096合格・3skip）、関連30unit、独立24ケース/48保存/74CLIと主4unit/同保存CLI照合がPASS。元240native不変、API/CLIのnative5はbyte一致、全プローブJSON一致。追加の半径非線形24ケース/48RF/12CLIもPASS。

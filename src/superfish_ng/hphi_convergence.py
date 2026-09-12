@@ -8,6 +8,7 @@ import numpy as np
 from .config import integer,positive,keys
 from .project import parse_json
 from .hphi_project import HphiProject
+from .curved_hphi import CurvedHphiCase
 from .hphi_native import hphi_result
 from .coaxial import CoaxialCase,_space
 from .hphi_field_overlap import _declared_mesh,_verified_solution,hphi_field_grams
@@ -43,6 +44,8 @@ class HphiConvergenceThresholds:
 
 def _project_mesh(project):
     case=project.case
+    if isinstance(case,CurvedHphiCase):
+        raise ValueError('curved Hphi convergence is not implemented; solve and inspect each explicit Project independently')
     return _declared_mesh(SimpleNamespace(case=case,space=_space(case))) if isinstance(case,CoaxialCase) else case.mesh
 
 
@@ -71,6 +74,8 @@ class HphiConvergence:
         previous=None;reference=None
         for project in self.projects:
             case=project.case
+            if isinstance(case,CurvedHphiCase):
+                _project_mesh(project)
             if case.modes>self.max_gram_modes:raise ValueError('Hphi convergence exceeds max_gram_modes')
             count=2*case.nr*case.nz if isinstance(case,CoaxialCase) else len(case.mesh.triangles)
             if count>min(self.max_triangles,self.max_overlay_triangles):raise ValueError('Hphi convergence mesh exceeds triangle budget')

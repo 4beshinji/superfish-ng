@@ -8,6 +8,7 @@ from .coaxial import CoaxialCase,CoaxialSolution,coaxial_matrices,_restore_coaxi
 from .coaxial_saved import _mesh_arrays as _coaxial_arrays
 from .hphi_mesh import HphiMeshCase,HphiMeshSolution,hphi_mesh_matrices,restore_hphi_mesh
 from .hphi_mesh_saved import _mesh_arrays as _mesh_arrays
+from .curved_hphi import CurvedHphiCase,CurvedHphiSolution
 from .config import integer
 from .constants import EPS0,TAU
 from .fem import triangle_quadrature
@@ -23,7 +24,13 @@ class HphiFieldGrams:
     diagnostic: dict
 
 
+def _reject_curved_comparison(solution):
+    if isinstance(solution,CurvedHphiSolution) or isinstance(getattr(solution,"case",None),CurvedHphiCase):
+        raise ValueError("curved Hphi field comparison and tracking are not implemented; inspect the original fields independently")
+
+
 def _verified_solution(solution):
+    _reject_curved_comparison(solution)
     if type(solution) is AxisHphiSolution and type(solution.case) is AxisHphiCase:
         case=AxisHphiCase.from_dict(solution.case.to_dict())
         space,k,m=axis_hphi_matrices(case)
@@ -47,6 +54,7 @@ def _verified_solution(solution):
 
 
 def _declared_mesh(solution):
+    _reject_curved_comparison(solution)
     case=solution.case
     if isinstance(case,(HphiMeshCase,AxisHphiCase)):
         return case.mesh
@@ -106,6 +114,7 @@ def hphi_field_grams(previous,current,*,max_candidate_tests=2000000,
                        ('max_overlay_triangles',max_overlay_triangles),('max_gram_modes',max_gram_modes)):
         integer(value,name)
     for solution in (previous,current):
+        _reject_curved_comparison(solution)
         if not isinstance(solution,(CoaxialSolution,AxisHphiSolution)):
             raise ValueError('Hphi field comparison requires dedicated Hphi FEM solutions')
         if solution.case.modes>max_gram_modes:

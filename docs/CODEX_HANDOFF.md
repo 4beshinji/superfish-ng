@@ -1,3 +1,22 @@
+2026-09-13 JST 01:26時点：曲線workspaceは標準1104件・主5unit/独立12ケース/17保存ジョブ6CLIすべてPASS、主662source。統合/文書finalizerは実行済み。コード変更中の主検証なし。
+残る標準：能力表10066（候補659source、期待1107）、材料行列76192（候補664source、期待1112）。実GUI/HTTPサーバーはすべて停止済み。
+能力表と材料行列の統合/finalizeスクリプトを/tmpへ準備済み、未実行。各標準完了後に順序どおり統合し主検証する。
+次の材料RF候補/tmp/superfish-material-hphi-rf-20260913を材料行列候補から分離し実装中。Case/固有解/元E/H/Bを追加、RFと検証は未完。MATERIAL_HPHI_RF_PLAN.mdが受入条件。主には未統合。
+全計画は未完。以下よりこの最新冒頭を優先。
+
+2026-09-13：[明示曲線HφのProject・表示・独立掃引](CURVED_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
+二次の全幾何を保持するProject/worker、曲線パッチで穴を除く元場表示、全18成分CSV、全中点/軸経路を変換する独立Studyを接続した。
+標準1104件（1101合格・3skip）、独立12ケース/24Study FEM/24取込/12再起動、Chrome新18/復元8/旧13、主5unit/同独立照合/17保存ジョブ6CLIがPASS。
+元300nativeとGUI元80nativeは不変。曲線PNG/CSVはCLI/GUI/復元後で一致し、旧同軸PNG/CSVは変更前とbyte一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+曲線比較/追跡・一般写像・材料/静的場・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+曲線workspace標準93189は終了0・2210.902秒、主5unit/12ケース/17保存ジョブ6CLIも終了0。主662source。
+/tmp/integrate-curved-hphi-workspace-20260913.pyと/tmp/finalize-curved-hphi-workspace-docs-20260913.pyは実行済み。再実行しない。
+次の能力表候補/tmp/superfish-capability-inventory-20260913は別受入。最新の実ハンドルを確認する。全計画は未完。以下よりこの冒頭を優先する。
+
+2026-09-13 JST（2026-09-12 15:48 UTC）：主HEAD eca0ea2、主659source。曲線workspace候補656sourceは最終標準93189が実稼働（out/validation-curved-hphi-workspace-final-20260913）。先行27730は任意Matplotlib欠如のテストskip追加のため意図的停止143、合格に数えない。製品/validatorソースは初回固定と同じ。
+workspaceの追加5unit/関連32unit、独立12ケース319.164秒、Chrome新18/復元8/旧Hφ8/旧TMTE平面5、artifact17ジョブ/元80native/6CLI11.905秒はPASS。全サーバー・ブラウザーは停止済み。ROOT=out/curved-hphi-workspace-browser-server-20260913には2元結果をmoved-originalsへ移した検証状態を保持。
+次のC01能力表修正は/tmp/superfish-capability-inventory-20260913の別候補で実装中。元656sourceをコピー済み。能力表にHφ4形式・平面追跡7が欠落する失敗を確認し、専用metadataを作業中。まだテスト/標準/受入なし。全計画は未完。以下よりこの冒頭を優先。
+
 2026-09-13 JST（2026-09-12 15:33 UTC）：曲線nativeを主659sourceへ統合し、標準1099件・主4unit/24ケース74CLIとも終了0。RFは039ac25へローカルコミット済み。
 次のProject/表示/Studyは/tmp/superfish-curved-hphi-workspace-20260913の別候補。追加5unit 36.670秒、関連32unit 56.855秒（HTTP環境1skip）がPASS。独立38044とGUIサーバー38399が実稼働、ROOT=out/curved-hphi-workspace-browser-server-20260913。未受入。以下よりこの冒頭を優先する。
 

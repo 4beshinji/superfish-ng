@@ -9,6 +9,8 @@ from pathlib import Path
 import tempfile
 import numpy as np
 from .constants import MU0
+from .curved_hphi import CurvedHphiSolution
+from .curved_hphi_display import curved_hphi_display_fields, paint_curved_hphi_panel
 from .hphi_native import read_hphi_run, hphi_result
 from .hphi_jobs import _native_hashes
 
@@ -20,6 +22,8 @@ def display_hphi_fields(solution, mode=0):
     preserve the one-sided FEM derivative without point-location ambiguity.
     Display samples do not estimate RF integrals or continuous field peaks.
     """
+    if isinstance(solution, CurvedHphiSolution):
+        return curved_hphi_display_fields(solution, mode)
     space = solution.space
     reference = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1],
                           [.5, .5, 0], [0, .5, .5], [.5, 0, .5]])
@@ -111,26 +115,35 @@ def plot_hphi_mode(run, out, mode=1, *, mesh=False, length_unit='mm'):
     points = samples['points_rz_m'];scale = 1000 if length_unit=='mm' else 1
     # Swapping (r,z) to the plotted (z,r) reverses the triangle orientation.
     triangles = samples['triangles'][:,[0,2,1]]
-    triangulation = Triangulation(points[:,1]*scale,points[:,0]*scale,triangles)
+    curved = isinstance(solution, CurvedHphiSolution)
+    triangulation = None if curved else Triangulation(points[:,1]*scale,points[:,0]*scale,triangles)
     fig = Figure(figsize=(13,4),layout='constrained');canvas=FigureCanvasAgg(fig)
     panels=[('Hphi_real_A_per_m','Hφ real [A/m]'),('Er_quadrature_V_per_m','Er quadrature [V/m]'),
             ('Ez_quadrature_V_per_m','Ez quadrature [V/m]')]
     for axis,(key,label) in zip(fig.subplots(1,3),panels):
         values=samples['fields'][key];maximum=float(np.max(abs(values)))
         if maximum==0:maximum=1.
-        artist=axis.tripcolor(triangulation,values,shading='flat',cmap='RdBu_r',vmin=-maximum,vmax=maximum)
-        if mesh:axis.triplot(triangulation,color='0.5',linewidth=.25)
-        for edge in solution.space.mesh.boundary_edges:
-            boundary=solution.space.mesh.points[edge]*scale
-            axis.plot(boundary[:,1],boundary[:,0],color='black',linewidth=.7)
+        if curved:
+            artist=paint_curved_hphi_panel(axis,solution,samples,values,scale,maximum,mesh)
+        else:
+            artist=axis.tripcolor(triangulation,values,shading='flat',cmap='RdBu_r',vmin=-maximum,vmax=maximum)
+            if mesh:axis.triplot(triangulation,color='0.5',linewidth=.25)
+            for edge in solution.space.mesh.boundary_edges:
+                boundary=solution.space.mesh.points[edge]*scale
+                axis.plot(boundary[:,1],boundary[:,0],color='black',linewidth=.7)
         axis.set(xlabel=f'z [{length_unit}]',ylabel=f'r [{length_unit}]',title=label,aspect='equal')
         fig.colorbar(artist,ax=axis,shrink=.8)
     quantities=metadata['quantities']
     family = "Axis-connected" if solution.case.to_dict()["format"] == "superfish_ng_axis_hphi_case" else "Positive-radius"
+    if curved: family = "Curved axis-connected" if solution.case.axis_connected else "Curved positive-radius"
     fig.suptitle(f"{family} Hφ | mode rank {mode} | {quantities['frequency_hz']/1e6:.6g} MHz | U={quantities['stored_energy_j']:.6g} J\n"
                  'peak exp(+iωt), real + i·quadrature; original FEM samples, not a surface-peak certificate',fontsize=10)
     stream=io.BytesIO();canvas.print_png(stream)
     metadata.update(view='rz_signed_fields',length_unit=length_unit,mesh=mesh,
                     display_samples=len(samples['triangles']),components=[key for key,_ in panels],
                     interpretation='one-sided original FEM samples; conductor interiors omitted; no physical peak convergence claim')
+    if curved:
+        metadata.update(display_geometry=samples['geometry'],reference_subtriangles_per_cell=64,
+                        mesh_interpretation='original quadratic element edges',
+                        sample_location='mapped reference subtriangle centroid; one-sided original FEM')
     return publish_hphi_view(run,out,stream.getvalue(),metadata)
