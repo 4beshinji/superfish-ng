@@ -1,3 +1,16 @@
+最新：静電forms主5unit/72独立例は終了0、統合/finalizer実行済み（再実行禁止）、主685source。残る実ハンドルはsolve独立42541/標準1962、native標準51514。solve/native統合とdoc finalizerは両方準備済み未実行。native独立24例79CLIはsolve最終104例PASS待ち。親33=8受入/13進行/11他未受入/1範囲外、全計画未完。
+
+2026-09-13：[軸対称静電の誘電体・電荷・弱形式](ELECTROSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
+正値実数epsilon_r・全材料割当・符号付き領域rhoから全3DのK[F]と荷重[C]を組み立て、定数電位核と全軸DOFを保持する。
+標準1132件（1129合格・3skip）、追加5unit、独立72例/216多項式と主5unit/同照合がPASS。総電荷・尺度則・領域順序変更も照合した。
+旧seed9モード19量はf差0、最大相対差8.882e-16。静電の境界/解法・場/容量・保存操作は別工程。
+S01を進行中へ移し、親33=8受入/13進行/11他未受入/1範囲外。S01と全計画は未完。
+静電forms統合/finalizerは実行済み。主685source、再実行しない。次はELECTROSTATIC_SOLVE_PLAN.mdの限定課題。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
+2026-09-13 JST最新：主HEAD e615881、680source。静電forms標準39531、solve独立42541/標準1962、native標準51514が実行中。native固定687sourceは4unit+旧能力表3unit+3CLI PASS、独立24例79CLIはsolve最終104例のPASS待ちで未開始。3固定候補679/684/687を変更しない。forms統合/finalizer準備済み未実行、solve/native統合スクリプトだけ準備済み未実行（各doc finalizer未作成）。主での期待sourceは順に685/690/693。全GUIサーバー停止済み。全計画未完、親33=8/12/12/1。
+
+最新：主HEAD e615881、材料workspaceまで680source受入済み。静電forms固定679の標準39531、静電solve固定684の最終独立42541/標準1962が実行中。後者P1/P2とも電位の未達を記録し、しきい値不変で16/32/64へ細分した。固定候補のソース変更禁止。静電native候補は固定solveを基に作成し実装中、未受入。forms統合/finalizerの2スクリプトは準備済み・未実行。全GUIサーバー停止済み。親33=8/12/12/1、全計画未完。
+
 最新：材料workspace主5unit/12例24StudyFEM/14保存ジョブ6CLIは終了0、統合とfinalizer実行済み。主680source。静電弱形式標準39531だけが実行中。静電solve別候補は6unit PASS、独立解析照合の初回37569は終了1で理由を調査する。全GUIサーバー停止済み。全計画は未完。
 
 2026-09-13：[材料HφのProject・表示・独立掃引](MATERIAL_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。

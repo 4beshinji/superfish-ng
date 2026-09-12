@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v11（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[静電弱形式](ELECTROSTATIC_FORMS.md)は独立APIとして全3Dのepsilon grad(Phi)形式と符号付き体積電荷を組み立てる。定数電位核を保持し、RF入力・peak phasor・固有値の規約を流用しない。この段階では境界条件も静電解法も適用しない。
+
 第11版は[区分一定の線形RF材料Hφ専用API](MATERIAL_HPHI_RF.md)を接続する。直線適合メッシュ、正値実数・等方・非分散・無損失に限定する。
 Kには1/epsilon_r、Mにはmu_rを元セルごとに適用し、qの一つの静的核除外とuの全軸DOF保持を区別する。
 Eはcurl H/(omega epsilon0 epsilon_r)のquadrature成分、Bはmu0 mu_r H。総エネルギーと領域別の電磁分配を検証する。

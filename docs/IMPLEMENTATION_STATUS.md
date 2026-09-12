@@ -1,5 +1,12 @@
 # 実装・検証の現状
 
+2026-09-13：[軸対称静電の誘電体・電荷・弱形式](ELECTROSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
+正値実数epsilon_r・全材料割当・符号付き領域rhoから全3DのK[F]と荷重[C]を組み立て、定数電位核と全軸DOFを保持する。
+標準1132件（1129合格・3skip）、追加5unit、独立72例/216多項式と主5unit/同照合がPASS。総電荷・尺度則・領域順序変更も照合した。
+旧seed9モード19量はf差0、最大相対差8.882e-16。静電の境界/解法・場/容量・保存操作は別工程。
+S01を進行中へ移し、親33=8受入/13進行/11他未受入/1範囲外。S01と全計画は未完。
+
+
 2026-09-13：[材料HφのProject・表示・独立掃引](MATERIAL_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
 全材料分割を保持する所有worker/GUIへ接続し、元セルのB=mu0 mu_r H、片側の材料情報付き25列CSV、領域エネルギー/壁損失、尺度/U/壁導電率の独立Studyを扱う。
 標準1127件（1124合格・3skip）、追加5unit、独立12例24StudyFEM/24取込/12再起動、Chrome41項目と主5unit/同独立照合/14保存ジョブ6CLIがPASS。
@@ -252,9 +259,10 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 
 | 分野 | 実装・入口 | 制約・残件 | 証拠 |
 |---|---|---|---|
-| 物理 | 真空、軸接続m=0 TM/TE、PEC・平坦z端の電気/磁気対称。別契約で矩形/単純多角形の平面TE/TM遮断問題と閉同軸円筒/正半径・軸接続の穴付き断面/明示二次曲線のHφ族 | 複数材料は別の専用APIに限定。静的場は未実装。平面はβ=0で、曲線・多重連結/TEMは未対応 | [PHYSICS.md](PHYSICS.md)、[AXISYMMETRIC_TE.md](AXISYMMETRIC_TE.md)、[PLANAR_POLYGON_RF.md](PLANAR_POLYGON_RF.md)、[COAXIAL_RF.md](COAXIAL_RF.md)、[HPHI_MESH_RF.md](HPHI_MESH_RF.md) |
+| 物理 | 真空、軸接続m=0 TM/TE、PEC・平坦z端の電気/磁気対称。別契約で矩形/単純多角形の平面TE/TM遮断問題と閉同軸円筒/正半径・軸接続の穴付き断面/明示二次曲線のHφ族 | 複数材料は別の専用APIに限定。静電の誘電体/体積電荷/K/荷重だけを別APIで追加。静的場の解法は未実装。平面はβ=0で、曲線・多重連結/TEMは未対応 | [PHYSICS.md](PHYSICS.md)、[AXISYMMETRIC_TE.md](AXISYMMETRIC_TE.md)、[PLANAR_POLYGON_RF.md](PLANAR_POLYGON_RF.md)、[COAXIAL_RF.md](COAXIAL_RF.md)、[HPHI_MESH_RF.md](HPHI_MESH_RF.md) |
 | TE・平面の操作 | 専用native/Project/worker・CLI/GUI、場表示とSIプローブ、独立Study・同形状細分、限定追跡。平面は所有履歴、宣言相似写像版3、同一領域再メッシュ版4、相似変換＋独立内部メッシュ版5、可逆アフィン＋独立内部メッシュ版6、厳密アフィン＋境界/内部独立メッシュ版7を接続 | TE追跡は同端条件の円筒。平面追跡は矩形宣言写像または検証済み多角形尺度/相似関係、同一多角形の独立メッシュ、厳密に写した境界上の独立内部メッシュ（相似または可逆アフィン）。境界密度が独立した厳密アフィン写像にも限定対応。一般の丸めた境界・非線形変形の追跡・調整は未対応 | [GUI_TE.md](GUI_TE.md)、[GUI_PLANAR.md](GUI_PLANAR.md)、[PLANAR_TRACKING_HISTORY.md](PLANAR_TRACKING_HISTORY.md)、[PLANAR_SIMILARITY_TRACKING.md](PLANAR_SIMILARITY_TRACKING.md)、[PLANAR_SIMILARITY_REMESH_TRACKING.md](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[PLANAR_AFFINE_REMESH_TRACKING.md](PLANAR_AFFINE_REMESH_TRACKING.md)、[PLANAR_EXACT_AFFINE_TRACKING.md](PLANAR_EXACT_AFFINE_TRACKING.md) |
 | 専用Hφの操作 | 4種類のCase/native、Project/worker/取込・取消・再起動、曲線パッチを含む元場表示、全E/H/BのSI CSV、独立Study。直線の元場比較・細分差診断・部分空間追跡・所有履歴 | 曲線の比較/追跡、一般の形状写像、材料、表面ピーク精度は未対応。capabilitiesは専用入口と未対応範囲を明記 | [CAPABILITY_INVENTORY.md](CAPABILITY_INVENTORY.md)、[CURVED_HPHI_WORKSPACE.md](CURVED_HPHI_WORKSPACE.md)、[HPHI_TRACKING_HISTORY.md](HPHI_TRACKING_HISTORY.md) |
+| 静電の弱形式 | 軸/正半径の直線P1/P2、全材料と符号付きrho、全3D K[F]/荷重[C]、定数電位核 | 境界/gauge・解法・E/D・容量・保存/CLI/GUI・平面は未実装 | [ELECTROSTATIC_FORMS.md](ELECTROSTATIC_FORMS.md) |
 | 線形RF材料 | 全直線セルを明示材料領域へ割当、q/uの材料重み付き実FEM、元E/H/B・領域エネルギー・非磁性壁損失、真空軸区間の加速量 | 正値・実数・等方・無損失のみ。材料native/CLI・Project/GUI・尺度/U/導電率の独立Studyに対応。材料比較/追跡・体積損失・分散等は未実装 | [MATERIAL_HPHI_FORMS.md](MATERIAL_HPHI_FORMS.md)、[MATERIAL_HPHI_RF.md](MATERIAL_HPHI_RF.md) |
 | 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否。閉同軸円筒・正半径/軸接続メッシュ・明示曲線Hφはそれぞれ専用Case/native版1 | 既存Caseへ同軸入力を混在させない。専用契約の対象外物理は拒否 | [MODEL_CONTRACT.md](MODEL_CONTRACT.md)、[COAXIAL_RF.md](COAXIAL_RF.md) |
 | 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 専用Hφの明示メッシュは穴・軸区間・二次曲線に対応。任意CAD/曲線の自動生成なし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
