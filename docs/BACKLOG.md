@@ -1,5 +1,11 @@
 # 実装バックログ
 
+2026-09-13：[軸に接続した磁静場の正則弱形式](AXIS_MAGNETOSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
+正値mu_r/Jphi、a=Aphi/r[T]と全軸DOF、元Br/Bzのエネルギー形式K[m⁴/H]・源仕事荷重[A m²]を追加した。定数aは一様軸方向Bで、gauge核と扱わない。
+標準1181件（1178合格・3skip）、追加5unit、独立72例216多項式と主5unit/同独立照合がPASS。固定723sourceと主729sourceは一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+軸対称の境界付き解・場/磁束出力・保存/CLI・軸非接続と外部境界診断等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+
+
 2026-09-13：[平面磁静場の専用保存・再構築・CLI](PLANAR_MAGNETOSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
 mu_r/reluctivity・Jz・固定Az/Ht・相対/絶対Azを保持し、再求解と元Az/B/H・エネルギー・電流/磁束・規約の全照合を接続した。
 標準1176件（1173合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/80CLIと主4unitがPASS。API/CLIの5ファイル・全プローブJSONが一致し、元240native/90参照ファイルは不変。固定718sourceと主724sourceは一致。
@@ -167,7 +173,7 @@ GUI・履歴・形状写像等と全計画は未完。親33課題の8受入/11�
 旧seed9モード19量はf差0、最大相対差8.882e-16。曲線内導体・部分空間追跡・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
 
 
-次の限定課題はS02の[軸接続磁静の正則弱形式](AXIS_MAGNETOSTATIC_FORMS_PLAN.md)。a=Aphi/r[T]、全軸DOF、一様Bの非零エネルギー、K[m⁴/H]/荷重[A m²]とmu/尺度則を受入条件とする。固定723sourceで5unit・独立72例216多項式がPASS、標準1181件を実行中。軸の境界付き解は固定728sourceで6unitがPASS、独立88例と標準1187件を実行中。軸nativeは固定731sourceで4unit/旧能力表3unit/3CLI smokeがPASS、標準1191件を実行中。S01の元要件とC00依存は[S01受入照合](S01_ACCEPTANCE.md)を参照する。
+次の限定課題はS02の[軸接続磁静の境界付き解・元場/磁束](AXIS_MAGNETOSTATIC_SOLVE_PLAN.md)。全軸DOF/正則a、明示固定Aphi/r/Ht、実FEM、元6場と全3DのJ/Wb、Ampere電流[A]と固定a反力[A m²]の分離を受入条件とする。固定728sourceで6unitがPASS、独立88例と標準1187件を実行中。軸nativeは固定731sourceで4unit/旧能力表3unit/3CLI smokeがPASS、標準1191件を実行中。固定電流の境界距離/細分系列と専用実行例2つは別の隔離候補で検証中。S01の元要件とC00依存は[S01受入照合](S01_ACCEPTANCE.md)を参照する。
 
 2026-09-12：[明示Hφメッシュ列の細分差診断](HPHI_CONVERGENCE.md)のAPI・全水準保存・完全再生・CLIを主ツリーへ統合・限定受入。
 元E/Hの対応、周波数近傍、最後2組のf/E/H/各RF・壁線分・複素Vaccを別々に判定する。縮退・guard不足・粗さ未達はUNVERIFIEDを保持する。

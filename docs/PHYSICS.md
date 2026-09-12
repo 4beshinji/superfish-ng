@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v14（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[軸に接続した磁静弱形式](AXIS_MAGNETOSTATIC_FORMS.md)はa=Aphi/r[T]からBr=−r∂z a、Bz=2a+r∂r aを構成し、∫B²/(2mu)dV[J]を組み立てる。K[m⁴/H]・源仕事荷重[A m²]を、断面源電流[A]と区別する。全軸DOFを保持し、定数aを零gaugeとは扱わない。境界付き解と軸非接続のgauge処理は後続工程。
+
 [平面磁静場native/CLI](PLANAR_MAGNETOSTATIC_NATIVE.md)は基準Azと元係数、mu_r/reluctivity、源・境界荷重、元B/Hと静的磁気エネルギー/電流/磁束を保存し、同じ問題の再求解で検証する。単位はAz[Wb/m]・B[T]・H[A/m]・エネルギー[J/m]・電流[A]・磁束[Wb/m]。RFモードや巻線インダクタンスは含めない。
 
 第14版は[平面線形磁静場](PLANAR_MAGNETOSTATIC_SOLVE.md)の固定Az/Ht境界と実FEMを接続する。Az[Wb/m]、B=(∂yAz,−∂xAz)[T]、H=νB[A/m]、Jz[A/m²]。反時計回りの接線Htは−ν∂nAzで、境界荷重は−∫Ht Ni ds[A]。静的エネルギーは∫B²/(2mu)dxdy[J/m]、元B磁束は[Wb/m]。離散反力と元H周回積分のAmpere診断を区別する。有限境界・固定Az付きのみで、軸対称/非線形/巻線インダクタンス/厳密開放境界は未対応。
