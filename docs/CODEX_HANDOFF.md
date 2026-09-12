@@ -1,3 +1,9 @@
+2026-09-13：[平面線形磁静場の実FEM・元B/H・磁束/エネルギー](PLANAR_MAGNETOSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
+明示mu_r/Jzと全境界の固定Az/Ht、実FEMの相対Az、元Az/B/H、J/mエネルギー、反力/元H周回積分[A]・元B磁束[Wb/m]を接続した。
+標準1172件（1169合格・3skip）、追加6unit、独立88例と主6unitがPASS。固定715sourceと主721sourceは一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+離散反力保存と元HのAmpere診断を区別する。平面保存/CLI・軸対称・外部境界診断等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+磁静solve統合/finalizer実行済み・再実行禁止。主721source。次は平面磁静の保存/CLI。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
 2026-09-13：[平面磁静の材料・Jz・Az弱形式](PLANAR_MAGNETOSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
 正値実数mu_r・全領域電流から、reluctivityによるK[m/H]と荷重[A]を組み立て、全DOFと定数Azのgauge核を保持する。
 標準1166件（1163合格・3skip）、追加5unit/旧RF移行2unit、独立72例216多項式・72mu逆比例/一様Bエネルギー、主5unit/同独立照合がPASS。固定710sourceと主716sourceが一致。

@@ -1,6 +1,8 @@
-# 物理・数値仕様 — canonical specification v13（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
+# 物理・数値仕様 — canonical specification v14（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
-[平面磁静の弱形式](PLANAR_MAGNETOSTATIC_FORMS.md)はAz[Wb/m]、B=(∂yAz,−∂xAz)[T]、H=B/(mu0 mu_r)[A/m]、Jz[A/m²]を別APIで扱う。Kはreluctivityで重み付けした[m/H]、荷重は[A]。全DOFと定数Azのgauge核を保持し、磁気エネルギー形式は∫B²/(2mu) dxdy [J/m]。境界付き磁静場ソルバーはまだ接続しない。
+第14版は[平面線形磁静場](PLANAR_MAGNETOSTATIC_SOLVE.md)の固定Az/Ht境界と実FEMを接続する。Az[Wb/m]、B=(∂yAz,−∂xAz)[T]、H=νB[A/m]、Jz[A/m²]。反時計回りの接線Htは−ν∂nAzで、境界荷重は−∫Ht Ni ds[A]。静的エネルギーは∫B²/(2mu)dxdy[J/m]、元B磁束は[Wb/m]。離散反力と元H周回積分のAmpere診断を区別する。有限境界・固定Az付きのみで、軸対称/非線形/巻線インダクタンス/厳密開放境界は未対応。
+
+[平面磁静の弱形式](PLANAR_MAGNETOSTATIC_FORMS.md)はAz[Wb/m]、B=(∂yAz,−∂xAz)[T]、H=B/(mu0 mu_r)[A/m]、Jz[A/m²]を別APIで扱う。Kはreluctivityで重み付けした[m/H]、荷重は[A]。全DOFと定数Azのgauge核を保持し、磁気エネルギー形式は∫B²/(2mu) dxdy [J/m]。境界付き磁静場ソルバーは第14版で接続した。
 
 第13版は[平面線形静電の専用Case/Poisson API](PLANAR_ELECTROSTATIC_SOLVE.md)を接続する。直線の単純多角形P1/P2、全材料/rhoと全境界の固定電位または外向きDnを明示する。K[F/m]と荷重[C/m]から相対電位を実FEMで解き、元Phi/Ex/Ey/Dx/DyとJ/mエネルギー・C/m電極電荷・F/m二端子容量を評価する。静電の1/2係数を使い、2πr・厚さ・RF phasorを仮定しない。有限外部境界であり、純Neumann/浮遊電極と厳密開放境界は未対応。軸/平面の数値入力はbool混在を変換前に拒否する。
 
