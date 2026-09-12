@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[実装済み能力表の整合](docs/CAPABILITY_INVENTORY.md)を主ツリーへ統合・限定受入。
+capabilitiesへHφ4形式の入力/保存・q/u/軸・CLI/Project/GUI/Studyと直線だけの比較を追加し、平面追跡版1〜7の写像/境界条件を列挙した。
+標準1107件（1104合格・3skip）、関連11unit、5Hφ例/38コマンド/59CLI/75nativeと主3unit/同照合がPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+能力表の補完で物理や入力受理を拡張していない。親33課題の8受入/11進行/13他未受入/1範囲外と全計画未完を維持する。
+
+
 2026-09-13：[明示曲線HφのProject・表示・独立掃引](docs/CURVED_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
 二次の全幾何を保持するProject/worker、曲線パッチで穴を除く元場表示、全18成分CSV、全中点/軸経路を変換する独立Studyを接続した。
 標準1104件（1101合格・3skip）、独立12ケース/24Study FEM/24取込/12再起動、Chrome新18/復元8/旧13、主5unit/同独立照合/17保存ジョブ6CLIがPASS。

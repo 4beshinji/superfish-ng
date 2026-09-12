@@ -1,5 +1,7 @@
 # C01: 物理・材料・領域と入力版の共通契約
 
+2026-09-13：[能力表整合](CAPABILITY_INVENTORY.md)。capabilitiesのhphi_rfへ専用4形式と操作・制約を追加し、平面追跡版1〜7を列挙する。既存supported_modelsはcanonical Modelだけを指し、専用HφをModelへ混在させない。能力情報を追加しても材料等の入力は受理しない。
+
 2026-09-09追補: [TE収束Study](TE_CONVERGENCE_STUDY_PLAN.md)を接続・限定受入済み。両native分割の全セルでEφ/Hr/Hzの体積内積を評価し、電場と磁場の相対L2、周波数、適用可能なRF量を別判定する。積分次数3/5の差・共通体積・近接縮退を確認し、未確認時はUNVERIFIED。R/Q/軸加速量はN/Aを保持する。幾何近似変更と元二次写像固定を区別し、表面ピーク精度を保証しない。
 
 2026-09-09追補: [TE Study](TE_STUDY_PLAN.md)の独立パラメータ掃引を接続・限定受入済み。全点の物理入力を実行前に検査する。各順位の独立スペクトルは収束・追跡の合格を意味せずUNVERIFIEDを保持する。軸加速量/RQはnull/N/Aを保持し、追跡は別の保存再検証操作である。未宣言の元メッシュ変形は拒否する。
@@ -45,7 +47,7 @@ TM組立にフォールバックしない。PythonのModelも不変値として�
 | 軸対称m=0 TM RF | Hphi=r u、Er/EzはPHYSICS.mdの復元式。SI、ピークphasor、2πr体積重み、U[J]、P[W]、RQ二定義 | vacuum、単一interiorのみ |
 | 軸対称TE RF | Ephiを独立未知数とし軸/PEC条件を別設計。軸加速量はN/A | [直線P1/P2](AXISYMMETRIC_TE.md)・[曲線P2と専用保存/CLI](CURVED_TE_PLAN.md)。[通常Project/JobManager](TE_JOBS.md)も対応。[通常GUI](GUI_TE.md)を接続。追跡等は未接続 |
 | 平面RF | 偏波別未知数、面積dx dy、U[J/m]、P[W/m]を別のキーで出力 | [矩形PlanarCase版1](PLANAR_RF.md)と[単純多角形PlanarPolygonCase版2](PLANAR_POLYGON_RF.md)の専用保存/CLI。版2は独立物理・標準835件まで限定受入。この軸対称Model/Caseでは受理せず、別formatを要求する。[専用Project/Job](PLANAR_JOBS.md)と[平面GUI](GUI_PLANAR.md)へ接続済み。Study・細分・追跡も各専用契約で扱う |
-| 同軸・多重連結RF | 零固有値と共振の区別、軸がない領域の軸積分はN/A | 拒否、P03 |
+| 同軸・多重連結RF | 零固有値と共振の区別、軸がない領域の軸積分はN/A | [専用4形式](CAPABILITY_INVENTORY.md)のq/u・FEM/RF/native/Project/GUIに対応。canonical Modelでは受理せず専用formatを要求する |
 | RF材料 | 領域別epsilon/mu、界面条件、領域エネルギーと損失モデルを明示 | 拒否、P04 |
 | 静電場 | 電位[V]、E[V/m]、電荷と容量。平面の容量[F/m]と回転体の容量[F]を別出力 | 拒否、S01 |
 | 静磁場 | 磁気ポテンシャル、B[T]/H[A/m]、源電流の単位、gauge・外部境界を別仕様化 | 拒否、S02〜S05 |

@@ -1,5 +1,11 @@
 # 実装・検証の現状
 
+2026-09-13：[実装済み能力表の整合](CAPABILITY_INVENTORY.md)を主ツリーへ統合・限定受入。
+capabilitiesへHφ4形式の入力/保存・q/u/軸・CLI/Project/GUI/Studyと直線だけの比較を追加し、平面追跡版1〜7の写像/境界条件を列挙した。
+標準1107件（1104合格・3skip）、関連11unit、5Hφ例/38コマンド/59CLI/75nativeと主3unit/同照合がPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+能力表の補完で物理や入力受理を拡張していない。親33課題の8受入/11進行/13他未受入/1範囲外と全計画未完を維持する。
+
+
 2026-09-13：[明示曲線HφのProject・表示・独立掃引](CURVED_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
 二次の全幾何を保持するProject/worker、曲線パッチで穴を除く元場表示、全18成分CSV、全中点/軸経路を変換する独立Studyを接続した。
 標準1104件（1101合格・3skip）、独立12ケース/24Study FEM/24取込/12再起動、Chrome新18/復元8/旧13、主5unit/同独立照合/17保存ジョブ6CLIがPASS。
@@ -219,10 +225,11 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 
 | 分野 | 実装・入口 | 制約・残件 | 証拠 |
 |---|---|---|---|
-| 物理 | 真空、軸接続m=0 TM/TE、PEC・平坦z端の電気/磁気対称。別契約で矩形/単純多角形の平面TE/TM遮断問題と閉同軸円筒/正半径の一般断面Hφ族 | 軸接続の穴付き領域・曲線内導体、複数材料、静的場は未実装。平面はβ=0で、曲線・多重連結/TEMは未対応 | [PHYSICS.md](PHYSICS.md)、[AXISYMMETRIC_TE.md](AXISYMMETRIC_TE.md)、[PLANAR_POLYGON_RF.md](PLANAR_POLYGON_RF.md)、[COAXIAL_RF.md](COAXIAL_RF.md)、[HPHI_MESH_RF.md](HPHI_MESH_RF.md) |
+| 物理 | 真空、軸接続m=0 TM/TE、PEC・平坦z端の電気/磁気対称。別契約で矩形/単純多角形の平面TE/TM遮断問題と閉同軸円筒/正半径・軸接続の穴付き断面/明示二次曲線のHφ族 | 複数材料、静的場は未実装。平面はβ=0で、曲線・多重連結/TEMは未対応 | [PHYSICS.md](PHYSICS.md)、[AXISYMMETRIC_TE.md](AXISYMMETRIC_TE.md)、[PLANAR_POLYGON_RF.md](PLANAR_POLYGON_RF.md)、[COAXIAL_RF.md](COAXIAL_RF.md)、[HPHI_MESH_RF.md](HPHI_MESH_RF.md) |
 | TE・平面の操作 | 専用native/Project/worker・CLI/GUI、場表示とSIプローブ、独立Study・同形状細分、限定追跡。平面は所有履歴、宣言相似写像版3、同一領域再メッシュ版4、相似変換＋独立内部メッシュ版5、可逆アフィン＋独立内部メッシュ版6、厳密アフィン＋境界/内部独立メッシュ版7を接続 | TE追跡は同端条件の円筒。平面追跡は矩形宣言写像または検証済み多角形尺度/相似関係、同一多角形の独立メッシュ、厳密に写した境界上の独立内部メッシュ（相似または可逆アフィン）。境界密度が独立した厳密アフィン写像にも限定対応。一般の丸めた境界・非線形変形の追跡・調整は未対応 | [GUI_TE.md](GUI_TE.md)、[GUI_PLANAR.md](GUI_PLANAR.md)、[PLANAR_TRACKING_HISTORY.md](PLANAR_TRACKING_HISTORY.md)、[PLANAR_SIMILARITY_TRACKING.md](PLANAR_SIMILARITY_TRACKING.md)、[PLANAR_SIMILARITY_REMESH_TRACKING.md](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[PLANAR_AFFINE_REMESH_TRACKING.md](PLANAR_AFFINE_REMESH_TRACKING.md)、[PLANAR_EXACT_AFFINE_TRACKING.md](PLANAR_EXACT_AFFINE_TRACKING.md) |
-| 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否。閉同軸円筒と一般正半径メッシュはそれぞれ専用Case/native版1 | 既存Caseへ同軸入力を混在させない。専用契約の対象外物理は拒否 | [MODEL_CONTRACT.md](MODEL_CONTRACT.md)、[COAXIAL_RF.md](COAXIAL_RF.md) |
-| 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 軸接続の穴付き領域・曲線内導体・任意CADなし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
+| 専用Hφの操作 | 4種類のCase/native、Project/worker/取込・取消・再起動、曲線パッチを含む元場表示、全E/H/BのSI CSV、独立Study。直線の元場比較・細分差診断・部分空間追跡・所有履歴 | 曲線の比較/追跡、一般の形状写像、材料、表面ピーク精度は未対応。capabilitiesは専用入口と未対応範囲を明記 | [CAPABILITY_INVENTORY.md](CAPABILITY_INVENTORY.md)、[CURVED_HPHI_WORKSPACE.md](CURVED_HPHI_WORKSPACE.md)、[HPHI_TRACKING_HISTORY.md](HPHI_TRACKING_HISTORY.md) |
+| 入力契約 | v3明示モデル、能力表、v1/v2移行、未対応指定の拒否。閉同軸円筒・正半径/軸接続メッシュ・明示曲線Hφはそれぞれ専用Case/native版1 | 既存Caseへ同軸入力を混在させない。専用契約の対象外物理は拒否 | [MODEL_CONTRACT.md](MODEL_CONTRACT.md)、[COAXIAL_RF.md](COAXIAL_RF.md) |
+| 幾何 | 折れ線・段差・短円弧、z折返し単一輪郭、native円/楕円/双曲線弧 | 専用Hφの明示メッシュは穴・軸区間・二次曲線に対応。任意CAD/曲線の自動生成なし。有限弧の数値判定/明示選択G1接続APIと支持曲線接点区間APIあり。保存・Case/CLI/GUI接続済み。有限弧所属/fractionの区間APIあり。版2で位置誤差上界付き切詰めを統合済み。版3で固定直線と有限弧の接続/明示延長を統合。版4は指定半径の線分間フィレットを統合（接点/G1は数値検査）。版5/6は有限弧間/直線と弧のフィレットを接点位置上界付きで統合。G1は数値検査 | [GENERAL_CONTOUR.md](GENERAL_CONTOUR.md)、[CONIC_GEOMETRY.md](CONIC_GEOMETRY.md)、[TANGENT_CONSTRUCTION.md](TANGENT_CONSTRUCTION.md) |
 | メッシュ・FEM | タグ付きJSON、品質条件付き自動生成、P1/P2、二次曲線写像、固定幾何細分、選択直線要素の適合細分と係数移送 | 品質未達は拒否。二次境界は元の解析曲線の近似。残差指標/対象選択APIあり。f/RQ/G停止・保存再開API/CLI/JobManager/GUIあり。版3の表面量停止はAPI/CLI/JobManager/GUIへ接続。曲線局所細分の空間/係数移送APIあり。曲線局所履歴の保存/CLI・曲線残差指標あり。曲線版4の五量停止/保存再開API/CLI/JobManager/GUIあり。高次積分比較も表示。物理誤差上界は未実装 | [GENERAL_MESH.md](GENERAL_MESH.md)、[HIGH_ORDER_FIELDS.md](HIGH_ORDER_FIELDS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md)、[MARKED_REFINEMENT.md](MARKED_REFINEMENT.md)、[RESIDUAL_INDICATOR.md](RESIDUAL_INDICATOR.md)、[ADAPTIVE_REFINEMENT.md](ADAPTIVE_REFINEMENT.md) |
 | 固有値・場 | 実FEM、複数モード、残差/直交性/エネルギー検査、物理座標プローブ | 残差は離散化誤差保証でない。全モード探索/一般追跡なし | solver.py、curved_solution.py、curved_sampling.py |
 | RF・表面場 | f/U/Q0/G/V/RQ/シャント/TTF、加速長/区間/位相、P1/P2片側場、直線/曲線の連続離散極値の囲い込み、曲線角診断 | peak phasor・RQ二規約。TE/平面/閉同軸円筒の加速量は理由付きN/A。平面は単位長エネルギー[J/m]・側壁損失[W/m]。常伝導摂動損失。離散極値の囲い込みは物理ピーク収束を保証しない | [ACCELERATING_CONVENTIONS.md](ACCELERATING_CONVENTIONS.md)、[CURVED_ELEMENTS.md](CURVED_ELEMENTS.md) |
