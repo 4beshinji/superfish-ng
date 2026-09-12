@@ -151,6 +151,16 @@ def main(argv=None):
     planar_project=sub.add_parser('execute-planar-project',help='execute a dedicated Cartesian cutoff Project and verify native completion')
     planar_project.add_argument('project',type=Path)
     planar_project.add_argument('--out',type=Path,required=True)
+    hphi=sub.add_parser('solve-hphi-mesh',help='solve explicit positive-radius vacuum Hphi mesh, including PEC holes')
+    hphi.add_argument('case',type=Path)
+    hphi.add_argument('--out',required=True,type=Path)
+    hphi_replay=sub.add_parser('replay-hphi-mesh',help='verify Hphi mesh topology, positive spectrum and all wall losses')
+    hphi_replay.add_argument('run',type=Path)
+    hphi_probe=sub.add_parser('probe-hphi-mesh',help='export signed E/H/B at vacuum [r_m,z_m] points; reject conductor interiors')
+    hphi_probe.add_argument('run',type=Path)
+    hphi_probe.add_argument('--points',type=Path,required=True)
+    hphi_probe.add_argument('--mode',type=int,default=1,help='one-based positive-spectrum index, not a tracked mode identity')
+    hphi_probe.add_argument('--out',type=Path,required=True)
     coaxial=sub.add_parser('solve-coaxial',help='solve a closed vacuum coaxial m=0 Hphi case; exclude static circulation')
     coaxial.add_argument('case',type=Path)
     coaxial.add_argument('--out',required=True,type=Path)
@@ -248,6 +258,20 @@ def main(argv=None):
             from .planar_project import PlanarProject
             from .planar_jobs import execute_planar_project
             print(json.dumps(execute_planar_project(PlanarProject.load(args.project),args.out),indent=2,allow_nan=False))
+            return 0
+        if args.command in ('solve-hphi-mesh','replay-hphi-mesh','probe-hphi-mesh'):
+            from .hphi_mesh import HphiMeshCase,solve_hphi_mesh
+            from .hphi_mesh_saved import save_hphi_mesh_run,read_hphi_mesh_run,export_hphi_mesh_probe
+            if args.command=='solve-hphi-mesh':
+                case=HphiMeshCase.load(args.case)
+                print(json.dumps(save_hphi_mesh_run(case,solve_hphi_mesh(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-hphi-mesh':
+                read_hphi_mesh_run(args.run)
+                print(f'PASS: {args.run} (positive-radius Hphi mesh; all PEC components; energy J; loss W)')
+            else:
+                from .project import parse_json
+                export_hphi_mesh_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')),args.mode)
+                print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-coaxial','replay-coaxial','probe-coaxial'):
             from .coaxial import CoaxialCase,solve_coaxial

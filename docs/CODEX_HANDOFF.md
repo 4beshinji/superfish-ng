@@ -1,3 +1,16 @@
+2026-09-12：[正半径の一般断面・複数PEC穴のHφ FEM](HPHI_MESH_RF.md)を限定受入。
+strictな外周/穴/接続検査、P1/P2、全壁損失、専用native・CLI・SIプローブを接続した。
+追加12unit、独立16FEM/native、番号入替/鏡映12FEM・72モード比較、同梱3例題9CLI、旧円筒native16件の再生を確認。
+標準999件（997合格・2skip）とseed9モード19量がPASS。f差0e+00、最大相対差8.882e-16。
+軸接続の穴付き領域・曲線内導体・Project/Job/GUI等、P03と全計画は未完。
+主標準38338は終了0、999件・2002.472秒。独立55923、例題56656、追加幾何10586も終了0。全573source一致。
+証拠はHPHI_MESH_RF.mdとout/validation-hphi-mesh-20260912/seed_regression.json。
+次のProject/Job候補は/tmp/superfish-hphi-jobs-20260912。source574固定、8unit・8worker/16取込/再起動24件・2例題CLIは合格。
+候補標準65939はout/validation-hphi-jobs-candidate-20260912。実ハンドルを確認し、完了/証拠照合後にのみ主ツリーへ統合する。
+さらに表示/GUI候補は/tmp/superfish-hphi-gui-20260912へ分離。元場/CSV/PNGの3unit、GUIの4unit（許可された実HTTPを含む）が合格。
+初回HTTPはsandboxのbind拒否。拒否ログを保持し、既存契約どおり環境拒否だけskip可能にして、許可された実HTTPで再検証した。ブラウザーと全回帰は未実施。
+表示計画はHPHI_GUI_PLAN.md。候補を主ツリーの完了実装として数えない。全計画goalはactive。
+
 2026-09-12：[閉じた真空同軸円筒のm=0 Hφ族](COAXIAL_RF.md)を限定受入。
 q=rHφのP1/P2 FEM、静的循環零空間の除外、全E/H・内外導体/両端板損失、専用native/CLI・SIプローブを接続した。
 追加8unit、独立16FEM/native・TEM/TMの64モード比較、主例題2件の6CLI操作、全体987件（985合格・2skip）でPASS。

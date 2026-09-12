@@ -1,5 +1,11 @@
 # 実装バックログ
 
+2026-09-12：[正半径の一般断面・複数PEC穴のHφ FEM](HPHI_MESH_RF.md)を限定受入。
+strictな外周/穴/接続検査、P1/P2、全壁損失、専用native・CLI・SIプローブを接続した。
+追加12unit、独立16FEM/native、番号入替/鏡映12FEM・72モード比較、同梱3例題9CLI、旧円筒native16件の再生を確認。
+標準999件（997合格・2skip）とseed9モード19量がPASS。f差0e+00、最大相対差8.882e-16。
+軸接続の穴付き領域・曲線内導体・Project/Job/GUI等、P03と全計画は未完。
+
 2026-09-12：[閉じた真空同軸円筒のm=0 Hφ族](COAXIAL_RF.md)を限定受入。
 q=rHφのP1/P2 FEM、静的循環零空間の除外、全E/H・内外導体/両端板損失、専用native/CLI・SIプローブを接続した。
 追加8unit、独立16FEM/native・TEM/TMの64モード比較、主例題2件の6CLI操作、全体987件（985合格・2skip）でPASS。

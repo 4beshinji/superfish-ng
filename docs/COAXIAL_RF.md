@@ -1,5 +1,7 @@
 # P03：閉じた真空同軸共振器のHφ固有場
 
+後続の[正半径の一般断面・複数穴](HPHI_MESH_RF.md)を専用形式で限定受入した。以下の円筒版1の入力・数値契約は保持する。
+
 2026-09-12、基準3198adf。P03/K04/K11の最初の実装・検証工程。
 FEM・場/RF・専用native/CLIまで主ツリーへ接続し、以下の範囲で限定受入した。
 
@@ -163,4 +165,4 @@ seedの周波数相対差0e+00、最大相対差8.882e-16。
 証拠は `out/coaxial-development-20260912`、`out/coaxial-independent-frozen-20260912`、
 `out/coaxial-main-examples-20260912`、`out/validation-coaxial-frozen-candidate-20260912`。
 `seed_regression.json` が556共通source・主ツリー全562source・全独立native hash・旧数値比較の最終照合。
-次は[複数断面境界の幾何と独立解析](COAXIAL_GENERAL_MESH_PLAN.md)。その穴を持つ解析例は恒等式だけ確認済みで、製品の穴付きFEMは未実装。
+[複数断面境界の計画](COAXIAL_GENERAL_MESH_PLAN.md)は[一般断面Hφ FEM](HPHI_MESH_RF.md)へ接続した。Project/Job・[GUI](HPHI_GUI_PLAN.md)は後続。
