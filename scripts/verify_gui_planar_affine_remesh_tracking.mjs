@@ -25,8 +25,13 @@ const args = Object.fromEntries(
 );
 if (!args["--url"] || !args["--out"])
   throw Error(
-    "Usage: node scripts/verify_gui_planar_affine_remesh_tracking.mjs --url LAUNCH_URL --out NEW_DIRECTORY",
+    "Usage: node scripts/verify_gui_planar_affine_remesh_tracking.mjs --url LAUNCH_URL --out NEW_DIRECTORY [--mapping-contract exact|rounded]",
   );
+const exact = args['--mapping-contract'] === 'exact';
+if (args['--mapping-contract'] && !['exact', 'rounded'].includes(args['--mapping-contract']))
+  throw Error('--mapping-contract must be exact or rounded');
+const mappingName = exact ? 'polygon_exact_affine_remesh' : 'polygon_affine_remesh';
+const trackingVersion = exact ? 7 : 6;
 const out = resolve(args["--out"]);
 await mkdir(out, { recursive: false });
 const profile = await mkdtemp("/tmp/ng-gui-chrome-");
@@ -233,11 +238,12 @@ try {
   const angle = 0.6,
     cosine = Math.cos(angle),
     sine = Math.sin(angle);
-  const matrix = [
+  const matrix = exact ? [[-1, 0.25], [0, 1]] : [
     [cosine * cosine - sine * sine, 2 * cosine * sine],
     [2 * cosine * sine, sine * sine - cosine * cosine],
   ];
-  const translation = [0.05, 0.02];
+  const translation = exact ? [0.125, -0.25] : [0.05, 0.02];
+  const sideLength = exact ? 0.25 : 0.2;
   const determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
   const mapPoint = (mapped) => ([x, y]) =>
     mapped
@@ -256,14 +262,14 @@ try {
     const project = mapPoint(mapped);
     const corners = [
       [0, 0],
-      [0.2, 0],
-      [0.2, 0.2],
-      [0, 0.2],
+      [sideLength, 0],
+      [sideLength, sideLength],
+      [0, sideLength],
     ].map(project);
     if (mapped && determinant < 0) corners.reverse();
     for (let j = 0; j <= n; j++)
       for (let i = 0; i <= n; i++) {
-        points.push(project([0.2 * (i / n), 0.2 * (j / n)]));
+        points.push(project([sideLength * (i / n), sideLength * (j / n)]));
       }
     for (let j = 0; j < n; j++)
       for (let i = 0; i < n; i++) {
@@ -289,13 +295,13 @@ try {
   await click("#tracking-select-previous");
   await writeFile(
     out + "/current-project.json",
-    JSON.stringify(makeProject(6, true, true)),
+    JSON.stringify(makeProject(exact ? 8 : 6, true, true)),
   );
   await loadFile("#open", out + "/current-project.json");
   await wait('project.case.name==="reflected independent interior mesh"');
   report.current = await execute("#start", "", "selected");
   await ev(
-    'document.querySelector("#tracking-mapping").value="polygon_affine_remesh";document.querySelector("#tracking-mapping").dispatchEvent(new Event("change"))',
+    `document.querySelector('#tracking-mapping').value=${JSON.stringify(mappingName)};document.querySelector('#tracking-mapping').dispatchEvent(new Event('change'))`,
   );
   await click("#tracking-select-current");
   await fill("#tracking-linear-a", matrix[0][0]);
@@ -311,13 +317,19 @@ try {
   report.tracking = await execute("#tracking-start", "モード追跡", "selectedTracking");
   report.request = await ev("currentTracking.request");
   await check(
-    "affine reflection and independent interior track the original field",
-    'currentTracking.result.status==="PASS" && currentTracking.result.result_version===6 && currentTracking.result.current_mode_ids[0]==="fundamental"',
+    exact ? "exact reflected shear with independent boundary subdivisions tracks the original field" : "affine reflection and independent interior track the original field",
+    `currentTracking.result.status==='PASS' && currentTracking.result.result_version===${trackingVersion} && currentTracking.result.current_mode_ids[0]==='fundamental'`,
   );
   await check(
     "affine declaration, adjugate and reversed orientation are saved",
-    'currentTracking.result.physical_mapping.name==="polygon_affine_remesh" && currentTracking.result.physical_mapping.declaration.max_candidate_tests===123456 && currentTracking.result.physical_mapping.current_to_previous_linear.length===2 && currentTracking.result.physical_mapping.orientation.includes("reversed")',
+    `currentTracking.result.physical_mapping.name===${JSON.stringify(mappingName)} && currentTracking.result.physical_mapping.declaration.max_candidate_tests===123456 && currentTracking.result.physical_mapping.current_to_previous_linear.length===2 && currentTracking.result.physical_mapping.orientation.includes('reversed')`,
   );
+  if (exact) {
+    await check(
+      "independent boundary density and current-area integration are preserved",
+      "currentTracking.result.physical_mapping.previous_case.mesh.points_xy_m.length===49 && currentTracking.result.physical_mapping.current_case.mesh.points_xy_m.length===81 && currentTracking.result.physical_mapping.reference_measure.includes('current physical xy area') && !document.querySelector('#tracking-affine-options').hidden && document.querySelector('#tracking-refinement-options').hidden && document.querySelector('#tracking-scale-row').hidden && document.querySelector('#tracking-similarity-note').hidden",
+    );
+  }
   await click("#tracking-save");
   if (
     !isDeepStrictEqual(
@@ -368,7 +380,7 @@ try {
   report.reverse = await execute("#tracking-start", "モード追跡", "selectedTracking");
   await check(
     "reverse affine reflection preserves the ID",
-    'currentTracking.result.status==="PASS" && currentTracking.result.current_mode_ids[0]==="fundamental" && currentTracking.request.mapping.inverse===true && currentTracking.request.tracking_version===6',
+    `currentTracking.result.status==='PASS' && currentTracking.result.current_mode_ids[0]==='fundamental' && currentTracking.request.mapping.inverse===true && currentTracking.request.tracking_version===${trackingVersion}`,
   );
   await ev(
     `document.querySelector('#history-next').value=${JSON.stringify(report.reverse)}`,

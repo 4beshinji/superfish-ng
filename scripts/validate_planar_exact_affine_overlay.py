@@ -3,9 +3,11 @@
 
 Different boundary densities, TE/TM, P1/P2, two refinements and two SI scales.
 Closed-form sine/cosine fields and side-wall integrals are validation references
-only. This checks a geometry API, not mode identification or saved tracking.
+only. By default this checks the geometry API; --tracking also checks the
+version 7 modal correspondence in both directions, with computed guard modes.
 """
 import argparse
+from dataclasses import replace
 import hashlib
 import json
 from pathlib import Path
@@ -19,6 +21,8 @@ from superfish_ng.planar_polygon import PlanarPolygonCase
 from superfish_ng.planar_saved import save_planar_run, read_planar_run
 from superfish_ng.planar_tracking_exact_affine import exact_affine_polygon_overlay
 from superfish_ng.planar_tracking_fields import _electric_grams
+from superfish_ng.planar_tracking import PlanarTrackingRequest, track_planar_modes
+from superfish_ng.planar_tracking_exact_mapping import PolygonExactAffineRemeshMapping
 
 
 def rectangle(n, width, height, flip, reflected):
@@ -107,6 +111,7 @@ def fingerprints():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--tracking', action='store_true', help='also verify version 7 forward/inverse tracking with upper guard modes')
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
     started = time.perf_counter()
@@ -128,7 +133,7 @@ def main():
                     width, height = .5*scale, .25*scale
                     solutions, errors, rf_rows = [], [], []
                     for side, grid, flip, reflected in (('previous', n, False, False), ('current', n*3//2, True, True)):
-                        case = PlanarPolygonCase(rectangle(grid, width, height, flip, reflected), pol, order, 1,
+                        case = PlanarPolygonCase(rectangle(grid, width, height, flip, reflected), pol, order, 2 if args.tracking else 1,
                                                  normalization_j_per_m=scale**2)
                         solution = solve_planar(case)
                         native = args.out/f'{pol}-p{order}-s{scale:g}-n{n}-{side}'
@@ -148,6 +153,20 @@ def main():
                     row = dict(polarization=pol, order=order, scale=scale, n=n, current_n=n*3//2,
                                errors=errors, quantities=rf_rows, gram_error=abs(abs(correlation)-1.),
                                overlay_triangles=len(overlay.previous_cells))
+                    if args.tracking:
+                        mapping = PolygonExactAffineRemeshMapping(matrix)
+                        matches = []
+                        for left, right, direction in ((solutions[0], solutions[1], mapping),
+                                                       (solutions[1], solutions[0], replace(mapping, inverse=True))):
+                            request = PlanarTrackingRequest(1, 1, ['fundamental'], mapping=direction)
+                            result = track_planar_modes(left, right, request)
+                            assert result['status'] == 'PASS' and result['result_version'] == 7, result
+                            assert result['current_mode_ids'] == ['fundamental'], result
+                            matches.append(dict(status=result['status'], result_version=result['result_version'],
+                                inverse=direction.inverse, current_mode_ids=result['current_mode_ids'],
+                                overlap=result['matches'][0]['minimum_principal_overlap'],
+                                gram_discrepancy=result['physical_mapping']['maximum_normalized_gram_discrepancy']))
+                        row['tracking'] = matches
                     rows.append(row)
                     sequence.append(row)
                     print(pol, order, scale, n, row['gram_error'], errors, flush=True)
@@ -168,7 +187,7 @@ def main():
     assert source == fingerprints(), 'source changed during validation'
     report = dict(passed=True, seconds=time.perf_counter()-started, rows=rows, limits=limits,
                   max_similarity_relative_error=similarity_error, source_sha256=source,
-                  scope='exact affine geometry API; no tracking IDs, request dispatch, CLI or GUI acceptance')
+                  scope=('exact affine version 7 forward/inverse correspondence with independent analytic frequency, E/H and RF checks; CLI/GUI persistence checked separately' if args.tracking else 'exact affine geometry API; no tracking IDs, request dispatch, CLI or GUI acceptance'))
     (args.out/'report.json').write_text(json.dumps(report, indent=2)+'\n')
     print('PASS', report['seconds'], similarity_error)
 

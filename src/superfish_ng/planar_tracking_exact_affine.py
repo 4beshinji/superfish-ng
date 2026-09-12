@@ -5,7 +5,7 @@ This geometry API evaluates the declared affine map over rational numbers,
 including its inverse. It does not round a transformed mesh into binary64.
 Both input meshes retain their original element polynomials. This is a
 separate contract from the rounded boundary-cycle maps in tracking versions
-5/6; it is not yet dispatched by a saved tracking request.
+5/6. Version 7 dispatch is provided by planar_tracking_exact_mapping.
 """
 from dataclasses import dataclass
 from fractions import Fraction

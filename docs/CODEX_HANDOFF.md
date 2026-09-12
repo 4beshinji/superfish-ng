@@ -1,3 +1,20 @@
+2026-09-12 P02厳密アフィン追跡版7を接続・限定受入。
+正逆の元電場移送・有限細分診断、完全保存再生、CLI/実worker/GUI/所有履歴を接続した。
+追加9unit（83.359秒）、独立16条件32FEM/native・正逆32対応（1088.988秒）、
+Chrome新版10/旧版9操作、管理器再起動後の保存14ジョブ、旧版1〜6保存全文再生がPASS。
+標準973件（971合格・2skip、1577.700秒）、convergenceとseed9モード19量がPASS。
+f差0e+00、最大相対差8.882e-16。主ツリーの553 sourceを固定・照合した。
+独立コピーとの差5ファイルはGUI/検証/説明だけで、数値実装・検証器の同一性を独立source比較に記録。
+最終契約・失敗履歴は[PLANAR_EXACT_AFFINE_TRACKING.md](PLANAR_EXACT_AFFINE_TRACKING.md)。
+証拠はout/planar-exact-affine-tracking-20260912、標準はout/validation-planar-exact-affine-tracking-20260912。
+初回BLAS未固定標準は中断記録。最終受入は1スレッド固定。既存の `.manager.lock` のResourceWarningは最終標準でも観測し、未解決として保持する。
+この区切りの全計算・GUIは終了。ユーザーの全計画完走goalはactiveのままで、完了にしない。
+親33課題は8受入/10進行/14未受入/1範囲外を維持。一般の丸めた境界・非線形変形・曲線、親P02は未完。
+次の候補はC00/K10の旧版Cartesian実行・成分/単位長量の仕様照合。C00_TE_COMPLEMENTARY_PLAN.mdにR25の既読要約があるが、
+参照した/tmp/superfish-wine-runtime/input-spec/SFCODES.txtは現在存在せず、資料・実行環境の再確認が必要。
+新たな参照閲覧・旧版実行は今回行っていない。旧版ソース/バイナリを閲覧・複製しない契約を維持する。
+以下の古い開始点は各実行時点の履歴として読む。
+
 2026-09-12 P02：境界分割独立の厳密アフィン共通分割APIを限定受入。
 `planar_tracking_exact_affine.exact_affine_polygon_overlay` は、写像/逆写像・BVH・交差を有理数で評価し、
 元要素ごとの厳密面積被覆を確認する。反射でも元の要素番号/重心座標列を保持し、正逆とも現在xy面積で積分する。
