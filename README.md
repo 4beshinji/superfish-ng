@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[軸接続磁静の実FEM・元Aphi/B/H・全3D磁束/エネルギー](docs/AXIS_MAGNETOSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
+明示mu_r/Jphi・軸/固定Aphi/r/Htから正則aを実FEMで解き、元6場、Jエネルギー、Wb磁束を接続した。Ampere電流[A]と固定a反力[A m²]を区別する。
+標準1187件（1184合格・3skip）、追加6unit・独立88例と主6unitがPASS。固定728sourceと主734sourceは一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+軸保存/CLI・軸非接続・外部境界診断等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+
+
 2026-09-13：[軸に接続した磁静場の正則弱形式](docs/AXIS_MAGNETOSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
 正値mu_r/Jphi、a=Aphi/r[T]と全軸DOF、元Br/Bzのエネルギー形式K[m⁴/H]・源仕事荷重[A m²]を追加した。定数aは一様軸方向Bで、gauge核と扱わない。
 標準1181件（1178合格・3skip）、追加5unit、独立72例216多項式と主5unit/同独立照合がPASS。固定723sourceと主729sourceは一致。旧seed9モード19量はf差0、最大相対差8.882e-16。

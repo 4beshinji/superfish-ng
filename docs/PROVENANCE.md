@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[軸接続磁静の実FEM・元Aphi/B/H・全3D磁束/エネルギー](AXIS_MAGNETOSTATIC_SOLVE.md)。円筒座標のcurlからHt境界の正符号とaの仕事を導出した。一様磁場、一定Jphiの円筒/穴付き製造解、二層のH積分とa=r^-2∫sBz dsを独立に評価し、元場/エネルギー/磁束/周回を分離検証。解析式でFEMを補正しない。新規依存・外部資料・旧版実行なし。
+
 2026-09-13：[軸接続磁静弱形式](AXIS_MAGNETOSTATIC_FORMS.md)。円筒座標のcurl AからAphi=r*a、Br/Bz、全3D磁気エネルギーと源仕事を自ら導出した。自前の幾何所有検証と独立Gauss/Vandermonde積分方式だけを共有し、電気/RF行列は流用しない。定数aが一様Bを表す非零エネルギー、mu/尺度/符号、216多項式を独立照合した。新規依存・外部資料・旧版実行なし。
 
 2026-09-13：[平面磁静場native/CLI](PLANAR_MAGNETOSTATIC_NATIVE.md)。自前の静電nativeのhash・スナップショット・最後のmanifest公開方式を用い、磁気のAz/B/H、Jz、mu_r/reluctivity、Ht境界、電流/磁束のSI契約を別形式に実装。独立解析済み24例の実ソルバー値と保存・CLIの全量を照合した。新規依存・外部資料・旧版実行なし。
