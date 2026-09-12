@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v10（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1入力）
 
+2026-09-13追補：[線形RF材料の行列基盤](MATERIAL_HPHI_FORMS.md)は独立した領域/API契約。正値実数・等方・無損失のepsilon_r/mu_rを直線要素に保持し、q/uのK/Mへ適用する。材料固有解/場/RF・入力Caseの拡張は含まないため、canonical specification v10と既存真空ソルバーの受理範囲は不変。
+
 第10版は[明示二次幾何のHφ専用API](CURVED_HPHI_RF.md)を接続する。真空・閉PEC・m=0 Hφで、二次多項式が幾何の正本。
 正半径q=rHφでは定数静的循環を検証して除き、軸接続u=Hφ/rでは全軸DOFを保って零モードを除かない。
 元要素の物理微分からpeak exp(+iωt)のHφ real・Er/Ez quadratureを求め、全曲線壁の損失と元場の電磁エネルギーを積分する。

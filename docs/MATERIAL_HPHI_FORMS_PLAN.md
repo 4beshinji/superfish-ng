@@ -1,6 +1,6 @@
 # P04: 線形RF材料の領域・界面・Hφ形式
 
-2026-09-13 JST。C00台帳K12のRF EPSILON/MUに対応する独立数値基盤。未受入。
+2026-09-13 JST。C00台帳K12のRF EPSILON/MUに対応する独立数値基盤。[実装記録](MATERIAL_HPHI_FORMS.md)の行列API範囲で限定受入。
 既存canonical Model・専用真空Caseの受理範囲は保ち、材料は新しい明示データ/APIに限定する。
 旧版との材料入力互換や数値一致はこの基盤の受入に含めない。
 
