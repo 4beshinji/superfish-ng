@@ -1,4 +1,11 @@
-# 物理・数値仕様 — canonical specification v10（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1入力）
+# 物理・数値仕様 — canonical specification v11（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
+
+第11版は[区分一定の線形RF材料Hφ専用API](MATERIAL_HPHI_RF.md)を接続する。直線適合メッシュ、正値実数・等方・非分散・無損失に限定する。
+Kには1/epsilon_r、Mにはmu_rを元セルごとに適用し、qの一つの静的核除外とuの全軸DOF保持を区別する。
+Eはcurl H/(omega epsilon0 epsilon_r)のquadrature成分、Bはmu0 mu_r H。総エネルギーと領域別の電磁分配を検証する。
+壁は非磁性金属の摂動Rsとし、媒質のmu_rを壁へ代入しない。加速量は明示した真空軸区間だけを受理する。
+既存canonical Modelと真空専用Caseの入力は不変。材料native/CLI/GUIは別の受入工程とする。
+
 
 2026-09-13追補：[線形RF材料の行列基盤](MATERIAL_HPHI_FORMS.md)は独立した領域/API契約。正値実数・等方・無損失のepsilon_r/mu_rを直線要素に保持し、q/uのK/Mへ適用する。材料固有解/場/RF・入力Caseの拡張は含まないため、canonical specification v10と既存真空ソルバーの受理範囲は不変。
 

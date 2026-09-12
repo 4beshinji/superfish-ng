@@ -1,3 +1,27 @@
+最新状態：材料RFの主6unit/32独立FEMは終了0、finalizer実行済み。材料native標準4327も終了0で、次に統合する。材料workspace標準93382だけが実行中。全GUIサーバー停止済み。静電弱形式は独立候補で実装中、未受入。
+
+2026-09-13：[材料重み付きHφ固有解・元場・RF](MATERIAL_HPHI_RF.md)を主ツリーへ統合・限定受入。
+直線適合メッシュの正値実数・等方・無損失材料を専用Caseへ接続し、実FEM・セルごとのE/H/B・領域エネルギー・非磁性壁損失・明示真空軸電圧を評価する。
+標準1118件（1115合格・3skip）、追加6unit、独立24材料例72モード/二層8例24モード、主6unit/同独立照合がPASS。
+粗いP1のfとP2のEの未達を記録し、許容差不変で細分した。最細P2の最大f差2.087e-7、E L2差4.735e-4、壁損失差1.627e-6。
+旧seed9モード19量はf差0、最大相対差8.882e-16。材料native/CLI/GUI・損失/旧版照合、P04と全計画は未完。親33=8受入/12進行/12他未受入/1範囲外。
+材料RF標準82717は終了0。統合/finalizerは実行済み、再実行しない。主675source。
+次は専用材料native/CLI候補の標準を確認し、本体で4unitと24例78CLIを照合する。実ハンドルの最新状態を確認する。
+全計画は未完。以下よりこの冒頭を優先。
+
+2026-09-13 JST 02:13時点：材料workspaceの復元Chrome68810は8項目PASS、server61697停止済み。保存物95321もPASS：14jobs=13complete+1cancel、元65native不変、原本2移動、6CLI、Chrome合計41操作。旧同軸PNG/CSVは変更前byte一致。GUI/ブラウザーは全て停止。
+材料3候補の標準82717/4327/93382だけが実行中。RF(1118)→native(1122)→workspace(1127)の順に実結果を確認して統合する。3組の/tmp/integrate-material-hphi-*と/tmp/finalize-material-hphi-*-docs-20260913.pyはすべて準備済み・未実行。
+workspaceの主照合は5unit、scripts/validate_material_hphi_workspace.pyで新out/material-hphi-workspace-main-20260913、/tmp/verify-material-hphi-workspace-browser-artifacts-20260913.py --source主 --out新out/material-hphi-workspace-main-browser-artifacts-20260913（期待14jobs/6CLI）。主sourceは順に675/678/680になる。std中の候補src変更禁止。
+全計画は未完。以下よりこの最新冒頭を優先。
+
+2026-09-13 JST 02:07時点。主HEAD 11c2234、材料領域/行列まで670source受入済み。全計画は未完、親33=8受入/12進行/12他未受入/1範囲外。
+固定候補の標準回帰3本：材料RF82717（669source/期待1118、16:39〜UTC）、材料native4327（672source/期待1122、16:48〜UTC）、材料workspace93382（674source/期待1127、17:03〜UTC）。src/tests/scripts/examplesを変更しない。
+RFは6unit/独立32FEM96モード、nativeは4unit/独立24例48native78CLI、workspaceは5unit/独立12例24StudyFEM・24取込12再起動・元300nativeがPASS。材料B表示の誤差82.68%を先に再現し、修正後0。材料RF粗いP1/P2の未達を残し、許容差不変で48/96へ細分した。
+RFとnativeの/tmp/integrate-*および/tmp/finalize-*-docs-20260913.pyは準備済み・未実行。主RF6unit+独立32例、主native4unit+24例78CLIを統合後に実行してから各finalizer。
+材料workspace実Chrome新20/旧同軸8/旧TMTE平面5チェックPASS。旧server73379は停止済み。restart準備43754は実行済み（再実行不可）：既存13jobs、所有取込2、保存native65ファイル、元2ディレクトリを移動。次の復元Chromeと再起動serverの実ハンドルを確認する。
+/tmp/verify-material-hphi-workspace-browser-artifacts-20260913.pyは準備済み、復元ブラウザー終了後にserver停止して--source候補 --out新規で実行する。旧曲線と件数を混同しない。復元後は14jobs見込み、実測で確定する。workspaceの統合/finalizerはまだ未作成。
+以下よりこの最新冒頭を優先する。
+
 2026-09-13 JST 01:48時点：材料行列基盤は標準1112件・主5unit/独立72ケースすべてPASS、主670source。統合/finalizerは実行済み。P04を進行中へ移し、親33=8受入/12進行/12他未受入/1範囲外。
 材料RF候補669sourceの標準82717は継続（期待1118件）。最終6unitと独立32FEM/96モードはPASS。P1/P2の粗い失敗を残し、しきい値不変で48/96分割へ増やした。/tmp/integrate-material-hphi-rf-20260913.pyは準備済み未実行。
 材料native候補/tmp/superfish-material-hphi-native-20260913は専用native/CLI/能力情報を実装。4unit・独立24例48native/78CLIがPASS（71623終了0、56.785秒）。native240ファイルと元参照25ファイル不変。候補固定/標準と主統合はまだ未完。
