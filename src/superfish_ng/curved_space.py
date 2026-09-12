@@ -9,7 +9,7 @@ from .quadratic_boundary import QuadraticEdge,separated_edges,adjacent_edges
 
 
 
-def check_curved_edges(points,cell_nodes,boundary_nodes,*,max_boxes=10000):
+def check_curved_edges(points,cell_nodes,boundary_nodes,*,max_boxes=10000,hole_count=0):
     """Validate all unique geometric edges, including internal-edge intersections."""
     points = np.asarray(points)
     cells = np.asarray(cell_nodes)
@@ -24,6 +24,8 @@ def check_curved_edges(points,cell_nodes,boundary_nodes,*,max_boxes=10000):
         raise ValueError('curved boundary requires three integer node indices')
     if type(max_boxes) is not int or max_boxes<1:
         raise ValueError('max_boxes must be a positive integer')
+    if type(hole_count) is not int or hole_count<0:
+        raise ValueError('hole_count must be a nonnegative integer')
     incidence = {}
     for index,nodes in enumerate(cells):
         if len(set(map(int,nodes)))!=6:
@@ -45,8 +47,23 @@ def check_curved_edges(points,cell_nodes,boundary_nodes,*,max_boxes=10000):
     supplied = {(*sorted((int(a),int(b))),int(m)) for a,b,m in boundary}
     if supplied!=expected or len(boundary)!=len(expected):
         raise ValueError('curved boundary disagrees with cell incidence')
-    if len(vertices)-len(incidence)+len(cells)!=1:
-        raise ValueError('curved space must retain disk Euler characteristic')
+    if len(vertices)-len(incidence)+len(cells)!=1-hole_count:
+        raise ValueError('curved space must retain disk Euler characteristic' if not hole_count
+                         else 'curved space Euler characteristic differs from declared hole_count')
+    boundary_graph = {}
+    for a,b,m in boundary:
+        boundary_graph.setdefault(int(a),set()).add(int(b))
+        boundary_graph.setdefault(int(b),set()).add(int(a))
+    if not boundary_graph or any(len(v)!=2 for v in boundary_graph.values()):
+        raise ValueError('curved boundary must contain disjoint degree-two cycles')
+    remaining = set(boundary_graph); cycles = 0
+    while remaining:
+        pending = [remaining.pop()]; cycles += 1
+        while pending:
+            for node in boundary_graph[pending.pop()] & remaining:
+                remaining.remove(node); pending.append(node)
+    if cycles!=1+hole_count:
+        raise ValueError('curved boundary cycle count differs from declared hole_count')
     neighbors = [set() for _ in cells]
     for pair in incidence.values():
         if len(pair)==2:
@@ -83,7 +100,7 @@ def check_curved_edges(points,cell_nodes,boundary_nodes,*,max_boxes=10000):
             else:
                 checked += separated_edges(first,second,padding=padding,max_boxes=max_boxes)
     return dict(status='PASS',edges=len(edges),overlapping_box_pairs=pairs,boxes_checked=checked,
-                cells=len(cells),euler_characteristic=1,scope='all unique quadratic edges and shared topology')
+                cells=len(cells),euler_characteristic=1-hole_count,scope='all unique quadratic edges and shared topology')
 
 
 @dataclass(frozen=True)

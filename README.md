@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-12：[穴付き二次幾何](docs/CURVED_MERIDIONAL_GEOMETRY.md)と[Hφ K/M](docs/CURVED_HPHI_FORMS.md)を主ツリーへ統合・限定受入。
+全境界成分/辺/セルを検証し、厳密な半径・Jacobian最小と面積/体積照合を接続した。qの静的核と軸接続uの正値を分け、全軸DOFを保持する。
+標準1091件（1088合格・3skip）、関連22unit、独立72幾何/72形式と主ツリーの同照合がPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+二次多項式が幾何の正本。曲線の固有解/RF・保存/GUI・一般写像・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+
+
 2026-09-12：[Hφ追跡の所有履歴](docs/HPHI_TRACKING_HISTORY.md)を主ツリーへ統合・限定受入。
 保存場・帯域・個別ID/ID集合の連続性を全再生し、所有コピーへの延長、CLI・worker・取消/再起動・GUIの各段階の元場取込まで接続した。
 標準1082件（1079合格・3skip）、独立8チェーン/21履歴worker/39再起動/5CLI、Chrome新16/復元8/旧19、主9unit/28保存ジョブ/5CLIがPASS。元286native・6履歴は不変、PNG/CSVはbyte一致。

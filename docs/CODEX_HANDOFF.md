@@ -1,3 +1,30 @@
+2026-09-12 15:04 UTC 続報：主652sourceへ幾何/K/Mを統合し限定受入。標準36849は1091件（1088合格・3skip）2251.925秒で終了0。主22unit1279は3.374秒、主72幾何47330は8.791秒、主72形式62184は18.460秒で終了0。対応するintegrate/finalize helperは実行済み、再実行しない。
+現在liveは曲線RF標準38419（候補650source、期待1095件、14:39 UTC開始）と曲線native標準94675（候補653source、期待1099件、14:53 UTC開始）。候補を変更しない。未終了を合格に数えない。
+native候補/tmp/superfish-curved-hphi-native-20260912は追加4unit7.502秒、関連30unit20.729秒、独立24ケース/48保存/74CLI（72成功・2想定拒否）77.974秒がPASS。240nativeと97参照ファイル不変、API/CLI native5はbyte一致、プローブ全JSON一致。GUI/Projectは未接続。
+半径も二次となる追加検証98863は24ケース/48RF/12CLI、40native不変で14.345秒・終了0。解析形式差2.177e-14、f7.128e-14、RF7.223e-15、場1.161e-15。全3候補の固定基盤sourceとの対応をreportへ保存。実行helperはout/curved-hphi-native-development-20260912/operation-helpersへhash付き保管。
+RFとnativeのintegrate helperは準備済み・未実行。RF/nativeのfinalize helperは未準備。本体統合後は各主4unitと主独立検証、文書/来歴/物理仕様、ローカルコミットを行う。全計画は未完。以下よりこの冒頭を優先する。
+
+2026-09-12：[穴付き二次幾何](CURVED_MERIDIONAL_GEOMETRY.md)と[Hφ K/M](CURVED_HPHI_FORMS.md)を主ツリーへ統合・限定受入。
+全境界成分/辺/セルを検証し、厳密な半径・Jacobian最小と面積/体積照合を接続した。qの静的核と軸接続uの正値を分け、全軸DOFを保持する。
+標準1091件（1088合格・3skip）、関連22unit、独立72幾何/72形式と主ツリーの同照合がPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+二次多項式が幾何の正本。曲線の固有解/RF・保存/GUI・一般写像・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+幾何/K/M標準36849は終了0・2251.925秒。主22unit3.374秒、主72幾何/72形式も終了0。主652source。
+/tmp/integrate-curved-meridional-geometry-20260912.pyと/tmp/finalize-curved-meridional-geometry-docs-20260912.pyは実行済み。再実行しない。
+次の曲線Hφ固有解/RFは/tmp/superfish-curved-hphi-rf-20260912の別候補で継続。候補の実行状態は後続の冒頭記録/実ハンドルを確認する。幾何とK/Mの受入に含めない。
+全計画は未完。以下よりこの冒頭を優先する。
+
+2026-09-12 14:42 UTC 続報：主6313da8・645source。受入済み追跡履歴の全検証は終了。
+標準は幾何/K/M36849（候補646source、期待1091件、14:20 UTC開始）と曲線Hφ固有解/RF38419（候補650source、期待1095件、14:39 UTC開始）の2本が継続中。両候補を変更しない。未終了を合格に数えない。
+RF候補/tmp/superfish-curved-hphi-rf-20260912は初回4unitで軸上Hφの微小非零を検出。軸を直線区間から直接逆変換する修正後4unit5.221秒、関連26unit11.146秒、独立48 FEM/144 RF/48 Case往復24.190秒がPASS。元96ファイル不変。f差7.861e-14、RF差1.022e-14、E/H差1.157e-15/3.275e-16。初回ログ5.096秒を保持する。
+幾何/K/Mのintegrateとfinalize helperは/tmpへ準備済み、どちらも未実行。標準の実終了後に統合し、主関連22unitと主72幾何/72形式を新しいoutで再確認する。RFのintegrate/finalizeはまだ未準備。主ツリーへ未受入コードを混ぜない。
+現在の独立・unitハンドルは全て終了済み。原則標準2本だけがlive。次のnative/CLIは調査段階。全計画は未完。以下よりこの冒頭を優先する。
+
+2026-09-12 14:23 UTC 続報：主6313da8・645source。Hφ追跡履歴は統合・限定受入済み。標準1082件/主9unit377.836秒/主artifact139.450秒は終了0。履歴のintegrate/finalizeは実行済み。
+曲線幾何とHφ K/Mの候補/tmp/superfish-curved-meridional-geometry-20260912は646source固定。追加9/関連22unit3.306秒、独立幾何72/JSON往復8.742秒、独立K/M72形式18.089秒がPASS。行列差最大4.132e-15、解析エネルギー差1.704e-13、相似差3.755e-16。初回K/M unitは旧参照だけ積分次数8で1件FAIL。同次数12へ揃えて再検証し、実装/しきい値は不変。初回ログを保持。
+現時点で標準36849だけが継続中。期待1091件、未終了を合格に数えない。候補646sourceを変更しない。out/curved-meridional-geometry-development-20260912/frozen-candidate-source.tar.gzは内部バックアップ。
+/tmp/integrate-curved-meridional-geometry-20260912.pyは準備済み・未実行。標準合格と2独立reportのsource一致を確認して主652sourceへ統合する。主関連22unitと必要な独立照合、文書/受入/来歴更新、ローカルコミットが残る。
+幾何は二次多項式の正本。K/Mはq=rHφの定数静的核とu=Hφ/rの正値を区別し、全軸DOFを保持する。固有解/RF・native/Project/GUI・一般写像は未受入。全計画は未完。以下よりこの冒頭を優先する。
+
 2026-09-12：[Hφ追跡の所有履歴](HPHI_TRACKING_HISTORY.md)を主ツリーへ統合・限定受入。
 保存場・帯域・個別ID/ID集合の連続性を全再生し、所有コピーへの延長、CLI・worker・取消/再起動・GUIの各段階の元場取込まで接続した。
 標準1082件（1079合格・3skip）、独立8チェーン/21履歴worker/39再起動/5CLI、Chrome新16/復元8/旧19、主9unit/28保存ジョブ/5CLIがPASS。元286native・6履歴は不変、PNG/CSVはbyte一致。
