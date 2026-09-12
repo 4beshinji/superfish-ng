@@ -1,3 +1,23 @@
+2026-09-12：[軸区間・PEC穴の幾何とK/M基盤](AXIS_CONNECTED_MESH.md)を限定受入。
+軸/PECの分離、元境界の厳密被覆、穴を除いた多項式モーメント、軸自由度の保持・正スペクトル/Ritzを確認した。
+標準1030件（1027合格・3skip）、主4unit（0.234秒）がPASS。
+seed9モード19量は周波数差0、最大相対差8.882e-16。既存ベンチマークは不変。
+RF/保存/GUIは後続工程で、P03/O02と全計画・親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+標準9082は終了0、1853.617秒。主4unitも終了0で、主599sourceを照合した。
+RF/Workspace候補の未終了ハンドルは以下の記録を参照し、実終了を確認してから受入する。
+
+以下は基盤統合前の工程記録。現在の主ソースと基盤受入はこの冒頭を優先する。
+
+2026-09-12 継続中：軸接続メッシュ基盤の固定候補593source、標準9082（out/validation-axis-connected-mesh-candidate-20260912）は未終了。
+製品RF候補/tmp/superfish-axis-rf-20260912を601sourceで固定。8unit（2.909秒）、一穴/二穴×P1/P2の8FEM診断（236.240秒）は合格。
+固定ゲートのf/E/H/全PEC線分損失/複素Vacc/両R/Qと実細分での減少を確認したが、診断は一尺度・nativeなしで受入にはしない。
+RF標準3210（out/validation-axis-rf-candidate-20260912）、二尺度16FEM/native独立28696（out/axis-rf-independent-20260912）が継続中。
+601sourceと内部作業用archiveはout/axis-rf-development-20260912。未終了検証を合格に数えず、候補sourceを変更しない。
+後続Project/表示/GUI/独立Study接続はAXIS_HPHI_WORKSPACE_PLAN.md、別コピー/tmp/superfish-axis-workspace-20260912で進める。
+主ソースはまだStudyの051845c・595sourceのまま。全33課題の完走要求と未完状態を維持する。
+
+以下の開始時点より、この冒頭の稼働ハンドルを優先する。
+
 2026-09-12：[正半径Hφの独立Study](HPHI_STUDY.md)を主ツリーへ統合・限定受入。
 尺度・全3Dエネルギー・壁導電率・円筒寸法の掃引、全点native/CLI・実worker・GUI・保存再起動を接続した。
 標準1026件（1023合格・3skip）、独立18worker/36FEM/18CLI、Chrome新9/復元3/既存13操作、主12unit/4CLIがPASS。
@@ -6,10 +26,12 @@ Study標準12034は終了0、1026件・1772.387秒。主12unit/4CLIも終了0。
 GUI/Studyの全計算・Chrome・ローカルサーバーは終了済み。HPHI_STUDY.mdに契約と証拠を記載した。
 
 次はAXIS_CONNECTED_HOLES_PLAN.md。隔離候補/tmp/superfish-axis-holes-20260912には軸区間/PEC穴の幾何・canonical P1/P2 K/Mだけを追加した。
-4unit（0.240秒）、4解析恒等式、18の解析磁場対応による試作FEMまで確認。製品Case/solve/native/CLI、全壁RF、標準回帰は未完。
+4unit（0.240秒）、4解析恒等式、18の解析磁場対応による試作FEMまで確認。製品Case/solve/native/CLI、全壁RFは未完。幾何・行列基盤の標準回帰9082は継続中。
 source593と作業アーカイブはout/axis-hole-reference-20260912/prototype-source-sha256.json、mesh-form-prototype-source.tar.gz。
 周波数最近傍が別の場を選ぶ反例はout/axis-hole-spectrum-prototype-20260912へ保持。対応版はout/axis-hole-field-matched-prototype-20260912（62253終了0、143.046秒）。
 最終水準は一穴/二穴ともf/E/H/Vaccが計画の固定ゲート内だが、未確認の全壁RF・保存・全回帰を受入扱いしない。
+固定593sourceの標準はout/validation-axis-connected-mesh-candidate-20260912、ログはout/axis-connected-mesh-development-20260912/standard.log。
+その候補は変更せず、製品RF候補を/tmp/superfish-axis-rf-20260912へ別コピーした。
 主ツリーへ軸穴候補はまだ統合していない。全33課題の完走要求と未完状態を維持する。
 
 以下は以前の工程履歴。稼働/完了は冒頭の記録を優先する。
