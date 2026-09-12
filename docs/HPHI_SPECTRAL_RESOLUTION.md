@@ -1,6 +1,6 @@
 # Hφの有限比較空間スペクトル診断
 
-[計画](HPHI_SPECTRAL_RESOLUTION_PLAN.md)の固定候補626sourceを検証中。本体統合・受入は未完。
+[計画](HPHI_SPECTRAL_RESOLUTION_PLAN.md)の固定候補626sourceを主ツリーへ統合し、以下の範囲で限定受入。
 `hphi_spectral_resolution(solution, comparison_mesh, ...)` は、元の専用Hφ解を完全再検証し、
 同じ真空領域の明示P1/P2空間で近傍固有値の数値区間を求める。
 比較先は元より三角形数が多く、最大辺長が小さく、次数が低くない必要がある。入れ子関係は仮定しない。
@@ -34,4 +34,10 @@ muで規格化した残差の最大差は5.020e-13、尺度変換の最大差5.3
 製品の判定は34比較がPASS、14比較がUNVERIFIEDであり、粗さを無視して全比較を合格へ変えていない。
 
 証拠はout/hphi-spectral-resolution-independent-20260912、固定sourceと内部作業archiveはout/hphi-spectral-resolution-development-20260912。
-標準回帰は継続中。新規外部資料・依存・旧版参照なし。guardを含む部分空間対応・保存/CLI/GUIは後続工程。
+標準回帰も終了した。新規外部資料・依存・旧版参照なし。guardを含む部分空間対応・保存/CLI/GUIは後続工程。
+
+標準1064件（1061合格・3skip）は1984.206秒、ResourceWarningなしでPASS。
+skipは任意NGSolve参照2件とsandboxの既存HTTP待受1件。今回は表示/操作の変更はない。
+主3unitは0.961秒でPASS。候補626sourceと主632source（不変egg-info 6件）の一致を確認した。
+旧seed9モード19量はf差0、最大相対差8.882e-16。ベンチマーク・既存しきい値は不変。
+標準/統合証拠はout/validation-hphi-spectral-resolution-candidate-20260912/seed_regression.json。

@@ -1,3 +1,14 @@
+2026-09-12：[Hφの有限比較空間スペクトル診断](HPHI_SPECTRAL_RESOLUTION.md)を主ツリーへ統合・限定受入。
+元場のL2射影とシフト逆行列のM残差から、明示した比較空間の近傍固有値の数値区間を求める。
+標準1064件（1061合格・3skip）、独立24FEM/native・48全固有分解、主3unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+有限空間の数値診断で、順位の同定・保証された区間・連続問題の誤差上界ではない。親33課題の8受入/11進行/13他未受入/1範囲外と全計画未完を維持する。
+有限スペクトル標準71526は終了0・1984.206秒、主3unit14791も終了0・0.961秒。主632source。
+/tmp/integrate-hphi-spectral-resolution-20260912.pyと/tmp/finalize-hphi-spectral-resolution-docs-20260912.pyは実行済み。再実行しない。
+同領域追跡629source標準64006が継続中。追跡APIの4unit/36独立比較/12縮退正逆比較は合格済み。候補は不変、主へ未統合。
+保存/worker/CLI候補/tmp/superfish-hphi-tracking-jobs-20260912は現在632source、未freeze。3unit82077は47.991秒で終了0。
+独立初回69612は8比較全文書一致の後に検証器abs(list)で終了1。元出力out/hphi-tracking-jobs-independent-20260912を保持し、配列化だけを修正した。製品sourceと数値条件は不変。再実行70390（out/hphi-tracking-jobs-independent-complete-20260912）が継続中。
+GUI接続はGUI_HPHI_TRACKING_PLAN.mdを準備済み。次の別候補で進める。全ブラウザー/サーバーは停止済み。元要求と全計画未完を維持し、以下よりこの冒頭を優先する。
+
 2026-09-12：[同領域Hφの質量内積とL2射影](HPHI_MASS_PROJECTION.md)を主ツリーへ統合・限定受入。
 独立P1/P2メッシュの元q/uを、全穴・軸を保つ質量内積で射影し、失った場を元要素から直接積分する。
 標準1061件（1058合格・3skip）、独立48比較/144係数列、主4unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
