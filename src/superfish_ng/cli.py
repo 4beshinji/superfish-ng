@@ -115,6 +115,10 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    hphi_convergence=sub.add_parser('execute-hphi-convergence',help='solve an explicit same-domain mesh sequence and compare original Hphi E/H/RF differences')
+    hphi_convergence.add_argument('request',type=Path);hphi_convergence.add_argument('--out',type=Path,required=True)
+    hphi_convergence_replay=sub.add_parser('replay-hphi-convergence',help='fully replay every Hphi mesh level and finite-difference decision')
+    hphi_convergence_replay.add_argument('run',type=Path)
     hphi_study=sub.add_parser('execute-hphi-study',help='execute independent Hphi spectra; ranks are not tracked IDs')
     hphi_study.add_argument('study',type=Path);hphi_study.add_argument('--out',type=Path,required=True)
     hphi_study_replay=sub.add_parser('replay-hphi-study',help='fully verify every saved independent Hphi point and summary')
@@ -271,6 +275,12 @@ def main(argv=None):
             result=(execute_planar_convergence(PlanarConvergence.load(args.request),args.out)
                     if args.command=='execute-planar-convergence' else read_planar_convergence(args.run))
             print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-hphi-convergence','replay-hphi-convergence'):
+            from .hphi_convergence import HphiConvergence
+            from .hphi_convergence_saved import execute_hphi_convergence,read_hphi_convergence
+            result=execute_hphi_convergence(HphiConvergence.load(args.request),args.out) if args.command=='execute-hphi-convergence' else read_hphi_convergence(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False))
+            return 0
         if args.command in ('execute-hphi-study','replay-hphi-study'):
             from .hphi_study import HphiStudy
             from .hphi_study_jobs import execute_hphi_study, read_hphi_study

@@ -1,5 +1,11 @@
 # 互換開発の作業分割 v0
 
+2026-09-12：[明示Hφメッシュ列の細分差診断](HPHI_CONVERGENCE.md)のAPI・全水準保存・完全再生・CLIを主ツリーへ統合・限定受入。
+元E/Hの対応、周波数近傍、最後2組のf/E/H/各RF・壁線分・複素Vaccを別々に判定する。縮退・guard不足・粗さ未達はUNVERIFIEDを保持する。
+標準1055件（1052合格・3skip）、独立24系列/72FEM、細かい円筒解析4系列/12FEM、縮退3FEM、主5unit/4CLIがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+有限メッシュ列の診断であり、連続問題の誤差上界・表面ピーク精度・永続モードIDは保証しない。親33課題の8受入/11進行/13他未受入/1範囲外と全計画の未完状態を維持する。
+
+
 2026-09-12：[軸接続HφのProject・表示・独立Study](AXIS_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
 軸区間・位相原点・betaの編集/復元、実worker・保存取込/取消/再起動、穴を除いた場と全18成分SIプローブ、複素Vacc/両R/Qを接続した。
 標準1042件（1039合格・3skip）、独立28FEM点、実Chrome新12/復元6/旧Hφ8/旧TMTE平面5操作、主4unit/5CLIがPASS。
@@ -172,7 +178,7 @@ V02の[ローカル配布確認](LOCAL_DISTRIBUTION_20260909.md)として3386a5f
 | 状態 | 件数 | 親課題と範囲 |
 |---|---:|---|
 | .S/.I/.V受入済み | 8 | C01、C02（初期AF部分集合）、O01（ローカル保存）、R01（native規約）、N01/N02（直線P2）、G01/G02（軸接続単一輪郭・自動メッシュ） |
-| 調査・実装進行中、親課題全体は未受入 | 11 | P03（[閉同軸円筒](COAXIAL_RF.md)、[正半径の一般断面・複数穴](HPHI_MESH_RF.md)、[軸接続のPEC穴付き断面](AXIS_HPHI_RF.md)のHφ FEM・各空間の零モード処理・全壁RF・native/CLIを限定受入。[軸接続のProject/GUI/独立Study](AXIS_HPHI_WORKSPACE.md)も限定受入。曲線内導体・収束/追跡・旧版照合等は未完）、 P02（[矩形P1/P2と専用入力・保存/CLI](PLANAR_RF.md)を限定受入。単純多角形版2/CLIと[専用Project/Job](PLANAR_JOBS.md)を限定受入、[平面表示/GUI](GUI_PLANAR.md)を限定受入、[独立Study](PLANAR_STUDY.md)、[同形状細分診断](PLANAR_CONVERGENCE.md)、[矩形追跡](PLANAR_TRACKING.md)、[多角形一様尺度追跡](PLANAR_POLYGON_TRACKING.md)を限定受入。[保存履歴](PLANAR_TRACKING_HISTORY.md)、[宣言相似写像](PLANAR_SIMILARITY_TRACKING.md)、[同じ多角形の独立再メッシュ](PLANAR_REMESH_TRACKING.md)、[相似変換＋独立内部メッシュの合成](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[可逆アフィン＋独立内部メッシュの合成](PLANAR_AFFINE_REMESH_TRACKING.md)、[厳密アフィン＋境界/内部の独立メッシュ](PLANAR_EXACT_AFFINE_TRACKING.md)も限定受入。一般の丸めた境界・非線形変形・曲線断面等は未完）、P01（直線P1/P2と曲線P2のTE固有値・場・RF・専用native/CLI）、 D03（保存RF制約評価・曲線2変数探索の実FEM/予算/最終細分/保存再開API・CLI・JobManagerを部分実装）、O02（外部mesh単体GUI読込/解除・通常Job/保存・直線P1/P2および曲線固定Study、TE通常Project/Job/GUIを部分実装）、C00（対象版/必須集合未確定）、G03（曲線FEM等を部分受入、弧端/退化分類・全要件照合が残る）、D01（標本部分空間追跡・円筒/profile写像・明示メッシュ対応を部分実装）、D02（追跡付き1変数tuneと再開・細分判定API/CLI・JobManager・GUIを部分実装）、N03（通常RFの上下界評価API/保存/CLI/GUI、固定曲線幾何の追跡済み表面収束評価API/CLI/GUI、直線P1/P2の連続離散ピーク囲い込み・元多角形角診断・表面収束評価API/保存/CLI/GUI）、N04（曲線適応版4の五量停止/保存再開API/CLI/JobManager、曲線親子質量内積追跡、曲線残差指標、曲線局所細分の基盤APIとCase履歴/native保存/CLI、適合細分・係数移送・残差指標、追跡付きf/RQ/G適応停止・保存再開API/CLI/JobManager/GUI。版2全域確認で円筒P1のRF改善検査もPASS。版3のピーク比停止はAPI/CLI/JobManagerへ追加。一般形状/効率は未受入） |
+| 調査・実装進行中、親課題全体は未受入 | 11 | P03（[閉同軸円筒](COAXIAL_RF.md)、[正半径の一般断面・複数穴](HPHI_MESH_RF.md)、[軸接続のPEC穴付き断面](AXIS_HPHI_RF.md)のHφ FEM・各空間の零モード処理・全壁RF・native/CLIを限定受入。[軸接続のProject/GUI/独立Study](AXIS_HPHI_WORKSPACE.md)も限定受入。[明示メッシュ列の細分差診断](HPHI_CONVERGENCE.md)も限定受入。曲線内導体・部分空間追跡・旧版照合等は未完）、 P02（[矩形P1/P2と専用入力・保存/CLI](PLANAR_RF.md)を限定受入。単純多角形版2/CLIと[専用Project/Job](PLANAR_JOBS.md)を限定受入、[平面表示/GUI](GUI_PLANAR.md)を限定受入、[独立Study](PLANAR_STUDY.md)、[同形状細分診断](PLANAR_CONVERGENCE.md)、[矩形追跡](PLANAR_TRACKING.md)、[多角形一様尺度追跡](PLANAR_POLYGON_TRACKING.md)を限定受入。[保存履歴](PLANAR_TRACKING_HISTORY.md)、[宣言相似写像](PLANAR_SIMILARITY_TRACKING.md)、[同じ多角形の独立再メッシュ](PLANAR_REMESH_TRACKING.md)、[相似変換＋独立内部メッシュの合成](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[可逆アフィン＋独立内部メッシュの合成](PLANAR_AFFINE_REMESH_TRACKING.md)、[厳密アフィン＋境界/内部の独立メッシュ](PLANAR_EXACT_AFFINE_TRACKING.md)も限定受入。一般の丸めた境界・非線形変形・曲線断面等は未完）、P01（直線P1/P2と曲線P2のTE固有値・場・RF・専用native/CLI）、 D03（保存RF制約評価・曲線2変数探索の実FEM/予算/最終細分/保存再開API・CLI・JobManagerを部分実装）、O02（外部mesh単体GUI読込/解除・通常Job/保存・直線P1/P2および曲線固定Study、TE通常Project/Job/GUIを部分実装）、C00（対象版/必須集合未確定）、G03（曲線FEM等を部分受入、弧端/退化分類・全要件照合が残る）、D01（標本部分空間追跡・円筒/profile写像・明示メッシュ対応を部分実装）、D02（追跡付き1変数tuneと再開・細分判定API/CLI・JobManager・GUIを部分実装）、N03（通常RFの上下界評価API/保存/CLI/GUI、固定曲線幾何の追跡済み表面収束評価API/CLI/GUI、直線P1/P2の連続離散ピーク囲い込み・元多角形角診断・表面収束評価API/保存/CLI/GUI）、N04（曲線適応版4の五量停止/保存再開API/CLI/JobManager、曲線親子質量内積追跡、曲線残差指標、曲線局所細分の基盤APIとCase履歴/native保存/CLI、適合細分・係数移送・残差指標、追跡付きf/RQ/G適応停止・保存再開API/CLI/JobManager/GUI。版2全域確認で円筒P1のRF改善検査もPASS。版3のピーク比停止はAPI/CLI/JobManagerへ追加。一般形状/効率は未受入） |
 | 親課題として未受入 | 13 | C03/C04、P04、S01〜S05、A01、V01/V02、L01/L02。既存プローブ/GUI/掃引や個別統合はあるが、各親課題の完了ではない |
 | 互換必須集合外の拡張候補 | 1 | X01。本v0の実装予定には組み込まない |
 

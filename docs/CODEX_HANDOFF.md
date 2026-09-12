@@ -1,3 +1,30 @@
+2026-09-12：[明示Hφメッシュ列の細分差診断](HPHI_CONVERGENCE.md)のAPI・全水準保存・完全再生・CLIを主ツリーへ統合・限定受入。
+元E/Hの対応、周波数近傍、最後2組のf/E/H/各RF・壁線分・複素Vaccを別々に判定する。縮退・guard不足・粗さ未達はUNVERIFIEDを保持する。
+標準1055件（1052合格・3skip）、独立24系列/72FEM、細かい円筒解析4系列/12FEM、縮退3FEM、主5unit/4CLIがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+有限メッシュ列の診断であり、連続問題の誤差上界・表面ピーク精度・永続モードIDは保証しない。親33課題の8受入/11進行/13他未受入/1範囲外と全計画の未完状態を維持する。
+細分差標準65005、主5unit83160、主4CLI52449は全て終了0。主623source。
+/tmp/integrate-hphi-convergence-20260912.pyと/tmp/finalize-hphi-convergence-docs-20260912.pyは実行済み。再実行しない。
+操作候補/tmp/superfish-hphi-convergence-workspace-20260912は620source固定、標準43622が継続中。
+新Chrome14・復元6・旧軸Hφ12/旧正半径Hφ8/旧TMTE平面5は全て終了0。保存artifact63916も終了0、26再起動ジョブ23完了/3取消、元180native不変、5ファイルDL・PNG/CSV・4CLI一致を確認した。復元画面も目視済み。
+全ブラウザーと両GUIサーバーは停止・終了0。操作標準の実終了と結果確認後にだけ9source差分を統合し、主2unit/CLIを行う。表示「差の減少」は後で「増加の検査／許容内」へ明確化する。620固定候補には今は手を入れない。
+元要求と未完状態を維持し、以下の古い稼働記録よりこの冒頭を優先する。
+
+2026-09-12 11:23 UTC続報：主f91090f・618source。明示細分差の標準65005と操作拡張の標準43622が継続中。
+操作620sourceは固定。新Chrome14、旧軸接続Hφ12、旧正半径Hφ8、旧TM/TE/平面5操作は全て終了0。各browserのreportはout/hphi-convergence-*-browser-20260912（新はbrowser-complete）。同じworkspaceのブラウザーを順に実行した。
+GUI最初のサーバー66478は停止・終了0。再起動前180nativeファイルのhashと24トップジョブ（21完了/3取消）の状態をout/hphi-convergence-workspace-development-20260912へ保存。
+同じROOT=out/hphi-convergence-workspace-browser-server-20260912でサーバーを再起動し、復元Chromeを開始（ハンドルは最新ツール結果）。まだ復元合格・artifact照合は未確認。
+元要求と全計画未完を維持。以下よりこの冒頭を優先する。
+
+2026-09-12 続報：主f91090f・618source。元E/H体積内積まで統合・限定受入済み。
+明示細分差617sourceの標準65005は継続中。/tmp/integrate-hphi-convergence-20260912.pyを準備したが未実行。標準実終了後に全1055件/seed/sourceを確認して6source差分を統合し、主5unit/CLIを行う。
+操作候補620sourceをfreeze済み。独立51380は終了0・260.864秒、7worker/21水準+単独同軸3水準/21取込/30再起動/2取消/7CLIがPASS。最終2unit65325は30.396秒で終了0。
+新Chrome94110は終了0・14操作、旧軸接続Hφ14362は終了0・12操作。初回Chrome90782は検証器のDOM式の引用符で失敗し、製品source不変で直して再実行した。
+新診断PASS/guard未検証/二穴場の画面を目視済み。表/描画の横はみ出しなし、穴は空白。
+操作標準43622が継続中（out/validation-hphi-convergence-workspace-candidate-20260912、期待1057件）。候補620sourceは変更しない。
+GUIサーバー66478が稼働中。ROOT=out/hphi-convergence-workspace-browser-server-20260912。旧正半径Hφブラウザーを開始済み（ハンドルは最新ツール結果）、次は旧TM/TE/平面、再起動とartifact照合。ブラウザーの同じworkspaceへの並行投入はしない。
+UIの「差の減少」表示は数値の丸め許容量を含む判定である。全工程統合後の小さな表示修正では「増加の検査／許容内」等へ明確化することを検討。凍結sourceには今は手を入れない。
+全計画は未完。以下の古い稼働記録より、この冒頭を優先する。
+
 2026-09-12：[元Hφ電場・磁場の体積内積](HPHI_FIELD_OVERLAP.md)を主ツリーへ統合・限定受入。
 同一真空領域の独立P1/P2メッシュで、元場と位相・規格化を保持した全3DのE/H自己・交差内積を検証した。
 標準1050件（1047合格・3skip）、独立48FEM/native・48比較、解析8FEM、主4unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
