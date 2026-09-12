@@ -1,5 +1,11 @@
 # 実装・検証の現状
 
+2026-09-13：[軸非接続の磁静保存・再構築・CLI](OFF_AXIS_MAGNETOSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+基準と相対/絶対psi、全mu_r/Jphi/境界/穴を保存し、同じ実FEM再求解で元6場とJ/Wb/Aの全量を照合する。独立24例48native/80CLIがPASSし、API/CLIの5ファイル・全プローブJSONが一致、元240native/90参照ファイルは不変。
+標準1208件（1205合格・3skip）、追加4unitと主4unitがPASS。固定749sourceを主755sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+C00の対象版/旧版仕様確認等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+
+
 2026-09-13：[軸非接続の境界付き磁静FEM・元6場/J/Wb](OFF_AXIS_MAGNETOSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
 固定psi/Htから相対psiを実FEMで解き、元6場、Jエネルギー/Wb磁束/A電流と反力を保持する。独立88例（P2一様B32、環状電流24、二層24、零場8）がPASS。保存/CLIは後続工程。
 標準1204件（1201合格・3skip）、追加6unitと主6unitがPASS。固定746sourceを主752sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
@@ -360,7 +366,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | TE・平面の操作 | 専用native/Project/worker・CLI/GUI、場表示とSIプローブ、独立Study・同形状細分、限定追跡。平面は所有履歴、宣言相似写像版3、同一領域再メッシュ版4、相似変換＋独立内部メッシュ版5、可逆アフィン＋独立内部メッシュ版6、厳密アフィン＋境界/内部独立メッシュ版7を接続 | TE追跡は同端条件の円筒。平面追跡は矩形宣言写像または検証済み多角形尺度/相似関係、同一多角形の独立メッシュ、厳密に写した境界上の独立内部メッシュ（相似または可逆アフィン）。境界密度が独立した厳密アフィン写像にも限定対応。一般の丸めた境界・非線形変形の追跡・調整は未対応 | [GUI_TE.md](GUI_TE.md)、[GUI_PLANAR.md](GUI_PLANAR.md)、[PLANAR_TRACKING_HISTORY.md](PLANAR_TRACKING_HISTORY.md)、[PLANAR_SIMILARITY_TRACKING.md](PLANAR_SIMILARITY_TRACKING.md)、[PLANAR_SIMILARITY_REMESH_TRACKING.md](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[PLANAR_AFFINE_REMESH_TRACKING.md](PLANAR_AFFINE_REMESH_TRACKING.md)、[PLANAR_EXACT_AFFINE_TRACKING.md](PLANAR_EXACT_AFFINE_TRACKING.md) |
 | 専用Hφの操作 | 4種類のCase/native、Project/worker/取込・取消・再起動、曲線パッチを含む元場表示、全E/H/BのSI CSV、独立Study。直線の元場比較・細分差診断・部分空間追跡・所有履歴 | 曲線の比較/追跡、一般の形状写像、材料、表面ピーク精度は未対応。capabilitiesは専用入口と未対応範囲を明記 | [CAPABILITY_INVENTORY.md](CAPABILITY_INVENTORY.md)、[CURVED_HPHI_WORKSPACE.md](CURVED_HPHI_WORKSPACE.md)、[HPHI_TRACKING_HISTORY.md](HPHI_TRACKING_HISTORY.md) |
 | 軸接続磁静 | 正値mu_r/Jphi、軸/固定Aphi/r/Ht、正則aの実FEM、元6場、Jエネルギー・Wb磁束、A電流とA m²反力、専用保存/CLI | GUI/Project/Study・軸非接続・曲線/非線形等・厳密開放境界は未実装 | [AXIS_MAGNETOSTATIC_SOLVE.md](AXIS_MAGNETOSTATIC_SOLVE.md)、[AXIS_MAGNETOSTATIC_NATIVE.md](AXIS_MAGNETOSTATIC_NATIVE.md) |
-| 軸非接続磁静 | 固定psi/Htの実FEM、元6場/J/Wb/A、基準と相対psi | 保存/CLI・GUI/Project/Study・曲線/非線形等・厳密開放境界は未実装 | [OFF_AXIS_MAGNETOSTATIC_SOLVE.md](OFF_AXIS_MAGNETOSTATIC_SOLVE.md) |
+| 軸非接続磁静 | 固定psi/Htの実FEM、元6場/J/Wb/A、基準と相対psi、専用保存/CLI | GUI/Project/Study・曲線/非線形等・厳密開放境界は未実装 | [OFF_AXIS_MAGNETOSTATIC_NATIVE.md](OFF_AXIS_MAGNETOSTATIC_NATIVE.md) |
 | 平面磁静 | 明示mu_r/Jz、固定Az/Ht、P1/P2実FEM、元Az/B/H、J/mエネルギーと反力/元H積分[A]・元B磁束[Wb/m]、専用保存/CLI | GUI/Project/Study・軸対称・曲線/穴・非線形等・厳密開放境界は未実装 | [PLANAR_MAGNETOSTATIC_SOLVE.md](PLANAR_MAGNETOSTATIC_SOLVE.md)、[PLANAR_MAGNETOSTATIC_NATIVE.md](PLANAR_MAGNETOSTATIC_NATIVE.md) |
 | 平面静電 | 単純多角形P1/P2、全epsilon_r/rhoと固定電極/Dn、実Poisson解、元E/D、J/mエネルギー・C/m電荷・F/m二端子容量、専用native/CLIと全Poisson再構築 | Project/GUI/Study・曲線/穴・純Neumann・浮遊電極・一般の自動外部境界診断は未実装 | [PLANAR_ELECTROSTATIC_FORMS.md](PLANAR_ELECTROSTATIC_FORMS.md)、[PLANAR_ELECTROSTATIC_SOLVE.md](PLANAR_ELECTROSTATIC_SOLVE.md)、[PLANAR_ELECTROSTATIC_NATIVE.md](PLANAR_ELECTROSTATIC_NATIVE.md) |
 | 軸対称静電 | 直線P1/P2、全材料/rhoと明示固定電極/Dn/軸、実Poisson解、元E/D・領域エネルギー・電荷・二端子容量 | 専用native/CLI対応。純Neumann/gauge・浮遊電極・Project/GUI/Study・平面は未実装 | [ELECTROSTATIC_FORMS.md](ELECTROSTATIC_FORMS.md)、[ELECTROSTATIC_SOLVE.md](ELECTROSTATIC_SOLVE.md) |

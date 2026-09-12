@@ -198,3 +198,25 @@ def axis_magnetostatic_capabilities():
         limits=['No off-axis gauge or curved geometry, nonlinear/anisotropic/complex permeability, remanence or RF phasors',
             'No winding inductance or exact open boundary',
             'Discrete work identities do not bound original field, flux or circulation error'])
+
+
+def off_axis_magnetostatic_capabilities():
+    return dict(case_format='superfish_ng_off_axis_magnetostatic_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_off_axis_magnetostatic_manifest',native_schema_versions=[1],
+        result_format='superfish_ng_off_axis_magnetostatic_result',result_schema_versions=[1],
+        partition_format='superfish_ng_off_axis_magnetic_partition',partition_schema_versions=[1],
+        commands=['solve-off-axis-magnetostatic','replay-off-axis-magnetostatic','probe-off-axis-magnetostatic'],physics='linear_magnetostatic',
+        coordinates='axisymmetric r,z with strictly r>0',geometry='explicit straight material-conforming triangles, optionally with declared holes',
+        element_orders=[1,2],material='positive real isotropic linear mu_r; reluctivity=(1/mu0)/mu_r [m/H]',
+        volume_current='signed Jphi [A/m^2], explicit in every region',boundaries=['fixed_psi [Wb]','tangential_h [A/m]'],
+        boundary_policy='every edge explicit; at least one fixed-psi boundary; connected fixed edges share one id; domain on left of tangent',
+        potential='psi=r*Aphi [Wb], coefficients relative to first fixed-psi boundary; constant psi is zero B with curl-free Aphi=C/r',
+        fields='Br=-d_z(psi)/r, Bz=d_r(psi)/r [T], H=reluctivity(original cell)*B [A/m]',
+        probes='original psi/Aphi/Br/Bz/Hr/Hz, cell/region/material IDs and mu_r; lowest cell at interfaces, no averaging',
+        volume_measure='2*pi*r drdz',energy='integral |B|^2/(2*mu0*mu_r) 2*pi*r drdz [J]',current_unit='A',
+        fixed_boundary_reaction='separate discrete reaction and +2*pi integral original Ht ds [A]',
+        normal_flux='original 2*pi*r B dot outward normal integrated along domain boundary [Wb]',
+        project=False,gui=False,study=False,
+        limits=['No axis-connected/curved geometry, nonlinear/anisotropic/complex permeability, remanence or RF phasors',
+            'No pure Neumann, excluded-axis absolute linked flux, winding inductance or exact open boundary',
+            'Discrete residual and reaction conservation do not bound original field or circulation error'])

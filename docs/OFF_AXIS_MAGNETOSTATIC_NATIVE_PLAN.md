@@ -1,6 +1,6 @@
 # S02: 軸非接続の磁静保存・再構築・CLI
 
-2026-09-13 JST。実装中・未受入。
+2026-09-13 JST。[実装記録](OFF_AXIS_MAGNETOSTATIC_NATIVE.md)の専用API範囲で限定受入。
 
 mu_r/reluctivity・Jphi・全境界/穴・自由DOFと荷重、基準psiと相対/絶対psiを5ファイルへ保存する。再読込は同じ実FEMを再求解し、全配列・元6場・Jエネルギー/Wb磁束/A電流・反力と物理規約を照合する。定数psiの零場を保持し、Aphi=C/rを一様Bへ読み替えない。
 

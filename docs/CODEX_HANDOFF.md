@@ -1,3 +1,9 @@
+2026-09-13：[軸非接続の磁静保存・再構築・CLI](OFF_AXIS_MAGNETOSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+基準と相対/絶対psi、全mu_r/Jphi/境界/穴を保存し、同じ実FEM再求解で元6場とJ/Wb/Aの全量を照合する。独立24例48native/80CLIがPASSし、API/CLIの5ファイル・全プローブJSONが一致、元240native/90参照ファイルは不変。
+標準1208件（1205合格・3skip）、追加4unitと主4unitがPASS。固定749sourceを主755sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+C00の対象版/旧版仕様確認等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+軸非接続磁静nativeの統合/finalizer実行済み・再実行禁止。主755source。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
 2026-09-13：[軸非接続の境界付き磁静FEM・元6場/J/Wb](OFF_AXIS_MAGNETOSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
 固定psi/Htから相対psiを実FEMで解き、元6場、Jエネルギー/Wb磁束/A電流と反力を保持する。独立88例（P2一様B32、環状電流24、二層24、零場8）がPASS。保存/CLIは後続工程。
 標準1204件（1201合格・3skip）、追加6unitと主6unitがPASS。固定746sourceを主752sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。

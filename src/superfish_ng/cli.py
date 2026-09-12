@@ -217,6 +217,13 @@ def main(argv=None):
     planar_magnetostatic_probe=sub.add_parser('probe-planar-magnetostatic',help='export original static Az/B/H at magnetic-domain [x_m,y_m] points with one-sided region metadata')
     planar_magnetostatic_probe.add_argument('run',type=Path);planar_magnetostatic_probe.add_argument('--points',required=True,type=Path)
     planar_magnetostatic_probe.add_argument('--out',required=True,type=Path)
+    off_axis_magnetostatic=sub.add_parser('solve-off-axis-magnetostatic',help='solve an explicit positive-radius magnetic/current psi case with verified native output')
+    off_axis_magnetostatic.add_argument('case',type=Path);off_axis_magnetostatic.add_argument('--out',required=True,type=Path)
+    off_axis_magnetostatic_replay=sub.add_parser('replay-off-axis-magnetostatic',help='reconstruct magnetic materials, signed currents, psi/Ht boundaries, psi/Aphi/B/H and all integral quantities')
+    off_axis_magnetostatic_replay.add_argument('run',type=Path)
+    off_axis_magnetostatic_probe=sub.add_parser('probe-off-axis-magnetostatic',help='export original static psi/Aphi/B/H at magnetic-domain [r_m,z_m] points with one-sided region metadata')
+    off_axis_magnetostatic_probe.add_argument('run',type=Path);off_axis_magnetostatic_probe.add_argument('--points',required=True,type=Path)
+    off_axis_magnetostatic_probe.add_argument('--out',required=True,type=Path)
     axis_magnetostatic=sub.add_parser('solve-axis-magnetostatic',help='solve an explicit axis-connected magnetic/current Aphi case with verified native output')
     axis_magnetostatic.add_argument('case',type=Path);axis_magnetostatic.add_argument('--out',required=True,type=Path)
     axis_magnetostatic_replay=sub.add_parser('replay-axis-magnetostatic',help='reconstruct magnetic materials, signed currents, axis/fixed Aphi/r/Ht boundaries, Aphi/B/H and all integral quantities')
@@ -441,6 +448,19 @@ def main(argv=None):
                 print(json.dumps(planar_magnetostatic_result(read_planar_magnetostatic_run(args.run)),indent=2,allow_nan=False))
             else:
                 export_planar_magnetostatic_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
+                print(f'WROTE: {args.out}')
+            return 0
+        if args.command in ('solve-off-axis-magnetostatic','replay-off-axis-magnetostatic','probe-off-axis-magnetostatic'):
+            from .off_axis_magnetostatic import OffAxisMagnetostaticCase,solve_off_axis_magnetostatic
+            from .off_axis_magnetostatic_saved import save_off_axis_magnetostatic_run,read_off_axis_magnetostatic_run,off_axis_magnetostatic_result,export_off_axis_magnetostatic_probe
+            from .project import parse_json
+            if args.command=='solve-off-axis-magnetostatic':
+                case=OffAxisMagnetostaticCase.from_dict(parse_json(args.case.read_text(encoding='utf-8')))
+                print(json.dumps(save_off_axis_magnetostatic_run(case,solve_off_axis_magnetostatic(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-off-axis-magnetostatic':
+                print(json.dumps(off_axis_magnetostatic_result(read_off_axis_magnetostatic_run(args.run)),indent=2,allow_nan=False))
+            else:
+                export_off_axis_magnetostatic_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-axis-magnetostatic','replay-axis-magnetostatic','probe-axis-magnetostatic'):
