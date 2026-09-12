@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .hphi_tracking_jobs import is_hphi_tracking, verify_hphi_tracking
+        if is_hphi_tracking(directory, state, manifest):
+            verify_hphi_tracking(directory, state, manifest)
+            return state
         from .hphi_convergence_jobs import is_hphi_convergence_job, verify_hphi_convergence_job
         if is_hphi_convergence_job(directory, state, manifest):
             verify_hphi_convergence_job(directory, state, manifest)
@@ -321,6 +325,11 @@ class JobManager:
                 _state(directory, "failed", error=str(exc))
                 raise
             return identifier
+
+    def start_hphi_tracking(self, previous, current, request):
+        """Compare owned original Hphi E/H subspaces with explicit comparison meshes."""
+        from .hphi_tracking_jobs import start_hphi_tracking
+        return start_hphi_tracking(self, previous, current, request)
 
     def start_hphi_convergence(self, request):
         """Compare explicit Hphi mesh levels in a dedicated local worker."""

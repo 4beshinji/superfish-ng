@@ -1,3 +1,15 @@
+2026-09-12：[Hφ部分空間対応の所有保存・worker・CLI](HPHI_TRACKING_JOBS.md)を主ツリーへ統合・限定受入。
+前後のProject/nativeを所有保存し、元パス移動後も完全再生する。実行complete、数値PASS/UNVERIFIED、個別ID完了を区別する。
+標準1071件（1068合格・3skip）、独立10追跡worker/34再起動/10CLI、主3unit/3CLIがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+GUI・履歴・形状写像等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+追跡保存標準91811は終了0・2188.351秒、主3unit/3CLIも終了0。主638source。
+/tmp/integrate-hphi-tracking-jobs-20260912.pyと/tmp/finalize-hphi-tracking-jobs-docs-20260912.pyは実行済み。再実行しない。
+GUI634sourceは固定、標準4607が継続中。API2unit、新Chrome14/再起動8/旧40、独立6GUI/12取込/18再起動/6CLI、artifact33ジョブ/226native/5CLIはPASS。全ブラウザー/サーバーは停止済み。
+GUI統合用/tmp/integrate-hphi-tracking-gui-20260912.pyは準備済み・未実行。標準実終了後のみ6sourceを主640sourceへ統合し、主2unit/保存artifactを確認する。
+次の履歴候補/tmp/superfish-hphi-tracking-history-20260912は639sourceを検証用に固定。9unit67890、独立8種チェーン11885が継続中。候補を変更しない。
+履歴初回8unit20853は試験中のGUI編集を検知して1件ERROR（258.420秒）。仕様/しきい値変更ではなく、固定後の9unitで再検証する。全計画は未完。
+以下よりこの冒頭を優先する。
+
 2026-09-12：[同じ真空領域のHφ部分空間対応](HPHI_SAME_DOMAIN_TRACKING.md)を主ツリーへ統合・限定受入。
 元E/Hの全方向の対応と有限比較空間・guardを確認し、縮退群はID集合として保持する。
 標準1068件（1065合格・3skip）、独立36比較と縮退/順位逆転12正逆比較、主4unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。

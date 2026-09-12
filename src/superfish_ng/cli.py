@@ -115,6 +115,11 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    hphi_tracking=sub.add_parser('execute-hphi-tracking',help='compare original Hphi E/H subspaces on the same vacuum with explicit comparison meshes')
+    hphi_tracking.add_argument('previous',type=Path);hphi_tracking.add_argument('current',type=Path)
+    hphi_tracking.add_argument('request',type=Path);hphi_tracking.add_argument('--out',type=Path,required=True)
+    hphi_tracking_replay=sub.add_parser('replay-hphi-tracking',help='fully replay both owned Hphi spectra and their subspace correspondence')
+    hphi_tracking_replay.add_argument('run',type=Path)
     hphi_convergence=sub.add_parser('execute-hphi-convergence',help='solve an explicit same-domain mesh sequence and compare original Hphi E/H/RF differences')
     hphi_convergence.add_argument('request',type=Path);hphi_convergence.add_argument('--out',type=Path,required=True)
     hphi_convergence_replay=sub.add_parser('replay-hphi-convergence',help='fully replay every Hphi mesh level and finite-difference decision')
@@ -263,6 +268,12 @@ def main(argv=None):
             else:
                 result=read_planar_history(args.run)
             print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-hphi-tracking','replay-hphi-tracking'):
+            from .hphi_tracking import HphiTrackingRequest
+            from .hphi_tracking_jobs import execute_hphi_tracking,read_hphi_tracking
+            result=(execute_hphi_tracking(args.previous,args.current,HphiTrackingRequest.load(args.request),args.out)
+                    if args.command=='execute-hphi-tracking' else read_hphi_tracking(args.run))
+            print(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False));return 0
         if args.command in ('execute-planar-tracking','replay-planar-tracking'):
             from .planar_tracking import PlanarTrackingRequest
             from .planar_tracking_jobs import execute_planar_tracking, read_planar_tracking
