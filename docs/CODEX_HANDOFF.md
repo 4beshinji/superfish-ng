@@ -1,3 +1,16 @@
+2026-09-12：[軸接続HφのProject・表示・独立Study](AXIS_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
+軸区間・位相原点・betaの編集/復元、実worker・保存取込/取消/再起動、穴を除いた場と全18成分SIプローブ、複素Vacc/両R/Qを接続した。
+標準1042件（1039合格・3skip）、独立28FEM点、実Chrome新12/復元6/旧Hφ8/旧TMTE平面5操作、主4unit/5CLIがPASS。
+既存seed9モード19量はf差0、最大相対差8.882e-16。ベンチマーク不変。
+独立Studyの順位は追跡IDではない。曲線穴・収束/追跡・旧版照合等とP03/O02・全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+Workspace標準63850は終了0・1635.683秒、主4unit24200・5CLI47913も終了0。主611source。
+/tmp/integrate-axis-workspace-20260912.pyと/tmp/finalize-axis-workspace-docs-20260912.pyは実行済み。再実行しない。
+Workspaceの全ブラウザー・サーバー・独立FEM・保存検証は終了済み。
+次は[同一真空領域の共通積分幾何](HPHI_OVERLAP_PLAN.md)。別候補/tmp/superfish-meridional-overlap-20260912へ元要素の厳密交差と穴を除いた全被覆だけを追加した。
+追加4unitは0.947秒、独立48幾何/288多項式積分は6.327秒（97940終了0、最大差9.992e-16）でPASS。
+608source固定と内部作業archiveはout/meridional-overlap-development-20260912。標準56573（out/validation-meridional-overlap-candidate-20260912）が継続中。本体統合はまだ。FEM対応・収束/追跡は含めない。
+全計画は未完。以下の古い稼働記録は、この冒頭を優先する。
+
 2026-09-12：[軸区間・PEC穴を持つ真空HφのFEM・保存](AXIS_HPHI_RF.md)を主ツリーへ統合・限定受入。
 正則u=Hφ/rのP1/P2・全壁RF・明示した複素軸Vacc/両R/Q・専用native/CLIを接続した。
 標準1038件（1035合格・3skip）、独立16FEM/native、12幾何/72モード、凹形4FEM/native、主8unit/6CLIがPASS。

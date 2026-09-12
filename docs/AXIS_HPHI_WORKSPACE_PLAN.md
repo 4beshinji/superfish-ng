@@ -1,6 +1,6 @@
 # 軸接続HφをローカルProject・表示・独立Studyへ接続する計画
 
-`AXIS_HPHI_RF.md`の専用Case/nativeを既存Hφ操作へ接続する後続工程。未受入。
+`AXIS_HPHI_RF.md`の専用Case/nativeを既存Hφ操作へ接続する後続工程。[実装・受入証拠](AXIS_HPHI_WORKSPACE.md)の範囲で限定受入。
 RF候補の標準・独立検証を変更しないよう、別候補を使う。
 
 受入条件は以下とする。

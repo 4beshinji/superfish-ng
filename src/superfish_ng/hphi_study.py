@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Strict independent positive-radius Hphi parameter sweeps; mode ranks are not identities."""
+"""Strict independent Hphi parameter sweeps; mode ranks are not identities."""
 from dataclasses import dataclass
 from copy import deepcopy
 from pathlib import Path
@@ -66,6 +66,8 @@ class HphiStudy:
                     for points in (mesh['outer_rz_m'],*mesh['holes_rz_m'],mesh['points_rz_m']):
                         for point in points:
                             point[0]*=value;point[1]*=value
+                    if case['format']=='superfish_ng_axis_hphi_case' and case['acceleration'] is not None:
+                        for key in ('z_start_m','z_end_m','phase_origin_m'):case['acceleration'][key]*=value
             elif self.parameter.startswith('/case/geometry/'):
                 if not cylinder:
                     raise ValueError('coaxial dimension sweeps cannot rewrite an explicit Hphi mesh; use uniform_scale or another explicitly supported parameter')

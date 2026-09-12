@@ -6,18 +6,19 @@ from pathlib import Path
 from .config import keys
 from .coaxial import CoaxialCase
 from .hphi_mesh import HphiMeshCase
+from .axis_hphi import AxisHphiCase
 from .hphi_native import hphi_case_from_dict
 from .project import parse_json
 
 
 @dataclass(frozen=True,eq=False)
 class HphiProject:
-    case: CoaxialCase | HphiMeshCase
+    case: CoaxialCase | HphiMeshCase | AxisHphiCase
     display_length_unit: str = 'mm'
 
     def __post_init__(self):
-        if not isinstance(self.case,(CoaxialCase,HphiMeshCase)):
-            raise ValueError('HphiProject requires a closed coaxial or positive-radius Hphi mesh case')
+        if not isinstance(self.case,(CoaxialCase,HphiMeshCase,AxisHphiCase)):
+            raise ValueError('HphiProject requires a dedicated coaxial, positive-radius mesh or regular-axis Hphi case')
         object.__setattr__(self,'case',hphi_case_from_dict(self.case.to_dict()))
         if self.display_length_unit not in ('m','mm'):
             raise ValueError('Hphi display_length_unit must be m or mm; saved physics is SI')

@@ -1,7 +1,7 @@
 # 軸につながる穴付き真空断面のHφ拡張計画
 
 P03の残る幾何領域を扱う後続計画。[幾何・行列基盤](AXIS_CONNECTED_MESH.md)は限定受入。
-[製品RF・保存](AXIS_HPHI_RF.md)も限定受入。操作は検証中で未受入。正半径Hφ版1や
+[製品RF・保存](AXIS_HPHI_RF.md)も限定受入。[Project/GUI/独立Study](AXIS_HPHI_WORKSPACE.md)も限定受入。正半径Hφ版1や
 [GUI](HPHI_GUI_PLAN.md)・[独立Study](HPHI_STUDY_PLAN.md)の受入へ含めない。
 
 ## 幾何と場空間

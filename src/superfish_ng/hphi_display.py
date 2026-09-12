@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Positive-radius Hphi display samples and SI probes evaluated in the original FEM cells."""
+"""Hphi display samples and SI probes evaluated in the original FEM cells."""
 import csv
 import hashlib
 import io
@@ -126,7 +126,8 @@ def plot_hphi_mode(run, out, mode=1, *, mesh=False, length_unit='mm'):
         axis.set(xlabel=f'z [{length_unit}]',ylabel=f'r [{length_unit}]',title=label,aspect='equal')
         fig.colorbar(artist,ax=axis,shrink=.8)
     quantities=metadata['quantities']
-    fig.suptitle(f"Positive-radius Hφ | mode rank {mode} | {quantities['frequency_hz']/1e6:.6g} MHz | U={quantities['stored_energy_j']:.6g} J\n"
+    family = "Axis-connected" if solution.case.to_dict()["format"] == "superfish_ng_axis_hphi_case" else "Positive-radius"
+    fig.suptitle(f"{family} Hφ | mode rank {mode} | {quantities['frequency_hz']/1e6:.6g} MHz | U={quantities['stored_energy_j']:.6g} J\n"
                  'peak exp(+iωt), real + i·quadrature; original FEM samples, not a surface-peak certificate',fontsize=10)
     stream=io.BytesIO();canvas.print_png(stream)
     metadata.update(view='rz_signed_fields',length_unit=length_unit,mesh=mesh,

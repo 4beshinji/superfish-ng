@@ -1,5 +1,7 @@
 # 正半径Hφの独立Study
 
+後続の[軸接続Hφ操作](AXIS_HPHI_WORKSPACE.md)も限定受入。明示した第三のCase/nativeを扱い、加速区間・beta・位相原点と複素Vacc/両R/Qを保持する。以下は正半径二形式の初回受入記録で、残項目の現状は後続文書を参照する。
+
 2026-09-12、[Study計画](HPHI_STUDY_PLAN.md)に従い主ツリーへ統合・限定受入した。
 固定候補589sourceの全回帰と、主595source（従来の不変egg-info 6件を含む）の対応を確認した。
 

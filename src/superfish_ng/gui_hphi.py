@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Explicit positive-radius Hphi GUI operations on dedicated Projects and verified jobs."""
+"""Explicit Hphi GUI operations on dedicated Projects and verified jobs."""
 import hashlib
 import json
 import os

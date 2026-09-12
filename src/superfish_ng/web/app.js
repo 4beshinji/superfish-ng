@@ -744,7 +744,7 @@ async function refreshJobs() {
     if (j.kind === "adaptive_refinement") title.textContent += ` / 適応細分${j.refinement_status ? " " + j.refinement_status : ""}`;
     if (j.kind === "rf_optimization") title.textContent += ` / RF探索${j.optimization_status ? " " + j.optimization_status : ""}`;
     if (j.kind === "tune") title.textContent += ` / 周波数調整${j.tuning_status ? " " + j.tuning_status : ""}`;
-    if (["hphi_solve","hphi_study"].includes(j.kind)) title.textContent += " / 正半径Hφ RF";
+    if (["hphi_solve","hphi_study"].includes(j.kind)) title.textContent += " / Hφ RF";
     if (["planar_solve","planar_study","planar_convergence","planar_tracking","planar_tracking_history"].includes(j.kind)) title.textContent += " / 平面RF";
     row.append(title);
     const desc = document.createElement("small");
