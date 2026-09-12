@@ -1,3 +1,11 @@
+2026-09-12：[明示曲線Hφの固有解・場・RF](CURVED_HPHI_RF.md)を主ツリーへ統合・限定受入。
+正半径qの静的循環と軸接続uを分け、元物理微分・逆写像プローブ、全曲線壁損失、明示軸の複素Vaccと両R/Qを専用APIへ接続した。
+標準1095件（1092合格・3skip）、関連26unit、独立48 FEM/144 RFと主4unit/同独立検証がPASS。半径非線形写像の追加24ケース/48RF/12CLIもPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+native/CLI・Project/GUI・一般の形状写像・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+曲線RF標準38419は終了0・2230.517秒。主4unit5.300秒、主48 FEM/144 RFも終了0。主656source。
+/tmp/integrate-curved-hphi-rf-20260912.pyと/tmp/finalize-curved-hphi-rf-docs-20260912.pyは実行済み。再実行しない。
+次のnative/CLI候補/tmp/superfish-curved-hphi-native-20260912は別の受入。実ハンドル94675等の最新状態を確認してから統合する。全計画は未完。以下よりこの冒頭を優先する。
+
 2026-09-12 15:04 UTC 続報：主652sourceへ幾何/K/Mを統合し限定受入。標準36849は1091件（1088合格・3skip）2251.925秒で終了0。主22unit1279は3.374秒、主72幾何47330は8.791秒、主72形式62184は18.460秒で終了0。対応するintegrate/finalize helperは実行済み、再実行しない。
 現在liveは曲線RF標準38419（候補650source、期待1095件、14:39 UTC開始）と曲線native標準94675（候補653source、期待1099件、14:53 UTC開始）。候補を変更しない。未終了を合格に数えない。
 native候補/tmp/superfish-curved-hphi-native-20260912は追加4unit7.502秒、関連30unit20.729秒、独立24ケース/48保存/74CLI（72成功・2想定拒否）77.974秒がPASS。240nativeと97参照ファイル不変、API/CLI native5はbyte一致、プローブ全JSON一致。GUI/Projectは未接続。

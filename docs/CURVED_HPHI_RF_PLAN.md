@@ -1,6 +1,6 @@
 # 明示曲線Hφの固有解・場・RF
 
-[穴付き二次幾何](CURVED_MERIDIONAL_GEOMETRY_PLAN.md)と[変分形式](CURVED_HPHI_FORMS_PLAN.md)に続くP03の工程。未実装・未受入。
+[穴付き二次幾何](CURVED_MERIDIONAL_GEOMETRY_PLAN.md)と[変分形式](CURVED_HPHI_FORMS_PLAN.md)に続くP03の工程。[実装記録](CURVED_HPHI_RF.md)の範囲で限定受入。
 正本は明示した二次多項式メッシュ。真空・閉PEC・m=0 Hφを専用Caseで指定し、軸あり/なしを幾何から区別する。
 
 受入条件：
@@ -16,3 +16,5 @@
 この工程は専用API。native・CLI・Project・Job・GUI・Study・追跡と、解析曲線からの自動生成は後続の受入工程。
 有限FEMの一致を連続問題の誤差上界や曲線表面ピーク精度へ読み替えない。合成形状を実測構造と呼ばない。
 既存の自作固有値処理、二次逆写像、軸電圧積分を再利用する。新規外部資料・依存・旧版参照は予定しない。
+
+標準1095件、関連26unit、独立48 FEM/144 RFと主4unit/同独立検証、追加半径非線形24ケースがPASS。主656sourceへ統合済み。
