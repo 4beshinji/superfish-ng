@@ -109,6 +109,8 @@ def create_server(workspace, port=0):
                 "/style.css": "style.css",
                 "/planar.html": "planar.html",
                 "/planar.js": "planar.js",
+                "/hphi.html": "hphi.html",
+                "/hphi.js": "hphi.js",
             }.get(urlsplit(self.path).path)
             if name is None:
                 return self.reply({"error": "not found"}, 404)
@@ -200,9 +202,15 @@ def create_server(workspace, port=0):
                 }
                 from .gui_planar import ACTIONS, planar_response
                 allowed.update(ACTIONS)
+                from .gui_hphi import ACTIONS as HPHI_ACTIONS, hphi_response
+                allowed.update(HPHI_ACTIONS)
                 if action not in allowed:
                     raise ValueError("unknown operation")
                 keys(data, ["action", *allowed[action]], ["action"], "request")
+                if action in HPHI_ACTIONS:
+                    payload, media = hphi_response(manager, action,
+                        {k: v for k, v in data.items() if k != 'action'}, render_lock, plot_cache)
+                    return self.reply(payload, content_type=media)
                 if action in ACTIONS:
                     payload, media = planar_response(manager, action,
                         {k: v for k, v in data.items() if k != 'action'}, render_lock, plot_cache)

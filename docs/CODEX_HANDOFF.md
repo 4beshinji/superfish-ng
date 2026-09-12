@@ -1,3 +1,28 @@
+2026-09-12：[正半径Hφの表示・GUI](GUI_HPHI.md)を主ツリーへ統合・限定受入。
+元P1/P2の符号付き全場、穴を除いた描画、境界/線分壁損失、Project/実worker/取込/保存/再起動を接続した。
+標準1014件（1011合格・3skip）、独立8件/16CLI、Chrome新9/既存5操作、統合後7unitと2CLIがPASS。
+任意NGSolveの2skipと、別の許可実行で合格したローカルHTTPの環境skip 1件を区別する。
+Study・追跡等とP03/O02・全計画は継続。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+GUI標準18403は終了0、1014件・1812.958秒。主7unit（実HTTP含む）・2CLIも終了0、587sourceを照合済み。
+前の標準65753は終了143で中断し、結果なし・子プロセスなしを確認。中断理由は未特定で、受入には使わない。
+全GUI/ブラウザーサーバーは終了。GUI_HPHI.mdに契約と証拠を記載した。
+
+Study候補/tmp/superfish-hphi-study-20260912は589source固定、標準ハンドル12034が継続中。out/validation-hphi-study-candidate-20260912。
+12unit・18worker/36FEM/18CLI/36再起動、Chrome新9/復元3/旧Hφ8/既存TMTE平面5、保存14完了/2取消と元30ファイル不変がPASS。
+HPHI_STUDY.mdは候補の契約。標準の実終了と589source/seedを確認してから、/tmp/integrate-verified-hphi-candidate-20260912.py studyで14差分sourceを統合できる。
+GUI/Studyの固定sourceアーカイブは各out/*-development-20260912/frozen-candidate-source.tar.gzとarchive.json。配布用パッケージではない。
+
+次の軸穴試作/tmp/superfish-axis-holes-20260912は幾何・canonical P1/P2 K/Mだけを追加し、4unit合格。製品Case/solve/native/CLI未実装。
+AXIS_CONNECTED_HOLES_PLAN.md、out/axis-hole-reference-20260912に4解析恒等式。周波数最近傍が別場を選ぶ反例をout/axis-hole-spectrum-prototype-20260912へ保持。
+磁場の全域内積で対象を選ぶ18試作FEMは62253終了0・143.046秒。out/axis-hole-field-matched-prototype-20260912。
+最終水準のf/E/H/Vaccは固定ゲート内だが、全壁RF・保存・全回帰は未検証で受入にはしない。
+
+Wine 9.0は/usr/lib/wine/wine64で再確認済み。ファイル名だけの拡張検索でもSUPERFISH本体/prefixは未特定。既存desktopは旧/tmp保存先を指す。
+検索は一部読めない場所があり全ファイルの不存在証明ではない。out/wine-runtime-location-scan-20260912。旧版の新しい実行・バイナリ内容閲覧はなし。
+全33課題の完走要求を維持する。goal toolは以前blockedを返したが、進行可能な独立工程を続ける。
+
+以下は以前の工程履歴。現在の稼働ハンドルは冒頭を優先する。
+
 2026-09-12：[正半径HφのProject・ローカルジョブ](HPHI_JOBS.md)を限定受入。
 閉同軸円筒/一般断面の専用入力、実worker、直接/管理済み取込、中止・再起動・完全保存検証を接続した。
 標準1007件（1005合格・2skip）、独立8worker/16取込/再起動24件、統合後8unit・2例題CLIがPASS。

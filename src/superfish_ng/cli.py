@@ -151,6 +151,17 @@ def main(argv=None):
     planar_project=sub.add_parser('execute-planar-project',help='execute a dedicated Cartesian cutoff Project and verify native completion')
     planar_project.add_argument('project',type=Path)
     planar_project.add_argument('--out',type=Path,required=True)
+    hphi_plot=sub.add_parser('plot-hphi',help='plot signed original-cell Hphi/Er/Ez fields, omitting conductor holes')
+    hphi_plot.add_argument('run',type=Path)
+    hphi_plot.add_argument('--out',type=Path,required=True)
+    hphi_plot.add_argument('--mode',type=int,default=1)
+    hphi_plot.add_argument('--mesh',action='store_true')
+    hphi_plot.add_argument('--length-unit',choices=('m','mm'),default='mm')
+    hphi_csv=sub.add_parser('probe-hphi-csv',help='export all signed cylindrical E/H/B components in SI CSV with native metadata')
+    hphi_csv.add_argument('run',type=Path)
+    hphi_csv.add_argument('--out',type=Path,required=True)
+    hphi_csv.add_argument('--points',type=Path,required=True)
+    hphi_csv.add_argument('--mode',type=int,default=1)
     hphi_project=sub.add_parser('execute-hphi-project',help='execute a dedicated positive-radius Hphi Project with verified native completion')
     hphi_project.add_argument('project',type=Path)
     hphi_project.add_argument('--out',type=Path,required=True)
@@ -261,6 +272,15 @@ def main(argv=None):
             from .planar_project import PlanarProject
             from .planar_jobs import execute_planar_project
             print(json.dumps(execute_planar_project(PlanarProject.load(args.project),args.out),indent=2,allow_nan=False))
+            return 0
+        if args.command in ('plot-hphi','probe-hphi-csv'):
+            from .hphi_display import plot_hphi_mode,export_hphi_probe
+            if args.command=='plot-hphi':
+                plot_hphi_mode(args.run,args.out,args.mode,mesh=args.mesh,length_unit=args.length_unit)
+            else:
+                from .project import parse_json
+                export_hphi_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')),args.mode)
+            print(f'WROTE: {args.out}')
             return 0
         if args.command=='execute-hphi-project':
             from .hphi_project import HphiProject

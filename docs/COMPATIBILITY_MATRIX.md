@@ -1,5 +1,11 @@
 # 互換対応表 v0
 
+2026-09-12：[正半径Hφの表示・GUI](GUI_HPHI.md)を主ツリーへ統合・限定受入。
+元P1/P2の符号付き全場、穴を除いた描画、境界/線分壁損失、Project/実worker/取込/保存/再起動を接続した。
+標準1014件（1011合格・3skip）、独立8件/16CLI、Chrome新9/既存5操作、統合後7unitと2CLIがPASS。
+任意NGSolveの2skipと、別の許可実行で合格したローカルHTTPの環境skip 1件を区別する。
+Study・追跡等とP03/O02・全計画は継続。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+
 2026-09-12：[正半径HφのProject・ローカルジョブ](HPHI_JOBS.md)を限定受入。
 閉同軸円筒/一般断面の専用入力、実worker、直接/管理済み取込、中止・再起動・完全保存検証を接続した。
 標準1007件（1005合格・2skip）、独立8worker/16取込/再起動24件、統合後8unit・2例題CLIがPASS。
@@ -185,14 +191,14 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K01 | 折れ線・段差・円弧の形状 | L/H | 実装、対象形状照合、限定AF読込 | 限定外の旧指定/既定値、G03の追加曲線 | A / C02,G03 |
 | K02 | 楕円・双曲線・接線接続 | D（NT=2楕円/3双曲線）、U（接線操作） | 部分：native楕円/双曲線・接続検査・共通接線・有限弧区間判定/位置誤差上界付き接続・固定直線と弧の接続・線分間/有限弧間/直線と弧のフィレットと保存・CLI/GUI、[弧端/退化の特殊ケース診断・構築保存/CLI/GUI](OFFSET_DEGENERACIES.md)、[最小子午面半径制約](MERIDIONAL_RADIUS.md)、[曲線P2/保存/描画/幾何・固定FEM系列・曲線鏡映GUI・楕円/双曲線GUI](CURVED_ELEMENTS.md) | 一般の弧端/退化分類、曲線ピークの物理収束・全要件照合、旧曲線パラメータと対象版での実行検証 | A / C00,G03 |
 | K03 | z折返しを含む単連結輪郭 | U | NG範囲受入：[輪郭](GENERAL_CONTOUR.md)・[品質付き生成](GENERAL_MESH.md) | 軸接続単一外周。旧版全仕様はC00未確認、曲線はG03 | A / G01,G02 |
-| K04 | 内導体・複数境界成分 | U（旧版対象実行） | 部分：[閉同軸円筒](COAXIAL_RF.md)と[正半径の明示一般断面・複数穴](HPHI_MESH_RF.md) | 直線の連結真空・m=0 Hφ族。軸接続の穴付き領域、曲線内導体、GUI・Study/追跡・旧版照合は未完。[Project/Job](HPHI_JOBS.md)も限定受入 | B / P03 |
+| K04 | 内導体・複数境界成分 | U（旧版対象実行） | 部分：[閉同軸円筒](COAXIAL_RF.md)と[正半径の明示一般断面・複数穴](HPHI_MESH_RF.md) | 直線の連結真空・m=0 Hφ族。軸接続の穴付き領域、曲線内導体、Study/追跡・旧版照合は未完。[Project/Job](HPHI_JOBS.md)と[表示/GUI](GUI_HPHI.md)も限定受入 | B / P03 |
 | K05 | 境界付き三角形・局所密度 | L/H | 部分：品質条件付き一般輪郭生成/JSON読込・GUI取込/固定Studyあり | 外部形式変換・生成対象の拡張。旧と同じ節点配置は要求しない | A / G02,O02 |
 | K06 | 高次要素・誤差推定・適応細分 | U | 部分：P1と実長細分、[P2場/RF/保存・表示](HIGH_ORDER_FIELDS.md) | P2場/RFは受入済み。[選択直線要素の細分・係数移送API](MARKED_REFINEMENT.md)を追加。[残差指標と割合による選択](RESIDUAL_INDICATOR.md)を追加。[追跡付きf/RQ/G停止・保存再開API/CLI](ADAPTIVE_REFINEMENT.md)を追加。版2全域確認で円筒P1のRF改善検査はPASS。JobManager実行/取消し/再開と[GUI](GUI_ADAPTIVE_REFINEMENT.md)も接続。[版3](ADAPTIVE_SURFACE_STOPPING.md)でピーク比を含む停止をAPI/CLI/JobManagerへ追加（版3 GUIも接続）。一般形状/効率・誤差上界は未完。曲線局所細分のCase履歴・native保存/CLI、曲線残差指標、親子質量内積追跡を追加。版4の滑らかな閉PEC曲線の五量停止・保存再開はAPI/CLI/JobManager/GUIへ接続。一様細分との球形対照では適応優位は得られず、一般精度/効率は未完。旧アルゴリズムの再現要件ではない | A / N01,N02,N04 |
 | K07 | 軸対称m=0 TM基本/高次モード | L/H | 実装、演習17対象モード照合 | 形状/周波数範囲・探索条件の網羅、対応モードの判定 | A / C04,D01 |
 | K08 | 電気/磁気対称・PEC | L（全領域比較）、U（旧半領域詳細） | 部分：平坦z端・鏡映 | 旧タグ写像、任意境界への拡張要否。旧半領域を直接照合済みとはしない | A / C02,G01 |
 | K09 | 軸対称TE | D（R25相補解）、L（7.17合成円筒二尺度/二モード） | 部分：[直線P1/P2](AXISYMMETRIC_TE.md)・[曲線P2](CURVED_TE_PLAN.md)の固有値・Eφ/Hr/Hz・エネルギー/壁損失・専用native/CLI、[Project/Job](TE_JOBS.md)・[通常GUI](GUI_TE.md)・[円筒追跡](TE_TRACKING_PLAN.md)・[独立掃引](TE_STUDY_PLAN.md)・[収束比較](TE_CONVERGENCE_STUDY_PLAN.md)・[対称面鏡映](TE_REFLECTION_PLAN.md) | 一般形状の追跡等、一般形状の受入。旧版[相補解比較器](C00_TE_COMPLEMENTARY_PLAN.md)は合成円筒に限定し、一般AF入力変換は未対応 | B / P01 |
 | K10 | 平面2D RF | D（R25のCartesian遮断解説明）、U（対象版の実行） | [矩形版1](PLANAR_RF.md)と[単純多角形版2・場/RF・保存/CLI](PLANAR_POLYGON_RF.md)を接続 | 主ツリーの両尺度/両次数8モードのf/場/G・零空間/縮退、CLI、標準813件と既存数値回帰まで限定受入。[一般多角形の明示メッシュ・面積行列基盤](PLANAR_POLYGON_MESH.md)は限定受入。単純多角形solve/保存/CLIは標準835件と両尺度f/場/Gまで限定受入。[平面Project/Job](PLANAR_JOBS.md)は標準849件・独立workerのf/場/G/Q・取込/中止/再起動まで限定受入。[表示/GUI](GUI_PLANAR.md)は標準856件・独立場/回転・Chrome/保存再起動まで限定受入。[独立Study](PLANAR_STUDY.md)は標準865件・独立則・実worker/GUI/保存まで限定受入。[同形状細分診断](PLANAR_CONVERGENCE.md)と[矩形の宣言写像追跡](PLANAR_TRACKING.md)は限定受入。[多角形一様尺度追跡](PLANAR_POLYGON_TRACKING.md)は限定受入。[所有履歴](PLANAR_TRACKING_HISTORY.md)と[相似写像版3](PLANAR_SIMILARITY_TRACKING.md)と[同一領域の独立再メッシュ版4](PLANAR_REMESH_TRACKING.md)、[相似変換＋独立内部メッシュ版5](PLANAR_SIMILARITY_REMESH_TRACKING.md)、[可逆アフィン＋独立内部メッシュ版6](PLANAR_AFFINE_REMESH_TRACKING.md)、[厳密アフィン＋境界/内部の独立メッシュ版7](PLANAR_EXACT_AFFINE_TRACKING.md)も限定受入。曲線・材料・一般の丸めた境界・非線形変形追跡、旧版Cartesian実行は未完 | B / P02 |
-| K11 | 同軸共振器/TEM系 | U（旧版対象実行） | 部分：[閉同軸円筒Hφ族](COAXIAL_RF.md)、[一般正半径断面・複数穴](HPHI_MESH_RF.md)のP1/P2・静的零空間除外・全壁RF・native/CLI | 円筒TEM/TMと矩形穴の独立解析・二尺度/両次数/実細分で限定受入。軸接続の穴付き領域、曲線、GUI・Study/追跡・旧版照合は未完。[Project/Job](HPHI_JOBS.md)も限定受入 | B / P03 |
+| K11 | 同軸共振器/TEM系 | U（旧版対象実行） | 部分：[閉同軸円筒Hφ族](COAXIAL_RF.md)、[一般正半径断面・複数穴](HPHI_MESH_RF.md)のP1/P2・静的零空間除外・全壁RF・native/CLI | 円筒TEM/TMと矩形穴の独立解析・二尺度/両次数/実細分で限定受入。軸接続の穴付き領域、曲線、Study/追跡・旧版照合は未完。[Project/Job](HPHI_JOBS.md)と[表示/GUI](GUI_HPHI.md)も限定受入 | B / P03 |
 | K12 | 複数RF材料領域 | D（MAT、MT EPSILON/MU） | 未 | epsilon/mu界面、エネルギー、対象版での材料入力・実行検証 | B / P04 |
 | K13 | f/U/壁損失/Q0/G/RQ/シャント | L | 実装、対象ケース照合 | 単位/正規化/二つのRQ規約の入出力写像 | A / R01,C03,C04 |
 | K14 | 通過電圧・TTF・加速長・位相 | L（ZCTR/KMETHOD等の限定比較） | NG実装：[加速長/電圧区間/位相原点](ACCELERATING_CONVENTIONS.md) | 旧の任意位相指定の入出力写像・比較。現AF読込は限定 | A / R01,C02,C03 |
