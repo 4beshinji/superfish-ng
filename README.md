@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[軸非接続の縮約磁束psi弱形式](docs/OFF_AXIS_MAGNETOSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
+r>0のpsi=r*Aphi[Wb]、1/r重みのK[1/H]、Jphi荷重[A]を接続し、定数psiの零場を保持する。独立72例・216多項式、P2一様B36例がPASS。境界付き解・保存は後続工程。
+標準1198件（1195合格・3skip）、追加5unitと主5unitがPASS。固定741sourceを主747sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+C00の対象版/旧版仕様確認等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+
+
 2026-09-13：[固定電流での境界距離と細分の分離](docs/MAGNETOSTATIC_BOUNDARY_STUDY.md)を主ツリーへ統合・限定受入。
 平面Jzスラブ/軸Jphi電流核の144例、48細分系列・32境界変化を独立照合した。平面の場不変とAz基準変化、軸の物理的戻りH∝b^-2をFEM差と分離した。
 追加2unit/既存RF例移行2unit・主4unit、例2つの6CLI/4nativeがPASS。API/CLIの5ファイル・全プローブJSONが一致、元20native不変。固定736sourceを主742sourceへ統合し、製品ソース変更なし。

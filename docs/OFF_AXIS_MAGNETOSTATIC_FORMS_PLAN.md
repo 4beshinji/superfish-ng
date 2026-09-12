@@ -1,6 +1,6 @@
 # S02: 軸を含まない磁静領域の縮約磁束ポテンシャル・弱形式
 
-2026-09-13 JST。軸非接続のgauge/参照と場の残件を解く最初の限定課題。未実装・未受入。
+2026-09-13 JST。軸非接続のgauge/参照と場の残件を解く最初の限定課題。[実装記録](OFF_AXIS_MAGNETOSTATIC_FORMS.md)の専用API範囲で限定受入。
 
 直線MeridionalMesh（全点r>0、明示穴を含む）に、psi=r*Aphi[Wb]をP1/P2で表現する。Br=−∂z psi/r、Bz=∂r psi/r、dV=2πr drdz。磁気エネルギーはπ∫nu/r |grad psi|²drdz[J]となる。
 
