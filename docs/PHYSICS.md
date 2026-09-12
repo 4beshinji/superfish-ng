@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v12（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[平面静電弱形式](PLANAR_ELECTROSTATIC_FORMS.md)は単位長さのK[F/m]と体積荷重[C/m]を別APIで組み立てる。rhoはC/m³、測度はdxdyであり、厚さ・回転軸・2πrを仮定しない。定数電位核と全DOFを保持する。平面の境界/Poisson解/元場は後続工程。
+
 第12版は[軸対称線形静電の専用Case/Poisson API](ELECTROSTATIC_SOLVE.md)を接続する。
 直線P1/P2・全セルの正値実数epsilon_r・全領域の符号付きrho・全境界の固定電位/外向きDn/軸を明示する。
 D=-epsilon grad(Phi)、div(D)=rho、Neumann荷重は-∫Dn Ni dS。最低一つの固定電極を必要とし、全軸DOFを保持する。
