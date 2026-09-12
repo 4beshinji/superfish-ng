@@ -1,7 +1,7 @@
 # Hφ細分差診断のローカルworker・GUI接続
 
-明示Project列の専用診断を、Hφページと既存JobManagerへ接続する後続工程。未実装・未受入。
-別候補で進め、固定617sourceの数値/保存/CLI標準検証を変更しない。
+明示Project列の専用診断を、Hφページと既存JobManagerへ接続する後続工程。[固定620sourceの実装](HPHI_CONVERGENCE_WORKSPACE.md)の範囲で限定受入。
+数値/保存/CLIは主9da9419へ統合済み。操作候補は独立7worker/21水準・2unit・新Chrome14/復元6/旧25操作を確認し、標準1057件・主2unit/26保存ジョブ/4CLIも合格し、主626sourceへ統合済み。
 
 受入条件：
 

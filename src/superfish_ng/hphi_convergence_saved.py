@@ -41,6 +41,9 @@ def _hashes(directory,request):
 
 def read_hphi_convergence(directory):
     directory=Path(directory);manifest=_load(directory/'manifest.json')
+    if manifest.get('kind')=='hphi_convergence':
+        from .hphi_convergence_jobs import read_hphi_convergence_job
+        return read_hphi_convergence_job(directory)
     names=['format','manifest_version','files','implementation_sha256','source_changed_during_run'];keys(manifest,names,names,'Hphi convergence manifest')
     if manifest['format']!='superfish_ng_hphi_convergence_manifest' or type(manifest['manifest_version']) is not int or manifest['manifest_version']!=1:
         raise ValueError('expected superfish_ng_hphi_convergence_manifest version 1')

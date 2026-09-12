@@ -58,14 +58,14 @@ async function openResult(id){
  history.replaceState(null,'',`/hphi.html?job=${encodeURIComponent(id)}`);
 }
 async function refresh(){
- const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study'].includes(job.kind)),signature=JSON.stringify(jobs);
+ const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study','hphi_convergence'].includes(job.kind)),signature=JSON.stringify(jobs);
  if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;$('jobs').replaceChildren();
  if(!jobs.length)$('jobs').textContent='Hφの計算はまだありません。';
  for(const job of jobs){const row=document.createElement('div');row.className='job';row.dataset.job=job.id;
- const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='hphi_study'?' / 独立掃引':''} / ${job.id}`;row.append(label);
+ const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='hphi_study'?' / 独立掃引':job.kind==='hphi_convergence'?' / 細分差診断':''} / ${job.id}`;row.append(label);
  const details=document.createElement('small');details.textContent=job.error||job.stage||'';row.append(details);
  const button=document.createElement('button'),active=['queued','running'].includes(job.status);button.textContent=active?'中止':'結果を開く';button.disabled=!active&&job.status!=='complete';
- button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(job.kind==='hphi_study')await openStudy(job.id);else await openResult(job.id);});row.append(button);$('jobs').append(row);}
+ button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(job.kind==='hphi_study')await openStudy(job.id);else if(job.kind==='hphi_convergence')await openConvergence(job.id);else await openResult(job.id);});row.append(button);$('jobs').append(row);}
 }
 $('new').onclick=run(async()=>loadProject(await api('hphi-normalize',{document:fresh()})));
 $('open').onchange=run(async()=>{const file=$('open').files[0];if(file)loadProject(await api('hphi-normalize',{document:await file.text()}));});
@@ -97,5 +97,38 @@ $('study-open').onchange=run(async()=>{const file=$('study-open').files[0];if(fi
 for(const id of ["study-parameter","study-values"])$(id).addEventListener("input",()=>{$("dirty").textContent="未保存のStudy編集";});
 
 $('study-result-save').onclick=run(async()=>{if(!currentStudy)throw Error('掃引結果を選択してください');download(new Blob([JSON.stringify(currentStudy.result,null,2)+'\n'],{type:'application/json'}),'hphi-study-results.json');});
-run(async()=>{loadProject(await api('hphi-normalize',{document:fresh()}));await refresh();const parameters=new URLSearchParams(location.search),id=parameters.get('job'),studyId=parameters.get('study');if(studyId)await openStudy(studyId);else if(id)await openResult(id);})();// Explicit operations retain errors; background refresh does not clear them.
+let convergenceRequest=null,currentConvergence=null;
+const convergenceThresholdLabels={frequency_relative:'周波数の相対差',electric_field_relative:'電場L2の相対差',magnetic_field_relative:'磁場L2の相対差',rf_relative:'各RF量・壁線分の相対差',axis_voltage_relative:'複素加速電圧の相対差',spectral_gap_relative:'近傍周波数との最小相対間隔',minimum_overlap:'E/H対応の最小内積',overlap_margin:'他モードに対する内積の差'};
+for(const [key,title] of Object.entries(convergenceThresholdLabels)){const label=document.createElement('label');label.textContent=title;const input=document.createElement('input');input.type='number';input.step='any';input.id='convergence-'+key;input.disabled=true;input.oninput=()=>{$('convergence-dirty').textContent='未保存の診断条件';};label.append(input);$('convergence-thresholds').append(label);}
+function loadConvergence(request){
+ convergenceRequest=structuredClone(request);$('convergence-document').value=JSON.stringify(request,null,2);$('convergence-ranks').value=JSON.stringify(request.mode_ranks);$('convergence-ranks').disabled=false;
+ for(const key of Object.keys(convergenceThresholdLabels)){const input=$('convergence-'+key);input.value=request.thresholds[key];input.disabled=false;}
+ $('convergence-preview').textContent=`${request.projects.length}水準 / 各水準${request.projects[0].case.modes}モード / 形状・規格化・導電率・加速経路を固定`;
+ $('convergence-save').disabled=false;$('convergence-start').disabled=false;$('convergence-dirty').textContent='';
+}
+function convergenceFromForm(){
+ if(!convergenceRequest)throw Error('診断要求を開いてください');const request=structuredClone(convergenceRequest);request.mode_ranks=JSON.parse($('convergence-ranks').value);
+ for(const key of Object.keys(convergenceThresholdLabels))request.thresholds[key]=numeric('convergence-'+key);return request;
+}
+const convergenceQuantityLabels={frequency_relative:'周波数',electric_field_relative:'電場L2',magnetic_field_relative:'磁場L2',axis_voltage_relative:'複素Vacc','rf/stored_energy_j':'全蓄積エネルギー','rf/electric_energy_j':'電気エネルギー','rf/magnetic_energy_j':'磁気エネルギー','rf/wall_loss_w':'全壁損失','rf/surface_resistance_ohm':'表面抵抗','rf/q0':'Q0','rf/geometry_factor_ohm':'G','rf/r_over_q_accelerator_ohm':'R/Q 加速器定義','rf/r_over_q_circuit_ohm':'R/Q 回路定義'};
+const convergenceReasons={'upper spectral neighbor was not computed':'上側の近傍モードが未計算','spectral separation is unresolved or near-degenerate':'近傍モードとの分離を確認できません','same-rank electric overlap is not uniquely dominant':'同順位の電場対応が一意ではありません','same-rank magnetic overlap is not uniquely dominant':'同順位の磁場対応が一意ではありません','electric and magnetic correspondence require different coefficient phases':'電場と磁場の対応で符号が一致しません'};
+async function openConvergence(id){
+ const data=await api('hphi-convergence-result',{id});currentConvergence=data;loadConvergence(data.request);history.replaceState(null,'',`/hphi.html?convergence=${encodeURIComponent(id)}`);
+ $('convergence-result').hidden=false;$('convergence-selection').textContent=id;$('convergence-status').textContent=`実行・保存: ${data.state.status} / 最後の3水準の差: ${data.result.status}`;$('convergence-decisions').replaceChildren();$('convergence-levels').replaceChildren();
+ for(const decision of data.result.decisions){const section=document.createElement('div');section.className='job';const title=document.createElement('strong');title.textContent=`周波数順位 ${decision.mode_rank}: ${decision.status}`;section.append(title);
+  const reasons=[...new Set(data.result.comparisons.slice(-2).flatMap(pair=>pair.modes.find(mode=>mode.mode_rank===decision.mode_rank).reasons))];if(reasons.length){const paragraph=document.createElement('p');paragraph.textContent=reasons.map(reason=>convergenceReasons[reason]||reason).join(' / ');section.append(paragraph);}
+  const table=document.createElement('table'),head=document.createElement('tr');for(const text of ['量','一つ前の差','最後の差','しきい値','差の減少','判定']){const th=document.createElement('th');th.textContent=text;head.append(th);}table.append(head);
+  for(const [name,check] of Object.entries(decision.checks)){const row=document.createElement('tr');row.dataset.check=name;const label=convergenceQuantityLabels[name]||(name.startsWith('wall_segment/')?'壁線分 '+name.split('/')[1]:name);for(const text of [label,check.previous.toExponential(3),check.last.toExponential(3),check.threshold.toExponential(3),check.nonincreasing?'確認':'未確認',check.passed?'PASS':'UNVERIFIED']){const td=document.createElement('td');td.textContent=text;row.append(td);}table.append(row);}section.append(table);$('convergence-decisions').append(section);
+ }
+ data.request.projects.forEach((project,index)=>{const section=document.createElement('div');section.className='job';const caseData=project.case,cylinder=isCylinder(caseData),label=document.createElement('strong');const cells=cylinder?2*caseData.mesh.nr*caseData.mesh.nz:caseData.mesh.triangles.length;label.textContent=`水準 ${index+1}: P${(cylinder?caseData.mesh:caseData.fem).element_order} / ${cells}三角形`;section.append(label);
+  const button=document.createElement('button');button.textContent='元の結果を取り込む';button.dataset.convergenceLevel=index;button.onclick=run(async()=>{const imported=await api('hphi-convergence-point',{id,index});await refresh();await openResult(imported.id);});section.append(button);$('convergence-levels').append(section);});
+}
+$('convergence-open').onchange=run(async()=>{const file=$('convergence-open').files[0];if(file)loadConvergence(await api('hphi-normalize-convergence',{document:await file.text()}));});
+$('convergence-apply').onclick=run(async()=>loadConvergence(await api('hphi-normalize-convergence',{document:$('convergence-document').value})));
+$('convergence-save').onclick=run(async()=>{const request=await api('hphi-normalize-convergence',{document:convergenceFromForm()});loadConvergence(request);download(new Blob([JSON.stringify(request,null,2)+'\n'],{type:'application/json'}),'hphi-convergence.json');$('convergence-dirty').textContent='診断要求を保存しました';});
+$('convergence-start').onclick=run(async()=>{const request=convergenceFromForm(),data=await api('hphi-start-convergence',{document:request});$('convergence-dirty').textContent=`診断投入済み: ${data.id}`;await refresh();});
+$('convergence-result-save').onclick=run(async()=>{if(!currentConvergence)throw Error('診断結果を選択してください');download(new Blob([JSON.stringify(currentConvergence.result,null,2)+'\n'],{type:'application/json'}),'hphi-convergence-results.json');});
+$('convergence-ranks').oninput=()=>{$('convergence-dirty').textContent='未保存の診断条件';};
+
+run(async()=>{loadProject(await api('hphi-normalize',{document:fresh()}));await refresh();const parameters=new URLSearchParams(location.search),id=parameters.get('job'),studyId=parameters.get('study'),convergenceId=parameters.get('convergence');if(convergenceId)await openConvergence(convergenceId);else if(studyId)await openStudy(studyId);else if(id)await openResult(id);})();// Explicit operations retain errors; background refresh does not clear them.
 setInterval(()=>refresh().catch(failure),2000);

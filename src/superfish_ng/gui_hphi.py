@@ -13,6 +13,8 @@ from .hphi_project import HphiProject
 from .project import parse_json
 
 ACTIONS = {
+    'hphi-normalize-convergence': ['document'], 'hphi-start-convergence': ['document'],
+    'hphi-convergence-result': ['id'], 'hphi-convergence-point': ['id','index'],
     'hphi-normalize-study': ['document'], 'hphi-start-study': ['document'],
     'hphi-study-result': ['id'], 'hphi-study-point': ['id','index'],
     'hphi-normalize': ['document'], 'hphi-start': ['document'],
@@ -27,6 +29,8 @@ ACTIONS = {
 def hphi_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown hphi operation')
+    if action in ('hphi-normalize-convergence','hphi-start-convergence','hphi-convergence-result','hphi-convergence-point'):
+        return hphi_convergence_response(manager,action,data)
     if action in ('hphi-normalize-study','hphi-start-study','hphi-study-result','hphi-study-point'):
         return hphi_study_response(manager,action,data)
     required = ['document'] if action in ('hphi-normalize', 'hphi-start') else ['path'] if action=='hphi-import' else ['id']
@@ -118,3 +122,25 @@ def hphi_study_response(manager, action, data):
     if before!=_snapshot(directory,study):raise ValueError('hphi Study changed during GUI response')
     return payload,media
 
+
+
+def hphi_convergence_response(manager,action,data):
+    from .hphi_convergence import HphiConvergence
+    from .hphi_convergence_jobs import read_hphi_convergence_job,_snapshot,_point_name
+    required=['document'] if action in ('hphi-normalize-convergence','hphi-start-convergence') else ['id']
+    if action=='hphi-convergence-point':required.append('index')
+    keys(data,ACTIONS[action],required,'Hphi convergence request');media='application/json; charset=utf-8'
+    if 'document' in required:
+        raw=parse_json(data['document']) if isinstance(data['document'],str) else data['document']
+        request=HphiConvergence.from_dict(raw)
+        return ({'id':manager.start_hphi_convergence(request)} if action=='hphi-start-convergence' else request.to_dict()),media
+    directory=manager.directory(data['id']);request=HphiConvergence.load(directory/'convergence.json');before=_snapshot(directory,request)
+    result=read_hphi_convergence_job(directory)
+    if action=='hphi-convergence-result':payload=dict(request=request.to_dict(),result=result,state=manager.status(data['id'],verify=True))
+    else:
+        index=data['index']
+        if type(index) is not int or not 0<=index<len(request.projects):raise ValueError('Hphi convergence level index is out of range')
+        if before!=_snapshot(directory,request):raise ValueError('Hphi convergence changed before level import')
+        payload={'id':manager.import_hphi_result(directory/_point_name(index))}
+    if before!=_snapshot(directory,request):raise ValueError('Hphi convergence changed during GUI response')
+    return payload,media

@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .hphi_convergence_jobs import is_hphi_convergence_job, verify_hphi_convergence_job
+        if is_hphi_convergence_job(directory, state, manifest):
+            verify_hphi_convergence_job(directory, state, manifest)
+            return state
         from .hphi_study_jobs import is_hphi_study, verify_hphi_study
         if is_hphi_study(directory, state, manifest):
             verify_hphi_study(directory, state, manifest)
@@ -317,6 +321,11 @@ class JobManager:
                 _state(directory, "failed", error=str(exc))
                 raise
             return identifier
+
+    def start_hphi_convergence(self, request):
+        """Compare explicit Hphi mesh levels in a dedicated local worker."""
+        from .hphi_convergence_jobs import start_hphi_convergence
+        return start_hphi_convergence(self, request)
 
     def start_hphi_study(self, study):
         """Run independent positive-radius Hphi spectra; no mode identity tracking."""
