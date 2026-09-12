@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[軸非接続の境界付き磁静FEM・元6場/J/Wb](docs/OFF_AXIS_MAGNETOSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
+固定psi/Htから相対psiを実FEMで解き、元6場、Jエネルギー/Wb磁束/A電流と反力を保持する。独立88例（P2一様B32、環状電流24、二層24、零場8）がPASS。保存/CLIは後続工程。
+標準1204件（1201合格・3skip）、追加6unitと主6unitがPASS。固定746sourceを主752sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+C00の対象版/旧版仕様確認等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+
+
 2026-09-13：[軸非接続の縮約磁束psi弱形式](docs/OFF_AXIS_MAGNETOSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
 r>0のpsi=r*Aphi[Wb]、1/r重みのK[1/H]、Jphi荷重[A]を接続し、定数psiの零場を保持する。独立72例・216多項式、P2一様B36例がPASS。境界付き解・保存は後続工程。
 標準1198件（1195合格・3skip）、追加5unitと主5unitがPASS。固定741sourceを主747sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。

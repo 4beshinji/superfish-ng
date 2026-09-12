@@ -1,4 +1,6 @@
-# 物理・数値仕様 — canonical specification v15（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
+# 物理・数値仕様 — canonical specification v16（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
+
+[軸非接続の境界付き磁静FEM・元6場/J/Wb](OFF_AXIS_MAGNETOSTATIC_SOLVE.md)。第16版は軸非接続psiの固定値/Ht境界付き実FEMを接続する。自然荷重+2π∫Ht Ni ds[A]、全Jエネルギー/Wb磁束とA電流/反力を別に保持する。基準変更はAphiにC/rを加えるがB/H/Uは不変。領域外の絶対磁束と巻線インダクタンスは推定しない。
 
 [軸非接続の縮約磁束psi弱形式](OFF_AXIS_MAGNETOSTATIC_FORMS.md)。r>0の縮約磁束psi=r*Aphi[Wb]についてBr=−psi_z/r、Bz=psi_r/r、K=2π∫nu/r gradNi·gradNj、f=2π∫Jphi Niを追加する。定数psiは零場Aphi=C/rで、軸を除いた領域だけでは絶対磁束基準は決定できない。
 
