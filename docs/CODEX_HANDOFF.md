@@ -1,3 +1,15 @@
+2026-09-12：[Hφ部分空間対応のGUI](GUI_HPHI_TRACKING.md)を主ツリーへ統合・限定受入。
+個別ID/縮退ID集合、E/H対応とguard等の理由、所有した元場の取込・再比較、要求/結果・URL復元を接続した。
+標準1073件（1070合格・3skip）、独立6GUI/18再起動/6CLI、Chrome新14/復元8/旧40、主2unit/33保存ジョブ/5CLIがPASS。元226native不変、PNG/CSVはbyte一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。履歴・形状写像・曲線内導体等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+追跡GUI標準4607は終了0・2098.608秒、主2unit/33ジョブ/5CLIも終了0。主640source。
+/tmp/integrate-hphi-tracking-gui-20260912.pyと/tmp/finalize-hphi-tracking-gui-docs-20260912.pyは実行済み。再実行しない。
+追跡GUIの全ブラウザー/サーバーは停止済み。ROOT=out/hphi-tracking-gui-browser-server-20260912には元2ジョブをmoved-original-sourcesへ移動した検証状態を保持する。
+次の履歴候補/tmp/superfish-hphi-tracking-history-20260912は639source固定。追加9unit67890は421.101秒で終了0。独立初回11885は元ディレクトリ移動後のmanager.closeで終了1。管理器を先に閉じる検証器修正だけを行い、独立再実行74139、標準96229が継続中。製品/testsは不変。候補を変更しない。ブラウザーは準備中。
+履歴初回8unit20853は試験中のGUI編集を検知して1件ERROR（258.420秒）。条件を変えず固定後の9unitがPASS。履歴と全計画は未受入・未完。
+Wine追加探索out/wine-runtime-additional-location-scan-20260912も対象ファイル未発見だが、権限/欠落パスがある不完全探索。Wine本体は存在する。旧版コード/バイナリ内容は未参照。
+以下よりこの冒頭を優先する。
+
 2026-09-12：[Hφ部分空間対応の所有保存・worker・CLI](HPHI_TRACKING_JOBS.md)を主ツリーへ統合・限定受入。
 前後のProject/nativeを所有保存し、元パス移動後も完全再生する。実行complete、数値PASS/UNVERIFIED、個別ID完了を区別する。
 標準1071件（1068合格・3skip）、独立10追跡worker/34再起動/10CLI、主3unit/3CLIがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。

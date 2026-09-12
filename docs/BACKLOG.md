@@ -1,5 +1,11 @@
 # 実装バックログ
 
+2026-09-12：[Hφ部分空間対応のGUI](GUI_HPHI_TRACKING.md)を主ツリーへ統合・限定受入。
+個別ID/縮退ID集合、E/H対応とguard等の理由、所有した元場の取込・再比較、要求/結果・URL復元を接続した。
+標準1073件（1070合格・3skip）、独立6GUI/18再起動/6CLI、Chrome新14/復元8/旧40、主2unit/33保存ジョブ/5CLIがPASS。元226native不変、PNG/CSVはbyte一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。履歴・形状写像・曲線内導体等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+
+
 2026-09-12：[Hφ部分空間対応の所有保存・worker・CLI](HPHI_TRACKING_JOBS.md)を主ツリーへ統合・限定受入。
 前後のProject/nativeを所有保存し、元パス移動後も完全再生する。実行complete、数値PASS/UNVERIFIED、個別ID完了を区別する。
 標準1071件（1068合格・3skip）、独立10追跡worker/34再起動/10CLI、主3unit/3CLIがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。

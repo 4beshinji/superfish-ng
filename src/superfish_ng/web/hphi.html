@@ -32,6 +32,19 @@
 <div id="convergence-result" hidden><h3>選択した細分差診断</h3><p id="convergence-selection"></p><p id="convergence-status"></p>
 <p>PASSは指定した最後の3水準の差が条件を満たしたことを示します。表面ピークの精度保証や縮退モードの部分空間追跡は未実施です。</p>
 <button id="convergence-result-save">診断結果を保存</button><div id="convergence-decisions"></div><h3>元の水準</h3><div id="convergence-levels"></div></div>
+</section><section><h2>同じ真空領域のモード部分空間対応</h2>
+<p>保存済みの前後の場と、それぞれに明示した比較メッシュを使います。E/Hの対応と有限比較区間を調べます。縮退した群はID集合として扱います。</p>
+<label>前の保存場<select id="tracking-previous"><option value="">保存結果を選択</option></select></label><label>現在の保存場<select id="tracking-current"><option value="">保存結果を選択</option></select></label>
+<label class="file">追跡要求を開く<input id="tracking-open" type="file" accept=".json"></label><button id="tracking-save" disabled>追跡要求を保存</button><p id="tracking-preview">前後の比較メッシュを含む完全な追跡要求を開いてください。</p>
+<label>前の追跡モード数<input id="tracking-previous-count" type="number" min="1" step="1" disabled></label><label>現在の追跡モード数<input id="tracking-current-count" type="number" min="1" step="1" disabled></label>
+<label>前の個別ID配列（集合を使う場合はnull）<input id="tracking-ids" type="text" disabled></label><label>前のID集合（個別IDを使う場合はnull）<textarea id="tracking-groups" rows="3" disabled></textarea></label>
+<div id="tracking-controls"></div><details><summary>追跡要求JSONを編集</summary><textarea id="tracking-document" rows="14" aria-label="Hφ部分空間追跡JSON"></textarea><button id="tracking-apply">JSONを適用</button><p>前後の比較メッシュは完全定義で、座標はSIの(r,z) [m]です。元の場を選んでも比較メッシュは自動生成しません。</p></details>
+<button id="tracking-start" class="primary" disabled>選択した前後の場を比較</button><p id="tracking-dirty"></p>
+<div id="tracking-result" hidden><h3>選択した部分空間対応</h3><p id="tracking-selection"></p><p id="tracking-status"></p><p id="tracking-current-ids"></p><p id="tracking-reasons"></p>
+<p>PASSは指定した二つの有限FEM部分空間の数値対応です。連続した形状変更のモード同一性・連続問題の誤差上界・表面ピーク精度は保証しません。</p>
+<button id="tracking-result-save">対応結果を保存</button><button id="tracking-repeat">保存した前後の場で再比較</button><div id="tracking-matches"></div>
+<details><summary>有限比較空間の区間と射影</summary><p>区間は近くにある比較空間の固有値を調べる数値診断です。固有値の順位や連続問題の包含を証明しません。</p><div id="tracking-resolution"></div></details>
+<h3>元の保存場</h3><div id="tracking-sides"></div></div>
 </section><section><h2>計算履歴</h2><p>completeは実行と保存の完了です。メッシュ精度の合格を意味しません。</p><div id="jobs"></div></section>
 <section id="result" hidden><h2>保存場</h2><p id="selection"></p><label>周波数順位<select id="mode"></select></label><p id="quantities"></p><p id="na"></p><pre id="walls"></pre><details id="wall-segments" hidden><summary>各線分の壁損失 [W]</summary><pre id="segment-losses"></pre></details><label><input id="mesh" type="checkbox">メッシュを重ねる</label><button id="plot">場を表示</button><button id="save-image" disabled>画像を保存</button><p>Hφは実部、Er/Ezはquadrature。peak exp(+iωt)、real+i·quadrature。表示標本は表面ピークの精度保証ではありません。</p><img id="image" hidden alt="真空領域のHφ実部・Er/Ez quadrature。内導体の領域は空白。">
 <h3>SIプローブ</h3><label>真空内の(r,z) [m]の配列<textarea id="points" rows="3">[[0.03,0.09],[0.04,0.09]]</textarea></label><button id="probe">全E/H/BをCSV保存</button><button id="probe-meta">単位・位相・元データ情報を保存</button><p id="probe-note">内導体の内部・領域外の点は評価できません。軸上は真空軸が宣言されたケースで評価できます。</p><h3>元の保存ファイル</h3><div id="files"></div></section></div>

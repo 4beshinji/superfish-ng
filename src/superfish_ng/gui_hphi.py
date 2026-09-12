@@ -13,6 +13,8 @@ from .hphi_project import HphiProject
 from .project import parse_json
 
 ACTIONS = {
+    'hphi-normalize-tracking': ['document'], 'hphi-start-tracking': ['previous_id','current_id','document'],
+    'hphi-tracking-result': ['id'], 'hphi-tracking-side': ['id','side'], 'hphi-repeat-tracking': ['id','document'],
     'hphi-normalize-convergence': ['document'], 'hphi-start-convergence': ['document'],
     'hphi-convergence-result': ['id'], 'hphi-convergence-point': ['id','index'],
     'hphi-normalize-study': ['document'], 'hphi-start-study': ['document'],
@@ -29,6 +31,8 @@ ACTIONS = {
 def hphi_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown hphi operation')
+    if action in ('hphi-normalize-tracking','hphi-start-tracking','hphi-tracking-result','hphi-tracking-side','hphi-repeat-tracking'):
+        return hphi_tracking_response(manager,action,data)
     if action in ('hphi-normalize-convergence','hphi-start-convergence','hphi-convergence-result','hphi-convergence-point'):
         return hphi_convergence_response(manager,action,data)
     if action in ('hphi-normalize-study','hphi-start-study','hphi-study-result','hphi-study-point'):
@@ -120,6 +124,33 @@ def hphi_study_response(manager, action, data):
         if before!=_snapshot(directory,study):raise ValueError('hphi Study changed before point import')
         payload={'id':manager.import_hphi_result(directory/result['points'][index]['directory'])}
     if before!=_snapshot(directory,study):raise ValueError('hphi Study changed during GUI response')
+    return payload,media
+
+
+def hphi_tracking_response(manager,action,data):
+    from .hphi_tracking import HphiTrackingRequest
+    from .hphi_tracking_jobs import read_hphi_tracking,_snapshot
+    keys(data,ACTIONS[action],ACTIONS[action],'Hphi tracking request');media='application/json; charset=utf-8'
+    request=None
+    if 'document' in data:
+        raw=parse_json(data['document']) if isinstance(data['document'],str) else data['document']
+        request=HphiTrackingRequest.from_dict(raw)
+    if action=='hphi-normalize-tracking':return request.to_dict(),media
+    if action=='hphi-start-tracking':
+        return {'id':manager.start_hphi_tracking(manager.directory(data['previous_id']),manager.directory(data['current_id']),request)},media
+    directory=manager.directory(data['id']);before=_snapshot(directory);result=read_hphi_tracking(directory)
+    if action=='hphi-tracking-result':
+        payload=dict(request=result['request'],result=result,state=manager.status(data['id'],verify=True),
+            projects={side:HphiProject.load(directory/side/'project.json').to_dict() for side in ('previous','current')},
+            sources=parse_json((directory/'sources.json').read_text()))
+    elif action=='hphi-tracking-side':
+        if data['side'] not in ('previous','current'):raise ValueError('Hphi tracking side must be previous or current')
+        if before!=_snapshot(directory):raise ValueError('Hphi tracking changed before original side import')
+        payload={'id':manager.import_hphi_result(directory/data['side'])}
+    else:
+        if before!=_snapshot(directory):raise ValueError('Hphi tracking changed before repeat execution')
+        payload={'id':manager.start_hphi_tracking(directory/'previous',directory/'current',request)}
+    if before!=_snapshot(directory):raise ValueError('Hphi tracking changed during GUI response')
     return payload,media
 
 
