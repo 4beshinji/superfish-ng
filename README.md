@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[材料Hφの専用保存・再生・CLI](docs/MATERIAL_HPHI_NATIVE.md)を主ツリーへ統合・限定受入。
+材料/界面/元メッシュ・最低正スペクトル・領域RFを全再構築するnative版1とsolve/replay/probe-material-hphiを追加した。プローブは片側の材料情報とB=mu0 mu_r Hを保持する。
+標準1122件（1119合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/78CLIと主4unit/同照合がPASS。API/CLIの全5ファイルとプローブJSONが一致、元240native/25参照ファイルは不変。
+旧seed9モード19量はf差0、最大相対差8.882e-16。材料Project/GUI/Study・損失/旧版照合、P04と全計画は未完。親33=8受入/12進行/12他未受入/1範囲外。
+
+
 2026-09-13：[材料重み付きHφ固有解・元場・RF](docs/MATERIAL_HPHI_RF.md)を主ツリーへ統合・限定受入。
 直線適合メッシュの正値実数・等方・無損失材料を専用Caseへ接続し、実FEM・セルごとのE/H/B・領域エネルギー・非磁性壁損失・明示真空軸電圧を評価する。
 標準1118件（1115合格・3skip）、追加6unit、独立24材料例72モード/二層8例24モード、主6unit/同独立照合がPASS。

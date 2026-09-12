@@ -196,6 +196,14 @@ def main(argv=None):
     curved_hphi_probe.add_argument('run',type=Path);curved_hphi_probe.add_argument('--points',required=True,type=Path)
     curved_hphi_probe.add_argument('--mode',type=int,default=1,help='one-based positive-spectrum rank, not a mode identity')
     curved_hphi_probe.add_argument('--out',required=True,type=Path)
+    material_hphi=sub.add_parser('solve-material-hphi',help='solve an explicit piecewise lossless material Hphi case with verified native output')
+    material_hphi.add_argument('case',type=Path);material_hphi.add_argument('--out',required=True,type=Path)
+    material_hphi_replay=sub.add_parser('replay-material-hphi',help='reconstruct materials and geometry, lowest positive FEM and all RF, and emit verified JSON')
+    material_hphi_replay.add_argument('run',type=Path)
+    material_hphi_probe=sub.add_parser('probe-material-hphi',help='export original signed E/H/B fields at material [r_m,z_m] points with one-sided region metadata')
+    material_hphi_probe.add_argument('run',type=Path);material_hphi_probe.add_argument('--points',required=True,type=Path)
+    material_hphi_probe.add_argument('--mode',type=int,default=1,help='one-based positive-spectrum rank, not a mode identity')
+    material_hphi_probe.add_argument('--out',required=True,type=Path)
     hphi=sub.add_parser('solve-axis-hphi',help='solve explicit axis-connected vacuum Hphi mesh, including PEC holes')
     hphi.add_argument('case',type=Path)
     hphi.add_argument('--out',required=True,type=Path)
@@ -366,6 +374,19 @@ def main(argv=None):
             else:
                 from .project import parse_json
                 export_curved_hphi_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')),args.mode)
+                print(f'WROTE: {args.out}')
+            return 0
+        if args.command in ('solve-material-hphi','replay-material-hphi','probe-material-hphi'):
+            from .material_hphi import MaterialHphiCase,solve_material_hphi
+            from .material_hphi_saved import save_material_hphi_run,read_material_hphi_run,material_hphi_result,export_material_hphi_probe
+            if args.command=='solve-material-hphi':
+                case=MaterialHphiCase.load(args.case)
+                print(json.dumps(save_material_hphi_run(case,solve_material_hphi(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-material-hphi':
+                print(json.dumps(material_hphi_result(read_material_hphi_run(args.run)),indent=2,allow_nan=False))
+            else:
+                from .project import parse_json
+                export_material_hphi_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')),args.mode)
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-axis-hphi','replay-axis-hphi','probe-axis-hphi'):

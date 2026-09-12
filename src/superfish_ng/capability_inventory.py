@@ -64,6 +64,32 @@ def hphi_capabilities():
             'No general shape-deformation identity, continuous-spectrum error bound or surface-peak accuracy guarantee'])
 
 
+def material_hphi_capabilities():
+    return dict(case_format='superfish_ng_material_hphi_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_material_hphi_manifest',native_schema_versions=[1],
+        result_format='superfish_ng_material_hphi_result',result_schema_versions=[1],
+        partition_format='superfish_ng_rf_material_partition',partition_schema_versions=[1],
+        commands=['solve-material-hphi','replay-material-hphi','probe-material-hphi'],
+        physics='rf_eigenmode',coordinates='axisymmetric r,z',azimuthal_index=0,field_family='Hphi',boundary='closed PEC',
+        geometry='explicit straight material-conforming meridional triangles, optional axis and PEC holes',
+        element_orders=[1,2],axis_connected=[False,True],
+        material='positive real isotropic linear nondispersive lossless epsilon_r/mu_r, constant in each explicitly assigned cell',
+        formulations=dict(positive_radius='q=r*Hphi, A; remove one constant static mode',
+            axis_connected='u=Hphi/r, A/m^2; retain every regular axis DOF, remove no mode'),
+        phasor='peak exp(+i omega t); Hphi real, Er/Ez quadrature; field=real+i*quadrature',
+        fields='E uses epsilon_r(original cell); B=mu0*mu_r(original cell)*H',
+        probes='18 SI E/H/B components, original cell, region/material IDs and coefficients; lowest original cell at interfaces, no averaging',
+        volume_measure='2*pi*r dr dz; full 3D',energy_unit='J',wall_loss_unit='W',
+        energy='integral (epsilon0*epsilon_r*|E|^2+mu0*mu_r*|H|^2)/4 dV; electric and magnetic by region',
+        wall_model='nonmagnetic metal; Rs=sqrt(pi*f*mu0/sigma), independent of adjacent material mu_r; no volume loss',
+        acceleration='explicit axis interval with epsilon_r=mu_r=1 on every overlapping axis segment; absent path gives null/N/A',
+        rq_definitions=dict(accelerator='abs(Vacc)^2/(omega*U)',circuit='abs(Vacc)^2/(2*omega*U)'),
+        project=False,gui=False,study=False,tracking=False,
+        limits=['No curved cells, complex/dispersive/anisotropic/nonlinear materials or volume conductivity',
+            'No open ports, azimuthal m>0 or static-field solver',
+            'No continuum error bound or surface-peak accuracy guarantee; mode rank is not identity'])
+
+
 def planar_tracking_mappings():
     return [dict(version=version, name=name, scope=scope) for version, name, scope in (
         (1, 'normalized_rectangle', 'rectangular cases on a normalized rectangle'),

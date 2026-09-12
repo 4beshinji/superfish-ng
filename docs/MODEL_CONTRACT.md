@@ -1,5 +1,7 @@
 # C01: 物理・材料・領域と入力版の共通契約
 
+2026-09-13：[材料Hφ専用native/CLI](MATERIAL_HPHI_NATIVE.md)。capabilities.material_hphi_rfに専用Case/材料分割/native版1、3コマンド、材料重み付きE/H/B・エネルギー、非磁性壁と真空軸経路の制約を記載する。canonical Modelと真空Hφの4形式は不変。材料Project/GUI/Study/追跡は未対応と明記する。
+
 2026-09-13：[能力表整合](CAPABILITY_INVENTORY.md)。capabilitiesのhphi_rfへ専用4形式と操作・制約を追加し、平面追跡版1〜7を列挙する。既存supported_modelsはcanonical Modelだけを指し、専用HφをModelへ混在させない。能力情報を追加しても材料等の入力は受理しない。
 
 2026-09-09追補: [TE収束Study](TE_CONVERGENCE_STUDY_PLAN.md)を接続・限定受入済み。両native分割の全セルでEφ/Hr/Hzの体積内積を評価し、電場と磁場の相対L2、周波数、適用可能なRF量を別判定する。積分次数3/5の差・共通体積・近接縮退を確認し、未確認時はUNVERIFIED。R/Q/軸加速量はN/Aを保持する。幾何近似変更と元二次写像固定を区別し、表面ピーク精度を保証しない。
