@@ -1,3 +1,22 @@
+2026-09-12：[元Hφ電場・磁場の体積内積](HPHI_FIELD_OVERLAP.md)を主ツリーへ統合・限定受入。
+同一真空領域の独立P1/P2メッシュで、元場と位相・規格化を保持した全3DのE/H自己・交差内積を検証した。
+標準1050件（1047合格・3skip）、独立48FEM/native・48比較、解析8FEM、主4unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
+この物理積分から順位対応や一般の精度を宣言しない。親33課題の8受入/11進行/13他未受入/1範囲外と全計画の未完状態を維持する。
+物理内積標準46867は終了0・1633.992秒、主4unit57573も終了0。主618source。
+/tmp/integrate-hphi-field-overlap-20260912.pyと/tmp/finalize-hphi-field-overlap-docs-20260912.pyは実行済み。再実行しない。
+明示細分差617sourceの標準65005が継続中。独立24系列/72FEM・細かい解析4系列/12FEM・縮退3FEM・5unit/4CLIは終了0。
+操作候補/tmp/superfish-hphi-convergence-workspace-20260912は現在620source。新2unitは初回30.178秒、初回UI sourceのPython2unit72353も終了0。JS挿入構文エラーは修正しnode --check合格。
+独立操作51380（out/hphi-convergence-workspace-independent-20260912）が継続中。実ブラウザーと操作候補標準はまだ。
+元の完走要求と未完状態を維持し、以下よりこの冒頭を優先する。
+
+2026-09-12 続報：主d43da1a・614source。共通幾何は統合・限定受入済み。物理内積612sourceの標準46867は継続中。
+明示細分差617sourceをfreeze済み、標準65005（out/validation-hphi-convergence-candidate-20260912）が継続中。5unit24.543秒、24系列/72FEM202.061秒、4実CLI15.609秒は終了0。
+細かい解析4系列/12FEM10787は終了0・348.806秒。n=4/8/16の両物理・両尺度が元の条件でPASS、f/E/H/全壁/軸Vacc/両R/Qの独立解析誤差も減少。初回の一壁非単調を保持し閾値は不変。
+縮退解析27232も終了0・15.584秒。正確に縮退するTM011/TM020の両順位をUNVERIFIEDに保ち、最終周波数誤差2.735e-7/3.370e-7を確認した。
+次の操作候補/tmp/superfish-hphi-convergence-workspace-20260912は617sourceから分離。専用Job/GUI API/要求フォームと各量の判定・水準取込表示を追加中。
+新2unit92382は30.178秒でPASS。UI組込初回はonchange代入途中への挿入によりnode構文チェックが失敗した。72353のPython2unitは終了0だがブラウザー合格とは数えない。挿入箇所をstartup前へ修正し、JS2ファイルのnode --checkは終了0。実ブラウザー・最終unit・標準はまだ。
+操作候補sourceは未freeze。HPHI_CONVERGENCE_WORKSPACE_PLAN.mdを参照。全計画未完、以下よりこの冒頭を優先する。
+
 2026-09-12：[同一真空領域の元要素共通分割](MERIDIONAL_OVERLAP.md)を主ツリーへ統合・限定受入。
 軸あり/なし・全PEC穴を含む厳密な同形状と各元要素の被覆、独立メッシュの重心座標・多項式積分を確認した。
 標準1046件（1043合格・3skip）、独立48組/288積分、主4unitがPASS。旧seed9モード19量はf差0、最大相対差8.882e-16。
