@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v17（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[軸接続反跳材料の弱形式](AXIS_RECOIL_FORMS.md)。軸接続のa=Aphi/r[T]に対してBr=−r a_z、Bz=2a+r a_r、H=nu(B−Brem)。K=∫B_iᵀnu B_j dV、fJ=∫Jphi*r*Ni dV、frem=∫B_iᵀnu Brem dV、dV=2pi*r dr dz。軸接触領域の向き0・径方向残留B=0、phi結合なし/mu_phi=mu_rr/残留B_phi=0を明示する。全軸DOFを残し、定数aは一様軸Bであってgaugeではない。境界付き解は後続工程。
+
 [平面の線形反跳材料の保存・再構築・CLI](PLANAR_RECOIL_NATIVE.md)。平面反跳材料native/CLIは全テンソル/残留B/向きとAz基準、三荷重・元5場・基準付き構成ポテンシャルを同じ実FEMで再検証する。絶対磁石内部エネルギーへの読み替えはしない。
 
 [平面の線形反跳材料の境界付きFEM・元場](PLANAR_RECOIL_SOLVE.md)。第17版は平面反跳材料の固定Az/Ht境界付き実FEMを接続する。元H=nu(B−Brem)、自然荷重−∫HtNi ds、固定反力=−元Ht積分。三荷重とU/R/W0/Ws/C0[J/m]を分け、W0+C0=Wsと2U=全源/境界仕事を検証する。
