@@ -1,6 +1,6 @@
 # P04/O02: 材料HφのProject・表示・独立掃引
 
-2026-09-13 JST。専用材料native/CLIの次の限定課題。未受入。
+2026-09-13 JST。専用材料native/CLIの次の限定課題。[実装記録](MATERIAL_HPHI_WORKSPACE.md)の操作範囲で限定受入。
 材料Caseを既存Hφ Project・所有worker・GUIへ接続し、全材料・界面・場の片側情報を保持する。
 材料Case/Project JSONの読込から計算・保存・表示・再起動までを対象とする。
 

@@ -59,11 +59,12 @@ class HphiStudy:
             raw=deepcopy(self.project.to_dict());case=raw['case']
             cylinder=case['format']=='superfish_ng_coaxial_case'
             curved=case['format']=='superfish_ng_curved_hphi_case'
+            material=case['format']=='superfish_ng_material_hphi_case'
             if self.parameter=='uniform_scale':
                 if cylinder:
                     for key in ('inner_radius_m','outer_radius_m','length_m'):case['geometry'][key]*=value
                 else:
-                    mesh=case['geometry']['base_mesh'] if curved else case['mesh']
+                    mesh=case['geometry']['base_mesh'] if curved else case['partition']['mesh'] if material else case['mesh']
                     if curved:
                         for point in case['geometry']['edge_midpoints_rz_m']:
                             point[0]*=value;point[1]*=value

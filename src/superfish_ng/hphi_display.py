@@ -10,6 +10,7 @@ import tempfile
 import numpy as np
 from .constants import MU0
 from .curved_hphi import CurvedHphiSolution
+from .material_hphi import MaterialHphiSolution
 from .curved_hphi_display import curved_hphi_display_fields, paint_curved_hphi_panel
 from .hphi_native import read_hphi_run, hphi_result
 from .hphi_jobs import _native_hashes
@@ -32,9 +33,10 @@ def display_hphi_fields(solution, mode=0):
     cells = np.repeat(np.arange(len(space.mesh.triangles)), len(split))
     barycentric = np.tile(reference[split].mean(axis=1), (len(space.mesh.triangles), 1))
     fields = solution.fields_in_cells(cells, barycentric, mode)
-    for axis in ('r','phi','z'):
-        for phase in ('real', 'quadrature'):
-            fields[f'B{axis}_{phase}_T'] = MU0 * fields[f'H{axis}_{phase}_A_per_m']
+    if not isinstance(solution, MaterialHphiSolution):
+        for axis in ('r','phi','z'):
+            for phase in ('real', 'quadrature'):
+                fields[f'B{axis}_{phase}_T'] = MU0 * fields[f'H{axis}_{phase}_A_per_m']
     return dict(points_rz_m=space.dof_points,
                 triangles=space.cell_dofs[:, split].reshape(-1, 3),
                 parent_cells=cells, barycentric=barycentric, fields=fields)
@@ -88,18 +90,28 @@ def publish_hphi_view(run, out, data, metadata):
 def export_hphi_probe(run, out, points_rz_m, mode=1):
     """Export all real/quadrature E/H components in SI, retaining CSV columns."""
     solution, metadata = verified_hphi_view(run, mode)
-    fields = solution.fields_at(points_rz_m, mode-1)
-    for axis in ('r','phi','z'):
-        for phase in ('real','quadrature'):
-            fields[f'B{axis}_{phase}_T'] = MU0 * fields[f'H{axis}_{phase}_A_per_m']
+    material = isinstance(solution, MaterialHphiSolution)
+    if material:
+        probe = solution.probe_at(points_rz_m, mode-1)
+        fields = probe['fields']
+    else:
+        fields = solution.fields_at(points_rz_m, mode-1)
+        for axis in ('r','phi','z'):
+            for phase in ('real','quadrature'):
+                fields[f'B{axis}_{phase}_T'] = MU0 * fields[f'H{axis}_{phase}_A_per_m']
     points = np.asarray(points_rz_m, dtype=float)
     stream = io.StringIO(newline='')
     writer = csv.writer(stream)
-    writer.writerow(['r_m', 'z_m', *fields])
-    writer.writerows([*point, *(fields[key][i] for key in fields)] for i, point in enumerate(points))
+    material_columns = ['cell_index','region_id','material_id','epsilon_r','mu_r'] if material else []
+    writer.writerow(['r_m', 'z_m', *fields, *material_columns])
+    material_keys = ['cell_indices','region_ids','material_ids','epsilon_r','mu_r'] if material else []
+    writer.writerows([*point, *(fields[key][i] for key in fields), *(probe[key][i] for key in material_keys)] for i, point in enumerate(points))
     metadata.update(view='rz_probe', points_rz_m=points.tolist(),
                     magnetic_flux_density='B = mu0 H; same phase; SI tesla',
                     mu0_h_per_m=MU0)
+    if material:
+        metadata.update(magnetic_flux_density='B = mu0 mu_r(original cell) H; same phase; SI tesla',
+            material_samples={key:probe[key] for key in (*material_keys,'barycentric','interface_policy')})
     return publish_hphi_view(run, out, stream.getvalue().encode('utf-8'), metadata)
 
 
@@ -136,6 +148,8 @@ def plot_hphi_mode(run, out, mode=1, *, mesh=False, length_unit='mm'):
     quantities=metadata['quantities']
     family = "Axis-connected" if solution.case.to_dict()["format"] == "superfish_ng_axis_hphi_case" else "Positive-radius"
     if curved: family = "Curved axis-connected" if solution.case.axis_connected else "Curved positive-radius"
+    if isinstance(solution, MaterialHphiSolution):
+        family = "Material axis-connected" if solution.case.axis_connected else "Material positive-radius"
     fig.suptitle(f"{family} Hφ | mode rank {mode} | {quantities['frequency_hz']/1e6:.6g} MHz | U={quantities['stored_energy_j']:.6g} J\n"
                  'peak exp(+iωt), real + i·quadrature; original FEM samples, not a surface-peak certificate',fontsize=10)
     stream=io.BytesIO();canvas.print_png(stream)
@@ -146,4 +160,7 @@ def plot_hphi_mode(run, out, mode=1, *, mesh=False, length_unit='mm'):
         metadata.update(display_geometry=samples['geometry'],reference_subtriangles_per_cell=64,
                         mesh_interpretation='original quadratic element edges',
                         sample_location='mapped reference subtriangle centroid; one-sided original FEM')
+    if isinstance(solution, MaterialHphiSolution):
+        metadata.update(material_field_policy='epsilon_r/mu_r from each original cell; no interface averaging',
+                        displayed_material_regions=[region.id for region in solution.case.partition.regions])
     return publish_hphi_view(run,out,stream.getvalue(),metadata)

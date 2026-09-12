@@ -15,13 +15,14 @@ function download(blob,name){const url=URL.createObjectURL(blob),a=document.crea
 function numeric(id){const value=$(id).value;if(!value.trim()||!Number.isFinite(Number(value)))throw Error(`${id}: 有限の数値を入力してください`);return Number(value);}
 function isCylinder(c){return c.format==='superfish_ng_coaxial_case';}
 function isCurved(c){return c.format==='superfish_ng_curved_hphi_case';}
-function explicitMesh(c){return isCurved(c)?c.geometry.base_mesh:c.mesh;}
-function isAxis(c){return c.format==='superfish_ng_axis_hphi_case'||isCurved(c)&&explicitMesh(c).format==='superfish_ng_axis_connected_mesh';}
+function isMaterial(c){return c.format==='superfish_ng_material_hphi_case';}
+function explicitMesh(c){return isCurved(c)?c.geometry.base_mesh:isMaterial(c)?c.partition.mesh:c.mesh;}
+function isAxis(c){return c.format==='superfish_ng_axis_hphi_case'||(isCurved(c)||isMaterial(c))&&explicitMesh(c).format==='superfish_ng_axis_connected_mesh';}
 function accelerationInputs(){for(const id of ['axis-start','axis-end','axis-origin','axis-beta'])$(id).disabled=!$('acceleration-enabled').checked;}
 function rqText(q){return q.r_over_q_accelerator_ohm===null?'N/A / N/A':`${q.r_over_q_accelerator_ohm.toPrecision(5)} / ${q.r_over_q_circuit_ohm.toPrecision(5)} Ω`;}
 function documentFromForm(){
  const p=structuredClone(project),c=p.case;c.name=$('name').value;c.modes=numeric('modes');
- const fem=isCylinder(c)?c.mesh:c.fem;fem.element_order=numeric('order');if(!isAxis(c)||isCurved(c))fem.quadrature_order=numeric('quadrature');
+ const fem=isCylinder(c)?c.mesh:c.fem;fem.element_order=numeric('order');if(!isAxis(c)||isCurved(c)||isMaterial(c))fem.quadrature_order=numeric('quadrature');
  if(isAxis(c)){const scale=unit==='mm'?1000:1;c.acceleration=$('acceleration-enabled').checked?{path:'axis',z_start_m:numeric('axis-start')/scale,z_end_m:numeric('axis-end')/scale,phase_origin_m:numeric('axis-origin')/scale,beta:numeric('axis-beta')}:null;}
  c.rf.stored_energy_j=numeric('energy');c.rf.conductivity_s_per_m=numeric('conductivity');
  if(isCylinder(c)){const scale=unit==='mm'?1000:1;c.geometry.inner_radius_m=numeric('inner-radius')/scale;c.geometry.outer_radius_m=numeric('outer-radius')/scale;c.geometry.length_m=numeric('length')/scale;c.mesh.nr=numeric('nr');c.mesh.nz=numeric('nz');}
@@ -31,18 +32,20 @@ function loadProject(p){
  project=structuredClone(p);const c=p.case;unit=p.display_length_unit;$('unit').value=unit;
  $('name').value=c.name;$('modes').value=c.modes;$('energy').value=c.rf.stored_energy_j;$('conductivity').value=c.rf.conductivity_s_per_m;
  const cylinder=isCylinder(c),fem=cylinder?c.mesh:c.fem;$('order').value=fem.element_order;$('quadrature').value=fem.quadrature_order??'';
- $('quadrature-row').hidden=isAxis(c)&&!isCurved(c);$('axis-acceleration').hidden=!isAxis(c);
+ $('quadrature-row').hidden=isAxis(c)&&!isCurved(c)&&!isMaterial(c);$('axis-acceleration').hidden=!isAxis(c);
  if(isAxis(c)){const scale=unit==='mm'?1000:1,z=explicitMesh(c).outer_rz_m.filter(p=>p[0]===0).map(p=>p[1]);const a=c.acceleration??{z_start_m:Math.min(...z),z_end_m:Math.max(...z),phase_origin_m:0,beta:1};$('acceleration-enabled').checked=c.acceleration!==null;$('axis-start').value=a.z_start_m*scale;$('axis-end').value=a.z_end_m*scale;$('axis-origin').value=a.phase_origin_m*scale;$('axis-beta').value=a.beta;accelerationInputs();}
- $('spectrum-note').textContent=(isAxis(c)?'真空軸の正則な場を使い、零モードを除外せず正周波数を小さい順に計算します。':'静的な循環磁場を除き、正周波数を小さい順に計算します。')+'同じ順位は同一モードの追跡IDではありません。';
+ $('spectrum-note').textContent=(isAxis(c)?(isMaterial(c)?'対称軸':'真空軸')+'の正則な場を使い、零モードを除外せず正周波数を小さい順に計算します。':'静的な循環磁場を除き、正周波数を小さい順に計算します。')+'同じ順位は同一モードの追跡IDではありません。';
  $('cylinder').hidden=!cylinder;$('explicit-note').hidden=cylinder;
  if(cylinder){const scale=unit==='mm'?1000:1;$('inner-radius').value=c.geometry.inner_radius_m*scale;$('outer-radius').value=c.geometry.outer_radius_m*scale;$('length').value=c.geometry.length_m*scale;$('nr').value=c.mesh.nr;$('nz').value=c.mesh.nz;}
  else {const m=explicitMesh(c);$('explicit-note').textContent=isCurved(c)?`明示した二次曲線：${m.points_rz_m.length}頂点、${c.geometry.edge_midpoints_rz_m.length}辺中点、${m.triangles.length}曲線三角形、${m.holes_rz_m.length}個の穴。形状はProject JSONで保持しています。独立掃引を利用できます。曲線の細分差診断と追跡は未対応です。`:`明示した一般断面：${m.points_rz_m.length}節点、${m.triangles.length}三角形、${m.holes_rz_m.length}個の穴。形状はProject JSONで保持しています。`;}
+ $('material-input').hidden=!isMaterial(c);if(isMaterial(c)){const materials=new Map(c.partition.materials.map(m=>[m.id,m]));$('material-input').textContent='無損失・等方・区分一定材料（Project JSONで保持）\n'+c.partition.regions.map(r=>{const m=materials.get(r.material);return `${r.id} / 材料 ${m.id}: εr=${m.epsilon_r}, μr=${m.mu_r}, ${r.cell_indices.length}セル`;}).join('\n')+'\n軸加速経路はεr=μr=1の真空区間だけ指定できます。壁は非磁性金属です。';}
  document.querySelectorAll('.length-unit').forEach(el=>el.textContent=unit);$('document').value=JSON.stringify(p,null,2);$('dirty').textContent='入力を復元済み';
 }
 function fresh(){return {format:'superfish_ng_hphi_project',project_version:1,display_length_unit:'mm',case:{format:'superfish_ng_coaxial_case',schema_version:1,name:'閉同軸円筒',model:{physics:'rf_eigenmode',coordinates:'axisymmetric',azimuthal_index:0,field_family:'Hphi',material:'vacuum',boundary:'closed_pec'},geometry:{type:'coaxial_cylinder',inner_radius_m:.025,outer_radius_m:.05,length_m:.18},mesh:{nr:8,nz:24,element_order:2,quadrature_order:8},modes:4,rf:{stored_energy_j:1,conductivity_s_per_m:5.8e7}}};}
 function clearImage(){request++;if(imageURL)URL.revokeObjectURL(imageURL);imageURL=null;imageBlob=null;$('image').hidden=true;$('save-image').disabled=true;}
 function showQuantities(){
  if(!result)return;$('curved-display-note').hidden=!isCurved(result.case);const q=result.modes[Number($('mode').value)-1];
+ $('material-result').hidden=!isMaterial(result.case);if(isMaterial(result.case))$('material-result').textContent='領域別エネルギー・隣接PEC壁損失\n'+q.regions.map(r=>`${r.id} / ${r.material}: Ue=${r.electric_energy_j.toPrecision(6)} J, Um=${r.magnetic_energy_j.toPrecision(6)} J, 壁P=${r.adjacent_wall_loss_w.toPrecision(6)} W`).join('\n')+'\nB=μ0 μr H（元セルの片側値）。壁金属のμr=1、体積損失=0。';
  $('quantities').textContent=`f = ${(q.frequency_hz/1e6).toFixed(6)} MHz / U = ${q.stored_energy_j.toPrecision(6)} J / 全壁損失 P = ${q.wall_loss_w.toPrecision(6)} W / Q0 = ${q.q0.toPrecision(6)} / G = ${q.geometry_factor_ohm.toPrecision(6)} Ω`;
  if(q.vacc_v!==null)$('na').textContent=`R/Q（加速器 / 回路）= ${rqText(q)} / Vacc（実部, 虚部）= (${q.vacc_v.real.toPrecision(6)}, ${q.vacc_v.imag.toPrecision(6)}) V / Eacc = ${q.eacc_v_per_m.toPrecision(6)} V/m`;
  else $('na').textContent=isAxis(result.case)?'R/Q（加速器定義・回路定義）・加速電圧：N/A。加速経路を宣言していません。':'R/Q（加速器定義・回路定義）・加速電圧：N/A。軸は真空領域外で、加速経路を宣言していません。';
@@ -50,7 +53,7 @@ function showQuantities(){
  const walls=q.wall_h2_integral_a2_by_component?q.wall_h2_integral_a2_by_component.map((v,i)=>[i?`穴 ${i}`:'外周',v]):Object.entries(q.wall_h2_integral_a2_by_surface).map(([k,v])=>[labels[k]||k,v]);
  $('walls').textContent='各境界の壁損失 [W]\n'+walls.map(([name,v])=>`${name}: ${(q.surface_resistance_ohm*v/2).toPrecision(6)}`).join('\n');
  $('wall-segments').hidden=!q.wall_h2_integral_a2_by_segment;
- if(q.wall_h2_integral_a2_by_segment){let offset=0;const lines=[];for(const [component,contour] of [explicitMesh(result.case).outer_rz_m,...explicitMesh(result.case).holes_rz_m].entries()){for(let edge=0;edge<contour.length;edge++)lines.push(`${component?'穴 '+component:'外周'} / ${isCurved(result.case)?'区間':'線分'} ${edge+1}${contour[edge][0]===0&&contour[(edge+1)%contour.length][0]===0?'（真空軸）':''}: ${(q.surface_resistance_ohm*q.wall_h2_integral_a2_by_segment[offset++]/2).toPrecision(6)}`);}$('segment-losses').textContent=lines.join('\n');}
+ if(q.wall_h2_integral_a2_by_segment){let offset=0;const lines=[];for(const [component,contour] of [explicitMesh(result.case).outer_rz_m,...explicitMesh(result.case).holes_rz_m].entries()){for(let edge=0;edge<contour.length;edge++)lines.push(`${component?'穴 '+component:'外周'} / ${isCurved(result.case)?'区間':'線分'} ${edge+1}${contour[edge][0]===0&&contour[(edge+1)%contour.length][0]===0?(isMaterial(result.case)?'（対称軸）':'（真空軸）'):''}: ${(q.surface_resistance_ohm*q.wall_h2_integral_a2_by_segment[offset++]/2).toPrecision(6)}`);}$('segment-losses').textContent=lines.join('\n');}
 }
 async function openResult(id){
  const sequence=++request,data=await api('hphi-result',{id});if(sequence!==request)return;
@@ -136,7 +139,7 @@ let trackingRequest=null,currentTracking=null;
 const trackingControlLabels={minimum_overlap:'E/Hの最小主内積',minimum_assignment_margin:'他候補への割当余裕',relative_cluster_gap:'周波数を群にする相対間隔',minimum_relative_singular_value:'基底の最小相対特異値',minimum_cluster_link:'群の結合候補の内積',maximum_relative_projection_error:'比較空間への最大射影誤差',quadrature_order:'比較空間の積分次数',max_candidate_tests:'共通領域の探索予算',max_overlay_triangles:'共通三角形の上限',max_dofs:'各比較空間の自由度上限',max_gram_modes:'内積を計算するモード数の上限'};
 for(const [key,title] of Object.entries(trackingControlLabels)){const label=document.createElement('label');label.textContent=title;const input=document.createElement('input');input.type='number';input.step=key.startsWith('max_')||key==='quadrature_order'?'1':'any';input.id='tracking-'+key;input.disabled=true;input.oninput=()=>{$('tracking-dirty').textContent='未保存の追跡条件';};label.append(input);$('tracking-controls').append(label);}
 function trackingCandidates(jobs){
- const candidates=jobs.filter(j=>j.kind==='hphi_solve'&&j.status==='complete'&&j.case_format!=='superfish_ng_curved_hphi_case'),signature=JSON.stringify(candidates.map(j=>j.id));
+ const candidates=jobs.filter(j=>j.kind==='hphi_solve'&&j.status==='complete'&&!['superfish_ng_curved_hphi_case','superfish_ng_material_hphi_case'].includes(j.case_format)),signature=JSON.stringify(candidates.map(j=>j.id));
  for(const name of ['tracking-previous','tracking-current']){const select=$(name);if(select.dataset.signature===signature)continue;const selected=select.value;select.dataset.signature=signature;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='保存結果を選択';select.append(empty);for(const job of candidates){const option=document.createElement('option');option.value=job.id;option.textContent=`${job.id} / ${job.modes}モード`;select.append(option);}if(candidates.some(j=>j.id===selected))select.value=selected;}
 }
 function loadTracking(q){

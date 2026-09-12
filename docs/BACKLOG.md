@@ -1,5 +1,12 @@
 # 実装バックログ
 
+2026-09-13：[材料HφのProject・表示・独立掃引](MATERIAL_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
+全材料分割を保持する所有worker/GUIへ接続し、元セルのB=mu0 mu_r H、片側の材料情報付き25列CSV、領域エネルギー/壁損失、尺度/U/壁導電率の独立Studyを扱う。
+標準1127件（1124合格・3skip）、追加5unit、独立12例24StudyFEM/24取込/12再起動、Chrome41項目と主5unit/同独立照合/14保存ジョブ6CLIがPASS。
+元300nativeとGUI65nativeは不変。PNG/CSVはCLI/GUI/復元で一致し、旧同軸PNG/CSVは変更前とbyte一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+材料比較/追跡・損失/分散・旧版照合、P04/O02と全計画は未完。親33=8受入/12進行/12他未受入/1範囲外。
+
+
 2026-09-13：[材料Hφの専用保存・再生・CLI](MATERIAL_HPHI_NATIVE.md)を主ツリーへ統合・限定受入。
 材料/界面/元メッシュ・最低正スペクトル・領域RFを全再構築するnative版1とsolve/replay/probe-material-hphiを追加した。プローブは片側の材料情報とB=mu0 mu_r Hを保持する。
 標準1122件（1119合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/78CLIと主4unit/同照合がPASS。API/CLIの全5ファイルとプローブJSONが一致、元240native/25参照ファイルは不変。
@@ -93,7 +100,7 @@ GUI・履歴・形状写像等と全計画は未完。親33課題の8受入/11�
 旧seed9モード19量はf差0、最大相対差8.882e-16。曲線内導体・部分空間追跡・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
 
 
-次の限定課題はP04の[材料HφのProject・表示・独立Study](MATERIAL_HPHI_WORKSPACE_PLAN.md)。Project所有import/再起動、材料ごとのBと領域情報を保持するPNG/CSV、尺度・U・壁導電率の独立Study、実Chromeと旧出力の一致を受入条件とする。候補5unit、12例24FEM、Chrome41項目と14ジョブ再生/6CLIはPASS。標準1127件を検証中。
+次の限定課題はS01の[軸対称静電の誘電体・電荷・弱形式](ELECTROSTATIC_FORMS_PLAN.md)。全3DのK[F]/荷重[C]、定数電位核、符号付き電荷の和、P1/P2多項式と独立組立・尺度則を受入条件とする。候補5unit/72例・216多項式はPASS、固定679sourceの標準1132件を検証中。静電解法・場・容量は別の受入工程とする。
 
 2026-09-12：[明示Hφメッシュ列の細分差診断](HPHI_CONVERGENCE.md)のAPI・全水準保存・完全再生・CLIを主ツリーへ統合・限定受入。
 元E/Hの対応、周波数近傍、最後2組のf/E/H/各RF・壁線分・複素Vaccを別々に判定する。縮退・guard不足・粗さ未達はUNVERIFIEDを保持する。

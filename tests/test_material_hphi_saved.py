@@ -37,7 +37,6 @@ class MaterialHphiSavedTests(unittest.TestCase):
                     self.assertEqual(result['format'],inventory['result_format'])
                     self.assertEqual(json.loads(before['manifest.json'])['format'],inventory['native_manifest_format'])
                     self.assertIn(order,inventory['element_orders']);self.assertIn(axis,inventory['axis_connected'])
-                    self.assertFalse(inventory['project']);self.assertFalse(inventory['gui']);self.assertFalse(inventory['study'])
                     self.assertEqual(result,material_hphi_result(restored));np.testing.assert_array_equal(restored.coefficients,s.coefficients)
                     self.assertEqual(result['excluded_nullspace']['dimension'],0 if axis else 1)
                     point=np.array([[.2,.3,.5]])@c.partition.mesh.points_rz_m[c.partition.mesh.triangles[0]];out=root/f'{axis}-{order}.json'

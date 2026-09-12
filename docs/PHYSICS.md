@@ -4,7 +4,7 @@
 Kには1/epsilon_r、Mにはmu_rを元セルごとに適用し、qの一つの静的核除外とuの全軸DOF保持を区別する。
 Eはcurl H/(omega epsilon0 epsilon_r)のquadrature成分、Bはmu0 mu_r H。総エネルギーと領域別の電磁分配を検証する。
 壁は非磁性金属の摂動Rsとし、媒質のmu_rを壁へ代入しない。加速量は明示した真空軸区間だけを受理する。
-既存canonical Modelと真空専用Caseの入力は不変。[専用材料native/CLI](MATERIAL_HPHI_NATIVE.md)は全材料/FEM/RF再生と片側の材料プローブまで限定受入。Project/GUI/Studyは別の受入工程とする。
+既存canonical Modelと真空専用Caseの入力は不変。[専用材料native/CLI](MATERIAL_HPHI_NATIVE.md)は全材料/FEM/RF再生と片側の材料プローブまで限定受入。[材料Project/GUI/独立Study](MATERIAL_HPHI_WORKSPACE.md)は元材料のE/H/B・領域量と尺度則を保持して限定受入。材料比較/追跡は未対応。
 
 
 2026-09-13追補：[線形RF材料の行列基盤](MATERIAL_HPHI_FORMS.md)は独立した領域/API契約。正値実数・等方・無損失のepsilon_r/mu_rを直線要素に保持し、q/uのK/Mへ適用する。材料固有解/場/RF・入力Caseの拡張は含まないため、canonical specification v10と既存真空ソルバーの受理範囲は不変。

@@ -8,18 +8,19 @@ from .coaxial import CoaxialCase
 from .hphi_mesh import HphiMeshCase
 from .axis_hphi import AxisHphiCase
 from .curved_hphi import CurvedHphiCase
+from .material_hphi import MaterialHphiCase
 from .hphi_native import hphi_case_from_dict
 from .project import parse_json
 
 
 @dataclass(frozen=True,eq=False)
 class HphiProject:
-    case: CoaxialCase | HphiMeshCase | AxisHphiCase | CurvedHphiCase
+    case: CoaxialCase | HphiMeshCase | AxisHphiCase | CurvedHphiCase | MaterialHphiCase
     display_length_unit: str = 'mm'
 
     def __post_init__(self):
-        if not isinstance(self.case,(CoaxialCase,HphiMeshCase,AxisHphiCase,CurvedHphiCase)):
-            raise ValueError('HphiProject requires a dedicated coaxial, positive-radius mesh regular-axis or explicit curved Hphi case')
+        if not isinstance(self.case,(CoaxialCase,HphiMeshCase,AxisHphiCase,CurvedHphiCase,MaterialHphiCase)):
+            raise ValueError('HphiProject requires a dedicated coaxial, positive-radius mesh regular-axis, curved or explicit material Hphi case')
         object.__setattr__(self,'case',hphi_case_from_dict(self.case.to_dict()))
         if self.display_length_unit not in ('m','mm'):
             raise ValueError('Hphi display_length_unit must be m or mm; saved physics is SI')

@@ -1,3 +1,16 @@
+最新：材料workspace主5unit/12例24StudyFEM/14保存ジョブ6CLIは終了0、統合とfinalizer実行済み。主680source。静電弱形式標準39531だけが実行中。静電solve別候補は6unit PASS、独立解析照合の初回37569は終了1で理由を調査する。全GUIサーバー停止済み。全計画は未完。
+
+2026-09-13：[材料HφのProject・表示・独立掃引](MATERIAL_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
+全材料分割を保持する所有worker/GUIへ接続し、元セルのB=mu0 mu_r H、片側の材料情報付き25列CSV、領域エネルギー/壁損失、尺度/U/壁導電率の独立Studyを扱う。
+標準1127件（1124合格・3skip）、追加5unit、独立12例24StudyFEM/24取込/12再起動、Chrome41項目と主5unit/同独立照合/14保存ジョブ6CLIがPASS。
+元300nativeとGUI65nativeは不変。PNG/CSVはCLI/GUI/復元で一致し、旧同軸PNG/CSVは変更前とbyte一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+材料比較/追跡・損失/分散・旧版照合、P04/O02と全計画は未完。親33=8受入/12進行/12他未受入/1範囲外。
+材料workspace標準93382は終了0。統合/finalizerは実行済み、再実行しない。主680source。
+実GUI/HTTPサーバーは停止済み。原本2ディレクトリはbrowser-server/moved-originalsへ移動済み、所有コピー14ジョブ/保存物65ファイルを検証済み。
+全計画は未完。次の限定課題はBACKLOGの最新記載を確認する。以下よりこの冒頭を優先。
+
+2026-09-13 JST最新：主HEAD 5b1229c、材料nativeまで678source受入済み。材料workspace標準93382が実行中。静電弱形式候補679sourceは追加5unit/独立72例・216多項式PASSで固定し、標準1132件を39531で開始した。どちらの固定候補もsrc/tests/scripts/examplesを変更しない。静電はまだ本体未統合・未受入。全GUIサーバー停止済み。全計画は未完。
+
 2026-09-13：[材料Hφの専用保存・再生・CLI](MATERIAL_HPHI_NATIVE.md)を主ツリーへ統合・限定受入。
 材料/界面/元メッシュ・最低正スペクトル・領域RFを全再構築するnative版1とsolve/replay/probe-material-hphiを追加した。プローブは片側の材料情報とB=mu0 mu_r Hを保持する。
 標準1122件（1119合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/78CLIと主4unit/同照合がPASS。API/CLIの全5ファイルとプローブJSONが一致、元240native/25参照ファイルは不変。

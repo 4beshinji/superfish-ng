@@ -84,8 +84,14 @@ def material_hphi_capabilities():
         wall_model='nonmagnetic metal; Rs=sqrt(pi*f*mu0/sigma), independent of adjacent material mu_r; no volume loss',
         acceleration='explicit axis interval with epsilon_r=mu_r=1 on every overlapping axis segment; absent path gives null/N/A',
         rq_definitions=dict(accelerator='abs(Vacc)^2/(omega*U)',circuit='abs(Vacc)^2/(2*omega*U)'),
-        project=False,gui=False,study=False,tracking=False,
+        project=dict(format='superfish_ng_hphi_project',version=1,command='execute-hphi-project',job_kind='hphi_solve'),
+        gui='/hphi.html',study=dict(format='superfish_ng_hphi_study',version=1,kind='sweep',
+            parameters=['uniform_scale','/case/rf/stored_energy_j','/case/rf/conductivity_s_per_m'],
+            commands=['execute-hphi-study','replay-hphi-study'],mode_tracking='not_performed'),tracking=False,
+        display=dict(commands=['plot-hphi','probe-hphi-csv'],
+            policy='original material E/H/B; CSV includes one-sided cell and region/material IDs with epsilon_r/mu_r'),
         limits=['No curved cells, complex/dispersive/anisotropic/nonlinear materials or volume conductivity',
+            'No material coefficient sweeps, field comparison, convergence diagnostics or tracking',
             'No open ports, azimuthal m>0 or static-field solver',
             'No continuum error bound or surface-peak accuracy guarantee; mode rank is not identity'])
 

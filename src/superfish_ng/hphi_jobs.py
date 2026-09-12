@@ -46,9 +46,9 @@ def is_hphi_job(directory,state,manifest):
             if isinstance(data,dict):
                 case=data.get('case',data)
                 model=case.get('model',{}) if isinstance(case,dict) else {}
-                if (data.get('format') in ('superfish_ng_hphi_project','superfish_ng_coaxial_case','superfish_ng_coaxial_result','superfish_ng_hphi_mesh_case','superfish_ng_hphi_mesh_result','superfish_ng_axis_hphi_case','superfish_ng_axis_hphi_result','superfish_ng_curved_hphi_case','superfish_ng_curved_hphi_result')
-                        or data.get('physics') in ('axisymmetric_coaxial_hphi_rf','positive_radius_axisymmetric_hphi_rf','axis_connected_axisymmetric_hphi_rf','curved_axisymmetric_hphi_rf')
-                        or isinstance(case,dict) and case.get('format') in ('superfish_ng_coaxial_case','superfish_ng_hphi_mesh_case','superfish_ng_axis_hphi_case','superfish_ng_curved_hphi_case')
+                if (data.get('format') in ('superfish_ng_hphi_project','superfish_ng_coaxial_case','superfish_ng_coaxial_result','superfish_ng_hphi_mesh_case','superfish_ng_hphi_mesh_result','superfish_ng_axis_hphi_case','superfish_ng_axis_hphi_result','superfish_ng_curved_hphi_case','superfish_ng_curved_hphi_result','superfish_ng_material_hphi_case','superfish_ng_material_hphi_result')
+                        or data.get('physics') in ('axisymmetric_coaxial_hphi_rf','positive_radius_axisymmetric_hphi_rf','axis_connected_axisymmetric_hphi_rf','curved_axisymmetric_hphi_rf','material_axisymmetric_hphi_rf')
+                        or isinstance(case,dict) and case.get('format') in ('superfish_ng_coaxial_case','superfish_ng_hphi_mesh_case','superfish_ng_axis_hphi_case','superfish_ng_curved_hphi_case','superfish_ng_material_hphi_case')
                         or isinstance(model,dict) and model.get('field_family')=='Hphi'):
                     return True
     return False

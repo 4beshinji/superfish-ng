@@ -11,7 +11,7 @@ case/mesh/fields/resultsと最後にmanifestの5ファイルを公開し、元�
 既存出力の上書き、native内へのプローブ保存、リンク・欠落、検証中変更を拒否する。
 
 `capabilities.material_hphi_rf`へ専用入口と現在の制約を追加した。
-真空Hφの4形式やcanonical Modelの受理範囲は不変。材料Project/GUI/Study/追跡は未対応と明記する。
+真空Hφの4形式やcanonical Modelの受理範囲は不変。[材料Project/GUI/独立Study](MATERIAL_HPHI_WORKSPACE.md)は後続の操作受入で接続した。材料追跡は未対応。
 
 追加4unitは正半径/軸・P1/P2・PEC穴・真空軸部分区間を保存再生し、材料・界面・所有セル・配列型・場・RF・位相の改変を拒否した。
 改変後にhashを作り直しても拒否する。公開直前の入力変更とmanifest前の中断も検証した。

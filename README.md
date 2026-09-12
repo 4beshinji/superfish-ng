@@ -1,5 +1,12 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[材料HφのProject・表示・独立掃引](docs/MATERIAL_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
+全材料分割を保持する所有worker/GUIへ接続し、元セルのB=mu0 mu_r H、片側の材料情報付き25列CSV、領域エネルギー/壁損失、尺度/U/壁導電率の独立Studyを扱う。
+標準1127件（1124合格・3skip）、追加5unit、独立12例24StudyFEM/24取込/12再起動、Chrome41項目と主5unit/同独立照合/14保存ジョブ6CLIがPASS。
+元300nativeとGUI65nativeは不変。PNG/CSVはCLI/GUI/復元で一致し、旧同軸PNG/CSVは変更前とbyte一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+材料比較/追跡・損失/分散・旧版照合、P04/O02と全計画は未完。親33=8受入/12進行/12他未受入/1範囲外。
+
+
 2026-09-13：[材料Hφの専用保存・再生・CLI](docs/MATERIAL_HPHI_NATIVE.md)を主ツリーへ統合・限定受入。
 材料/界面/元メッシュ・最低正スペクトル・領域RFを全再構築するnative版1とsolve/replay/probe-material-hphiを追加した。プローブは片側の材料情報とB=mu0 mu_r Hを保持する。
 標準1122件（1119合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/78CLIと主4unit/同照合がPASS。API/CLIの全5ファイルとプローブJSONが一致、元240native/25参照ファイルは不変。
