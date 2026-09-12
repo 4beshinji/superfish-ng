@@ -2,6 +2,7 @@
 """Single-user loopback UI; no remote service or web framework dependency."""
 
 import hmac
+from contextlib import ExitStack
 import json
 import mimetypes
 from pathlib import Path
@@ -67,11 +68,8 @@ def create_server(workspace, port=0):
         raise ValueError(
             "GUI plotting requires the plot extra: python -m pip install -e '.[plot]'"
         )
-    manager = JobManager(workspace)
     token = secrets.token_urlsafe(32)
     render_lock = threading.Lock()
-    plot_cache = manager.root / ".plot-cache"
-    plot_cache.mkdir(exist_ok=True)
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):
@@ -460,9 +458,12 @@ def create_server(workspace, port=0):
             ) as exc:
                 self.reply({"error": str(exc)}, 400)
 
+    manager = JobManager(workspace)
     try:
+        plot_cache = manager.root / ".plot-cache"
+        plot_cache.mkdir(exist_ok=True)
         server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    except Exception:
+    except BaseException:
         manager.close()
         raise
     server.manager = manager
@@ -472,14 +473,14 @@ def create_server(workspace, port=0):
 
 def serve(workspace, port=0, open_browser=True):
     server = create_server(workspace, port)
-    print(f"Superfish-NG GUI: {server.launch_url}", flush=True)
-    print(f"Workspace: {server.manager.root}", flush=True)
-    if open_browser:
-        webbrowser.open(server.launch_url)
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        server.server_close()
-        server.manager.close()
+    with ExitStack() as cleanup:
+        cleanup.callback(server.manager.close)
+        cleanup.callback(server.server_close)
+        print(f"Superfish-NG GUI: {server.launch_url}", flush=True)
+        print(f"Workspace: {server.manager.root}", flush=True)
+        if open_browser:
+            webbrowser.open(server.launch_url)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass

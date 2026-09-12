@@ -1,3 +1,15 @@
+2026-09-12 O01運用修正：ジョブ管理/GUIの起動失敗・中断時にもOSロックを解放する。
+既存ResourceWarningはtest_gui_mode_trackingのクラスcleanup漏れと特定し、5件だけの再現ログを保持して修正した。
+別途、壊れたjob.json・復旧書込失敗/中断・GUIキャッシュ競合・ブラウザー失敗でロックが残る先行反例を確認。
+追加6件を含む関連29unitが1.443秒・警告なしでPASS。実HTTP6確認もPASSで、全サーバー終了済み。
+契約・制限は[JOB_STARTUP_CLEANUP.md](JOB_STARTUP_CLEANUP.md)、証拠はout/job-startup-cleanup-20260912。
+数値実装は下記dabc302と同じ。非数値修正後に全体979件を再実行したとは主張しない。
+直前のP02版7はローカルコミットdabc302として完了。全計画goalと親33課題の未完状態を維持する。
+C00/K10は旧版実行環境を確認したが、以前の/tmp/superfish-wine-runtime、/usr/bin/wine、/usr/bin/Xvfbが存在しない。
+PATHのwine/wine64/Xvfbも未検出。/home/sin/.wineはあるが既知のdrive_c/LANLはなく、ソース/バイナリ内容は未閲覧。
+既存Wine実行ファイルとWINEPREFIXの別保存先をユーザーへ非同期で質問済み。新しい旧版実行や環境構築はしていない。
+この確認待ちだけで全計画goalをblockedにしない。独立した未完課題は継続できる。
+
 2026-09-12 P02厳密アフィン追跡版7を接続・限定受入。
 正逆の元電場移送・有限細分診断、完全保存再生、CLI/実worker/GUI/所有履歴を接続した。
 追加9unit（83.359秒）、独立16条件32FEM/native・正逆32対応（1088.988秒）、

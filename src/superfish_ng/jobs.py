@@ -250,19 +250,28 @@ class JobManager:
             raise ValueError(
                 "workspace already has a running application; choose another workspace"
             )
-        self.processes = {}
-        self.lock = threading.RLock()
-        self.closed = False
-        for p in self.root.iterdir():
-            if p.is_dir() and not p.is_symlink() and (p / "job.json").is_file():
-                state = read_job(p, verify=False)
-                if state.get("status") in ("queued", "running"):
-                    _state(
-                        p,
-                        "interrupted",
-                        kind=state.get("kind", "solve"),
-                        error="application stopped before completion; start a new run",
-                    )
+        except BaseException:
+            self._workspace_lock.close()
+            raise
+        try:
+            self.processes = {}
+            self.lock = threading.RLock()
+            self.closed = False
+            for p in self.root.iterdir():
+                if p.is_dir() and not p.is_symlink() and (p / "job.json").is_file():
+                    state = read_job(p, verify=False)
+                    if state.get("status") in ("queued", "running"):
+                        _state(
+                            p,
+                            "interrupted",
+                            kind=state.get("kind", "solve"),
+                            error="application stopped before completion; start a new run",
+                        )
+        except BaseException:
+            # No workers exist yet. Release even if a caller keeps the failed
+            # constructor's traceback alive, or startup is interrupted.
+            self._workspace_lock.close()
+            raise
 
     def directory(self, identifier):
         if (

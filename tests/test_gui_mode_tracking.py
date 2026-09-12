@@ -14,6 +14,7 @@ class GUIModeTrackingTests(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp=tempfile.TemporaryDirectory();cls.addClassCleanup(cls.tmp.cleanup);cls.root=Path(cls.tmp.name)
         cls.manager=JobManager(cls.root/'workspace');cls.ids={}
+        cls.addClassCleanup(cls.manager.close)
         for name,length,modes in [('a',.055,3),('b',.075,3),('short',.075,2)]:
             case=Case(((0.,.1),(length,.1)),nr=8,nz=8,modes=modes,element_order=2);path=cls.root/name
             save_run(case,solve(case),path);cls.ids[name]=cls.manager.import_result(str(path))
