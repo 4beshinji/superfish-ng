@@ -1,7 +1,7 @@
 # 正半径Hφの独立Study接続計画
 
 [Project/Job](HPHI_JOBS.md)と[表示/GUI](HPHI_GUI_PLAN.md)の後続。
-以下は未受入の次工程で、既存Hφ場やGUIの完了へ含めない。
+下記の独立掃引・保存/worker・GUIを[実装契約と検証](HPHI_STUDY.md)で限定受入した。収束・追跡は含めない。
 
 ## 入力と物理の契約
 

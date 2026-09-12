@@ -13,6 +13,8 @@ from .hphi_project import HphiProject
 from .project import parse_json
 
 ACTIONS = {
+    'hphi-normalize-study': ['document'], 'hphi-start-study': ['document'],
+    'hphi-study-result': ['id'], 'hphi-study-point': ['id','index'],
     'hphi-normalize': ['document'], 'hphi-start': ['document'],
     'hphi-import': ['path'], 'hphi-result': ['id'],
     'hphi-plot': ['id','mode','mesh','length_unit'],
@@ -25,6 +27,8 @@ ACTIONS = {
 def hphi_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown hphi operation')
+    if action in ('hphi-normalize-study','hphi-start-study','hphi-study-result','hphi-study-point'):
+        return hphi_study_response(manager,action,data)
     required = ['document'] if action in ('hphi-normalize', 'hphi-start') else ['path'] if action=='hphi-import' else ['id']
     if action in ('hphi-probe', 'hphi-probe-metadata'): required += ['points_rz_m']
     if action=='hphi-download': required += ['file']
@@ -88,4 +92,29 @@ def hphi_response(manager, action, data, render_lock, plot_cache):
     if _native_hashes(native)!=before or manager.status(data['id'], verify=True)!=state:
         raise ValueError('hphi job changed while preparing GUI response')
     return payload, media
+
+
+
+def hphi_study_response(manager, action, data):
+    from .hphi_study import HphiStudy
+    from .hphi_study_jobs import read_hphi_study, _snapshot
+    required=['document'] if action.endswith(('normalize-study','start-study')) else ['id']
+    if action=='hphi-study-point':required.append('index')
+    keys(data,ACTIONS[action],required,'hphi Study request')
+    media='application/json; charset=utf-8'
+    if 'document' in required:
+        raw=parse_json(data['document']) if isinstance(data['document'],str) else data['document']
+        study=HphiStudy.from_dict(raw)
+        return ({'id':manager.start_hphi_study(study)} if action=='hphi-start-study' else study.to_dict()),media
+    directory=manager.directory(data['id']);study=HphiStudy.load(directory/'study.json');before=_snapshot(directory,study)
+    result=read_hphi_study(directory)
+    if action=='hphi-study-result':
+        payload=dict(study=study.to_dict(),result=result,state=manager.status(data['id'],verify=True))
+    else:
+        index=data['index']
+        if type(index) is not int or not 0<=index<len(result['points']):raise ValueError('hphi Study point index is out of range')
+        if before!=_snapshot(directory,study):raise ValueError('hphi Study changed before point import')
+        payload={'id':manager.import_hphi_result(directory/result['points'][index]['directory'])}
+    if before!=_snapshot(directory,study):raise ValueError('hphi Study changed during GUI response')
+    return payload,media
 

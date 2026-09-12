@@ -1,7 +1,7 @@
 # 正半径Hφの独立Study
 
-2026-09-12、[Study計画](HPHI_STUDY_PLAN.md)の隔離候補を実装・検証中。
-候補は `/tmp/superfish-hphi-study-20260912`。589sourceを固定し、主統合・最終受入は全体回帰後に行う。
+2026-09-12、[Study計画](HPHI_STUDY_PLAN.md)に従い主ツリーへ統合・限定受入した。
+固定候補589sourceの全回帰と、主595source（従来の不変egg-info 6件を含む）の対応を確認した。
 
 ## 定義と保存
 
@@ -56,10 +56,19 @@ GUIの最初の機械的挿入位置はnode --checkで検出して修正し、�
 実Chromeの新Study9操作、再起動後の復元/点表示/再実行3操作、既存Hφ8操作、既存TM/TE・平面5操作がPASS。
 ブラウザーの定義/結果をCLI/nativeと照合し、再起動前の元30ファイルを保持した。
 最終の14完了・2取消ジョブ、以前のnative 30ファイル不変、2 CLI再生とブラウザー保存全文の一致をout/hphi-study-browser-verification-20260912へ記録した。全ブラウザーとサーバーは終了済み。
-全体回帰はout/validation-hphi-study-candidate-20260912で継続中。主ツリーでの受入とはまだ数えない。
+全体回帰はout/validation-hphi-study-candidate-20260912で完了し、下記の範囲で主ツリーへ受け入れた。
 
 証拠はout/hphi-gui-development-20260912/study-*.log、out/hphi-study-independent-first-20260912、
 out/hphi-study-development-20260912、out/hphi-study-browser-first-20260912、out/hphi-study-browser-restored-20260912、
 out/hphi-study-existing-hphi-browser-20260912、out/hphi-study-existing-tm-te-browser-20260912。
 新規外部資料・依存・旧版参照なし。自作PlanarStudyの所有/保存操作を明示Hφ形式へ接続した。
 Hφの収束・追跡・調整・最適化、軸接続の穴付き領域・曲線内導体、親P03/O02と全計画は継続する。
+
+## 最終受入記録
+
+標準1026件（1023合格・3skip）は1772.387秒、ResourceWarningなしでPASS。
+skipは任意NGSolve参照2件とsandboxのローカルHTTP待受1件。実HTTPは許可されたGUI検査と固定候補の実Chromeで別途確認した。
+主12unitを11.585秒で再実行し、同梱2例題の4実CLI・保存Project/全点native再生・公開read_jobが合格した。
+既存seed9モード19量はf差0、最大相対差8.882e-16。ベンチマークは更新していない。
+主統合前後で589検証sourceと不変egg-info 6件を照合。証拠はout/validation-hphi-study-candidate-20260912/seed_regression.jsonとout/hphi-study-main-examples-20260912。
+内部作業用アーカイブはout/hphi-study-development-20260912/frozen-candidate-source.tar.gzとarchive.json。

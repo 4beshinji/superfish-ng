@@ -1,3 +1,19 @@
+2026-09-12：[正半径Hφの独立Study](HPHI_STUDY.md)を主ツリーへ統合・限定受入。
+尺度・全3Dエネルギー・壁導電率・円筒寸法の掃引、全点native/CLI・実worker・GUI・保存再起動を接続した。
+標準1026件（1023合格・3skip）、独立18worker/36FEM/18CLI、Chrome新9/復元3/既存13操作、主12unit/4CLIがPASS。
+順位は独立スペクトルで追跡未実施。収束・追跡等、P03/O02と全計画は継続し、親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+Study標準12034は終了0、1026件・1772.387秒。主12unit/4CLIも終了0。固定589sourceと主595sourceの同一性を確認。
+GUI/Studyの全計算・Chrome・ローカルサーバーは終了済み。HPHI_STUDY.mdに契約と証拠を記載した。
+
+次はAXIS_CONNECTED_HOLES_PLAN.md。隔離候補/tmp/superfish-axis-holes-20260912には軸区間/PEC穴の幾何・canonical P1/P2 K/Mだけを追加した。
+4unit（0.240秒）、4解析恒等式、18の解析磁場対応による試作FEMまで確認。製品Case/solve/native/CLI、全壁RF、標準回帰は未完。
+source593と作業アーカイブはout/axis-hole-reference-20260912/prototype-source-sha256.json、mesh-form-prototype-source.tar.gz。
+周波数最近傍が別の場を選ぶ反例はout/axis-hole-spectrum-prototype-20260912へ保持。対応版はout/axis-hole-field-matched-prototype-20260912（62253終了0、143.046秒）。
+最終水準は一穴/二穴ともf/E/H/Vaccが計画の固定ゲート内だが、未確認の全壁RF・保存・全回帰を受入扱いしない。
+主ツリーへ軸穴候補はまだ統合していない。全33課題の完走要求と未完状態を維持する。
+
+以下は以前の工程履歴。稼働/完了は冒頭の記録を優先する。
+
 2026-09-12：[正半径Hφの表示・GUI](GUI_HPHI.md)を主ツリーへ統合・限定受入。
 元P1/P2の符号付き全場、穴を除いた描画、境界/線分壁損失、Project/実worker/取込/保存/再起動を接続した。
 標準1014件（1011合格・3skip）、独立8件/16CLI、Chrome新9/既存5操作、統合後7unitと2CLIがPASS。

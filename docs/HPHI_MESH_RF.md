@@ -1,5 +1,6 @@
 # P03：軸を含まない一般断面と複数PEC境界のHφ FEM
 
+後続の[独立Hφ Study](HPHI_STUDY.md)を保存/実worker/CLI/GUIへ接続・限定受入した。収束・追跡・軸接続の穴付き領域は別工程。
 後続の[Hφ表示/GUI](GUI_HPHI.md)を主ツリーへ接続・限定受入した。独立Study・収束・追跡は別工程。
 専用[Hφ Project/Job](HPHI_JOBS.md)の入力・実worker・保存/取込・中止/再起動を後続工程で接続・限定受入した。GUIは[別計画](HPHI_GUI_PLAN.md)。
 2026-09-12、基準f4b8cc3。[一般断面計画](COAXIAL_GENERAL_MESH_PLAN.md)を実装・限定受入した。

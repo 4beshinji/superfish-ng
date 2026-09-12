@@ -50,14 +50,14 @@ async function openResult(id){
  history.replaceState(null,'',`/hphi.html?job=${encodeURIComponent(id)}`);
 }
 async function refresh(){
- const jobs=(await api('jobs')).filter(job=>job.kind==='hphi_solve'),signature=JSON.stringify(jobs);
+ const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study'].includes(job.kind)),signature=JSON.stringify(jobs);
  if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;$('jobs').replaceChildren();
  if(!jobs.length)$('jobs').textContent='正半径Hφの計算はまだありません。';
  for(const job of jobs){const row=document.createElement('div');row.className='job';row.dataset.job=job.id;
- const label=document.createElement('strong');label.textContent=`${job.status} / ${job.id}`;row.append(label);
+ const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='hphi_study'?' / 独立掃引':''} / ${job.id}`;row.append(label);
  const details=document.createElement('small');details.textContent=job.error||job.stage||'';row.append(details);
  const button=document.createElement('button'),active=['queued','running'].includes(job.status);button.textContent=active?'中止':'結果を開く';button.disabled=!active&&job.status!=='complete';
- button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else await openResult(job.id);});row.append(button);$('jobs').append(row);}
+ button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(job.kind==='hphi_study')await openStudy(job.id);else await openResult(job.id);});row.append(button);$('jobs').append(row);}
 }
 $('new').onclick=run(async()=>loadProject(await api('hphi-normalize',{document:fresh()})));
 $('open').onchange=run(async()=>{const file=$('open').files[0];if(file)loadProject(await api('hphi-normalize',{document:await file.text()}));});
@@ -71,5 +71,22 @@ $('plot').onclick=run(async()=>{if(!selected)throw Error('結果を選択して�
 $('save-image').onclick=()=>{if(imageBlob)download(imageBlob,'hphi-fields.png');};
 for(const [id,action,name] of [['probe','hphi-probe','hphi-probe.csv'],['probe-meta','hphi-probe-metadata','hphi-probe.csv.json']])$(id).onclick=run(async()=>{if(!selected)throw Error('結果を選択してください');const points_rz_m=JSON.parse($('points').value),data=await api(action,{id:selected,mode:Number($('mode').value),points_rz_m},id==='probe');download(id==='probe'?data:new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}),name);});
 for(const id of ['name','inner-radius','outer-radius','length','nr','nz','order','quadrature','modes','energy','conductivity'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の入力';});
-run(async()=>{loadProject(await api('hphi-normalize',{document:fresh()}));await refresh();const id=new URLSearchParams(location.search).get('job');if(id)await openResult(id);})();// Explicit operations retain errors; background refresh does not clear them.
+let selectedStudy=null,currentStudy=null;
+function studyFromForm(){return {format:'superfish_ng_hphi_study',study_version:1,kind:'sweep',project:documentFromForm(),parameter:$('study-parameter').value,values:JSON.parse($('study-values').value)};}
+function loadStudy(study){loadProject(study.project);$('study-parameter').value=study.parameter;$('study-values').value=JSON.stringify(study.values);}
+async function openStudy(id){
+ const data=await api('hphi-study-result',{id});history.replaceState(null,'',`/hphi.html?study=${encodeURIComponent(id)}`);selectedStudy=id;currentStudy=data;loadStudy(data.study);$('study-result').hidden=false;$('study-selection').textContent=`${data.study.parameter} / ${id}`;$('study-points').replaceChildren();
+ for(const point of data.result.points){const section=document.createElement('div');section.className='job';const title=document.createElement('strong');title.textContent=`点 ${point.index+1}: ${point.value}`;section.append(title);
+ const table=document.createElement('table'),head=document.createElement('tr');for(const label of ['順位','f [MHz]','U [J]','P [W]','Q0','G [Ω]','R/Q（加速器/回路）']){const th=document.createElement('th');th.textContent=label;head.append(th);}table.append(head);
+ point.modes.forEach((q,index)=>{const row=document.createElement('tr');for(const value of [index+1,(q.frequency_hz/1e6).toFixed(6),q.stored_energy_j.toPrecision(5),q.wall_loss_w.toPrecision(5),q.q0.toPrecision(5),q.geometry_factor_ohm.toPrecision(5),'N/A / N/A']){const td=document.createElement('td');td.textContent=value;row.append(td);}table.append(row);});section.append(table);
+ const button=document.createElement('button');button.textContent='結果を取り込む';button.dataset.point=point.index;button.onclick=run(async()=>{const imported=await api('hphi-study-point',{id,index:point.index});await refresh();await openResult(imported.id);});section.append(button);$('study-points').append(section);}
+}
+$('study-start').onclick=run(async()=>{const data=await api('hphi-start-study',{document:studyFromForm()});$('dirty').textContent=`掃引投入済み: ${data.id}`;await refresh();});
+$('study-save').onclick=run(async()=>{const study=await api('hphi-normalize-study',{document:studyFromForm()});loadStudy(study);download(new Blob([JSON.stringify(study,null,2)+'\n'],{type:'application/json'}),'hphi-study.json');});
+$('study-open').onchange=run(async()=>{const file=$('study-open').files[0];if(file)loadStudy(await api('hphi-normalize-study',{document:await file.text()}));});
+
+for(const id of ["study-parameter","study-values"])$(id).addEventListener("input",()=>{$("dirty").textContent="未保存のStudy編集";});
+
+$('study-result-save').onclick=run(async()=>{if(!currentStudy)throw Error('掃引結果を選択してください');download(new Blob([JSON.stringify(currentStudy.result,null,2)+'\n'],{type:'application/json'}),'hphi-study-results.json');});
+run(async()=>{loadProject(await api('hphi-normalize',{document:fresh()}));await refresh();const parameters=new URLSearchParams(location.search),id=parameters.get('job'),studyId=parameters.get('study');if(studyId)await openStudy(studyId);else if(id)await openResult(id);})();// Explicit operations retain errors; background refresh does not clear them.
 setInterval(()=>refresh().catch(failure),2000);

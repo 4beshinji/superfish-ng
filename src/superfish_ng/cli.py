@@ -115,6 +115,10 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    hphi_study=sub.add_parser('execute-hphi-study',help='execute independent positive-radius Hphi spectra; ranks are not tracked IDs')
+    hphi_study.add_argument('study',type=Path);hphi_study.add_argument('--out',type=Path,required=True)
+    hphi_study_replay=sub.add_parser('replay-hphi-study',help='fully verify every saved independent Hphi point and summary')
+    hphi_study_replay.add_argument('run',type=Path)
     planar_study=sub.add_parser('execute-planar-study',help='execute an independent Cartesian sweep; mode ranks are not tracked IDs')
     planar_study.add_argument('study',type=Path)
     planar_study.add_argument('--out',required=True,type=Path)
@@ -256,6 +260,11 @@ def main(argv=None):
             from .planar_convergence_jobs import execute_planar_convergence, read_planar_convergence
             result=(execute_planar_convergence(PlanarConvergence.load(args.request),args.out)
                     if args.command=='execute-planar-convergence' else read_planar_convergence(args.run))
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-hphi-study','replay-hphi-study'):
+            from .hphi_study import HphiStudy
+            from .hphi_study_jobs import execute_hphi_study, read_hphi_study
+            result=(execute_hphi_study(HphiStudy.load(args.study),args.out) if args.command=='execute-hphi-study' else read_hphi_study(args.run))
             print(json.dumps(result,indent=2,allow_nan=False));return 0
         if args.command in ('execute-planar-study','replay-planar-study'):
             from .planar_study import PlanarStudy
