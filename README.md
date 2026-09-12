@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[平面磁静場の専用保存・再構築・CLI](docs/PLANAR_MAGNETOSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+mu_r/reluctivity・Jz・固定Az/Ht・相対/絶対Azを保持し、再求解と元Az/B/H・エネルギー・電流/磁束・規約の全照合を接続した。
+標準1176件（1173合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/80CLIと主4unitがPASS。API/CLIの5ファイル・全プローブJSONが一致し、元240native/90参照ファイルは不変。固定718sourceと主724sourceは一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。軸対称・外部境界診断・磁静Project/GUI/Study等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+
+
 2026-09-13：[平面線形磁静場の実FEM・元B/H・磁束/エネルギー](docs/PLANAR_MAGNETOSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
 明示mu_r/Jzと全境界の固定Az/Ht、実FEMの相対Az、元Az/B/H、J/mエネルギー、反力/元H周回積分[A]・元B磁束[Wb/m]を接続した。
 標準1172件（1169合格・3skip）、追加6unit、独立88例と主6unitがPASS。固定715sourceと主721sourceは一致。旧seed9モード19量はf差0、最大相対差8.882e-16。

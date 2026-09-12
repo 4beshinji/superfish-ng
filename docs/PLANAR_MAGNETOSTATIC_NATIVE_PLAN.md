@@ -1,6 +1,6 @@
 # S02: 平面磁静場の保存・再構築・CLI
 
-2026-09-13 JST。固定Az付き線形磁静場を専用native/CLIへ接続する限定課題。実装中・未受入。
+2026-09-13 JST。固定Az付き線形磁静場を専用native/CLIへ接続する限定課題。[実装記録](PLANAR_MAGNETOSTATIC_NATIVE.md)の専用native/CLI範囲で限定受入。
 
 - Case/mesh/fields/results/manifestの5ファイルへ、全mu_r/reluctivity・Jz・境界・基準Azと元係数を保持する。
 - 読込時は同じ磁静場問題を再構築/再求解し、元Az/B/H、反力/元H周回積分[A]、元Bの磁束[Wb/m]、J/mエネルギーを全再検証する。

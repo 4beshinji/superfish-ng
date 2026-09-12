@@ -210,6 +210,13 @@ def main(argv=None):
     planar_electrostatic_probe=sub.add_parser('probe-planar-electrostatic',help='export original static Phi/E/D at dielectric [x_m,y_m] points with one-sided region metadata')
     planar_electrostatic_probe.add_argument('run',type=Path);planar_electrostatic_probe.add_argument('--points',required=True,type=Path)
     planar_electrostatic_probe.add_argument('--out',required=True,type=Path)
+    planar_magnetostatic=sub.add_parser('solve-planar-magnetostatic',help='solve an explicit planar magnetic/current Az case with verified native output')
+    planar_magnetostatic.add_argument('case',type=Path);planar_magnetostatic.add_argument('--out',required=True,type=Path)
+    planar_magnetostatic_replay=sub.add_parser('replay-planar-magnetostatic',help='reconstruct magnetic materials, signed currents, Az/Ht boundaries, Az/B/H and all integral quantities')
+    planar_magnetostatic_replay.add_argument('run',type=Path)
+    planar_magnetostatic_probe=sub.add_parser('probe-planar-magnetostatic',help='export original static Az/B/H at magnetic-domain [x_m,y_m] points with one-sided region metadata')
+    planar_magnetostatic_probe.add_argument('run',type=Path);planar_magnetostatic_probe.add_argument('--points',required=True,type=Path)
+    planar_magnetostatic_probe.add_argument('--out',required=True,type=Path)
     material_hphi=sub.add_parser('solve-material-hphi',help='solve an explicit piecewise lossless material Hphi case with verified native output')
     material_hphi.add_argument('case',type=Path);material_hphi.add_argument('--out',required=True,type=Path)
     material_hphi_replay=sub.add_parser('replay-material-hphi',help='reconstruct materials and geometry, lowest positive FEM and all RF, and emit verified JSON')
@@ -414,6 +421,19 @@ def main(argv=None):
                 print(json.dumps(planar_electrostatic_result(read_planar_electrostatic_run(args.run)),indent=2,allow_nan=False))
             else:
                 export_planar_electrostatic_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
+                print(f'WROTE: {args.out}')
+            return 0
+        if args.command in ('solve-planar-magnetostatic','replay-planar-magnetostatic','probe-planar-magnetostatic'):
+            from .planar_magnetostatic import PlanarMagnetostaticCase,solve_planar_magnetostatic
+            from .planar_magnetostatic_saved import save_planar_magnetostatic_run,read_planar_magnetostatic_run,planar_magnetostatic_result,export_planar_magnetostatic_probe
+            from .project import parse_json
+            if args.command=='solve-planar-magnetostatic':
+                case=PlanarMagnetostaticCase.from_dict(parse_json(args.case.read_text(encoding='utf-8')))
+                print(json.dumps(save_planar_magnetostatic_run(case,solve_planar_magnetostatic(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-planar-magnetostatic':
+                print(json.dumps(planar_magnetostatic_result(read_planar_magnetostatic_run(args.run)),indent=2,allow_nan=False))
+            else:
+                export_planar_magnetostatic_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-material-hphi','replay-material-hphi','probe-material-hphi'):

@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[平面磁静場native/CLI](PLANAR_MAGNETOSTATIC_NATIVE.md)。自前の静電nativeのhash・スナップショット・最後のmanifest公開方式を用い、磁気のAz/B/H、Jz、mu_r/reluctivity、Ht境界、電流/磁束のSI契約を別形式に実装。独立解析済み24例の実ソルバー値と保存・CLIの全量を照合した。新規依存・外部資料・旧版実行なし。
+
 2026-09-13：[平面磁静場ソルバー](PLANAR_MAGNETOSTATIC_SOLVE.md)。AzのcurlとAmpere則から固定Az/Ht境界の符号、Jz荷重と仕事恒等式を導出した。自前の中立矩形メッシュ生成のみ静電参照から共有し、電気行列は呼ばない。二層の接線H連続、回転/凹形二次製造解、全周固定Azの矩形の分離変数解と積分済みエネルギーで独立照合。場・エネルギー・境界積分とmu/尺度/gauge則を分離評価し、FEMへの解析補正は行わない。新規依存・外部資料・旧版実行なし。
 
 2026-09-13：[平面磁静弱形式](PLANAR_MAGNETOSTATIC_FORMS.md)。自前の静電の幾何所有検査・基底積分方式を参考に、Azのcurlから磁気エネルギーとreluctivityのKを独立に構成した。静電のepsilon倍率をmuへ読み替えると逆比例則に反することを先に確認。磁気のSI量、Jz負荷、gauge核、一様Bエネルギーとmu尺度則を独立Gauss/Vandermonde・解析モーメントで検証。新規依存・外部資料・旧版実行なし。

@@ -152,3 +152,26 @@ def planar_tracking_mappings():
         (6, 'polygon_affine_remesh', 'invertible affine map with exactly matching transformed boundary subdivision; independent interior'),
         (7, 'polygon_exact_affine_remesh', 'rationally evaluated invertible affine map; independent boundary and interior subdivisions'),
     )]
+
+
+def planar_magnetostatic_capabilities():
+    return dict(case_format='superfish_ng_planar_magnetostatic_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_planar_magnetostatic_manifest',native_schema_versions=[1],
+        result_format='superfish_ng_planar_magnetostatic_result',result_schema_versions=[1],
+        partition_format='superfish_ng_planar_magnetic_partition',partition_schema_versions=[1],
+        commands=['solve-planar-magnetostatic','replay-planar-magnetostatic','probe-planar-magnetostatic'],physics='linear_magnetostatic',
+        coordinates='Cartesian x,y',geometry='explicit straight material-conforming triangles in a simple polygon',
+        element_orders=[1,2],material='positive real isotropic linear mu_r, explicit in every cell; reluctivity=(1/mu0)/mu_r [m/H]',
+        volume_current='signed Jz [A/m^2], explicit in every region',
+        boundaries=['fixed_az [Wb/m]','tangential_h [A/m]'],
+        boundary_policy='every edge explicit; at least one fixed-Az boundary; connected fixed edges share one boundary id; counterclockwise tangent',
+        potential='Az [Wb/m], coefficients relative to first fixed boundary; no implicit ground, axis or thickness',
+        fields='static real B=(dAz/dy,-dAz/dx) [T], H=reluctivity(original cell)*B [A/m]',
+        probes='original Az/Bx/By/Hx/Hy, cell/region/material IDs and mu_r; lowest cell at interfaces, no averaging',
+        volume_measure='dx dy per metre of uniform extrusion',energy='integral |B|^2/(2*mu0*mu_r) dxdy [J/m]',current_unit='A',
+        fixed_boundary_reaction='separate discrete reaction and minus original counterclockwise H line integral [A]',
+        normal_flux='original B dot outward normal integrated along boundary [Wb/m]; normal to right of tangent',
+        project=False,gui=False,study=False,
+        limits=['No axisymmetric/curved geometry or holes, nonlinear/anisotropic/complex permeability, remanence or RF phasors',
+            'No pure Neumann/gauge, winding inductance or exact open boundary',
+            'Discrete residual and reaction conservation do not bound original field or circulation error'])
