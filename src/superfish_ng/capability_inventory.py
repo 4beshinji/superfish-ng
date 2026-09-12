@@ -220,3 +220,25 @@ def off_axis_magnetostatic_capabilities():
         limits=['No axis-connected/curved geometry, nonlinear/anisotropic/complex permeability, remanence or RF phasors',
             'No pure Neumann, excluded-axis absolute linked flux, winding inductance or exact open boundary',
             'Discrete residual and reaction conservation do not bound original field or circulation error'])
+
+
+def planar_recoil_capabilities():
+    return dict(case_format='superfish_ng_planar_recoil_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_planar_recoil_manifest',native_schema_versions=[1],
+        result_format='superfish_ng_planar_recoil_result',result_schema_versions=[1],
+        partition_format='superfish_ng_planar_recoil_partition',partition_schema_versions=[1],
+        commands=['solve-planar-recoil','replay-planar-recoil','probe-planar-recoil'],physics='linear_recoil_magnetostatic',
+        coordinates='Cartesian x,y',geometry='explicit straight material-conforming triangles in a simple polygon',element_orders=[1,2],
+        material='positive principal recoil mu_r, local remanent induction[T] and explicit region orientation[rad]; B=mu0*mu_rec*H+Brem',
+        volume_current='signed free Jz [A/m^2], explicit in every region',boundaries=['fixed_az [Wb/m]','tangential_h [A/m]'],
+        boundary_policy='every edge explicit; at least one fixed-Az boundary; connected fixed edges share one id; domain-left tangent',
+        potential='Az[Wb/m] relative to first fixed-Az boundary with original reference retained',
+        fields='B=(dAz/dy,-dAz/dx)[T], H=nu(original cell)*(B-Brem)[A/m]',
+        probes='original Az/Bx/By/Hx/Hy, cell/region/material IDs, tensor and remanent B; exact binary64 cell ownership, no averaging',
+        volume_measure='dx dy per metre of uniform extrusion',
+        constitutive_potentials='B=0 and H=0 references explicitly named [J/m]; difference is .5 integral Brem.nu.Brem; no absolute magnet internal energy',
+        current_unit='A',fixed_boundary_reaction='separate discrete reaction and minus original domain-left Ht integral [A]',
+        normal_flux='original B dot outward normal integrated along boundary [Wb/m]',project=False,gui=False,study=False,
+        limits=['No axisymmetric/curved geometry or holes, nonlinear/complex permeability, hysteresis or RF phasors',
+            'No pure Neumann, irreversible demagnetization, winding inductance, force or exact open boundary',
+            'Discrete residual and reaction conservation do not bound original field or circulation error'])

@@ -217,6 +217,13 @@ def main(argv=None):
     planar_magnetostatic_probe=sub.add_parser('probe-planar-magnetostatic',help='export original static Az/B/H at magnetic-domain [x_m,y_m] points with one-sided region metadata')
     planar_magnetostatic_probe.add_argument('run',type=Path);planar_magnetostatic_probe.add_argument('--points',required=True,type=Path)
     planar_magnetostatic_probe.add_argument('--out',required=True,type=Path)
+    planar_recoil=sub.add_parser('solve-planar-recoil',help='solve an explicit planar recoil tensor/remanence/current Az case with verified native output')
+    planar_recoil.add_argument('case',type=Path);planar_recoil.add_argument('--out',required=True,type=Path)
+    planar_recoil_replay=sub.add_parser('replay-planar-recoil',help='reconstruct recoil tensors, remanent induction, signed currents, Az/Ht boundaries, Az/B/H and all integral quantities')
+    planar_recoil_replay.add_argument('run',type=Path)
+    planar_recoil_probe=sub.add_parser('probe-planar-recoil',help='export original static Az/B/H at magnetic-domain [x_m,y_m] points with one-sided region metadata')
+    planar_recoil_probe.add_argument('run',type=Path);planar_recoil_probe.add_argument('--points',required=True,type=Path)
+    planar_recoil_probe.add_argument('--out',required=True,type=Path)
     off_axis_magnetostatic=sub.add_parser('solve-off-axis-magnetostatic',help='solve an explicit positive-radius magnetic/current psi case with verified native output')
     off_axis_magnetostatic.add_argument('case',type=Path);off_axis_magnetostatic.add_argument('--out',required=True,type=Path)
     off_axis_magnetostatic_replay=sub.add_parser('replay-off-axis-magnetostatic',help='reconstruct magnetic materials, signed currents, psi/Ht boundaries, psi/Aphi/B/H and all integral quantities')
@@ -448,6 +455,19 @@ def main(argv=None):
                 print(json.dumps(planar_magnetostatic_result(read_planar_magnetostatic_run(args.run)),indent=2,allow_nan=False))
             else:
                 export_planar_magnetostatic_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
+                print(f'WROTE: {args.out}')
+            return 0
+        if args.command in ('solve-planar-recoil','replay-planar-recoil','probe-planar-recoil'):
+            from .planar_recoil import PlanarRecoilCase,solve_planar_recoil
+            from .planar_recoil_saved import save_planar_recoil_run,read_planar_recoil_run,planar_recoil_result,export_planar_recoil_probe
+            from .project import parse_json
+            if args.command=='solve-planar-recoil':
+                case=PlanarRecoilCase.from_dict(parse_json(args.case.read_text(encoding='utf-8')))
+                print(json.dumps(save_planar_recoil_run(case,solve_planar_recoil(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-planar-recoil':
+                print(json.dumps(planar_recoil_result(read_planar_recoil_run(args.run)),indent=2,allow_nan=False))
+            else:
+                export_planar_recoil_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-off-axis-magnetostatic','replay-off-axis-magnetostatic','probe-off-axis-magnetostatic'):

@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v17（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[平面の線形反跳材料の保存・再構築・CLI](PLANAR_RECOIL_NATIVE.md)。平面反跳材料native/CLIは全テンソル/残留B/向きとAz基準、三荷重・元5場・基準付き構成ポテンシャルを同じ実FEMで再検証する。絶対磁石内部エネルギーへの読み替えはしない。
+
 [平面の線形反跳材料の境界付きFEM・元場](PLANAR_RECOIL_SOLVE.md)。第17版は平面反跳材料の固定Az/Ht境界付き実FEMを接続する。元H=nu(B−Brem)、自然荷重−∫HtNi ds、固定反力=−元Ht積分。三荷重とU/R/W0/Ws/C0[J/m]を分け、W0+C0=Wsと2U=全源/境界仕事を検証する。
 
 [平面の線形反跳材料弱形式](PLANAR_RECOIL_FORMS.md)を専用APIに追加する。B=mu0*mu_rec*H+Brem、nu=(mu0*mu_rec)^−1、Kij=∫curl(Ni ez)ᵀnu curl(Nj ez)、frem=∫curl(Ni ez)ᵀnu Brem。主軸tensorと残留Bを同じ領域向きへ回転する。w0=Bᵀnu B/2−Bᵀnu Brem（B=0基準）とws=(B−Brem)ᵀnu(B−Brem)/2（H=0基準）は定数差を持ち、両者のB微分はH。絶対磁石内部エネルギーを定義しない。境界付き解は後続工程。
