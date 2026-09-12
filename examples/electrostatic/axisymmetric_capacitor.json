@@ -1,0 +1,269 @@
+{
+  "format": "superfish_ng_axisymmetric_electrostatic_case",
+  "schema_version": 1,
+  "physics": "linear_electrostatic",
+  "name": "electrostatic",
+  "partition": {
+    "format": "superfish_ng_axisymmetric_dielectric_partition",
+    "schema_version": 1,
+    "coordinates": "axisymmetric_rz",
+    "mesh": {
+      "format": "superfish_ng_axis_connected_mesh",
+      "schema_version": 1,
+      "coordinates": "r,z in metres",
+      "boundary": "axis_and_pec",
+      "outer_rz_m": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0625,
+          0.0
+        ],
+        [
+          0.0625,
+          0.125
+        ],
+        [
+          0.0,
+          0.125
+        ]
+      ],
+      "holes_rz_m": [],
+      "points_rz_m": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.03125,
+          0.0
+        ],
+        [
+          0.0625,
+          0.0
+        ],
+        [
+          0.0,
+          0.03125
+        ],
+        [
+          0.03125,
+          0.03125
+        ],
+        [
+          0.0625,
+          0.03125
+        ],
+        [
+          0.0,
+          0.0625
+        ],
+        [
+          0.03125,
+          0.0625
+        ],
+        [
+          0.0625,
+          0.0625
+        ],
+        [
+          0.0,
+          0.09375
+        ],
+        [
+          0.03125,
+          0.09375
+        ],
+        [
+          0.0625,
+          0.09375
+        ],
+        [
+          0.0,
+          0.125
+        ],
+        [
+          0.03125,
+          0.125
+        ],
+        [
+          0.0625,
+          0.125
+        ]
+      ],
+      "triangles": [
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          1,
+          2,
+          5
+        ],
+        [
+          1,
+          5,
+          4
+        ],
+        [
+          3,
+          4,
+          7
+        ],
+        [
+          3,
+          7,
+          6
+        ],
+        [
+          4,
+          5,
+          8
+        ],
+        [
+          4,
+          8,
+          7
+        ],
+        [
+          6,
+          7,
+          10
+        ],
+        [
+          6,
+          10,
+          9
+        ],
+        [
+          7,
+          8,
+          11
+        ],
+        [
+          7,
+          11,
+          10
+        ],
+        [
+          9,
+          10,
+          13
+        ],
+        [
+          9,
+          13,
+          12
+        ],
+        [
+          10,
+          11,
+          14
+        ],
+        [
+          10,
+          14,
+          13
+        ]
+      ]
+    },
+    "materials": [
+      {
+        "id": "lower",
+        "type": "linear_isotropic_dielectric",
+        "epsilon_r": 2.0
+      },
+      {
+        "id": "upper",
+        "type": "linear_isotropic_dielectric",
+        "epsilon_r": 5.0
+      }
+    ],
+    "regions": [
+      {
+        "id": "bottom",
+        "material": "lower",
+        "cell_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "top",
+        "material": "upper",
+        "cell_indices": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    ]
+  },
+  "charge_density_c_per_m3": {
+    "bottom": 0.0,
+    "top": 0.0
+  },
+  "boundaries": [
+    {
+      "id": "lower",
+      "kind": "electrode_potential",
+      "edge_indices": [
+        0,
+        1
+      ],
+      "potential_v": -2.0
+    },
+    {
+      "id": "upper",
+      "kind": "electrode_potential",
+      "edge_indices": [
+        10,
+        11
+      ],
+      "potential_v": 3.0
+    },
+    {
+      "id": "side",
+      "kind": "outward_displacement",
+      "edge_indices": [
+        2,
+        4,
+        6,
+        8
+      ],
+      "outward_displacement_c_per_m2": 0.0
+    },
+    {
+      "id": "axis",
+      "kind": "axis_symmetry",
+      "edge_indices": [
+        3,
+        5,
+        7,
+        9
+      ]
+    }
+  ],
+  "element_order": 2,
+  "quadrature_order": 4
+}

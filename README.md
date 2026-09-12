@@ -1,5 +1,12 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[静電の境界距離とメッシュ細分の分離検証](docs/ELECTROSTATIC_BOUNDARY_STUDY.md)を主ツリーへ統合・限定受入。
+固定電荷の平面帯/同軸領域144例で、48固定境界細分系列と32境界移動を解析照合した。共通場が不変でも絶対電位が距離/対数で増えることを明記し、厳密開放境界の収束とは扱わない。
+追加2unit/旧RF移行2unit・主4unit、入力例2つの6CLI/4nativeがPASS。API/CLIの5ファイルと全プローブJSONが一致、元20native不変。製品ソース変更なし、固定705sourceを主711sourceへ統合した。
+既存標準1159件と周波数/RFの証拠を継承し、追加2unitを別に実行した。新たな全標準実行とは区別する。S01の原要件と残件を[S01受入照合](docs/S01_ACCEPTANCE.md)に集約。
+C00の旧版仕様確認と静電GUI等は未完。親33=8受入/13進行/11他未受入/1範囲外、全計画未完。
+
+
 2026-09-13：[平面静電の専用保存・再構築・CLI](docs/PLANAR_ELECTROSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
 中立Cartesian幾何・全材料/rho/境界・基準電位と元係数を保存し、実Poisson再構築/再求解で元Phi/E/D・C/m電荷・J/mエネルギー・F/m容量を全再生する。
 標準1159件（1156合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/80CLIと主4unitがPASS。API/CLIの5ファイル・プローブJSONが一致し、元240nativeは不変。固定700sourceと主706sourceは一致。
