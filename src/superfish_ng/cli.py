@@ -169,6 +169,16 @@ def main(argv=None):
     hphi_project=sub.add_parser('execute-hphi-project',help='execute a dedicated positive-radius Hphi Project with verified native completion')
     hphi_project.add_argument('project',type=Path)
     hphi_project.add_argument('--out',type=Path,required=True)
+    hphi=sub.add_parser('solve-axis-hphi',help='solve explicit axis-connected vacuum Hphi mesh, including PEC holes')
+    hphi.add_argument('case',type=Path)
+    hphi.add_argument('--out',required=True,type=Path)
+    hphi_replay=sub.add_parser('replay-axis-hphi',help='verify Hphi mesh topology, regular positive spectrum and all wall losses')
+    hphi_replay.add_argument('run',type=Path)
+    hphi_probe=sub.add_parser('probe-axis-hphi',help='export signed E/H/B at vacuum [r_m,z_m] points; reject conductor interiors')
+    hphi_probe.add_argument('run',type=Path)
+    hphi_probe.add_argument('--points',type=Path,required=True)
+    hphi_probe.add_argument('--mode',type=int,default=1,help='one-based positive-spectrum index, not a tracked mode identity')
+    hphi_probe.add_argument('--out',type=Path,required=True)
     hphi=sub.add_parser('solve-hphi-mesh',help='solve explicit positive-radius vacuum Hphi mesh, including PEC holes')
     hphi.add_argument('case',type=Path)
     hphi.add_argument('--out',required=True,type=Path)
@@ -295,6 +305,20 @@ def main(argv=None):
             from .hphi_project import HphiProject
             from .hphi_jobs import execute_hphi_project
             print(json.dumps(execute_hphi_project(HphiProject.load(args.project),args.out),indent=2,allow_nan=False))
+            return 0
+        if args.command in ('solve-axis-hphi','replay-axis-hphi','probe-axis-hphi'):
+            from .axis_hphi import AxisHphiCase,solve_axis_hphi
+            from .axis_hphi_saved import save_axis_hphi_run,read_axis_hphi_run,export_axis_hphi_probe
+            if args.command=='solve-axis-hphi':
+                case=AxisHphiCase.load(args.case)
+                print(json.dumps(save_axis_hphi_run(case,solve_axis_hphi(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-axis-hphi':
+                read_axis_hphi_run(args.run)
+                print(f'PASS: {args.run} (axis-connected Hphi mesh; regular axis; all PEC components; energy J; loss W)')
+            else:
+                from .project import parse_json
+                export_axis_hphi_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')),args.mode)
+                print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-hphi-mesh','replay-hphi-mesh','probe-hphi-mesh'):
             from .hphi_mesh import HphiMeshCase,solve_hphi_mesh

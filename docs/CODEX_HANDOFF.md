@@ -1,3 +1,30 @@
+2026-09-12：[軸区間・PEC穴を持つ真空HφのFEM・保存](AXIS_HPHI_RF.md)を主ツリーへ統合・限定受入。
+正則u=Hφ/rのP1/P2・全壁RF・明示した複素軸Vacc/両R/Q・専用native/CLIを接続した。
+標準1038件（1035合格・3skip）、独立16FEM/native、12幾何/72モード、凹形4FEM/native、主8unit/6CLIがPASS。
+既存seed9モード19量はf差0、最大相対差8.882e-16。ベンチマーク不変。
+Project/GUI/Study接続・曲線穴等とP03/O02・全計画は継続し、親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+RF標準3210は終了0・1749.380秒、主8unit41549・6CLI52485も終了0。主607source。
+Workspace標準63850のみ継続中。全ブラウザー・サーバー・独立FEM・保存検証は終了済み。
+605sourceのWorkspaceは新12/復元6/旧Hφ8/旧TMTE平面5の実Chrome、27ジョブ（25完了/2取消）、元140native不変、4CLIとCSV/PNG byte一致までPASS。
+/tmp/integrate-axis-workspace-20260912.pyは未実行。標準実終了後、605候補と607主source・seedを確認してから15差分sourceを統合する。
+全計画は未完。
+
+以下の古い稼働記録は、この冒頭を優先する。
+
+2026-09-12 進捗続報：主基盤コミット42e4d38・599source。基盤標準9082（1030件1853.617秒）と主4unitは終了0。
+RF候補601source：8unit、独立16FEM/native（28696終了0・1060.310秒・相似最大1.033e-13）、12幾何/72モード（65489終了0・2.394秒）がPASS。
+RF標準3210は継続中。out/validation-axis-rf-candidate-20260912。
+Workspace候補605source：4unit、Hφ関連51unit（50合格/HTTPskip1）、4Project/12Study/28FEM/48再起動/8CLI（11296終了0・50.348秒）、Chrome新12/再起動6/旧Hφ8/既存TMTE平面5がPASS。
+Workspace標準63850（out/validation-axis-workspace-candidate-20260912）は継続中。605sourceは固定。
+ブラウザーは全終了。最初のサーバー58973は終了0、再起動サーバー4936へstopを置いたので実終了を確認する。
+ブラウザー初回の15秒待機、旧Hφの前workspace参照、並行投入でTM検証器が別Hφ行を選んだ失敗を保持。いずれも製品source不変で、待機/パス修正と単独再実行で合格した。
+新RFの最終P2解析対象の図54837/27655が継続中。out/axis-rf-analytic-plots-20260912。図はまだ目視していない。
+RF統合用/tmp/integrate-axis-rf-20260912.pyは未実行。標準実終了後に601source/旧seedと599主sourceを確認して統合する。
+Workspaceの統合はRF受入後。独立報告・ブラウザー・再起動前140nativeファイルを照合し、主で新unit/CLIを確認してから受入する。
+全33課題の完走要求と未完状態を維持する。P03/O02と全計画を完了へ変更しない。
+
+以下は各工程の記録。稼働ハンドルはこの冒頭を優先する。
+
 2026-09-12：[軸区間・PEC穴の幾何とK/M基盤](AXIS_CONNECTED_MESH.md)を限定受入。
 軸/PECの分離、元境界の厳密被覆、穴を除いた多項式モーメント、軸自由度の保持・正スペクトル/Ritzを確認した。
 標準1030件（1027合格・3skip）、主4unit（0.234秒）がPASS。

@@ -1,4 +1,11 @@
-# 物理・数値仕様 — canonical specification v8（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1入力）
+# 物理・数値仕様 — canonical specification v9（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1入力）
+
+第9版は[軸接続の直線PEC穴付き断面](AXIS_HPHI_RF.md)に、canonicalと同じ正則u=Hφ/r空間を専用入力で接続する。
+一本の連続真空軸の自由度を保持し、零モードは除かない。軸はゼロ面積でPEC壁損失から区別する。
+保存phasorはpeak exp(+iωt)、Hφ real、Er/Ez quadrature、field=real+i*quadratureを明示する。
+既存canonicalのEphasor=−i*Eamplitude出力との符号変換を同一メッシュ・場/RFで確認した。
+Vaccと両R/Qは明示した真空軸区間・beta・位相原点に限る。軸接続だけで加速経路を補完しない。
+既存の全形式と式・境界条件・規格化は不変。Project/GUI/Studyは別の操作受入として扱う。
 
 第8版は[正半径の一般断面・複数PEC境界](HPHI_MESH_RF.md)へq=rHφ空間を明示拡張する。
 連結真空・全r>0・直線P1/P2に限定し、一つの静的循環を除く。外周/穴の全損失を加え、全3DのU[J]/P[W]と専用位相を保持する。

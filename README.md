@@ -1,5 +1,12 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-12：[軸区間・PEC穴を持つ真空HφのFEM・保存](docs/AXIS_HPHI_RF.md)を主ツリーへ統合・限定受入。
+正則u=Hφ/rのP1/P2・全壁RF・明示した複素軸Vacc/両R/Q・専用native/CLIを接続した。
+標準1038件（1035合格・3skip）、独立16FEM/native、12幾何/72モード、凹形4FEM/native、主8unit/6CLIがPASS。
+既存seed9モード19量はf差0、最大相対差8.882e-16。ベンチマーク不変。
+Project/GUI/Study接続・曲線穴等とP03/O02・全計画は継続し、親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
+
+
 2026-09-12：[正半径Hφの独立Study](docs/HPHI_STUDY.md)を主ツリーへ統合・限定受入。
 尺度・全3Dエネルギー・壁導電率・円筒寸法の掃引、全点native/CLI・実worker・GUI・保存再起動を接続した。
 標準1026件（1023合格・3skip）、独立18worker/36FEM/18CLI、Chrome新9/復元3/既存13操作、主12unit/4CLIがPASS。
