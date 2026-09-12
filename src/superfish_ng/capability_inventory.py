@@ -119,6 +119,29 @@ def electrostatic_capabilities():
             'Discrete residual and reaction conservation do not bound original field or surface-flux error'])
 
 
+def planar_electrostatic_capabilities():
+    return dict(case_format='superfish_ng_planar_electrostatic_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_planar_electrostatic_manifest',native_schema_versions=[1],
+        result_format='superfish_ng_planar_electrostatic_result',result_schema_versions=[1],
+        partition_format='superfish_ng_planar_dielectric_partition',partition_schema_versions=[1],
+        commands=['solve-planar-electrostatic','replay-planar-electrostatic','probe-planar-electrostatic'],physics='linear_electrostatic',
+        coordinates='Cartesian x,y',geometry='explicit straight dielectric-conforming triangles in a simple polygon',
+        element_orders=[1,2],material='positive real isotropic linear epsilon_r, explicit in every cell',
+        volume_charge='signed rho [C/m^3], explicit in every region',
+        boundaries=['electrode_potential [V]','outward_displacement [C/m^2]'],
+        boundary_policy='every edge explicit, at least one electrode; connected conductor edges share one electrode id',
+        potential='Phi [V], coefficients relative to first fixed electrode; no implicit ground, axis or thickness',
+        fields='static real E=-grad(Phi) [V/m], D=epsilon0*epsilon_r(original cell)*E [C/m^2]',
+        probes='original Phi/Ex/Ey/Dx/Dy, cell/region/material IDs and epsilon_r; lowest cell at interfaces, no averaging',
+        volume_measure='dx dy per metre of uniform extrusion',energy='integral epsilon*|E|^2/2 dxdy [J/m]',charge_unit='C/m',
+        electrode_charge='separate discrete reaction and minus original outward D flux into electrode',
+        capacitance='F/m, only two unequal fixed electrodes with rho=0 and other Dn=0; reaction, energy and original-field definitions separate',
+        project=False,gui=False,study=False,
+        limits=['No axisymmetric/curved geometry or holes, nonlinear/anisotropic/complex permittivity or RF phasors',
+            'No pure Neumann/gauge, floating electrodes, multi-terminal capacitance matrix or exact open boundary',
+            'Discrete residual and reaction conservation do not bound original field or surface-flux error'])
+
+
 def planar_tracking_mappings():
     return [dict(version=version, name=name, scope=scope) for version, name, scope in (
         (1, 'normalized_rectangle', 'rectangular cases on a normalized rectangle'),

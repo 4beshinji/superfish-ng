@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[平面静電の専用保存・再構築・CLI](docs/PLANAR_ELECTROSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+中立Cartesian幾何・全材料/rho/境界・基準電位と元係数を保存し、実Poisson再構築/再求解で元Phi/E/D・C/m電荷・J/mエネルギー・F/m容量を全再生する。
+標準1159件（1156合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/80CLIと主4unitがPASS。API/CLIの5ファイル・プローブJSONが一致し、元240nativeは不変。固定700sourceと主706sourceは一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。静電Project/GUI/Study・外部境界診断等、S01と全計画は未完。親33=8受入/13進行/11他未受入/1範囲外。
+
+
 2026-09-13：[平面静電Poisson解・元E/D・電荷/容量](docs/PLANAR_ELECTROSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
 全境界の固定電位/Dn、単位長さの実FEMと元Phi/Ex/Ey/Dx/Dy、J/mエネルギー、反力/元場電荷とF/m容量を接続した。
 標準1155件（1152合格・3skip）、追加8unitと既存10unit、独立88例、既存軸24native/240ファイル/プローブ不変、主18unitがPASS。固定697sourceと主703sourceは一致。

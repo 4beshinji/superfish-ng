@@ -223,7 +223,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K21 | 旧バイナリ解ファイル | U | 未 | 仕様確認。まずテキストへの移行経路。バイト互換はv0で約束しない | C / C00,C03 |
 | K22 | GUI・場表示・結果再利用 | L/H（役割） | 実装：NG GUI | 同じ実務を完結することを確認。画面/操作キーの完全複製は対象外 | A / O02,V02 |
 | K23 | 完了管理・再現・配布 | U | 部分：直接保存/Jobの完了公開、外部mesh取込、ローカル配布 | 高次/追加物理との一貫性、他環境/配布再受入 | A / O01,O02,V02 |
-| K24 | 平面/軸対称静電場 | H | 部分 | [軸対称の誘電体/体積電荷/K/荷重](ELECTROSTATIC_FORMS.md)を限定受入。[固定電極/Poisson解・元E/D・電荷/容量](ELECTROSTATIC_SOLVE.md)も限定受入。[専用native/CLI](ELECTROSTATIC_NATIVE.md)も限定受入。[平面の誘電体/K/荷重基盤](PLANAR_ELECTROSTATIC_FORMS.md)も限定受入。Project/GUI/Studyは未完。[平面Poisson解・元E/D・J/m/C/m/F/m](PLANAR_ELECTROSTATIC_SOLVE.md)も限定受入。平面保存/CLI・外部境界診断・純Neumann等は未完 | B / S01 |
+| K24 | 平面/軸対称静電場 | H | 部分 | [軸対称の誘電体/体積電荷/K/荷重](ELECTROSTATIC_FORMS.md)を限定受入。[固定電極/Poisson解・元E/D・電荷/容量](ELECTROSTATIC_SOLVE.md)も限定受入。[専用native/CLI](ELECTROSTATIC_NATIVE.md)も限定受入。[平面の誘電体/K/荷重基盤](PLANAR_ELECTROSTATIC_FORMS.md)も限定受入。Project/GUI/Studyは未完。[平面Poisson解・元E/D・J/m/C/m/F/m](PLANAR_ELECTROSTATIC_SOLVE.md)も限定受入。[平面専用native/CLI](PLANAR_ELECTROSTATIC_NATIVE.md)も限定受入。外部境界診断・純Neumann等は未完 | B / S01 |
 | K25 | 平面/軸対称線形静磁場 | H | 未 | 電流源、磁気ポテンシャル、外部境界、磁束・エネルギー | B / S02 |
 | K26 | 非線形BH・材料曲線 | H | 未 | 単位/補間/範囲、反復、飽和、失敗検知。非線形誘電体の対象版要否も確認 | B / S04 |
 | K27 | 永久磁石・異方性材料 | H | 未 | 残留磁束/磁化方向・テンソル、対象版の材料モデル | B / S03 |

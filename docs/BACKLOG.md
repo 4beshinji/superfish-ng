@@ -1,5 +1,11 @@
 # 実装バックログ
 
+2026-09-13：[平面静電の専用保存・再構築・CLI](PLANAR_ELECTROSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+中立Cartesian幾何・全材料/rho/境界・基準電位と元係数を保存し、実Poisson再構築/再求解で元Phi/E/D・C/m電荷・J/mエネルギー・F/m容量を全再生する。
+標準1159件（1156合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/80CLIと主4unitがPASS。API/CLIの5ファイル・プローブJSONが一致し、元240nativeは不変。固定700sourceと主706sourceは一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。静電Project/GUI/Study・外部境界診断等、S01と全計画は未完。親33=8受入/13進行/11他未受入/1範囲外。
+
+
 2026-09-13：[平面静電Poisson解・元E/D・電荷/容量](PLANAR_ELECTROSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
 全境界の固定電位/Dn、単位長さの実FEMと元Phi/Ex/Ey/Dx/Dy、J/mエネルギー、反力/元場電荷とF/m容量を接続した。
 標準1155件（1152合格・3skip）、追加8unitと既存10unit、独立88例、既存軸24native/240ファイル/プローブ不変、主18unitがPASS。固定697sourceと主703sourceは一致。
@@ -135,7 +141,7 @@ GUI・履歴・形状写像等と全計画は未完。親33課題の8受入/11�
 旧seed9モード19量はf差0、最大相対差8.882e-16。曲線内導体・部分空間追跡・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
 
 
-次の限定課題はS01の[平面静電専用native/CLI](PLANAR_ELECTROSTATIC_NATIVE_PLAN.md)。全Poisson再構築、C/m・J/m・F/m、全元場と片側材料情報、API/CLI byte一致、改変/中断/不正型拒否を受入条件とする。候補4unit/旧能力表3unitはPASS、独立24例80CLIと標準1159件を検証中。外部境界と細分の分離検証は別候補で144例PASS、静電入力例は既存RF移行検査と整合する専用examples/electrostatic/へ移して再検証中。
+次の限定課題はS01の[有限外部境界とメッシュ細分の分離検証](ELECTROSTATIC_BOUNDARY_STUDY_PLAN.md)。固定電荷を保つ平面帯と同軸領域、共通内部場と絶対電位の境界依存、48固定境界細分系列/32境界移動、実行可能な静電入力例と旧RF移行検査を受入条件とする。固定705sourceで144例・新2/旧2unitと6CLIがPASS、これから本体へ反映する。平面磁静の材料/電流/弱形式は別候補710sourceで5新/2移行unit・72例216多項式PASS、標準1166件を検証中。
 
 2026-09-12：[明示Hφメッシュ列の細分差診断](HPHI_CONVERGENCE.md)のAPI・全水準保存・完全再生・CLIを主ツリーへ統合・限定受入。
 元E/Hの対応、周波数近傍、最後2組のf/E/H/各RF・壁線分・複素Vaccを別々に判定する。縮退・guard不足・粗さ未達はUNVERIFIEDを保持する。

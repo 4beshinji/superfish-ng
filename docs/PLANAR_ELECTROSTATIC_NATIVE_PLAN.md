@@ -1,6 +1,6 @@
 # S01: 平面静電の保存・再構築・CLI
 
-2026-09-13 JST。平面静電の実FEM結果を、中立Cartesian幾何・単位長さの静電量を保持した専用nativeへ接続する限定課題。実装中・未受入。
+2026-09-13 JST。平面静電の実FEM結果を、中立Cartesian幾何・単位長さの静電量を保持した専用nativeへ接続する限定課題。[実装記録](PLANAR_ELECTROSTATIC_NATIVE.md)の専用native/CLI範囲で限定受入。
 
 受入条件：
 

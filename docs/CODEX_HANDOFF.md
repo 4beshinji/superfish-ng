@@ -1,3 +1,13 @@
+最新：平面native主4unit PASS、統合/finalizer実行済み・再実行禁止。主706source。次は準備済み境界study-final705 integrator→主4unit（新2+旧RF移行2）→finalizer、全144例は再実行しない。境界の独立144例と固定最終705sourceは完全一致。残る実ハンドルは磁静forms標準58978だけ。磁静forms統合/finalizer未作成。全GUI停止、全計画未完、親33=8/13/11/1。
+
+2026-09-13：[平面静電の専用保存・再構築・CLI](PLANAR_ELECTROSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+中立Cartesian幾何・全材料/rho/境界・基準電位と元係数を保存し、実Poisson再構築/再求解で元Phi/E/D・C/m電荷・J/mエネルギー・F/m容量を全再生する。
+標準1159件（1156合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/80CLIと主4unitがPASS。API/CLIの5ファイル・プローブJSONが一致し、元240nativeは不変。固定700sourceと主706sourceは一致。
+旧seed9モード19量はf差0、最大相対差8.882e-16。静電Project/GUI/Study・外部境界診断等、S01と全計画は未完。親33=8受入/13進行/11他未受入/1範囲外。
+平面native統合/finalizer実行済み・再実行禁止。主706source。次の限定課題と実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
+最新：平面native独立88424/標準6986は終了0（24例48native/80CLI、193.876秒、240native/90参照不変、標準1159件）。native integrator実行済み、主706source。本体4unitの実ハンドルを確認しfinalizerへ。境界study-final705の独立7049は144例PASS/163.620秒、4unit PASSで最終固定済み。境界integrator/finalizerを新examples/electrostatic/配置と独立全source一致・主4unitへ更新済み未実行。磁静forms-final710は7unit/72例PASS、標準58978だけが実行中。元50194は終了241で保持。磁静forms統合/finalizerは未作成。全GUI停止、全計画未完、親33=8/13/11/1。
+
 最新：平面solveは主18unit PASS、統合/finalizer実行済み・再実行禁止。主703source、標準55579終了0（1155=1152+3skip、2268.227秒）、独立71566終了0（88例1030.401秒、既存軸24native/240ファイル/プローブ不変）。native独立88424/標準6986は実行中、統合/finalizer未実行。境界例のroot配置で旧RF移行2検査が4errorsになることを確認。専用examples/electrostatic/へ移した-final候補705で追加2+旧移行2unit PASS、独立7049（144例）実行中。境界統合/finalizerの旧版はまだ新配置へ要更新。磁静formsも-final710へ継承し5新+2移行unit/独立72例PASSで固定、標準58978実行中（1166件）。旧標準50194は失敗が既知のため自分のunittest子だけSIGTERMで停止し終了241、partial log保持。磁静forms統合/finalizer未作成。全GUI停止、全計画未完、親33=8/13/11/1。
 
 2026-09-13：[平面静電Poisson解・元E/D・電荷/容量](PLANAR_ELECTROSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
