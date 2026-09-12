@@ -1,3 +1,16 @@
+最新：軸対称静電solve標準1962は終了0（1138=1135合格+3skip、2261.456秒）。主6unit PASSで統合/finalizer実行済み、主690source。残る標準はnative51514と平面forms73191。両統合/finalizerは準備済み未実行。native本体は4unit+24例79CLI、平面forms本体は5unit+72例。平面solveは新planar_electrostatic.pyとscripts/planar_electrostatic_reference.pyを実装しsmoke PASS、6例の矩形Poisson細分の予備調査が完了（本体未統合・未受入）。次はこの平面solveの正式unit/独立検証。全計画未完、親33=8/13/11/1。
+
+2026-09-13：[軸対称静電Poisson解・元E/D・電荷/容量](ELECTROSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
+全境界を固定電位/外向きDn/対称軸へ明示し、基準電極からの電位差を実FEMで解く。元場・領域エネルギー、離散反力と元Dによる電極電荷を別々に評価する。
+標準1138件（1135合格・3skip）、追加6unit、二層32/製造解48/同軸24の独立104例と主6unitがPASS。固定684sourceと主690sourceの一致を確認した。
+同電位の場0を基準電位差で保ち、同軸P1/P2の電位誤差未達はしきい値を変えず16/32/64の細分で解消した。
+旧seed9モード19量はf差0、最大相対差8.882e-16。静電保存/CLI/GUI・平面・純Neumann等、S01と全計画は未完。親33=8受入/13進行/11他未受入/1範囲外。
+静電solve統合/finalizerは実行済み、再実行しない。主690source。次は専用静電native/CLI。実ハンドルの最新状態を確認する。以下よりこの冒頭を優先。
+
+最新：主HEAD 9202a9e、685source。標準の実ハンドルは軸対称solve1962（1138件）、native51514（1142件）、平面forms73191（1147件）。前二者の独立照合は104例/24例79CLIともPASS。平面formsは5unit/72例216多項式PASSで固定692source、主未統合。平面solve候補 /tmp/superfish-planar-electrostatic-solve-20260913 を作成したが実装未着手、計画のみ。軸対称solve/native統合+finalizerは準備済み未実行。平面forms統合/finalizerは未作成。親33=8/13/11/1、全計画未完。
+
+2026-09-13 JST最新：主HEAD 9202a9e、静電formsまで685source受入済み。solve最終42541は104例PASS（872.013秒、固定684一致）、native独立14077は24例48native/79CLI PASS（99.970秒、固定687一致）。残る標準はsolve1962とnative51514。両統合/finalizerは準備済み未実行、主期待690/693。solve本体は6unitと全ソース一致で確認し、104例を本体で再実行したとは扱わない。native本体は4unitと独立24例79CLI。平面静電forms候補 /tmp/superfish-planar-electrostatic-forms-20260913 は固定native687を基に実装中。新2srcのみ、smoke PASS、テスト/独立検証はこれから。全計画未完、親33=8/13/11/1。
+
 最新：静電forms主5unit/72独立例は終了0、統合/finalizer実行済み（再実行禁止）、主685source。残る実ハンドルはsolve独立42541/標準1962、native標準51514。solve/native統合とdoc finalizerは両方準備済み未実行。native独立24例79CLIはsolve最終104例PASS待ち。親33=8受入/13進行/11他未受入/1範囲外、全計画未完。
 
 2026-09-13：[軸対称静電の誘電体・電荷・弱形式](ELECTROSTATIC_FORMS.md)を主ツリーへ統合・限定受入。
