@@ -1,6 +1,6 @@
 # S02: 軸接続磁静の専用保存・再構築・CLI
 
-2026-09-13 JST。正則a=Aphi/rの実FEMを専用native/CLIへ接続する限定課題。実装中・未受入。
+2026-09-13 JST。正則a=Aphi/rの実FEMを専用native/CLIへ接続する限定課題。[実装記録](AXIS_MAGNETOSTATIC_NATIVE.md)の専用API範囲で限定受入。
 
 - Case/mesh/fields/results/manifestの5ファイルへ、全mu_r/reluctivity、Jphi、軸/固定Aphi/r/Ht境界、軸DOFと元a[T]係数を保持する。定数aをgauge移動しない。
 - 同じ磁静問題を再求解し、元a/Aphi/Br/Bz/Hr/Hzと全回転体のエネルギー[J]・磁束[Wb]、電流[A]、固定aの反力[A m²]を単位・向きの規約ごと検証する。

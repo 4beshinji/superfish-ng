@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v15（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[軸接続磁静native/CLI](AXIS_MAGNETOSTATIC_NATIVE.md)は元a[T]と全軸DOF、mu_r/reluctivity/Jphi/境界荷重を保存し、同じ実FEMの再求解で元6場・J/Wb/A/A m²の各物理量と規約を照合する。軸の正則値を保持し、aの定数をgauge移動しない。
+
 第15版は[軸接続磁静の実FEM](AXIS_MAGNETOSTATIC_SOLVE.md)を接続する。正則a=Aphi/r[T]の固定値と+2π∫r²Ht Ni ds[A m²]を明示する。全非軸Htでも一意に解き、定数aをgaugeとして除去しない。元a/Aphi/Br/Bz/Hr/Hz、Jエネルギー・Wb磁束を保持し、H周回+Jphi断面電流[A]と固定a反力[A m²]を区別する。軸非接続と一般外部境界診断は未対応。
 
 [軸に接続した磁静弱形式](AXIS_MAGNETOSTATIC_FORMS.md)はa=Aphi/r[T]からBr=−r∂z a、Bz=2a+r∂r aを構成し、∫B²/(2mu)dV[J]を組み立てる。K[m⁴/H]・源仕事荷重[A m²]を、断面源電流[A]と区別する。全軸DOFを保持し、定数aを零gaugeとは扱わない。境界付き解は第15版で接続した。軸非接続のgauge処理は後続工程。

@@ -1,5 +1,11 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[軸接続磁静の専用保存・再構築・CLI](docs/AXIS_MAGNETOSTATIC_NATIVE.md)を主ツリーへ統合・限定受入。
+mu_r/reluctivity・Jphi・全境界/軸DOFと元a[T]を保持し、再求解で元6場とJエネルギー・Wb磁束・A電流・A m²反力を検証する専用native/CLIを接続した。
+標準1191件（1188合格・3skip）、追加4unit/旧能力表3unit、独立24例48native/80CLIと主4unitがPASS。API/CLIの5ファイル・全プローブJSONが一致、元240native/90参照ファイルは不変。固定731sourceと主737sourceは一致。旧seed9モード19量はf差0、最大相対差8.882e-16。
+軸非接続・外部境界診断・磁静Project/GUI/Study等は未完。親33=8受入/14進行/10他未受入/1範囲外、S02と全計画は未完。
+
+
 2026-09-13：[軸接続磁静の実FEM・元Aphi/B/H・全3D磁束/エネルギー](docs/AXIS_MAGNETOSTATIC_SOLVE.md)を主ツリーへ統合・限定受入。
 明示mu_r/Jphi・軸/固定Aphi/r/Htから正則aを実FEMで解き、元6場、Jエネルギー、Wb磁束を接続した。Ampere電流[A]と固定a反力[A m²]を区別する。
 標準1187件（1184合格・3skip）、追加6unit・独立88例と主6unitがPASS。固定728sourceと主734sourceは一致。旧seed9モード19量はf差0、最大相対差8.882e-16。

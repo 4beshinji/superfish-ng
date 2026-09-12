@@ -175,3 +175,26 @@ def planar_magnetostatic_capabilities():
         limits=['No axisymmetric/curved geometry or holes, nonlinear/anisotropic/complex permeability, remanence or RF phasors',
             'No pure Neumann/gauge, winding inductance or exact open boundary',
             'Discrete residual and reaction conservation do not bound original field or circulation error'])
+
+
+def axis_magnetostatic_capabilities():
+    return dict(case_format='superfish_ng_axis_magnetostatic_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_axis_magnetostatic_manifest',native_schema_versions=[1],
+        result_format='superfish_ng_axis_magnetostatic_result',result_schema_versions=[1],
+        partition_format='superfish_ng_axis_magnetic_partition',partition_schema_versions=[1],
+        commands=['solve-axis-magnetostatic','replay-axis-magnetostatic','probe-axis-magnetostatic'],physics='linear_magnetostatic',
+        coordinates='axisymmetric r,z',geometry='explicit straight axis-connected triangles, optional holes',
+        element_orders=[1,2],material='positive real isotropic linear mu_r, explicit in every cell',
+        volume_current='signed Jphi [A/m^2], explicit in every region; cross-section integral Jphi dr dz [A]',
+        boundaries=['fixed_aphi_over_r [T]','tangential_h [A/m]','axis_regularity'],
+        boundary_policy='every edge explicit; axis regularity only at r=0; domain-left tangent in r,z; all non-axis Ht is allowed',
+        potential='a=Aphi/r [T], Aphi=r*a [Wb/m]; all axis a DOFs retained; constant a is uniform Bz, not gauge',
+        fields='Br=-r*d_z(a) [T], Bz=2*a+r*d_r(a) [T], H=reluctivity(original cell)*B [A/m]',
+        probes='original a/Aphi/Br/Bz/Hr/Hz, cell/region/material IDs and mu_r; lowest cell at interfaces, no averaging',
+        volume_measure='2*pi*r dr dz; full 3D',energy='integral |B|^2/(2*mu0*mu_r) dV [J]',current_unit='A',
+        fixed_boundary_reaction='separate discrete reaction and +2*pi*integral r^2*Ht ds [A m^2]; conjugate to a, not Ampere current',
+        normal_flux='2*pi*integral r*original B dot outward normal ds [Wb]',
+        project=False,gui=False,study=False,
+        limits=['No off-axis gauge or curved geometry, nonlinear/anisotropic/complex permeability, remanence or RF phasors',
+            'No winding inductance or exact open boundary',
+            'Discrete work identities do not bound original field, flux or circulation error'])
