@@ -238,6 +238,13 @@ def main(argv=None):
     axis_magnetostatic_probe=sub.add_parser('probe-axis-magnetostatic',help='export original static Aphi/B/H at magnetic-domain [r_m,z_m] points with one-sided region metadata')
     axis_magnetostatic_probe.add_argument('run',type=Path);axis_magnetostatic_probe.add_argument('--points',required=True,type=Path)
     axis_magnetostatic_probe.add_argument('--out',required=True,type=Path)
+    axis_recoil=sub.add_parser('solve-axis-recoil',help='solve an explicit axis-connected recoil tensor/remanence/current Aphi case with verified native output')
+    axis_recoil.add_argument('case',type=Path);axis_recoil.add_argument('--out',required=True,type=Path)
+    axis_recoil_replay=sub.add_parser('replay-axis-recoil',help='reconstruct recoil tensors, remanent induction, signed currents, axis/fixed Aphi/r/Ht boundaries, Aphi/B/H and all integral quantities')
+    axis_recoil_replay.add_argument('run',type=Path)
+    axis_recoil_probe=sub.add_parser('probe-axis-recoil',help='export original static Aphi/B/H at magnetic-domain [r_m,z_m] points with one-sided region metadata')
+    axis_recoil_probe.add_argument('run',type=Path);axis_recoil_probe.add_argument('--points',required=True,type=Path)
+    axis_recoil_probe.add_argument('--out',required=True,type=Path)
     material_hphi=sub.add_parser('solve-material-hphi',help='solve an explicit piecewise lossless material Hphi case with verified native output')
     material_hphi.add_argument('case',type=Path);material_hphi.add_argument('--out',required=True,type=Path)
     material_hphi_replay=sub.add_parser('replay-material-hphi',help='reconstruct materials and geometry, lowest positive FEM and all RF, and emit verified JSON')
@@ -494,6 +501,19 @@ def main(argv=None):
                 print(json.dumps(axis_magnetostatic_result(read_axis_magnetostatic_run(args.run)),indent=2,allow_nan=False))
             else:
                 export_axis_magnetostatic_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
+                print(f'WROTE: {args.out}')
+            return 0
+        if args.command in ('solve-axis-recoil','replay-axis-recoil','probe-axis-recoil'):
+            from .axis_recoil import AxisRecoilCase,solve_axis_recoil
+            from .axis_recoil_saved import save_axis_recoil_run,read_axis_recoil_run,axis_recoil_result,export_axis_recoil_probe
+            from .project import parse_json
+            if args.command=='solve-axis-recoil':
+                case=AxisRecoilCase.from_dict(parse_json(args.case.read_text(encoding='utf-8')))
+                print(json.dumps(save_axis_recoil_run(case,solve_axis_recoil(case),args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-axis-recoil':
+                print(json.dumps(axis_recoil_result(read_axis_recoil_run(args.run)),indent=2,allow_nan=False))
+            else:
+                export_axis_recoil_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-material-hphi','replay-material-hphi','probe-material-hphi'):

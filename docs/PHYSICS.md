@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v18（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[軸接続の反跳材料の保存・再構築・CLI](AXIS_RECOIL_NATIVE.md)。軸反跳材料native/CLIは全テンソル/残留B/向き・軸接触/phiモデル、a=Aphi/rと三荷重・元6場・Jの基準付き構成ポテンシャルを同じ実FEMで再検証する。A m²反力をA電流へ読み替えず、絶対磁石内部エネルギーも推定しない。
+
 [軸接続の反跳材料の境界付きFEM・元6場](AXIS_RECOIL_SOLVE.md)。第18版は軸接続の反跳材料の境界付き実FEMを接続する。元H=nu(B−Brem)、自然荷重+2pi∫r²HtNi ds[A m²]、固定反力は+2pi∫r²Ht ds。三荷重とU/R/W0/Ws/C0[J]、元6場・Wb磁束・A周回を分け、軸上Aphi=Br=Hr=0を保つ。定数a試験の∫2Hz dVでは残留荷重を二重に差し引かない。
 
 [軸接続反跳材料の弱形式](AXIS_RECOIL_FORMS.md)。軸接続のa=Aphi/r[T]に対してBr=−r a_z、Bz=2a+r a_r、H=nu(B−Brem)。K=∫B_iᵀnu B_j dV、fJ=∫Jphi*r*Ni dV、frem=∫B_iᵀnu Brem dV、dV=2pi*r dr dz。軸接触領域の向き0・径方向残留B=0、phi結合なし/mu_phi=mu_rr/残留B_phi=0を明示する。全軸DOFを残し、定数aは一様軸Bであってgaugeではない。境界付き解は後続工程。
