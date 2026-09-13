@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[平面磁場の力・トルク報告保存・CLI](PLANAR_MAGNETIC_FORCE_NATIVE.md)。線形P1/P2の元native 5ファイルSHAに固定した力/二つのトルクと、明示nullまたは実変位FEM仮想仕事の完全JSONを保存・再計算する。API/CLIは元Case/場と規約、差分/求積診断を保持する。 [MeekerのWeighted Stress Tensor数学説明 (2022)](https://www.femm.info/doku/doku.php?id=weightedstresstensor)と[FEMM 4.2 Manual (2015), §2.3.11, 式2.13/2.14](https://www.femm.info/Archives/doc/manual.pdf)の公開応力・固定電流のエネルギー微分を照合した。コード/図/磁場データ/重みの丸めは再利用しない。混合境界の停留ポテンシャルと節点移動を自前に導出し、別FEM変位と照合した。 合成解析場のみ。新規依存・旧版実行なし。
+
 2026-09-13：[平面磁場のMaxwell応力と仮想仕事](PLANAR_MAGNETIC_FORCE.md)。元P1/P2のBと真空P1重みから力[N/m]、重み付きトルクと節点回転の応力トルク[N m/m]を別々に積分する。同じ節点移動・固定境界/電流の実FEM停留ポテンシャル差分を独立に照合する。 [MeekerのWeighted Stress Tensor数学説明 (2022)](https://www.femm.info/doku/doku.php?id=weightedstresstensor)と[FEMM 4.2 Manual (2015), §2.3.11, 式2.13/2.14](https://www.femm.info/Archives/doc/manual.pdf)の公開応力・固定電流のエネルギー微分を照合した。コード/図/磁場データ/重みの丸めは再利用しない。混合境界の停留ポテンシャルと節点移動を自前に導出し、別FEM変位と照合した。 合成解析場のみ。新規依存・旧版実行なし。
 
 2026-09-13：[B-H/反跳モデルの多極報告保存・CLI](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md)。成功したB-H/反跳nativeを厳密manifestで選び、元材料/係数/反復履歴と円板条件・全4系列を再検証する。材料報告は版2、従来線形報告は版1、request版1と2コマンドを保持する。 既存の独立B-H/反跳FEMを明示的に接続し、宣言構成則の全円板条件と元場・係数・保存/CLI互換を分離して照合した。B-H表の線形性は入力floatの厳密有理比で確認する。追加外部資料なし。 合成解析場のみ。新規依存・旧版実行なし。

@@ -1,3 +1,13 @@
+2026-09-13：[平面磁場の力・トルク報告保存・CLI](PLANAR_MAGNETIC_FORCE_NATIVE.md)を主ツリーへ統合・限定受入。
+線形P1/P2の元native 5ファイルSHAに固定した力/二つのトルクと、明示nullまたは実変位FEM仮想仕事の完全JSONを保存・再計算する。API/CLIは元Case/場と規約、差分/求積診断を保持する。独立8例（仮想仕事4/応力のみ4）、26CLI、24報告と元native 40ファイルがPASS・不変。API/CLIのJSON/バイトが一致し、改変/上書き/リンク/中断を拒否。
+標準1350件（1347合格・3skip）、追加6unitとcapability 3unit、主6unitがPASS。固定848sourceを主854sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+GUI受渡し・B-H/反跳/軸対称の力/トルク、S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+planar-magnetic-force-native統合/finalizer実行済み・再実行禁止。主854source。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
+継続中の候補（主ツリーへは未統合）：B-H/反跳の平面Maxwell応力は固定851source・独立62例PASS、標準1356件をout/validation-planar-magnetic-force-materials-candidate-20260913へ実行中。材料仮想仕事は固定854source・独立50成功条件+4原点変更/12実失敗PASS、標準1362件をout/validation-planar-magnetic-virtual-work-materials-candidate-20260913へ実行中。元主ソースは854件で不変。候補は/tmp/superfish-<各slug>-20260913。両段階のintegrator/finalizerは/tmpに準備済みだが未実行で、各標準PASSと直前主のfocused PASSを待って順に実行する。固定候補を編集しない。最新のout/magnetic-force-work-checkpoint-*.jsonも確認する。
+
+材料仮想仕事の新入口は別専用material_planar_magnetic_virtual_work。既存の線形用APIの型契約とversion 1、材料応力version 2は不変。後続は材料力報告native/CLI、軸対称の軸力、GUI量受渡し。OFF_AXIS_MAGNETIC_FORCE_PLAN.mdとS05_GUI_HANDOFF_PLAN.mdは未受入の設計草案。軸方向力の先行試作out/off-axis-magnetic-force-design-probe-20260913は製品API受入に数えない。
+
 2026-09-13：[平面磁場のMaxwell応力と仮想仕事](PLANAR_MAGNETIC_FORCE.md)を主ツリーへ統合・限定受入。
 元P1/P2のBと真空P1重みから力[N/m]、重み付きトルクと節点回転の応力トルク[N m/m]を別々に積分する。同じ節点移動・固定境界/電流の実FEM停留ポテンシャル差分を独立に照合する。独立56例（解析32/細分16/線形材料8）、8細分系列、40条件480変位FEMと3重みがPASS。211ファイル不変。P1の二つの回転場の違いを修正で消さず明示した。
 標準1344件（1341合格・3skip）、追加6unitと主6unitがPASS。固定845sourceを主851sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。

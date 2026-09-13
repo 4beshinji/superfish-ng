@@ -210,6 +210,10 @@ def main(argv=None):
     planar_electrostatic_probe=sub.add_parser('probe-planar-electrostatic',help='export original static Phi/E/D at dielectric [x_m,y_m] points with one-sided region metadata')
     planar_electrostatic_probe.add_argument('run',type=Path);planar_electrostatic_probe.add_argument('--points',required=True,type=Path)
     planar_electrostatic_probe.add_argument('--out',required=True,type=Path)
+    magnetic_force=sub.add_parser('analyze-planar-magnetic-force',help='integrate original planar Maxwell force and two torque definitions, optionally with displaced-FEM work')
+    magnetic_force.add_argument('run',type=Path);magnetic_force.add_argument('--request',required=True,type=Path);magnetic_force.add_argument('--out',required=True,type=Path)
+    magnetic_force_replay=sub.add_parser('replay-planar-magnetic-force',help='verify force source, body, vacuum weights, original stress and all requested displaced FEM cases')
+    magnetic_force_replay.add_argument('run',type=Path);magnetic_force_replay.add_argument('report',type=Path)
     magnetic_multipoles=sub.add_parser('extract-planar-magnetic-multipoles',help='extract source-free planar magnetic harmonics from a verified native run')
     magnetic_multipoles.add_argument('run',type=Path);magnetic_multipoles.add_argument('--request',required=True,type=Path);magnetic_multipoles.add_argument('--out',required=True,type=Path)
     magnetic_multipoles_replay=sub.add_parser('replay-planar-magnetic-multipoles',help='verify the source native, original FEM circles, multipole coefficients and diagnostics')
@@ -482,6 +486,13 @@ def main(argv=None):
             else:
                 export_planar_electrostatic_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
                 print(f'WROTE: {args.out}')
+            return 0
+        if args.command in ('analyze-planar-magnetic-force','replay-planar-magnetic-force'):
+            from .planar_magnetic_force_saved import export_planar_magnetic_force,replay_planar_magnetic_force
+            from .project import parse_json
+            if args.command=='analyze-planar-magnetic-force':result=export_planar_magnetic_force(args.run,args.out,parse_json(args.request.read_text(encoding='utf-8')))
+            else:result=replay_planar_magnetic_force(args.run,args.report)
+            print(json.dumps(result,indent=2,allow_nan=False))
             return 0
         if args.command in ('extract-planar-magnetic-multipoles','replay-planar-magnetic-multipoles'):
             from .planar_magnetic_multipole_saved import export_planar_magnetic_multipoles,replay_planar_magnetic_multipoles
