@@ -1,6 +1,6 @@
 # S05: 平面磁場の多極係数と座標規約
 
-2026-09-13 JST。後続限定課題。未実装・未受入。
+2026-09-13 JST。後続限定課題。[実装記録](PLANAR_MAGNETIC_MULTIPOLES.md)の専用API範囲で限定受入。
 
 最初の限定範囲は多極展開の数学的表現と座標変換。原点c=(cx,cy)[m]、局所軸の反時計回り角θ[rad]、基準半径R[m]、次数n=1..Nを明示する。局所z'=exp(-iθ)((x+iy)-(cx+icy))、F'=By'+iBx'=ΣCn(z'/R)^(n-1)、Cn=Bn+iAn[T]とする。Bnはnormal、Anはskew、n=1は双極、n=2は四極。この規約は[CERN LHC-M-ES-0001 rev3.0 (2001), §§2.1–2.4, 5.1–5.2](https://lhc-div-mms.web.cern.ch/tests/MAG/FiDeL/Documentation/lhc-m-es-0001-30-00.pdf)を参照する。LHC固有の半径や主成分・10^-4規格化を既定値として取り込まない。
 
