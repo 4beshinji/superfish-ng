@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[軸接続の反跳材料の境界付きFEM・元6場](AXIS_RECOIL_SOLVE.md)。第18版は軸接続の反跳材料の境界付き実FEMを接続する。元H=nu(B−Brem)、自然荷重+2pi∫r²HtNi ds[A m²]、固定反力は+2pi∫r²Ht ds。三荷重とU/R/W0/Ws/C0[J]、元6場・Wb磁束・A周回を分け、軸上Aphi=Br=Hr=0を保つ。定数a試験の∫2Hz dVでは残留荷重を二重に差し引かない。[材料弱形式の公開構成則](PLANAR_RECOIL_FORMS_PLAN.md)と自前の軸curl・3次元体積/境界積分から導出した。独立解析は合成材料のみで、資料のコード・材料表・旧版資産を転用しない。新規依存・追加外部資料・旧版実行なし。
+
 2026-09-13：[軸接続反跳材料の弱形式](AXIS_RECOIL_FORMS.md)。軸接続のa=Aphi/r[T]に対してBr=−r a_z、Bz=2a+r a_r、H=nu(B−Brem)。K=∫B_iᵀnu B_j dV、fJ=∫Jphi*r*Ni dV、frem=∫B_iᵀnu Brem dV、dV=2pi*r dr dz。軸接触領域の向き0・径方向残留B=0、phi結合なし/mu_phi=mu_rr/残留B_phi=0を明示する。全軸DOFを残し、定数aは一様軸Bであってgaugeではない。平面材料の公開構成則と自前の軸curl・体積積分から導出し、独立Vandermonde/Gaussと解析モーメントで照合した。合成材料のみを使用。新規依存・追加外部資料・旧版実行なし。
 
 2026-09-13：[平面の線形反跳材料の保存・再構築・CLI](PLANAR_RECOIL_NATIVE.md)。平面反跳材料native/CLIは全テンソル/残留B/向きとAz基準、三荷重・元5場・基準付き構成ポテンシャルを同じ実FEMで再検証する。絶対磁石内部エネルギーへの読み替えはしない。[材料弱形式の公開数学と独自導出](PLANAR_RECOIL_FORMS_PLAN.md)を継承する。独立解析は構成則/curlと矩形の解析積分から導出した合成材料で、材料表・旧版コードを使用しない。新規依存・追加外部資料・旧版実行なし。

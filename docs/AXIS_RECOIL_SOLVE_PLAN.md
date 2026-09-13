@@ -1,6 +1,6 @@
 # S03: 軸接続の線形反跳材料の境界付きFEM
 
-2026-09-13 JST。次の限定課題。未実装・未受入。
+2026-09-13 JST。次の限定課題。[実装記録](AXIS_RECOIL_SOLVE.md)の専用API範囲で限定受入。
 
 AxisRecoilCaseとして固定a=Aphi/r[T]、Ht[A/m]、軸の正則性と全Jphiを明示する。全軸DOFを保ち、K・電流/残留/境界の三荷重で実求解する。自然荷重は+2pi∫r²HtNi ds[A m²]。定数aはgaugeではないため、全外部Ht境界も許す。元6場a/Aphi/Br/Bz/Hr/Hzを元セルから復元し、H=nu(B−Brem)と軸上Aphi=Br=Hr=0を確認する。
 
