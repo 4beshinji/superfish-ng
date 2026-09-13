@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v19（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[平面P1の非線形B-H弱形式](PLANAR_BH_FORMS.md)。平面P1のAzから元セル一定B=curl(Az ez)、H=h(|B|)B/|B|、T=dH/dBを評価する。g_i=∫curlNi·H[A]、K_ij=∫curlNiᵀT curlNj[m/H]、fJ_i=∫Jz Ni[A]。U/U*[J/m]、元B·HとAz·gを独立積分し、仕事はU+U*であって一般に2Uではない。全境界DOFと定数核を保ち、境界付き解法は後続工程。
+
 [等方B-H材料構成則](BH_CURVE.md)。単調な等方H(B)表の構成則APIを追加する。B[T]/H[A/m]は原点から厳密増加、H(B)は区分線形、外挿は拒否。H=h(b)n、T=(h/b)I+(h'−h/b)nnᵀ。零場は初期傾き、節点は明示片側接線を使う。w=∫h db、w*=∫b dh[J/m³]を別に積分し、w+w*=B·H。非線形FEMとRF入力はこの工程で拡張しない。
 
 [軸非接続の反跳材料の保存・再構築・CLI](OFF_AXIS_RECOIL_NATIVE.md)。r>0の反跳材料native/CLIは全テンソル/残留B/向き・phiモデル、psi基準と三荷重・元6場・Jの基準付き構成ポテンシャルを同じ実FEMで再検証する。軸を除く領域でpsiの定数はAphiにC/rを加えるがB/Hを変えない。除外軸の絶対磁束や絶対磁石内部エネルギーは補わない。
