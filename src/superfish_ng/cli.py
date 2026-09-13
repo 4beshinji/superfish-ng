@@ -224,6 +224,13 @@ def main(argv=None):
     planar_recoil_probe=sub.add_parser('probe-planar-recoil',help='export original static Az/B/H at magnetic-domain [x_m,y_m] points with one-sided region metadata')
     planar_recoil_probe.add_argument('run',type=Path);planar_recoil_probe.add_argument('--points',required=True,type=Path)
     planar_recoil_probe.add_argument('--out',required=True,type=Path)
+    planar_bh=sub.add_parser('solve-planar-bh',help='solve an explicit planar nonlinear B-H/current Az case with verified success or retained failure output')
+    planar_bh.add_argument('case',type=Path);planar_bh.add_argument('--out',required=True,type=Path)
+    planar_bh_replay=sub.add_parser('replay-planar-bh',help='reconstruct B-H curves, Newton histories, signed currents, Az/Ht boundaries, Az/B/H and all integral quantities')
+    planar_bh_replay.add_argument('run',type=Path)
+    planar_bh_probe=sub.add_parser('probe-planar-bh',help='export original static Az/B/H at magnetic-domain [x_m,y_m] points with one-sided region metadata')
+    planar_bh_probe.add_argument('run',type=Path);planar_bh_probe.add_argument('--points',required=True,type=Path)
+    planar_bh_probe.add_argument('--out',required=True,type=Path)
     off_axis_magnetostatic=sub.add_parser('solve-off-axis-magnetostatic',help='solve an explicit positive-radius magnetic/current psi case with verified native output')
     off_axis_magnetostatic.add_argument('case',type=Path);off_axis_magnetostatic.add_argument('--out',required=True,type=Path)
     off_axis_magnetostatic_replay=sub.add_parser('replay-off-axis-magnetostatic',help='reconstruct magnetic materials, signed currents, psi/Ht boundaries, psi/Aphi/B/H and all integral quantities')
@@ -482,6 +489,26 @@ def main(argv=None):
                 print(json.dumps(planar_recoil_result(read_planar_recoil_run(args.run)),indent=2,allow_nan=False))
             else:
                 export_planar_recoil_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
+                print(f'WROTE: {args.out}')
+            return 0
+        if args.command in ('solve-planar-bh','replay-planar-bh','probe-planar-bh'):
+            from .planar_bh import PlanarBHCase,solve_planar_bh
+            from .nonlinear_magnetic import MagneticNonlinearFailure
+            from .planar_bh_saved import save_planar_bh_run,read_planar_bh_run,planar_bh_result,export_planar_bh_probe,save_planar_bh_failure,read_planar_bh_outcome
+            from .project import parse_json
+            if args.command=='solve-planar-bh':
+                case=PlanarBHCase.from_dict(parse_json(args.case.read_text(encoding='utf-8')))
+                try:solution=solve_planar_bh(case)
+                except MagneticNonlinearFailure as exc:
+                    print(json.dumps(save_planar_bh_failure(case,exc,args.out),indent=2,allow_nan=False))
+                    return 1
+                print(json.dumps(save_planar_bh_run(case,solution,args.out),indent=2,allow_nan=False))
+            elif args.command=='replay-planar-bh':
+                result=read_planar_bh_outcome(args.run)
+                print(json.dumps(result,indent=2,allow_nan=False))
+                return 1 if result['status']=='failed' else 0
+            else:
+                export_planar_bh_probe(args.run,args.out,parse_json(args.points.read_text(encoding='utf-8')))
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-off-axis-magnetostatic','replay-off-axis-magnetostatic','probe-off-axis-magnetostatic'):

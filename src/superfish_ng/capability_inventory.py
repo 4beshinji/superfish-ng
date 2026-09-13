@@ -286,3 +286,28 @@ def off_axis_recoil_capabilities():
         limits=['No axis-connected/curved geometry, arbitrary 3D tensor, nonlinear/complex permeability, hysteresis or RF phasors',
             'No pure Neumann, irreversible demagnetization, winding inductance, force or exact open boundary',
             'Discrete residual and identities do not bound original field or circulation error'])
+
+
+def planar_bh_capabilities():
+    return dict(case_format='superfish_ng_planar_bh_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_planar_bh_manifest',native_schema_versions=[1],
+        failure_manifest_format='superfish_ng_planar_bh_failure_manifest',failure_schema_versions=[1],
+        result_format='superfish_ng_planar_bh_result',result_schema_versions=[1],
+        failure_format='superfish_ng_magnetic_nonlinear_failure',
+        partition_format='superfish_ng_planar_bh_partition',partition_schema_versions=[1],
+        commands=['solve-planar-bh','replay-planar-bh','probe-planar-bh'],physics='nonlinear_isotropic_magnetostatic',
+        coordinates='cartesian x,y',geometry='explicit straight simple polygon and material-conforming triangles',element_orders=[1],
+        material='explicit monotone piecewise-linear H(B) in SI with provenance; isotropic, reversible, no extrapolation',
+        volume_current='signed Jz[A/m^2], explicit in every region',boundaries=['fixed_az [Wb/m]','tangential_h [A/m]'],
+        boundary_policy='every edge explicit; at least one fixed Az; first fixed value defines the retained reference',
+        nonlinear_method='true material tangent, damped Newton with objective line search and separate residual convergence',
+        failure='separate verified failure native retains Case, controls, complete history and last valid relative coefficients or null; replay reattempts the same FEM',
+        cli_exit_codes=dict(success=0,nonlinear_failure=1,input_or_native_error=2),
+        fields='Az[Wb/m], original B=curl(Az ez)[T], H=h(|B|)*B/|B|[A/m]',
+        probes='original one-sided P1 fields with cell/region/material IDs, provenance, table interval and secant/differential reluctivity; no averaging',
+        volume_measure='dx dy per metre of uniform extrusion',energy='U=integral h(b) db dA; Ustar=integral b(h) dh dA [J/m]; internal work=U+Ustar',
+        fixed_boundary_reaction='minus original Ht line integral [A], distinct from discrete reaction',normal_flux='original B dot outward normal line integral [Wb/m]',
+        native_replay='same nonlinear FEM with exact coefficient and deterministic iteration-history comparison',project=False,gui=False,study=False,
+        limits=['No P2, axisymmetric/curved geometry, pure Neumann, anisotropic nonlinear material, hysteresis or remanence',
+            'No RF phasors, winding inductance, force or exact open boundary',
+            'Algebraic convergence and discrete identities do not bound original field or circulation error'])

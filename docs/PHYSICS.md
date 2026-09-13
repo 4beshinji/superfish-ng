@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v20（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[平面P1非線形磁場の保存・失敗再現・CLI](PLANAR_BH_NATIVE.md)。B-H表/来歴・元場/接線・内部g/電流/境界荷重と全反復履歴を同じ非線形FEMで再検証する。成功5ファイルと失敗3ファイルを分離し、CLIは成功0/非線形失敗1/入力・保存エラー2。残差停止は元場の離散化誤差を保証しない。
+
 第20版は[平面P1の境界付き非線形磁静場](PLANAR_BH_SOLVE.md)。固定Az/Ht・全Jzと実接線Newton、採用/棄却/失敗履歴、元Az/B/HとU/U*、元H周回/反力・B磁束を保持する。仕事はU+U*で、K@Azを内部gへ代用しない。残差停止は元場の離散化誤差を保証しない。
 
 [平面P1の非線形B-H弱形式](PLANAR_BH_FORMS.md)。平面P1のAzから元セル一定B=curl(Az ez)、H=h(|B|)B/|B|、T=dH/dBを評価する。g_i=∫curlNi·H[A]、K_ij=∫curlNiᵀT curlNj[m/H]、fJ_i=∫Jz Ni[A]。U/U*[J/m]、元B·HとAz·gを独立積分し、仕事はU+U*であって一般に2Uではない。全境界DOFと定数核を保ち、境界付き解法は第20版で接続した。
