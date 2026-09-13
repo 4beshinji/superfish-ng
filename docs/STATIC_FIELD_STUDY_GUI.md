@@ -1,6 +1,8 @@
 # O02: 静的StudyのGUI入力・実行・各条件表示
 
-2026-09-13 JST。候補実装・検証中、主ツリー未統合・未受入。[受入計画](STATIC_FIELD_STUDY_GUI_PLAN.md)。
+統合記録の件数訂正：標準ログは1429件（1426合格・3skip）、4868.421秒で合格。統合用スクリプトがブラウザー最終群の20件で集計変数を上書きしたため、seed記録のstandard_tests/standard_passedだけを元ログから訂正した。元記録はout/static-field-study-gui-development-20260913/seed-regression-before-count-correction.json、訂正理由とSHAは同standard-count-correction.jsonに保持する。実装・標準結果・数値量・source SHAは変更せず、統合やテストを再実行していない。
+
+2026-09-13 JST。固定895sourceを主901sourceへ統合し、専用静的Study GUIの範囲を限定受入。[受入計画](STATIC_FIELD_STUDY_GUI_PLAN.md)。
 
 専用の/static-study.htmlと7種類の静的Study HTTP操作を追加する。入力はJSON文字列のまま既存StaticFieldStudy parserへ渡し、重複キー・未対応形式・不正な全派生Caseを出力予約前に拒否する。表示長さm/mmだけを変更でき、基底Projectの全SI値・材料/境界・B-H初期値/反復条件とパラメータの順序を保持する。JavaScriptの再編集でも負のゼロは-0.0で保持する。求解は既存の独立Study実workerへ接続する。
 
@@ -23,3 +25,25 @@ Study入力・全Study結果と、各条件Project/元nativeをそのまま取�
 全件の初回実Chromeはout/static-field-study-gui-browser-20260913/report.jsonで94項目PASS、実ハンドル85430の終了0を確認。78 Study/192条件・元1266取得と編集Study 78取得、全Case/量/元場/単位/実失敗、中止/強制終了・別条件改変拒否/復帰・RF履歴誘導と既存RF実FEMが一致した。配信source不変・外部HTTP要求0。元の細かいメッシュと全失敗/混合Studyの3画像を追加目視し、初回の計4画像をdev/visual-review-in-progress.jsonへ記録。既存静的42例の初回ブラウザーを同じサーバーで開始し、その後の磁気20例・実再起動と標準/主受入は残る。
 
 同じ初回サーバーで既存静的42例/234取得・56チェック、磁気報告20例/140取得・28チェックもPASS、端末42499/89529の終了0を確認。3報告の全配信sourceが固定候補と一致することをdev/all-initial-browser-completion.jsonに記録した。初回サーバー6993/PID1853591を正常終了0とし、2026-09-13 12:12 UTCに同じworkspaceを別PID2014893で再起動、全Study復元の実Chromeを開始した。再起動後の全3ブラウザー・最終目視・標準/主受入は未完。
+
+実サーバー再起動後の全Study Chrome56778は終了0、out/static-field-study-gui-browser-restarted-20260913/report.jsonで88項目PASS。初回と同じ78ジョブ/192条件・成功171/実失敗21、各元1266取得と既存RF保存結果が一致し、配信source不変・外部要求0。再起動後の成功・平面混合失敗・正半径混合失敗の3画像を追加目視し、初回と合わせて7画像をdev/visual-review-in-progress.jsonへ記録した。既存静的42例の再起動後ブラウザーを開始し、その後の磁気20例・サーバー終了と最終目視記録・標準/主受入は残る。
+
+再起動後の既存静的44276は50チェック/42例/234取得、磁気22395は26チェック/20例/140取得がPASS、両端末終了0。初回と同じジョブと既存RF結果を復元した。再起動サーバー53891/PID2014893も正常終了0とし、両実サーバーの停止記録を確認。全6ブラウザーは342チェック・元3280取得（初回の編集Study78/Project42は別）、固定895sourceと一致。dev/all-browser-completion.jsonに全記録を保持し、Study初回4/再起動3・既存静的/磁気各1の計9画像をdev/visual-review.jsonへ目視済みとして記録した。標準1429件、親worker受入と主統合/専用検証は残る。
+
+最終独立比較は1896.439秒でPASS。受入済み入力段階66 Study/165条件、既存9失敗Caseの18条件と新たに元FEMで確認した3混合Study/9条件から、GUI/Study実行を用いず全参照を組み立てた。全Case/量・履歴、元セル中心場/材料/単位と各1266取得、元1941/新3537ファイル不変。最終証拠はout/static-field-study-gui-independent-trial-20260913/report.json。試作4件を全78件へ読み替えず、別の全件記録を得た。
+
+標準は4868.421秒、1426合格・任意NGSolve参照2件/HTTP環境1件skip、ResourceWarningなし。主6unitは638.480秒でPASS。固定895sourceと主901source（不変egg-info 6件）は完全一致。独立全例を主で再実行したとは扱わない。統合証拠はout/validation-static-field-study-gui-candidate-20260913/seed_regression.json。
+
+実Chrome記録 out/static-field-study-gui-browser-20260913/report.json は94チェックPASS。
+
+実Chrome記録 out/static-field-study-gui-browser-restarted-20260913/report.json は88チェックPASS。
+
+実Chrome記録 out/static-field-study-gui-static-browser-20260913/report.json は56チェックPASS。
+
+実Chrome記録 out/static-field-study-gui-static-browser-restarted-20260913/report.json は50チェックPASS。
+
+実Chrome記録 out/static-field-study-gui-magnetic-browser-20260913/report.json は28チェックPASS。
+
+実Chrome記録 out/static-field-study-gui-magnetic-browser-restarted-20260913/report.json は26チェックPASS。
+
+実サーバー/Chromeを停止し、新しいサーバー/Chromeから同じworkspaceの全78 Study/192点、単体静的42件と磁気報告20件を再検証した。元取得はStudy各1266（初回編集Study 78は別）、単体静的各234、磁気各140。初回の入力編集/表示単位/負のゼロ、全場とSI量/履歴、条件切替、実中止/強制終了・別条件改変拒否と正常復帰、既存RFの実FEM/全native量を確認。目視記録はout/static-field-study-gui-development-20260913/visual-review.json。次は[O02原要件照合](O02_ACCEPTANCE_PLAN.md)。

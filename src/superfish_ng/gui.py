@@ -112,6 +112,8 @@ def create_server(workspace, port=0):
                 "/hphi.html": "hphi.html",
                 "/hphi.js": "hphi.js",
                 "/magnetic.html": "magnetic.html",
+                "/static-study.html": "static-study.html",
+                "/static-study.js": "static-study.js",
                 "/static.html": "static.html",
                 "/static.js": "static.js",
                 "/magnetic.js": "magnetic.js",
@@ -212,9 +214,15 @@ def create_server(workspace, port=0):
                 allowed.update(MAGNETIC_ACTIONS)
                 from .gui_static_fields import ACTIONS as STATIC_ACTIONS, static_field_response
                 allowed.update(STATIC_ACTIONS)
+                from .gui_static_field_studies import ACTIONS as STATIC_STUDY_ACTIONS, static_field_study_response
+                allowed.update(STATIC_STUDY_ACTIONS)
                 if action not in allowed:
                     raise ValueError("unknown operation")
                 keys(data, ["action", *allowed[action]], ["action"], "request")
+                if action in STATIC_STUDY_ACTIONS:
+                    payload, media = static_field_study_response(manager, static_study_access, action,
+                        {k: v for k, v in data.items() if k != 'action'})
+                    return self.reply(payload, content_type=media)
                 if action in STATIC_ACTIONS:
                     payload, media = static_field_response(manager, static_access, action,
                         {k: v for k, v in data.items() if k != 'action'})
@@ -487,6 +495,8 @@ def create_server(workspace, port=0):
     magnetic_access = MagneticReportAccess(manager)
     from .gui_static_fields import StaticFieldAccess
     static_access = StaticFieldAccess(manager)
+    from .gui_static_field_studies import StaticFieldStudyAccess
+    static_study_access = StaticFieldStudyAccess(manager)
     try:
         plot_cache = manager.root / ".plot-cache"
         plot_cache.mkdir(exist_ok=True)
@@ -497,6 +507,7 @@ def create_server(workspace, port=0):
     server.manager = manager
     server.magnetic_access = magnetic_access
     server.static_access = static_access
+    server.static_study_access = static_study_access
     server.launch_url = f"http://127.0.0.1:{server.server_port}/#{token}"
     return server
 
@@ -507,6 +518,7 @@ def serve(workspace, port=0, open_browser=True):
         cleanup.callback(server.manager.close)
         cleanup.callback(server.magnetic_access.close)
         cleanup.callback(server.static_access.close)
+        cleanup.callback(server.static_study_access.close)
         cleanup.callback(server.server_close)
         print(f"Superfish-NG GUI: {server.launch_url}", flush=True)
         print(f"Workspace: {server.manager.root}", flush=True)

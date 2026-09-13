@@ -420,8 +420,8 @@ def static_field_study_jobs_capabilities():
         execution='every derived Project is independently solved with the existing dedicated FEM; original initial values and controls retained',
         completion='Job complete means every requested point outcome is saved and verified; all_points_successful and failure counts are separate',
         verification='rebuild every requested Case and replay every original native success/failure; bind all point bytes and one stable implementation',
-        worker=True, project=True, study=True, gui=False,
-        limits='No previous-point warm start, branch/mode tracking, convergence claim or new solver; static Study GUI remains separate.')
+        worker=True, project=True, study=True, gui=True, gui_page="/static-study.html",
+        limits='No previous-point warm start, branch/mode tracking, convergence claim or new solver; dedicated Study GUI retains every point outcome.')
 
 
 def static_field_study_capabilities():
@@ -432,9 +432,9 @@ def static_field_study_capabilities():
                                  excitation_scale='finite signed factor including zero for all volume source densities, prescribed potentials, displacement/H boundary loads and recoil remanent B'),
         nonlinear_initialization='original initial coefficients and controls retained independently at every point; no automatic adjustment or previous-point warm start',
         commands=['normalize-static-study'], cli_exit_codes=dict(complete=0, invalid_or_io=2),
-        gui=False, execution=True, display_length_units=['m', 'mm'], stored_units='SI',
+        gui=True, gui_page='/static-study.html', execution=True, display_length_units=['m', 'mm'], stored_units='SI',
         mode_tracking='not_applicable', solution_branch_tracking='not_performed', mesh_convergence='not_performed',
-        limitations=['Independent worker execution and original native persistence are available; Study GUI requires separate acceptance.',
+        limitations=['Independent worker execution, original native persistence and dedicated Study GUI are available.',
                      'Recoil constitutive potentials are not absolute magnet internal energy; B-H fields do not obey linear excitation scaling.',
                      'Every derived Case must pass its dedicated parser before output allocation.'])
 
@@ -472,3 +472,14 @@ def static_field_gui_capabilities():
         saved_failure='full actual B-H failure history and Case; no field plot',
         verification='asynchronous first/restart FEM replay; every later display/download checks all original file hashes',
         limits='11 dedicated static FEM families; RF frequency, both R/Q definitions and mode index are N/A; static Study remains separate')
+
+
+def static_field_study_gui_capabilities():
+    from .static_field_project import static_case_families
+    from .gui_static_field_studies import ACTIONS, FIELD_UNITS
+    return dict(page='/static-study.html', gui=True, project=True, worker=True, study=True,
+        case_families=static_case_families(), gui_actions={k:list(v) for k,v in ACTIONS.items()},
+        field_units=dict(FIELD_UNITS), parameters=['uniform_scale', 'excitation_scale'], display_length_units=['m','mm'],
+        completion='complete execution and all_points_successful are separate; retain every actual nonlinear failure',
+        verification='asynchronous full Study replay before display/download, selected original FEM cell-center field views, every read binds all Study and point bytes',
+        limits='independent points; no branch/mode tracking, smoothing, field on failed points or convergence certification; RF quantities are N/A')

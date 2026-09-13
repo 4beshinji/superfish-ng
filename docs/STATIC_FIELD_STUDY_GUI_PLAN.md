@@ -1,6 +1,6 @@
 # O02: 静的StudyのGUI入力・実行・各条件表示
 
-2026-09-13 JST。[候補実装](STATIC_FIELD_STUDY_GUI.md)を検証中、未受入。[Study実worker](STATIC_FIELD_STUDY_JOBS_PLAN.md)に続く[静的Study全体](STATIC_FIELD_STUDY_PLAN.md)のGUI接続。
+2026-09-13 JST。[実装記録](STATIC_FIELD_STUDY_GUI.md)の専用Study GUI範囲を限定受入。[Study実worker](STATIC_FIELD_STUDY_JOBS_PLAN.md)に続く[静的Study全体](STATIC_FIELD_STUDY_PLAN.md)のGUI接続。
 
 専用Study JSONの読込・編集・厳密検査・非上書き取得を既存のStaticFieldStudyへ接続する。全11形式の基底Project、uniform_scale/excitation_scaleと入力順、表示m/mm、元の全材料/境界/初期値/反復条件を保持する。求解は既存の専用Study実workerを使用し、HTTPやJavaScriptでFEM/派生Caseを別実装しない。
 

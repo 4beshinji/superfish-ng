@@ -772,9 +772,6 @@ async function refreshJobs() {
       ? "中止"
       : "結果を開く";
     action.disabled = !["running", "queued", "complete"].includes(j.status) && !(j.kind === "static_field_solve" && j.outcome_saved === true);
-    if (j.kind === "static_field_study" && !["running", "queued"].includes(j.status)) {
-      action.disabled = true; action.textContent = "専用画面は準備中";
-    }
     action.onclick = async () => {
       try {
         if (["running", "queued"].includes(j.status)) {
@@ -785,6 +782,7 @@ async function refreshJobs() {
         else if (j.kind === "rf_optimization") await openRFOptimization(j.id);
         else if (j.kind === "tune") await openTuning(j.id);
         else if (j.kind === "study") await openStudy(j.id);
+        else if (j.kind === "static_field_study") location.href = `/static-study.html?job=${encodeURIComponent(j.id)}`;
         else if (j.kind === "static_field_solve") location.href = `/static.html?job=${encodeURIComponent(j.id)}`;
         else if (j.kind === "magnetic_report_import") location.href = `/magnetic.html?job=${encodeURIComponent(j.id)}`;
         else if (j.kind === "hphi_tracking_history") location.href = `/hphi.html?history=${encodeURIComponent(j.id)}`;

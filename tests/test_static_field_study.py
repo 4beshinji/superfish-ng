@@ -176,4 +176,4 @@ class StaticFieldStudyTests(unittest.TestCase):
             with patch.object(static.os, 'fsync', side_effect=changed):
                 with self.assertRaisesRegex(ValueError, 'changed during'): study.save(root / 'changed.json')
             self.assertFalse((root / 'changed.json').exists())
-        inventory = capabilities()['static_field_study']; self.assertEqual(inventory['parameters'], ['uniform_scale', 'excitation_scale']); self.assertFalse(inventory['gui']); self.assertEqual(inventory['commands'], ['normalize-static-study'])
+        inventory = capabilities()['static_field_study']; self.assertEqual(inventory['parameters'], ['uniform_scale', 'excitation_scale']); self.assertTrue(inventory['gui']); self.assertEqual(inventory['commands'], ['normalize-static-study'])

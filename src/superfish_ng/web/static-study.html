@@ -2,27 +2,34 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Superfish-NG — 静電場・静磁場</title>
-  <link rel="stylesheet" href="/style.css" /><script defer src="/static.js"></script>
+  <title>Superfish-NG — 静的Study</title>
+  <link rel="stylesheet" href="/style.css" /><script defer src="/static-study.js"></script>
   <style>textarea{width:100%;box-sizing:border-box;font-family:monospace}canvas{width:100%;height:auto;background:white;border:1px solid #cad3da}pre{white-space:pre-wrap;overflow-wrap:anywhere}#field-view select{max-width:100%}</style>
 </head>
 <body>
-  <header><div><span class="eyebrow">STATIC FIELDS</span><h1>静電場・静磁場</h1></div><p>入力・求解・元の場の確認<br /><small>静電・線形磁気・反跳材料・B-H</small></p></header>
-  <nav aria-label="ワークスペース"><a href="/">軸対称RF</a><a href="/planar.html">平面RF</a><a href="/hphi.html">Hφ RF</a><a href="/magnetic.html">磁気後処理報告</a><a href="/static-study.html">静的Study</a></nav>
+  <header><div><span class="eyebrow">STATIC STUDY</span><h1>静的Study</h1></div><p>複数条件の実行・各条件の場と履歴<br /><small>静電・線形磁気・反跳材料・B-H</small></p></header>
+  <nav aria-label="ワークスペース"><a href="/">軸対称RF</a><a href="/planar.html">平面RF</a><a href="/hphi.html">Hφ RF</a><a href="/magnetic.html">磁気後処理報告</a><a href="/static.html">静電場・静磁場</a></nav>
   <div id="error" role="alert" hidden></div>
   <main>
     <section class="editor">
       <h2>入力を編集する</h2>
-      <label>静的Case / Project JSON<input id="input-file" type="file" accept=".json,application/json" /></label>
+      <label>静的Study JSON<input id="input-file" type="file" accept=".json,application/json" /></label>
       <p>座標・材料・源・境界はSI値で編集します。表示長さ単位の選択は保存CaseのSI値を変更しません。</p>
       <label>表示長さ単位<select id="length-unit"><option value="mm">mm</option><option value="m">m</option></select></label>
-      <label>入力JSON<textarea id="document" rows="18" spellcheck="false" aria-label="静的CaseまたはProjectのJSON"></textarea></label>
-      <div class="actions"><button id="validate" type="button">入力を確認</button><button id="save-project" type="button">Projectを保存</button><button id="solve" type="button">求解する</button></div>
+      <label>入力JSON<textarea id="document" rows="18" spellcheck="false" aria-label="静的StudyのJSON"></textarea></label>
+      <div class="actions"><button id="validate" type="button">入力を確認</button><button id="save-study" type="button">Studyを保存</button><button id="solve" type="button">全条件を実行する</button></div>
       <p id="input-status" role="status"></p>
       <h2>計算履歴</h2><button id="refresh" type="button">一覧を更新</button><div id="jobs"></div>
     </section>
     <section class="viewer">
       <h2 id="selection">計算結果を選択してください</h2><p id="verification" role="status"></p>
+      <div id="study-view" hidden>
+        <p id="study-status" role="status"></p><p>入力順に独立に求解します。条件間の解枝・モードの追跡や、メッシュ収束の判定は行いません。</p>
+        <label>表示する条件<select id="point-index"></select></label><p id="point-verification" role="status"></p>
+        <details><summary>元Studyの入力</summary><button id="edit-selected" type="button">このStudyを編集する</button><pre id="study-json"></pre></details>
+        <details><summary>全条件の結果・全履歴</summary><pre id="study-result-json"></pre></details>
+        <div id="study-downloads"></div>
+      </div>
       <div id="result-view" hidden>
         <p id="physics"></p><p id="solver-status" role="status"></p>
         <p id="rf-na">RF周波数・R/Q（circuit / accelerator）・RFモード番号: N/A</p>
@@ -33,7 +40,7 @@
         </div>
         <h3 id="outcome-title">保存された量</h3><div id="quantity-table"></div><p id="failure-reason" hidden></p>
         <details><summary>全ての保存量・規約・反復履歴</summary><pre id="outcome-json"></pre></details>
-        <details><summary>元の入力・材料・境界</summary><button id="edit-selected" type="button">この入力を編集する</button><pre id="project-json"></pre></details>
+        <details><summary>元の入力・材料・境界</summary><pre id="project-json"></pre></details>
         <h3>元の保存ファイル</h3><div id="downloads"></div>
       </div>
     </section>

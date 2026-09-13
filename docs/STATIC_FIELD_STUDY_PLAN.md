@@ -1,5 +1,7 @@
 # O02: 静的ProjectのパラメータStudy
 
+[静的Study GUI](STATIC_FIELD_STUDY_GUI.md)まで専用範囲を限定受入。次にO02の元要件と全接続の受入証拠を照合する。対象版/親/全計画の受入とは分ける。
+
 [実worker・各条件保存・CLI](STATIC_FIELD_STUDY_JOBS.md)を限定受入。GUIは未完で、全体要件を維持する。
 
 [入力と尺度変換](STATIC_FIELD_STUDY_INPUT.md)を限定受入。実行/保存・worker/GUIは未完で、以下の全体要件を維持する。

@@ -178,6 +178,6 @@ class StaticFieldStudyJobTests(unittest.TestCase):
             self.assertEqual(main(['replay-static-study', str(self.root / 'absent')]), 2)
         self.assertFalse((self.root / 'invalid').exists())
         inventory = capabilities()['static_field_study_jobs']; self.assertEqual(inventory['kind'], static.KIND)
-        self.assertEqual(len(inventory['case_families']), 11); self.assertFalse(inventory['gui'])
+        self.assertEqual(len(inventory['case_families']), 11); self.assertTrue(inventory['gui'])
         self.assertEqual(inventory['cli_exit_codes'], dict(all_points_successful=0, completed_with_nonlinear_failures=1, invalid_incomplete_or_io=2))
         self.assertTrue(capabilities()['static_field_study']['execution'])
