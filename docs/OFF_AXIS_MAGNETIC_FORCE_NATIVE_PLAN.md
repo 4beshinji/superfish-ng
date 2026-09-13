@@ -1,6 +1,6 @@
 # S05: 軸を含まない軸対称磁気力の保存・CLI
 
-2026-09-13 JST。後続限定課題。未実装・未受入。
+2026-09-13 JST。後続限定課題。[実装記録](OFF_AXIS_MAGNETIC_FORCE_NATIVE.md)の専用API範囲で限定受入。
 
 [軸方向力API](OFF_AXIS_MAGNETIC_FORCE_PLAN.md)の成功した線形スカラーOffAxisMagnetostaticCase P1/P2 nativeを、専用保存/再読込とCLIへ接続する。元5ファイルのSHA、ψの基準/係数、材料・電流・境界と求積次数を実FEMで検証する。平面力の[N/m]報告、軸接続r=0、B-H/反跳・曲線・失敗nativeを読み替えない。
 

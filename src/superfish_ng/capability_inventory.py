@@ -389,3 +389,13 @@ def planar_magnetic_force_capabilities():
         material_report_workflow_statuses=['complete','virtual_work_failed'],cli_exit_codes=dict(complete=0,retained_virtual_work_failure=1,invalid_or_io=2),
         source_binding='five native file SHA256 values and complete source FEM, stress, and optional actual displaced-FEM replay, including the same retained nonlinear failure',project=False,gui=False,study=False,
         limits='no failed source native, axisymmetric or curved source; no implicit length, RF factor, smoothing or continuum force/torque accuracy bound; scalar report version 1 remains unchanged')
+
+
+def off_axis_magnetic_force_capabilities():
+    return dict(request_format='superfish_ng_off_axis_magnetic_force_request',request_schema_versions=[1],report_format='superfish_ng_off_axis_magnetic_force_report',report_schema_versions=[1],
+        source_native_manifest_format='superfish_ng_off_axis_magnetostatic_manifest',source_native_schema_versions=[1],force_format='superfish_ng_off_axis_magnetic_force',force_schema_versions=[1],virtual_work_format='superfish_ng_off_axis_magnetic_virtual_work',virtual_work_schema_versions=[1],element_orders=[1,2],
+        commands=['analyze-off-axis-magnetic-force','replay-off-axis-magnetic-force'],force_unit='N',force_component='z for the full annular body',potential_unit='J',current_unit='A from integral Jphi dr dz',
+        scope='strictly positive-radius linear scalar original FEM; all weight gradients in declared vacuum mu_r=1,Jphi=0; body w=1, outer/hole boundaries and other sources/nonvacuum regions w=0',
+        virtual_work='explicit null or 2..8 decreasing positive axial steps; radial coordinates, exterior and integrated azimuthal currents fixed; full displaced Cases, energy/source work and coefficient SHA retained',
+        quadrature='source Case order q from 4..32, with q+4 stress comparison; no quadrature-error bound',source_binding='all five native SHA256 values and complete actual FEM/stress/optional axial-work replay',project=False,gui=False,study=False,
+        limits='no planar N/m reinterpretation, radial net vector force, meridional torque, axis-connected/BH/recoil/curved or failed source, GUI or continuum force accuracy certification')

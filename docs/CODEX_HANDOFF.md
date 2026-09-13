@@ -1,3 +1,9 @@
+2026-09-13：[軸を含まない磁気力報告の保存・CLI](OFF_AXIS_MAGNETIC_FORCE_NATIVE.md)を主ツリーへ統合・限定受入。
+正半径の線形P1/P2の元native 5ファイルSHAへ拘束した軸方向力Fz[N]と、明示nullまたは実変位FEMのポテンシャル[J]/全Caseを保存・再計算する。求積/+4診断、基準ψ、対象と重みを保持し、平面N/mや断面回転へ読み替えない。独立20例（仮想仕事10/応力のみ10）、62CLI、60報告の全JSON/バイトが一致。元native 100/新報告60/要求20と参照50ファイル不変。
+標準1380件（1377合格・3skip）、追加保存6unit・capability 3unitと主6unitがPASS。固定863sourceを主869sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+GUI受渡し・軸接続/B-H/反跳の軸対称力、S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+off-axis-magnetic-force-native統合/finalizer実行済み・再実行禁止。主869source。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
 2026-09-13 07:52 UTC 進行チェックポイント：主0a1bead、866source、PHYSICS v28。材料仮想仕事28d5c90、材料力保存/CLI 7b10e7e、軸非接続の軸方向力0a1beadを検証・コミット済み。各integrator/finalizerは実行済みで再実行禁止。
 
 未統合の固定候補は2件。`/tmp/superfish-off-axis-magnetic-force-native-20260913` は863source、独立20例/62CLIと追加9unit合格、標準1380件を実ハンドル96351で実行中。`/tmp/superfish-magnetic-report-gui-20260913` は871source、独立20実worker/20初回/20再起動replay、最終Chrome初回28項目/再起動26項目・各20報告と140ダウンロードが合格、標準1392件を実ハンドル46500で実行中。固定候補を編集しない。GUIの最終独立出力は `out/magnetic-report-gui-independent-navigation-trial-20260913`、ブラウザーは `out/magnetic-report-gui-browser-navigation-20260913` と `out/magnetic-report-gui-browser-restarted-20260913`。全失敗ログと修正判断をdevelopmentへ保持し、古い途中出力を最終証拠へ置換していない。二つのローカル検証サーバーは正常に停止済み。

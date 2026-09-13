@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[軸を含まない磁気力報告の保存・CLI](OFF_AXIS_MAGNETIC_FORCE_NATIVE.md)。正半径の線形P1/P2の元native 5ファイルSHAへ拘束した軸方向力Fz[N]と、明示nullまたは実変位FEMのポテンシャル[J]/全Caseを保存・再計算する。求積/+4診断、基準ψ、対象と重みを保持し、平面N/mや断面回転へ読み替えない。 [MeekerのWeighted Stress Tensor数学説明 (2022)](https://www.femm.info/doku/doku.php?id=weightedstresstensor)と[FEMM 4.2 Manual (2015), §2.3.11, 式2.13/2.14](https://www.femm.info/Archives/doc/manual.pdf)の公開応力・固定電流のエネルギー微分を照合した。コード/図/磁場データ/重みの丸めは再利用しない。混合境界の停留ポテンシャルと節点移動を自前に導出し、別FEM変位と照合した。 合成解析場のみ。新規依存・旧版実行なし。
+
 2026-09-13：[軸を含まない軸対称磁場の軸方向力](OFF_AXIS_MAGNETIC_FORCE.md)。元r>0の線形P1/P2 FEMから、真空P1重みと全周2πrのMaxwell応力でFz[N]を求める。同じ節点z移動の別Caseを実FEM再求解し、全周停留ポテンシャル[J]の差分と照合する。 [MeekerのWeighted Stress Tensor数学説明 (2022)](https://www.femm.info/doku/doku.php?id=weightedstresstensor)と[FEMM 4.2 Manual (2015), §2.3.11, 式2.13/2.14](https://www.femm.info/Archives/doc/manual.pdf)の公開応力・固定電流のエネルギー微分を照合した。コード/図/磁場データ/重みの丸めは再利用しない。混合境界の停留ポテンシャルと節点移動を自前に導出し、別FEM変位と照合した。 合成解析場のみ。新規依存・旧版実行なし。
 
 2026-09-13：[B-H・反跳材料の力・仮想仕事報告保存・CLI](PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md)。材料の成功nativeを元FEMで再検証し、応力とnull/完了/実非線形失敗の仮想仕事をversion 2で保存・再計算する。元Case/材料方向/ポテンシャル/全履歴を保持し、CLIは完了0・保存された実求解失敗1・不正2を返す。 [MeekerのWeighted Stress Tensor数学説明 (2022)](https://www.femm.info/doku/doku.php?id=weightedstresstensor)と[FEMM 4.2 Manual (2015), §2.3.11, 式2.13/2.14](https://www.femm.info/Archives/doc/manual.pdf)の公開応力・固定電流のエネルギー微分を照合した。コード/図/磁場データ/重みの丸めは再利用しない。混合境界の停留ポテンシャルと節点移動を自前に導出し、別FEM変位と照合した。 合成解析場のみ。新規依存・旧版実行なし。
