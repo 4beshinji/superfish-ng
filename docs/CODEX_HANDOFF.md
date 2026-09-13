@@ -1,3 +1,8 @@
+2026-09-13：[静的Projectの入力・保存・CLI](STATIC_FIELD_PROJECT.md)を主ツリーへ統合・限定受入。
+既存11種類の専用Caseを保持し、m/mm表示選択をSI値・材料・境界・B-H初期値/反復条件へ作用させない。厳密JSON往復と非上書きのnormalize-static-projectを追加した。独立33元Caseの66 Projectを実FEMで再求解し、264 Project/330 nativeの全バイトが一致、元165ファイル不変。
+標準1398件（1395合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定874sourceを主880sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的worker/GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+static-field-project統合/finalizer実行済み・再実行禁止。主880source。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
 2026-09-13 17:49 JST（08:49 UTC）— この節を以下の過去記録より優先。
 
 計画完走のgoalはACTIVE。全計画は未完、親33=8受入/17進行/7他未受入/1範囲外。現主ソース877、PHYSICS v28。今回89772d6で軸方向磁気力native、d9044e7で磁気報告GUI、8accb49でS05原要件照合をコミット済み。S05は13受入工程を原要件へ照合したが、C00.V対象版/必須範囲の確認待ちで親は未受入。旧ベンチマーク9モード19量はf差0/最大相対差8.882e-16、許容差不変。

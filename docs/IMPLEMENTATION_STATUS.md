@@ -1,5 +1,10 @@
 # 実装・検証の現状
 
+2026-09-13：[静的Projectの入力・保存・CLI](STATIC_FIELD_PROJECT.md)を主ツリーへ統合・限定受入。
+既存11種類の専用Caseを保持し、m/mm表示選択をSI値・材料・境界・B-H初期値/反復条件へ作用させない。厳密JSON往復と非上書きのnormalize-static-projectを追加した。独立33元Caseの66 Projectを実FEMで再求解し、264 Project/330 nativeの全バイトが一致、元165ファイル不変。
+標準1398件（1395合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定874sourceを主880sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的worker/GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[S05原要件の受入照合](S05_ACCEPTANCE.md)を完了。
 S02に基づく平面多極・力/トルク・実変位FEM仮想仕事、正半径の線形軸力、元native/CLIと磁気報告GUIの専用範囲を照合した。全周量/単位長量、未実施/零/実求解失敗、元場/材料/履歴を区別する。標準1392件と主12unit、実Chrome初回/再起動の受入証拠がある。
 対象版と未対応な軸力範囲の必須性はC00.V未確認。親S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
@@ -574,6 +579,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 等方非線形B-H構成則・平面/軸接続/軸非接続P1 | 単調表/来歴・元H/実接線、平面/軸接続の解/保存、軸非接続P1非線形磁場の保存・失敗再現・CLIを限定受入 | [原要件照合](S04_ACCEPTANCE.md)済み。C00.Vの対象版/材料モデルは未確認 | [BH_CURVE.md](BH_CURVE.md)、[OFF_AXIS_BH_NATIVE.md](OFF_AXIS_BH_NATIVE.md) |
 | 軸を含まない磁場の軸力 | 軸を含まない磁気力報告の保存・CLIを限定受入。元Br/Bz・真空重みと全周測度、Fz[N] | GUI受渡し・軸接続/B-H/反跳の軸対称力は未実装/未確認 | [OFF_AXIS_MAGNETIC_FORCE_NATIVE.md](OFF_AXIS_MAGNETIC_FORCE_NATIVE.md) |
 | 磁気後処理報告のGUI受渡し | 検証済み磁気後処理量のGUI受渡しを限定受入。元5ファイル/全報告を実FEMで再検証し、SI量・全Caseと履歴を表示/保存 | 磁気Case編集・包括的GUI求解は対象外。原要件/対象版確認と未対応な軸接続/B-H/反跳の軸対称力は未完 | [S05_GUI_HANDOFF.md](S05_GUI_HANDOFF.md) |
+| 静的Project入力 | 既存11形式の全Case/表示単位を厳密保存・CLI往復し、元FEM結果不変を確認 | 静的worker/GUI/Studyは後続 | [STATIC_FIELD_PROJECT.md](STATIC_FIELD_PROJECT.md) |
 | 平面磁場の力/トルク | B-H・反跳材料の力・仮想仕事報告保存・CLIを限定受入。元B・真空重みと原点、N/mとN m/m | GUI受渡し・軸対称の力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md) |
 | 平面磁場の多極表現/抽出 | B-H/反跳モデルの多極報告保存・CLIを限定受入。明示normal/skew[T]/frame | GUI受渡し・力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md) |
 | 平面磁静 | 明示mu_r/Jz、固定Az/Ht、P1/P2実FEM、元Az/B/H、J/mエネルギーと反力/元H積分[A]・元B磁束[Wb/m]、専用保存/CLI | GUI/Project/Study・軸対称・曲線/穴・非線形等・厳密開放境界は未実装 | [PLANAR_MAGNETOSTATIC_SOLVE.md](PLANAR_MAGNETOSTATIC_SOLVE.md)、[PLANAR_MAGNETOSTATIC_NATIVE.md](PLANAR_MAGNETOSTATIC_NATIVE.md) |

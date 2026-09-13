@@ -371,8 +371,20 @@ def main(argv=None):
     reference = sub.add_parser("compare-pillbox", help="compare saved cylindrical modes with independent analytical fields and RF")
     reference.add_argument("run", type=Path)
     reference.add_argument("--out", type=Path, required=True)
+    static_project = sub.add_parser('normalize-static-project', help='validate a dedicated static Case/Project and publish a portable Project without solving or changing SI values')
+    static_project.add_argument('input', type=Path)
+    static_project.add_argument('--out', type=Path, required=True)
+    static_project.add_argument('--display-length-unit', choices=('m', 'mm'))
     args = parser.parse_args(argv)
     try:
+        if args.command == 'normalize-static-project':
+            from .static_field_project import StaticFieldProject
+            project = StaticFieldProject.load(args.input)
+            if args.display_length_unit is not None:
+                project = replace(project, display_length_unit=args.display_length_unit)
+            project.save(args.out)
+            sys.stdout.write(project.dumps())
+            return 0
         if args.command in ('execute-planar-history','extend-planar-history','replay-planar-history'):
             from .planar_tracking_history import PlanarTrackingHistoryRequest
             from .planar_tracking_history_saved import execute_planar_history,extend_planar_history,read_planar_history

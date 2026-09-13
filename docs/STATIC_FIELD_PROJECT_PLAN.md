@@ -1,6 +1,6 @@
 # O02: 静電場・静磁場の専用Project入力契約
 
-2026-09-13 JST。未実装・未受入。[O02](COMPATIBILITY_PLAN.md)の追加物理をProject/Study/GUIへ渡す工程の最初の限定課題。
+2026-09-13 JST。[実装記録](STATIC_FIELD_PROJECT.md)の専用入力契約を限定受入。[O02](COMPATIBILITY_PLAN.md)の追加物理をProject/Study/GUIへ渡す工程の最初の限定課題。
 
 対象は受入済みの11種類の専用Case：軸対称/平面の線形静電、平面/軸接続/軸非接続の線形磁静、同3座標系の線形反跳材料と等方非線形B-H。各Caseの厳密format/schema/physicsと既存parserを保持し、新しい汎用RF Caseへ読み替えない。
 

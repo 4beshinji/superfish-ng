@@ -1,5 +1,10 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[静的Projectの入力・保存・CLI](docs/STATIC_FIELD_PROJECT.md)を主ツリーへ統合・限定受入。
+既存11種類の専用Caseを保持し、m/mm表示選択をSI値・材料・境界・B-H初期値/反復条件へ作用させない。厳密JSON往復と非上書きのnormalize-static-projectを追加した。独立33元Caseの66 Projectを実FEMで再求解し、264 Project/330 nativeの全バイトが一致、元165ファイル不変。
+標準1398件（1395合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定874sourceを主880sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的worker/GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[S05原要件の受入照合](docs/S05_ACCEPTANCE.md)を完了。
 S02に基づく平面多極・力/トルク・実変位FEM仮想仕事、正半径の線形軸力、元native/CLIと磁気報告GUIの専用範囲を照合した。全周量/単位長量、未実施/零/実求解失敗、元場/材料/履歴を区別する。標準1392件と主12unit、実Chrome初回/再起動の受入証拠がある。
 対象版と未対応な軸力範囲の必須性はC00.V未確認。親S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。

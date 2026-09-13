@@ -409,3 +409,13 @@ def magnetic_report_gui_capabilities():
         units=dict(multipole='T',planar_force='N/m',planar_torques='N m/m',axial_force='N',planar_work_potential='J/m',axial_work_potential='J'),
         virtual_work_states=['not_performed','complete','failed'],case_editor=False,solve=False,
         limits='verified saved reports only; no magnetic Case editor, implied longitudinal length, radial net force, meridional torque or continuum accuracy certificate')
+
+
+def static_field_project_capabilities():
+    from .static_field_project import static_case_families
+    return dict(project_format='superfish_ng_static_field_project',project_versions=[1],case_families=static_case_families(),
+        display_length_units=['m','mm'],case_values='unchanged SI; display unit does not rescale geometry, sources, materials, boundaries, gauges or initial coefficients',
+        commands=['normalize-static-project'],cli_exit_codes=dict(complete=0,invalid_or_io=2),
+        publication='complete Project JSON, exclusive destination, no overwrite or partial publication',
+        project=True,solve=False,gui=False,study=False,
+        limits='input document only; dedicated static Case parsers retain all restrictions; no RF fallback, new physics, FEM execution, native result or convergence claim')
