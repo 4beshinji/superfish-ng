@@ -1,3 +1,11 @@
+2026-09-13 07:52 UTC 進行チェックポイント：主0a1bead、866source、PHYSICS v28。材料仮想仕事28d5c90、材料力保存/CLI 7b10e7e、軸非接続の軸方向力0a1beadを検証・コミット済み。各integrator/finalizerは実行済みで再実行禁止。
+
+未統合の固定候補は2件。`/tmp/superfish-off-axis-magnetic-force-native-20260913` は863source、独立20例/62CLIと追加9unit合格、標準1380件を実ハンドル96351で実行中。`/tmp/superfish-magnetic-report-gui-20260913` は871source、独立20実worker/20初回/20再起動replay、最終Chrome初回28項目/再起動26項目・各20報告と140ダウンロードが合格、標準1392件を実ハンドル46500で実行中。固定候補を編集しない。GUIの最終独立出力は `out/magnetic-report-gui-independent-navigation-trial-20260913`、ブラウザーは `out/magnetic-report-gui-browser-navigation-20260913` と `out/magnetic-report-gui-browser-restarted-20260913`。全失敗ログと修正判断をdevelopmentへ保持し、古い途中出力を最終証拠へ置換していない。二つのローカル検証サーバーは正常に停止済み。
+
+それぞれの標準PASS後、直前の主統合を確認して `/tmp/integrate-off-axis-magnetic-force-native-20260913.py` →主6unit→ `/tmp/finalize-off-axis-magnetic-force-native-docs-20260913.py`、次に `/tmp/integrate-magnetic-report-gui-20260913.py` →主12unit（test_magnetic_report_jobs、test_gui_magnetic_reports）→ `/tmp/finalize-magnetic-report-gui-docs-20260913.py` の順。これら4helperは未実行。主unitログは各 `out/<slug>-development-20260913/main-unit.log`。文書finalizerの独立参照先は実際のtrial/navigation-trialへ補正済み。統合後は差分を確認し、その工程と次計画だけをローカルコミットする。
+
+機械可読状態は `out/magnetic-report-checkpoint-20260913-075140.json`。次のS05原要件照合は `docs/S05_ACCEPTANCE_PLAN.md` と `docs/S05_ACCEPTANCE.md` の未受入草稿、読取監査は `out/s05-acceptance-audit-in-progress-20260913/accepted-stages.json`。親33=8受入/17進行/7他未受入/1範囲外、S05/全計画は未完、目標はACTIVE。新規依存・subagent・Wine/旧版実行なし。Wine本体は存在し、SUPERFISH用prefixは未特定。パス質問や同じ探索を繰り返さず、進行中の検証と残要件を進める。
+
 2026-09-13：[軸を含まない軸対称磁場の軸方向力](OFF_AXIS_MAGNETIC_FORCE.md)を主ツリーへ統合・限定受入。
 元r>0の線形P1/P2 FEMから、真空P1重みと全周2πrのMaxwell応力でFz[N]を求める。同じ節点z移動の別Caseを実FEM再求解し、全周停留ポテンシャル[J]の差分と照合する。独立50例（解析42/線形磁性体8）、30条件120変位FEM、メッシュ/重み/求積/基準ψの別系列がPASS。130ファイル不変。低次P2求積の拒否を実細分で解消し、元5e-12条件と力/仕事許容差を維持した。
 標準1374件（1371合格・3skip）、追加6unitと主6unitがPASS。固定860sourceを主866sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
