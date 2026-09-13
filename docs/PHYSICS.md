@@ -1,6 +1,8 @@
-# 物理・数値仕様 — canonical specification v21（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
+# 物理・数値仕様 — canonical specification v22（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
-[軸非接続P1の非線形B-H弱形式](OFF_AXIS_BH_FORMS.md)。軸非接続P1のpsi=r*Aphi[Wb]から元B=(−psi_z/r,psi_r/r)、H=h(|B|)B/|B|、実接線を評価する。dV=2pi*r dr dzでg[A]、K[1/H]、電流荷重[A]とU/U*[J]を積分する。相対psi·g=U+U*、sum(g)=0、sum(fJ)/(2pi)=断面源電流を検査する。一定psiは零B/Hと非零Aphi=C/rを与える。q/q+4の積分差は残差/場精度と別の診断として保持し、元P1場の最小r頂点で表範囲を検査する。境界付き解は後続工程。
+第22版は[軸非接続P1の境界付き非線形磁静場](OFF_AXIS_BH_SOLVE.md)。正半径psi=r*Aphi、固定psi/Htと基準、実接線Newtonと版2の明示相対psi失敗履歴、元6場と全J U/U*・A周回/反力/Wb磁束を分離する。q/q+4差と高次数の自由残差も保持する。一定psiの零B/Hと非零Aphi=C/rを区別し、残差停止を積分/場の誤差保証と扱わない。
+
+[軸非接続P1の非線形B-H弱形式](OFF_AXIS_BH_FORMS.md)。軸非接続P1のpsi=r*Aphi[Wb]から元B=(−psi_z/r,psi_r/r)、H=h(|B|)B/|B|、実接線を評価する。dV=2pi*r dr dzでg[A]、K[1/H]、電流荷重[A]とU/U*[J]を積分する。相対psi·g=U+U*、sum(g)=0、sum(fJ)/(2pi)=断面源電流を検査する。一定psiは零B/Hと非零Aphi=C/rを与える。q/q+4の積分差は残差/場精度と別の診断として保持し、元P1場の頂点範囲も検査する。境界付き解は第22版で接続した。
 
 [軸接続P1非線形磁場の保存・失敗再現・CLI](AXIS_BH_NATIVE.md)。元a/全軸DOF・B-H表/来歴・g/接線・求積差/高次数残差と全反復履歴を同じ非線形FEMで再検証する。成功5ファイルと版2失敗3ファイル、元6場の片側probeを保持する。一定aをgaugeとして除去せず、残差停止を積分/場の誤差保証と扱わない。
 
