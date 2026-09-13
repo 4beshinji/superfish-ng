@@ -112,6 +112,10 @@ class OffsetDegeneracyTests(unittest.TestCase):
             self.assertNotEqual(main(['diagnose-offsets',str(source),'--out',str(out)]),0)
             self.assertEqual(out.read_bytes(),original)
             request['curves'][1]=curve_to_dict(replace(b,center_zr_m=(1,0),semiaxes_m=(2,1)))
+            supported=diagnose_offsets_document(request)
+            self.assertEqual(supported['diagnosis']['classification'],'DISJOINT')
+            self.assertTrue(supported['diagnosis']['finite_domain_complete'])
+            request['curves'][0]=curve_to_dict(replace(a,semiaxes_m=(3,1)))
             source.write_text(json.dumps(request));unknown=Path(tmp)/'unknown.json'
             self.assertEqual(main(['diagnose-offsets',str(source),'--out',str(unknown)]),1)
             self.assertEqual(json.loads(unknown.read_text())['diagnosis']['status'],'UNVERIFIED')

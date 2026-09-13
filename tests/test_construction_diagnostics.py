@@ -65,7 +65,7 @@ class ConstructionDiagnosisTests(unittest.TestCase):
         changed=deepcopy(original);changed['diagnosis']['finite_center_count']=0;variants.append(changed)
         changed=deepcopy(original);changed['parameter_domain_box'][0][0]['rational_numerator']='1';variants.append(changed)
         changed=deepcopy(original);changed['construction']['status']='CASE_VALIDATED';variants.append(changed)
-        changed=deepcopy(original);changed['schema_version']=9;variants.append(changed)
+        changed=deepcopy(original);changed['schema_version']=999;variants.append(changed)
         for changed in variants:
             with self.assertRaises(ValueError):replay_construction_diagnosis(changed)
             with self.assertRaises(ValueError):tangent_document(changed,replay=True)

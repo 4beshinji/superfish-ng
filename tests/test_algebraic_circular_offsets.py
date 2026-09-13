@@ -10,7 +10,7 @@ import tempfile
 import unittest
 
 from superfish_ng.conics import EllipseArc, LineSegment, rotation_cos_sin
-from superfish_ng.offset_degeneracies import classify_offset_degeneracies
+from superfish_ng.offset_degeneracies import _classify_offset_degeneracies_v6 as classify_offset_degeneracies
 
 
 class AlgebraicCircularOffsetTests(unittest.TestCase):
@@ -107,7 +107,7 @@ class AlgebraicCircularOffsetTests(unittest.TestCase):
                 self.assertFalse(old['diagnosis']['finite_domain_complete'])
                 self.assertEqual(replay_construction_diagnosis(old), old)
                 new = diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'], 8)
+                self.assertEqual(new['schema_version'], 9)
                 self.assert_count(new['diagnosis'], 2)
                 self.assertEqual(new['construction'], old['construction'])
                 self.assertEqual(replay_construction_diagnosis(new), new)

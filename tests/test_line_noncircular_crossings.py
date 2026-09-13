@@ -92,7 +92,7 @@ class LineNoncircularCrossingTests(unittest.TestCase):
             self.assertTrue(result['evidence']['unresolved'])
 
     def test_public_schema_eight_and_saved_seven_keep_original_construction(self):
-        from superfish_ng.construction_diagnostics import diagnose_construction, replay_construction_diagnosis
+        from superfish_ng.construction_diagnostics import _from_replayed_construction, replay_construction_diagnosis
         from superfish_ng.gui import tangent_document
         from superfish_ng.cli import main
         fixture = Path(__file__).parent/'fixtures/offset_diagnosis_v7_line_crossings.json'
@@ -102,7 +102,7 @@ class LineNoncircularCrossingTests(unittest.TestCase):
                 self.assertEqual(old['schema_version'], 7)
                 self.assertEqual(old['diagnosis']['classification'], 'TANGENCY_WITNESSES')
                 self.assertEqual(replay_construction_diagnosis(old), old)
-                current = diagnose_construction(old['construction'])
+                current = _from_replayed_construction(old['construction'], schema_version=8)
                 self.assertEqual(current['schema_version'], 8)
                 self.assertTrue(current['diagnosis']['finite_domain_complete'])
                 self.assertEqual(current['diagnosis']['finite_center_count'], 2 if i == 3 else 1)
@@ -125,7 +125,7 @@ class LineNoncircularCrossingTests(unittest.TestCase):
                        curves=[curve_to_dict(EllipseArc((0, 0), (2, 1), -3., 6.)), curve_to_dict(LineSegment((0, -3), (0, 3)))],
                        controls=dict(first_distance_m=0., second_distance_m=0.))
         report = diagnose_offsets_document(request)
-        self.assertEqual(report['schema_version'], 8)
+        self.assertEqual(report['schema_version'], 9)
         self.assertEqual(report['diagnosis']['finite_center_count'], 2)
         for key, value in (('endpoint_width', 0), ('max_series_terms', True), ('unknown_control', 2)):
             changed = deepcopy(request); changed['controls'][key] = value

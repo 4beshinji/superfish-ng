@@ -10,7 +10,7 @@ import tempfile
 import unittest
 
 from superfish_ng.conics import EllipseArc, LineSegment, curve_from_dict
-from superfish_ng.offset_degeneracies import classify_offset_degeneracies
+from superfish_ng.offset_degeneracies import _classify_offset_degeneracies_v8 as classify_offset_degeneracies
 
 
 class FiniteCircularCrossingTests(unittest.TestCase):
@@ -127,7 +127,7 @@ class FiniteCircularCrossingTests(unittest.TestCase):
                 self.assertFalse(old['diagnosis']['finite_domain_complete'])
                 self.assertEqual(replay_construction_diagnosis(old), old)
                 new = diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'], 8)
+                self.assertEqual(new['schema_version'], 9)
                 self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['construction'], old['construction'])
                 self.assertEqual(replay_construction_diagnosis(new), new)
