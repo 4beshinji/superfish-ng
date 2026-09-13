@@ -57,7 +57,7 @@ class ConstructionDiagnosisTests(unittest.TestCase):
         legacy=json.loads((ROOT/'examples/construction/corner_fillet_request.json').read_text())
         old=tangent_document(legacy,candidate_index=0)
         self.assertIsNone(old['offset_diagnosis']);self.assertIsNone(old['diagnosis_serialized'])
-        with self.assertRaisesRegex(ValueError,'version 5 or 6'):diagnose_construction(old['construction'])
+        with self.assertRaisesRegex(ValueError,'version 5, 6 or 7'):diagnose_construction(old['construction'])
 
     def test_diagnosis_domain_and_construction_tampering_rejected(self):
         original=diagnose_construction(construct_tangent_case(tangent_request()))

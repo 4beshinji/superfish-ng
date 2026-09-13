@@ -1615,7 +1615,7 @@ function showTangent(response) {
   $("tangent-status").textContent = c.status === "CASE_VALIDATED"
     ? "閉輪郭と計算条件の検査に合格しました。編集画面へ適用できます。FEM精度は別途検証が必要です。"
     : `${c.status === "UNVERIFIED" ? "未確認" : "候補表示"}: ${report.candidates.length}候補、${report.unresolved.length}件未確認。候補表示だけでは計算できません。`;
-  if ([2,3,5,6].includes(c.schema_version)) {
+  if ([2,3,5,6,7].includes(c.schema_version)) {
     const selected = c.candidate_index === null ? null : report.candidates[c.candidate_index];
     $("tangent-status").textContent += selected?.trim_contact_error_bounds_m
       ? ` 接点誤差上界は最大${(Math.max(...selected.trim_contact_error_bounds_m,...(selected.fillet_contact_error_bounds_m ?? []))*1000).toExponential(3)} mmです。接線角度は数値検査です。`
@@ -1624,7 +1624,7 @@ function showTangent(response) {
   if (c.schema_version === 4) {
     $("tangent-status").textContent += ` 指定半径${(report.radius_m*1000).toPrecision(7)} mmの線分フィレットです。長さは円弧長、接点・接線角度は数値検査です。`;
   }
-  if ([5,6].includes(c.schema_version)) {
+  if ([5,6,7].includes(c.schema_version)) {
     $("tangent-status").textContent += ` 指定半径${(report.radius_m*1000).toPrecision(7)} mm、${report.turn_direction === 1 ? "反時計回り" : "時計回り"}の弧フィレットです。長さは円弧長です。`;
   }
   const diagnosis = response.offset_diagnosis?.diagnosis;

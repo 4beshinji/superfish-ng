@@ -24,16 +24,10 @@ def _trim(curve,fraction,keep_start):
     return replace(curve,**({'end_parameter':parameter} if keep_start else {'start_parameter':parameter}))
 
 
-def conic_fillet_candidates(first,second,*,radius_m,turn_direction,max_sweep_rad,
-                            position_tolerance_m,angle_tolerance_rad,allow_extension=False,
-                            fraction_width=F(1,2**40),max_boxes=10000,precision_bits=96,
-                            endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
-    """Enumerate one explicitly selected radius/turn family on finite arcs.
-
-    Positive turn is counterclockwise. Both contacts must have the same signed
-    left-normal distance to preserve directed G1 joins. Root search completeness
-    is separate from each candidate's numerical construction eligibility.
-    """
+def _fillet_setup(first,second,*,radius_m,turn_direction,max_sweep_rad,
+                   position_tolerance_m,angle_tolerance_rad,allow_extension,
+                   endpoint_width,max_series_terms):
+    """Validate common controls and derive an explicit finite line extension."""
     _positive(radius_m,'radius_m');_positive(position_tolerance_m,'position_tolerance_m')
     _positive(angle_tolerance_rad,'angle_tolerance_rad',upper=math.pi/2)
     _positive(max_sweep_rad,'max_sweep_rad')
@@ -55,22 +49,52 @@ def conic_fillet_candidates(first,second,*,radius_m,turn_direction,max_sweep_rad
         for c,o,v in zip(center_box,origin_box,delta):projected=add(projected,scale(subtract(c,o),v))
         low,high=divide(projected,(squared,squared))
         domains['first_interval' if i==0 else 'second_interval']=(low-1,high+1)
+    return distance,domains
+
+
+def conic_fillet_candidates(first,second,*,radius_m,turn_direction,max_sweep_rad,
+                            position_tolerance_m,angle_tolerance_rad,allow_extension=False,
+                            fraction_width=F(1,2**40),max_boxes=10000,precision_bits=96,
+                            endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
+    """Preserved version 5/6 Krawczyk search and strict interior trimming."""
+    common=dict(radius_m=radius_m,turn_direction=turn_direction,max_sweep_rad=max_sweep_rad,
+                position_tolerance_m=position_tolerance_m,angle_tolerance_rad=angle_tolerance_rad,
+                allow_extension=allow_extension,endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    distance,domains=_fillet_setup(first,second,**common)
     search=intersect_normal_offsets(first,second,first_distance_m=distance,second_distance_m=distance,
                                     fraction_width=fraction_width,max_boxes=max_boxes,precision_bits=precision_bits,
                                     endpoint_width=endpoint_width,max_series_terms=max_series_terms,**domains)
+    return _fillets_from_search(first,second,search,**common)
+
+
+def _fillets_from_search(first,second,search,*,radius_m,turn_direction,max_sweep_rad,
+                         position_tolerance_m,angle_tolerance_rad,allow_extension,
+                         endpoint_width,max_series_terms,retain_whole_at_endpoint=False):
+    """Bound output geometry separately from the supplied root certificate."""
     endpoint_controls=dict(endpoint_width=endpoint_width,max_terms=max_series_terms)
     candidates=[];unresolved=list(search['unresolved'])
     for index,root in enumerate(search['roots']):
         record=dict(root=root,connection_direction='UNVERIFIED',contacts_zr_m=(),contact_distance_m=None)
+        if retain_whole_at_endpoint and root.get('source_contacts_coincide') is True:
+            record.update(connection_direction='ZERO_LENGTH',contact_distance_m=0.,
+                          construction_reason='certified source contacts coincide; no nonzero fillet')
+            candidates.append(record);continue
         try:
             fractions=tuple(float(sum(interval)/2) for interval in root['parameter_box'])
             for i,(curve,f) in enumerate(zip((first,second),fractions)):
                 if isinstance(curve,LineSegment):
                     if not math.isfinite(f) or (f<=0 if i==0 else f>=1):raise ValueError('retained line would be empty or reversed')
-                    if not allow_extension and not 0<f<1:raise ValueError('line contact is outside the finite segment')
+                    if not allow_extension and not (0<=f<=1 if retain_whole_at_endpoint else 0<f<1):raise ValueError('line contact is outside the finite segment')
                     record.update(line_first=i==0,line_fraction=f,line_extended=not 0<=f<=1,allow_extension=allow_extension)
-                elif not 0<f<1:raise ValueError('retained arc is empty or contact fraction is not representable in its interior')
+                else:
+                    allowed=(0<f<=1 if i==0 else 0<=f<1) if retain_whole_at_endpoint else 0<f<1
+                    if not allowed:
+                        raise ValueError('retained arc is empty or contact fraction is not representable in its allowed range'
+                                         if retain_whole_at_endpoint else 'retained arc is empty or contact fraction is not representable in its interior')
             left,right=_trim(first,fractions[0],True),_trim(second,fractions[1],False)
+            if retain_whole_at_endpoint:
+                if fractions[0]==1:left=first
+                if fractions[1]==0:right=second
             center=tuple(float(sum(interval)/2) for interval in root['center_box_zr_m'])
             p,q=[tuple(map(float,c.evaluate(f)['points_zr_m'])) for c,f in ((left,1.),(right,0.))]
             if not all(math.isfinite(x) for x in center):raise ValueError('fillet center is not representable')

@@ -90,6 +90,10 @@ def _same_center(first, second, curve, distance):
     other, other_chart, other_row = second
     if any(a[1] < b[0] or b[1] < a[0] for a, b in zip(row['center_box_zr_m'], other_row['center_box_zr_m'])):
         return False
+    if isinstance(curve, EllipseArc) and curve.semiaxes_m[0] == curve.semiaxes_m[1]:
+        # A noncollapsed circular offset is an injective radial scaling. A
+        # collapsed circle gives an identically zero polynomial when incident.
+        return False
     # Exhaustive same-source-conic self-contact reflection alternatives. Chart
     # boundary duplicates have already been removed, so equal roots are absent.
     same_half = chart['side'] == other_chart['side']
@@ -104,7 +108,8 @@ def _same_center(first, second, curve, distance):
 
 
 def classify_line_noncircular_crossings(curves, distances, domains, *, endpoint_width,
-                                        max_series_terms, max_root_boxes=10000, max_refinements=512):
+                                        max_series_terms, max_root_boxes=10000, max_refinements=512,
+                                        include_circles=False):
     """Private extension; the public diagnosis validates curves and controls.
 
     The fixed public algebraic budgets are recorded in evidence. Exhaustion or
@@ -117,7 +122,9 @@ def classify_line_noncircular_crossings(curves, distances, domains, *, endpoint_
     if not isinstance(curve, (EllipseArc, HyperbolaArc)):
         return None
     ellipse = isinstance(curve, EllipseArc)
-    if ellipse and curve.semiaxes_m[0] == curve.semiaxes_m[1]:
+    if type(include_circles) is not bool:
+        raise ValueError('include_circles must be an explicit boolean')
+    if ellipse and curve.semiaxes_m[0] == curve.semiaxes_m[1] and not include_circles:
         return None
     if type(max_root_boxes) is not int or max_root_boxes < 1 or type(max_refinements) is not int or max_refinements < 1:
         raise ValueError('positive integer root and refinement budgets required')
