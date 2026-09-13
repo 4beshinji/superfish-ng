@@ -6,6 +6,8 @@ from .config import keys,integer
 from .project import parse_json
 from .coaxial_saved import _json
 from .planar_magnetostatic_saved import _snapshot,read_planar_magnetostatic_run
+from .planar_bh_saved import read_planar_bh_run
+from .planar_recoil_saved import read_planar_recoil_run
 from .planar_magnetic_multipoles import PlanarMagneticMultipoleFrame
 from .planar_magnetic_multipole_extraction import extract_planar_magnetic_multipoles
 
@@ -36,11 +38,16 @@ def _outside(run,path):
 
 
 def _compute(run,request):
-    raw=_snapshot(run);solution=read_planar_magnetostatic_run(run)
+    raw=_snapshot(run);manifest=parse_json(raw['manifest.json'].decode('utf-8'))
+    readers={'superfish_ng_planar_magnetostatic_manifest':read_planar_magnetostatic_run,'superfish_ng_planar_bh_manifest':read_planar_bh_run,'superfish_ng_planar_recoil_manifest':read_planar_recoil_run}
+    if not isinstance(manifest,dict) or type(manifest.get('format')) is not str or manifest['format'] not in readers:raise ValueError('multipole source requires a successful planar linear, B-H or recoil native manifest')
+    source_format=manifest['format'];solution=readers[source_format](run)
     extraction=extract_planar_magnetic_multipoles(solution,PlanarMagneticMultipoleFrame.from_dict(request['frame']),request['maximum_order'],request['angular_samples'])
     result=dict(format='superfish_ng_planar_magnetic_multipole_report',schema_version=1,request=request,
         source_native_sha256={name:hashlib.sha256(value).hexdigest() for name,value in sorted(raw.items())},extraction=extraction,
         interpretation='Source-bound linear planar FEM spatial harmonics; replay requires the explicitly supplied unchanged five-file source native. Full FEM and Fourier replay is not a continuum error bound; no implicit material extension, force, torque or longitudinal integral.')
+    if source_format!='superfish_ng_planar_magnetostatic_manifest':
+        result.update(schema_version=2,source_native_manifest_format=source_format,source_physics=solution.case.to_dict()['physics'],interpretation='Source-bound planar B-H/recoil FEM harmonics in a verified declared homogeneous linear isotropic nonremanent source-free disk; explicit unchanged five-file native and original FEM/Fourier replay required; no continuum bound, GUI, force, torque or longitudinal integral.')
     if _snapshot(run)!=raw:raise ValueError('multipole source native changed during extraction')
     return result,raw
 
@@ -58,8 +65,10 @@ def export_planar_magnetic_multipoles(run,out,request):
 
 def replay_planar_magnetic_multipoles(run,report):
     run,report=Path(run),Path(report);_outside(run,report);raw_report=_report_bytes(report);stored=parse_json(raw_report.decode('utf-8'))
-    names=['format','schema_version','request','source_native_sha256','extraction','interpretation'];keys(stored,names,names,'planar magnetic multipole report')
-    if stored['format']!='superfish_ng_planar_magnetic_multipole_report' or type(stored['schema_version']) is not int or stored['schema_version']!=1:
+    names=['format','schema_version','request','source_native_sha256','extraction','interpretation']
+    if isinstance(stored,dict) and type(stored.get('schema_version')) is int and stored['schema_version']==2:names+=['source_native_manifest_format','source_physics']
+    keys(stored,names,names,'planar magnetic multipole report')
+    if stored['format']!='superfish_ng_planar_magnetic_multipole_report' or type(stored['schema_version']) is not int or stored['schema_version'] not in (1,2):
         raise ValueError('unsupported planar magnetic multipole report format/version')
     request=multipole_request(stored['request']);raw=_snapshot(run)
     if stored['source_native_sha256']!={name:hashlib.sha256(value).hexdigest() for name,value in sorted(raw.items())}:

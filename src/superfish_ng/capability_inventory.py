@@ -363,14 +363,16 @@ def off_axis_bh_capabilities():
 
 def planar_magnetic_multipole_capabilities():
     return dict(request_format='superfish_ng_planar_magnetic_multipole_request',request_schema_versions=[1],
-        report_format='superfish_ng_planar_magnetic_multipole_report',report_schema_versions=[1],
+        report_format='superfish_ng_planar_magnetic_multipole_report',report_schema_versions=[1,2],
         source_native_manifest_format='superfish_ng_planar_magnetostatic_manifest',source_native_schema_versions=[1],
+        source_native_manifest_formats=['superfish_ng_planar_magnetostatic_manifest','superfish_ng_planar_bh_manifest','superfish_ng_planar_recoil_manifest'],
+        source_element_orders={'linear_magnetostatic':[1,2],'nonlinear_isotropic_magnetostatic':[1],'linear_recoil_magnetostatic':[1,2]},
         series_format='superfish_ng_planar_magnetic_multipole_series',series_schema_versions=[1],
-        extraction_format='superfish_ng_planar_magnetic_multipole_extraction',extraction_schema_versions=[1],
+        extraction_format='superfish_ng_planar_magnetic_multipole_extraction',extraction_schema_versions=[1,2],
         commands=['extract-planar-magnetic-multipoles','replay-planar-magnetic-multipoles'],element_orders=[1,2],
         coefficient_unit='T',convention='local By+iBx; normal+i*skew; n=1..32; explicit center[m], radius[m], counterclockwise rotation[rad]',
-        aperture='whole closed disk strictly inside original domain; exact zero Jz and uniform positive scalar mu_r in every intersecting cell',
+        aperture='whole closed disk strictly inside original domain; exact zero Jz and uniform positive scalar linear nonremanent constitutive law; BH exact whole-table linearity and recoil equal principal mu_r/zero remanence; original exterior material retained',
         sampling='N and 2N on R and 0.75R; primary N coefficients; negative/high orders, angular/radial differences and field remainder are diagnostics',
         source_binding='all five native file SHA256 values; original FEM and all Fourier traces replayed; no automatic source path lookup',
         project=False,gui=False,study=False,
-        limits='linear scalar planar P1/P2 only; no nonlinear/recoil/axisymmetric/curved extraction, force, torque, longitudinal integral or continuum error bound')
+        limits='planar straight linear/recoil P1/P2 and B-H P1 success native only; no failed/axisymmetric/curved source or nonlinear/anisotropic/remanent/current-bearing aperture; no force, torque, longitudinal integral or continuum error bound')

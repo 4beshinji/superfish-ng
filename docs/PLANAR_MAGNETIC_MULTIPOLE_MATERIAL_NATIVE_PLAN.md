@@ -1,6 +1,6 @@
 # S05: B-H/反跳モデルの多極報告保存・CLI
 
-2026-09-13 JST。後続限定課題。未実装・未受入。
+2026-09-13 JST。後続限定課題。[実装記録](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md)の専用API範囲で限定受入。
 
 既存の多極報告を、成功した平面B-H/反跳nativeへ拡張する。元manifestの厳密なformat/versionから明示3種類のreaderを選び、元Case/係数/材料/反復履歴を同じFEMで再検証した後、版2抽出で閉円板の線形・等方・非残留・無源条件を確認する。失敗native/軸対称/未知形式を暗黙に受理しない。
 
