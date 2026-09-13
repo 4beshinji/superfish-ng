@@ -154,7 +154,7 @@ class StaticFieldProjectTests(unittest.TestCase):
             inventory = capabilities()['static_field_project']
             self.assertEqual(len(inventory['case_families']), 11)
             self.assertEqual(inventory['display_length_units'], ['m', 'mm'])
-            self.assertFalse(inventory['solve']); self.assertFalse(inventory['gui'])
+            self.assertFalse(inventory['solve']); self.assertTrue(inventory['gui']); self.assertEqual(inventory['gui_page'], '/static.html')
 
 
 if __name__ == '__main__':

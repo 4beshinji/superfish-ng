@@ -1,6 +1,6 @@
 # O02: 静的ProjectのGUI入力・実求解・元場表示
 
-2026-09-13 JST。候補検証中、主ツリー未統合・未受入。[受入計画](STATIC_FIELD_GUI_PLAN.md)。
+2026-09-13 JST。固定883sourceを主889sourceへ統合し、専用静的GUIの範囲を限定受入。[受入計画](STATIC_FIELD_GUI_PLAN.md)。
 
 専用画面 `/static.html` で受入済み11形式のCase/Projectを読み込み、厳密JSON編集・検査・Project保存と表示長さm/mmを扱う。JSON文字列をサーバーの専用parserへ渡して重複キーを拒否し、元SI Case・材料・境界・非線形初期値/反復条件を保持する。求解は既存の静的Project実workerへ接続する。成功、保存済み非線形失敗、中止/未完/IO失敗を区別し、RF履歴も専用画面へ誘導する。
 
@@ -19,3 +19,15 @@ Projectと成功native 5ファイル、またはProjectと実失敗native 3フ�
 候補段階の最終独立比較は189.259秒で合格。実Chromeは静的場42例の初回56/実サーバー再起動50チェック、各234元ファイル取得（初回編集Projectの42取得は別）に合格した。既存磁気報告20例も初回28/再起動26チェックと各140取得、既存RFの実求解・全native量が一致した。最終目視も完了し、検証専用サーバー/Chromeは終了済み。固定883sourceとして全1410件の標準回帰を開始した段階で、主ツリーへの統合・受入はまだ行っていない。
 
 静的Studyは[次工程](STATIC_FIELD_STUDY_PLAN.md)。対象版、O02親と全計画は未完。ローカルChromeと目視による検証を、ユーザー業務評価やhosted CIとして扱わない。
+
+最終独立比較は189.259秒でPASS。標準は3537.237秒、1407合格・任意NGSolve参照2件/HTTP環境1件skip、ResourceWarningなし。主6unitは60.775秒でPASS。固定883sourceと主889source（不変egg-info 6件）は完全一致。独立全例を主で再実行したとは扱わない。統合証拠はout/validation-static-field-gui-candidate-20260913/seed_regression.json。
+
+実Chrome記録 out/static-field-gui-browser-color-20260913/report.json は56チェックPASS。
+
+実Chrome記録 out/static-field-gui-browser-restarted-20260913/report.json は50チェックPASS。
+
+実Chrome記録 out/static-field-gui-magnetic-browser-20260913/report.json は28チェックPASS。
+
+実Chrome記録 out/static-field-gui-magnetic-browser-restarted-20260913/report.json は26チェックPASS。
+
+実サーバーとChromeを停止し、新しいサーバー/Chromeから同じworkspaceの全42静的Jobと20磁気報告を再検証した。静的取得は各234ファイル（初回の編集Project 42取得は別）、磁気取得は各140ファイル。初回の静的入力編集・m/mm/負のゼロ保持、全場成分、成功/実失敗、中止/強制終了、改変拒否と正常結果への復帰、既存RFの実求解/元native一致を確認。最終初回/再起動の画像の目視記録はout/static-field-gui-development-20260913/visual-review.json。

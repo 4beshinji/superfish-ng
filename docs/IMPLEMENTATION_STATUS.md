@@ -1,5 +1,10 @@
 # 実装・検証の現状
 
+2026-09-13：[静的ProjectのGUI入力・実求解・元場表示](STATIC_FIELD_GUI.md)を主ツリーへ統合・限定受入。
+既存11形式の厳密Case/Project編集・m/mm表示と実worker、成功/保存済みB-H失敗、非同期の元FEM再検証を接続する。元セル中心場とSI全量/材料/履歴を保持し、零中心の明示配色と元バイト保存、中止/強制終了/改変拒否を検証。独立42例、初回/再起動各234取得が一致し、元360/新318ファイル不変。実Chrome初回/実サーバー再起動でも42例・各234取得と既存RF操作を確認し、既存磁気報告20件・各140取得も初回/再起動で合格。
+標準1410件（1407合格・3skip）、候補11unitと主6unitがPASS。固定883sourceを主889sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的Study、対象版、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[静的Projectの実worker・保存・CLI](STATIC_FIELD_JOBS.md)を主ツリーへ統合・限定受入。
 既存11種類の専用FEMを同じProjectから求解し、成功native 5ファイルと実非線形失敗3ファイルを保存・再現する。JobManagerの別プロセス・再起動・中止とCLI 0/1/2、全SI Case/結果/失敗履歴を保持する。独立42例（成功33/実失敗9）のAPI/実worker/CLI各42件と再起動42件、87 CLI、元192/新954所有ファイルが一致・不変。
 標準1404件（1401合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定877sourceを主883sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
@@ -586,6 +591,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 磁気後処理報告のGUI受渡し | 検証済み磁気後処理量のGUI受渡しを限定受入。元5ファイル/全報告を実FEMで再検証し、SI量・全Caseと履歴を表示/保存 | 磁気Case編集・包括的GUI求解は対象外。原要件/対象版確認と未対応な軸接続/B-H/反跳の軸対称力は未完 | [S05_GUI_HANDOFF.md](S05_GUI_HANDOFF.md) |
 | 静的Project入力 | 既存11形式の全Case/表示単位を厳密保存・CLI往復し、元FEM結果不変を確認 | 静的worker/GUI/Studyは後続 | [STATIC_FIELD_PROJECT.md](STATIC_FIELD_PROJECT.md) |
 | 静的Project求解 | 既存11専用FEMのAPI/実worker/CLI、成功・実非線形失敗の保存/再読込を限定受入 | 静的GUI/Studyは後続 | [STATIC_FIELD_JOBS.md](STATIC_FIELD_JOBS.md) |
+| 静的Project画面 | 11形式の編集・実worker・元場と全量/履歴、保存/再起動を限定受入 | 静的Study・対象版確認は後続 | [STATIC_FIELD_GUI.md](STATIC_FIELD_GUI.md) |
 | 平面磁場の力/トルク | B-H・反跳材料の力・仮想仕事報告保存・CLIを限定受入。元B・真空重みと原点、N/mとN m/m | GUI受渡し・軸対称の力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md) |
 | 平面磁場の多極表現/抽出 | B-H/反跳モデルの多極報告保存・CLIを限定受入。明示normal/skew[T]/frame | GUI受渡し・力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md) |
 | 平面磁静 | 明示mu_r/Jz、固定Az/Ht、P1/P2実FEM、元Az/B/H、J/mエネルギーと反力/元H積分[A]・元B磁束[Wb/m]、専用保存/CLI | GUI/Project/Study・軸対称・曲線/穴・非線形等・厳密開放境界は未実装 | [PLANAR_MAGNETOSTATIC_SOLVE.md](PLANAR_MAGNETOSTATIC_SOLVE.md)、[PLANAR_MAGNETOSTATIC_NATIVE.md](PLANAR_MAGNETOSTATIC_NATIVE.md) |

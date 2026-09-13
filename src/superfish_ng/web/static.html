@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superfish-NG — 静電場・静磁場</title>
+  <link rel="stylesheet" href="/style.css" /><script defer src="/static.js"></script>
+  <style>textarea{width:100%;box-sizing:border-box;font-family:monospace}canvas{width:100%;height:auto;background:white;border:1px solid #cad3da}pre{white-space:pre-wrap;overflow-wrap:anywhere}#field-view select{max-width:100%}</style>
+</head>
+<body>
+  <header><div><span class="eyebrow">STATIC FIELDS</span><h1>静電場・静磁場</h1></div><p>入力・求解・元の場の確認<br /><small>静電・線形磁気・反跳材料・B-H</small></p></header>
+  <nav aria-label="ワークスペース"><a href="/">軸対称RF</a><a href="/planar.html">平面RF</a><a href="/hphi.html">Hφ RF</a><a href="/magnetic.html">磁気後処理報告</a></nav>
+  <div id="error" role="alert" hidden></div>
+  <main>
+    <section class="editor">
+      <h2>入力を編集する</h2>
+      <label>静的Case / Project JSON<input id="input-file" type="file" accept=".json,application/json" /></label>
+      <p>座標・材料・源・境界はSI値で編集します。表示長さ単位の選択は保存CaseのSI値を変更しません。</p>
+      <label>表示長さ単位<select id="length-unit"><option value="mm">mm</option><option value="m">m</option></select></label>
+      <label>入力JSON<textarea id="document" rows="18" spellcheck="false" aria-label="静的CaseまたはProjectのJSON"></textarea></label>
+      <div class="actions"><button id="validate" type="button">入力を確認</button><button id="save-project" type="button">Projectを保存</button><button id="solve" type="button">求解する</button></div>
+      <p id="input-status" role="status"></p>
+      <h2>計算履歴</h2><button id="refresh" type="button">一覧を更新</button><div id="jobs"></div>
+    </section>
+    <section class="viewer">
+      <h2 id="selection">計算結果を選択してください</h2><p id="verification" role="status"></p>
+      <div id="result-view" hidden>
+        <p id="physics"></p><p id="solver-status" role="status"></p>
+        <p id="rf-na">RF周波数・R/Q（circuit / accelerator）・RFモード番号: N/A</p>
+        <div id="field-view" hidden><h3>元の場</h3><label>表示成分<select id="field"></select></label>
+          <canvas id="field-canvas" width="900" height="540" aria-label="元FEMの各セル中心の場"></canvas>
+          <p id="field-caption"></p><p>各三角形の色は、その材料セル中心の元FEM標本値です。界面をまたぐ平滑化はしていません。表示の最小・最大はセル中心標本の範囲で、場全体の極値ではありません。</p>
+          <details><summary>標本位置・元の場・領域と材料</summary><pre id="probe-json"></pre></details>
+        </div>
+        <h3 id="outcome-title">保存された量</h3><div id="quantity-table"></div><p id="failure-reason" hidden></p>
+        <details><summary>全ての保存量・規約・反復履歴</summary><pre id="outcome-json"></pre></details>
+        <details><summary>元の入力・材料・境界</summary><button id="edit-selected" type="button">この入力を編集する</button><pre id="project-json"></pre></details>
+        <h3>元の保存ファイル</h3><div id="downloads"></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[静的GUI](STATIC_FIELD_GUI.md)。既存の自前専用FEM/元片側場評価、StaticFieldProject/workerとローカルGUIを接続。元Case/数値/保存バイトを独立比較・実Chromeで検証。JSON負のゼロ、零中心配色と非同期エラーの修正、検証ドライバーの同一ファイル再選択修正と全失敗記録を保持。新規数値モデル・外部資料・旧版コード/実行・依存の再利用なし。
+
 2026-09-13：[静的Project worker](STATIC_FIELD_JOBS.md)。自前の既存専用FEM・native readerとローカルJobManagerを接続。受入済み成功/実失敗Caseの再現でAPI/worker/CLIを照合し、検証側の一時保存先名修正と全失敗ログを保持。新規数値モデル・外部資料・旧版コード/実行・依存の再利用なし。
 
 2026-09-13：[静的Project入力](STATIC_FIELD_PROJECT.md)。自前の既存専用Case parserとnative検証を再利用し、既存受入Caseの実FEM再現で入出力を照合。検証側の静電meshキー取り違えを修正した記録と初回失敗を保持。外部資料・旧版コード/実行・新規依存の再利用なし。

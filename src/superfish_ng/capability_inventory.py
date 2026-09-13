@@ -417,7 +417,7 @@ def static_field_project_capabilities():
         display_length_units=['m','mm'],case_values='unchanged SI; display unit does not rescale geometry, sources, materials, boundaries, gauges or initial coefficients',
         commands=['normalize-static-project'],cli_exit_codes=dict(complete=0,invalid_or_io=2),
         publication='complete Project JSON, exclusive destination, no overwrite or partial publication',
-        project=True,solve=False,gui=False,study=False,
+        project=True,solve=False,gui=True,gui_page="/static.html",study=False,
         limits='input document only; dedicated static Case parsers retain all restrictions; no RF fallback, new physics, FEM execution, native result or convergence claim')
 
 
@@ -429,5 +429,18 @@ def static_field_jobs_capabilities():
         cli_exit_codes=dict(complete=0, retained_nonlinear_failure=1, invalid_or_io=2),
         statuses=dict(complete='successful original FEM fields', nonlinear_failed='actual B-H failure retained and replayed; Job status failed'),
         success_native_files=5, nonlinear_failure_native_files=3,
-        project=True, worker=True, solve=True, gui=False, study=False,
+        project=True, worker=True, solve=True, gui=True, gui_page="/static.html", study=False,
         limits='11 dedicated static FEM families only; saved failure is not a field solution; algebraic/Newton convergence does not certify discretization accuracy; no RF fallback')
+
+
+def static_field_gui_capabilities():
+    from .static_field_project import static_case_families
+    from .gui_static_fields import ACTIONS, FIELD_UNITS
+    return dict(page='/static.html', gui=True, project=True, worker=True, study=False,
+        case_families=static_case_families(), gui_actions={k:list(v) for k,v in ACTIONS.items()},
+        field_units=dict(FIELD_UNITS), display_length_units=['m','mm'],
+        input='strict JSON text with duplicate-key rejection; nullable display unit override preserves original unit',
+        display='original one-sided FEM cell-center samples; constant color per original material cell; no smoothing or extrema claim',
+        saved_failure='full actual B-H failure history and Case; no field plot',
+        verification='asynchronous first/restart FEM replay; every later display/download checks all original file hashes',
+        limits='11 dedicated static FEM families; RF frequency, both R/Q definitions and mode index are N/A; static Study remains separate')

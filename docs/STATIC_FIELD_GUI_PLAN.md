@@ -1,6 +1,6 @@
 # O02: 静的ProjectのGUI入力・実求解・元場表示
 
-2026-09-13 JST。後続の限定課題、未実装・未受入。[静的Project worker](STATIC_FIELD_JOBS_PLAN.md)に続く。
+2026-09-13 JST。[実装記録](STATIC_FIELD_GUI.md)の専用静的GUI範囲を限定受入。[静的Project worker](STATIC_FIELD_JOBS_PLAN.md)に続く。
 
 受入済み11形式のCase/Projectを専用画面へ読み込み、厳密JSON編集・検査・Project保存・表示長さ単位m/mmを扱う。求解は同じ静的Project workerを使用し、HTTP処理内やGUI内に新しいソルバーを作らない。成功、保存済み非線形失敗、中止/未完/IO失敗を区別し、全Caseと材料/境界/求積/初期値・停止履歴を表示する。
 
