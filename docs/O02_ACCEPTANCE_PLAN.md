@@ -1,6 +1,6 @@
 # O02: Project・Study・GUIの原要件照合
 
-2026-09-13 JST。照合未実施・親未受入。[静的Study GUI](STATIC_FIELD_STUDY_GUI_PLAN.md)の受入に続く、[互換計画](COMPATIBILITY_PLAN.md)のO02/K05,K16,K22,K23の監査。
+2026-09-13 JST。照合中・親未受入。[対応表と途中証拠](O02_ACCEPTANCE.md)を作成し、既存受入工程の報告を読取照合した。[静的Study GUI](STATIC_FIELD_STUDY_GUI_PLAN.md)の受入後に完了する、[互換計画](COMPATIBILITY_PLAN.md)のO02/K05,K16,K22,K23の監査。
 
 原要件は、C01と組込対象の受入済み物理を前提に、外部mesh・高次要素・追加物理をProject/Study/GUIへ渡す操作と保存を接続すること。GUIへ別ソルバーを作らず、CLI/Python/GUIで同じ入力・結果を保持し、再起動、失敗/中止/描画、対応外量のN/Aを確認する。後続物理の完成に合わせて接続するという元の依存関係を維持する。
 

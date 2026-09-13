@@ -23,3 +23,5 @@ solve-static-study INPUT --out DIRECTORYとreplay-static-study DIRECTORYは同�
 初回の独立比較は24 Study完了後、1024三角形の元Caseでプロセス終了待ちが15秒を超え失敗した。保存されたcomplete状態の後にも元FEMによる全条件の再検証が続くため、検証側を元900秒の実行期限内で終了まで待つよう修正した。元メッシュ/FEM/許容差と初回の全失敗出力を保持し、別のprocess-wait-trial出力で全比較を再実行中。初回試行を合格とは扱わない。
 
 2026-09-13 継続：修正後の独立比較で元1024三角形の条件を通過した。889sourceを検証用候補として固定し、同じソースで独立比較と標準1423件を並行実行している。固定は受入ではなく、双方の全件合格・source一致・主統合後の専用検証を統合条件として維持する。
+
+修正後の独立比較は3238.294秒で全78 Study/192条件・全経路と再起動がPASS。成功171/実失敗21、API/実worker/CLI各78、再起動78、156 CLI、元1941/所有6345ファイル不変。端末ハンドル86019の終了コード0と固定889sourceの完全一致を確認した。rootのCLI stdout/stderrログは即時照合済みだが、所有6345の不変性カウントには含めない。証拠はout/static-field-study-jobs-independent-process-wait-trial-20260913/report.jsonとdev/independent-completion.json。標準1423件と主統合/専用検証はまだ残る。

@@ -17,3 +17,9 @@ Study入力・全Study結果と、各条件Project/元nativeをそのまま取�
 2026-09-13 継続：全件の独立GUI比較を開始。比較基準は受入済み入力66 Study/165条件と元9失敗Case/18条件、新たに元FEMで確認する3混合Study/9条件の、同じ78 Study/192条件である。Study workerの比較完了には依存させず、元nativeから期待するStudy全結果と元場を直接構築する。参照bundleにはStudy実行のJob/完了manifestを作らず、元nativeと明示のreference-provenanceを保存する。全38形式/次数/パラメータ組合せを実際の記録から検査する。
 
 最初の独立GUI条件を通過した895sourceを検証用候補として固定し、標準1429件も並行実行中。実ブラウザーの全件期待値も同じ元nativeから別に評価し、独立GUI比較の全Case/量/元場と同一条件であることを監査する。全件初回/実サーバー再起動、既存静的42件/磁気20件、目視、全source/バイト一致は受入前の必須条件のままで、まだ受入ではない。
+
+全件の独立GUI比較は1896.439秒でPASS、実ハンドル99583の終了0を確認した。全11形式・38形式/次数/パラメータ組合せ、78 Study/192条件（成功171/実非線形失敗21）で、実worker 78、初回/再起動後各78の全Study再検証・各192の点場表示・各1266取得が一致した。元1941/所有3537ファイルが不変で、全895sourceが固定候補と一致する。証拠はout/static-field-study-gui-independent-trial-20260913/report.jsonとdev/independent-completion.json。別に直接元nativeから作った実Chrome期待値との全78 Study/192条件・全Case/量/元場の照合もdev/browser-reference-audit.jsonでPASS。全件ブラウザー、標準1429件、親worker受入と主統合/専用検証は残る。
+
+全件の初回実Chromeはout/static-field-study-gui-browser-20260913/report.jsonで94項目PASS、実ハンドル85430の終了0を確認。78 Study/192条件・元1266取得と編集Study 78取得、全Case/量/元場/単位/実失敗、中止/強制終了・別条件改変拒否/復帰・RF履歴誘導と既存RF実FEMが一致した。配信source不変・外部HTTP要求0。元の細かいメッシュと全失敗/混合Studyの3画像を追加目視し、初回の計4画像をdev/visual-review-in-progress.jsonへ記録。既存静的42例の初回ブラウザーを同じサーバーで開始し、その後の磁気20例・実再起動と標準/主受入は残る。
+
+同じ初回サーバーで既存静的42例/234取得・56チェック、磁気報告20例/140取得・28チェックもPASS、端末42499/89529の終了0を確認。3報告の全配信sourceが固定候補と一致することをdev/all-initial-browser-completion.jsonに記録した。初回サーバー6993/PID1853591を正常終了0とし、2026-09-13 12:12 UTCに同じworkspaceを別PID2014893で再起動、全Study復元の実Chromeを開始した。再起動後の全3ブラウザー・最終目視・標準/主受入は未完。

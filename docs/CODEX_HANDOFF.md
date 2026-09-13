@@ -1,5 +1,25 @@
 2026-09-13 UTC 11:47:28 並行検証の最新状態。以下の古いチェックポイントより、この冒頭を優先する。
 
+2026-09-13 UTC 12:17:04 最新継続状態。以下の古い記録より、この冒頭を優先する。
+
+主sourceは892、PHYSICS v28、受入済み静的Study入力e43aab7・標準1417件（1414合格/3skip、3778.058秒）。静的Project GUI335efd4も受入済み。現在はStudy worker/GUIの固定候補を検証中で主統合なし。元Case/メッシュ/FEM/数値許容差は変えていない。
+
+worker候補 /tmp/superfish-static-field-study-jobs-20260913 は固定889source。独立86019は終了0、3238.294秒で78 Study/192条件（成功171/実失敗21）、API/実worker/CLI各78・再起動78・156 CLI、元1941/所有6345ファイル不変でPASS。out/static-field-study-jobs-independent-process-wait-trial-20260913/report.jsonとdev/independent-completion.json。旧15秒process.waitで24件後に失敗した初回は保持し、全体900秒期限内で終了を待つ検証器修正だけを最終候補に含める。root CLI stdout/stderrは即時照合済みだが所有6345には含めない。
+worker標準1423件は実ハンドル20092、out/validation-static-field-study-jobs-candidate-20260913、ログdev/standard.logで継続中。空ログはbufferingで失敗とは限らない。固定候補を編集しない。終了PASS後 /tmp/integrate-static-field-study-jobs-20260913.py →主test_static_field_study_jobs 6件をdev/main-unit.log→ /tmp/finalize-static-field-study-jobs-docs-20260913.py →ローカルコミット。両helper未実行、期待主895source。
+
+GUI候補 /tmp/superfish-static-field-study-gui-20260913 は固定895source。独立99583は終了0、1896.439秒で全11形式/38形式・次数・パラメータ、78 Study/192条件（成功171/実失敗21）、実worker78、初回/再生成access各78全Study再検証・各192点表示・各1266取得がPASS。元1941/所有3537不変。out/static-field-study-gui-independent-trial-20260913/report.json。元nativeから別に作った実Chrome期待値との全Case/量/元場一致はdev/browser-reference-audit.jsonでPASS、helperは実行済み。標準1429件は実ハンドル77530、out/validation-static-field-study-gui-candidate-20260913、ログdev/standard.logで継続中。
+
+初回実Chromeは全3経路が終了0/PASS: Study85430=94チェック/78例192点/1266元取得+78編集Study、静的42499=56チェック/42例/234元取得+42編集Project、磁気89529=28チェック/20例/140取得。out/static-field-study-gui-browser-20260913、同static-browser、同magnetic-browser。全配信sourceが固定候補と一致・外部要求0。dev/all-initial-browser-completion.json。初回6993/PID1853591はCtrlC正常終了0、initial-process-stopped.jsonも確認済み。
+実サーバーを同じout/static-field-study-gui-browser-server-20260913/workspaceへ別PID2014893で再起動済み。実ハンドル53891、launch-url-restarted.txt（0600）。再起動Study Chromeは実ハンドル56778、out/static-field-study-gui-browser-restarted-20260913、ログdev/browser-restarted.logで実行中。初回reportを--restoreへ渡した全78例192点。終わるまで固定候補を変えない。
+再起動Study終了PASS後、同じサーバーで順に node scripts/verify_static_field_gui.mjs（cases=out/static-field-gui-independent-color-trial-20260913/cases.json、--restore初回static-browser/report.json、--out out/static-field-study-gui-static-browser-restarted-20260913）、次にverify_magnetic_report_gui.mjs（cases=out/magnetic-report-gui-independent-navigation-trial-20260913/cases.json、--restore初回magnetic-browser/report.json、--out out/static-field-study-gui-magnetic-browser-restarted-20260913）を実行する。共通--url-fileは上記再起動ファイル、--workspaceは同workspace。ログは各dev/static-browser-restarted.log、magnetic-browser-restarted.log。両方まだ未開始。同じworkspaceのRF最新行を使う検証のため並行実行しない。全3復元PASS後に53891を正常停止し、restarted-process-stopped.jsonを確認する。
+目視は初回case0、24、66point1、76point2の計4画像をdev/visual-review-in-progress.jsonへ記録済み。元の細かいメッシュ・全失敗/混合の表示、SI/N/Aと場非表示を確認。再起動後の画像を見てdev/visual-review.json status=reviewed・全895sourceを作るまでは最終目視未完。試作4Studyだけで全件を受け入れていない。
+GUI標準/全6ブラウザー/独立/参照監査/目視/両サーバー停止と親worker受入後、/tmp/integrate-static-field-study-gui-20260913.py →主test_gui_static_field_studies 6件をdev/main-unit.log→ /tmp/finalize-static-field-study-gui-docs-20260913.py →ローカルコミット。両helper未実行、期待主901source。新11unit751.181秒は固定前にPASS、最終標準も必要。
+
+O02はdocs/O02_ACCEPTANCE.mdに原要件/経路の照合草稿を作成。既存33実装工程の標準/seed66報告、28工程のブラウザー46報告586チェック、保存/復元23報告を読取照合し、報告のPASSと受入時sourceに不一致なし。out/o02-acceptance-audit-in-progress-20260913にSHA/全対応を保存。この33工程は親33項目の受入数ではない。今回の監査で過去テストを再実行していない。静的Study主受入と最終要件対応が残り、O02/全計画は未完。
+
+最新チェックポイント/12 helper退避はout/static-study-restarted-checkpoint-20260913-121704。clone/builders/freezers/export/参照監査/完了記録/本checkpointは実行済みで再実行禁止。主/候補sourceは完全一致を確認済み。goal ACTIVE・全計画完走・予算なし、今回も進展あり。親33=8受入/17進行/7他未受入/1範囲外、対象C00.V未確認。旧版再走査/再質問・旧ソース/バイナリ検査・subagent・新規依存・hosted CIなし。既存Wine実行ファイルはある。標準3skipは任意NGSolve2/HTTP環境1。主.venv絶対Python・cwd候補・OPENBLAS_NUM_THREADS=1 PYTHONPATH=src（unitはsrc:tests）。gitとローカルHTTP/Chromeの必要なescalationは承認済み、拒否/保留なし。
+
+
 主HEADはe864134（e43aab7で静的Study入力、335efd4で静的Project GUIを受入済み）、主892source、PHYSICS v28、最新標準1417=1414合格/3skip、主入力7unit219.970秒PASS。元seed9モード19量はf差0・最大相対差8.882e-16。主ソースの追加統合はこの段階ではまだない。
 
 worker候補 /tmp/superfish-static-field-study-jobs-20260913 を889sourceで固定済み。freezerは実行済み・再実行禁止。修正後の独立比較と標準回帰を同じ固定ソースで並行実行する方式へ変更した。固定を受入とはせず、integratorは独立全78 Study/192条件/156 CLIと標準1423件の全合格/source一致を引き続き必須とする。標準は11:20:49 UTC前に開始、ハンドル20092、out/validation-static-field-study-jobs-candidate-20260913、ログdev/standard.log。独立は既存ハンドル86019、out/static-field-study-jobs-independent-process-wait-trial-20260913、ログdev/independent-process-wait.log。最新DONE 77 mixed-off_axis_bh points 3 failures 1。元の15秒待機失敗を保持し、900秒全体期限の修正で大きい元メッシュを通過。固定ソースは変更しない。worker integrator/finalizerは未実行で、標準/独立合格後に主895へ統合、主test_static_field_study_jobs 6件をdev/main-unit.log、finalizer、ローカルコミット。
