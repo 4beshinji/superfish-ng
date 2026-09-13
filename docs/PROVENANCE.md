@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[S05原要件照合](S05_ACCEPTANCE.md)。既存の公開数学・独立合成解析/実FEMと固定source/実ブラウザー証拠の対応だけを整理。対象版の来歴確認とは区別し、新しい数値結果・外部資料・旧版実行/コード再利用はない。
+
 2026-09-13：[検証済み磁気後処理量のGUI受渡し](S05_GUI_HANDOFF.md)。専用磁気報告の所有コピーと実FEM replay worker、非同期の初回/再起動検証、毎回のSHA照合、元Case/材料/規約と全量表示・元バイト保存を接続する。平面多極/二つのトルクと全周軸力のSI、仮想仕事の未実施/完了/実求解失敗を区別し、詳細JSONの負のゼロも保持する。 [MeekerのWeighted Stress Tensor数学説明 (2022)](https://www.femm.info/doku/doku.php?id=weightedstresstensor)と[FEMM 4.2 Manual (2015), §2.3.11, 式2.13/2.14](https://www.femm.info/Archives/doc/manual.pdf)の公開応力・固定電流のエネルギー微分を照合した。コード/図/磁場データ/重みの丸めは再利用しない。混合境界の停留ポテンシャルと節点移動を自前に導出し、別FEM変位と照合した。 合成解析場のみ。新規依存・旧版実行なし。
 
 2026-09-13：[軸を含まない磁気力報告の保存・CLI](OFF_AXIS_MAGNETIC_FORCE_NATIVE.md)。正半径の線形P1/P2の元native 5ファイルSHAへ拘束した軸方向力Fz[N]と、明示nullまたは実変位FEMのポテンシャル[J]/全Caseを保存・再計算する。求積/+4診断、基準ψ、対象と重みを保持し、平面N/mや断面回転へ読み替えない。 [MeekerのWeighted Stress Tensor数学説明 (2022)](https://www.femm.info/doku/doku.php?id=weightedstresstensor)と[FEMM 4.2 Manual (2015), §2.3.11, 式2.13/2.14](https://www.femm.info/Archives/doc/manual.pdf)の公開応力・固定電流のエネルギー微分を照合した。コード/図/磁場データ/重みの丸めは再利用しない。混合境界の停留ポテンシャルと節点移動を自前に導出し、別FEM変位と照合した。 合成解析場のみ。新規依存・旧版実行なし。
