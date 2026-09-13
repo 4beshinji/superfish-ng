@@ -1,3 +1,21 @@
+2026-09-13 UTC 13:58:01 最新継続状態。以下の古い実行中/未受入記録より優先する。
+
+主は04adb61・901source・PHYSICS v28。O02専用原要件照合と静的Study worker/GUIは受入済み。全計画goal ACTIVE・予算なし、親33=8受入/17進行/7他未受入/1範囲外、C00.V対象版/必須集合とV02利用者評価は未確認。主sourceの追加統合はまだない。
+
+G03の先行候補 /tmp/superfish-coincident-circle-arcs-20260913 は899source固定。独立2688条件、21unit、実Chrome初回/実再起動各27チェック/15取得、7旧新診断/既存構築計8入力と目視5枚PASS。主未統合・未受入。標準1436件は実ハンドル52289、13:07:11 UTC開始、out/validation-coincident-circle-arcs-candidate-20260913、dev/standard.logで継続中。空ログはcapture buffering。終了PASS後、未実行 /tmp/integrate-coincident-circle-arcs-20260913.py → 主21unit（test_coincident_circle_arcs test_offset_degeneracies test_construction_diagnostics）をdev/main-unit.log → 未実行 /tmp/finalize-coincident-circle-arcs-docs-20260913.py → 差分確認/コミット。期待主905source。parent finalizerの次課題文だけは一般回転の検証中候補へ更新済みで未実行。
+
+後続は docs/GENERAL_COINCIDENT_CIRCLE_ARCS_PLAN.md とGENERAL_COINCIDENT_CIRCLE_ARCS.md。/tmp/superfish-general-coincident-circle-arcs-20260913 は903source固定済み、devはout/general-coincident-circle-arcs-development-20260913。先行899から4新規/4修正の8変更。元二進回転の非有理ノルムを含む支持半径一致を有理代数の符号と平方恒等式で証明し、一般相対角をatan加法/交代級数とπ区間で囲む。全候補周期を分類。元構築/Case/FEMは不変。新規診断版3、旧構築診断版1/2は従来規則を保持する。版2 fixtureは変更前の自前構築診断8件で、旧SUPERFISH資産ではない。
+
+一般候補は開始時8例の未完と旧版2保存8件を保持。最初の全28unitで低予算時に既知共有端点を失う回帰を検出し、full-first-unit.logとoffset-degeneracies-before-witness-fix.pyを保存。証拠保持修正後28件2.830秒、固定直前のfinal-focused-unit.logも28PASS。独立 out/general-coincident-circle-arcs-independent-first-trial-20260913/report.json は有限弧4608/支持半径7056条件、4.690秒・全903source不変でPASS。120桁Decimal平方根/AGM pi/三角Newton相対角と固定17周期が参照。新規外部資料/依存/旧版資産なし。
+
+一般候補標準1443件は実ハンドル57815、13:46:38 UTC開始、out/validation-general-coincident-circle-arcs-candidate-20260913、dev/standard.logで実行中。親/後続ともcwd各候補、主.venv絶対Python、OPENBLAS_NUM_THREADS=1 PYTHONPATH=src。期待skipは任意NGSolve2/HTTP sandbox1。固定候補を変更せず、重複実行しない。
+
+一般候補の実Chromeは out/general-coincident-circle-arcs-browser-initial-20260913 と同browser-restarted-20260913、各75チェック/24入力/47取得でPASS。版2旧8/版3新8、先行版1/2と構築8件。元全JSON/元バイト、実サーバー再起動後の同じ初回取得ファイル、改変拒否/復帰/編集無効化/適用可否。dev/browser-completion.json は150チェック/94取得・元24入力不変・source903一致。初回PID3570612/session63572と再起動PID3612616/session12254は両方正常停止。Chrome81100/13435も終了0、旧28unit84202/最終6956/独立36525は終了0。目視7画像（旧版の証拠・新版の全域分類・既存構築適用を分離）はvisual-review.json。ブラウザー参照初回builder48554は既存status名をBUILTと誤記して失敗、FAILED JSONと部分入力/元helperを保持。CASE_VALIDATEDへ直した別helper87415はPASS、固定候補は不変。実使用参照はout/general-coincident-circle-arcs-browser-reference-status-fixed-20260913/cases.json。driverは同dev/verify-browser.mjsでsource固定対象外、SHAを両報告に保持。
+
+一般候補の受入手順は親主受入後、標準1443/独立/実ブラウザー/目視の合格を条件に未実行 /tmp/integrate-general-coincident-circle-arcs-20260913.py → 主28unit（test_general_coincident_circle_arcs test_coincident_circle_arcs test_offset_degeneracies test_construction_diagnostics）をdev/main-unit.log → 未実行 /tmp/finalize-general-coincident-circle-arcs-docs-20260913.py → 差分確認/ローカルコミット。期待主909source。freezer、修正後browser builder、browser/visual recorderは実行済みで再実行禁止。失敗builderも再実行せず保存する。
+
+次のG03一般楕円/双曲線オフセットの自己交差は読取調査中で未実装。円候補の検証や受入範囲を広げて扱わない。旧版Wineの同じ走査/パス質問を繰り返さず、既存Wine実行ファイルがある事実を保持。subagentなし・hosted CI実行主張なし・承認拒否/質問待ちなし。以下の古いハンドルは再利用しない。
+
 2026-09-13 UTC 13:18 最新継続状態。以下の古い実行中/未受入記録より優先する。
 
 主ツリーは901source・PHYSICS v28。静的Study worker/CLIはef3fa68で限定受入、標準1423件（1420合格/3skip、4254.005秒）と主6unit448.593秒PASS。GUIは30a2c5bで限定受入、標準1429件（1426合格/3skip、4868.421秒）と主6unit638.480秒PASS。両者の統合/finalizerは実行済みで再実行禁止。旧seed9モード19量はf差0・最大相対差8.882e-16。GUI integratorのloop変数衝突で20/17と誤記された集計は元1429/1426へ訂正し、元記録とstandard-count-correction.jsonをGUI devに保持した。FEM/結果/sourceは不変。
