@@ -2,7 +2,7 @@
 """Explicit supported physics; planned solvers never fall back to vacuum TM."""
 from dataclasses import dataclass, replace
 from .config import Case, integer, keys
-from .capability_inventory import hphi_capabilities, material_hphi_capabilities, planar_tracking_mappings, electrostatic_capabilities, planar_electrostatic_capabilities, planar_magnetostatic_capabilities, axis_magnetostatic_capabilities, off_axis_magnetostatic_capabilities, planar_recoil_capabilities, axis_recoil_capabilities, off_axis_recoil_capabilities, planar_bh_capabilities, axis_bh_capabilities, off_axis_bh_capabilities
+from .capability_inventory import hphi_capabilities, material_hphi_capabilities, planar_tracking_mappings, electrostatic_capabilities, planar_electrostatic_capabilities, planar_magnetostatic_capabilities, axis_magnetostatic_capabilities, off_axis_magnetostatic_capabilities, planar_recoil_capabilities, axis_recoil_capabilities, off_axis_recoil_capabilities, planar_bh_capabilities, axis_bh_capabilities, off_axis_bh_capabilities, planar_magnetic_multipole_capabilities
 
 
 @dataclass(frozen=True)
@@ -69,6 +69,7 @@ def capabilities():
             'material_hphi_rf': material_hphi_capabilities(),
             'axisymmetric_electrostatic': electrostatic_capabilities(),
             'planar_electrostatic': planar_electrostatic_capabilities(),
+            'planar_magnetic_multipoles': planar_magnetic_multipole_capabilities(),
             'planar_magnetostatic': planar_magnetostatic_capabilities(),
             'axis_magnetostatic': axis_magnetostatic_capabilities(),
             'off_axis_magnetostatic': off_axis_magnetostatic_capabilities(),

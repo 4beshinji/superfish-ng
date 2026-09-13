@@ -1,5 +1,11 @@
 # 実装・検証の現状
 
+2026-09-13：[多極抽出結果の保存・元native照合・CLI](PLANAR_MAGNETIC_MULTIPOLE_NATIVE.md)を主ツリーへ統合・限定受入。
+元5ファイルのSHA256、厳密request、FEM再求解による元場・全4系列/係数/診断を報告へ保存し、明示出典と再計算で照合する。上書き/出典差/改変/途中変更を拒否する。独立24例、72報告/74 CLI、全216出力と48参照ファイルが不変。API/CLIの全JSONとバイトが一致。
+標準1327件（1324合格・3skip）、追加6unitと主6unitがPASS。固定836sourceを主842sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+GUI受渡し・対象材料の拡張・力/トルク、S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[元の平面FEM磁場からの多極抽出](PLANAR_MAGNETIC_MULTIPOLE_EXTRACTION.md)を主ツリーへ統合・限定受入。
 線形スカラーP1/P2の元Caseを実FEMで再求解して係数を照合し、円板全体の電流ゼロ/一様mu_r/領域内部を確認する。Rと.75RのN/2N、元片側B・全4系列と角度/半径/負次数/打切り診断を保持する。独立72例（厳密48/細分24）、P1の8細分系列と別の角度系列がPASS。元場と係数の誤差を分離し、144入力/結果ファイルを保持した。
 標準1321件（1318合格・3skip）、追加5unitと主5unitがPASS。固定833sourceを主839sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
@@ -501,7 +507,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 軸接続の線形永久磁石・異方性 | 軸の材料正則性、三荷重、元a/Aphi/B/HとJの基準付き構成ポテンシャル、専用保存/CLI | 対象版モデル確認・GUI/Project/Study・非線形等は未実装 | [AXIS_RECOIL_NATIVE.md](AXIS_RECOIL_NATIVE.md) |
 | 軸非接続の線形永久磁石・異方性 | r>0の材料/三荷重、固定psi基準と元6場/J/Wb/A、専用保存/CLI | C00.Vの対象版/材料モデル確認・GUI/Project/Study・非線形等は未実装 | [OFF_AXIS_RECOIL_NATIVE.md](OFF_AXIS_RECOIL_NATIVE.md) |
 | 等方非線形B-H構成則・平面/軸接続/軸非接続P1 | 単調表/来歴・元H/実接線、平面/軸接続の解/保存、軸非接続P1非線形磁場の保存・失敗再現・CLIを限定受入 | [原要件照合](S04_ACCEPTANCE.md)済み。C00.Vの対象版/材料モデルは未確認 | [BH_CURVE.md](BH_CURVE.md)、[OFF_AXIS_BH_NATIVE.md](OFF_AXIS_BH_NATIVE.md) |
-| 平面磁場の多極表現/抽出 | 元の平面FEM磁場からの多極抽出を限定受入。明示normal/skew[T]/frame | 保存/CLI・GUI受渡し・対象材料の拡張・力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_MULTIPOLE_EXTRACTION.md](PLANAR_MAGNETIC_MULTIPOLE_EXTRACTION.md) |
+| 平面磁場の多極表現/抽出 | 多極抽出結果の保存・元native照合・CLIを限定受入。明示normal/skew[T]/frame | GUI受渡し・対象材料の拡張・力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_MULTIPOLE_NATIVE.md](PLANAR_MAGNETIC_MULTIPOLE_NATIVE.md) |
 | 平面磁静 | 明示mu_r/Jz、固定Az/Ht、P1/P2実FEM、元Az/B/H、J/mエネルギーと反力/元H積分[A]・元B磁束[Wb/m]、専用保存/CLI | GUI/Project/Study・軸対称・曲線/穴・非線形等・厳密開放境界は未実装 | [PLANAR_MAGNETOSTATIC_SOLVE.md](PLANAR_MAGNETOSTATIC_SOLVE.md)、[PLANAR_MAGNETOSTATIC_NATIVE.md](PLANAR_MAGNETOSTATIC_NATIVE.md) |
 | 平面静電 | 単純多角形P1/P2、全epsilon_r/rhoと固定電極/Dn、実Poisson解、元E/D、J/mエネルギー・C/m電荷・F/m二端子容量、専用native/CLIと全Poisson再構築 | Project/GUI/Study・曲線/穴・純Neumann・浮遊電極・一般の自動外部境界診断は未実装 | [PLANAR_ELECTROSTATIC_FORMS.md](PLANAR_ELECTROSTATIC_FORMS.md)、[PLANAR_ELECTROSTATIC_SOLVE.md](PLANAR_ELECTROSTATIC_SOLVE.md)、[PLANAR_ELECTROSTATIC_NATIVE.md](PLANAR_ELECTROSTATIC_NATIVE.md) |
 | 軸対称静電 | 直線P1/P2、全材料/rhoと明示固定電極/Dn/軸、実Poisson解、元E/D・領域エネルギー・電荷・二端子容量 | 専用native/CLI対応。純Neumann/gauge・浮遊電極・Project/GUI/Study・平面は未実装 | [ELECTROSTATIC_FORMS.md](ELECTROSTATIC_FORMS.md)、[ELECTROSTATIC_SOLVE.md](ELECTROSTATIC_SOLVE.md) |
