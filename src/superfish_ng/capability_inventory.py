@@ -335,3 +335,27 @@ def axis_bh_capabilities():
         limits=['No P2, off-axis/curved geometry, anisotropic nonlinear material, hysteresis or remanence',
             'No RF phasors, winding inductance, force or exact open boundary',
             'Algebraic convergence and discrete identities do not bound quadrature or original field/circulation error'])
+
+
+def off_axis_bh_capabilities():
+    return dict(case_format='superfish_ng_off_axis_bh_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_off_axis_bh_manifest',native_schema_versions=[1],
+        failure_manifest_format='superfish_ng_off_axis_bh_failure_manifest',failure_manifest_schema_versions=[1],failure_schema_versions=[2],
+        result_format='superfish_ng_off_axis_bh_result',result_schema_versions=[1],failure_format='superfish_ng_magnetic_nonlinear_failure',
+        failure_coefficient_field='psi_relative_to_reference_wb',partition_format='superfish_ng_off_axis_bh_partition',partition_schema_versions=[1],
+        commands=['solve-off-axis-bh','replay-off-axis-bh','probe-off-axis-bh'],physics='nonlinear_isotropic_magnetostatic',
+        coordinates='axisymmetric r,z',geometry='explicit straight positive-radius triangles with optional holes',element_orders=[1],quadrature_order_range=[4,32],
+        material='explicit monotone piecewise-linear H(B) in SI with provenance; isotropic H parallel to B, Bphi=Hphi=0, no extrapolation',
+        volume_current='signed Jphi[A/m^2], explicit in every region',boundaries=['fixed_psi [Wb]','tangential_h [A/m]'],
+        boundary_policy='every edge explicit; at least one fixed psi; pure Neumann gauge is unsupported; psi reference retained',
+        nonlinear_method='true material tangent, damped Newton with objective line search and separate fixed-quadrature residual convergence',
+        failure='separate version-2 report retains Case, controls, complete history, coefficient_field=psi_relative_to_reference_wb and last_valid_coefficients or null; replay reattempts the same FEM',
+        cli_exit_codes=dict(success=0,nonlinear_failure=1,input_or_native_error=2),
+        fields='psi[Wb], Aphi=psi/r[Wb/m], Br=-psi_z/r, Bz=psi_r/r[T], original H=h(|B|)*B/|B|[A/m]',
+        probes='original one-sided six fields with cell/region/material IDs, provenance, table interval and secant/differential reluctivity; no averaging',
+        volume_measure='2*pi*r dr dz, full 3D',energy='U=integral h(b) db dV; Ustar=integral b(h) dh dV [J]; internal work=U+Ustar',
+        fixed_boundary_reaction='+2*pi integral original Ht ds [A], distinct from discrete reaction',normal_flux='2*pi integral r original B dot outward normal ds [Wb]',
+        native_replay='same nonlinear FEM with exact coefficient, deterministic iteration and q/q+4 diagnostic comparison',project=False,gui=False,study=False,
+        limits=['No P2, axis-connected/curved geometry, anisotropic nonlinear material, hysteresis or remanence',
+            'No RF phasors, winding inductance, force or exact open boundary',
+            'Algebraic convergence and discrete identities do not bound quadrature or original field/circulation error'])

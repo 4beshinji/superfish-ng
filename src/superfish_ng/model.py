@@ -2,7 +2,7 @@
 """Explicit supported physics; planned solvers never fall back to vacuum TM."""
 from dataclasses import dataclass, replace
 from .config import Case, integer, keys
-from .capability_inventory import hphi_capabilities, material_hphi_capabilities, planar_tracking_mappings, electrostatic_capabilities, planar_electrostatic_capabilities, planar_magnetostatic_capabilities, axis_magnetostatic_capabilities, off_axis_magnetostatic_capabilities, planar_recoil_capabilities, axis_recoil_capabilities, off_axis_recoil_capabilities, planar_bh_capabilities, axis_bh_capabilities
+from .capability_inventory import hphi_capabilities, material_hphi_capabilities, planar_tracking_mappings, electrostatic_capabilities, planar_electrostatic_capabilities, planar_magnetostatic_capabilities, axis_magnetostatic_capabilities, off_axis_magnetostatic_capabilities, planar_recoil_capabilities, axis_recoil_capabilities, off_axis_recoil_capabilities, planar_bh_capabilities, axis_bh_capabilities, off_axis_bh_capabilities
 
 
 @dataclass(frozen=True)
@@ -75,6 +75,7 @@ def capabilities():
             'planar_recoil': planar_recoil_capabilities(),
             'planar_bh': planar_bh_capabilities(),
             'axis_bh': axis_bh_capabilities(),
+            'off_axis_bh': off_axis_bh_capabilities(),
             'axis_recoil': axis_recoil_capabilities(),
             'off_axis_recoil': off_axis_recoil_capabilities(),
             'planar_cutoff': {'case_format': 'superfish_ng_planar_case', 'schema_version': 1, 'schema_versions': [1,2],
