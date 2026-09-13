@@ -56,7 +56,8 @@ class OffsetDegeneracyTests(unittest.TestCase):
                 self.assertTrue(r['finite_domain_complete'])
             r=self.diagnose(a,end,.25,.25);self.assertEqual(r['classification'],'SHARED_PARAMETER_ENDPOINT')
             self.assertEqual(r['evidence']['fraction_intervals'],[(F(1),F(1)),(F(0),F(0))])
-            self.assertEqual(self.diagnose(a,reverse,.25,.25)['status'],'UNVERIFIED')
+            opposite=self.diagnose(a,reverse,.25,.25)
+            self.assertEqual(opposite['classification'],'DISJOINT');self.assertTrue(opposite['finite_domain_complete'])
 
     def test_line_circle_tangent_and_finite_line_domain(self):
         circle=EllipseArc((0,0),(2,2),-.5,1.);line=LineSegment((1,-1),(1,1))
@@ -116,10 +117,10 @@ class OffsetDegeneracyTests(unittest.TestCase):
             self.assertEqual(supported['diagnosis']['classification'],'DISJOINT')
             self.assertTrue(supported['diagnosis']['finite_domain_complete'])
             request['curves'][0]=curve_to_dict(replace(a,semiaxes_m=(3,1)))
-            # An identically zero projection with opposite signed distances
-            # remains explicitly unresolved after general finite-root recovery.
-            request['curves'][1]=request['curves'][0].copy()
-            request['controls']['second_distance_m']=-1.
+            # Finite-arc precision exhaustion remains unknown after same-support
+            # equal-distance identities gain a complete branch classification.
+            request['curves']=[curve_to_dict(EllipseArc((0,0),axes,-3.,6.)) for axes in ((2,1),(1,2))]
+            request['controls'].update(first_distance_m=.25,second_distance_m=.25,max_series_terms=1)
             source.write_text(json.dumps(request));unknown=Path(tmp)/'unknown.json'
             self.assertEqual(main(['diagnose-offsets',str(source),'--out',str(unknown)]),1)
             self.assertEqual(json.loads(unknown.read_text())['diagnosis']['status'],'UNVERIFIED')

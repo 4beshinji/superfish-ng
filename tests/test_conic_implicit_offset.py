@@ -108,7 +108,7 @@ class ConicImplicitOffsetTests(unittest.TestCase):
         from superfish_ng.construction_diagnostics import diagnose_construction,replay_construction_diagnosis
         from superfish_ng.gui import tangent_document
         req=request();report=diagnose_offsets_document(req)
-        self.assertEqual(report['schema_version'],12);self.assertEqual(report['diagnosis']['finite_center_count'],4)
+        self.assertEqual(report['schema_version'],13);self.assertEqual(report['diagnosis']['finite_center_count'],4)
         with tempfile.TemporaryDirectory() as tmp:
             source=Path(tmp)/'request.json';out=Path(tmp)/'diagnosis.json';source.write_text(json.dumps(req)+'\n')
             self.assertEqual(main(['diagnose-offsets',str(source),'--out',str(out)]),0)
@@ -120,7 +120,7 @@ class ConicImplicitOffsetTests(unittest.TestCase):
         raw=(ROOT/'tests/fixtures/offset_diagnosis_v9.json').read_bytes();old=json.loads(raw)
         self.assertEqual(old['schema_version'],9);self.assertEqual(replay_construction_diagnosis(old),old)
         self.assertEqual(tangent_document(old,replay=True)['offset_diagnosis'],old)
-        new=diagnose_construction(old['construction']);self.assertEqual(new['schema_version'],12)
+        new=diagnose_construction(old['construction']);self.assertEqual(new['schema_version'],13)
         self.assertEqual(new['construction'],old['construction']);self.assertEqual(new['diagnosis'],old['diagnosis'])
         self.assertEqual(replay_construction_diagnosis(new),new)
         bad=deepcopy(old);bad['diagnosis']['finite_center_count']=100

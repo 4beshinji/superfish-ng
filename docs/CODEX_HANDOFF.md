@@ -1,3 +1,33 @@
+2026-09-14 JST 最新継続状態。開始HEAD1692c5c、cleanから一般非円フィレット構築を調べ、必要な恒等零残件を先に解決した。
+前goalターンは一般有限射影の相手実点回復・診断12受入/commitというprogress。本段階も実装・受入証拠を伴うprogress。
+[同じ円錐曲線の等距離オフセットと反対枝](EQUAL_DISTANCE_CONIC_BRANCHES.md)を限定受入。
+新equal_distance_conic_branches.pyが同じ凸な枝の反対法線側の離隔、反対双曲線枝の0/1/2中心を分類する。
+重根の三次行列束は異なる2元点なら階数1。反対枝はlambda=-1/(n*a²)だけで、両枝の外向き距離が必要。
+q=y²=b²(d²-n*a²)/(n*a²*(a²+b²))、元点(±sqrt(1+q),同符号sqrt(q))、中心(0,(a²+b²)/b*同符号sqrt(q))。
+回転と元表現へ厳密に戻し、有限弧/符号/1ULP/尺度を検査。q=0正則接触、q>0横断、外向きなのでカスプなし。
+診断13、旧12を専用関数へ固定。旧保存診断1〜12/構築1〜9を保持。新規フィレット構築はまだ接続していない。
+関連112unit55.486秒+主軸交換/半回転の追加1不変量PASS、初回6unit0.016秒PASS。
+独立576条件94元点対/凸な最近点不等式1080件が2.404秒PASS。初回は576条件保存後に検証器のHyperbolaArc位置引数誤りで停止。
+検証器だけを修正し専用全検証を再実行した。専用後の変更は追加テスト1件のみで、製品と検証器は不変。
+Chrome初回51/実再起動49チェック、計42取得、9入力、4画像目視PASS。元Case、保存バイト、全構築/診断、改変拒否を確認。
+両GUIサーバーはPID+argv照合後SIGINTでexit0。Chromeもexit0、検証/サーバーの実行中プロセスなし。
+証拠はout/equal-distance-conic-branches-20260914/acceptance.json、independent-fixed報告、browser initial/restarted報告。
+fixture12は88,730 bytes、SHA4d71a33e63253e19ebc3de2ce9b0745eb936c8539fbc80e48cd49413f11efe86、変更前1692c5cで全再現済み。
+次は一般非円の全元点対からのフィレット構築（想定構築10）。source-fractionと順序、全保持端点、零長/出力誤差/Caseを確定する。
+構築の参考はcircle_conic_fillet.py、circular_fillet.py、共通conic_fillet._fillets_from_search(retain_whole_at_endpoint=True)。
+一般有限射影はconic_offset_intersectionsのsource_local_box/target_local_boxとsource_candidate_indexを使える。
+同じ元候補に相手2点なら第一fractionを共有し、第二fractionで辞書式順序。別元候補は第一fractionが別である。
+同じ支持/同じ補正距離はreparameterized_conic_offsetsで全共有端点とself_contacts/included_parameter_pairsを利用できる。
+自己接触中心はcoordinate_factor*sqrt(coordinate_square)を指定axisへ置き第一回転と中心で戻す。対を中心数で潰さない。
+同じ物理点の共有端点は厳密零長として残す。新しい反対枝のrowsはsource_contacts_coincide=Falseを含む。
+一般有限交点で両distancesが同じなら、tangent_parallelと元方向の接線内積の正符号により元接点一致を証明できる（カスプでも元接線は正則）。
+_source_candidate_indexが異なる根の第一fraction順序はinterval分離で確定し、不足ならUNVERIFIED。数値近似のsortだけで順序を保証しない。
+構築10を加える場合はtangent_constructionの厳密版別parser/dispatch、construction_diagnostics対応版、web/app.jsのfillet版一覧を更新する。
+Case/FEMへ新形状を通すので次段階には解析面積/体積と実FEM尺度則も必要。診断変更だけの本段階ではseed/FEM/全validate/Hosted CI未実行。
+物理ピーク収束・G03全体/C00.V/V02は未完。親33=8受入/17進行/7他未受入/1範囲外、全計画goalはACTIVE。
+現在worktreeは/home/sin/code/agent/reserch/superfish-ng。旧資産は触らず、subagent/追加skillは要求がなく未使用。
+gitメタデータ更新はrequire_escalated。以下の過去履歴より先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD1cc75c1、旧診断11 fixture保存から一般両非零オフセットの相手回復へ進んだ。
 前goalターンは全元候補射影の受入・commitというprogress。本段階も実装・受入証拠を作成したprogress。
 [両非零の円錐曲線オフセット交点](GENERAL_CONIC_OFFSET_INTERSECTIONS.md)を限定受入。
