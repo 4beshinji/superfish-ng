@@ -1,6 +1,6 @@
 # O02: 静的Studyの入力・厳密な尺度変換
 
-2026-09-13 JST。候補検証中、主ツリー未統合・未受入。[限定受入計画](STATIC_FIELD_STUDY_INPUT_PLAN.md)と[Study全体の計画](STATIC_FIELD_STUDY_PLAN.md)。
+2026-09-13 JST。固定886sourceを主892sourceへ統合し、静的Study入力と尺度変換の範囲を限定受入。[限定受入計画](STATIC_FIELD_STUDY_INPUT_PLAN.md)と[Study全体の計画](STATIC_FIELD_STUDY_PLAN.md)。
 
 StaticFieldStudyは `superfish_ng_static_field_study`、study_version=1、kind=sweep、基底StaticFieldProject、parameter、2個以上のvaluesを持つ。全11静的Case形式と対応P1/P2を保持し、入力順に独立な各条件Projectを返す。未知の型/フィールド、重複キー、非有限値、RF入力を拒否する。表示m/mmは全CaseのSI値と分離する。
 
@@ -23,3 +23,7 @@ epsilon/mu、反跳の主値・材料方向、B-H構成表と来歴を保つ。�
 候補段階の最終10unitは231.638秒で合格。最終独立比較は537.463秒、33参照Case・66 Study・165条件・330直接FEM対比較・66 CLI、励起比例72点/幾何尺度4点が合格し、元297/新1914ファイルが不変だった。今回の165派生条件は全て求解成功で、実非線形失敗点は零。B-Hの実失敗を含むStudy実行は後続工程で検証する。固定886sourceとして全1417件の標準回帰を開始した段階で、主ツリーへの統合・受入はまだ行っていない。
 
 Study実行/保存・worker/GUI、対象版、O02親と全計画は未完。この限定入力工程を静的Study全体の完了とはしない。
+
+最終独立比較は537.463秒でPASS。全165条件の完全Case/全量・履歴とnativeバイト、66 CLIが一致。全165条件が求解成功。実非線形失敗の検証はworker段階に残し、元297ファイルと新1914ファイル不変。最終証拠はout/static-field-study-input-independent-final-trial-20260913/report.json。検証尺度・対象名の修正前の初回試行は最終coverage assertionで失敗し、合格とはせず保持した。最終の全sourceへの拘束と必須の幾何尺度4点を別出力で確認した。
+
+標準は3778.058秒、1414合格・任意NGSolve参照2件/HTTP環境1件skip、ResourceWarningなし。主7unitは219.970秒でPASS。固定886sourceと主892source（不変egg-info 6件）は完全一致。独立全例を主で再実行したとは扱わない。統合証拠はout/validation-static-field-study-input-candidate-20260913/seed_regression.json。後続は[静的Study workerと各条件保存](STATIC_FIELD_STUDY_JOBS_PLAN.md)。

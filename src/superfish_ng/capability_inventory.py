@@ -411,6 +411,21 @@ def magnetic_report_gui_capabilities():
         limits='verified saved reports only; no magnetic Case editor, implied longitudinal length, radial net force, meridional torque or continuum accuracy certificate')
 
 
+def static_field_study_capabilities():
+    from .static_field_project import static_case_families
+    return dict(study_format='superfish_ng_static_field_study', study_versions=[1],
+        case_families=static_case_families(), parameters=['uniform_scale', 'excitation_scale'],
+        parameter_semantics=dict(uniform_scale='positive common factor for every original mesh/outer/hole coordinate; source densities and boundary values unchanged',
+                                 excitation_scale='finite signed factor including zero for all volume source densities, prescribed potentials, displacement/H boundary loads and recoil remanent B'),
+        nonlinear_initialization='original initial coefficients and controls retained independently at every point; no automatic adjustment or previous-point warm start',
+        commands=['normalize-static-study'], cli_exit_codes=dict(complete=0, invalid_or_io=2),
+        gui=False, execution=False, display_length_units=['m', 'mm'], stored_units='SI',
+        mode_tracking='not_applicable', solution_branch_tracking='not_performed', mesh_convergence='not_performed',
+        limitations=['Input and derived-Project validation only; Study worker, result persistence and GUI require separate acceptance.',
+                     'Recoil constitutive potentials are not absolute magnet internal energy; B-H fields do not obey linear excitation scaling.',
+                     'Every derived Case must pass its dedicated parser before output allocation.'])
+
+
 def static_field_project_capabilities():
     from .static_field_project import static_case_families
     return dict(project_format='superfish_ng_static_field_project',project_versions=[1],case_families=static_case_families(),

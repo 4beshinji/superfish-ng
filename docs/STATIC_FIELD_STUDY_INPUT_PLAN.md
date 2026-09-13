@@ -1,6 +1,6 @@
 # O02: 静的Studyの入力と厳密な尺度変換
 
-2026-09-13 JST。未実装・未受入。[静的Study全体](STATIC_FIELD_STUDY_PLAN.md)の最初の限定課題。全体のAPI/CLI/worker/GUIと各条件保存の完了要件は維持する。
+2026-09-13 JST。[入力/尺度変換の実装記録](STATIC_FIELD_STUDY_INPUT.md)の限定範囲を受入。[静的Study全体](STATIC_FIELD_STUDY_PLAN.md)の最初の限定課題。全体のAPI/CLI/worker/GUIと各条件保存の完了要件は維持する。
 
 専用StaticFieldStudyとnormalize-static-studyを追加する。全11 Case形式・対応P1/P2を基底StaticFieldProjectと二つの明示パラメータへ接続し、元Caseの対応する全座標、源密度、固定ポテンシャル/Neumann・Ht境界値、反跳残留Bを変換する。uniform_scaleは正有限、excitation_scaleは符号付き有限値（零を含む）。入力順を保持し、全派生Projectを保存前に専用parserで検証する。未知のフィールド、重複キー、RF入力、非有限値を拒否する。
 

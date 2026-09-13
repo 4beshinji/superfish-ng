@@ -380,8 +380,17 @@ def main(argv=None):
     static_project.add_argument('input', type=Path)
     static_project.add_argument('--out', type=Path, required=True)
     static_project.add_argument('--display-length-unit', choices=('m', 'mm'))
+    static_study = sub.add_parser('normalize-static-study', help='validate every independent static Study point and publish the input without solving')
+    static_study.add_argument('input', type=Path)
+    static_study.add_argument('--out', type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command == 'normalize-static-study':
+            from .static_field_study import StaticFieldStudy
+            study = StaticFieldStudy.load(args.input)
+            study.save(args.out)
+            sys.stdout.write(study.dumps())
+            return 0
         if args.command in ('solve-static-project', 'replay-static-project'):
             from .static_field_project import StaticFieldProject
             from .static_field_jobs import execute_static_field_project, read_static_field_job
