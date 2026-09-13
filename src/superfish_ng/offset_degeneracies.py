@@ -315,7 +315,7 @@ def _classify_offset_degeneracies_v10(first,second,*,first_distance_m,second_dis
     return _report(**result)
 
 
-def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
+def _classify_offset_degeneracies_v11(first,second,*,first_distance_m,second_distance_m,
                                  first_interval=(0.,1.),second_interval=(0.,1.),
                                  endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
     """Version 11 also handles equal conic offsets in different principal frames."""
@@ -329,6 +329,25 @@ def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance
     if result is None:return previous
     if not result['complete'] and previous['status']=='CERTIFIED':
         previous['evidence']['reparameterized_conic_search']=result['evidence']
+        previous['reason']+='; '+result['reason']
+        return previous
+    return _report(**result)
+
+
+def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
+                                 first_interval=(0.,1.),second_interval=(0.,1.),
+                                 endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
+    """Version 12 adds real target recovery for finite general conic projections."""
+    previous=_classify_offset_degeneracies_v11(first,second,first_distance_m=first_distance_m,
+        second_distance_m=second_distance_m,first_interval=first_interval,second_interval=second_interval,
+        endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    if previous['finite_domain_complete']:return previous
+    from .conic_offset_intersections import classify_conic_offset_intersections
+    result=classify_conic_offset_intersections((first,second),(first_distance_m,second_distance_m),
+        (first_interval,second_interval),endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    if result is None:return previous
+    if not result['complete'] and previous['status']=='CERTIFIED':
+        previous['evidence']['general_conic_offset_search']=result['evidence']
         previous['reason']+='; '+result['reason']
         return previous
     return _report(**result)
@@ -352,6 +371,6 @@ def diagnose_offsets_document(request):
     keys(controls,('first_distance_m','second_distance_m','first_interval','second_interval','endpoint_width','max_series_terms'),
          ('first_distance_m','second_distance_m'),'offset diagnosis controls')
     report=classify_offset_degeneracies(*(curve_from_dict(row) for row in rows),**controls)
-    return _json_value(dict(schema_version=11,document_type='normal_offset_diagnosis',software_version=__version__,
+    return _json_value(dict(schema_version=12,document_type='normal_offset_diagnosis',software_version=__version__,
                             request=deepcopy(request),request_sha256=hashlib.sha256(canonical.encode()).hexdigest(),
                             diagnosis=report))

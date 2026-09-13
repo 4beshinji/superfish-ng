@@ -95,18 +95,21 @@ class SameConicOffsetIntersectionTests(unittest.TestCase):
                 self.assertLessEqual(D(low.numerator)/D(low.denominator),expected)
                 self.assertGreaterEqual(D(high.numerator)/D(high.denominator),expected)
 
-    def test_budget_keeps_known_witnesses_and_unmatched_supports_remain_unknown(self):
+    def test_budget_keeps_known_witnesses_and_version_eleven_unmatched_scope(self):
+        from superfish_ng.offset_degeneracies import _classify_offset_degeneracies_v11
+        def previous(a, b, distance):
+            return _classify_offset_degeneracies_v11(a,b,first_distance_m=distance,second_distance_m=distance)
         for a in (EllipseArc((0,0),(2,1),0.,1.),HyperbolaArc((0,0),(2,1),0.,1.)):
             b=replace(a,start_rad=-1.) if isinstance(a,EllipseArc) else replace(a,start_parameter=-1.,end_parameter=0.)
             distance=.75 if isinstance(a,EllipseArc) else -.75
             result=self.diagnose(a,b,distance,max_series_terms=1)
             self.assertFalse(result['finite_domain_complete']);self.assertEqual(result['classification'],'SHARED_PARAMETER_ENDPOINT')
             for changed in (replace(b,center_zr_m=(math.nextafter(0.,1.),0)),replace(b,semiaxes_m=(3,1)),replace(b,rotation_rad=.1)):
-                self.assertFalse(self.diagnose(a,changed,distance)['finite_domain_complete'])
+                self.assertFalse(previous(a,changed,distance)['finite_domain_complete'])
             for extra in ({'first_interval':(-.1,1.)},{'max_series_terms':True},{'endpoint_width':0}):
                 with self.assertRaises(ValueError):self.diagnose(a,b,distance,**extra)
         a=HyperbolaArc((0,0),(2,1),.25,.75)
-        self.assertFalse(self.diagnose(a,replace(a,branch=-1),-.75)['finite_domain_complete'])
+        self.assertFalse(previous(a,replace(a,branch=-1),-.75)['finite_domain_complete'])
 
     def test_saved_versions_one_two_three_and_current_keep_rules_and_bytes(self):
         from superfish_ng.construction_diagnostics import diagnose_construction,replay_construction_diagnosis
@@ -118,7 +121,7 @@ class SameConicOffsetIntersectionTests(unittest.TestCase):
                 self.assertEqual(replay_construction_diagnosis(old),old)
                 self.assertEqual(tangent_document(old,replay=True)['offset_diagnosis'],old)
                 new=diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'],11);self.assertTrue(new['diagnosis']['finite_domain_complete'])
+                self.assertEqual(new['schema_version'],12);self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['diagnosis']['finite_center_count'],count)
                 self.assertEqual(new['construction'],old['construction']);self.assertEqual(replay_construction_diagnosis(new),new)
                 changed=deepcopy(new);changed['schema_version']=3

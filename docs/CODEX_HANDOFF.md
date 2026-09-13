@@ -1,3 +1,25 @@
+2026-09-14 JST 最新継続状態。開始HEAD1cc75c1、旧診断11 fixture保存から一般両非零オフセットの相手回復へ進んだ。
+前goalターンは全元候補射影の受入・commitというprogress。本段階も実装・受入証拠を作成したprogress。
+[両非零の円錐曲線オフセット交点](GENERAL_CONIC_OFFSET_INTERSECTIONS.md)を限定受入。
+conic_offset_intersections.pyが重根から階数2の単一実点/階数1の0〜2実点を回復する。
+root_radical_arithmetic.pyが元根号と追加有理平方根の従属関係も厳密判定。射影はprivate handlerで孤立根を再利用。
+診断12へ接続し、旧11を専用関数に固定。旧診断1〜11/構築1〜9を保持。新フィレット構築はまだ接続していない。
+118テスト57.639秒+追加2不変量0.589秒PASS（初回内部16テスト16.424秒もPASS）。
+独立初回7条件は数値合格後、並行した3テスト編集をファイル不変性ガードが検出してexit1。
+数値実装はその間不変。実行器に入力SHA/変更パス保存を追加し編集終了後に一度再検証、137.664秒PASS。
+最終独立7条件36候補/87法線足/18元点対。全unittest/seed/FEM/Hosted CIは今回未実行、許容差/benchmark不変。
+Chrome初回53/再起動51チェック、計38取得、8入力、5画像目視がPASS。元Case、全診断・構築、保存バイト、改変拒否を確認。
+作業用両GUIサーバーはPID+argv照合後SIGINTでexit0。実ブラウザーもexit0。実行中の検証・サーバーなし。
+証拠はout/conic-offset-target-recovery-20260914/acceptance.json、専用frozen report、browser initial/restarted report。
+開始前fixture11は88,730 bytes、SHA c83656d570c532208b7a3c9910dc999b907eabfaedd570d73b1055327c09f44f。
+次は一般非円の全元点対からのフィレット構築か、恒等零射影（同一支持/逆符号等距離）の残分類。
+構築には相手元点の原パラメータ/順序と端点保持/零長/誤差境界を新しく確定し、旧保存構築の版を維持すること。
+恒等零は有限根なし/離隔と扱わない。一般回転の有限根例は約118秒なのでSturmを元/相手や根ごとに再構築しないこと。
+物理ピーク収束・G03全体/C00.V/V02は残る。親33=8受入/17進行/7他未受入/1範囲外、全計画goalはACTIVE。
+以前からの現在worktreeは /home/sin/code/agent/reserch/superfish-ng。旧資産は触らず、ユーザー所有出力は上書きしない。
+subagent/追加skillの要求はなく未使用。gitメタデータの更新はrequire_escalatedを使用する。
+以下は過去段階の履歴であり、この先頭状態を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEADcbfd162、cleanからG03の一般両非零オフセットへ進んだ。
 前goalターンは同一支持の別主軸表現の等距離オフセット診断11を受入・commitしたprogress。
 [両非零オフセットの全元候補射影](GENERAL_CONIC_OFFSET_PROJECTION.md)を専用範囲で受入。

@@ -113,7 +113,21 @@ def project_conic_offset_candidates(first, second, *, first_distance_m, second_d
     ``projection_complete`` refers to the pencil-discriminant projection after
     the original source radical sign and source finite membership are checked.
     The target distance sign, target real parameters and finite target arc are
-    still unclassified. Public offset-diagnosis versions do not call this yet.
+    still unclassified.
+    """
+    return _project_conic_offset_candidates(first, second, first_distance_m=first_distance_m,
+        second_distance_m=second_distance_m, first_interval=first_interval, endpoint_width=endpoint_width,
+        max_series_terms=max_series_terms, max_root_boxes=max_root_boxes, max_refinements=max_refinements)
+
+
+def _project_conic_offset_candidates(first, second, *, first_distance_m, second_distance_m,
+                                     first_interval=(0., 1.), endpoint_width=DEFAULT_ENDPOINT_WIDTH,
+                                     max_series_terms=96, max_root_boxes=10000, max_refinements=512,
+                                     candidate_handler=None):
+    """Reuse isolated roots for target recovery without rebuilding Sturm systems.
+
+    A handler owns target failures; they must not erase proved source candidates.
+    The public projection-only entry point installs no handler.
     """
     if not isinstance(first_interval, (tuple, list)) or len(first_interval) != 2:
         raise ValueError('source fraction interval requires a pair')
@@ -181,6 +195,8 @@ def project_conic_offset_candidates(first, second, *, first_distance_m, second_d
                 elif membership['status'] == 'EXTERIOR':
                     result['excluded'].append(dict(row, reason='outside finite source domain'))
                 else:
+                    if candidate_handler is not None:
+                        candidate_handler(root, projection, row)
                     result['source_candidates'].append(row)
             except ValueError as error:
                 result['unresolved'].append(dict(row, reason=str(error)))

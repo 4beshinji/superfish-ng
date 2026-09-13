@@ -117,7 +117,7 @@ class ReparameterizedConicOffsetTests(unittest.TestCase):
         request = dict(schema_version=1, curves=[curve_to_dict(c) for c in (a, b)],
                        controls=dict(first_distance_m=.75, second_distance_m=.75))
         report = diagnose_offsets_document(request)
-        self.assertEqual(report['schema_version'], 11); self.assertEqual(report['diagnosis']['finite_center_count'], 1)
+        self.assertEqual(report['schema_version'], 12); self.assertEqual(report['diagnosis']['finite_center_count'], 1)
         with tempfile.TemporaryDirectory() as tmp:
             source = Path(tmp)/'request.json'; out = Path(tmp)/'diagnosis.json'
             source.write_text(json.dumps(request)+'\n')
@@ -131,7 +131,7 @@ class ReparameterizedConicOffsetTests(unittest.TestCase):
         self.assertEqual(old['schema_version'], 10); self.assertEqual(replay_construction_diagnosis(old), old)
         self.assertEqual(tangent_document(old, replay=True)['offset_diagnosis'], old)
         new = diagnose_construction(old['construction'])
-        self.assertEqual(new['schema_version'], 11); self.assertEqual(new['construction'], old['construction'])
+        self.assertEqual(new['schema_version'], 12); self.assertEqual(new['construction'], old['construction'])
         self.assertEqual(new['diagnosis'], old['diagnosis']); self.assertEqual(replay_construction_diagnosis(new), new)
         bad = deepcopy(new); bad['diagnosis']['finite_center_count'] = 100
         with self.assertRaisesRegex(ValueError, 'replay differs'): replay_construction_diagnosis(bad)

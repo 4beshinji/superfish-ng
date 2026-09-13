@@ -113,7 +113,7 @@ class CircleConicCrossingTests(unittest.TestCase):
             for i, old in enumerate(json.loads(raw)):
                 self.assertEqual(replay_construction_diagnosis(old), old)
                 current = diagnose_construction(old['construction'])
-                self.assertEqual(current['schema_version'], 11)
+                self.assertEqual(current['schema_version'], 12)
                 self.assertEqual(current['construction'], old['construction'])
                 for doc in (old, current):
                     self.assertEqual(tangent_document(doc, replay=True)['offset_diagnosis'], doc)
@@ -128,7 +128,7 @@ class CircleConicCrossingTests(unittest.TestCase):
         request = dict(schema_version=1, curves=[curve_to_dict(EllipseArc((0,0),(2,1),-3.,6.)), curve_to_dict(EllipseArc((0,0),(1.5,1.5),-3.,6.))],
                        controls=dict(first_distance_m=0., second_distance_m=0.))
         report = diagnose_offsets_document(request)
-        self.assertEqual(report['schema_version'], 11); self.assertEqual(report['diagnosis']['finite_center_count'], 4)
+        self.assertEqual(report['schema_version'], 12); self.assertEqual(report['diagnosis']['finite_center_count'], 4)
         request['controls']['max_root_boxes'] = 1
         with self.assertRaises(ValueError): diagnose_offsets_document(request)
 

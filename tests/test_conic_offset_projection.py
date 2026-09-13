@@ -71,7 +71,7 @@ class ConicOffsetProjectionTests(unittest.TestCase):
         result = project_conic_offset_candidates(a, a, first_distance_m=.25, second_distance_m=.25)
         self.assertFalse(result['projection_complete']); self.assertTrue(result['unresolved'])
         self.assertFalse(result['target_incidence_certified'])
-        # Current diagnosis stays on its accepted version 11 path.
+        # The accepted shared-support classification precedes general projection.
         self.assertTrue(classify_offset_degeneracies(a, a, first_distance_m=.25, second_distance_m=.25)['infinite_parameter_pairs'])
 
     def test_symmetric_offsets_retain_four_true_points_and_extra_candidates(self):

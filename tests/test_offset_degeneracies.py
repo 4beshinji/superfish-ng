@@ -116,6 +116,10 @@ class OffsetDegeneracyTests(unittest.TestCase):
             self.assertEqual(supported['diagnosis']['classification'],'DISJOINT')
             self.assertTrue(supported['diagnosis']['finite_domain_complete'])
             request['curves'][0]=curve_to_dict(replace(a,semiaxes_m=(3,1)))
+            # An identically zero projection with opposite signed distances
+            # remains explicitly unresolved after general finite-root recovery.
+            request['curves'][1]=request['curves'][0].copy()
+            request['controls']['second_distance_m']=-1.
             source.write_text(json.dumps(request));unknown=Path(tmp)/'unknown.json'
             self.assertEqual(main(['diagnose-offsets',str(source),'--out',str(unknown)]),1)
             self.assertEqual(json.loads(unknown.read_text())['diagnosis']['status'],'UNVERIFIED')

@@ -107,7 +107,7 @@ class AlgebraicCircularOffsetTests(unittest.TestCase):
                 self.assertFalse(old['diagnosis']['finite_domain_complete'])
                 self.assertEqual(replay_construction_diagnosis(old), old)
                 new = diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'], 11)
+                self.assertEqual(new['schema_version'], 12)
                 self.assert_count(new['diagnosis'], 2)
                 self.assertEqual(new['construction'], old['construction'])
                 self.assertEqual(replay_construction_diagnosis(new), new)
