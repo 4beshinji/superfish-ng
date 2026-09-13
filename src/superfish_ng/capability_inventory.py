@@ -265,3 +265,24 @@ def axis_recoil_capabilities():
         limits=['No off-axis-only domain, curved geometry, arbitrary 3D tensor, nonlinear/complex permeability, hysteresis or RF phasors',
             'No irreversible demagnetization, winding inductance, force or exact open boundary',
             'Discrete residual and work identities do not bound original field or circulation error'])
+
+
+def off_axis_recoil_capabilities():
+    return dict(case_format='superfish_ng_off_axis_recoil_case',case_schema_versions=[1],
+        native_manifest_format='superfish_ng_off_axis_recoil_manifest',native_schema_versions=[1],
+        result_format='superfish_ng_off_axis_recoil_result',result_schema_versions=[1],
+        partition_format='superfish_ng_off_axis_recoil_partition',partition_schema_versions=[1],
+        commands=['solve-off-axis-recoil','replay-off-axis-recoil','probe-off-axis-recoil'],physics='linear_recoil_magnetostatic',
+        coordinates='axisymmetric r,z, strictly r>0',geometry='explicit straight material-conforming triangles, optional holes; axis excluded',element_orders=[1,2],
+        material='positive principal recoil mu_r, local remanent B[T] and meridional region orientation[rad]; B=mu0*mu_rec*H+Brem',
+        azimuthal_model='no phi coupling, mu_phi=mu_rr and remanent B_phi=0',volume_current='signed free Jphi[A/m^2], explicit in every region',
+        boundaries=['fixed_psi [Wb]','tangential_h [A/m]'],boundary_policy='every edge explicit; at least one fixed psi; connected fixed edges share one id',
+        potential='psi=r*Aphi[Wb]; relative and absolute psi with reference retained; constant shift adds C/r to Aphi',
+        fields='Br=-psi_z/r, Bz=psi_r/r[T], original H=nu*(B-Brem)[A/m]',
+        probes='original psi/Aphi/Br/Bz/Hr/Hz with cell/region/material IDs, tensor/remanence and orientation; no averaging',
+        volume_measure='2*pi*r dr dz, full 3D',constitutive_potentials='B=0 and H=0 references explicitly named [J]; no absolute magnet internal energy',
+        fixed_boundary_reaction='+2*pi integral original Ht ds [A], distinct from the discrete reaction',
+        normal_flux='2*pi integral r*original B dot outward normal ds [Wb]; excluded-axis absolute flux is not inferred',project=False,gui=False,study=False,
+        limits=['No axis-connected/curved geometry, arbitrary 3D tensor, nonlinear/complex permeability, hysteresis or RF phasors',
+            'No pure Neumann, irreversible demagnetization, winding inductance, force or exact open boundary',
+            'Discrete residual and identities do not bound original field or circulation error'])

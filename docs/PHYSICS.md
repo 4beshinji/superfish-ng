@@ -1,5 +1,7 @@
 # 物理・数値仕様 — canonical specification v19（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[軸非接続の反跳材料の保存・再構築・CLI](OFF_AXIS_RECOIL_NATIVE.md)。r>0の反跳材料native/CLIは全テンソル/残留B/向き・phiモデル、psi基準と三荷重・元6場・Jの基準付き構成ポテンシャルを同じ実FEMで再検証する。軸を除く領域でpsiの定数はAphiにC/rを加えるがB/Hを変えない。除外軸の絶対磁束や絶対磁石内部エネルギーは補わない。
+
 [軸非接続の反跳材料の境界付きFEM・元6場](OFF_AXIS_RECOIL_SOLVE.md)。第19版はr>0の反跳材料の境界付き実FEMを接続する。元H=nu(B−Brem)、自然荷重+2pi∫HtNi ds[A]、固定反力は+2pi∫Ht ds。psi基準と相対/絶対係数、三荷重とU/R/W0/Ws/C0[J]、元6場・Wb磁束・A周回を分ける。平面/軸非接続で仕事が相殺する場合は各DOF積の絶対値で誤差尺度を構成し、許容1e-9と既受理の診断値を保持する。
 
 [軸非接続反跳材料の弱形式](OFF_AXIS_RECOIL_FORMS.md)。r>0のpsi=r*Aphi[Wb]に対し、Br=−psi_z/r、Bz=psi_r/r、H=nu(B−Brem)。K=2pi∫(curl_rz Ni)ᵀnu(curl_rz Nj)/r dr dz、fJ=2pi∫Jphi Ni dr dz、frem=2pi∫(curl_rz Ni)ᵀnu Brem dr dz、curl_rz Ni=(−Ni_z,Ni_r)。定数psi核と残留荷重総和0を保ち、除かれた軸の絶対磁束は補わない。境界付き解は後続工程。
