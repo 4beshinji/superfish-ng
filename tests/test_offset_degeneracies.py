@@ -23,7 +23,8 @@ class OffsetDegeneracyTests(unittest.TestCase):
         r=self.diagnose(large,small);self.assertEqual(r['classification'],'SINGLE_TANGENCY')
         self.assertEqual(r['evidence']['center_zr_m'],(F(2),F(0)))
         self.assertEqual(self.diagnose(a,replace(b,center_zr_m=(math.nextafter(2.,math.inf),0)))['classification'],'DISJOINT')
-        self.assertEqual(self.diagnose(a,replace(b,center_zr_m=(math.nextafter(2.,0.),0)))['status'],'UNVERIFIED')
+        inside=self.diagnose(a,replace(b,center_zr_m=(math.nextafter(2.,0.),0)))
+        self.assertEqual(inside['status'],'CERTIFIED');self.assertEqual(inside['finite_center_count'],2)
 
     def test_finite_arc_endpoint_exterior_and_budget(self):
         a,b=self.circles();a=replace(a,start_rad=0.,sweep_rad=.5)
@@ -110,7 +111,7 @@ class OffsetDegeneracyTests(unittest.TestCase):
             original=out.read_bytes()
             self.assertNotEqual(main(['diagnose-offsets',str(source),'--out',str(out)]),0)
             self.assertEqual(out.read_bytes(),original)
-            request['curves'][1]=curve_to_dict(replace(b,center_zr_m=(1,0)))
+            request['curves'][1]=curve_to_dict(replace(b,center_zr_m=(1,0),semiaxes_m=(2,1)))
             source.write_text(json.dumps(request));unknown=Path(tmp)/'unknown.json'
             self.assertEqual(main(['diagnose-offsets',str(source),'--out',str(unknown)]),1)
             self.assertEqual(json.loads(unknown.read_text())['diagnosis']['status'],'UNVERIFIED')

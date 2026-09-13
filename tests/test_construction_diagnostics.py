@@ -43,11 +43,17 @@ class ConstructionDiagnosisTests(unittest.TestCase):
         self.assertIsNone(report['construction']['case'])
 
     def test_unknown_special_case_does_not_invalidate_a_built_case(self):
+        from superfish_ng.construction_diagnostics import _from_replayed_construction
         request=json.loads((ROOT/'examples/construction/line_conic_fillet_request.json').read_text())
         gui=tangent_document(request,candidate_index=0)
-        self.assertEqual(gui['offset_diagnosis']['diagnosis']['status'],'UNVERIFIED')
+        self.assertEqual(gui['offset_diagnosis']['diagnosis']['status'],'CERTIFIED')
         self.assertEqual(gui['construction']['status'],'CASE_VALIDATED');self.assertIsNotNone(gui['preview'])
         self.assertEqual(replay_construction_diagnosis(gui['offset_diagnosis']),gui['offset_diagnosis'])
+        prior=_from_replayed_construction(gui['construction'],schema_version=4)
+        self.assertEqual(prior['diagnosis']['status'],'UNVERIFIED')
+        restored=tangent_document(prior,replay=True)
+        self.assertEqual(restored['construction'],gui['construction']);self.assertIsNotNone(restored['preview'])
+        self.assertEqual(restored['offset_diagnosis'],prior)
         legacy=json.loads((ROOT/'examples/construction/corner_fillet_request.json').read_text())
         old=tangent_document(legacy,candidate_index=0)
         self.assertIsNone(old['offset_diagnosis']);self.assertIsNone(old['diagnosis_serialized'])
@@ -59,7 +65,7 @@ class ConstructionDiagnosisTests(unittest.TestCase):
         changed=deepcopy(original);changed['diagnosis']['finite_center_count']=0;variants.append(changed)
         changed=deepcopy(original);changed['parameter_domain_box'][0][0]['rational_numerator']='1';variants.append(changed)
         changed=deepcopy(original);changed['construction']['status']='CASE_VALIDATED';variants.append(changed)
-        changed=deepcopy(original);changed['schema_version']=5;variants.append(changed)
+        changed=deepcopy(original);changed['schema_version']=6;variants.append(changed)
         for changed in variants:
             with self.assertRaises(ValueError):replay_construction_diagnosis(changed)
             with self.assertRaises(ValueError):tangent_document(changed,replay=True)

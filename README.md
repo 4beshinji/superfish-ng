@@ -1,5 +1,9 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14 JST：[異なる円・直線の有限交点診断](docs/FINITE_CIRCULAR_CROSSINGS.md)を限定受入。
+関連49テスト・独立4,896条件・実Chromeの保存/再起動検証が合格。
+新規診断は版5、旧保存版1〜4を保持する。G03と全計画は継続中。
+
 通常の開発は変更した機能と影響先のテストを選んで実行します。着手時や小変更ごとの全件再実行は不要です。[棚卸し・変更別の検証手順](docs/TESTING.md)を参照。seed数値検証だけなら`python scripts/validate.py --skip-tests --out out/validation-seed-new`、全件は節目や広範な共通変更で一度実行します。[並列検証と実測](docs/PARALLEL_VALIDATION.md)も参照。
 
 2026-09-13 UTC：[有限オフセット診断の区切り](docs/G03_FINITE_OFFSETS_CHECKPOINT.md)を主ツリーへ統合・限定受入。

@@ -108,7 +108,7 @@ class SameConicOffsetIntersectionTests(unittest.TestCase):
         a=HyperbolaArc((0,0),(2,1),.25,.75)
         self.assertFalse(self.diagnose(a,replace(a,branch=-1),-.75)['finite_domain_complete'])
 
-    def test_saved_versions_one_two_three_and_new_four_keep_rules_and_bytes(self):
+    def test_saved_versions_one_two_three_and_current_keep_rules_and_bytes(self):
         from superfish_ng.construction_diagnostics import diagnose_construction,replay_construction_diagnosis
         from superfish_ng.gui import tangent_document
         from superfish_ng.cli import main
@@ -118,7 +118,7 @@ class SameConicOffsetIntersectionTests(unittest.TestCase):
                 self.assertEqual(replay_construction_diagnosis(old),old)
                 self.assertEqual(tangent_document(old,replay=True)['offset_diagnosis'],old)
                 new=diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'],4);self.assertTrue(new['diagnosis']['finite_domain_complete'])
+                self.assertEqual(new['schema_version'],5);self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['diagnosis']['finite_center_count'],count)
                 self.assertEqual(new['construction'],old['construction']);self.assertEqual(replay_construction_diagnosis(new),new)
                 changed=deepcopy(new);changed['schema_version']=3
