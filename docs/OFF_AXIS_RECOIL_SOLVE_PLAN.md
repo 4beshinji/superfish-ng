@@ -1,6 +1,6 @@
 # S03: 軸非接続の反跳材料の境界付きFEM
 
-2026-09-13 JST。次の限定課題。未実装・未受入。
+2026-09-13 JST。次の限定課題。[実装記録](OFF_AXIS_RECOIL_SOLVE.md)の専用API範囲で限定受入。
 
 全r>0のOffAxisRecoilCaseで固定psi[Wb]とHt[A/m]、全Jphi、材料テンソル/残留B/向きを明示する。少なくとも一つの固定psiを要求し、基準と相対/絶対psiを保持する。三荷重で実FEMを解き、自然荷重は+2pi∫HtNi ds[A]。元psi/Aphi/Br/Bz/Hr/HzとH=nu(B−Brem)を復元する。基準Cの変更はAphiにC/rを加えるが、B/Hと基準付き構成ポテンシャルは不変でなければならない。
 

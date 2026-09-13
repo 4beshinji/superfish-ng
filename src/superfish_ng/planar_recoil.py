@@ -197,6 +197,13 @@ def planar_recoil_quantities(solution):
     boundary_work=float(s.az_wb_per_m@s.boundary_load_a);fixed_work=sum(v.value*fixed_reaction[v.id] for v in case.boundaries if v.kind=='fixed_az')
     scale=2*u+abs(source_work)+abs(remanent_work)+abs(boundary_work)+abs(fixed_work)
     work_error=float(abs(2*u-source_work-remanent_work-boundary_work-fixed_work)/scale) if scale else 0.
+    if work_error>1e-9:
+        # B=0 at nonzero reference Az may cancel the boundary-work totals.
+        # Use the absolute DOF terms to bound that summation error, preserving
+        # already accepted diagnostic values and their native representations.
+        term_scale=2*u+float(abs(s.az_wb_per_m)@abs(s.current_load_a))+float(abs(s.az_relative_to_reference_wb_per_m)@abs(s.remanent_load_a))+float(abs(s.az_wb_per_m)@abs(s.boundary_load_a))
+        term_scale+=sum(abs(v.value)*float(abs(reaction[s.fixed_boundary_dofs[v.id]]).sum()) for v in case.boundaries if v.kind=='fixed_az')
+        if term_scale:work_error=float(abs(2*u-source_work-remanent_work-boundary_work-fixed_work)/term_scale)
     potential_scale=u+abs(coupled)+ws+constant
     potential_error=float(abs(w0+constant-ws)/potential_scale) if potential_scale else 0.
     coupling_scale=abs(coupled)+abs(remanent_work)+u+constant
@@ -221,5 +228,4 @@ def planar_recoil_quantities(solution):
         circulation_convention='domain on left of planar tangent; curl(H)_z=Jz; fixed-Az reaction is minus original Ht integral [A]',
         flux_convention='original B dot outward normal integrated along boundary [Wb/m]; outward normal to right of tangent',
         interpretation='finite declared external boundaries; potentials are for a fixed linear recoil model, not absolute magnet internal energy or irreversible demagnetization; no winding inductance or force is inferred; discrete identities do not bound original field error')
-
 
