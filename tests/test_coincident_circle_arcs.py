@@ -116,7 +116,7 @@ class CoincidentCircleArcTests(unittest.TestCase):
                 self.assertEqual(restored['offset_diagnosis'],old)
                 self.assertEqual(json.loads(restored['diagnosis_serialized']),old)
                 new=diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'],7)
+                self.assertEqual(new['schema_version'],8)
                 self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['construction'],old['construction'])
                 self.assertEqual(replay_construction_diagnosis(new),new)

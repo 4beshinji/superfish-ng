@@ -7,7 +7,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from superfish_ng.conics import EllipseArc,HyperbolaArc,LineSegment,rotation_cos_sin
-from superfish_ng.offset_degeneracies import classify_offset_degeneracies
+from superfish_ng.offset_degeneracies import _classify_offset_degeneracies_v7 as classify_offset_degeneracies
 
 
 class LineNoncircularOffsetContactTests(unittest.TestCase):
@@ -98,7 +98,7 @@ class LineNoncircularOffsetContactTests(unittest.TestCase):
         for controls in ({'max_series_terms':True},{'endpoint_width':0},{'first_interval':(-1,1)}):
             with self.assertRaises(ValueError):self.diagnose(curve,line,.5,**controls)
 
-    def test_saved_six_and_new_seven_preserve_rules_construction_and_cli_bytes(self):
+    def test_saved_six_and_current_preserve_rules_construction_and_cli_bytes(self):
         from superfish_ng.construction_diagnostics import diagnose_construction,replay_construction_diagnosis
         from superfish_ng.gui import tangent_document
         from superfish_ng.cli import main
@@ -106,9 +106,9 @@ class LineNoncircularOffsetContactTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             for index,old in enumerate(json.loads(raw)):
                 self.assertEqual(old['schema_version'],6);self.assertEqual(replay_construction_diagnosis(old),old)
-                new=diagnose_construction(old['construction']);self.assertEqual(new['schema_version'],7)
+                new=diagnose_construction(old['construction']);self.assertEqual(new['schema_version'],8)
                 self.assertEqual(new['construction'],old['construction'])
-                self.assertEqual(new['diagnosis']['classification'],'TANGENCY_WITNESSES' if index==1 else 'SINGLE_TANGENCY')
+                self.assertEqual(new['diagnosis']['classification'],'FINITE_CENTERS' if index==1 else 'SINGLE_TANGENCY')
                 for document in (old,new):
                     self.assertEqual(tangent_document(document,replay=True)['offset_diagnosis'],document)
                     source=Path(temporary)/f'{index}-{document["schema_version"]}.json';out=source.with_suffix('.replayed.json')

@@ -127,7 +127,7 @@ class FiniteCircularCrossingTests(unittest.TestCase):
                 self.assertFalse(old['diagnosis']['finite_domain_complete'])
                 self.assertEqual(replay_construction_diagnosis(old), old)
                 new = diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'], 7)
+                self.assertEqual(new['schema_version'], 8)
                 self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['construction'], old['construction'])
                 self.assertEqual(replay_construction_diagnosis(new), new)

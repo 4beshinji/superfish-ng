@@ -1,5 +1,9 @@
 # 法線オフセットの弧端・退化診断
 
+2026-09-14 JST：[直線と非円円錐曲線オフセットの全交点](LINE_NONCIRCULAR_CROSSINGS.md)を追加。
+新規診断は版8、旧保存構築診断版1〜7は元規則で再検証する。全根・元符号・有限所属と同一中心を確認し、
+通常接触・平行元接線以外のカスプも含める。予算不足なら既存の接触証拠と未完了探索を保存する。
+
 2026-09-14 JST：[直線と非円楕円・双曲線オフセットの接触](LINE_NONCIRCULAR_OFFSET_CONTACTS.md)を追加。
 新規診断は版7、旧保存構築診断版1〜6は元規則で再検証する。全域射影から有限0/1点を証明し、
 非正則時は確認済み接触中心数だけを保存する。カスプ接触と同一中心の重複も明示する。
@@ -32,7 +36,7 @@
 | TANGENCY_WITNESSES | 非円楕円/双曲線と直線の有限接触中心を確認。通常/カスプ接触と同一中心の統合を証拠へ記録 | false、finite_center_count=null。確認数はevidence.tangency_witness_center_count |
 | INFINITE_PARAMETER_PAIRS | 同じ中心を与えるパラメータ対が無限個ある | 証拠のみならfalse。同一支持円・対象の同一円錐曲線・潰れた円・平行直線の全分類はtrue |
 | SHARED_PARAMETER_ENDPOINT | 同じ元パラメータの端点、または一直線上の有限範囲の共有端点 | 証拠のみならfalse。同一支持円・対象の同一円錐曲線・平行直線の全分類はtrue |
-| FINITE_CENTERS | 対象の同一円錐曲線の反射接点/共有端点、または異なる円・直線の全交点から重複なく数えた有限中心 | true、finite_center_countは全数 |
+| FINITE_CENTERS | 対象の同一円錐曲線の反射接点/共有端点、異なる円・直線、または直線と非円円錐曲線の全交点から重複なく数えた有限中心 | true、finite_center_countは全数 |
 | COINCIDENT_SUPPORTING_CIRCLES | 支持円の中心と半径が同じ | false。元の有限弧同士が重なるとは限らない |
 | UNVERIFIED | この診断で証明できない、または有限弧所属の精度予算不足 | false。無交点・解数・接続可否を確定しない |
 
@@ -116,7 +120,7 @@ superfish-ng diagnose-construction out/construction-diagnosis-new.json --out out
 接触を証明しても、元の構築状態を変更しない。第2/3コマンドは診断の証明で終了コード0、
 出力のconstruction.statusはUNVERIFIEDのままである。FEMへ渡せるCaseは生成していない。
 
-新規診断文書はschema_version=7 / document_type=construction_offset_diagnosisで、
+新規診断文書はschema_version=8 / document_type=construction_offset_diagnosisで、
 元のconstruction全体、parameter_domain_box、diagnosisを保存する。構築文書自体の版や
 内容は変えない。再読込は元の構築要求から再構築し、診断も再計算して文書全体を照合する。
 診断、探索区間、構築内容、文書版の改変は拒否する。これは署名ではなく現在の実装での再現照合である。
@@ -125,6 +129,7 @@ CLIは保存構築または保存診断を受け取り、新規ファイルだ�
 診断UNVERIFIEDは終了コード1だが、元の構築がCASE_VALIDATEDである場合もある。
 有理支持の円・直線の横断交点は版5、一般の二進回転/直線長は版6の対象。
 直線と非円楕円/双曲線の全域射影境界・接触証拠は版7の対象。旧版1〜6は当時の規則を保持する。
+同じ組合せの一般交点・カスプを含む全根列挙は版8の対象。旧版7も当時の規則を保持する。
 その他の未確認診断も、構築の合格を取り消す根拠にはしない。
 
 GUIは版5/6構築の候補表示・選択後検査・再読込時に同じ診断を別欄へ表示する。

@@ -8,7 +8,9 @@ import itertools,json,math,time
 from pathlib import Path
 from validate_general_coincident_circle_arcs import decimal_value,phase_reference
 from superfish_ng.conics import EllipseArc,HyperbolaArc,LineSegment,rotation_cos_sin
-from superfish_ng.offset_degeneracies import classify_offset_degeneracies
+# This validator preserves version 7's projection/witness contract. Version 8's
+# full crossings have a separate direct-parameter independent validator.
+from superfish_ng.offset_degeneracies import _classify_offset_degeneracies_v7 as classify_offset_degeneracies
 
 
 def examples():

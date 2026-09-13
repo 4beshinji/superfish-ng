@@ -249,7 +249,7 @@ def _classify_offset_degeneracies_v6(first,second,*,first_distance_m,second_dist
     return previous if result is None else _report(**result)
 
 
-def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
+def _classify_offset_degeneracies_v7(first,second,*,first_distance_m,second_distance_m,
                                  first_interval=(0.,1.),second_interval=(0.,1.),
                                  endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
     """Version 7 adds line/noncircular contacts and proved global projection bounds."""
@@ -261,6 +261,25 @@ def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance
     result=classify_line_noncircular_contacts((first,second),(first_distance_m,second_distance_m),
         (first_interval,second_interval),endpoint_width=endpoint_width,max_series_terms=max_series_terms)
     return previous if result is None else _report(**result)
+
+
+def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
+                                 first_interval=(0.,1.),second_interval=(0.,1.),
+                                 endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
+    """Version 8 adds exhaustive rational-chart roots for line/noncircular offsets."""
+    previous=_classify_offset_degeneracies_v7(first,second,first_distance_m=first_distance_m,
+        second_distance_m=second_distance_m,first_interval=first_interval,second_interval=second_interval,
+        endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    if previous['finite_domain_complete']:return previous
+    from .line_noncircular_crossings import classify_line_noncircular_crossings
+    result=classify_line_noncircular_crossings((first,second),(first_distance_m,second_distance_m),
+        (first_interval,second_interval),endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    if result is None:return previous
+    if not result['complete'] and previous['status']=='CERTIFIED':
+        previous['evidence']['general_crossing_search']=result['evidence']
+        previous['reason']+='; '+result['reason']
+        return previous
+    return _report(**result)
 
 
 def diagnose_offsets_document(request):
@@ -281,6 +300,6 @@ def diagnose_offsets_document(request):
     keys(controls,('first_distance_m','second_distance_m','first_interval','second_interval','endpoint_width','max_series_terms'),
          ('first_distance_m','second_distance_m'),'offset diagnosis controls')
     report=classify_offset_degeneracies(*(curve_from_dict(row) for row in rows),**controls)
-    return _json_value(dict(schema_version=7,document_type='normal_offset_diagnosis',software_version=__version__,
+    return _json_value(dict(schema_version=8,document_type='normal_offset_diagnosis',software_version=__version__,
                             request=deepcopy(request),request_sha256=hashlib.sha256(canonical.encode()).hexdigest(),
                             diagnosis=report))

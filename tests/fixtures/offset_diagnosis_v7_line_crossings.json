@@ -1,0 +1,2500 @@
+[
+  {
+    "schema_version": 7,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 6,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 6,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": 0.0,
+                "sweep_rad": 0.5,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  2.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  2.0,
+                  1.0
+                ]
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 1.0,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96,
+          "allow_extension": false
+        }
+      },
+      "request_sha256": "d1598d26e87dbd3ffdc299059f834898104b3598644d602bc4982b1e6ed37ad0",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "12777047697552211458411628539",
+                  "rational_denominator": "79228162514264337593543950336"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1978158484112194518300840965",
+                  "rational_denominator": "79228162514264337593543950336"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "12777047697552211458411628539",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1978158484112194518300840965",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 0,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "1",
+              "rational_denominator": "1"
+            },
+            "second_distance_m": {
+              "rational_numerator": "1",
+              "rational_denominator": "1"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 1.0,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite line/conic offset crossings and bounded fillet contact error; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "CERTIFIED",
+      "classification": "TANGENCY_WITNESSES",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {
+        "identity": "all source-conic tangents parallel to the offset line",
+        "line_index": 1,
+        "normal": [
+          {
+            "rational_numerator": "-1",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "line_length_squared": {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        },
+        "local_normal": [
+          {
+            "rational_numerator": "-1",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "support_square": {
+          "rational_numerator": "4",
+          "rational_denominator": "1"
+        },
+        "global_regularity": {
+          "kind": "UNVERIFIED",
+          "adjusted_distance_m": {
+            "rational_numerator": "1",
+            "rational_denominator": "1"
+          },
+          "minimum_curvature_radius_squared_m2": {
+            "rational_numerator": "1",
+            "rational_denominator": "4"
+          },
+          "maximum_curvature_radius_squared_m2": {
+            "rational_numerator": "16",
+            "rational_denominator": "1"
+          }
+        },
+        "source_tangent_contacts": [
+          {
+            "side": -1,
+            "source_local_coefficients": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_coefficients": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_box_zr_m": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "incidence": [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              }
+            ],
+            "incidence_sign": 0,
+            "offset_speed_factor_numerator": [
+              {
+                "rational_numerator": "-4",
+                "rational_denominator": "1"
+              }
+            ],
+            "offset_speed_factor_sign": -1,
+            "contact_kind": "REGULAR_TANGENCY",
+            "parameter_pair_in_domain": true,
+            "membership": [
+              {
+                "status": "START",
+                "endpoint_bounds": [
+                  [
+                    [
+                      {
+                        "rational_numerator": "1",
+                        "rational_denominator": "1"
+                      },
+                      {
+                        "rational_numerator": "1",
+                        "rational_denominator": "1"
+                      }
+                    ],
+                    [
+                      {
+                        "rational_numerator": "0",
+                        "rational_denominator": "1"
+                      },
+                      {
+                        "rational_numerator": "0",
+                        "rational_denominator": "1"
+                      }
+                    ]
+                  ],
+                  [
+                    [
+                      {
+                        "rational_numerator": "1827021031551060138764949348883",
+                        "rational_denominator": "2081879370546666490772324352000"
+                      },
+                      {
+                        "rational_numerator": "9135105157755300693824746744417",
+                        "rational_denominator": "10409396852733332453861621760000"
+                      }
+                    ],
+                    [
+                      {
+                        "rational_numerator": "249526534633328674584113421559199",
+                        "rational_denominator": "520469842636666622693081088000000"
+                      },
+                      {
+                        "rational_numerator": "249526534633328674584113421559201",
+                        "rational_denominator": "520469842636666622693081088000000"
+                      }
+                    ]
+                  ]
+                ]
+              },
+              {
+                "status": "START",
+                "fraction_coefficients": [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  }
+                ],
+                "fraction_bounds": [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  }
+                ],
+                "endpoint_difference_signs": [
+                  0,
+                  -1
+                ]
+              }
+            ]
+          },
+          {
+            "side": 1,
+            "source_local_coefficients": [
+              [
+                {
+                  "rational_numerator": "-1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_coefficients": [
+              [
+                {
+                  "rational_numerator": "-1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_box_zr_m": [
+              [
+                {
+                  "rational_numerator": "-1",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "-1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "incidence": [
+              {
+                "rational_numerator": "2",
+                "rational_denominator": "1"
+              }
+            ],
+            "incidence_sign": 1,
+            "offset_speed_factor_numerator": [
+              {
+                "rational_numerator": "-4",
+                "rational_denominator": "1"
+              }
+            ],
+            "offset_speed_factor_sign": -1,
+            "contact_kind": "REGULAR_TANGENCY",
+            "parameter_pair_in_domain": false
+          }
+        ],
+        "root_bounds": [],
+        "tangency_witness_center_count": 1,
+        "same_center_contact_groups": [
+          [
+            0
+          ]
+        ],
+        "radicands": []
+      },
+      "reason": "certified finite tangent witnesses; other crossings or cusps remain unclassified",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 7,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 6,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 6,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": 0.0,
+                "sweep_rad": 0.5,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  2.0,
+                  -2.0
+                ],
+                "end_zr_m": [
+                  2.0,
+                  2.0
+                ]
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.5,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96,
+          "allow_extension": false
+        }
+      },
+      "request_sha256": "508b47e7b402e63bde669d7b2df02e95281f84b652566b39a72ab5f9692ac799",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "55226562199885834554906796819",
+                  "rational_denominator": "79228162514264337593543950336"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "38300337038185539463144383477",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "20565794201340775669314029029",
+                  "rational_denominator": "39614081257132168796771975168"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "55226562199885834554906796819",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "38300337038185539463144383477",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "20565794201340775669314029029",
+                    "rational_denominator": "39614081257132168796771975168"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 0,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "1",
+              "rational_denominator": "2"
+            },
+            "second_distance_m": {
+              "rational_numerator": "1",
+              "rational_denominator": "2"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.5,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite line/conic offset crossings and bounded fillet contact error; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "CERTIFIED",
+      "classification": "TANGENCY_WITNESSES",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {
+        "identity": "all source-conic tangents parallel to the offset line",
+        "line_index": 1,
+        "normal": [
+          {
+            "rational_numerator": "-4",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "line_length_squared": {
+          "rational_numerator": "16",
+          "rational_denominator": "1"
+        },
+        "local_normal": [
+          {
+            "rational_numerator": "-4",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "support_square": {
+          "rational_numerator": "64",
+          "rational_denominator": "1"
+        },
+        "global_regularity": {
+          "kind": "UNVERIFIED",
+          "adjusted_distance_m": {
+            "rational_numerator": "1",
+            "rational_denominator": "2"
+          },
+          "minimum_curvature_radius_squared_m2": {
+            "rational_numerator": "1",
+            "rational_denominator": "4"
+          },
+          "maximum_curvature_radius_squared_m2": {
+            "rational_numerator": "16",
+            "rational_denominator": "1"
+          }
+        },
+        "source_tangent_contacts": [
+          {
+            "side": -1,
+            "source_local_coefficients": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_coefficients": [
+              [
+                {
+                  "rational_numerator": "3",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_box_zr_m": [
+              [
+                {
+                  "rational_numerator": "3",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "3",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "incidence": [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              }
+            ],
+            "incidence_sign": 0,
+            "offset_speed_factor_numerator": [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              }
+            ],
+            "offset_speed_factor_sign": 0,
+            "contact_kind": "CUSP_AT_SOURCE_TANGENCY",
+            "parameter_pair_in_domain": true,
+            "membership": [
+              {
+                "status": "START",
+                "endpoint_bounds": [
+                  [
+                    [
+                      {
+                        "rational_numerator": "1",
+                        "rational_denominator": "1"
+                      },
+                      {
+                        "rational_numerator": "1",
+                        "rational_denominator": "1"
+                      }
+                    ],
+                    [
+                      {
+                        "rational_numerator": "0",
+                        "rational_denominator": "1"
+                      },
+                      {
+                        "rational_numerator": "0",
+                        "rational_denominator": "1"
+                      }
+                    ]
+                  ],
+                  [
+                    [
+                      {
+                        "rational_numerator": "1827021031551060138764949348883",
+                        "rational_denominator": "2081879370546666490772324352000"
+                      },
+                      {
+                        "rational_numerator": "9135105157755300693824746744417",
+                        "rational_denominator": "10409396852733332453861621760000"
+                      }
+                    ],
+                    [
+                      {
+                        "rational_numerator": "249526534633328674584113421559199",
+                        "rational_denominator": "520469842636666622693081088000000"
+                      },
+                      {
+                        "rational_numerator": "249526534633328674584113421559201",
+                        "rational_denominator": "520469842636666622693081088000000"
+                      }
+                    ]
+                  ]
+                ]
+              },
+              {
+                "status": "INTERIOR",
+                "fraction_coefficients": [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                "fraction_bounds": [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                "endpoint_difference_signs": [
+                  1,
+                  -1
+                ]
+              }
+            ]
+          },
+          {
+            "side": 1,
+            "source_local_coefficients": [
+              [
+                {
+                  "rational_numerator": "-1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_coefficients": [
+              [
+                {
+                  "rational_numerator": "-3",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_box_zr_m": [
+              [
+                {
+                  "rational_numerator": "-3",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "-3",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "incidence": [
+              {
+                "rational_numerator": "12",
+                "rational_denominator": "1"
+              }
+            ],
+            "incidence_sign": 1,
+            "offset_speed_factor_numerator": [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              }
+            ],
+            "offset_speed_factor_sign": 0,
+            "contact_kind": "CUSP_AT_SOURCE_TANGENCY",
+            "parameter_pair_in_domain": false
+          }
+        ],
+        "root_bounds": [],
+        "tangency_witness_center_count": 1,
+        "same_center_contact_groups": [
+          [
+            0
+          ]
+        ],
+        "radicands": []
+      },
+      "reason": "certified finite tangent witnesses; other crossings or cusps remain unclassified",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 7,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 6,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 6,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "hyperbola_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_parameter": 0.0,
+                "end_parameter": 0.5,
+                "branch": 1,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  2.0,
+                  -2.0
+                ],
+                "end_zr_m": [
+                  2.0,
+                  2.0
+                ]
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.5,
+          "turn_direction": -1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96,
+          "allow_extension": false
+        }
+      },
+      "request_sha256": "ce535d80d8b97efcb6c7098c0bfca29fbee354d64ee0f9ed892dc7ac00b992f6",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "25421175191366804081466816425",
+                  "rational_denominator": "39614081257132168796771975168"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "37983233948019779624835954429",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "41512263959527899425711703505",
+                  "rational_denominator": "79228162514264337593543950336"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "25421175191366804081466816425",
+                    "rational_denominator": "39614081257132168796771975168"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "37983233948019779624835954429",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "41512263959527899425711703505",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 0,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "-1",
+              "rational_denominator": "2"
+            },
+            "second_distance_m": {
+              "rational_numerator": "-1",
+              "rational_denominator": "2"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.5,
+        "turn_direction": -1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite line/conic offset crossings and bounded fillet contact error; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "CERTIFIED",
+      "classification": "TANGENCY_WITNESSES",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {
+        "identity": "all source-conic tangents parallel to the offset line",
+        "line_index": 1,
+        "normal": [
+          {
+            "rational_numerator": "-4",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "line_length_squared": {
+          "rational_numerator": "16",
+          "rational_denominator": "1"
+        },
+        "local_normal": [
+          {
+            "rational_numerator": "-4",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "support_square": {
+          "rational_numerator": "64",
+          "rational_denominator": "1"
+        },
+        "global_regularity": {
+          "kind": "UNVERIFIED",
+          "adjusted_distance_m": {
+            "rational_numerator": "-1",
+            "rational_denominator": "2"
+          },
+          "minimum_curvature_radius_squared_m2": {
+            "rational_numerator": "1",
+            "rational_denominator": "4"
+          },
+          "maximum_curvature_radius_squared_m2": null
+        },
+        "source_tangent_contacts": [
+          {
+            "side": -1,
+            "source_local_coefficients": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_coefficients": [
+              [
+                {
+                  "rational_numerator": "5",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_box_zr_m": [
+              [
+                {
+                  "rational_numerator": "5",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "5",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "incidence": [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              }
+            ],
+            "incidence_sign": 0,
+            "offset_speed_factor_numerator": [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              }
+            ],
+            "offset_speed_factor_sign": 0,
+            "contact_kind": "CUSP_AT_SOURCE_TANGENCY",
+            "parameter_pair_in_domain": true,
+            "membership": [
+              {
+                "status": "START",
+                "endpoint_bounds": [
+                  [
+                    {
+                      "rational_numerator": "0",
+                      "rational_denominator": "1"
+                    },
+                    {
+                      "rational_numerator": "0",
+                      "rational_denominator": "1"
+                    }
+                  ],
+                  [
+                    {
+                      "rational_numerator": "7533733101362122487262894599",
+                      "rational_denominator": "14457495628796295074807808000"
+                    },
+                    {
+                      "rational_numerator": "10573594407761738910873472569696539",
+                      "rational_denominator": "20291095115015600137492758528000000"
+                    }
+                  ]
+                ]
+              },
+              {
+                "status": "INTERIOR",
+                "fraction_coefficients": [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                "fraction_bounds": [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                "endpoint_difference_signs": [
+                  1,
+                  -1
+                ]
+              }
+            ]
+          }
+        ],
+        "root_bounds": [],
+        "tangency_witness_center_count": 1,
+        "same_center_contact_groups": [
+          [
+            0
+          ]
+        ],
+        "radicands": []
+      },
+      "reason": "certified finite tangent witnesses; other crossings or cusps remain unclassified",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 7,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 6,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 6,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": -0.1,
+                "sweep_rad": 3.4,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  2.0,
+                  -2.0
+                ],
+                "end_zr_m": [
+                  2.0,
+                  2.0
+                ]
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 2.0,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96,
+          "allow_extension": false
+        }
+      },
+      "request_sha256": "e14424c82cf597bfd019efc62e5ea25d7e0bb5bff3d08e4907062e2d59173ffe",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "16"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "8"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "3681600295835408999673748143",
+                  "rational_denominator": "19807040628566084398385987584"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "8"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "16"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "8"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "3681600295835408999673748143",
+                    "rational_denominator": "19807040628566084398385987584"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "8"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 1,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "2",
+              "rational_denominator": "1"
+            },
+            "second_distance_m": {
+              "rational_numerator": "2",
+              "rational_denominator": "1"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 2.0,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite line/conic offset crossings and bounded fillet contact error; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "CERTIFIED",
+      "classification": "TANGENCY_WITNESSES",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {
+        "identity": "all source-conic tangents parallel to the offset line",
+        "line_index": 1,
+        "normal": [
+          {
+            "rational_numerator": "-4",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "line_length_squared": {
+          "rational_numerator": "16",
+          "rational_denominator": "1"
+        },
+        "local_normal": [
+          {
+            "rational_numerator": "-4",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "support_square": {
+          "rational_numerator": "64",
+          "rational_denominator": "1"
+        },
+        "global_regularity": {
+          "kind": "UNVERIFIED",
+          "adjusted_distance_m": {
+            "rational_numerator": "2",
+            "rational_denominator": "1"
+          },
+          "minimum_curvature_radius_squared_m2": {
+            "rational_numerator": "1",
+            "rational_denominator": "4"
+          },
+          "maximum_curvature_radius_squared_m2": {
+            "rational_numerator": "16",
+            "rational_denominator": "1"
+          }
+        },
+        "source_tangent_contacts": [
+          {
+            "side": -1,
+            "source_local_coefficients": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_coefficients": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_box_zr_m": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "incidence": [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              }
+            ],
+            "incidence_sign": 0,
+            "offset_speed_factor_numerator": [
+              {
+                "rational_numerator": "-768",
+                "rational_denominator": "1"
+              }
+            ],
+            "offset_speed_factor_sign": -1,
+            "contact_kind": "REGULAR_TANGENCY",
+            "parameter_pair_in_domain": true,
+            "membership": [
+              {
+                "status": "INTERIOR",
+                "endpoint_bounds": [
+                  [
+                    [
+                      {
+                        "rational_numerator": "1025529764736213256767243835324537450172039193430295705496392452150693839558384618524804181820771800964438136782370499438415271475378543809097007963298786191630548959118133552252776423661502004669182501531303362708853719767288175877371422106336424198964979187131957980861980094637093602839454770592921690472055767",
+                        "rational_denominator": "1030678866002192037075209556026974758850121810759117679419063734871533000912712930539973833992381103234878193134361000910090309731049793557890774361285751218450522381600651784825393127429103473500535522330207266852242234995061536905241508610057966368699299751816958651477743990703532632000771998776169121762508800"
+                      },
+                      {
+                        "rational_numerator": "5127648823681066283836219176622688860698848590751826485112901359780222220330925008677414380055888252905933982167537234073529314891966126242268625372334931882279323856007515529497216803185995097962808192767787905939218449142026374391815255458916570369102890366152570819939747844230199045834016982325791772216257741",
+                        "rational_denominator": "5153394330010960185376047780134873794250609053795588397095318674357665004563564652699869169961905516174390965671805004550451548655248967789453871806428756092252611908003258924126965637145517367502677611651036334261211174975307684526207543050289831843496498759084793257388719953517663160003859993880845608812544000"
+                      }
+                    ],
+                    [
+                      {
+                        "rational_numerator": "-793317515527287751070458240987131268056199146816347566760191724562578582154785126111321041464875336113987463564232362937252183836433246006974070962372673895259116630129286126864840433703306897554628176148951108976772236325400414732185813642811190994446622976469216614367603612010430669855498241",
+                        "rational_denominator": "7946412555765139362416954738263324647103932351255894329000911497359057545678249972260080821372733269512962751791418685274159120637593992687484240374458772308767987808186907637903162506355366039027775421156189802990316729313134359292507335794729884541337680176504350216612667214941396198752256000"
+                      },
+                      {
+                        "rational_numerator": "-29382130204714361150757712629136461039691873398979748612787757355971537142869029259229312620313995621667301771212312164030735615236959770455362586793581330301031894299720413612881560333300826590133873250657831627010935009672678990798883617303375138473138166386460381142982736077886908298249709",
+                        "rational_denominator": "294311576139449606015442768083826838781627124120588678851885611013298427617712961935558548939730861833813435251534025380524411875466444173610527421276250826250666215118033616218635648383532075519547237820599622332974693678264235529352123547952958686716210376907568526541209896849681340694528000"
+                      }
+                    ]
+                  ],
+                  [
+                    [
+                      {
+                        "rational_numerator": "-18134456646885236987572043416126467430579840088318241591525937720955343632037850802814922667923296559496137239383821408696005750305946491165267242755608117701914891975480278675028848320431629667166287162408988870630872979622296594589056606472576055320278167692325907189252761133082530805284639473890095620510635480382213208731513708196291515561597030429491007828924708344190799889842163993897249016911828678655314475413692166557560185401689517982388522026235401792967084083927497467809996303717249870930068061475745029528126305151672081944874176579234328382021453563304569969986466287460431836614248992824585761859233990709165903771925919531411261891349664284960165496188237892136285530280480260390201150100467238252309962540011016933866103825790433881227201089539532071862092879189",
+                        "rational_denominator": "18364382946861662680430928627271145203980130059131241404233375038687689344207961444678102764543967407577570791789466639611406658466123541962539985709374949381801006419786633667222785629315466395921214294300673170374033122340063148564816933539783152523716483412352331979142258107304264278195542098136695862670279295660570633322656679440847647153746594453967051152424860036909055153352447809924116502414948819721347102665117118527502176127812362842110738468750509135265675846535001462353070247161201027444418258771052581235734659994622541481900719069404170429204834724414540283221872680981056740339836788446197118007757288893511118191065253064828441870785938431683866746688272885528162322741597386544852147468923388744162500592521537837997807963040406398383607345039727289958400000000"
+                      },
+                      {
+                        "rational_numerator": "-116578649872833666348677421960807208824918753867022256810857524497727339931841068033867705438285024066773869539027581675066005185389964057109560081537334251137901514743764632555901864243765408523057585284775913226471295609407608393476681496717095601196419243357089319019251139394861910066674790302180951402096055058467275879509339936857297780100549746404970227782992002639803376197676243984453049350598839202334618574251140858504175058348895099115685707003720651389991866472775182062700902807473741126087383881244987582908820109024072221047621057427335875783255806445697357649677981242391880568090916480915431547762507345259039107315447426300067933822897316919173430028204105844952536632649179101195451137304533197541186639631398705355333051485203503866784824503610583774008176995769",
+                        "rational_denominator": "118056747515539260088484541175314504882729407522986551884357410962992288641336895001502089200639790477284383661503714111787614232996508484044899908131696103168720755555771216432146479045599426830922091891932898952404498643614691669345251715612891694795320250507979277008771659261241698931257056345164473402880366900675096928502792939262592017416942392918359614551302671665843925985837164492369320372667528126780088517132895761962513989393079475413569033013396130155279344727725009400841165874607720890714117377813909450801151385679716338097933194017598238473459651799807758963569181520592507616470379354296981472907011142886857188371133769702468554883623889917967714800138897121252472074767411770645478090871650356212473218094781314672843051190974041132466047218112532578304000000000"
+                      }
+                    ],
+                    [
+                      {
+                        "rational_numerator": "-82232582546346403515960726529230741683459522833883601204351717392628205373607359887310864822512083372697882653706369268389068788503834130072834546465858028068367496644487618578307077684391192204687196925717819177201183608544751260810595664770254290305441180981348756582298051323330585382258542759528343854354773120273493381352253894886822311869328820182916062831309489310230169937794948494090171611129788128206115075381817531887950115457767356295897441984098805580781639917764217994789585668273105563045709786275393310495460432984225437952006598293045580338564458850250824809957697699815557227368599819951559629336696077325924716850932819949626000720819924659181940117607453754519804566558236172666049631655803866458275911010073180898094899049297580649202659169947",
+                        "rational_denominator": "521298429050439218884365672056593089304746680789981627168814131714104251897131887570570597677419863536072801699920340911148834851780568310014521778353737944691156991911982484714582608376578793723869791965283744570283583671503765756560260090551783995487372261548253755997092452503977986235700459687028393449348008339672698893634594895884875736776193273924561584271938845664435396539013526730958406952145771807275026237306392265348118267141817952689657587690427549104011972954762061473496364298894057770872567182219610409685047355920796008546241100831880390787221743842554939482960532034396837685212349466961981510431893182221475646756463203391953334240371334044867023614615863984580825935602150684707127088442825335025596147317950267221990882760512749174784000000000"
+                      },
+                      {
+                        "rational_numerator": "-1495137864479025518472013209616172626127146688758136863181469985136013420661660483466860473463532492855495601800925217811536071911543354259039981629703027681452218631054993809780439893348291916622190630149566351114252133199268976606058375403157741887386213157658469884781877593090515491301402308242205246901084670512673263517567778581701805425536181055695606650941681397519455727862580793484989350935566085516833393742282364854654151333357937418598811764911585234384957886459278189286281097068997098162581927005721300180084003186260195843823969570362702230042452763511145351100431753309128638257532531626251257315051004664645185038806123849450323505499470399397728066243264415143980290963367725836577997338131340244218740223214170539875970260887142444899277503811",
+                        "rational_denominator": "9478153255462531252443012219210783441904485105272393221251166031165531852675125228555829048680361155201323667271278925657251542759646696545718577788249780812566490762036045176628774697755978067706723490277886264914246975845523013755641092555486981736134041119059159199947135500072327022467281085218698062715418333448594525338810816288815922486839877707719301532217069921171552664345700486017425580948104941950455022496479859369965786675305780957993774321644137256436581326450219299518115714525346504924955766949447461994273588289469018337204383651488734377949486251682817081508373309716306139731133626672036027462398057858572284486481149152580969713461296982633945883902106617901469562465493648812856856153505915182283566314871823040399834232009322712268800000000"
+                      }
+                    ]
+                  ]
+                ],
+                "sectors": [
+                  {
+                    "left_cross": [
+                      {
+                        "rational_numerator": "29382130204714361150757712629136461039691873398979748612787757355971537142869029259229312620313995621667301771212312164030735615236959770455362586793581330301031894299720413612881560333300826590133873250657831627010935009672678990798883617303375138473138166386460381142982736077886908298249709",
+                        "rational_denominator": "294311576139449606015442768083826838781627124120588678851885611013298427617712961935558548939730861833813435251534025380524411875466444173610527421276250826250666215118033616218635648383532075519547237820599622332974693678264235529352123547952958686716210376907568526541209896849681340694528000"
+                      },
+                      {
+                        "rational_numerator": "793317515527287751070458240987131268056199146816347566760191724562578582154785126111321041464875336113987463564232362937252183836433246006974070962372673895259116630129286126864840433703306897554628176148951108976772236325400414732185813642811190994446622976469216614367603612010430669855498241",
+                        "rational_denominator": "7946412555765139362416954738263324647103932351255894329000911497359057545678249972260080821372733269512962751791418685274159120637593992687484240374458772308767987808186907637903162506355366039027775421156189802990316729313134359292507335794729884541337680176504350216612667214941396198752256000"
+                      }
+                    ],
+                    "right_cross": [
+                      {
+                        "rational_numerator": "1867664569578097026462998145514360776509492950509987563290656643058951241803608289993962479291853009401771960280243136458336250996837004954451663018253651473323052848290082558941813914790109996822429159492704311516499172752733946035599308439395167309872652771115483680651539921823106787834793456224167981514879381834882006202208195526127030237964305795687502058183706582642803191358981580351827868004291702790223599416329825187224600120316237126674843385207593243749253576340558469120615496835537146261286101210617059450775379014281118715372370419992052752972106926900045732597277455920022968020893057860613679409451",
+                        "rational_denominator": "1868461275783156341933745624001999608638133242061418460752968826409611030518631333332145081050441082340741033556521585753179208089858595483420858808731373767195871709683414747346785064471978066438036896205585263964040252597753481413555884892042625900692730863177695948972165869097985855381825515109173726543076666802441782218866972471557705720691551527999766572507038039896233798191584300064299471133494664513499388798169411367703847458628210457710178457060534599193105936203569194442364278527088387616040403075555557726908535517849929989860126672247818846594452867553708506082820232379162821134615925961523200000000"
+                      },
+                      {
+                        "rational_numerator": "3640671675590832410259255644277516212657545524769830321437994670971372019390015075154209442566665815128959813946350629480435438569756214667761182898213931203465011036729246782236973599811219636768838365316633214825883396257705709037723949096613160087204668127324686098596500766211602639039092922626057660184399229779479416642702751157246915785006166532520611376212316332527673149256039762656435183388846020620518553599885355415950133278597842488349386832378988298464318835318261128770032173888150943867375684475824459594144392124131840296617596684015390208678527974543348899522326050376796649129479325963112770773",
+                        "rational_denominator": "3642224709128959730865001216378166878436906904603154894255299856548949377229300844702037195030099575712945484515636619401908787699529425893607911907858428396093317172872153503599970885910288628534184982856891352756413747753905421858783401349010966668017019226467243565247886684401531881835917183448681728154145549322498600816504819632666093022790548787523911447382140428647629236240905068351460957375233264158868204284930626447765784519743100307427248454309034306419309817160953595404218866524538767282729830556638514087541004908089532143976855111594188784784508513749919115171189536801486980769231824486400000000"
+                      }
+                    ],
+                    "excluded": false
+                  },
+                  {
+                    "left_cross": [
+                      {
+                        "rational_numerator": "-3640671675590832410259255644277516212657545524769830321437994670971372019390015075154209442566665815128959813946350629480435438569756214667761182898213931203465011036729246782236973599811219636768838365316633214825883396257705709037723949096613160087204668127324686098596500766211602639039092922626057660184399229779479416642702751157246915785006166532520611376212316332527673149256039762656435183388846020620518553599885355415950133278597842488349386832378988298464318835318261128770032173888150943867375684475824459594144392124131840296617596684015390208678527974543348899522326050376796649129479325963112770773",
+                        "rational_denominator": "3642224709128959730865001216378166878436906904603154894255299856548949377229300844702037195030099575712945484515636619401908787699529425893607911907858428396093317172872153503599970885910288628534184982856891352756413747753905421858783401349010966668017019226467243565247886684401531881835917183448681728154145549322498600816504819632666093022790548787523911447382140428647629236240905068351460957375233264158868204284930626447765784519743100307427248454309034306419309817160953595404218866524538767282729830556638514087541004908089532143976855111594188784784508513749919115171189536801486980769231824486400000000"
+                      },
+                      {
+                        "rational_numerator": "-1867664569578097026462998145514360776509492950509987563290656643058951241803608289993962479291853009401771960280243136458336250996837004954451663018253651473323052848290082558941813914790109996822429159492704311516499172752733946035599308439395167309872652771115483680651539921823106787834793456224167981514879381834882006202208195526127030237964305795687502058183706582642803191358981580351827868004291702790223599416329825187224600120316237126674843385207593243749253576340558469120615496835537146261286101210617059450775379014281118715372370419992052752972106926900045732597277455920022968020893057860613679409451",
+                        "rational_denominator": "1868461275783156341933745624001999608638133242061418460752968826409611030518631333332145081050441082340741033556521585753179208089858595483420858808731373767195871709683414747346785064471978066438036896205585263964040252597753481413555884892042625900692730863177695948972165869097985855381825515109173726543076666802441782218866972471557705720691551527999766572507038039896233798191584300064299471133494664513499388798169411367703847458628210457710178457060534599193105936203569194442364278527088387616040403075555557726908535517849929989860126672247818846594452867553708506082820232379162821134615925961523200000000"
+                      }
+                    ],
+                    "right_cross": [
+                      {
+                        "rational_numerator": "-82232582546346403515960726529230741683459522833883601204351717392628205373607359887310864822512083372697882653706369268389068788503834130072834546465858028068367496644487618578307077684391192204687196925717819177201183608544751260810595664770254290305441180981348756582298051323330585382258542759528343854354773120273493381352253894886822311869328820182916062831309489310230169937794948494090171611129788128206115075381817531887950115457767356295897441984098805580781639917764217994789585668273105563045709786275393310495460432984225437952006598293045580338564458850250824809957697699815557227368599819951559629336696077325924716850932819949626000720819924659181940117607453754519804566558236172666049631655803866458275911010073180898094899049297580649202659169947",
+                        "rational_denominator": "521298429050439218884365672056593089304746680789981627168814131714104251897131887570570597677419863536072801699920340911148834851780568310014521778353737944691156991911982484714582608376578793723869791965283744570283583671503765756560260090551783995487372261548253755997092452503977986235700459687028393449348008339672698893634594895884875736776193273924561584271938845664435396539013526730958406952145771807275026237306392265348118267141817952689657587690427549104011972954762061473496364298894057770872567182219610409685047355920796008546241100831880390787221743842554939482960532034396837685212349466961981510431893182221475646756463203391953334240371334044867023614615863984580825935602150684707127088442825335025596147317950267221990882760512749174784000000000"
+                      },
+                      {
+                        "rational_numerator": "-1495137864479025518472013209616172626127146688758136863181469985136013420661660483466860473463532492855495601800925217811536071911543354259039981629703027681452218631054993809780439893348291916622190630149566351114252133199268976606058375403157741887386213157658469884781877593090515491301402308242205246901084670512673263517567778581701805425536181055695606650941681397519455727862580793484989350935566085516833393742282364854654151333357937418598811764911585234384957886459278189286281097068997098162581927005721300180084003186260195843823969570362702230042452763511145351100431753309128638257532531626251257315051004664645185038806123849450323505499470399397728066243264415143980290963367725836577997338131340244218740223214170539875970260887142444899277503811",
+                        "rational_denominator": "9478153255462531252443012219210783441904485105272393221251166031165531852675125228555829048680361155201323667271278925657251542759646696545718577788249780812566490762036045176628774697755978067706723490277886264914246975845523013755641092555486981736134041119059159199947135500072327022467281085218698062715418333448594525338810816288815922486839877707719301532217069921171552664345700486017425580948104941950455022496479859369965786675305780957993774321644137256436581326450219299518115714525346504924955766949447461994273588289469018337204383651488734377949486251682817081508373309716306139731133626672036027462398057858572284486481149152580969713461296982633945883902106617901469562465493648812856856153505915182283566314871823040399834232009322712268800000000"
+                      }
+                    ],
+                    "excluded": true
+                  }
+                ],
+                "reason": "closed short-sector union with original endpoint separation"
+              },
+              {
+                "status": "INTERIOR",
+                "fraction_coefficients": [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                "fraction_bounds": [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                "endpoint_difference_signs": [
+                  1,
+                  -1
+                ]
+              }
+            ]
+          },
+          {
+            "side": 1,
+            "source_local_coefficients": [
+              [
+                {
+                  "rational_numerator": "-1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_coefficients": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "center_box_zr_m": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "incidence": [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              }
+            ],
+            "incidence_sign": 0,
+            "offset_speed_factor_numerator": [
+              {
+                "rational_numerator": "-768",
+                "rational_denominator": "1"
+              }
+            ],
+            "offset_speed_factor_sign": -1,
+            "contact_kind": "REGULAR_TANGENCY",
+            "parameter_pair_in_domain": true,
+            "membership": [
+              {
+                "status": "INTERIOR",
+                "endpoint_bounds": [
+                  [
+                    [
+                      {
+                        "rational_numerator": "1025529764736213256767243835324537450172039193430295705496392452150693839558384618524804181820771800964438136782370499438415271475378543809097007963298786191630548959118133552252776423661502004669182501531303362708853719767288175877371422106336424198964979187131957980861980094637093602839454770592921690472055767",
+                        "rational_denominator": "1030678866002192037075209556026974758850121810759117679419063734871533000912712930539973833992381103234878193134361000910090309731049793557890774361285751218450522381600651784825393127429103473500535522330207266852242234995061536905241508610057966368699299751816958651477743990703532632000771998776169121762508800"
+                      },
+                      {
+                        "rational_numerator": "5127648823681066283836219176622688860698848590751826485112901359780222220330925008677414380055888252905933982167537234073529314891966126242268625372334931882279323856007515529497216803185995097962808192767787905939218449142026374391815255458916570369102890366152570819939747844230199045834016982325791772216257741",
+                        "rational_denominator": "5153394330010960185376047780134873794250609053795588397095318674357665004563564652699869169961905516174390965671805004550451548655248967789453871806428756092252611908003258924126965637145517367502677611651036334261211174975307684526207543050289831843496498759084793257388719953517663160003859993880845608812544000"
+                      }
+                    ],
+                    [
+                      {
+                        "rational_numerator": "-793317515527287751070458240987131268056199146816347566760191724562578582154785126111321041464875336113987463564232362937252183836433246006974070962372673895259116630129286126864840433703306897554628176148951108976772236325400414732185813642811190994446622976469216614367603612010430669855498241",
+                        "rational_denominator": "7946412555765139362416954738263324647103932351255894329000911497359057545678249972260080821372733269512962751791418685274159120637593992687484240374458772308767987808186907637903162506355366039027775421156189802990316729313134359292507335794729884541337680176504350216612667214941396198752256000"
+                      },
+                      {
+                        "rational_numerator": "-29382130204714361150757712629136461039691873398979748612787757355971537142869029259229312620313995621667301771212312164030735615236959770455362586793581330301031894299720413612881560333300826590133873250657831627010935009672678990798883617303375138473138166386460381142982736077886908298249709",
+                        "rational_denominator": "294311576139449606015442768083826838781627124120588678851885611013298427617712961935558548939730861833813435251534025380524411875466444173610527421276250826250666215118033616218635648383532075519547237820599622332974693678264235529352123547952958686716210376907568526541209896849681340694528000"
+                      }
+                    ]
+                  ],
+                  [
+                    [
+                      {
+                        "rational_numerator": "-18134456646885236987572043416126467430579840088318241591525937720955343632037850802814922667923296559496137239383821408696005750305946491165267242755608117701914891975480278675028848320431629667166287162408988870630872979622296594589056606472576055320278167692325907189252761133082530805284639473890095620510635480382213208731513708196291515561597030429491007828924708344190799889842163993897249016911828678655314475413692166557560185401689517982388522026235401792967084083927497467809996303717249870930068061475745029528126305151672081944874176579234328382021453563304569969986466287460431836614248992824585761859233990709165903771925919531411261891349664284960165496188237892136285530280480260390201150100467238252309962540011016933866103825790433881227201089539532071862092879189",
+                        "rational_denominator": "18364382946861662680430928627271145203980130059131241404233375038687689344207961444678102764543967407577570791789466639611406658466123541962539985709374949381801006419786633667222785629315466395921214294300673170374033122340063148564816933539783152523716483412352331979142258107304264278195542098136695862670279295660570633322656679440847647153746594453967051152424860036909055153352447809924116502414948819721347102665117118527502176127812362842110738468750509135265675846535001462353070247161201027444418258771052581235734659994622541481900719069404170429204834724414540283221872680981056740339836788446197118007757288893511118191065253064828441870785938431683866746688272885528162322741597386544852147468923388744162500592521537837997807963040406398383607345039727289958400000000"
+                      },
+                      {
+                        "rational_numerator": "-116578649872833666348677421960807208824918753867022256810857524497727339931841068033867705438285024066773869539027581675066005185389964057109560081537334251137901514743764632555901864243765408523057585284775913226471295609407608393476681496717095601196419243357089319019251139394861910066674790302180951402096055058467275879509339936857297780100549746404970227782992002639803376197676243984453049350598839202334618574251140858504175058348895099115685707003720651389991866472775182062700902807473741126087383881244987582908820109024072221047621057427335875783255806445697357649677981242391880568090916480915431547762507345259039107315447426300067933822897316919173430028204105844952536632649179101195451137304533197541186639631398705355333051485203503866784824503610583774008176995769",
+                        "rational_denominator": "118056747515539260088484541175314504882729407522986551884357410962992288641336895001502089200639790477284383661503714111787614232996508484044899908131696103168720755555771216432146479045599426830922091891932898952404498643614691669345251715612891694795320250507979277008771659261241698931257056345164473402880366900675096928502792939262592017416942392918359614551302671665843925985837164492369320372667528126780088517132895761962513989393079475413569033013396130155279344727725009400841165874607720890714117377813909450801151385679716338097933194017598238473459651799807758963569181520592507616470379354296981472907011142886857188371133769702468554883623889917967714800138897121252472074767411770645478090871650356212473218094781314672843051190974041132466047218112532578304000000000"
+                      }
+                    ],
+                    [
+                      {
+                        "rational_numerator": "-82232582546346403515960726529230741683459522833883601204351717392628205373607359887310864822512083372697882653706369268389068788503834130072834546465858028068367496644487618578307077684391192204687196925717819177201183608544751260810595664770254290305441180981348756582298051323330585382258542759528343854354773120273493381352253894886822311869328820182916062831309489310230169937794948494090171611129788128206115075381817531887950115457767356295897441984098805580781639917764217994789585668273105563045709786275393310495460432984225437952006598293045580338564458850250824809957697699815557227368599819951559629336696077325924716850932819949626000720819924659181940117607453754519804566558236172666049631655803866458275911010073180898094899049297580649202659169947",
+                        "rational_denominator": "521298429050439218884365672056593089304746680789981627168814131714104251897131887570570597677419863536072801699920340911148834851780568310014521778353737944691156991911982484714582608376578793723869791965283744570283583671503765756560260090551783995487372261548253755997092452503977986235700459687028393449348008339672698893634594895884875736776193273924561584271938845664435396539013526730958406952145771807275026237306392265348118267141817952689657587690427549104011972954762061473496364298894057770872567182219610409685047355920796008546241100831880390787221743842554939482960532034396837685212349466961981510431893182221475646756463203391953334240371334044867023614615863984580825935602150684707127088442825335025596147317950267221990882760512749174784000000000"
+                      },
+                      {
+                        "rational_numerator": "-1495137864479025518472013209616172626127146688758136863181469985136013420661660483466860473463532492855495601800925217811536071911543354259039981629703027681452218631054993809780439893348291916622190630149566351114252133199268976606058375403157741887386213157658469884781877593090515491301402308242205246901084670512673263517567778581701805425536181055695606650941681397519455727862580793484989350935566085516833393742282364854654151333357937418598811764911585234384957886459278189286281097068997098162581927005721300180084003186260195843823969570362702230042452763511145351100431753309128638257532531626251257315051004664645185038806123849450323505499470399397728066243264415143980290963367725836577997338131340244218740223214170539875970260887142444899277503811",
+                        "rational_denominator": "9478153255462531252443012219210783441904485105272393221251166031165531852675125228555829048680361155201323667271278925657251542759646696545718577788249780812566490762036045176628774697755978067706723490277886264914246975845523013755641092555486981736134041119059159199947135500072327022467281085218698062715418333448594525338810816288815922486839877707719301532217069921171552664345700486017425580948104941950455022496479859369965786675305780957993774321644137256436581326450219299518115714525346504924955766949447461994273588289469018337204383651488734377949486251682817081508373309716306139731133626672036027462398057858572284486481149152580969713461296982633945883902106617901469562465493648812856856153505915182283566314871823040399834232009322712268800000000"
+                      }
+                    ]
+                  ]
+                ],
+                "sectors": [
+                  {
+                    "left_cross": [
+                      {
+                        "rational_numerator": "-793317515527287751070458240987131268056199146816347566760191724562578582154785126111321041464875336113987463564232362937252183836433246006974070962372673895259116630129286126864840433703306897554628176148951108976772236325400414732185813642811190994446622976469216614367603612010430669855498241",
+                        "rational_denominator": "7946412555765139362416954738263324647103932351255894329000911497359057545678249972260080821372733269512962751791418685274159120637593992687484240374458772308767987808186907637903162506355366039027775421156189802990316729313134359292507335794729884541337680176504350216612667214941396198752256000"
+                      },
+                      {
+                        "rational_numerator": "-29382130204714361150757712629136461039691873398979748612787757355971537142869029259229312620313995621667301771212312164030735615236959770455362586793581330301031894299720413612881560333300826590133873250657831627010935009672678990798883617303375138473138166386460381142982736077886908298249709",
+                        "rational_denominator": "294311576139449606015442768083826838781627124120588678851885611013298427617712961935558548939730861833813435251534025380524411875466444173610527421276250826250666215118033616218635648383532075519547237820599622332974693678264235529352123547952958686716210376907568526541209896849681340694528000"
+                      }
+                    ],
+                    "right_cross": [
+                      {
+                        "rational_numerator": "-3640671675590832410259255644277516212657545524769830321437994670971372019390015075154209442566665815128959813946350629480435438569756214667761182898213931203465011036729246782236973599811219636768838365316633214825883396257705709037723949096613160087204668127324686098596500766211602639039092922626057660184399229779479416642702751157246915785006166532520611376212316332527673149256039762656435183388846020620518553599885355415950133278597842488349386832378988298464318835318261128770032173888150943867375684475824459594144392124131840296617596684015390208678527974543348899522326050376796649129479325963112770773",
+                        "rational_denominator": "3642224709128959730865001216378166878436906904603154894255299856548949377229300844702037195030099575712945484515636619401908787699529425893607911907858428396093317172872153503599970885910288628534184982856891352756413747753905421858783401349010966668017019226467243565247886684401531881835917183448681728154145549322498600816504819632666093022790548787523911447382140428647629236240905068351460957375233264158868204284930626447765784519743100307427248454309034306419309817160953595404218866524538767282729830556638514087541004908089532143976855111594188784784508513749919115171189536801486980769231824486400000000"
+                      },
+                      {
+                        "rational_numerator": "-1867664569578097026462998145514360776509492950509987563290656643058951241803608289993962479291853009401771960280243136458336250996837004954451663018253651473323052848290082558941813914790109996822429159492704311516499172752733946035599308439395167309872652771115483680651539921823106787834793456224167981514879381834882006202208195526127030237964305795687502058183706582642803191358981580351827868004291702790223599416329825187224600120316237126674843385207593243749253576340558469120615496835537146261286101210617059450775379014281118715372370419992052752972106926900045732597277455920022968020893057860613679409451",
+                        "rational_denominator": "1868461275783156341933745624001999608638133242061418460752968826409611030518631333332145081050441082340741033556521585753179208089858595483420858808731373767195871709683414747346785064471978066438036896205585263964040252597753481413555884892042625900692730863177695948972165869097985855381825515109173726543076666802441782218866972471557705720691551527999766572507038039896233798191584300064299471133494664513499388798169411367703847458628210457710178457060534599193105936203569194442364278527088387616040403075555557726908535517849929989860126672247818846594452867553708506082820232379162821134615925961523200000000"
+                      }
+                    ],
+                    "excluded": true
+                  },
+                  {
+                    "left_cross": [
+                      {
+                        "rational_numerator": "1867664569578097026462998145514360776509492950509987563290656643058951241803608289993962479291853009401771960280243136458336250996837004954451663018253651473323052848290082558941813914790109996822429159492704311516499172752733946035599308439395167309872652771115483680651539921823106787834793456224167981514879381834882006202208195526127030237964305795687502058183706582642803191358981580351827868004291702790223599416329825187224600120316237126674843385207593243749253576340558469120615496835537146261286101210617059450775379014281118715372370419992052752972106926900045732597277455920022968020893057860613679409451",
+                        "rational_denominator": "1868461275783156341933745624001999608638133242061418460752968826409611030518631333332145081050441082340741033556521585753179208089858595483420858808731373767195871709683414747346785064471978066438036896205585263964040252597753481413555884892042625900692730863177695948972165869097985855381825515109173726543076666802441782218866972471557705720691551527999766572507038039896233798191584300064299471133494664513499388798169411367703847458628210457710178457060534599193105936203569194442364278527088387616040403075555557726908535517849929989860126672247818846594452867553708506082820232379162821134615925961523200000000"
+                      },
+                      {
+                        "rational_numerator": "3640671675590832410259255644277516212657545524769830321437994670971372019390015075154209442566665815128959813946350629480435438569756214667761182898213931203465011036729246782236973599811219636768838365316633214825883396257705709037723949096613160087204668127324686098596500766211602639039092922626057660184399229779479416642702751157246915785006166532520611376212316332527673149256039762656435183388846020620518553599885355415950133278597842488349386832378988298464318835318261128770032173888150943867375684475824459594144392124131840296617596684015390208678527974543348899522326050376796649129479325963112770773",
+                        "rational_denominator": "3642224709128959730865001216378166878436906904603154894255299856548949377229300844702037195030099575712945484515636619401908787699529425893607911907858428396093317172872153503599970885910288628534184982856891352756413747753905421858783401349010966668017019226467243565247886684401531881835917183448681728154145549322498600816504819632666093022790548787523911447382140428647629236240905068351460957375233264158868204284930626447765784519743100307427248454309034306419309817160953595404218866524538767282729830556638514087541004908089532143976855111594188784784508513749919115171189536801486980769231824486400000000"
+                      }
+                    ],
+                    "right_cross": [
+                      {
+                        "rational_numerator": "1495137864479025518472013209616172626127146688758136863181469985136013420661660483466860473463532492855495601800925217811536071911543354259039981629703027681452218631054993809780439893348291916622190630149566351114252133199268976606058375403157741887386213157658469884781877593090515491301402308242205246901084670512673263517567778581701805425536181055695606650941681397519455727862580793484989350935566085516833393742282364854654151333357937418598811764911585234384957886459278189286281097068997098162581927005721300180084003186260195843823969570362702230042452763511145351100431753309128638257532531626251257315051004664645185038806123849450323505499470399397728066243264415143980290963367725836577997338131340244218740223214170539875970260887142444899277503811",
+                        "rational_denominator": "9478153255462531252443012219210783441904485105272393221251166031165531852675125228555829048680361155201323667271278925657251542759646696545718577788249780812566490762036045176628774697755978067706723490277886264914246975845523013755641092555486981736134041119059159199947135500072327022467281085218698062715418333448594525338810816288815922486839877707719301532217069921171552664345700486017425580948104941950455022496479859369965786675305780957993774321644137256436581326450219299518115714525346504924955766949447461994273588289469018337204383651488734377949486251682817081508373309716306139731133626672036027462398057858572284486481149152580969713461296982633945883902106617901469562465493648812856856153505915182283566314871823040399834232009322712268800000000"
+                      },
+                      {
+                        "rational_numerator": "82232582546346403515960726529230741683459522833883601204351717392628205373607359887310864822512083372697882653706369268389068788503834130072834546465858028068367496644487618578307077684391192204687196925717819177201183608544751260810595664770254290305441180981348756582298051323330585382258542759528343854354773120273493381352253894886822311869328820182916062831309489310230169937794948494090171611129788128206115075381817531887950115457767356295897441984098805580781639917764217994789585668273105563045709786275393310495460432984225437952006598293045580338564458850250824809957697699815557227368599819951559629336696077325924716850932819949626000720819924659181940117607453754519804566558236172666049631655803866458275911010073180898094899049297580649202659169947",
+                        "rational_denominator": "521298429050439218884365672056593089304746680789981627168814131714104251897131887570570597677419863536072801699920340911148834851780568310014521778353737944691156991911982484714582608376578793723869791965283744570283583671503765756560260090551783995487372261548253755997092452503977986235700459687028393449348008339672698893634594895884875736776193273924561584271938845664435396539013526730958406952145771807275026237306392265348118267141817952689657587690427549104011972954762061473496364298894057770872567182219610409685047355920796008546241100831880390787221743842554939482960532034396837685212349466961981510431893182221475646756463203391953334240371334044867023614615863984580825935602150684707127088442825335025596147317950267221990882760512749174784000000000"
+                      }
+                    ],
+                    "excluded": false
+                  }
+                ],
+                "reason": "closed short-sector union with original endpoint separation"
+              },
+              {
+                "status": "INTERIOR",
+                "fraction_coefficients": [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                "fraction_bounds": [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                "endpoint_difference_signs": [
+                  1,
+                  -1
+                ]
+              }
+            ]
+          }
+        ],
+        "root_bounds": [],
+        "tangency_witness_center_count": 1,
+        "same_center_contact_groups": [
+          [
+            0,
+            1
+          ]
+        ],
+        "radicands": []
+      },
+      "reason": "certified finite tangent witnesses; other crossings or cusps remain unclassified",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  }
+]
