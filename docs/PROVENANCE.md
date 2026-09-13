@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[軸非接続反跳材料の弱形式](OFF_AXIS_RECOIL_FORMS.md)。r>0のpsi=r*Aphi[Wb]に対し、Br=−psi_z/r、Bz=psi_r/r、H=nu(B−Brem)。K=2pi∫(curl_rz Ni)ᵀnu(curl_rz Nj)/r dr dz、fJ=2pi∫Jphi Ni dr dz、frem=2pi∫(curl_rz Ni)ᵀnu Brem dr dz、curl_rz Ni=(−Ni_z,Ni_r)。定数psi核と残留荷重総和0を保ち、除かれた軸の絶対磁束は補わない。公開構成則と自前の縮約磁束curl・体積積分から導出し、独立Gauss/Vandermondeと対数/多項式モーメントで照合した。合成材料のみ。新規依存・外部資料・旧版実行なし。
+
 2026-09-13：[軸接続の反跳材料の保存・再構築・CLI](AXIS_RECOIL_NATIVE.md)。軸反跳材料native/CLIは全テンソル/残留B/向き・軸接触/phiモデル、a=Aphi/rと三荷重・元6場・Jの基準付き構成ポテンシャルを同じ実FEMで再検証する。A m²反力をA電流へ読み替えず、絶対磁石内部エネルギーも推定しない。[材料弱形式の公開構成則](PLANAR_RECOIL_FORMS_PLAN.md)と自前の軸curl・3次元体積/境界積分から導出した。独立解析は合成材料のみで、資料のコード・材料表・旧版資産を転用しない。新規依存・追加外部資料・旧版実行なし。
 
 2026-09-13：[軸接続の反跳材料の境界付きFEM・元6場](AXIS_RECOIL_SOLVE.md)。第18版は軸接続の反跳材料の境界付き実FEMを接続する。元H=nu(B−Brem)、自然荷重+2pi∫r²HtNi ds[A m²]、固定反力は+2pi∫r²Ht ds。三荷重とU/R/W0/Ws/C0[J]、元6場・Wb磁束・A周回を分け、軸上Aphi=Br=Hr=0を保つ。定数a試験の∫2Hz dVでは残留荷重を二重に差し引かない。[材料弱形式の公開構成則](PLANAR_RECOIL_FORMS_PLAN.md)と自前の軸curl・3次元体積/境界積分から導出した。独立解析は合成材料のみで、資料のコード・材料表・旧版資産を転用しない。新規依存・追加外部資料・旧版実行なし。
