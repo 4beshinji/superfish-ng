@@ -52,7 +52,7 @@ class OffsetDegeneracyTests(unittest.TestCase):
                 r=self.diagnose(a,second,.25,d)
                 self.assertEqual(r['classification'],'INFINITE_PARAMETER_PAIRS')
                 self.assertEqual(r['evidence']['shared_parameter_interval'],(F(1,2),F(1)))
-                self.assertFalse(r['finite_domain_complete'])
+                self.assertTrue(r['finite_domain_complete'])
             r=self.diagnose(a,end,.25,.25);self.assertEqual(r['classification'],'SHARED_PARAMETER_ENDPOINT')
             self.assertEqual(r['evidence']['fraction_intervals'],[(F(1),F(1)),(F(0),F(0))])
             self.assertEqual(self.diagnose(a,reverse,.25,.25)['status'],'UNVERIFIED')
@@ -84,13 +84,13 @@ class OffsetDegeneracyTests(unittest.TestCase):
             with self.assertRaises(ValueError):self.diagnose(a,b,**extra)
         with self.assertRaises(ValueError):self.diagnose(a,b,True)
 
-    def test_coincident_support_does_not_prove_finite_arc_overlap(self):
+    def test_coincident_support_with_opposite_short_arcs_is_disjoint(self):
         a=EllipseArc((0,0),(2,2),-.1,.2)
         b=replace(a,rotation_rad=math.pi)
         r=self.diagnose(a,b)
-        self.assertEqual(r['classification'],'COINCIDENT_SUPPORTING_CIRCLES')
-        self.assertFalse(r['finite_domain_complete']);self.assertIsNone(r['finite_center_count'])
-        self.assertIsNone(r['infinite_parameter_pairs'])
+        self.assertEqual(r['classification'],'DISJOINT')
+        self.assertTrue(r['finite_domain_complete']);self.assertEqual(r['finite_center_count'],0)
+        self.assertFalse(r['infinite_parameter_pairs'])
 
     def test_cli_diagnosis_roundtrip_strict_input_unknown_and_exclusive_output(self):
         import json

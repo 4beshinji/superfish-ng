@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Classify finite coincident circular offsets, arbitrary binary rotations, and reflected self-contacts of the same ellipse or hyperbola branch. Emit diagnosis version 4 while replaying saved versions 1–3 with their original rules.
+- Run standard validation in isolated unittest module processes with live progress and per-module results; retain serial discovery with `--test-workers 1`. Include saved diagnosis JSON fixtures in source distributions.
+- Verify this checkpoint with 1456 tests (1453 passed, 3 environment skips), 20496 independent geometry conditions, browser save/restart checks, and unchanged frequency/RF benchmarks.
+
 - Reconcile completed and partial milestones with implementation evidence; add a version-aware compatibility matrix and specification/implementation/validation work packages without changing solver behavior.
 
 - Validate two synthetic TM cavities against independently meshed, high-order NGSolve Hphi fields and RF integrals; keep the reference dependency outside the production environment.

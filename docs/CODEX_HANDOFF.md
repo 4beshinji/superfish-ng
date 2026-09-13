@@ -1,3 +1,43 @@
+2026-09-14 JST 最新受入状態。以下の旧ハンドル/順次統合指示は本記録で置き換える。
+
+2026-09-13 UTC：[有限オフセット診断の区切り](G03_FINITE_OFFSETS_CHECKPOINT.md)を主ツリーへ統合・限定受入。
+同一支持円の全候補周期・任意二進回転と、同じ非円楕円/同枝双曲線の反射自己接点を分類する。新規診断版4と旧保存版1/2/3を別の規則で再検証し、元構築・Case・適用可否を保持する。
+独立20496条件、実Chromeの初回/実サーバー再起動で46入力・計292チェック/182取得と保存バイト一致、9画像の目視がPASS。数値907sourceを保持した最終909sourceを主915sourceへ統合。標準1456件（1453合格・任意NGSolve参照2件/HTTP sandbox 1件の計3skip）が718.595秒でPASS。主統合後の専用41unitも6.443秒でPASS。既存seed9モード19量の最大相対差は周波数0、全量8.882e-16。許容差・ベンチマークは不変。
+G03全体・対象版C00.V・利用者業務V02・全計画は未完。親33=8受入/17進行/7他未受入/1範囲外を維持する。
+
+ユーザーの「完了後、ここまでを一区切りとしてcommit」と、待ち時間中の並列化要求に対応した区切り。G03の3実装と検証並列化、JSON fixture配布設定を一つの区切りとして記録する。主915source、PHYSICS v28。親HEADは324d3be、最終コミットはgit logを確認。全計画を完走済みとは扱わない。
+
+最終固定候補は/tmp/superfish-parallel-validation-import-path-20260914、909source。数値907sourceからの変更はscripts/run_tests.py、scripts/validate.py、tests/test_parallel_test_runner.pyのみ。集約out/parallel-validation-development-20260914に最終SHA/差分復元コピー、逐次対並列18件の実測、主41unitとintegrate-final.py/finalize-final.pyを保存。両helperは実行済みで再実行禁止。G03の元17変更と独立/ブラウザー証拠はout/g03-finite-offsets-checkpoint-development-20260913。旧helper/途中freeze/失敗benchmarkは保存し、旧順次統合を実行しない。
+
+標準out/validation-parallel-checkpoint-20260914の全299モジュール1456件は16プロセスで完走。test-run/report.jsonが件数/skip/各実行時間の正本で、結合tests.logの最初のRan行を全件数と誤読しない。既定8、--test-workers 1は元の逐次discover。旧逐次標準は最終全合格後に停止済みでPASSと扱わない。全Chrome/GUIサーバーも停止済み。
+
+残件は異なる支持曲線の一般重解/全弧端、新フィレット構築、C00.V、V02利用者業務、物理ピーク収束等。親33=8受入/17進行/7他未受入/1範囲外。Wine実行環境は存在するので同じパス探索/質問を繰り返さない。旧版コード/バイナリ検査、subagent、新依存、hosted CI実行主張なし。
+
+2026-09-14 JST 00:29 並列化要求を含む最新状態。以下の旧統合指示は置き換え済み。
+
+ユーザーが待ち時間中の並列化を依頼。最終候補は/tmp/superfish-parallel-validation-import-path-20260914、909source固定。G03数値907sourceとの差はscripts/run_tests.py、scripts/validate.py、tests/test_parallel_test_runner.pyの3ファイルのみ。主はまだ901source/HEAD324d3beで未統合。最後にG03の3実装・並列化・MANIFEST.inのJSON fixture追加を一つのコミットにする。
+
+実行中：全1456件・299モジュールの16プロセス標準はハンドル71476（2026-09-13 15:23 UTC開始）、out/validation-parallel-checkpoint-20260914、ログout/parallel-validation-development-20260914/standard-parallel.log。15:27UTCに289/299 PASS、失敗なし。最終固定sourceを変更しない。旧逐次1450件はハンドル55955、実PID46395/46412でまだ動作中だが、並列全件合格後に停止し、その停止記録を残す。途中逐次の時間から全suite短縮率を算出しない。
+
+並列ランナーは既定最大8、--test-workersで変更、1なら元python -m unittest discover。全一覧と各workerの一覧/件数を照合し、進捗・時間・skip/エラー/失敗・異常終了を保存。モジュール/クラスfixtureを同じプロセスへ保持し、BLAS等各1スレッド、POSIXの中断で子孫も終了する。6unit初回PASS後、実FEM benchmarkでcwdのsys.path欠落によりscripts.* import失敗を検出。旧909source候補/ログ/3changesはfirst-trialとして保持。別候補でcwdを復元し、cwd補助moduleの回帰を含め6unit0.979秒PASS。
+
+同じB-H保存/再読込18テストの元逐次は123.557秒、修正後3プロセス83.882秒（1.473倍）、全ID/件数/結果一致。benchmark-comparison.json。両測定時に旧逐次標準は動作していた。最終909sourceのsdistもネットワークなしsystem setuptools68.1.2で作り、修正前3fixture欠落/修正後3件元バイトと全909source一致、展開先41unitがPASS。out/parallel-checkpoint-source-distribution-20260914。
+
+主受入手順：全並列標準PASS/全909source/1456=1453+3既知skipを確認→旧逐次を正確なPID/argv/cwd確認で停止、original-serial-termination.json（stopped=true）をparallel devへ→同dev/integrate-final.py（未実行、主915へ20source変更）→主41unit（test_same_conic_offset_intersections/test_general_coincident_circle_arcs/test_coincident_circle_arcs/test_offset_degeneracies/test_construction_diagnostics/test_parallel_test_runner）を同dev/main-unit.log→同dev/finalize-final.py（未実行）→文書/全diff/源SHA/コミットを確認。両helperは実行前に最終レビュー。旧combined integrate.py/finalize.pyおよび先行2候補のhelperは置換済みで実行しない。
+
+独立20496条件/実Chrome292チェック182取得/9画像と907sourceの証拠はout/g03-finite-offsets-checkpoint-development-20260913に保持。最終909sourceの変更が検証用3ファイルだけであることをintegratorが照合する。新しいfinal-frozen-source-sha256.json/final-frozen-changes3と旧17変更から候補を復元できる。freezer/builders/record-browser/check-final-source-distributionは実行済み・再実行禁止。全GUIサーバー停止済み。親33=8/17/7/1、全計画未完。subagent/新依存/旧版再探索なし。
+
+2026-09-13 UTC 15:03 この区切りの最新状態。以下の旧候補ハンドル・順次統合指示は廃止し、この記録を優先する。
+
+ユーザーは「完了後、ここまでを一区切りとしてcommit」と指示。3つのG03拡張を最終907sourceでまとめて検証・主913sourceへ統合し、一つのローカルコミットにする。それまで新課題を開始しない。主HEADは324d3be、主901source、まだ追加ソース未統合。
+最終候補/tmp/superfish-same-conic-offset-self-intersections-20260913は固定907source。集約out/g03-finite-offsets-checkpoint-development-20260913に17変更の復元用コピー、全SHA、helperと独立/ブラウザー証拠を保存済み。freezer/builders/record-browser.pyは実行済みで再実行禁止。
+標準はハンドル55955、14:46:59 UTC開始、out/validation-g03-finite-offsets-checkpoint-20260913、集約standard.log。1450件（期待1447合格/3既知skip）を実行中。15時UTCに実プロセス46395/46412の生存・CPU進行を確認。空ログはcapture buffering。候補を変更/重複実行しない。
+同じ907sourceで独立2688+4608+7056+6144=20496条件と専用35unitがPASS。実Chrome初回/実サーバー再起動各46入力・146チェック・91取得がPASS。全182保存バイトと46入力/実旧保存32ファイルのSHA一致、9画像目視済み。両サーバー50577/54803は正常停止済み。
+集約のintegrate.pyとfinalize.pyは作成済み・未実行。標準PASS後、integrate.py→主test_same_conic_offset_intersections/test_general_coincident_circle_arcs/test_coincident_circle_arcs/test_offset_degeneracies/test_construction_diagnosticsの35unitを集約main-unit.logへ→finalize.py→全差分確認/コミット。元seed9モード19量のf/RF差は実数を確認し、許容差/benchmarksは不変。
+一時ディレクトリ消失で先行候補の未完走標準を復元したが、最終ソースで全件検証する方針へ統合したため、先行再開2走は意図的に停止した。各devにtemporary-restoration/interrupted-standard-run/resumed-standard-supersededを保持。旧個別integrator/finalizerは置換済みで実行しない。
+配布設定MANIFEST.inに*.json fixtureを追加。out/g03-finite-offsets-source-distribution-20260913のsystem setuptools 68.1.2によるネットワークなしsdist確認は、修正前3fixture欠落・修正後3件の元バイトと全907source一致・展開先35unitがPASS。集約check-source-distribution.pyは実行済みで再実行禁止。integrator/finalizerの受入条件にも加えた。
+全計画は未完、親33=8受入/17進行/7他未受入/1範囲外。目標ツールの現状はpaused（達成済みではない）。同じWine探索/質問、旧版コード/バイナリ検査、新依存、subagentなし。既存Wine実行環境がある事実を保持する。
+
 2026-09-13 UTC 14:18:34 最新継続状態。主HEADは808ca27・901source・PHYSICS v28。以下の古い実行中/未実装記録より優先する。
 
 先行2候補は固定したまま標準検証中：相対四分の一回転/tmp/superfish-coincident-circle-arcs-20260913は899source、実ハンドル52289（13:07:11 UTC開始、期待1436=1433+3skip）。任意回転/tmp/superfish-general-coincident-circle-arcs-20260913は903source、実ハンドル57815（13:46:38開始、期待1443=1440+3skip）。両方14:16:41 UTCに生存確認。各out/validation-...-candidate-20260913とdev/standard.log。空ログはbufferingで、固定sourceを変更/重複起動しない。独立2688と4608/7056、各候補の実ブラウザー初回/実再起動・目視は既にPASS。両integrator/finalizerは未実行。親1436PASS→主905/21unit/finalizer/commit→後続1443PASS→主909/28unit/finalizer/commitの順。具体的なhelper絶対パスは直下の14時前の記録に保持する。mainの追加source統合はまだない。

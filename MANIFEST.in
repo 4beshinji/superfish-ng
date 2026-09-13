@@ -3,7 +3,7 @@ include .python-version
 recursive-include docs *.md *.bib
 recursive-include examples *.json
 recursive-include tests *.py
-recursive-include tests/fixtures *.html *.svg
+recursive-include tests/fixtures *.html *.svg *.json
 recursive-include scripts *.py *.mjs
 
 recursive-include src/superfish_ng/web *.html *.css *.js

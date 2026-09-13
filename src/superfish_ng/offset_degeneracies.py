@@ -93,9 +93,10 @@ def _shared_parameters(first,second,distances,domain):
                    reason='certified shared-parameter witness; other parameter pairs are not classified')
 
 
-def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
+def _classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
                                  first_interval=(0.,1.),second_interval=(0.,1.),
-                                 endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
+                                 endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96,
+                                 finite_circle_intersections=False):
     """Diagnose shared parameters, exact circles and rational straight offsets.
 
     Complete circle/line tangency and disjointness require finite membership.
@@ -128,6 +129,16 @@ def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance
             collapsed=a if a['radius']==0 else b;other=b if a['radius']==0 else a
             if d2!=other['radius']**2:return _report('DISJOINT',complete=True,centers=0,infinite=False,evidence=dict(distance_squared=d2,radius_squared=other['radius']**2))
             return _point_result('INFINITE_PARAMETER_PAIRS',curves,circles,collapsed['center'],domain,controls,infinite=True)
+        if finite_circle_intersections and all(circles) and circles[0]['center']==circles[1]['center'] and circles[0]['radius']==circles[1]['radius']:
+            from .coincident_circle_arcs import coincident_circle_intervals
+            try:
+                overlap=coincident_circle_intervals(curves,circles,domain,**controls)
+            except ValueError as error:
+                shared=_shared_parameters(first,second,distances,domain)
+                if shared is not None:return shared
+                return _report('COINCIDENT_SUPPORTING_CIRCLES',reason=str(error))
+            if overlap is not None:
+                return _report(**overlap)
         shared=_shared_parameters(first,second,distances,domain)
         if shared is not None:return shared
         if all(circles):
@@ -162,6 +173,54 @@ def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance
         return _report('UNVERIFIED',reason=str(error))
 
 
+def _classify_offset_degeneracies_v2(first,second,*,first_distance_m,second_distance_m,
+                                 first_interval=(0.,1.),second_interval=(0.,1.),
+                                 endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
+    """Preserve version 2 quarter-turn rules for saved construction diagnoses."""
+    return _classify_offset_degeneracies(first,second,first_distance_m=first_distance_m,
+        second_distance_m=second_distance_m,first_interval=first_interval,second_interval=second_interval,
+        endpoint_width=endpoint_width,max_series_terms=max_series_terms,finite_circle_intersections=True)
+
+
+def _classify_offset_degeneracies_v3(first,second,*,first_distance_m,second_distance_m,
+                                 first_interval=(0.,1.),second_interval=(0.,1.),
+                                 endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
+    """Extend the version 2 special cases to general coincident circular offsets."""
+    previous=_classify_offset_degeneracies_v2(first,second,first_distance_m=first_distance_m,
+        second_distance_m=second_distance_m,first_interval=first_interval,second_interval=second_interval,
+        endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    if previous['finite_domain_complete']:return previous
+    from .general_coincident_circle_arcs import classify_general_coincident_arcs
+    result=classify_general_coincident_arcs((first,second),(first_distance_m,second_distance_m),
+        (first_interval,second_interval),endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    if result is None:return previous
+    # Keep already proved shared-parameter witnesses on enclosure exhaustion.
+    if (result['classification']=='COINCIDENT_SUPPORTING_CIRCLES'
+            and previous['classification'] in ('INFINITE_PARAMETER_PAIRS','SHARED_PARAMETER_ENDPOINT')):return previous
+    return _report(**result)
+
+
+def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
+                                 first_interval=(0.,1.),second_interval=(0.,1.),
+                                 endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
+    """Extend version 3 with all same-conic reflected normal-offset contacts."""
+    previous=_classify_offset_degeneracies_v3(first,second,first_distance_m=first_distance_m,
+        second_distance_m=second_distance_m,first_interval=first_interval,second_interval=second_interval,
+        endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    if previous['finite_domain_complete']:return previous
+    from .same_conic_offset_intersections import classify_same_conic_offsets
+    try:
+        result=classify_same_conic_offsets((first,second),(first_distance_m,second_distance_m),
+            (first_interval,second_interval),endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    except ValueError:return previous
+    if result is None:return previous
+    if previous['classification'] in ('INFINITE_PARAMETER_PAIRS','SHARED_PARAMETER_ENDPOINT'):
+        result['evidence']=dict(previous['evidence'],**result['evidence'])
+        if result['classification']=='UNVERIFIED':
+            result.update(classification=previous['classification'],infinite=previous['infinite_parameter_pairs'])
+    return _report(**result)
+
+
 def diagnose_offsets_document(request):
     """Strict, self-contained JSON diagnosis; never a constructed Case."""
     from copy import deepcopy
@@ -180,6 +239,6 @@ def diagnose_offsets_document(request):
     keys(controls,('first_distance_m','second_distance_m','first_interval','second_interval','endpoint_width','max_series_terms'),
          ('first_distance_m','second_distance_m'),'offset diagnosis controls')
     report=classify_offset_degeneracies(*(curve_from_dict(row) for row in rows),**controls)
-    return _json_value(dict(schema_version=1,document_type='normal_offset_diagnosis',software_version=__version__,
+    return _json_value(dict(schema_version=4,document_type='normal_offset_diagnosis',software_version=__version__,
                             request=deepcopy(request),request_sha256=hashlib.sha256(canonical.encode()).hexdigest(),
                             diagnosis=report))

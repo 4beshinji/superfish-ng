@@ -1,0 +1,2250 @@
+[
+  {
+    "schema_version": 3,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 5,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 5,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": 0.5,
+                "sweep_rad": 0.5,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": -1.0,
+                "sweep_rad": 0.5,
+                "rotation_rad": 0.0
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.75,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96
+        }
+      },
+      "request_sha256": "6dc4ebb756b69ab30ee2c88030137cf33fd924fccb5b7239fa39123fda18205e",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "9254432516024250874648340851",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "26922795818104658125788556011",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "68127979966803157470305911137",
+                  "rational_denominator": "79228162514264337593543950336"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "9254432516024250874648340851",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "26922795818104658125788556011",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "68127979966803157470305911137",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 0,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "3",
+              "rational_denominator": "4"
+            },
+            "second_distance_m": {
+              "rational_numerator": "3",
+              "rational_denominator": "4"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.75,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "UNVERIFIED",
+      "classification": "UNVERIFIED",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {},
+      "reason": "no exact special-case classification; use finite-domain crossing search",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 3,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 5,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 5,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": 0.0,
+                "sweep_rad": 1.0,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": -1.0,
+                "sweep_rad": 1.0,
+                "rotation_rad": 0.0
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.75,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96
+        }
+      },
+      "request_sha256": "edaee0729a27c25c5b624874c2e629e4eab22ac414022794477d5fb01c90cb1c",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "26428310577028596410834373941",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "9778402749615377196687656307",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "26428310577028596410834373941",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "9778402749615377196687656307",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 1,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "3",
+              "rational_denominator": "4"
+            },
+            "second_distance_m": {
+              "rational_numerator": "3",
+              "rational_denominator": "4"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.75,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "CERTIFIED",
+      "classification": "SHARED_PARAMETER_ENDPOINT",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {
+        "shared_parameter_interval": [
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "fraction_intervals": [
+          [
+            {
+              "rational_numerator": "0",
+              "rational_denominator": "1"
+            },
+            {
+              "rational_numerator": "0",
+              "rational_denominator": "1"
+            }
+          ],
+          [
+            {
+              "rational_numerator": "1",
+              "rational_denominator": "1"
+            },
+            {
+              "rational_numerator": "1",
+              "rational_denominator": "1"
+            }
+          ]
+        ],
+        "identity": "same source parameterization and same orientation-adjusted signed distance"
+      },
+      "reason": "certified shared-parameter witness; other parameter pairs are not classified",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 3,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 5,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 5,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": 0.25,
+                "sweep_rad": 0.5,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": 2.5,
+                "sweep_rad": 0.5,
+                "rotation_rad": 0.0
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 2.5,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96
+        }
+      },
+      "request_sha256": "ca9b1a5eb44c4efd97d6f6563201cd306ed3acc7d26da51a655a9c356b47fa58",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "77164187536328803010672405643",
+                  "rational_denominator": "79228162514264337593543950336"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "77164187536328803010672405643",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 0,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "5",
+              "rational_denominator": "2"
+            },
+            "second_distance_m": {
+              "rational_numerator": "5",
+              "rational_denominator": "2"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 2.5,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "UNVERIFIED",
+      "classification": "UNVERIFIED",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {},
+      "reason": "no exact special-case classification; use finite-domain crossing search",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 3,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 5,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 5,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": 0.5,
+                "sweep_rad": 0.5,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_rad": -1.0,
+                "sweep_rad": 0.5,
+                "rotation_rad": 0.0
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.75,
+          "turn_direction": -1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96
+        }
+      },
+      "request_sha256": "01e90f4d66f677c3d7ec89003d6f26464065325e864834e347bc74a88904f909",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "PASS",
+        "candidates": [],
+        "unresolved": [],
+        "excluded": [],
+        "certificate": {
+          "status": "PASS",
+          "roots": [],
+          "unresolved": [],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 1,
+          "excluded_boxes": 1,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "-3",
+              "rational_denominator": "4"
+            },
+            "second_distance_m": {
+              "rational_numerator": "-3",
+              "rational_denominator": "4"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.75,
+        "turn_direction": -1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "CANDIDATES",
+      "scope": "certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "UNVERIFIED",
+      "classification": "UNVERIFIED",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {},
+      "reason": "no exact special-case classification; use finite-domain crossing search",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 3,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 5,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 5,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "hyperbola_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_parameter": 0.25,
+                "end_parameter": 0.75,
+                "branch": 1,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "hyperbola_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_parameter": -0.75,
+                "end_parameter": -0.25,
+                "branch": 1,
+                "rotation_rad": 0.0
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.75,
+          "turn_direction": -1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96
+        }
+      },
+      "request_sha256": "6dbfbbf5d92264b8f9173e8baa53b2a6c7896830af0ef111df932decfb917d1e",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "3546640597893261288196069849",
+                  "rational_denominator": "9903520314283042199192993792"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "6356879716389780910996923943",
+                  "rational_denominator": "9903520314283042199192993792"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "3546640597893261288196069849",
+                    "rational_denominator": "9903520314283042199192993792"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "6356879716389780910996923943",
+                    "rational_denominator": "9903520314283042199192993792"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 1,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "-3",
+              "rational_denominator": "4"
+            },
+            "second_distance_m": {
+              "rational_numerator": "-3",
+              "rational_denominator": "4"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.75,
+        "turn_direction": -1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "UNVERIFIED",
+      "classification": "UNVERIFIED",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {},
+      "reason": "no exact special-case classification; use finite-domain crossing search",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 3,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 5,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 5,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "hyperbola_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_parameter": 0.0,
+                "end_parameter": 1.0,
+                "branch": 1,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "hyperbola_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_parameter": -1.0,
+                "end_parameter": 0.0,
+                "branch": 1,
+                "rotation_rad": 0.0
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.75,
+          "turn_direction": -1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96
+        }
+      },
+      "request_sha256": "c852822375b87af6a64568d02edacfb57d540e048bd2ea6f303f37b59085cb15",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "23467175552965338283898259287",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "23467175552965338283898259287",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 0,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "-3",
+              "rational_denominator": "4"
+            },
+            "second_distance_m": {
+              "rational_numerator": "-3",
+              "rational_denominator": "4"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.75,
+        "turn_direction": -1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "CERTIFIED",
+      "classification": "SHARED_PARAMETER_ENDPOINT",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {
+        "shared_parameter_interval": [
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          },
+          {
+            "rational_numerator": "0",
+            "rational_denominator": "1"
+          }
+        ],
+        "fraction_intervals": [
+          [
+            {
+              "rational_numerator": "0",
+              "rational_denominator": "1"
+            },
+            {
+              "rational_numerator": "0",
+              "rational_denominator": "1"
+            }
+          ],
+          [
+            {
+              "rational_numerator": "1",
+              "rational_denominator": "1"
+            },
+            {
+              "rational_numerator": "1",
+              "rational_denominator": "1"
+            }
+          ]
+        ],
+        "identity": "same source parameterization and same orientation-adjusted signed distance"
+      },
+      "reason": "certified shared-parameter witness; other parameter pairs are not classified",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 3,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 5,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 5,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "hyperbola_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_parameter": 0.25,
+                "end_parameter": 0.75,
+                "branch": 1,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "hyperbola_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  1.0
+                ],
+                "start_parameter": -0.75,
+                "end_parameter": -0.25,
+                "branch": 1,
+                "rotation_rad": 0.0
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.75,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96
+        }
+      },
+      "request_sha256": "fe26518a4e7c3a1fbd19e02b47dea9942c48f9114eec5502d822fc80e1f4a012",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "PASS",
+        "candidates": [],
+        "unresolved": [],
+        "excluded": [],
+        "certificate": {
+          "status": "PASS",
+          "roots": [],
+          "unresolved": [],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 1,
+          "excluded_boxes": 1,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "3",
+              "rational_denominator": "4"
+            },
+            "second_distance_m": {
+              "rational_numerator": "3",
+              "rational_denominator": "4"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.75,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "CANDIDATES",
+      "scope": "certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "UNVERIFIED",
+      "classification": "UNVERIFIED",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {},
+      "reason": "no exact special-case classification; use finite-domain crossing search",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  }
+]

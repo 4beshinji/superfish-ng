@@ -1,5 +1,7 @@
 # 法線オフセットの弧端・退化診断
 
+2026-09-13 UTC：[有限オフセット診断の受入更新](G03_FINITE_OFFSETS_CHECKPOINT.md)。新規normal_offset_diagnosis/construction_offset_diagnosisは版4、要求は版1。保存構築診断版1/2/3は各当時の規則で再検証し、自動更新しない。同一支持円の真の周期と任意回転、同じ非円楕円/同枝双曲線の等距離自己接点を追加した。証拠のみの認証と全有限領域の完全性を区別する。
+
 2026-09-08。`offset_degeneracies.classify_offset_degeneracies` は中心軌跡の特殊ケースを
 厳密な有理数演算と有限弧の区間所属検査で分類する。単位はSI、座標順は(z,r)。
 診断は構築候補の自動選択や完成Caseではなく、G03の退化分類の部分実装である。
@@ -15,8 +17,9 @@
 |---|---|---|
 | DISJOINT | 対象領域で共有する中心点なし | true、finite_center_count=0 |
 | SINGLE_TANGENCY | 円同士または直線と円の唯一の支持接点が、両有限範囲に所属 | true、finite_center_count=1 |
-| INFINITE_PARAMETER_PAIRS | 同じ中心を与えるパラメータ対が無限個ある | 同一パラメータ区間の証拠はfalse。潰れた円や平行直線の完全分類はtrue |
-| SHARED_PARAMETER_ENDPOINT | 同じ元パラメータの端点、または一直線上の有限範囲の共有端点 | 一般弧の端点証拠はfalse。平行直線の完全分類はtrue |
+| INFINITE_PARAMETER_PAIRS | 同じ中心を与えるパラメータ対が無限個ある | 証拠のみならfalse。同一支持円・対象の同一円錐曲線・潰れた円・平行直線の全分類はtrue |
+| SHARED_PARAMETER_ENDPOINT | 同じ元パラメータの端点、または一直線上の有限範囲の共有端点 | 証拠のみならfalse。同一支持円・対象の同一円錐曲線・平行直線の全分類はtrue |
+| FINITE_CENTERS | 同じ非円楕円/同枝双曲線の全反射接点と共有端点を重複なく数えた有限中心 | true、finite_center_countは全数 |
 | COINCIDENT_SUPPORTING_CIRCLES | 支持円の中心と半径が同じ | false。元の有限弧同士が重なるとは限らない |
 | UNVERIFIED | この診断で証明できない、または有限弧所属の精度予算不足 | false。無交点・解数・接続可否を確定しない |
 
@@ -100,7 +103,7 @@ superfish-ng diagnose-construction out/construction-diagnosis-new.json --out out
 接触を証明しても、元の構築状態を変更しない。第2/3コマンドは診断の証明で終了コード0、
 出力のconstruction.statusはUNVERIFIEDのままである。FEMへ渡せるCaseは生成していない。
 
-診断文書はschema_version=1 / document_type=construction_offset_diagnosisで、
+新規診断文書はschema_version=4 / document_type=construction_offset_diagnosisで、
 元のconstruction全体、parameter_domain_box、diagnosisを保存する。構築文書自体の版や
 内容は変えない。再読込は元の構築要求から再構築し、診断も再計算して文書全体を照合する。
 診断、探索区間、構築内容、文書版の改変は拒否する。これは署名ではなく現在の実装での再現照合である。
@@ -113,9 +116,9 @@ GUIは版5/6構築の候補表示・選択後検査・再読込時に同じ診�
 「中心軌跡の診断を保存」からサーバーの直列化文字列を保存でき、構築ファイルと同じ入力欄で
 再検証して開ける。要求/候補の編集や改変拒否では診断保存も無効化する。
 元の構築ファイル保存と適用条件は維持し、診断がCERTIFIEDという理由で適用を許可しない。
-版1〜4にはこのオフセット診断を付けず、従来の保存/再構築を維持する。
+構築版1〜4にはこのオフセット診断を付けず、従来の保存/再構築を維持する。
 
 追加5テストは端点接触診断と未完成Caseの分離、延長区間の一致、通常の構築合格と
 特殊ケース未分類の両立、旧構築版の維持、改変拒否、CLI保存再実行/上書き拒否。
 Chrome11操作で診断表示・ダウンロード・再読込・改変拒否と未確認構築の適用不可まで確認。
-数学的な診断対象は前節と同じであり、一般重解や退化からの新しい構築候補生成は未実装である。
+診断対象は2026-09-13の受入範囲まで拡張した。異なる支持曲線の一般重解や退化からの新しい構築候補生成は未実装である。
