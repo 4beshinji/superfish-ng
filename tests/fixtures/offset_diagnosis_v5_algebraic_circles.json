@@ -1,0 +1,1180 @@
+[
+  {
+    "schema_version": 5,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 5,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 5,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  2.0
+                ],
+                "start_rad": -2.9,
+                "sweep_rad": 5.8,
+                "rotation_rad": 0.3
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  1.5,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  2.0
+                ],
+                "start_rad": -2.9,
+                "sweep_rad": 5.8,
+                "rotation_rad": 0.7
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.5,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96
+        }
+      },
+      "request_sha256": "cc0a3ccc1bf3f858105aef43a5442b1259234b26d16cddc74e04116b751031bc",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "8"
+                },
+                {
+                  "rational_numerator": "3",
+                  "rational_denominator": "16"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "8"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "8"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "8"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "3",
+                  "rational_denominator": "16"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "8"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "8"
+                  },
+                  {
+                    "rational_numerator": "3",
+                    "rational_denominator": "16"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "8"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "8"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "8"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "3",
+                    "rational_denominator": "16"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "8"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 1,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "1",
+              "rational_denominator": "2"
+            },
+            "second_distance_m": {
+              "rational_numerator": "1",
+              "rational_denominator": "2"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.5,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite conic offset crossings and bounded fillet contact error; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "UNVERIFIED",
+      "classification": "UNVERIFIED",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {},
+      "reason": "no exact special-case classification; use finite-domain crossing search",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  },
+  {
+    "schema_version": 5,
+    "document_type": "construction_offset_diagnosis",
+    "construction": {
+      "schema_version": 6,
+      "software_version": "0.1.0",
+      "request": {
+        "schema_version": 6,
+        "case_template": {
+          "schema_version": 3,
+          "name": "synthetic two-lobe conic fillet",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.4,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  2.0,
+                  2.0
+                ],
+                "start_rad": -2.9,
+                "sweep_rad": 5.8,
+                "rotation_rad": 0.3
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.5,
+                  -2.0
+                ],
+                "end_zr_m": [
+                  1.5,
+                  2.0
+                ]
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-12,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.0005,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "contour_mesh": {
+              "max_edge_m": 0.02,
+              "min_angle_deg": 10.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            },
+            "geometry_order": 2
+          },
+          "solver": {
+            "modes": 1,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "tm",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "pair_start": 1,
+        "controls": {
+          "radius_m": 0.5,
+          "turn_direction": 1,
+          "max_sweep_rad": 3.141592653589793,
+          "position_tolerance_m": 1e-12,
+          "angle_tolerance_rad": 1e-08,
+          "fraction_width": 5.684341886080802e-14,
+          "max_boxes": 8,
+          "precision_bits": 96,
+          "endpoint_width": 7.888609052210118e-31,
+          "max_series_terms": 96,
+          "allow_extension": false
+        }
+      },
+      "request_sha256": "e5efdae19ac4fd363bd992db83b8135727ff83643526e27563cef94678139f18",
+      "candidate_index": null,
+      "enumeration": {
+        "status": "UNVERIFIED",
+        "candidates": [],
+        "unresolved": [
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "7389392305745579259835449657",
+                  "rational_denominator": "39614081257132168796771975168"
+                },
+                {
+                  "rational_numerator": "15361984232691600220425453319",
+                  "rational_denominator": "79228162514264337593543950336"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "6964161515832220075098555709",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "256147864988408081245172639",
+                  "rational_denominator": "2475880078570760549798248448"
+                }
+              ]
+            ],
+            "certificate": {
+              "domain_box": [
+                [
+                  {
+                    "rational_numerator": "6604474465139734897179512351",
+                    "rational_denominator": "39614081257132168796771975168"
+                  },
+                  {
+                    "rational_numerator": "4200531535210519099359436841",
+                    "rational_denominator": "19807040628566084398385987584"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "501097534749341241547479903",
+                    "rational_denominator": "9903520314283042199192993792"
+                  },
+                  {
+                    "rational_numerator": "2797755312905739023028333711",
+                    "rational_denominator": "19807040628566084398385987584"
+                  }
+                ]
+              ],
+              "midpoint": [
+                {
+                  "rational_numerator": "15005537535560773095898386033",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "3799950382404421506123293517",
+                  "rational_denominator": "39614081257132168796771975168"
+                }
+              ],
+              "preconditioner": [
+                [
+                  {
+                    "rational_numerator": "2216935263837445",
+                    "rational_denominator": "18014398509481984"
+                  },
+                  {
+                    "rational_numerator": "-2216935263837445",
+                    "rational_denominator": "72057594037927936"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "8289204104251611",
+                    "rational_denominator": "576460752303423488"
+                  },
+                  {
+                    "rational_numerator": "-2284179517217481",
+                    "rational_denominator": "9007199254740992"
+                  }
+                ]
+              ],
+              "krawczyk_box": [
+                [
+                  {
+                    "rational_numerator": "7389392305745579259835449657",
+                    "rational_denominator": "39614081257132168796771975168"
+                  },
+                  {
+                    "rational_numerator": "15361984232691600220425453319",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "6964161515832220075098555709",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "256147864988408081245172639",
+                    "rational_denominator": "2475880078570760549798248448"
+                  }
+                ]
+              ],
+              "contraction_bound": {
+                "rational_numerator": "548399488687667983155411627613241133154888538883994513529226362189285514664501768307757800888466500033408552283947078249725400254179518679206520468102947920543193477102245120431430088905304913764432540245228729956517883995043584854629428234019249218823185391910605900823818485349539407240875932399608664043326213088107598500726131649694128497429117687749061159289197931042492749890388625498676774399909905125017208057882117409171730669474544666420608581071573179031508250722724093136844869664272597162515130516756766780877838063218506202714858357322540440233128159409642911248783588092170872971627357344916228356331327290967844141575125333835534366388144903242142360414788327905670193822032547522305387296232977081750770743681214472206768689908249078860102168784926529799500439039822402125339072497537753896848488158547039250322961192804300659822073200443691246557043498806655105603764687860188094865067978131334270804805744269220850019706949740677379776923804437855640595868906085979113759788303549397819785044296689726917760713866352640039265930885903331092431702418055827249894933479518813947933762342680773750449467070743041490336130852509481769010903004818377283961885152879977308064962888109851254752845264400652986413626199528929197866796327901945553772975399415350110106727415782910213576301440440234938369988947063541240248618157107917062600770926774441304197914329350444151924821201204654181604772978771560180592370797484057244291033354649341156798730833336708767152397613572481631115201338629135678510690116397577204635187964743663324545528604357408714489725384539673834859427801393605257226425466478487094239295932381974105697436320073907574102490116455883123405118173",
+                "rational_denominator": "1598689148021199227904222631830990928255850844723096651485370902957720236421175469747778499427325626221208073405943115024854450569557453174938434220406119444547005729171198422657320684392942450703249643146995450948130897704125467274300065423733052506757808583102721121838734220052545746768203963792719945908323398618786573652297372051637764900966898170195556573585463527368948018676788060537624422528839476649614269862360103854760007870367894396885843987983799464412073595759867469408074722195124398246241056853789646790779203793368011386085843256733296615870510536480044515197774129254463251976947001723472947022851290139299852506046017909219401957051483347718507563275639075271778389920570363977512810314008899486112979204206798060992327690321081305541016917385223465689643284628366604367857911168936822806794142132805294408594902070744012297917020851927479049845412705204049449353863610635788649941890823580910682448398951449894061193035967260584027419485210646751154266014676110150147787258027897956412861401440208184680877887590366428636197731074896101981509550134537793445412366602088904028719862617901845909752673332480563616579599855957120322895602903110599620838833887986449012625137002218165161501896562447901763710805922622171116987763093500335416106617225784014625425357393383245156815016253045450382083787963603473330871086692009901274917947729046486176678025071446584239029676374181248264220458393464997528816814681726066324441689959805530858579519203031394509616448227216188161778955737618039774550626169159811383030618215427786744133779786648756468359738167337575954095574255339132042153034073690212469456886226201320050046763478017313712784567297038263821371703296"
+              },
+              "strict_inclusion": true
+            },
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "1"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "37975769304269993538207241171",
+                  "rational_denominator": "79228162514264337593543950336"
+                },
+                {
+                  "rational_numerator": "37975769304269993538207241171",
+                  "rational_denominator": "39614081257132168796771975168"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          },
+          {
+            "parameter_box": [
+              [
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "4"
+                },
+                {
+                  "rational_numerator": "1",
+                  "rational_denominator": "2"
+                }
+              ],
+              [
+                {
+                  "rational_numerator": "0",
+                  "rational_denominator": "1"
+                },
+                {
+                  "rational_numerator": "37975769304269993538207241171",
+                  "rational_denominator": "79228162514264337593543950336"
+                }
+              ]
+            ],
+            "certificate": null,
+            "reason": "box budget exhausted"
+          }
+        ],
+        "excluded": [],
+        "certificate": {
+          "status": "UNVERIFIED",
+          "roots": [],
+          "unresolved": [
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "7389392305745579259835449657",
+                    "rational_denominator": "39614081257132168796771975168"
+                  },
+                  {
+                    "rational_numerator": "15361984232691600220425453319",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "6964161515832220075098555709",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "256147864988408081245172639",
+                    "rational_denominator": "2475880078570760549798248448"
+                  }
+                ]
+              ],
+              "certificate": {
+                "domain_box": [
+                  [
+                    {
+                      "rational_numerator": "6604474465139734897179512351",
+                      "rational_denominator": "39614081257132168796771975168"
+                    },
+                    {
+                      "rational_numerator": "4200531535210519099359436841",
+                      "rational_denominator": "19807040628566084398385987584"
+                    }
+                  ],
+                  [
+                    {
+                      "rational_numerator": "501097534749341241547479903",
+                      "rational_denominator": "9903520314283042199192993792"
+                    },
+                    {
+                      "rational_numerator": "2797755312905739023028333711",
+                      "rational_denominator": "19807040628566084398385987584"
+                    }
+                  ]
+                ],
+                "midpoint": [
+                  {
+                    "rational_numerator": "15005537535560773095898386033",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "3799950382404421506123293517",
+                    "rational_denominator": "39614081257132168796771975168"
+                  }
+                ],
+                "preconditioner": [
+                  [
+                    {
+                      "rational_numerator": "2216935263837445",
+                      "rational_denominator": "18014398509481984"
+                    },
+                    {
+                      "rational_numerator": "-2216935263837445",
+                      "rational_denominator": "72057594037927936"
+                    }
+                  ],
+                  [
+                    {
+                      "rational_numerator": "8289204104251611",
+                      "rational_denominator": "576460752303423488"
+                    },
+                    {
+                      "rational_numerator": "-2284179517217481",
+                      "rational_denominator": "9007199254740992"
+                    }
+                  ]
+                ],
+                "krawczyk_box": [
+                  [
+                    {
+                      "rational_numerator": "7389392305745579259835449657",
+                      "rational_denominator": "39614081257132168796771975168"
+                    },
+                    {
+                      "rational_numerator": "15361984232691600220425453319",
+                      "rational_denominator": "79228162514264337593543950336"
+                    }
+                  ],
+                  [
+                    {
+                      "rational_numerator": "6964161515832220075098555709",
+                      "rational_denominator": "79228162514264337593543950336"
+                    },
+                    {
+                      "rational_numerator": "256147864988408081245172639",
+                      "rational_denominator": "2475880078570760549798248448"
+                    }
+                  ]
+                ],
+                "contraction_bound": {
+                  "rational_numerator": "548399488687667983155411627613241133154888538883994513529226362189285514664501768307757800888466500033408552283947078249725400254179518679206520468102947920543193477102245120431430088905304913764432540245228729956517883995043584854629428234019249218823185391910605900823818485349539407240875932399608664043326213088107598500726131649694128497429117687749061159289197931042492749890388625498676774399909905125017208057882117409171730669474544666420608581071573179031508250722724093136844869664272597162515130516756766780877838063218506202714858357322540440233128159409642911248783588092170872971627357344916228356331327290967844141575125333835534366388144903242142360414788327905670193822032547522305387296232977081750770743681214472206768689908249078860102168784926529799500439039822402125339072497537753896848488158547039250322961192804300659822073200443691246557043498806655105603764687860188094865067978131334270804805744269220850019706949740677379776923804437855640595868906085979113759788303549397819785044296689726917760713866352640039265930885903331092431702418055827249894933479518813947933762342680773750449467070743041490336130852509481769010903004818377283961885152879977308064962888109851254752845264400652986413626199528929197866796327901945553772975399415350110106727415782910213576301440440234938369988947063541240248618157107917062600770926774441304197914329350444151924821201204654181604772978771560180592370797484057244291033354649341156798730833336708767152397613572481631115201338629135678510690116397577204635187964743663324545528604357408714489725384539673834859427801393605257226425466478487094239295932381974105697436320073907574102490116455883123405118173",
+                  "rational_denominator": "1598689148021199227904222631830990928255850844723096651485370902957720236421175469747778499427325626221208073405943115024854450569557453174938434220406119444547005729171198422657320684392942450703249643146995450948130897704125467274300065423733052506757808583102721121838734220052545746768203963792719945908323398618786573652297372051637764900966898170195556573585463527368948018676788060537624422528839476649614269862360103854760007870367894396885843987983799464412073595759867469408074722195124398246241056853789646790779203793368011386085843256733296615870510536480044515197774129254463251976947001723472947022851290139299852506046017909219401957051483347718507563275639075271778389920570363977512810314008899486112979204206798060992327690321081305541016917385223465689643284628366604367857911168936822806794142132805294408594902070744012297917020851927479049845412705204049449353863610635788649941890823580910682448398951449894061193035967260584027419485210646751154266014676110150147787258027897956412861401440208184680877887590366428636197731074896101981509550134537793445412366602088904028719862617901845909752673332480563616579599855957120322895602903110599620838833887986449012625137002218165161501896562447901763710805922622171116987763093500335416106617225784014625425357393383245156815016253045450382083787963603473330871086692009901274917947729046486176678025071446584239029676374181248264220458393464997528816814681726066324441689959805530858579519203031394509616448227216188161778955737618039774550626169159811383030618215427786744133779786648756468359738167337575954095574255339132042153034073690212469456886226201320050046763478017313712784567297038263821371703296"
+                },
+                "strict_inclusion": true
+              },
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "1"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "37975769304269993538207241171",
+                    "rational_denominator": "79228162514264337593543950336"
+                  },
+                  {
+                    "rational_numerator": "37975769304269993538207241171",
+                    "rational_denominator": "39614081257132168796771975168"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            },
+            {
+              "parameter_box": [
+                [
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "4"
+                  },
+                  {
+                    "rational_numerator": "1",
+                    "rational_denominator": "2"
+                  }
+                ],
+                [
+                  {
+                    "rational_numerator": "0",
+                    "rational_denominator": "1"
+                  },
+                  {
+                    "rational_numerator": "37975769304269993538207241171",
+                    "rational_denominator": "79228162514264337593543950336"
+                  }
+                ]
+              ],
+              "certificate": null,
+              "reason": "box budget exhausted"
+            }
+          ],
+          "domain_box": [
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ],
+            [
+              {
+                "rational_numerator": "0",
+                "rational_denominator": "1"
+              },
+              {
+                "rational_numerator": "1",
+                "rational_denominator": "1"
+              }
+            ]
+          ],
+          "boxes_checked": 8,
+          "excluded_boxes": 0,
+          "controls": {
+            "first_distance_m": {
+              "rational_numerator": "1",
+              "rational_denominator": "2"
+            },
+            "second_distance_m": {
+              "rational_numerator": "1",
+              "rational_denominator": "2"
+            },
+            "fraction_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "17592186044416"
+            },
+            "max_boxes": 8,
+            "precision_bits": 96,
+            "endpoint_width": {
+              "rational_numerator": "1",
+              "rational_denominator": "1267650600228229401496703205376"
+            },
+            "max_series_terms": 96
+          },
+          "scope": "complete finite-domain crossing search when PASS; rational existence/uniqueness certificates; no fillet trimming or physical accuracy claim"
+        },
+        "radius_m": 0.5,
+        "turn_direction": 1,
+        "max_sweep_rad": 3.141592653589793,
+        "arc_filter_status": "CERTIFIED_CONIC_FILLET_CONTACTS",
+        "scope": "certified finite offset crossings and bounded output contact errors; specified radius/turn/sweep; floating G1; closed contour checked separately"
+      },
+      "joins": null,
+      "case": null,
+      "status": "UNVERIFIED",
+      "scope": "certified finite line/conic offset crossings and bounded fillet contact error; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve"
+    },
+    "parameter_domain_box": [
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ],
+      [
+        {
+          "rational_numerator": "0",
+          "rational_denominator": "1"
+        },
+        {
+          "rational_numerator": "1",
+          "rational_denominator": "1"
+        }
+      ]
+    ],
+    "diagnosis": {
+      "status": "UNVERIFIED",
+      "classification": "UNVERIFIED",
+      "finite_domain_complete": false,
+      "finite_center_count": null,
+      "infinite_parameter_pairs": null,
+      "evidence": {},
+      "reason": "no exact special-case classification; use finite-domain crossing search",
+      "scope": "exact special-case offset diagnosis; witness is not exhaustive unless finite_domain_complete; no fillet selection or FEM accuracy claim"
+    }
+  }
+]

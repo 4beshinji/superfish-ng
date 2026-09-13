@@ -1,3 +1,19 @@
+2026-09-14 JST 最新継続状態。開始HEAD94b879c、cleanからG03の次課題を実装した。
+前goalターンは有理支持の有限交点の実装/受入/commitを完了したprogress。
+[一般二進回転/直線長を保持する円オフセット](ALGEBRAIC_CIRCULAR_OFFSETS.md)を限定受入。
+根号代数は最大3段階、従属根号も再帰的符号で判定。円・直線の接触/横断/離隔・
+同心円/潰れ/平行線と有限所属を追加した。新規診断版6、旧保存版1〜5は元規則を維持。
+元構築・Case適用可否・FEM/物理規約は変更しない。関連58unit25.348秒、独立1,944条件9.362秒がPASS。
+実Chrome初回/実サーバー再起動各8入力31チェック16取得がPASS。全保存バイト一致、新版3画像目視済み。
+両GUIサーバーは終了0で停止済み。実行中の検証ハンドルはない。
+記録はout/algebraic-circular-offsets-20260914と同independent/browser-{initial,restarted}系。
+詳細なパスと再現コマンドは上記文書。初回51unitの旧期待値9失敗をログに保持して明示更新した。
+旧版5 fixtureは公開分類器の変更前の自前構築2件。新外部資料・依存・旧版資産/実行・subagentなし。
+全suite/seed/Hosted CIは再実行していない。許容差とbenchmarksは不変。
+次はG03の非円楕円/双曲線の一般弧端/重解と新候補構築を限定する。
+C00.V対象版/必須集合、V02利用者業務、物理ピーク収束等も残る。全計画goalはactive、予算なし。
+親33=8受入/17進行/7他未受入/1範囲外。未解決の承認拒否や質問待ちはない。
+
 2026-09-14 JST 開発再開。ユーザーが既存計画の完走を`/goal`に指定し、予算なしのactive goalを作成した。
 作業checkoutは引き続き`/home/sin/code/agent/reserch/superfish-ng`。開始HEADはdbd5327、作業ツリーはcleanだった。
 [有理支持の異なる円・直線の有限交点診断](FINITE_CIRCULAR_CROSSINGS.md)を限定受入。

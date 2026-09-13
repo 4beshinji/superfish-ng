@@ -105,7 +105,7 @@ class GeneralCoincidentCircleArcTests(unittest.TestCase):
         result=self.diagnose(a,b,first_interval=(0.,.1),second_interval=(.8,1.))
         self.assertTrue(result['finite_domain_complete']);self.assertEqual(result['classification'],'DISJOINT')
 
-    def test_budget_preserves_known_witness_and_unequal_supports_are_not_promoted(self):
+    def test_budget_preserves_known_witness_and_unequal_supports_are_classified(self):
         a=EllipseArc((0,0),(2,2),0.,1.,.3)
         for start,kind in ((.5,'INFINITE_PARAMETER_PAIRS'),(1.,'SHARED_PARAMETER_ENDPOINT')):
             result=self.diagnose(a,replace(a,start_rad=start),max_series_terms=1)
@@ -114,7 +114,7 @@ class GeneralCoincidentCircleArcTests(unittest.TestCase):
         self.assertFalse(result['finite_domain_complete']);self.assertEqual(result['classification'],'COINCIDENT_SUPPORTING_CIRCLES')
         for b in (replace(a,center_zr_m=(math.nextafter(0.,1.),0)),replace(a,semiaxes_m=(3,3)),replace(a,rotation_rad=.1)):
             result=self.diagnose(a,b)
-            self.assertFalse(result['finite_domain_complete'])
+            self.assertTrue(result['finite_domain_complete']);self.assertEqual(result['classification'],'DISJOINT')
 
     def test_version_two_and_one_saved_documents_keep_original_rules_and_bytes(self):
         from copy import deepcopy
@@ -129,7 +129,7 @@ class GeneralCoincidentCircleArcTests(unittest.TestCase):
                 self.assertEqual(replay_construction_diagnosis(old),old)
                 self.assertEqual(tangent_document(old,replay=True)['offset_diagnosis'],old)
                 new=diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'],5);self.assertTrue(new['diagnosis']['finite_domain_complete'])
+                self.assertEqual(new['schema_version'],6);self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['construction'],old['construction']);self.assertEqual(replay_construction_diagnosis(new),new)
                 changed=deepcopy(new);changed['schema_version']=2
                 with self.assertRaises(ValueError):replay_construction_diagnosis(changed)

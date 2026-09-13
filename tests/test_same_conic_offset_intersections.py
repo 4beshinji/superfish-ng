@@ -118,7 +118,7 @@ class SameConicOffsetIntersectionTests(unittest.TestCase):
                 self.assertEqual(replay_construction_diagnosis(old),old)
                 self.assertEqual(tangent_document(old,replay=True)['offset_diagnosis'],old)
                 new=diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'],5);self.assertTrue(new['diagnosis']['finite_domain_complete'])
+                self.assertEqual(new['schema_version'],6);self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['diagnosis']['finite_center_count'],count)
                 self.assertEqual(new['construction'],old['construction']);self.assertEqual(replay_construction_diagnosis(new),new)
                 changed=deepcopy(new);changed['schema_version']=3

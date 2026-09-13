@@ -1,5 +1,9 @@
 # 法線オフセットの弧端・退化診断
 
+2026-09-14 JST：[一般二進回転/直線長の円オフセット](ALGEBRAIC_CIRCULAR_OFFSETS.md)を追加。
+新規診断は版6、旧保存構築診断版1〜5は元規則で再検証する。支持半径や直線長の平方根を
+丸めず、円・直線の接触/横断/離隔と有限所属を判定する。予算不足の未確認は維持する。
+
 2026-09-14 JST：[異なる円・直線の有限交点](FINITE_CIRCULAR_CROSSINGS.md)を追加。
 新規診断は版5、保存構築診断版1〜4は各当時の規則で再検証する。
 有理支持の二円/直線円の全二交点・非平行線の一交点を元有限区間へ照合する。
@@ -23,7 +27,7 @@
 | SINGLE_TANGENCY | 円同士または直線と円の唯一の支持接点が、両有限範囲に所属 | true、finite_center_count=1 |
 | INFINITE_PARAMETER_PAIRS | 同じ中心を与えるパラメータ対が無限個ある | 証拠のみならfalse。同一支持円・対象の同一円錐曲線・潰れた円・平行直線の全分類はtrue |
 | SHARED_PARAMETER_ENDPOINT | 同じ元パラメータの端点、または一直線上の有限範囲の共有端点 | 証拠のみならfalse。同一支持円・対象の同一円錐曲線・平行直線の全分類はtrue |
-| FINITE_CENTERS | 対象の同一円錐曲線の反射接点/共有端点、または有理支持の異なる円・直線の全交点から重複なく数えた有限中心 | true、finite_center_countは全数 |
+| FINITE_CENTERS | 対象の同一円錐曲線の反射接点/共有端点、または異なる円・直線の全交点から重複なく数えた有限中心 | true、finite_center_countは全数 |
 | COINCIDENT_SUPPORTING_CIRCLES | 支持円の中心と半径が同じ | false。元の有限弧同士が重なるとは限らない |
 | UNVERIFIED | この診断で証明できない、または有限弧所属の精度予算不足 | false。無交点・解数・接続可否を確定しない |
 
@@ -107,14 +111,15 @@ superfish-ng diagnose-construction out/construction-diagnosis-new.json --out out
 接触を証明しても、元の構築状態を変更しない。第2/3コマンドは診断の証明で終了コード0、
 出力のconstruction.statusはUNVERIFIEDのままである。FEMへ渡せるCaseは生成していない。
 
-新規診断文書はschema_version=5 / document_type=construction_offset_diagnosisで、
+新規診断文書はschema_version=6 / document_type=construction_offset_diagnosisで、
 元のconstruction全体、parameter_domain_box、diagnosisを保存する。構築文書自体の版や
 内容は変えない。再読込は元の構築要求から再構築し、診断も再計算して文書全体を照合する。
 診断、探索区間、構築内容、文書版の改変は拒否する。これは署名ではなく現在の実装での再現照合である。
 Pythonではdiagnose_construction / replay_construction_diagnosisを使える。
 CLIは保存構築または保存診断を受け取り、新規ファイルだけへ出力する。
 診断UNVERIFIEDは終了コード1だが、元の構築がCASE_VALIDATEDである場合もある。
-有理支持の円・直線の横断交点は版5の対象。その他の未確認診断も、構築の合格を取り消す根拠にはしない。
+有理支持の円・直線の横断交点は版5、一般の二進回転/直線長は版6の対象。
+その他の未確認診断も、構築の合格を取り消す根拠にはしない。
 
 GUIは版5/6構築の候補表示・選択後検査・再読込時に同じ診断を別欄へ表示する。
 「中心軌跡の診断を保存」からサーバーの直列化文字列を保存でき、構築ファイルと同じ入力欄で

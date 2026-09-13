@@ -80,7 +80,7 @@ class OffsetDegeneracyTests(unittest.TestCase):
         a,b=self.circles();r=self.diagnose(b,a);self.assertEqual(r['classification'],'SINGLE_TANGENCY')
         a=replace(a,semiaxes_m=(4,4));b=replace(b,center_zr_m=(4,0),semiaxes_m=(4,4))
         r=self.diagnose(a,b,2.,2.);self.assertEqual(r['evidence']['center_zr_m'],(F(2),F(0)))
-        a=replace(a,rotation_rad=.1);self.assertEqual(self.diagnose(a,b)['status'],'UNVERIFIED')
+        a=replace(a,rotation_rad=.1);self.assertEqual(self.diagnose(a,b)['classification'],'DISJOINT')
         for extra in ({'first_interval':(-.1,1.)},{'max_series_terms':True},{'endpoint_width':0}):
             with self.assertRaises(ValueError):self.diagnose(a,b,**extra)
         with self.assertRaises(ValueError):self.diagnose(a,b,True)

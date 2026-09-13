@@ -110,12 +110,12 @@ class FiniteCircularCrossingTests(unittest.TestCase):
         self.assertEqual(result['evidence']['supporting_center_count'], 2)
         # An excluded line fraction suffices even if arc membership exhausts its budget.
         self.assert_count(self.diagnose(a, LineSegment((1, 3), (1, 4)), max_series_terms=1), 0)
-        self.assertFalse(self.diagnose(a, replace(b, rotation_rad=.3))['finite_domain_complete'])
+        self.assert_count(self.diagnose(a, replace(b, rotation_rad=.3)), 2)
         self.assertFalse(self.diagnose(a, replace(b, semiaxes_m=(2, 1)))['finite_domain_complete'])
         for controls in ({'first_interval':(-1, 1)}, {'endpoint_width':0}, {'max_series_terms':True}, {'first_interval':(0, True)}):
             with self.assertRaises(ValueError): self.diagnose(a, b, **controls)
 
-    def test_saved_version_four_replay_and_new_five_cli_gui_keep_construction(self):
+    def test_saved_version_four_replay_and_current_cli_gui_keep_construction(self):
         from superfish_ng.construction_diagnostics import diagnose_construction, replay_construction_diagnosis
         from superfish_ng.gui import tangent_document
         from superfish_ng.cli import main
@@ -127,7 +127,7 @@ class FiniteCircularCrossingTests(unittest.TestCase):
                 self.assertFalse(old['diagnosis']['finite_domain_complete'])
                 self.assertEqual(replay_construction_diagnosis(old), old)
                 new = diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'], 5)
+                self.assertEqual(new['schema_version'], 6)
                 self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['construction'], old['construction'])
                 self.assertEqual(replay_construction_diagnosis(new), new)

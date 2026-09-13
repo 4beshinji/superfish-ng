@@ -221,7 +221,7 @@ def _classify_offset_degeneracies_v4(first,second,*,first_distance_m,second_dist
     return _report(**result)
 
 
-def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
+def _classify_offset_degeneracies_v5(first,second,*,first_distance_m,second_distance_m,
                                  first_interval=(0.,1.),second_interval=(0.,1.),
                                  endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
     """Version 5 also classifies all rational circular/straight crossings."""
@@ -231,6 +231,20 @@ def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance
     if previous['finite_domain_complete']:return previous
     from .finite_circular_crossings import classify_finite_circular_crossings
     result=classify_finite_circular_crossings((first,second),(first_distance_m,second_distance_m),
+        (first_interval,second_interval),endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    return previous if result is None else _report(**result)
+
+
+def classify_offset_degeneracies(first,second,*,first_distance_m,second_distance_m,
+                                 first_interval=(0.,1.),second_interval=(0.,1.),
+                                 endpoint_width=DEFAULT_ENDPOINT_WIDTH,max_series_terms=96):
+    """Version 6 retains algebraic radii and lengths for circular/straight offsets."""
+    previous=_classify_offset_degeneracies_v5(first,second,first_distance_m=first_distance_m,
+        second_distance_m=second_distance_m,first_interval=first_interval,second_interval=second_interval,
+        endpoint_width=endpoint_width,max_series_terms=max_series_terms)
+    if previous['finite_domain_complete']:return previous
+    from .algebraic_circular_offsets import classify_algebraic_circular_offsets
+    result=classify_algebraic_circular_offsets((first,second),(first_distance_m,second_distance_m),
         (first_interval,second_interval),endpoint_width=endpoint_width,max_series_terms=max_series_terms)
     return previous if result is None else _report(**result)
 
@@ -253,6 +267,6 @@ def diagnose_offsets_document(request):
     keys(controls,('first_distance_m','second_distance_m','first_interval','second_interval','endpoint_width','max_series_terms'),
          ('first_distance_m','second_distance_m'),'offset diagnosis controls')
     report=classify_offset_degeneracies(*(curve_from_dict(row) for row in rows),**controls)
-    return _json_value(dict(schema_version=5,document_type='normal_offset_diagnosis',software_version=__version__,
+    return _json_value(dict(schema_version=6,document_type='normal_offset_diagnosis',software_version=__version__,
                             request=deepcopy(request),request_sha256=hashlib.sha256(canonical.encode()).hexdigest(),
                             diagnosis=report))

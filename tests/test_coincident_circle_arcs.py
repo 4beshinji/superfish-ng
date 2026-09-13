@@ -90,10 +90,10 @@ class CoincidentCircleArcTests(unittest.TestCase):
         r=self.diagnose(a,b)
         self.assertEqual(r['classification'],'INFINITE_PARAMETER_PAIRS');self.assertTrue(r['finite_domain_complete'])
 
-    def test_unknown_rotation_budget_and_collapsed_center_are_not_promoted(self):
+    def test_unequal_rotation_norm_budget_and_collapsed_center_are_distinguished(self):
         a=EllipseArc((0,0),(2,2),0.,.5)
         r=self.diagnose(a,replace(a,rotation_rad=.1))
-        self.assertEqual(r['status'],'UNVERIFIED');self.assertFalse(r['finite_domain_complete'])
+        self.assertEqual(r['classification'],'DISJOINT');self.assertTrue(r['finite_domain_complete'])
         r=self.diagnose(a,replace(a,rotation_rad=math.pi),max_series_terms=1)
         self.assertFalse(r['finite_domain_complete'])
         r=self.diagnose(a,a,2.,2.)
@@ -116,7 +116,7 @@ class CoincidentCircleArcTests(unittest.TestCase):
                 self.assertEqual(restored['offset_diagnosis'],old)
                 self.assertEqual(json.loads(restored['diagnosis_serialized']),old)
                 new=diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'],5)
+                self.assertEqual(new['schema_version'],6)
                 self.assertTrue(new['diagnosis']['finite_domain_complete'])
                 self.assertEqual(new['construction'],old['construction'])
                 self.assertEqual(replay_construction_diagnosis(new),new)
