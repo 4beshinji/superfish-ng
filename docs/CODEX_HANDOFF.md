@@ -1,3 +1,9 @@
+2026-09-13：[B-H・反跳材料解からの平面Maxwell応力](PLANAR_MAGNETIC_FORCE_MATERIALS.md)を主ツリーへ統合・限定受入。
+B-H P1/反跳P1/P2の元実FEMを再検証し、宣言された真空の重み遷移だけでMaxwell応力を積分する。全B-H表・反跳主値/残留Bで真空を厳密判定し、非線形/異方性/残留磁化の対象を元解に保持する。独立62例、8メッシュ系列と6重み、解析Lorentz力/磁気モーメントトルク/材料対称性がPASS。旧56応力・40仮想仕事・24native報告が一致し元275ファイル不変。
+標準1356件（1353合格・3skip）、追加6unitと主6unitがPASS。固定851sourceを主857sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+材料仮想仕事と保存/CLI・GUI受渡し・軸対称の力/トルク、S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+planar-magnetic-force-materials統合/finalizer実行済み・再実行禁止。主857source。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
 2026-09-13：[平面磁場の力・トルク報告保存・CLI](PLANAR_MAGNETIC_FORCE_NATIVE.md)を主ツリーへ統合・限定受入。
 線形P1/P2の元native 5ファイルSHAに固定した力/二つのトルクと、明示nullまたは実変位FEM仮想仕事の完全JSONを保存・再計算する。API/CLIは元Case/場と規約、差分/求積診断を保持する。独立8例（仮想仕事4/応力のみ4）、26CLI、24報告と元native 40ファイルがPASS・不変。API/CLIのJSON/バイトが一致し、改変/上書き/リンク/中断を拒否。
 標準1350件（1347合格・3skip）、追加6unitとcapability 3unit、主6unitがPASS。固定848sourceを主854sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。

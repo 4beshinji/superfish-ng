@@ -1,14 +1,30 @@
 # SPDX-License-Identifier: Apache-2.0
 """Original planar FEM Maxwell stress and independent finite-displacement work."""
 import hashlib,json
+from fractions import Fraction
 import numpy as np
 from .constants import MU0
+from .planar_bh import PlanarBHCase,PlanarBHSolution,solve_planar_bh
+from .planar_recoil import PlanarRecoilCase,PlanarRecoilSolution,solve_planar_recoil
 from .bh_curve import _real_array
 from .planar_magnetostatic import PlanarMagnetostaticCase,PlanarMagnetostaticSolution,solve_planar_magnetostatic,planar_magnetostatic_quantities
 
 
+def _vacuum_cells(case):
+    p=case.partition
+    if type(case) is PlanarMagnetostaticCase:return p.mu_r==1.
+    materials={m.id:m for m in p.materials};region_vacuum=[]
+    for region in p.regions:
+        material=materials[region.material]
+        if type(case) is PlanarBHCase:
+            vacuum=all(Fraction(h)/Fraction(b)==Fraction(1./MU0) for b,h in zip(material.b_t[1:],material.h_a_per_m[1:]))
+        else:vacuum=material.mu_r_principal==(1.,1.) and material.remanent_b_local_t==(0.,0.)
+        region_vacuum.append(vacuum)
+    return np.asarray(region_vacuum)[p.cell_region_indices]
+
+
 def _request(case,body_region_ids,weights,origin_xy_m):
-    if type(case) is not PlanarMagnetostaticCase:raise ValueError('force requires an explicit linear scalar PlanarMagnetostaticCase')
+    if type(case) not in (PlanarMagnetostaticCase,PlanarBHCase,PlanarRecoilCase):raise ValueError('force requires an explicit planar scalar, B-H or recoil Case')
     p=case.partition;mesh=p.mesh
     if not isinstance(body_region_ids,(list,tuple)) or not body_region_ids or any(type(v) is not str for v in body_region_ids) or len(set(body_region_ids))!=len(body_region_ids):raise ValueError('force body_region_ids must be a nonempty distinct string sequence')
     if not set(body_region_ids)<=set(r.id for r in p.regions):raise ValueError('force body_region_ids contains an unknown region')
@@ -18,16 +34,18 @@ def _request(case,body_region_ids,weights,origin_xy_m):
     if np.any(w[np.unique(mesh.boundary_edges)]!=0.):raise ValueError('force weights must vanish on the whole outer boundary')
     values=w[mesh.triangles];current=np.array([case.current_density_z_a_per_m2[r.id] for r in p.regions])[p.cell_region_indices];body=np.array([r.id in body_region_ids for r in p.regions])[p.cell_region_indices];varying=np.any(values!=values[:,0,None],axis=1)
     if np.any(values[body]!=1.):raise ValueError('force weights must equal one throughout every body cell')
-    if np.any((p.mu_r[varying]!=1.)|(current[varying]!=0.)):raise ValueError('force weight gradients require strictly vacuum mu_r=1 and Jz=0 cells')
-    fixed_other=(~body)&((p.mu_r!=1.)|(current!=0.))
+    vacuum=_vacuum_cells(case)
+    if np.any((~vacuum[varying])|(current[varying]!=0.)):raise ValueError('force weight gradients require strictly vacuum mu_r=1 and Jz=0 cells')
+    fixed_other=(~body)&((~vacuum)|(current!=0.))
     if np.any(values[fixed_other]!=0.):raise ValueError('other current or nonvacuum regions must have weight zero')
     if not np.any(varying):raise ValueError('force requires a nonempty surrounding vacuum weight transition')
     return w,origin,body,varying
 
 
 def _verified(solution):
-    if type(solution) is not PlanarMagnetostaticSolution:raise ValueError('force currently requires a linear scalar PlanarMagnetostaticSolution')
-    fresh=solve_planar_magnetostatic(solution.case)
+    solvers={PlanarMagnetostaticSolution:solve_planar_magnetostatic,PlanarBHSolution:solve_planar_bh,PlanarRecoilSolution:solve_planar_recoil}
+    if type(solution) not in solvers:raise ValueError('force requires an explicit planar scalar, B-H or recoil FEM solution')
+    fresh=solvers[type(solution)](solution.case)
     if solution.reference_az_wb_per_m!=fresh.reference_az_wb_per_m or any(not np.array_equal(getattr(solution,k),getattr(fresh,k)) for k in ('az_wb_per_m','az_relative_to_reference_wb_per_m')):raise ValueError('force source coefficients disagree with actual FEM replay')
     return fresh
 
@@ -54,11 +72,16 @@ def _stress_integral(solution,w,origin,order):
 
 def planar_magnetic_force(solution,body_region_ids,weights,origin_xy_m):
     fresh=_verified(solution);w,origin,body,varying=_request(fresh.case,body_region_ids,weights,origin_xy_m);force,torque,absolute,nodal=_stress_integral(fresh,w,origin,3);other,other_t,_,other_nodal=_stress_integral(fresh,w,origin,4);total=np.r_[force.sum(axis=0),torque.sum(),nodal.sum()];difference=np.r_[(other-force).sum(axis=0),(other_t-torque).sum(),(other_nodal-nodal).sum()];scale=np.maximum(absolute,abs(total));relative=np.divide(abs(difference),scale,out=np.zeros(4),where=scale>0.)
-    return dict(format='superfish_ng_planar_magnetic_force',schema_version=1,source_case_sha256=hashlib.sha256(json.dumps(fresh.case.to_dict(),sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest(),
+    result=dict(format='superfish_ng_planar_magnetic_force',schema_version=1,source_case_sha256=hashlib.sha256(json.dumps(fresh.case.to_dict(),sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest(),
         body_region_ids=list(body_region_ids),weights=w.tolist(),origin_xy_m=origin.tolist(),body_cell_indices=np.flatnonzero(body).tolist(),vacuum_transition_cells=np.flatnonzero(varying).tolist(),
         force_xy_n_per_m=total[:2].tolist(),torque_z_nm_per_m=float(total[2]),nodal_rotation_stress_torque_z_nm_per_m=float(total[3]),nodal_minus_weighted_torque_nm_per_m=float(total[3]-total[2]),cell_nodal_rotation_stress_torque_z_nm_per_m=nodal.tolist(),cell_force_xy_n_per_m=force.tolist(),cell_torque_z_nm_per_m=torque.tolist(),absolute_integral_scales=absolute.tolist(),diagnostic_quantity_order=['Fx_N_per_m','Fy_N_per_m','weighted_torque_Nm_per_m','nodal_rotation_torque_Nm_per_m'],quadrature_orders=[3,4],quadrature_relative_differences=relative.tolist(),
         conventions='static real original FEM B; vacuum T=(B tensor B-|B|^2 I/2)/mu0; F/L=-integral T grad(w) dA [N/m]; torque/L=-integral ((x-origin) cross T grad(w))z dA [N m/m]; nodal rotation torque=-integral T:grad(P1(w*(-(y-origin_y),x-origin_x))) dA [N m/m], matched to actual nodal geometry variation; no RF phasor or implicit length',
         interpretation='declared body and continuous P1 weight; all transitions in vacuum without current; original field, weight/mesh and quadrature differences remain separate; no continuum error bound or material/axisymmetric extension')
+    if type(fresh) is not PlanarMagnetostaticSolution:
+        result.update(schema_version=2,source_physics=fresh.case.to_dict()['physics'],vacuum_material_policy='B-H: every declared H/B ratio exactly equals the input-float vacuum 1/MU0; recoil: declared principal mu_r=(1,1) and remanent B=(0,0); every varying-weight cell also has Jz=0',
+            interpretation='original verified B-H/recoil FEM B; all weight transitions are declared vacuum without current; nonlinear, anisotropic or remanent body remains in the actual source solve; weighted and nodal rotation stress torques retained separately; weight, mesh and quadrature diagnostics are not continuum error bounds; material virtual work and axisymmetry are unsupported')
+    return result
+
 
 
 def _displaced_case(case,w,body,origin,translation,angle):
@@ -78,6 +101,7 @@ def _stationary_potential(solution):
 
 
 def planar_magnetic_virtual_work(case,body_region_ids,weights,origin_xy_m,translation_steps_m,rotation_steps_rad):
+    if type(case) is not PlanarMagnetostaticCase:raise ValueError('virtual work currently requires a linear scalar PlanarMagnetostaticCase; material rotation and nonlinear failure handling are unsupported')
     w,origin,body,varying=_request(case,body_region_ids,weights,origin_xy_m);translation_steps=_real_array(translation_steps_m,'virtual translation steps [m]');rotation_steps=_real_array(rotation_steps_rad,'virtual rotation steps [rad]')
     for steps,name in ((translation_steps,'translation'),(rotation_steps,'rotation')):
         if steps.ndim!=1 or not 2<=len(steps)<=8 or np.any(steps<=0.) or np.any(steps[1:]>=steps[:-1]):raise ValueError('virtual '+name+' requires 2..8 strictly decreasing positive finite steps')
