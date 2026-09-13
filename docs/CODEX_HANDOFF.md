@@ -1,3 +1,21 @@
+2026-09-13 UTC 14:18:34 最新継続状態。主HEADは808ca27・901source・PHYSICS v28。以下の古い実行中/未実装記録より優先する。
+
+先行2候補は固定したまま標準検証中：相対四分の一回転/tmp/superfish-coincident-circle-arcs-20260913は899source、実ハンドル52289（13:07:11 UTC開始、期待1436=1433+3skip）。任意回転/tmp/superfish-general-coincident-circle-arcs-20260913は903source、実ハンドル57815（13:46:38開始、期待1443=1440+3skip）。両方14:16:41 UTCに生存確認。各out/validation-...-candidate-20260913とdev/standard.log。空ログはbufferingで、固定sourceを変更/重複起動しない。独立2688と4608/7056、各候補の実ブラウザー初回/実再起動・目視は既にPASS。両integrator/finalizerは未実行。親1436PASS→主905/21unit/finalizer/commit→後続1443PASS→主909/28unit/finalizer/commitの順。具体的なhelper絶対パスは直下の14時前の記録に保持する。mainの追加source統合はまだない。
+
+G03の次の限定課題を開始：docs/SAME_CONIC_OFFSET_SELF_INTERSECTIONS_PLAN.md。開発候補/tmp/superfish-same-conic-offset-self-intersections-20260913、dev=out/same-conic-offset-self-intersections-development-20260913。先行一般円903sourceから複製し、現在906source/10変更（新module/test/版3fixtureの3追加、offset診断/構築診断/GUI JS/既存test4変更）。開発中で未固定・主未統合・未受入。circle候補を変更していない。新規独立driver未作成、追加後は907source/主統合913を見込むが実数を確認すること。
+
+数学範囲は同じ中心・半軸・二進回転（双曲線は同じ枝）と向き補正距離が同じ二有限弧。非円楕円の等距離法線二接点θ=α±βの消去は(a²−b²)sinα cosα sin²β=0、異なる接点はどちらかの主軸の反射対。双曲線同枝では(a²+b²)sinhα coshα sinh²β=0でu,-uの反射対。具体的なq=sin²θ/sinh²uと距離符号・端等号、中心座標、二進回転ノルムL²の有理式は計画書を参照。周期を含む同じパラメータ対と有限自己接点を別に列挙し、全所属/除外/共有端点との重複が証明できた場合だけ全域分類する。別支持曲線・反対の双曲線枝は未確認を維持。FEM/構築/Case適用可否は不変。
+
+変更前の解析7例はinitial-invariant.jsonで未完を確認。直接の新実装は全7例の有限中心数1/2/1/0/1/2/0が一致。最初の6例目で共有端点照合が未対応coshを既存APIへ要求したため、sinhの区間とsqrt(1+sinh²)へ修正した。first-implementation-invariant-failure.json、修正前moduleとdirect-invariants-after-hyperbola-endpoint-fix.jsonを保持。新規一般診断/構築診断は版4、旧版3は_classify_offset_degeneracies_v3へ保存し、旧1/2も元規則を維持。FINITE_CENTERSは有限中心数を表示。既存証拠もmergeして保持。
+
+版3の自前構築診断7件を変更前に生成したtests/fixtures/offset_diagnosis_v3_same_conics.json（67087bytes）はdev/previous-version-three.jsonと同一。来歴/SHAはprevious-version-three-provenance.json。初回fixture helperは誤ったcontrols.turnをstrict parserが拒否、未出力。正しいturn_directionと宣言pair_startの別helperで生成した。両helper/失敗JSONを保存し再実行しない。
+
+専用35unit=新7+先行28は5.789秒でPASS、ResourceWarningなし（focused-indentation-fixed-unit.log、実ハンドル37193終了0）。新7は解析/交換/逆向き/2回転/3尺度/双曲線両枝、楕円両軸順、1 ULPで共有端点に自己交差が追加される境界、中心で重複する共有端点、零距離/真2pi周期/部分区間、Decimal平方根、低予算/不一致支持/strict、旧1/2/3保存再検証/CLIバイト/GUI応答/新版4を含む。parent-first-unit.logの4失敗は新規版と全域完全性への旧期待値で、明示更新した。first-focused-unit.logは版番号更新行の字下げ誤りでimport失敗、修正後35PASS。既存数値許容差/物理は変更なし。
+
+次は独立driverを作成する。実装のq公式を期待値に再利用せず、元normal変位の各対称軸成分を高精度で零点探索し、有限パラメータ所属と全中心数を照合する案。楕円はt=sinθ∈[0,1]で単調な速度から各法線成分を二分、角度は別のNewton三角参照。双曲線はt=sinh u≥0の速度と元normal成分を二分し、u=log(t+sqrt(1+t²))が参照。両楕円軸順/双曲線両枝、距離符号と閾値、元二進回転/尺度/部分区間/交換/逆向き、共有端点重複を含める。想定数6144等は未実行で証拠ではない。独立合格後にfinal unit→固定→標準1450（期待1447+3）/実Chrome初回・実再起動→目視→親受入後の統合へ進む。self候補のfreezer/integrator/finalizer/browser driverは未作成。現時点で標準を起動しない。
+
+開発10変更はdev/development-changes/、3helperはdev/helpers/、SHAと状態はdev/checkpoint.jsonへ保存。一般円の統合helper等8本はgeneral dev/helpers/に別途保持。唯一の実行中ハンドルは52289/57815。全GUIサーバーとChromeは停止済み。全計画goal ACTIVE・予算なし、親33=8受入/17進行/7他未受入/1範囲外、C00.VとV02は未確認。新規外部資料/旧版資産/依存/subagent/hosted CIなし。Wine実行環境は存在するので同じ探索/質問を繰り返さない。承認拒否や質問待ちなし。
+
 2026-09-13 UTC 13:58:01 最新継続状態。以下の古い実行中/未受入記録より優先する。
 
 主は04adb61・901source・PHYSICS v28。O02専用原要件照合と静的Study worker/GUIは受入済み。全計画goal ACTIVE・予算なし、親33=8受入/17進行/7他未受入/1範囲外、C00.V対象版/必須集合とV02利用者評価は未確認。主sourceの追加統合はまだない。
