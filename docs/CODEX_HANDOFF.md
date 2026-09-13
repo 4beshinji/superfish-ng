@@ -1,3 +1,24 @@
+2026-09-13 17:49 JST（08:49 UTC）— この節を以下の過去記録より優先。
+
+計画完走のgoalはACTIVE。全計画は未完、親33=8受入/17進行/7他未受入/1範囲外。現主ソース877、PHYSICS v28。今回89772d6で軸方向磁気力native、d9044e7で磁気報告GUI、8accb49でS05原要件照合をコミット済み。S05は13受入工程を原要件へ照合したが、C00.V対象版/必須範囲の確認待ちで親は未受入。旧ベンチマーク9モード19量はf差0/最大相対差8.882e-16、許容差不変。
+
+磁気報告GUIは固定871sourceを主877sourceへ統合済み。標準1392件（1389合格・3skip）3326.087秒と主12unit 86.631秒がPASS。独立20実worker/20初回/20再起動と140ダウンロード、Chrome初回28/再起動26項目・各20報告/140ダウンロードを確認。GUI統合/finalizer、軸力native統合/finalizer、S05照合finalizerは実行済み、再実行禁止。ローカルGUIサーバー/Chromeは稼働していない。
+
+進行中の固定候補は順に統合する。標準PASSと前段主ツリーの受入が条件。元候補には編集を加えず、既存出力も上書きしない。
+
+- 静的Project: /tmp/superfish-static-field-project-20260913、固定874source→主880source予定。標準1398件の実ハンドル95869（08:14 UTC開始）。独立out/static-field-project-independent-mesh-trial-20260913/report.jsonは33元Case/66 Project、66実再求解・134 CLI、元165/新594ファイルが125.550秒でPASS。unit 9件38.536秒PASS。初回独立の静電partition.meshキー取り違えは検証側だけ修正し失敗記録を保持。統合待ちhelper /tmp/integrate-static-field-project-20260913.py、主test_static_field_project 6件をout/static-field-project-development-20260913/main-unit.logへ実行後、/tmp/finalize-static-field-project-docs-20260913.py。どちらも未実行。
+- 静的worker: /tmp/superfish-static-field-jobs-20260913、固定877source→主883source予定。標準1404件の実ハンドル86870（08:36 UTC開始）。独立out/static-field-jobs-independent-corrected-trial-20260913/report.jsonは33成功/9実非線形失敗のAPI/実worker/CLI各42件、再起動42件、87 CLI、元192/新954ファイルが335.915秒でPASS。初回unitは8合格/1検証用一時保存先名の重複エラー、正確に修正した1件1.656秒PASS、計9 unique。既存RF/磁気Job 13件37.643秒PASS。初回独立42件335.192秒も保持し、修正後の全sourceへ結び付けるため別出力へ最終比較を実施した。統合待ちhelper /tmp/integrate-static-field-jobs-20260913.py、主test_static_field_jobs 6件をout/static-field-jobs-development-20260913/main-unit.logへ実行後、/tmp/finalize-static-field-jobs-docs-20260913.py。どちらも未実行。
+
+編集可能な次工程は/tmp/superfish-static-field-gui-20260913。固定worker877sourceから作成し、現881source（4新規+10既存変更）。gui_static_fields.py、static.html/js、test_gui_static_fields.pyを追加し、gui/model/capability/4既存画面ナビ/RF履歴と既存Project/workerのGUI capability期待値2件を更新した。入力はJSON文字列をサーバーの厳密parserへ渡し、m/mmは表示だけ。実worker、非同期の元FEM再検証、毎回SHA、セル中心の片側元場の一定色三角形表示、全Case/量/材料・実失敗履歴と元バイト取得を接続。失敗にはplot=null。RF周波数/二つのR/Q/モード番号はN/A。
+
+静的GUIのunit 11件（新6+cap3+既存capability期待値が変わる入力/worker各1）は82.959秒PASS、Node構文検査もPASS。試作viewは受入済み42元Job（33成功/9実失敗）を確認し、out/static-field-gui-development-20260913/prototype-view.logに保持。これは独立GUI受入/実ブラウザー検証ではない。まだ独立validatorとChrome driverは未作成、ブラウザー・標準回帰・freeze・主統合も未実施。次は全11形式/次数、元場/全量/単位・Project往復、実worker/再起動、各6成功/4失敗ファイルの元バイトダウンロードと改変拒否を独立に照合し、実Chrome初回/再起動と表示目視を実施する。既存磁気報告/RF操作も確認する。新script 2件を追加すれば固定883source/主889source/標準1410件の見込みだが実数を照合する。失敗時は候補を固定せず原因を修正し、実結果を保持する。
+
+最新の完全fingerprint/実ハンドル/準備済みhelper一覧はout/static-integration-checkpoint-20260913-084804.json。/tmp/checkpoint-static-integration-20260913.pyは現主877・静的GUI881を前提に新しい時刻名で監査を保存できる。Project/workerのfreezerと/tmp/prepare-static-field-gui-20260913.pyは実行済み、再実行禁止。静的GUIの独立検証・browser・受入helperはまだ存在しない。
+
+候補内では絶対パスの主.venv/bin/pythonを使い、cwdを候補、PYTHONPATH=src（unitはsrc:tests）、OPENBLAS_NUM_THREADS=1とする。editable installの主ソースを誤って読み込まない。標準ログは完了時まで空でも正常。標準の3skipは任意NGSolve参照2/HTTP環境1で固定。主source fingerprintを統合helperが検証する。不変egg-info 6件を削除しない。全源/数値出力の同一性を確認後に文書・次計画を選択してローカルコミットする。新規依存・サブエージェント・hosted CIの実施主張なし。
+
+Wine実行ファイルの存在は確認済み。SUPERFISH prefixは未特定だが環境全体が存在しないとは扱わない。今回Wine/旧版実行やパスの再走査・再質問はしていない。ユーザー所有の旧版コード/バイナリは読まない。実作業rootはこのworkspaceであり、古いAGENTSの/home/sin/code/superfishへ移動しない。
+
 2026-09-13：[S05原要件の受入照合](S05_ACCEPTANCE.md)を完了。
 S02に基づく平面多極・力/トルク・実変位FEM仮想仕事、正半径の線形軸力、元native/CLIと磁気報告GUIの専用範囲を照合した。全周量/単位長量、未実施/零/実求解失敗、元場/材料/履歴を区別する。標準1392件と主12unit、実Chrome初回/再起動の受入証拠がある。
 対象版と未対応な軸力範囲の必須性はC00.V未確認。親S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
