@@ -95,7 +95,7 @@ class AlgebraicCircularOffsetTests(unittest.TestCase):
         for controls in ({'endpoint_width':0}, {'max_series_terms':False}, {'second_interval':(0, 2)}):
             with self.assertRaises(ValueError): self.diagnose(a, b, .5, .5, **controls)
 
-    def test_saved_version_five_and_new_six_keep_construction_and_bytes(self):
+    def test_saved_version_five_and_current_keep_construction_and_bytes(self):
         from superfish_ng.construction_diagnostics import diagnose_construction, replay_construction_diagnosis
         from superfish_ng.gui import tangent_document
         from superfish_ng.cli import main
@@ -107,7 +107,7 @@ class AlgebraicCircularOffsetTests(unittest.TestCase):
                 self.assertFalse(old['diagnosis']['finite_domain_complete'])
                 self.assertEqual(replay_construction_diagnosis(old), old)
                 new = diagnose_construction(old['construction'])
-                self.assertEqual(new['schema_version'], 6)
+                self.assertEqual(new['schema_version'], 7)
                 self.assert_count(new['diagnosis'], 2)
                 self.assertEqual(new['construction'], old['construction'])
                 self.assertEqual(replay_construction_diagnosis(new), new)

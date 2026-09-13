@@ -1631,7 +1631,7 @@ function showTangent(response) {
   $("tangent-diagnosis-save").disabled = !diagnosis;
   $("tangent-offset-status").hidden = !diagnosis;
   if (diagnosis) {
-    const names = {DISJOINT:"共有する中心点なし", SINGLE_TANGENCY:"1点で接触", FINITE_CENTERS:`共有する中心点は${diagnosis.finite_center_count}個`, INFINITE_PARAMETER_PAIRS:"対応するパラメータ対が無限個", SHARED_PARAMETER_ENDPOINT:"共有端点あり", COINCIDENT_SUPPORTING_CIRCLES:"支持円が一致"};
+    const names = {DISJOINT:"共有する中心点なし", SINGLE_TANGENCY:"1点で接触", FINITE_CENTERS:`共有する中心点は${diagnosis.finite_center_count}個`, TANGENCY_WITNESSES:`接触のある中心点を${diagnosis.evidence.tangency_witness_center_count}個確認`, INFINITE_PARAMETER_PAIRS:"対応するパラメータ対が無限個", SHARED_PARAMETER_ENDPOINT:"共有端点あり", COINCIDENT_SUPPORTING_CIRCLES:"支持円が一致"};
     $("tangent-offset-status").textContent = diagnosis.status === "UNVERIFIED"
       ? "中心軌跡の特殊ケース診断: 対象外または未確認です。構築の可否は上の検査結果を参照してください。"
       : `中心軌跡の特殊ケース診断: ${names[diagnosis.classification] ?? diagnosis.classification}。${diagnosis.finite_domain_complete ? "指定範囲全体を分類済みです。" : "この事実を確認しました。指定範囲全体の分類は未完了です。"} 構築の可否は上の検査結果を参照してください。`;

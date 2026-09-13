@@ -5,13 +5,13 @@ from fractions import Fraction
 from .config import keys
 from .conics import curve_from_dict
 from .tangent_construction import _canonical, _json_value, replay_construction
-from .offset_degeneracies import classify_offset_degeneracies, _classify_offset_degeneracies, _classify_offset_degeneracies_v2, _classify_offset_degeneracies_v3, _classify_offset_degeneracies_v4, _classify_offset_degeneracies_v5
+from .offset_degeneracies import classify_offset_degeneracies, _classify_offset_degeneracies, _classify_offset_degeneracies_v2, _classify_offset_degeneracies_v3, _classify_offset_degeneracies_v4, _classify_offset_degeneracies_v5, _classify_offset_degeneracies_v6
 
 
-def _from_replayed_construction(construction, *, schema_version=6):
+def _from_replayed_construction(construction, *, schema_version=7):
     """Internal: construction must be freshly built or successfully replayed."""
-    if type(schema_version) is not int or schema_version not in (1,2,3,4,5,6):
-        raise ValueError('construction offset diagnosis requires schema version 1, 2, 3, 4, 5 or 6')
+    if type(schema_version) is not int or schema_version not in (1,2,3,4,5,6,7):
+        raise ValueError('construction offset diagnosis requires schema version 1, 2, 3, 4, 5, 6 or 7')
     if construction['schema_version'] not in (5,6):return None
     request=construction['request'];index=request['pair_start']
     curves=[curve_from_dict(row) for row in request['case_template']['geometry']['curves'][index:index+2]]
@@ -20,7 +20,7 @@ def _from_replayed_construction(construction, *, schema_version=6):
         return Fraction(int(value['rational_numerator']),int(value['rational_denominator']))
     domain=[tuple(rational(x) for x in interval) for interval in search['domain_box']]
     controls=search['controls']
-    classifier = {1:_classify_offset_degeneracies,2:_classify_offset_degeneracies_v2,3:_classify_offset_degeneracies_v3,4:_classify_offset_degeneracies_v4,5:_classify_offset_degeneracies_v5,6:classify_offset_degeneracies}[schema_version]
+    classifier = {1:_classify_offset_degeneracies,2:_classify_offset_degeneracies_v2,3:_classify_offset_degeneracies_v3,4:_classify_offset_degeneracies_v4,5:_classify_offset_degeneracies_v5,6:_classify_offset_degeneracies_v6,7:classify_offset_degeneracies}[schema_version]
     diagnosis=classifier(*curves,
         first_distance_m=rational(controls['first_distance_m']),second_distance_m=rational(controls['second_distance_m']),
         first_interval=domain[0],second_interval=domain[1],endpoint_width=rational(controls['endpoint_width']),
