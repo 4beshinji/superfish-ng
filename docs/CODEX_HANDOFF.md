@@ -1,3 +1,18 @@
+2026-09-13 UTC 10:11:14 最新継続状態。以下の古い詳細より、この冒頭を優先する。
+
+主実装の受入コミットは2c75de5、主883source、PHYSICS v28（後続の文書コミットはgit logで確認）。静的Project worker/API/CLIを限定受入しコミット済み。標準1404件（1401合格・3skip）3452.844秒、主6unit 90.673秒。独立42成功/実失敗例・API/実worker/CLI・再起動、87 CLI、元192/新954ファイル不変。旧seed9モード19量はf差0、最大相対差8.882e-16。static-field-jobs integrator/finalizerは実行済み、再実行しない。
+
+静的GUI候補 /tmp/superfish-static-field-gui-20260913 は固定883source・主未統合。独立color-trial 42例189.259秒、33成功/9実失敗、42実worker・初回/再起動各42 replay/234取得、元360/新318ファイル不変。実Chromeは初回42例56チェック、実サーバー再起動42例50チェック、各234元ファイル取得（初回編集Project 42取得は別）。既存磁気報告も初回20件28チェック/再起動20件26チェック、各140取得とRF実求解/native一致。静的中止・強制終了・改変拒否/正常結果へ復帰・厳密JSON負のゼロ・全場/単位、目視済み。全Chrome/サーバーは終了済み。初回2つの失敗は保持し、最終記録に混同しない。
+GUI標準1410件はハンドル55111、out/validation-static-field-gui-candidate-20260913、ログout/static-field-gui-development-20260913/standard.logで進行中。固定sourceを変更/再実行しない。/tmp/integrate-static-field-gui-20260913.py と /tmp/finalize-static-field-gui-docs-20260913.py は未実行。標準PASS後に前者、主test_gui_static_fields 6件を同dev/main-unit.log、後者、明示ファイルをローカルコミット。期待主889source。GUI freezerは実行済み。
+
+静的Study入力候補 /tmp/superfish-static-field-study-input-20260913 は固定886source・主未統合。StaticFieldStudyの厳密uniform_scale/excitation_scale、初期値/条件保持、非上書き保存/normalize-static-studyとcapability、7新unit・独立scriptを実装。元基底の重複検査を削減し各条件は独立deepcopyと専用parser検査を保持（1024要素3条件8.001→6.476秒、全Case同一）。最終10unit 231.638秒PASS。初回の未実装/import失敗、9unitの幾何尺度1失敗と修正ログを保持。理論上零の横成分の丸め差を自身で割る検証を、共通の解析ベクトル場尺度へ修正し許容値/FEM不変。解析24組の最大相対差5.968e-14/解析との差7.398e-14、穴/非零源1unitと修正幾何1unitもPASS。極端1e308尺度の拒否で既存幾何parserのRuntimeWarningが出るが、ResourceWarningではなく入力は拒否される。
+初回独立は33 DONE/165対native後、物理名electrostaticの誤選択による幾何0件で最終coverage assertion失敗。out/static-field-study-input-independent-trial-20260913/attempt-summary.jsonに記録し未受入。正しいlinear_electrostaticと幾何4件必須へ修正した最終独立は 537.463秒PASS、33 Case/66 Study/165条件/330直接FEM対比較・66 CLI、励起不変量72/幾何4条件。元297/新1914ファイル不変、実非線形失敗0点（零なら実失敗を試したとは主張しない）。最終報告はout/static-field-study-input-independent-final-trial-20260913/report.json。
+Study入力標準1417件はハンドル91690、out/validation-static-field-study-input-candidate-20260913、ログout/static-field-study-input-development-20260913/standard.logで進行中。/tmp/integrate-static-field-study-input-20260913.py と /tmp/finalize-static-field-study-input-docs-20260913.py は未実行。先にGUIを主889へ受入し、この標準PASS後に統合、主test_static_field_study 7件を同dev/main-unit.log、文書finalizer、コミット。期待主892source。Study入力のclone/apply-geometry-test/freezerは実行済み・再実行禁止。
+
+次はdocs/STATIC_FIELD_STUDY_JOBS_PLAN.mdの実worker/各条件保存・CLI、その後静的Study GUI。Study全体はdocs/STATIC_FIELD_STUDY_PLAN.md、入力限定範囲を全体完了としない。worker候補/実装はまだない。全計画goalはactive・予算なし。親33=8受入/17進行/7他未受入/1範囲外で未完。C00.V対象版未確認。進展があるのでblocked/completeへ変更しない。
+
+作業rootは/home/sin/code/agent/reserch/superfish-ng（AGENTSの/home/sin/code/superfishは旧マシンの記述）。候補は主の絶対.venv/bin/pythonとcwd候補、OPENBLAS_NUM_THREADS=1 PYTHONPATH=src（unitはsrc:tests）で実行。旧版再探索・Wine実行やパス再質問をしていない。Wine実行ファイルは既存、SUPERFISH prefixは未特定で、Wine自体が無いとは言わない。新規依存・旧版コード/バイナリ検査・subagentなし。git add/commitのみ必要時require_escalated、拒否なし。生出力はignored out/、既存出力を上書きしない。保存スナップショット out/static-continuation-checkpoint-20260913-101114.json。
+
 2026-09-13：[静的Projectの実worker・保存・CLI](STATIC_FIELD_JOBS.md)を主ツリーへ統合・限定受入。
 既存11種類の専用FEMを同じProjectから求解し、成功native 5ファイルと実非線形失敗3ファイルを保存・再現する。JobManagerの別プロセス・再起動・中止とCLI 0/1/2、全SI Case/結果/失敗履歴を保持する。独立42例（成功33/実失敗9）のAPI/実worker/CLI各42件と再起動42件、87 CLI、元192/新954所有ファイルが一致・不変。
 標準1404件（1401合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定877sourceを主883sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
