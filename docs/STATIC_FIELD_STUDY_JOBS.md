@@ -1,0 +1,23 @@
+# O02: 静的Studyの実worker・各条件保存・CLI
+
+2026-09-13 JST。候補検証中、主ツリー未統合・未受入。[受入計画](STATIC_FIELD_STUDY_JOBS_PLAN.md)。
+
+execute_static_field_studyとJobManager.start_static_field_studyを追加する。基底StaticFieldStudyの全派生Projectを出力予約前に検査し、既存の静的Project実行APIを入力順に呼ぶ。全11形式・対応次数と両パラメータに同じ専用FEMを使用し、各条件に元の初期値/反復条件を渡す。前の条件の解によるwarm startや解枝/モード追跡、新しいソルバーは導入しない。
+
+kind=static_field_study、結果はsuperfish_ng_static_field_study_result/schema_version=1。全条件を実行して元nativeを保存・再検証できたStudyはJob status=complete、結果execution_status=completeとなる。all_points_successful、successful_points、nonlinear_failed_pointsを別に保持し、実行完了を全点の求解成功へ読み替えない。各pointはindex・value・directoryと、元のStaticFieldProjectの完全結果/Caseまたは実非線形失敗履歴を含む。成功nativeは5ファイル、失敗nativeは3ファイルのまま。失敗点へ場や零の量を作らない。
+
+所有Study JSON、各条件Project、全native、Job metadataをmanifestのSHAへ拘束し、親と全pointの実装SHAを一致させる。exclusive claimと出力先の非上書きで二重worker/既存結果の再実行を拒否する。各点の保存直後のhashを保持し、以前の点を後から改変しても完了manifestへ取り込まない。入力・実装の途中変更と保存/再検証エラーは親をfailed/outcome_saved=falseとし、中断や部分成功を完了Studyとして読まない。
+
+read_static_field_studyは元Studyから全Projectを再構築し、各点の専用FEMと成功/実失敗nativeを再検証する。全Case・全量/履歴、条件順と値、点数/成否、来歴と所有バイトを照合する。欠落/余分な点、リンク、改変してhashを付け直した要約/量/Project、kindの除去や状態の書換えを拒否する。read_jobも専用Studyを入力/結果formatから識別し、RFの保存結果へ読み替えない。非objectのJob状態には明示的な入力エラーを返す。
+
+solve-static-study INPUT --out DIRECTORYとreplay-static-study DIRECTORYは同じ完全JSONを返す。全点成功0、全条件実行完了かつ実非線形失敗点あり1、不正/未完/IO失敗2。専用Study GUIは後続で、現段階のRF履歴では静的Studyを区別して完了結果のRF表示を無効にし、RF追跡候補から除外する。実行中の中止は保持する。
+
+単体検証では全11形式・19次数組合せと両パラメータの全Case/元FEM結果、3座標系の成功2点/実失敗1点のStudyと既存9失敗Case、中止/強制終了/再起動、途中変更/保存エラー・改変/重複worker/非上書き、CLI 0/1/2を確認する。試作でも励起0/1/1000に対して、平面/軸接続B-Hはline_search_limit、正半径B-Hはinvalid_initial_fieldとなる実失敗を、元FEMで確認した。
+
+初回10件のテスト呼出は8合格・2エラーだった。一つは既存JobManagerを対応していないwith構文で使った検証手順で、manager.lockの未closeを示すResourceWarningも記録した。もう一つは既存CLIテスト名の誤指定。検証側をcontextlib.closingによる既存close APIへ変更し、実worker/再起動/中止/強制終了の1件は21.661秒・ResourceWarningなしで合格した。既存の正しいCLIテストとRF Job/平面・Hphi Studyなど24件も19.252秒で合格。失敗した呼出の記録は保持し、合格へ読み替えない。物理実装・許容差の修正はない。
+
+独立比較は入力段階で独立照合済みの66 Study/165条件に、元の3種類×3座標系の失敗Caseを保持した9 Study/18条件と、成功/失敗を混ぜた3 Study/9条件を加える。計78 Study・192条件（成功171/実非線形失敗21）をAPI/実worker/CLIの各経路と再起動で比較する。全Case/全量・履歴と元nativeバイトを一致させ、参照/所有ファイルの変更を検出する。実行結果・時間・固定sourceと標準回帰の合格は受入時に追記する。
+
+この工程は既存専用FEMのStudy実行契約。GUI、対象版、O02親と全計画は未完。離散/Newton残差を場/積分の精度保証とせず、新規依存・外部サービス・旧版実行/コード再利用は導入しない。
+
+初回の独立比較は24 Study完了後、1024三角形の元Caseでプロセス終了待ちが15秒を超え失敗した。保存されたcomplete状態の後にも元FEMによる全条件の再検証が続くため、検証側を元900秒の実行期限内で終了まで待つよう修正した。元メッシュ/FEM/許容差と初回の全失敗出力を保持し、別のprocess-wait-trial出力で全比較を再実行中。初回試行を合格とは扱わない。
