@@ -29,8 +29,8 @@ def _canonical(value):
 def _request(request):
     keys(request, ('schema_version', 'case_template', 'pair_start', 'controls'),
          ('schema_version', 'case_template', 'pair_start', 'controls'), 'tangent construction request')
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4, 5, 6, 7):
-        raise ValueError('tangent construction request requires schema_version 1, 2, 3, 4, 5, 6 or 7')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4, 5, 6, 7, 8):
+        raise ValueError('tangent construction request requires schema_version 1, 2, 3, 4, 5, 6, 7 or 8')
     _canonical(request)  # Reject nonfinite JSON values even in the unfinished template.
     template = request['case_template']
     keys(template, ('schema_version', 'name', 'geometry', 'mesh', 'solver', 'rf', 'model', 'boundaries'),
@@ -62,6 +62,9 @@ def _request(request):
             raise ValueError('version 4 fillet pair requires two directed lines')
     elif any(not isinstance(curve,(EllipseArc,HyperbolaArc)) for curve in pair):
         raise ValueError('tangent pair must contain two ellipse or hyperbola arcs')
+    if request['schema_version']==8:
+        if sum(isinstance(c,EllipseArc) and c.semiaxes_m[0]==c.semiaxes_m[1] for c in pair)!=1:
+            raise ValueError('version 8 requires one circle and one noncircular ellipse or hyperbola arc')
     if tags[index:index+2] != ['pec','pec']:
         raise ValueError('tangent construction currently requires two PEC primitives')
     controls = request['controls']
@@ -80,10 +83,11 @@ def _request(request):
         allowed=('radius_m','turn_direction','max_sweep_rad','position_tolerance_m','angle_tolerance_rad',
                  'fraction_width','max_boxes','precision_bits','endpoint_width','max_series_terms')
     if request['schema_version']==6:allowed+=('allow_extension',)
-    if request['schema_version']==7:
+    if request['schema_version'] in (7,8):
         allowed=('radius_m','turn_direction','max_sweep_rad','position_tolerance_m','angle_tolerance_rad',
                  'fraction_width','max_root_boxes','max_refinements','max_fraction_steps',
-                 'endpoint_width','max_series_terms','allow_extension')
+                 'endpoint_width','max_series_terms')
+        if request['schema_version']==7:allowed+=('allow_extension',)
     keys(controls, allowed, allowed, 'tangent controls')
     return template, geometry, curves, index, controls
 
@@ -120,6 +124,10 @@ def construct_tangent_case(request, *, candidate_index=None):
         from .algebraic_conic_fillet import algebraic_conic_fillet_candidates, connect_algebraic_conic_fillet
         enumerate_candidates,connect=algebraic_conic_fillet_candidates,connect_algebraic_conic_fillet
 
+    elif request['schema_version']==8:
+        from .circle_conic_fillet import circle_conic_fillet_candidates, connect_circle_conic_fillet
+        enumerate_candidates,connect=circle_conic_fillet_candidates,connect_circle_conic_fillet
+
     if candidate_index is None:
         enumeration = enumerate_candidates(first, second, **controls)
         case, joins = None, None
@@ -149,7 +157,9 @@ def construct_tangent_case(request, *, candidate_index=None):
                                   if request['schema_version']==5 else
                                   'certified finite line/conic offset crossings and bounded fillet contact error; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve'
                                   if request['schema_version']==6 else
-                                  'all algebraic line/conic source pairs, certified order and bounded fillet contact error; nonempty retained endpoints; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve')))
+                                  'all algebraic line/conic source pairs, certified order and bounded fillet contact error; nonempty retained endpoints; explicit extension/radius/turn/sweep; floating G1; canonical case validation; no FEM solve'
+                                  if request['schema_version']==7 else
+                                  'all algebraic circular/noncircular source pairs, certified order and bounded fillet contact error; nonempty retained endpoints; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve')))
 
 
 def save_construction(request, path, *, candidate_index=None):
