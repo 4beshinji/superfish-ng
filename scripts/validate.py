@@ -28,6 +28,8 @@ def main():
     parser.add_argument('--out', type=Path, required=True, help='new output directory')
     parser.add_argument('--test-workers', type=int, default=min(8, os.cpu_count() or 1),
                         help='isolated unittest module processes (default: up to 8; 1 uses original serial discovery)')
+    parser.add_argument('--skip-tests', action='store_true',
+                        help='run only seed numerical checks; explicitly records that unittest was not run')
     args = parser.parse_args()
     if args.test_workers < 1:
         parser.error('--test-workers must be a positive integer')
@@ -37,10 +39,11 @@ def main():
     test_command = ([sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v']
                     if args.test_workers == 1 else [sys.executable, str(ROOT/'scripts/run_tests.py'),
                         '--workers', str(args.test_workers), '--out', str(out/'test-run')])
-    commands = [test_command,
-                [sys.executable, '-m', 'superfish_ng', 'converge', '--out', str(out/'pillbox_convergence.json')]]
+    commands = [] if args.skip_tests else [('tests', test_command)]
+    commands.append(('convergence',
+                     [sys.executable, '-m', 'superfish_ng', 'converge', '--out', str(out/'pillbox_convergence.json')]))
     runs = []
-    for name, command in zip(['tests', 'convergence'], commands):
+    for name, command in commands:
         start = time.perf_counter()
         parallel_tests = name == 'tests' and args.test_workers > 1
         if parallel_tests:
@@ -75,13 +78,16 @@ def main():
                     for folder in ['src','tests','scripts','examples'] for p in sorted((ROOT/folder).rglob('*'))
                     if p.is_file() and '__pycache__' not in p.parts}
     report = {'passed': all(r['exit_code']==0 for r in runs) and max(m['relative_error'] for m in modes)<.003,
+              'scope': 'seed-numerics' if args.skip_tests else 'full',
+              'tests': {'status': 'NOT_RUN' if args.skip_tests else 'PASS'},
               'environment': {'python':platform.python_version(),'numpy':np.__version__,'scipy':scipy.__version__,
                               'platform':platform.platform(),'openblas_num_threads':os.environ.get('OPENBLAS_NUM_THREADS'),
                               'test_workers':args.test_workers},
               'commands':runs,'source_sha256':fingerprints,
-              'not_performed':['external solver comparison','legacy SUPERFISH comparison','measured cavity validation','GUI/ParaView interactive check']}
+              'not_performed':(['unittest suite (--skip-tests)'] if args.skip_tests else []) +
+                              ['external solver comparison','legacy SUPERFISH comparison','measured cavity validation','GUI/ParaView interactive check']}
     (out/'validation.json').write_text(json.dumps(report,indent=2)+'\n')
-    print(f"Validation {'PASS' if report['passed'] else 'FAIL'}: {out}")
+    print(f"Validation {'PASS' if report['passed'] else 'FAIL'} ({report['scope']}): {out}")
     return 0 if report['passed'] else 1
 
 

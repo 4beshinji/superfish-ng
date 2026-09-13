@@ -1,3 +1,10 @@
+2026-09-14 JST 検証運用の更新。現在の手順は[TESTING.md](TESTING.md)とAGENTS.md。
+ユーザー要求により、着手時・各小変更での全件再実行を廃止し、対象テスト＋影響先を選ぶ。
+seed数値だけ必要ならvalidate.py --skip-tests、全件は節目・広範な共通変更・影響不明時に一度実行する。
+文書更新や同一コードの統合で同じ合格検証を繰り返さない。以下の件数・時間は各時点の履歴であり、新たな必須検証ではない。
+棚卸しと手順変更は完了。実行器の対象4件・実seed CLI/報告生成が合格し、seedの全モード辞書は既存受入出力と一致した。
+記録はTESTING.md末尾。今回の全unittest/Hosted CIは未実行であり、手順変更の確認のために追加で回す必要はない。
+
 2026-09-14 JST 最新受入状態。以下の旧ハンドル/順次統合指示は本記録で置き換える。
 
 2026-09-13 UTC：[有限オフセット診断の区切り](G03_FINITE_OFFSETS_CHECKPOINT.md)を主ツリーへ統合・限定受入。
@@ -5537,7 +5544,8 @@ RAM設定で追加DX=0.01/0.011 cmはSFO生成前に失敗。ローカルSF.INI�
 ```text
 このSuperfish-NGリポジトリを継続開発せよ。
 AGENTS.md、README.md、docs/PHYSICS.md、docs/PROVENANCE.mdを最初に読み、
-ローカルでテストとscripts/validate.pyを実行して初期状態を確認すること。
+docs/TESTING.mdに従い、変更対象と影響先のテストを選ぶこと。
+着手時に全件を回さず、必要なseed数値検証はscripts/validate.py --skip-testsで分離すること。
 旧SUPERFISHのソースやバイナリは参照・使用せず、公開された数学と
 明示的なライセンスを持つ現代のOSSだけを使用する。
 

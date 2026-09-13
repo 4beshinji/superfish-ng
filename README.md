@@ -1,6 +1,6 @@
 # Superfish-NG — 0.1.0 research seed
 
-検証は既定で最大8プロセス。`python scripts/validate.py --test-workers 16 --out out/validation-new`で指定でき、`--test-workers 1`で従来の逐次実行になる。[並列検証と実測](docs/PARALLEL_VALIDATION.md)を参照。
+通常の開発は変更した機能と影響先のテストを選んで実行します。着手時や小変更ごとの全件再実行は不要です。[棚卸し・変更別の検証手順](docs/TESTING.md)を参照。seed数値検証だけなら`python scripts/validate.py --skip-tests --out out/validation-seed-new`、全件は節目や広範な共通変更で一度実行します。[並列検証と実測](docs/PARALLEL_VALIDATION.md)も参照。
 
 2026-09-13 UTC：[有限オフセット診断の区切り](docs/G03_FINITE_OFFSETS_CHECKPOINT.md)を主ツリーへ統合・限定受入。
 同一支持円の全候補周期・任意二進回転と、同じ非円楕円/同枝双曲線の反射自己接点を分類する。新規診断版4と旧保存版1/2/3を別の規則で再検証し、元構築・Case・適用可否を保持する。
@@ -688,7 +688,7 @@ superfish-ng solve examples/pillbox.json --out out/pillbox-new
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests -p test_interface.py -v
 superfish-ng solve examples/pillbox.json --out out/pillbox
 superfish-ng solve examples/shaped_cell.json --out out/shaped
 superfish-ng converge --out out/convergence.json
@@ -699,7 +699,8 @@ CLIの代わりに `python -m superfish_ng ...` も使用できます。
 既にNumPy/SciPyがある環境では、インストールせず `PYTHONPATH=src python -m superfish_ng ...` でも動きます。
 ZIPに仮想環境や依存ライブラリのwheelは含みません。初回の依存関係取得には通常ネット接続が必要です。
 
-全検証と例題出力を再生成するコマンド:
+上のテストは初回セットアップのインターフェース確認です。開発中は[変更別の検証手順](docs/TESTING.md)で対象を選びます。
+節目や広範な共通変更で、全unittestとseed例題出力をまとめて再生成するコマンド（直前の全unittest実行は不要）:
 
 ```bash
 OPENBLAS_NUM_THREADS=1 python scripts/validate.py --out out/validation

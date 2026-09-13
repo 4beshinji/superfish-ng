@@ -1,5 +1,27 @@
 name: physics-and-interface
-on: [push, pull_request]
+on:
+  push:
+    branches: [main, master]
+    paths-ignore:
+      - README.md
+      - AGENTS.md
+      - CONTRIBUTING.md
+      - docs/TESTING.md
+      - docs/PARALLEL_VALIDATION.md
+      - docs/BACKLOG.md
+      - docs/CODEX_HANDOFF.md
+      - docs/PROVENANCE.md
+  pull_request:
+    paths-ignore:
+      - README.md
+      - AGENTS.md
+      - CONTRIBUTING.md
+      - docs/TESTING.md
+      - docs/PARALLEL_VALIDATION.md
+      - docs/BACKLOG.md
+      - docs/CODEX_HANDOFF.md
+      - docs/PROVENANCE.md
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest

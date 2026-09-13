@@ -50,12 +50,12 @@ under ignored `out/`; do not inspect/copy solver source or redistribute executab
 
 ## Local engineering workflow
 
-1. Run `python -m unittest discover -s tests -v` in the installed environment.
-2. Select one bounded issue in docs/BACKLOG.md; state the acceptance criteria.
-3. Implement and verify the relevant physics/interface behavior.
-4. For numerical changes run `OPENBLAS_NUM_THREADS=1 python scripts/validate.py --out out/validation-<unique-name>`.
-5. Review frequency AND RF differences against benchmarks/validation; update evidence only with an explanation.
-6. Update affected docs and add a provenance/decision note. Commit a coherent local change.
+1. Select one bounded issue in docs/BACKLOG.md; state its acceptance criteria and affected behavior.
+2. Use docs/TESTING.md to select relevant unittest modules/cases and direct consumers. Do not run the full suite at task start by default. For a bug, reproduce the relevant failure first.
+3. Implement and run the selected checks once after the change. Documentation-only changes need no FEM or full suite. Expand checks only for new changes, failures, shared dependencies or unresolved impact.
+4. For numerical changes, check an independent analytical/physical invariant in the affected formulation. Run the relevant dedicated validator when its evidence is needed. If the seed TM path is affected, run `OPENBLAS_NUM_THREADS=1 python scripts/validate.py --skip-tests --out out/validation-<unique-name>` and compare frequency AND RF quantities with benchmarks/validation. Seed validation does not cover every supported formulation.
+5. Run the full `scripts/validate.py` once for a release/milestone, broad shared-core/dependency change, or impact that cannot be bounded. It already includes all unittest tests; do not precede it with another full discovery. Reuse applicable successful evidence through documentation edits and unchanged integration; do not relabel a partial run as full acceptance.
+6. Record the checks run and scope in the affected docs with a brief provenance/decision note. Commit a coherent local change. Do not repeat tests just to update counts, hashes or completion prose.
 
 Use the standard library unittest suite; pytest is not required. NumPy/SciPy are core, Matplotlib optional.
 Do not add Gmsh, MFEM, NGSolve, PETSc, SLEPc, Qt or web dependencies without a measured need and a dependency decision.
