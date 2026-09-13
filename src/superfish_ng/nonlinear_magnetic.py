@@ -33,14 +33,20 @@ class MagneticNewtonControls:
 
 
 class MagneticNonlinearFailure(ValueError):
-    def __init__(self,reason,detail,context,controls,history,last_valid):
+    def __init__(self,reason,detail,context,controls,history,last_valid,*,coefficient_field=None):
         super().__init__('nonlinear magnetic solve failed: '+reason+'; '+detail)
         self.report=dict(format='superfish_ng_magnetic_nonlinear_failure',schema_version=1,status='failed',reason=reason,detail=detail,
-            context=copy.deepcopy(context),controls=controls.to_dict(),history=copy.deepcopy(history),
-            last_valid_relative_coefficients=None if last_valid is None else np.asarray(last_valid).tolist())
+            context=copy.deepcopy(context),controls=controls.to_dict(),history=copy.deepcopy(history))
+        values=None if last_valid is None else np.asarray(last_valid).tolist()
+        if coefficient_field is None:
+            # Preserve the existing planar relative-Az failure format exactly.
+            self.report['last_valid_relative_coefficients']=values
+        elif coefficient_field=='aphi_over_r_t':
+            self.report.update(schema_version=2,coefficient_field=coefficient_field,last_valid_coefficients=values)
+        else:raise ValueError('unsupported nonlinear failure coefficient_field')
 
 
-def damped_magnetic_newton(assemble,initial,free,load,controls,*,energy_key,context):
+def damped_magnetic_newton(assemble,initial,free,load,controls,*,energy_key,context,coefficient_field=None):
     """Solve free-DOF internal_load=load using the true material tangent.
 
     The caller supplies physical coefficient/residual/energy units in context.
@@ -49,8 +55,9 @@ def damped_magnetic_newton(assemble,initial,free,load,controls,*,energy_key,cont
     No elapsed times enter the reproducible iteration history.
     """
     if type(controls) is not MagneticNewtonControls:raise ValueError('explicit MagneticNewtonControls required')
+    if coefficient_field not in (None,'aphi_over_r_t'):raise ValueError('unsupported nonlinear failure coefficient_field')
     coefficients=np.asarray(initial,dtype=float).copy();history=[];last_valid=None
-    def fail(reason,detail):raise MagneticNonlinearFailure(reason,detail,context,controls,history,last_valid)
+    def fail(reason,detail):raise MagneticNonlinearFailure(reason,detail,context,controls,history,last_valid,coefficient_field=coefficient_field)
     def evaluate(values):
         k,g,q=assemble(values);energy=float(q[energy_key]);objective=energy-float(values@load)
         scale=float(np.linalg.norm(g)+np.linalg.norm(load));norm=float(np.linalg.norm((g-load)[free]));residual=norm/scale if scale else norm

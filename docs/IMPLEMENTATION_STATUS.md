@@ -1,5 +1,11 @@
 # 実装・検証の現状
 
+2026-09-13：[軸接続P1の境界付き非線形磁静場](AXIS_BH_SOLVE.md)を主ツリーへ統合・限定受入。
+正則a=Aphi/r、固定a/Ht/軸境界、実接線Newtonと版2失敗履歴、元6場と全J U/U*・A周回/A m²反力/Wb磁束を分離する。q/q+4差と高次数の自由残差も保持する。独立96条件（成功88/期待失敗8）、16細分系列と独立1次元BVP 8比較がPASS。版2変更前後の88物理記録は完全一致し、旧平面64 nativeも不変。
+標準1288件（1285合格・3skip）、追加6unitと主18unitがPASS。固定811sourceを主817sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+軸接続の保存/CLI・軸非接続非線形・対象版モデル、S04と全計画は未完。親33=8受入/16進行/8他未受入/1範囲外。
+
+
 2026-09-13：[軸接続P1の非線形B-H弱形式](AXIS_BH_FORMS.md)を主ツリーへ統合・限定受入。
 正則a=Aphi/rの元H/接線からg/Kと電流荷重を組み立て、全JのU/U*、元B·Hとa·g、一定a試験を検査する。独立96例384形式/192変分、非零一定a・線形極限・尺度/移動則がPASS。表折点の求積差を別に記録した。
 標準1282件（1279合格・3skip）、追加5unitと主5unitがPASS。固定807sourceを主813sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
@@ -454,7 +460,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 平面の線形永久磁石・異方性 | 明示主軸mu_r/Brem・向き、三荷重、元Az/B/Hと二つの基準付き構成ポテンシャル、専用保存/CLI | 対象版モデル確認・GUI/Project/Study・非線形等は未実装 | [PLANAR_RECOIL_NATIVE.md](PLANAR_RECOIL_NATIVE.md) |
 | 軸接続の線形永久磁石・異方性 | 軸の材料正則性、三荷重、元a/Aphi/B/HとJの基準付き構成ポテンシャル、専用保存/CLI | 対象版モデル確認・GUI/Project/Study・非線形等は未実装 | [AXIS_RECOIL_NATIVE.md](AXIS_RECOIL_NATIVE.md) |
 | 軸非接続の線形永久磁石・異方性 | r>0の材料/三荷重、固定psi基準と元6場/J/Wb/A、専用保存/CLI | C00.Vの対象版/材料モデル確認・GUI/Project/Study・非線形等は未実装 | [OFF_AXIS_RECOIL_NATIVE.md](OFF_AXIS_RECOIL_NATIVE.md) |
-| 等方非線形B-H構成則・平面/軸接続P1 | 単調表/来歴、平面の境界付き解/失敗保存/CLI、軸接続のg/K/全J U/U*と一定a試験・独立微分 | 軸対称境界付き反復/保存・対象版確認は未実装 | [BH_CURVE.md](BH_CURVE.md)、[AXIS_BH_FORMS.md](AXIS_BH_FORMS.md) |
+| 等方非線形B-H構成則・平面/軸接続P1 | 単調表/来歴・元H/実接線、平面の解/保存、軸接続P1の境界付き非線形磁静場を限定受入 | 軸接続の保存/CLI・軸非接続非線形・対象版モデルは未実装/未確認 | [BH_CURVE.md](BH_CURVE.md)、[AXIS_BH_SOLVE.md](AXIS_BH_SOLVE.md) |
 | 平面磁静 | 明示mu_r/Jz、固定Az/Ht、P1/P2実FEM、元Az/B/H、J/mエネルギーと反力/元H積分[A]・元B磁束[Wb/m]、専用保存/CLI | GUI/Project/Study・軸対称・曲線/穴・非線形等・厳密開放境界は未実装 | [PLANAR_MAGNETOSTATIC_SOLVE.md](PLANAR_MAGNETOSTATIC_SOLVE.md)、[PLANAR_MAGNETOSTATIC_NATIVE.md](PLANAR_MAGNETOSTATIC_NATIVE.md) |
 | 平面静電 | 単純多角形P1/P2、全epsilon_r/rhoと固定電極/Dn、実Poisson解、元E/D、J/mエネルギー・C/m電荷・F/m二端子容量、専用native/CLIと全Poisson再構築 | Project/GUI/Study・曲線/穴・純Neumann・浮遊電極・一般の自動外部境界診断は未実装 | [PLANAR_ELECTROSTATIC_FORMS.md](PLANAR_ELECTROSTATIC_FORMS.md)、[PLANAR_ELECTROSTATIC_SOLVE.md](PLANAR_ELECTROSTATIC_SOLVE.md)、[PLANAR_ELECTROSTATIC_NATIVE.md](PLANAR_ELECTROSTATIC_NATIVE.md) |
 | 軸対称静電 | 直線P1/P2、全材料/rhoと明示固定電極/Dn/軸、実Poisson解、元E/D・領域エネルギー・電荷・二端子容量 | 専用native/CLI対応。純Neumann/gauge・浮遊電極・Project/GUI/Study・平面は未実装 | [ELECTROSTATIC_FORMS.md](ELECTROSTATIC_FORMS.md)、[ELECTROSTATIC_SOLVE.md](ELECTROSTATIC_SOLVE.md) |
