@@ -149,7 +149,7 @@ class CircularFilletTests(unittest.TestCase):
         self.assertAlmostEqual(case.curved_contour.area_m2,(751/256+153*math.pi/64-75*alpha/128)*u*u,delta=1e-12)
         self.assertAlmostEqual(case.curved_contour.volume_m3,math.pi*(75395/6144+1299*math.pi/256-225*alpha/128)*u**3,delta=1e-12)
         self.assertEqual(replay_construction(doc),doc)
-        diagnosis=diagnose_construction(doc);self.assertEqual(diagnosis['schema_version'],9)
+        diagnosis=diagnose_construction(doc);self.assertEqual(diagnosis['schema_version'],10)
         self.assertEqual(replay_construction_diagnosis(diagnosis),diagnosis)
         self.assertEqual(tangent_document(diagnosis,replay=True)['construction'],doc)
         for key in ('case','enumeration','candidate_index'):

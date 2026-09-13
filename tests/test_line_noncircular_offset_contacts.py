@@ -106,7 +106,7 @@ class LineNoncircularOffsetContactTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             for index,old in enumerate(json.loads(raw)):
                 self.assertEqual(old['schema_version'],6);self.assertEqual(replay_construction_diagnosis(old),old)
-                new=diagnose_construction(old['construction']);self.assertEqual(new['schema_version'],9)
+                new=diagnose_construction(old['construction']);self.assertEqual(new['schema_version'],10)
                 self.assertEqual(new['construction'],old['construction'])
                 self.assertEqual(new['diagnosis']['classification'],'FINITE_CENTERS' if index==1 else 'SINGLE_TANGENCY')
                 for document in (old,new):
