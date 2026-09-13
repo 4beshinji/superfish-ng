@@ -1,3 +1,8 @@
+2026-09-13：[静的Projectの実worker・保存・CLI](STATIC_FIELD_JOBS.md)を主ツリーへ統合・限定受入。
+既存11種類の専用FEMを同じProjectから求解し、成功native 5ファイルと実非線形失敗3ファイルを保存・再現する。JobManagerの別プロセス・再起動・中止とCLI 0/1/2、全SI Case/結果/失敗履歴を保持する。独立42例（成功33/実失敗9）のAPI/実worker/CLI各42件と再起動42件、87 CLI、元192/新954所有ファイルが一致・不変。
+標準1404件（1401合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定877sourceを主883sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+static-field-jobs統合/finalizer実行済み・再実行禁止。主883source。実ハンドルは最新状態を確認する。以下よりこの冒頭を優先。
+
 2026-09-13：[静的Projectの入力・保存・CLI](STATIC_FIELD_PROJECT.md)を主ツリーへ統合・限定受入。
 既存11種類の専用Caseを保持し、m/mm表示選択をSI値・材料・境界・B-H初期値/反復条件へ作用させない。厳密JSON往復と非上書きのnormalize-static-projectを追加した。独立33元Caseの66 Projectを実FEMで再求解し、264 Project/330 nativeの全バイトが一致、元165ファイル不変。
 標準1398件（1395合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定874sourceを主880sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的worker/GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。

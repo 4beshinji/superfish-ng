@@ -1,5 +1,10 @@
 # 実装バックログ
 
+2026-09-13：[静的Projectの実worker・保存・CLI](STATIC_FIELD_JOBS.md)を主ツリーへ統合・限定受入。
+既存11種類の専用FEMを同じProjectから求解し、成功native 5ファイルと実非線形失敗3ファイルを保存・再現する。JobManagerの別プロセス・再起動・中止とCLI 0/1/2、全SI Case/結果/失敗履歴を保持する。独立42例（成功33/実失敗9）のAPI/実worker/CLI各42件と再起動42件、87 CLI、元192/新954所有ファイルが一致・不変。
+標準1404件（1401合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定877sourceを主883sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[静的Projectの入力・保存・CLI](STATIC_FIELD_PROJECT.md)を主ツリーへ統合・限定受入。
 既存11種類の専用Caseを保持し、m/mm表示選択をSI値・材料・境界・B-H初期値/反復条件へ作用させない。厳密JSON往復と非上書きのnormalize-static-projectを追加した。独立33元Caseの66 Projectを実FEMで再求解し、264 Project/330 nativeの全バイトが一致、元165ファイル不変。
 標準1398件（1395合格・3skip）、追加6unit・capability 3unitと主6unitがPASS。固定874sourceを主880sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的worker/GUI/Study、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
@@ -416,7 +421,7 @@ GUI・履歴・形状写像等と全計画は未完。親33課題の8受入/11�
 旧seed9モード19量はf差0、最大相対差8.882e-16。曲線内導体・部分空間追跡・旧版照合等と全計画は未完。親33課題の8受入/11進行/13他未受入/1範囲外を維持する。
 
 
-次の限定課題はO02の[静的Projectの実worker・成功/非線形失敗保存・CLI](STATIC_FIELD_JOBS_PLAN.md)。元FEM・全SI量と実求解失敗の履歴を保持し、再起動・中止・改変拒否・既存回帰を検証する。
+次の限定課題はO02の[静的ProjectのGUI入力・実求解・元場表示](STATIC_FIELD_GUI_PLAN.md)。同じProject/workerと元場評価を接続し、全Case/量/単位、成功/実失敗、再起動・中止・描画/保存・改変拒否を検証する。
 
 2026-09-12：[明示Hφメッシュ列の細分差診断](HPHI_CONVERGENCE.md)のAPI・全水準保存・完全再生・CLIを主ツリーへ統合・限定受入。
 元E/Hの対応、周波数近傍、最後2組のf/E/H/各RF・壁線分・複素Vaccを別々に判定する。縮退・guard不足・粗さ未達はUNVERIFIEDを保持する。

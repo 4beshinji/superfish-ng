@@ -54,6 +54,12 @@ def _state(directory, status, **extra):
 def read_job(directory, verify=True):
     directory = Path(directory)
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
+    if verify and state.get('status') in ('complete', 'failed'):
+        from .static_field_jobs import is_static_field_job, read_static_field_job
+        if is_static_field_job(directory, state):
+            if state['status'] == 'complete' or state.get('outcome_saved') or (directory / 'manifest.json').exists():
+                read_static_field_job(directory)
+            return state
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
         from .magnetic_report_jobs import is_magnetic_report_job, verify_magnetic_report_job
@@ -338,6 +344,11 @@ class JobManager:
         """Append a verified pair to an immutable hphi history in a new worker."""
         from .hphi_tracking_history_saved import start_extended_hphi_history
         return start_extended_hphi_history(self, history, next_pair)
+
+    def start_static_field(self, project):
+        """Solve a dedicated static Project in a local worker, retaining real B-H failures."""
+        from .static_field_jobs import start_static_field
+        return start_static_field(self, project)
 
     def start_hphi_history(self, paths, request):
         """Create an owned hphi tracking chain in a dedicated local worker."""

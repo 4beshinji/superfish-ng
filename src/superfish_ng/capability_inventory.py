@@ -419,3 +419,15 @@ def static_field_project_capabilities():
         publication='complete Project JSON, exclusive destination, no overwrite or partial publication',
         project=True,solve=False,gui=False,study=False,
         limits='input document only; dedicated static Case parsers retain all restrictions; no RF fallback, new physics, FEM execution, native result or convergence claim')
+
+
+def static_field_jobs_capabilities():
+    from .static_field_project import static_case_families
+    return dict(kind='static_field_solve', case_families=static_case_families(),
+        result_format='superfish_ng_static_field_project_result', result_schema_versions=[1],
+        operations=['solve-static-project', 'replay-static-project'],
+        cli_exit_codes=dict(complete=0, retained_nonlinear_failure=1, invalid_or_io=2),
+        statuses=dict(complete='successful original FEM fields', nonlinear_failed='actual B-H failure retained and replayed; Job status failed'),
+        success_native_files=5, nonlinear_failure_native_files=3,
+        project=True, worker=True, solve=True, gui=False, study=False,
+        limits='11 dedicated static FEM families only; saved failure is not a field solution; algebraic/Newton convergence does not certify discretization accuracy; no RF fallback')

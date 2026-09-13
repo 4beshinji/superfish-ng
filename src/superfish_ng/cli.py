@@ -371,12 +371,24 @@ def main(argv=None):
     reference = sub.add_parser("compare-pillbox", help="compare saved cylindrical modes with independent analytical fields and RF")
     reference.add_argument("run", type=Path)
     reference.add_argument("--out", type=Path, required=True)
+    static_solve = sub.add_parser('solve-static-project', help='solve a dedicated static Project with verified native success or retained nonlinear failure')
+    static_solve.add_argument('input', type=Path)
+    static_solve.add_argument('--out', type=Path, required=True)
+    static_replay = sub.add_parser('replay-static-project', help='recompute a saved static Project outcome with its original dedicated FEM')
+    static_replay.add_argument('run', type=Path)
     static_project = sub.add_parser('normalize-static-project', help='validate a dedicated static Case/Project and publish a portable Project without solving or changing SI values')
     static_project.add_argument('input', type=Path)
     static_project.add_argument('--out', type=Path, required=True)
     static_project.add_argument('--display-length-unit', choices=('m', 'mm'))
     args = parser.parse_args(argv)
     try:
+        if args.command in ('solve-static-project', 'replay-static-project'):
+            from .static_field_project import StaticFieldProject
+            from .static_field_jobs import execute_static_field_project, read_static_field_job
+            result = (execute_static_field_project(StaticFieldProject.load(args.input), args.out)
+                      if args.command == 'solve-static-project' else read_static_field_job(args.run))
+            print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+            return 1 if result['status'] == 'nonlinear_failed' else 0
         if args.command == 'normalize-static-project':
             from .static_field_project import StaticFieldProject
             project = StaticFieldProject.load(args.input)

@@ -2,7 +2,7 @@
 """Explicit supported physics; planned solvers never fall back to vacuum TM."""
 from dataclasses import dataclass, replace
 from .config import Case, integer, keys
-from .capability_inventory import static_field_project_capabilities, magnetic_report_gui_capabilities, hphi_capabilities, material_hphi_capabilities, planar_tracking_mappings, electrostatic_capabilities, planar_electrostatic_capabilities, planar_magnetostatic_capabilities, axis_magnetostatic_capabilities, off_axis_magnetostatic_capabilities, planar_recoil_capabilities, axis_recoil_capabilities, off_axis_recoil_capabilities, planar_bh_capabilities, axis_bh_capabilities, off_axis_bh_capabilities, planar_magnetic_multipole_capabilities, planar_magnetic_force_capabilities, off_axis_magnetic_force_capabilities
+from .capability_inventory import static_field_jobs_capabilities, static_field_project_capabilities, magnetic_report_gui_capabilities, hphi_capabilities, material_hphi_capabilities, planar_tracking_mappings, electrostatic_capabilities, planar_electrostatic_capabilities, planar_magnetostatic_capabilities, axis_magnetostatic_capabilities, off_axis_magnetostatic_capabilities, planar_recoil_capabilities, axis_recoil_capabilities, off_axis_recoil_capabilities, planar_bh_capabilities, axis_bh_capabilities, off_axis_bh_capabilities, planar_magnetic_multipole_capabilities, planar_magnetic_force_capabilities, off_axis_magnetic_force_capabilities
 
 
 @dataclass(frozen=True)
@@ -71,6 +71,7 @@ def capabilities():
             'planar_electrostatic': planar_electrostatic_capabilities(),
             'off_axis_magnetic_force': off_axis_magnetic_force_capabilities(),
             'magnetic_report_gui': magnetic_report_gui_capabilities(),
+            'static_field_jobs': static_field_jobs_capabilities(),
             'static_field_project': static_field_project_capabilities(),
             'planar_magnetic_force': planar_magnetic_force_capabilities(),
             'planar_magnetic_multipoles': planar_magnetic_multipole_capabilities(),

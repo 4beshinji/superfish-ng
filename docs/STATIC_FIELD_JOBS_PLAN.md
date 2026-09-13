@@ -1,6 +1,6 @@
 # O02: 静的Projectの実worker・成功/非線形失敗保存・CLI
 
-2026-09-13 JST。後続の限定課題、未実装・未受入。[専用Project入力契約](STATIC_FIELD_PROJECT_PLAN.md)に続く[O02](COMPATIBILITY_PLAN.md)の工程。
+2026-09-13 JST。[実装記録](STATIC_FIELD_JOBS.md)の専用worker/API/CLI範囲を限定受入。[専用Project入力契約](STATIC_FIELD_PROJECT_PLAN.md)に続く[O02](COMPATIBILITY_PLAN.md)の工程。
 
 受入済み11種類の静的CaseをStaticFieldProjectから同じ専用FEMへ渡す。新しい数値ソルバーは作らない。JobManagerの専用kind、所有Project、別プロセスでの求解、既存nativeの成功5ファイルとB-H失敗3ファイル、実装来歴と完了manifestを接続する。SI、全領域/材料/境界、求積次数、初期値と全非線形反復履歴を保つ。
 
