@@ -1,6 +1,6 @@
 # S05: B-H・反跳材料の平面仮想仕事
 
-2026-09-13 JST。後続限定課題。未実装・未受入。
+2026-09-13 JST。後続限定課題。[実装記録](PLANAR_MAGNETIC_VIRTUAL_WORK_MATERIALS.md)の専用API範囲で限定受入。
 
 [材料Maxwell応力](PLANAR_MAGNETIC_FORCE_MATERIALS_PLAN.md)に続き、同じ真空P1重み・剛体対象・固定外周・固定した対象外源/材料で、実際の±変位FEMを独立に再求解する。B-HはP1、反跳はP1/P2に限る。元の線形スカラー仮想仕事version 1と保存報告を完全再現する。
 
