@@ -1,5 +1,11 @@
 # 実装・検証の現状
 
+2026-09-13：[軸を含まない軸対称磁場の軸方向力](OFF_AXIS_MAGNETIC_FORCE.md)を主ツリーへ統合・限定受入。
+元r>0の線形P1/P2 FEMから、真空P1重みと全周2πrのMaxwell応力でFz[N]を求める。同じ節点z移動の別Caseを実FEM再求解し、全周停留ポテンシャル[J]の差分と照合する。独立50例（解析42/線形磁性体8）、30条件120変位FEM、メッシュ/重み/求積/基準ψの別系列がPASS。130ファイル不変。低次P2求積の拒否を実細分で解消し、元5e-12条件と力/仕事許容差を維持した。
+標準1374件（1371合格・3skip）、追加6unitと主6unitがPASS。固定860sourceを主866sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+軸方向力保存/CLI・GUI受渡し・軸接続とB-H/反跳の軸対称力、S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[B-H・反跳材料の力・仮想仕事報告保存・CLI](PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md)を主ツリーへ統合・限定受入。
 材料の成功nativeを元FEMで再検証し、応力とnull/完了/実非線形失敗の仮想仕事をversion 2で保存・再計算する。元Case/材料方向/ポテンシャル/全履歴を保持し、CLIは完了0・保存された実求解失敗1・不正2を返す。独立20例（完了12/実変位先失敗8）、70CLI、60報告と元100nativeファイルがPASS・不変。旧線形24報告と72ファイルも不変。
 標準1368件（1365合格・3skip）、追加6unit・旧保存6unit・capability 3unit、主6unitがPASS。固定856sourceを主862sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
@@ -549,6 +555,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 軸接続の線形永久磁石・異方性 | 軸の材料正則性、三荷重、元a/Aphi/B/HとJの基準付き構成ポテンシャル、専用保存/CLI | 対象版モデル確認・GUI/Project/Study・非線形等は未実装 | [AXIS_RECOIL_NATIVE.md](AXIS_RECOIL_NATIVE.md) |
 | 軸非接続の線形永久磁石・異方性 | r>0の材料/三荷重、固定psi基準と元6場/J/Wb/A、専用保存/CLI | C00.Vの対象版/材料モデル確認・GUI/Project/Study・非線形等は未実装 | [OFF_AXIS_RECOIL_NATIVE.md](OFF_AXIS_RECOIL_NATIVE.md) |
 | 等方非線形B-H構成則・平面/軸接続/軸非接続P1 | 単調表/来歴・元H/実接線、平面/軸接続の解/保存、軸非接続P1非線形磁場の保存・失敗再現・CLIを限定受入 | [原要件照合](S04_ACCEPTANCE.md)済み。C00.Vの対象版/材料モデルは未確認 | [BH_CURVE.md](BH_CURVE.md)、[OFF_AXIS_BH_NATIVE.md](OFF_AXIS_BH_NATIVE.md) |
+| 軸を含まない磁場の軸力 | 軸を含まない軸対称磁場の軸方向力を限定受入。元Br/Bz・真空重みと全周測度、Fz[N] | 軸方向力保存/CLI・GUI受渡し・軸接続とB-H/反跳の軸対称力は未実装/未確認 | [OFF_AXIS_MAGNETIC_FORCE.md](OFF_AXIS_MAGNETIC_FORCE.md) |
 | 平面磁場の力/トルク | B-H・反跳材料の力・仮想仕事報告保存・CLIを限定受入。元B・真空重みと原点、N/mとN m/m | GUI受渡し・軸対称の力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md) |
 | 平面磁場の多極表現/抽出 | B-H/反跳モデルの多極報告保存・CLIを限定受入。明示normal/skew[T]/frame | GUI受渡し・力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md) |
 | 平面磁静 | 明示mu_r/Jz、固定Az/Ht、P1/P2実FEM、元Az/B/H、J/mエネルギーと反力/元H積分[A]・元B磁束[Wb/m]、専用保存/CLI | GUI/Project/Study・軸対称・曲線/穴・非線形等・厳密開放境界は未実装 | [PLANAR_MAGNETOSTATIC_SOLVE.md](PLANAR_MAGNETOSTATIC_SOLVE.md)、[PLANAR_MAGNETOSTATIC_NATIVE.md](PLANAR_MAGNETOSTATIC_NATIVE.md) |
