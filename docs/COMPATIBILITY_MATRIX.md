@@ -1,5 +1,10 @@
 # 互換対応表 v0
 
+2026-09-13：[O02原要件の照合](O02_ACCEPTANCE.md)を専用範囲で完了。
+外部mesh/曲線高次・TM/TE・平面/Hφ・静的11形式と磁気後処理のProject/Study/GUI、同一入力/結果、保存復元、失敗/中止/描画/N/Aを受入証拠と主901sourceへ対応付けた。静的Study worker/CLIとGUIの標準1423/1429件・主各6unit、GUI全6ブラウザー342チェックもPASS。過去の記録は読取監査であり再実行とはしない。
+対象版/必須集合C00.VとV02の利用者業務評価は未確認。親O02と全計画は未完、親33=8受入/17進行/7他未受入/1範囲外。次はG03の同じ支持円上の有限弧の分類。
+
+
 2026-09-12：[軸接続HφのProject・表示・独立Study](AXIS_HPHI_WORKSPACE.md)を主ツリーへ統合・限定受入。
 軸区間・位相原点・betaの編集/復元、実worker・保存取込/取消/再起動、穴を除いた場と全18成分SIプローブ、複素Vacc/両R/Qを接続した。
 標準1042件（1039合格・3skip）、独立28FEM点、実Chrome新12/復元6/旧Hφ8/旧TMTE平面5操作、主4unit/5CLIがPASS。
@@ -221,9 +226,9 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K19 | 旧幾何/計算入力デッキ | L/D（限定AFの読込と既存SFO照合） | 部分：[単一真空・全PEC AF読込](LEGACY_INPUT.md) | 初期部分集合外の文法/既定値/領域、一般探索とモード対応 | A / C00,C02 |
 | K20 | 旧RFテキスト出力・バッチ連携 | L（SFO/SF7の限定読取） | 部分：比較スクリプトのみ | 製品用の読込/出力・終了コード・必要な列と精度 | A / C03,C04 |
 | K21 | 旧バイナリ解ファイル | U | 未 | 仕様確認。まずテキストへの移行経路。バイト互換はv0で約束しない | C / C00,C03 |
-| K22 | GUI・場表示・結果再利用 | L/H（役割） | 実装：NG GUI | 同じ実務を完結することを確認。画面/操作キーの完全複製は対象外 | A / O02,V02 |
+| K22 | GUI・場表示・結果再利用 | L/H（役割） | 実装：NG GUI。[原要件照合](O02_ACCEPTANCE.md)の専用範囲は完了 | 同じ実務を完結することを確認。画面/操作キーの完全複製は対象外 | A / O02,V02 |
 | K23 | 完了管理・再現・配布 | U | 部分：直接保存/Jobの完了公開、外部mesh取込、ローカル配布、[静的Project入力](STATIC_FIELD_PROJECT.md)と[静的worker/CLI](STATIC_FIELD_JOBS.md)と[静的GUI](STATIC_FIELD_GUI.md)と[静的Study入力](STATIC_FIELD_STUDY_INPUT.md)と[Study実worker/CLI](STATIC_FIELD_STUDY_JOBS.md)と[Study GUI](STATIC_FIELD_STUDY_GUI.md) | 高次/追加物理との一貫性、他環境/配布再受入 | A / O01,O02,V02 |
-| K24 | 平面/軸対称静電場 | H | 部分 | [軸対称の誘電体/体積電荷/K/荷重](ELECTROSTATIC_FORMS.md)を限定受入。[固定電極/Poisson解・元E/D・電荷/容量](ELECTROSTATIC_SOLVE.md)も限定受入。[専用native/CLI](ELECTROSTATIC_NATIVE.md)も限定受入。[平面の誘電体/K/荷重基盤](PLANAR_ELECTROSTATIC_FORMS.md)も限定受入。[静的Project入力](STATIC_FIELD_PROJECT.md)、[実worker/CLI](STATIC_FIELD_JOBS.md)、[静的GUI](STATIC_FIELD_GUI.md)、[Study入力](STATIC_FIELD_STUDY_INPUT.md)は専用範囲を限定受入。[Study実worker/CLI](STATIC_FIELD_STUDY_JOBS.md)を限定受入。[Study GUI](STATIC_FIELD_STUDY_GUI.md)も専用範囲を限定受入。O02原要件照合と対象版確認は未完。[平面Poisson解・元E/D・J/m/C/m/F/m](PLANAR_ELECTROSTATIC_SOLVE.md)も限定受入。[平面専用native/CLI](PLANAR_ELECTROSTATIC_NATIVE.md)も限定受入。[固定電荷の外部境界/細分144例](ELECTROSTATIC_BOUNDARY_STUDY.md)を限定受入。[原要件と残件](S01_ACCEPTANCE.md)：C00の対象版照合・純Neumann等は未完 | B / S01 |
+| K24 | 平面/軸対称静電場 | H | 部分 | [軸対称の誘電体/体積電荷/K/荷重](ELECTROSTATIC_FORMS.md)を限定受入。[固定電極/Poisson解・元E/D・電荷/容量](ELECTROSTATIC_SOLVE.md)も限定受入。[専用native/CLI](ELECTROSTATIC_NATIVE.md)も限定受入。[平面の誘電体/K/荷重基盤](PLANAR_ELECTROSTATIC_FORMS.md)も限定受入。[静的Project入力](STATIC_FIELD_PROJECT.md)、[実worker/CLI](STATIC_FIELD_JOBS.md)、[静的GUI](STATIC_FIELD_GUI.md)、[Study入力](STATIC_FIELD_STUDY_INPUT.md)は専用範囲を限定受入。[Study実worker/CLI](STATIC_FIELD_STUDY_JOBS.md)を限定受入。[Study GUI](STATIC_FIELD_STUDY_GUI.md)も専用範囲を限定受入。[O02原要件照合](O02_ACCEPTANCE.md)の専用範囲は完了。対象版確認は未完。[平面Poisson解・元E/D・J/m/C/m/F/m](PLANAR_ELECTROSTATIC_SOLVE.md)も限定受入。[平面専用native/CLI](PLANAR_ELECTROSTATIC_NATIVE.md)も限定受入。[固定電荷の外部境界/細分144例](ELECTROSTATIC_BOUNDARY_STUDY.md)を限定受入。[原要件と残件](S01_ACCEPTANCE.md)：C00の対象版照合・純Neumann等は未完 | B / S01 |
 | K25 | 平面/軸対称線形静磁場 | H | 部分 | [平面mu_r/Jz/Azの実FEM・元B/H/磁束](PLANAR_MAGNETOSTATIC_SOLVE.md)と[保存/CLI](PLANAR_MAGNETOSTATIC_NATIVE.md)、[軸接続の正則弱形式](AXIS_MAGNETOSTATIC_FORMS.md)を限定受入。[軸接続の実FEM・元6場/J/Wb](AXIS_MAGNETOSTATIC_SOLVE.md)も限定受入。[軸保存/CLI](AXIS_MAGNETOSTATIC_NATIVE.md)と[固定電流の境界距離/細分系列](MAGNETOSTATIC_BOUNDARY_STUDY.md)も限定受入。[軸非接続のpsi弱形式](OFF_AXIS_MAGNETOSTATIC_FORMS.md)も限定受入。[軸非接続の解/元6場/J/Wb](OFF_AXIS_MAGNETOSTATIC_SOLVE.md)も限定受入。[軸非接続の保存/CLI](OFF_AXIS_MAGNETOSTATIC_NATIVE.md)も限定受入。C00.Vは未完（[S02照合](S02_ACCEPTANCE.md)） | B / S02 |
 | K26 | 非線形BH・材料曲線 | H | 部分 | [S04原要件照合](S04_ACCEPTANCE.md)。単調表/来歴、平面/軸接続/軸非接続P1の解/失敗保存/CLI・元場/解析/BVPを限定受入。C00.Vの対象版/材料モデルは未確認 | B / S04 |
 | K27 | 永久磁石・異方性材料 | H | 部分 | 平面/軸接続の反跳FEM/保存と[軸非接続の反跳材料の保存・再構築・CLI](OFF_AXIS_RECOIL_NATIVE.md)を限定受入。C00.Vの対象版/材料モデル確認は未完（[原要件照合](S03_ACCEPTANCE.md)） | B / S03 |

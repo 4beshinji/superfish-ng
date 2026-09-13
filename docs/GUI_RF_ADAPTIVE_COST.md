@@ -1,5 +1,7 @@
 # 適応計算の祖先ジョブに記録された時間
 
+2026-09-13の[O02照合](O02_ACCEPTANCE.md)追補：以下の当時の記録が参照する`out/validation-rf-cost-accepted-20260909`と`out/browser-rf-cost-initial-20260909`は、現在の作業領域では見つからない。保存されている後続の`out/browser-rf-surface-initial-20260909/report.json`の19チェックには、3祖先ジョブの時間を一度ずつ合算、再読込で同じ観測値、中止後再開で時間を保持、外部checkpointの時間を不明と表示する検査が含まれ、全件PASS。配信sourceは`out/validation-rf-surface-policy-20260909/validation.json`の標準689件と一致し、同`tests.log`の費用2件・GUI5件も合格している。検証driverもこの標準時のSHAと一致した。これは保存済みの後続証拠の読取確認で、欠けた旧報告を復元した記録でも今回の再実行でもない。対応は`out/o02-acceptance-audit-in-progress-20260913/additional-rf-gui-records.json`に保持する。
+
 2026-09-09。RFA-5の費用表示。数値checkpointを再検証した後、保存場のパスから
 現在のGUI作業領域のジョブを特定し、時間を一度ずつ合算する。未採用の確認場も対象。
 ジョブrequestの元checkpointと、表示対象のnative祖先列・source snapshotの一致を確認する。
