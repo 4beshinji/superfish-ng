@@ -493,7 +493,7 @@ def main(argv=None):
             if args.command=='analyze-planar-magnetic-force':result=export_planar_magnetic_force(args.run,args.out,parse_json(args.request.read_text(encoding='utf-8')))
             else:result=replay_planar_magnetic_force(args.run,args.report)
             print(json.dumps(result,indent=2,allow_nan=False))
-            return 0
+            return 1 if result.get('status')=='virtual_work_failed' else 0
         if args.command in ('extract-planar-magnetic-multipoles','replay-planar-magnetic-multipoles'):
             from .planar_magnetic_multipole_saved import export_planar_magnetic_multipoles,replay_planar_magnetic_multipoles
             from .project import parse_json

@@ -379,12 +379,13 @@ def planar_magnetic_multipole_capabilities():
 
 
 def planar_magnetic_force_capabilities():
-    return dict(request_format='superfish_ng_planar_magnetic_force_request',request_schema_versions=[1],report_format='superfish_ng_planar_magnetic_force_report',report_schema_versions=[1],
-        source_native_manifest_format='superfish_ng_planar_magnetostatic_manifest',source_native_schema_versions=[1],force_format='superfish_ng_planar_magnetic_force',force_schema_versions=[1],
-        virtual_work_format='superfish_ng_planar_magnetic_virtual_work',virtual_work_schema_versions=[1],element_orders=[1,2],
+    return dict(request_format='superfish_ng_planar_magnetic_force_request',request_schema_versions=[1],report_format='superfish_ng_planar_magnetic_force_report',report_schema_versions=[1,2],
+        source_native_manifest_formats=['superfish_ng_planar_magnetostatic_manifest','superfish_ng_planar_bh_manifest','superfish_ng_planar_recoil_manifest'],source_native_schema_versions=[1],force_format='superfish_ng_planar_magnetic_force',force_schema_versions=[1,2],
+        virtual_work_format='superfish_ng_planar_magnetic_virtual_work',virtual_work_schema_versions=[1,2],element_orders=[1,2],source_element_orders=dict(linear_scalar=[1,2],nonlinear_bh=[1],linear_recoil=[1,2]),
         commands=['analyze-planar-magnetic-force','replay-planar-magnetic-force'],force_unit='N/m',torque_unit='N m/m',
-        scope='linear scalar planar original FEM; selected body w=1, exterior w=0, continuous P1 weights [0,1], every transition cell strictly mu_r=1 and Jz=0; other current/nonvacuum regions w=0',
-        torques=['scalar-weight moment of Maxwell stress','stress of the P1 interpolation of nodal rotation velocity, matched to actual displaced-FEM work'],
-        virtual_work='explicit null or 2..8 decreasing positive translation and rotation steps; fixed exterior boundary and integrated source currents; complete displaced Cases and stationary potentials retained',
-        source_binding='all five native file SHA256 values and complete source FEM, stress, and optional displaced-FEM replay',project=False,gui=False,study=False,
-        limits='no failed, B-H/recoil/axisymmetric or curved source; no implicit extrusion length, RF factor, smoothing or continuum force/torque accuracy bound')
+        scope='original scalar/B-H/recoil planar FEM; body w=1, exterior w=0, P1 weights [0,1]; all transitions declared vacuum with Jz=0; other current/nonvacuum regions w=0',
+        torques=['scalar-weight moment of Maxwell stress','stress of P1 nodal rotation velocity, matched to actual displaced-FEM work'],
+        virtual_work='explicit null or 2..8 decreasing positive translation/rotation steps; fixed exterior and integrated currents; recoil body tensors/remanence co-rotate; true constitutive potential minus J/Ht work; complete Cases, potentials and Newton histories retained',
+        material_report_workflow_statuses=['complete','virtual_work_failed'],cli_exit_codes=dict(complete=0,retained_virtual_work_failure=1,invalid_or_io=2),
+        source_binding='five native file SHA256 values and complete source FEM, stress, and optional actual displaced-FEM replay, including the same retained nonlinear failure',project=False,gui=False,study=False,
+        limits='no failed source native, axisymmetric or curved source; no implicit length, RF factor, smoothing or continuum force/torque accuracy bound; scalar report version 1 remains unchanged')

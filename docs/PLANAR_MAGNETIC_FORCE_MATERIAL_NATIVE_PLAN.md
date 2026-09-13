@@ -1,6 +1,6 @@
 # S05: B-H・反跳材料の力・仮想仕事報告保存・CLI
 
-2026-09-13 JST。後続限定課題。未実装・未受入。
+2026-09-13 JST。後続限定課題。[実装記録](PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md)の専用保存API・CLI範囲で限定受入。
 
 成功した平面B-H P1/反跳P1/P2の5ファイルnativeから、[材料応力](PLANAR_MAGNETIC_FORCE_MATERIALS_PLAN.md)と[材料仮想仕事](PLANAR_MAGNETIC_VIRTUAL_WORK_MATERIALS_PLAN.md)を保存・再計算する。既存の線形報告version 1と全CLI/JSON/バイト互換を維持し、材料報告をversion 2に分ける。元manifestの厳密dispatch、5ファイルSHA、元Case/係数/材料/非線形履歴を固定する。失敗した元nativeを成功した場として扱わない。
 
