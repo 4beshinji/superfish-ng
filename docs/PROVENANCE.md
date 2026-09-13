@@ -1,5 +1,7 @@
 # 独立実装・情報来歴
 
+2026-09-13：[平面P1の境界付き非線形磁静場](PLANAR_BH_SOLVE.md)。固定Az/Ht・全Jzと実接線Newton、採用/棄却/失敗履歴、元Az/B/HとU/U*、元H周回/反力・B磁束を保持する。仕事はU+U*で、K@Azを内部gへ代用しない。 独立1次元境界値対照は既存SciPy [solve_bvp公式仕様](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_bvp.html)の接口/残差制御を参照。例題コードはコピーせず、FEMとは別のA_y=B(H), H_y=-Jを構成した。折点節点はBVP自身の途中解から求める。 新規依存・旧版実行なし。合成材料のみ。
+
 2026-09-13：[平面P1非線形弱形式](PLANAR_BH_FORMS.md)。平面P1のAzから元セル一定B=curl(Az ez)、H=h(|B|)B/|B|、T=dH/dBを評価する。g_i=∫curlNi·H[A]、K_ij=∫curlNiᵀT curlNj[m/H]、fJ_i=∫Jz Ni[A]。U/U*[J/m]、元B·HとAz·gを独立積分し、仕事はU+U*であって一般に2Uではない。全境界DOFと定数核を保ち、境界付き解法は後続工程。公開H(B)構成則と自前のcurl/エネルギー微分から独立に導き、Vandermonde勾配・Decimal区間積分で照合した。合成材料のみ。新規依存・この工程の追加外部資料・旧版実行なし。
 
 2026-09-13：[単調B-H材料構成則](BH_CURVE.md)。[限定計画のCOMSOL公式構成則/微分透磁率資料](BH_CURVE_PLAN.md)を参照し、補間・外挿拒否・節点接線とベクトル微分/区間積分は独立に設計した。コード・材料表・製品の補間実装は再利用していない。合成表だけをDecimal積分・逆関数・微分で検証した。新規依存・旧版実行なし。
