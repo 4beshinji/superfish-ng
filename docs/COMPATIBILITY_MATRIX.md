@@ -227,7 +227,7 @@ Hの分類は [USPAS 2024講義 p.44](https://uspas.fnal.gov/materials/24Rohnert
 | K25 | 平面/軸対称線形静磁場 | H | 部分 | [平面mu_r/Jz/Azの実FEM・元B/H/磁束](PLANAR_MAGNETOSTATIC_SOLVE.md)と[保存/CLI](PLANAR_MAGNETOSTATIC_NATIVE.md)、[軸接続の正則弱形式](AXIS_MAGNETOSTATIC_FORMS.md)を限定受入。[軸接続の実FEM・元6場/J/Wb](AXIS_MAGNETOSTATIC_SOLVE.md)も限定受入。[軸保存/CLI](AXIS_MAGNETOSTATIC_NATIVE.md)と[固定電流の境界距離/細分系列](MAGNETOSTATIC_BOUNDARY_STUDY.md)も限定受入。[軸非接続のpsi弱形式](OFF_AXIS_MAGNETOSTATIC_FORMS.md)も限定受入。[軸非接続の解/元6場/J/Wb](OFF_AXIS_MAGNETOSTATIC_SOLVE.md)も限定受入。[軸非接続の保存/CLI](OFF_AXIS_MAGNETOSTATIC_NATIVE.md)も限定受入。C00.Vは未完（[S02照合](S02_ACCEPTANCE.md)） | B / S02 |
 | K26 | 非線形BH・材料曲線 | H | 部分 | [S04原要件照合](S04_ACCEPTANCE.md)。単調表/来歴、平面/軸接続/軸非接続P1の解/失敗保存/CLI・元場/解析/BVPを限定受入。C00.Vの対象版/材料モデルは未確認 | B / S04 |
 | K27 | 永久磁石・異方性材料 | H | 部分 | 平面/軸接続の反跳FEM/保存と[軸非接続の反跳材料の保存・再構築・CLI](OFF_AXIS_RECOIL_NATIVE.md)を限定受入。C00.Vの対象版/材料モデル確認は未完（[原要件照合](S03_ACCEPTANCE.md)） | B / S03 |
-| K28 | 多極成分・力・トルク | H | 部分 | [B-H/反跳モデルの多極報告保存・CLI](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md)を限定受入。GUI受渡し・力/トルクは未完 | B / S05 |
+| K28 | 多極成分・力・トルク | H | 部分 | [平面多極のB-H/反跳native](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md)と[平面磁場のMaxwell応力と仮想仕事](PLANAR_MAGNETIC_FORCE.md)を限定受入。保存/CLI・GUI受渡し・B-H/反跳/軸対称の力/トルクは未完 | B / S05 |
 | K29 | 専用tuner・RFQ関連・ユーティリティ | U | 未 | ツール一覧と実際の近似モデル/用途を確定。3D RFQと同一視しない | C / L01 |
 | K30 | 磁石形状最適化・熱後処理 | H（歴史的MIRT/PAN-T） | 未 | 対象配布物での有無と必要操作を確認して採否・個別仕様 | C / L02 |
 | K31 | 実機参照・測定比較 | U | 未 | 公開可能な寸法/境界/参照不確かさ。旧との一致だけで実測一致としない | A / V01 |
