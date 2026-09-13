@@ -153,7 +153,7 @@ class CircleConicFilletTests(unittest.TestCase):
         self.assertAlmostEqual(case.curved_contour.area_m2,(751/256+121*math.pi/64-75*alpha/128)*u*u,delta=1e-12)
         self.assertAlmostEqual(case.curved_contour.volume_m3,math.pi*(46723/6144+1043*math.pi/256-225*alpha/128)*u**3,delta=1e-12)
         self.assertEqual(replay_construction(doc),doc)
-        diagnosis=diagnose_construction(doc);self.assertEqual(diagnosis['schema_version'],10);self.assertEqual(replay_construction_diagnosis(diagnosis),diagnosis)
+        diagnosis=diagnose_construction(doc);self.assertEqual(diagnosis['schema_version'],11);self.assertEqual(replay_construction_diagnosis(diagnosis),diagnosis)
         self.assertEqual(tangent_document(diagnosis,replay=True)['construction'],doc)
         for key in ('case','enumeration','candidate_index'):
             changed=deepcopy(doc);changed[key]=None

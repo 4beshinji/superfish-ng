@@ -125,7 +125,7 @@ class LineNoncircularCrossingTests(unittest.TestCase):
                        curves=[curve_to_dict(EllipseArc((0, 0), (2, 1), -3., 6.)), curve_to_dict(LineSegment((0, -3), (0, 3)))],
                        controls=dict(first_distance_m=0., second_distance_m=0.))
         report = diagnose_offsets_document(request)
-        self.assertEqual(report['schema_version'], 10)
+        self.assertEqual(report['schema_version'], 11)
         self.assertEqual(report['diagnosis']['finite_center_count'], 2)
         for key, value in (('endpoint_width', 0), ('max_series_terms', True), ('unknown_control', 2)):
             changed = deepcopy(request); changed['controls'][key] = value
