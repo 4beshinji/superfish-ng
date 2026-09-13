@@ -1,5 +1,11 @@
 # 実装・検証の現状
 
+2026-09-13：[検証済み磁気後処理量のGUI受渡し](S05_GUI_HANDOFF.md)を主ツリーへ統合・限定受入。
+専用磁気報告の所有コピーと実FEM replay worker、非同期の初回/再起動検証、毎回のSHA照合、元Case/材料/規約と全量表示・元バイト保存を接続する。平面多極/二つのトルクと全周軸力のSI、仮想仕事の未実施/完了/実求解失敗を区別し、詳細JSONの負のゼロも保持する。独立20実workerと20初回/20再起動replay、140ダウンロード、元120ファイルと所有180ファイル不変。Chromeでも20報告の初回/再起動表示と各140ダウンロード、改変拒否、既存RFの実FEM/全量保存を確認。
+標準1392件（1389合格・3skip）、追加Job 6unit・GUI 6unit・capability 3unitと主12unitがPASS。固定871sourceを主877sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
+原要件/対象版確認と未対応な軸接続/B-H/反跳の軸対称力、S05と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[軸を含まない磁気力報告の保存・CLI](OFF_AXIS_MAGNETIC_FORCE_NATIVE.md)を主ツリーへ統合・限定受入。
 正半径の線形P1/P2の元native 5ファイルSHAへ拘束した軸方向力Fz[N]と、明示nullまたは実変位FEMのポテンシャル[J]/全Caseを保存・再計算する。求積/+4診断、基準ψ、対象と重みを保持し、平面N/mや断面回転へ読み替えない。独立20例（仮想仕事10/応力のみ10）、62CLI、60報告の全JSON/バイトが一致。元native 100/新報告60/要求20と参照50ファイル不変。
 標準1380件（1377合格・3skip）、追加保存6unit・capability 3unitと主6unitがPASS。固定863sourceを主869sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。
@@ -562,6 +568,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 軸非接続の線形永久磁石・異方性 | r>0の材料/三荷重、固定psi基準と元6場/J/Wb/A、専用保存/CLI | C00.Vの対象版/材料モデル確認・GUI/Project/Study・非線形等は未実装 | [OFF_AXIS_RECOIL_NATIVE.md](OFF_AXIS_RECOIL_NATIVE.md) |
 | 等方非線形B-H構成則・平面/軸接続/軸非接続P1 | 単調表/来歴・元H/実接線、平面/軸接続の解/保存、軸非接続P1非線形磁場の保存・失敗再現・CLIを限定受入 | [原要件照合](S04_ACCEPTANCE.md)済み。C00.Vの対象版/材料モデルは未確認 | [BH_CURVE.md](BH_CURVE.md)、[OFF_AXIS_BH_NATIVE.md](OFF_AXIS_BH_NATIVE.md) |
 | 軸を含まない磁場の軸力 | 軸を含まない磁気力報告の保存・CLIを限定受入。元Br/Bz・真空重みと全周測度、Fz[N] | GUI受渡し・軸接続/B-H/反跳の軸対称力は未実装/未確認 | [OFF_AXIS_MAGNETIC_FORCE_NATIVE.md](OFF_AXIS_MAGNETIC_FORCE_NATIVE.md) |
+| 磁気後処理報告のGUI受渡し | 検証済み磁気後処理量のGUI受渡しを限定受入。元5ファイル/全報告を実FEMで再検証し、SI量・全Caseと履歴を表示/保存 | 磁気Case編集・包括的GUI求解は対象外。原要件/対象版確認と未対応な軸接続/B-H/反跳の軸対称力は未完 | [S05_GUI_HANDOFF.md](S05_GUI_HANDOFF.md) |
 | 平面磁場の力/トルク | B-H・反跳材料の力・仮想仕事報告保存・CLIを限定受入。元B・真空重みと原点、N/mとN m/m | GUI受渡し・軸対称の力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md) |
 | 平面磁場の多極表現/抽出 | B-H/反跳モデルの多極報告保存・CLIを限定受入。明示normal/skew[T]/frame | GUI受渡し・力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md) |
 | 平面磁静 | 明示mu_r/Jz、固定Az/Ht、P1/P2実FEM、元Az/B/H、J/mエネルギーと反力/元H積分[A]・元B磁束[Wb/m]、専用保存/CLI | GUI/Project/Study・軸対称・曲線/穴・非線形等・厳密開放境界は未実装 | [PLANAR_MAGNETOSTATIC_SOLVE.md](PLANAR_MAGNETOSTATIC_SOLVE.md)、[PLANAR_MAGNETOSTATIC_NATIVE.md](PLANAR_MAGNETOSTATIC_NATIVE.md) |

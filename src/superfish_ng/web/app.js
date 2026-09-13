@@ -744,6 +744,7 @@ async function refreshJobs() {
     if (j.kind === "adaptive_refinement") title.textContent += ` / 適応細分${j.refinement_status ? " " + j.refinement_status : ""}`;
     if (j.kind === "rf_optimization") title.textContent += ` / RF探索${j.optimization_status ? " " + j.optimization_status : ""}`;
     if (j.kind === "tune") title.textContent += ` / 周波数調整${j.tuning_status ? " " + j.tuning_status : ""}`;
+    if (j.kind === "magnetic_report_import") title.textContent += " / 磁気後処理報告";
     if (["hphi_solve","hphi_study","hphi_convergence","hphi_tracking","hphi_tracking_history"].includes(j.kind)) title.textContent += " / Hφ RF";
     if (["planar_solve","planar_study","planar_convergence","planar_tracking","planar_tracking_history"].includes(j.kind)) title.textContent += " / 平面RF";
     row.append(title);
@@ -779,6 +780,7 @@ async function refreshJobs() {
         else if (j.kind === "rf_optimization") await openRFOptimization(j.id);
         else if (j.kind === "tune") await openTuning(j.id);
         else if (j.kind === "study") await openStudy(j.id);
+        else if (j.kind === "magnetic_report_import") location.href = `/magnetic.html?job=${encodeURIComponent(j.id)}`;
         else if (j.kind === "hphi_tracking_history") location.href = `/hphi.html?history=${encodeURIComponent(j.id)}`;
         else if (j.kind === "hphi_tracking") location.href = `/hphi.html?tracking=${encodeURIComponent(j.id)}`;
         else if (j.kind === "hphi_convergence") location.href = `/hphi.html?convergence=${encodeURIComponent(j.id)}`;
@@ -1754,7 +1756,7 @@ $("surface-open").addEventListener("change",async event=>{
 let trackingResult = null, trackingBusy = false, trackingJobSignature = "";
 let surfaceResult = null, surfaceBusy = false;
 function trackingJobs(jobs) {
-  const completed = jobs.filter(j => j.status === "complete" && !["study","tracked_study","adaptive_study","tune","adaptive_refinement","hphi_solve","hphi_study","hphi_convergence","hphi_tracking","hphi_tracking_history","planar_solve","planar_study","planar_convergence","planar_tracking","planar_tracking_history"].includes(j.kind));
+  const completed = jobs.filter(j => j.status === "complete" && !["study","tracked_study","adaptive_study","tune","adaptive_refinement","hphi_solve","hphi_study","hphi_convergence","hphi_tracking","hphi_tracking_history","planar_solve","planar_study","planar_convergence","planar_tracking","planar_tracking_history","magnetic_report_import"].includes(j.kind));
   const signature = JSON.stringify(jobs.filter(j => j.status === "complete").map(j => [j.id,j.kind]));
   if (signature === trackingJobSignature) return;
   trackingJobSignature = signature;

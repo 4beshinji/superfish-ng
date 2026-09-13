@@ -56,6 +56,10 @@ def read_job(directory, verify=True):
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .magnetic_report_jobs import is_magnetic_report_job, verify_magnetic_report_job
+        if is_magnetic_report_job(directory, state, manifest):
+            verify_magnetic_report_job(directory, state, manifest)
+            return state
         from .hphi_tracking_history_saved import is_hphi_history, verify_hphi_history
         if is_hphi_history(directory, state, manifest):
             verify_hphi_history(directory, state, manifest)

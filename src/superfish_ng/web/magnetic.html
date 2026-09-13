@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superfish-NG — 磁気後処理報告</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script defer src="/magnetic.js"></script>
+</head>
+<body>
+  <header><div><span class="eyebrow">MAGNETIC POSTPROCESSING</span><h1>磁気後処理報告</h1></div>
+    <p>多極・力・仮想仕事<br /><small>元の計算結果と照合して表示</small></p></header>
+  <nav aria-label="ワークスペース"><a href="/">軸対称RF</a><a href="/planar.html">平面RF</a><a href="/hphi.html">Hφ RF</a></nav>
+  <div id="error" role="alert" hidden></div>
+  <main>
+    <section class="editor">
+      <h2>保存済み報告を取り込む</h2>
+      <p>このマシンにある元の計算結果フォルダーと、多極または力の報告ファイルを指定してください。</p>
+      <form id="import-form">
+        <label>元の計算結果フォルダー<input id="source-path" type="text" required autocomplete="off" /></label>
+        <label>報告JSONのパス<input id="report-path" type="text" required autocomplete="off" /></label>
+        <button id="import" type="submit">コピーして再検証</button>
+      </form>
+      <p id="import-status" role="status"></p>
+      <h2>取り込んだ報告</h2>
+      <button id="refresh" type="button">一覧を更新</button>
+      <div id="jobs"></div>
+    </section>
+    <section class="viewer">
+      <h2 id="selection">報告を選択してください</h2>
+      <p id="verification" role="status"></p>
+      <div id="report-view" hidden>
+        <p id="report-physics"></p>
+        <div id="quantities"></div>
+        <div id="multipoles" hidden><h3>多極係数</h3><p id="frame"></p><div id="coefficients"></div><h3>4つの元場標本系列</h3><div id="traces"></div></div>
+        <div id="work" hidden><h3>仮想仕事</h3><p id="work-status"></p><div id="work-comparison"></div>
+          <details id="work-detail"><summary>変位した入力・ポテンシャル・反復履歴</summary><pre id="work-json"></pre></details></div>
+        <details><summary>規約・診断</summary><p id="convention"></p><pre id="diagnostics"></pre></details>
+        <details><summary>元の入力・材料・出典</summary><pre id="source-case"></pre><pre id="source-hashes"></pre></details>
+        <p>求積・半径・差分などの診断は、それぞれの計算条件による違いです。場や力の誤差上界を表すものではありません。</p>
+        <h3>検証済みファイルを保存</h3><div id="downloads"></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -374,7 +374,7 @@ def planar_magnetic_multipole_capabilities():
         aperture='whole closed disk strictly inside original domain; exact zero Jz and uniform positive scalar linear nonremanent constitutive law; BH exact whole-table linearity and recoil equal principal mu_r/zero remanence; original exterior material retained',
         sampling='N and 2N on R and 0.75R; primary N coefficients; negative/high orders, angular/radial differences and field remainder are diagnostics',
         source_binding='all five native file SHA256 values; original FEM and all Fourier traces replayed; no automatic source path lookup',
-        project=False,gui=False,study=False,
+        project=False,gui=False,gui_report_import=True,study=False,
         limits='planar straight linear/recoil P1/P2 and B-H P1 success native only; no failed/axisymmetric/curved source or nonlinear/anisotropic/remanent/current-bearing aperture; no force, torque, longitudinal integral or continuum error bound')
 
 
@@ -387,7 +387,7 @@ def planar_magnetic_force_capabilities():
         torques=['scalar-weight moment of Maxwell stress','stress of P1 nodal rotation velocity, matched to actual displaced-FEM work'],
         virtual_work='explicit null or 2..8 decreasing positive translation/rotation steps; fixed exterior and integrated currents; recoil body tensors/remanence co-rotate; true constitutive potential minus J/Ht work; complete Cases, potentials and Newton histories retained',
         material_report_workflow_statuses=['complete','virtual_work_failed'],cli_exit_codes=dict(complete=0,retained_virtual_work_failure=1,invalid_or_io=2),
-        source_binding='five native file SHA256 values and complete source FEM, stress, and optional actual displaced-FEM replay, including the same retained nonlinear failure',project=False,gui=False,study=False,
+        source_binding='five native file SHA256 values and complete source FEM, stress, and optional actual displaced-FEM replay, including the same retained nonlinear failure',project=False,gui=False,gui_report_import=True,study=False,
         limits='no failed source native, axisymmetric or curved source; no implicit length, RF factor, smoothing or continuum force/torque accuracy bound; scalar report version 1 remains unchanged')
 
 
@@ -397,5 +397,15 @@ def off_axis_magnetic_force_capabilities():
         commands=['analyze-off-axis-magnetic-force','replay-off-axis-magnetic-force'],force_unit='N',force_component='z for the full annular body',potential_unit='J',current_unit='A from integral Jphi dr dz',
         scope='strictly positive-radius linear scalar original FEM; all weight gradients in declared vacuum mu_r=1,Jphi=0; body w=1, outer/hole boundaries and other sources/nonvacuum regions w=0',
         virtual_work='explicit null or 2..8 decreasing positive axial steps; radial coordinates, exterior and integrated azimuthal currents fixed; full displaced Cases, energy/source work and coefficient SHA retained',
-        quadrature='source Case order q from 4..32, with q+4 stress comparison; no quadrature-error bound',source_binding='all five native SHA256 values and complete actual FEM/stress/optional axial-work replay',project=False,gui=False,study=False,
-        limits='no planar N/m reinterpretation, radial net vector force, meridional torque, axis-connected/BH/recoil/curved or failed source, GUI or continuum force accuracy certification')
+        quadrature='source Case order q from 4..32, with q+4 stress comparison; no quadrature-error bound',source_binding='all five native SHA256 values and complete actual FEM/stress/optional axial-work replay',project=False,gui=False,gui_report_import=True,study=False,
+        limits='no planar N/m reinterpretation, radial net vector force, meridional torque, axis-connected/BH/recoil/curved or failed source or continuum force accuracy certification')
+
+
+def magnetic_report_gui_capabilities():
+    return dict(gui=True,page='/magnetic.html',job_kind='magnetic_report_import',
+        report_formats={'superfish_ng_planar_magnetic_multipole_report':[1,2],'superfish_ng_planar_magnetic_force_report':[1,2],'superfish_ng_off_axis_magnetic_force_report':[1]},
+        gui_actions=['magnetic-report-import','magnetic-report-jobs','magnetic-report-result','magnetic-report-download'],
+        verification='owned five-file source and unchanged report; full original FEM replay asynchronously on import and initial/restarted display; every display/download checks all owned hashes',
+        units=dict(multipole='T',planar_force='N/m',planar_torques='N m/m',axial_force='N',planar_work_potential='J/m',axial_work_potential='J'),
+        virtual_work_states=['not_performed','complete','failed'],case_editor=False,solve=False,
+        limits='verified saved reports only; no magnetic Case editor, implied longitudinal length, radial net force, meridional torque or continuum accuracy certificate')

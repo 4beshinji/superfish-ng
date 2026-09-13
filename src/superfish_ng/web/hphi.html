@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hφ RF — Superfish-NG</title><link rel="stylesheet" href="/style.css"><script src="/hphi.js" defer></script></head>
-<body><header><div><span class="eyebrow">Hφ RF WORKSPACE</span><h1>Hφ RF</h1></div><p>軸接続・閉同軸円筒・一般断面と内導体<br><small>真空/無損失等方材料・m=0・閉PEC（対称軸は正則境界）</small></p></header><nav aria-label="ワークスペース"><a href="/">軸接続RF</a><a href="/planar.html">平面RF</a></nav>
+<body><header><div><span class="eyebrow">Hφ RF WORKSPACE</span><h1>Hφ RF</h1></div><p>軸接続・閉同軸円筒・一般断面と内導体<br><small>真空/無損失等方材料・m=0・閉PEC（対称軸は正則境界）</small></p></header><nav aria-label="ワークスペース">
+      <a href="/magnetic.html">磁気後処理報告</a><a href="/">軸接続RF</a><a href="/planar.html">平面RF</a></nav>
 <div id="error" hidden role="alert"></div><main><div class="editor"><section><h2>入力</h2><button id="new">新しい同軸円筒</button><label class="file">Projectを開く<input id="open" type="file" accept=".json"></label><button id="save">Projectを保存</button><p id="dirty"></p>
 <label>名前<input id="name" type="text"></label><label>表示単位<select id="unit"><option value="mm">mm</option><option value="m">m</option></select></label>
 <div id="cylinder"><label>内半径 <span class="length-unit">mm</span><input id="inner-radius" type="number" step="any"></label><label>外半径 <span class="length-unit">mm</span><input id="outer-radius" type="number" step="any"></label><label>長さ <span class="length-unit">mm</span><input id="length" type="number" step="any"></label><label>半径方向の分割数<input id="nr" type="number" min="2" step="1"></label><label>z方向の分割数<input id="nz" type="number" min="2" step="1"></label></div>
