@@ -1,5 +1,10 @@
 # 実装・検証の現状
 
+2026-09-13：[静的Studyの実worker・各条件保存・CLI](STATIC_FIELD_STUDY_JOBS.md)を主ツリーへ統合・限定受入。
+全11形式の全条件を既存専用FEMで独立に実行し、元Projectと成功/実失敗nativeを保存・再検証する。全条件実行完了と全点成功を分け、元初期値/条件・材料と失敗履歴を保持。独立78 Study/192条件（成功171/実非線形失敗21）のAPI/実worker/CLI各78と再起動78、156 CLIが一致。元1941/新6345ファイル不変。
+標準1423件（1420合格・3skip）、候補10 focused unit・既存23件と主6unitがPASS。固定889sourceを主895sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的Study GUI、対象版、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[静的Studyの入力・尺度変換](STATIC_FIELD_STUDY_INPUT.md)を主ツリーへ統合・限定受入。
 全11形式の基底Projectとuniform_scale/excitation_scale、全派生Caseの厳密検査、初期値/条件/材料来歴と入力順、非上書き保存・normalize-static-studyを接続する。独立33参照Caseの66 Study/165条件・元FEM330回の対比較と66 CLI、励起比例/二次積分72点と幾何尺度4点が合格。全165条件が求解成功で、実非線形失敗はこの比較では未検証。元297/新1914ファイルが不変。
 標準1417件（1414合格・3skip）、候補10unitと主7unitがPASS。固定886sourceを主892sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的Studyの実行/worker/GUI、対象版、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
@@ -598,6 +603,7 @@ X01は互換必須集合外の拡張候補。課題数は工数消化率や互�
 | 静的Project求解 | 既存11専用FEMのAPI/実worker/CLI、成功・実非線形失敗の保存/再読込を限定受入 | 静的GUI/Studyは後続 | [STATIC_FIELD_JOBS.md](STATIC_FIELD_JOBS.md) |
 | 静的Project画面 | 11形式の編集・実worker・元場と全量/履歴、保存/再起動を限定受入 | 静的Study・対象版確認は後続 | [STATIC_FIELD_GUI.md](STATIC_FIELD_GUI.md) |
 | 静的Study入力 | 11形式の厳密な幾何/励起尺度変換・初期値保持、正規化CLIを限定受入 | Study実行/保存・worker/GUIは後続 | [STATIC_FIELD_STUDY_INPUT.md](STATIC_FIELD_STUDY_INPUT.md) |
+| 静的Study求解 | 全11形式の実worker・元native/実失敗保存・再検証、CLIを限定受入 | Study GUI・対象版確認は後続 | [STATIC_FIELD_STUDY_JOBS.md](STATIC_FIELD_STUDY_JOBS.md) |
 | 平面磁場の力/トルク | B-H・反跳材料の力・仮想仕事報告保存・CLIを限定受入。元B・真空重みと原点、N/mとN m/m | GUI受渡し・軸対称の力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_FORCE_MATERIAL_NATIVE.md) |
 | 平面磁場の多極表現/抽出 | B-H/反跳モデルの多極報告保存・CLIを限定受入。明示normal/skew[T]/frame | GUI受渡し・力/トルクは未実装/未確認 | [PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md](PLANAR_MAGNETIC_MULTIPOLE_MATERIAL_NATIVE.md) |
 | 平面磁静 | 明示mu_r/Jz、固定Az/Ht、P1/P2実FEM、元Az/B/H、J/mエネルギーと反力/元H積分[A]・元B磁束[Wb/m]、専用保存/CLI | GUI/Project/Study・軸対称・曲線/穴・非線形等・厳密開放境界は未実装 | [PLANAR_MAGNETOSTATIC_SOLVE.md](PLANAR_MAGNETOSTATIC_SOLVE.md)、[PLANAR_MAGNETOSTATIC_NATIVE.md](PLANAR_MAGNETOSTATIC_NATIVE.md) |

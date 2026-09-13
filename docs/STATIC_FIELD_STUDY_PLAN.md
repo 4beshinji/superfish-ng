@@ -1,5 +1,7 @@
 # O02: 静的ProjectのパラメータStudy
 
+[実worker・各条件保存・CLI](STATIC_FIELD_STUDY_JOBS.md)を限定受入。GUIは未完で、全体要件を維持する。
+
 [入力と尺度変換](STATIC_FIELD_STUDY_INPUT.md)を限定受入。実行/保存・worker/GUIは未完で、以下の全体要件を維持する。
 
 2026-09-13 JST。後続課題、未実装・未受入。[静的GUI](STATIC_FIELD_GUI_PLAN.md)に続くO02のStudy接続。既存の平面/Hphi Studyと同様、明示した基底Projectから独立した各条件を作成し、全条件を既存の専用FEMで求解する。

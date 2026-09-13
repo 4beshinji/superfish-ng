@@ -54,7 +54,13 @@ def _state(directory, status, **extra):
 def read_job(directory, verify=True):
     directory = Path(directory)
     state = json.loads((directory / "job.json").read_text(encoding="utf-8"))
+    if not isinstance(state, dict): raise ValueError('job state must be a JSON object')
     if verify and state.get('status') in ('complete', 'failed'):
+        from .static_field_study_jobs import is_static_field_study, read_static_field_study
+        if is_static_field_study(directory, state):
+            if state['status'] == 'complete' or state.get('outcome_saved') or (directory / 'manifest.json').exists():
+                read_static_field_study(directory)
+            return state
         from .static_field_jobs import is_static_field_job, read_static_field_job
         if is_static_field_job(directory, state):
             if state['status'] == 'complete' or state.get('outcome_saved') or (directory / 'manifest.json').exists():
@@ -384,6 +390,10 @@ class JobManager:
         """Execute a dedicated Cartesian cutoff Project in a local worker."""
         from .planar_jobs import start_planar
         return start_planar(self,project)
+
+    def start_static_field_study(self, study):
+        from .static_field_study_jobs import start_static_field_study
+        return start_static_field_study(self, study)
 
     def start_planar_study(self, study):
         """Run an independent Cartesian sweep; point ranks are not mode identities."""

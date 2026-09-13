@@ -1,6 +1,6 @@
 # O02: 静的Studyの実worker・各条件保存・CLI
 
-2026-09-13 JST。未実装・未受入。[静的Study入力](STATIC_FIELD_STUDY_INPUT_PLAN.md)に続く、[Study全体](STATIC_FIELD_STUDY_PLAN.md)の実行工程。
+2026-09-13 JST。[実worker・保存・CLIの実装記録](STATIC_FIELD_STUDY_JOBS.md)の限定範囲を受入。[静的Study入力](STATIC_FIELD_STUDY_INPUT_PLAN.md)に続く、[Study全体](STATIC_FIELD_STUDY_PLAN.md)の実行工程。
 
 基底Studyの全派生Projectを厳密検証した後、各条件を既存の静的Project実行APIから独立に求解する。同じ専用FEM・材料・境界・初期値/反復条件を使い、前の条件の解を初期値へ渡さない。入力順に各条件Projectと成功5/実非線形失敗3の元nativeを保持する。Studyの全条件実行完了と、全条件求解成功を別項目で保存する。失敗点を削除したり零の場/量を作ったりしない。
 

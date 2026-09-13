@@ -1,5 +1,10 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-13：[静的Studyの実worker・各条件保存・CLI](docs/STATIC_FIELD_STUDY_JOBS.md)を主ツリーへ統合・限定受入。
+全11形式の全条件を既存専用FEMで独立に実行し、元Projectと成功/実失敗nativeを保存・再検証する。全条件実行完了と全点成功を分け、元初期値/条件・材料と失敗履歴を保持。独立78 Study/192条件（成功171/実非線形失敗21）のAPI/実worker/CLI各78と再起動78、156 CLIが一致。元1941/新6345ファイル不変。
+標準1423件（1420合格・3skip）、候補10 focused unit・既存23件と主6unitがPASS。固定889sourceを主895sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的Study GUI、対象版、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。
+
+
 2026-09-13：[静的Studyの入力・尺度変換](docs/STATIC_FIELD_STUDY_INPUT.md)を主ツリーへ統合・限定受入。
 全11形式の基底Projectとuniform_scale/excitation_scale、全派生Caseの厳密検査、初期値/条件/材料来歴と入力順、非上書き保存・normalize-static-studyを接続する。独立33参照Caseの66 Study/165条件・元FEM330回の対比較と66 CLI、励起比例/二次積分72点と幾何尺度4点が合格。全165条件が求解成功で、実非線形失敗はこの比較では未検証。元297/新1914ファイルが不変。
 標準1417件（1414合格・3skip）、候補10unitと主7unitがPASS。固定886sourceを主892sourceへ統合。旧seed9モード19量はf差0、最大相対差8.882e-16。静的Studyの実行/worker/GUI、対象版、O02と全計画は未完。親33=8受入/17進行/7他未受入/1範囲外。

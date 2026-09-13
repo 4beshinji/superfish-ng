@@ -180,7 +180,7 @@ class StaticFieldJobTests(unittest.TestCase):
             inventory=capabilities()['static_field_jobs']
             self.assertEqual(len(inventory['case_families']),11);self.assertEqual(inventory['kind'],static.KIND)
             self.assertEqual(inventory['cli_exit_codes'],dict(complete=0,retained_nonlinear_failure=1,invalid_or_io=2))
-            self.assertTrue(inventory['gui']); self.assertEqual(inventory['gui_page'], '/static.html');self.assertFalse(inventory['study'])
+            self.assertTrue(inventory['gui']); self.assertEqual(inventory['gui_page'], '/static.html');self.assertTrue(inventory['study'])
 
 
 if __name__=='__main__':unittest.main()

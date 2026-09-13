@@ -411,6 +411,19 @@ def magnetic_report_gui_capabilities():
         limits='verified saved reports only; no magnetic Case editor, implied longitudinal length, radial net force, meridional torque or continuum accuracy certificate')
 
 
+def static_field_study_jobs_capabilities():
+    from .static_field_project import static_case_families
+    return dict(kind='static_field_study', case_families=static_case_families(),
+        result_format='superfish_ng_static_field_study_result', result_schema_versions=[1],
+        operations=['solve-static-study', 'replay-static-study'],
+        cli_exit_codes=dict(all_points_successful=0, completed_with_nonlinear_failures=1, invalid_incomplete_or_io=2),
+        execution='every derived Project is independently solved with the existing dedicated FEM; original initial values and controls retained',
+        completion='Job complete means every requested point outcome is saved and verified; all_points_successful and failure counts are separate',
+        verification='rebuild every requested Case and replay every original native success/failure; bind all point bytes and one stable implementation',
+        worker=True, project=True, study=True, gui=False,
+        limits='No previous-point warm start, branch/mode tracking, convergence claim or new solver; static Study GUI remains separate.')
+
+
 def static_field_study_capabilities():
     from .static_field_project import static_case_families
     return dict(study_format='superfish_ng_static_field_study', study_versions=[1],
@@ -419,9 +432,9 @@ def static_field_study_capabilities():
                                  excitation_scale='finite signed factor including zero for all volume source densities, prescribed potentials, displacement/H boundary loads and recoil remanent B'),
         nonlinear_initialization='original initial coefficients and controls retained independently at every point; no automatic adjustment or previous-point warm start',
         commands=['normalize-static-study'], cli_exit_codes=dict(complete=0, invalid_or_io=2),
-        gui=False, execution=False, display_length_units=['m', 'mm'], stored_units='SI',
+        gui=False, execution=True, display_length_units=['m', 'mm'], stored_units='SI',
         mode_tracking='not_applicable', solution_branch_tracking='not_performed', mesh_convergence='not_performed',
-        limitations=['Input and derived-Project validation only; Study worker, result persistence and GUI require separate acceptance.',
+        limitations=['Independent worker execution and original native persistence are available; Study GUI requires separate acceptance.',
                      'Recoil constitutive potentials are not absolute magnet internal energy; B-H fields do not obey linear excitation scaling.',
                      'Every derived Case must pass its dedicated parser before output allocation.'])
 
@@ -432,7 +445,7 @@ def static_field_project_capabilities():
         display_length_units=['m','mm'],case_values='unchanged SI; display unit does not rescale geometry, sources, materials, boundaries, gauges or initial coefficients',
         commands=['normalize-static-project'],cli_exit_codes=dict(complete=0,invalid_or_io=2),
         publication='complete Project JSON, exclusive destination, no overwrite or partial publication',
-        project=True,solve=False,gui=True,gui_page="/static.html",study=False,
+        project=True,solve=False,gui=True,gui_page="/static.html",study=True,
         limits='input document only; dedicated static Case parsers retain all restrictions; no RF fallback, new physics, FEM execution, native result or convergence claim')
 
 
@@ -444,7 +457,7 @@ def static_field_jobs_capabilities():
         cli_exit_codes=dict(complete=0, retained_nonlinear_failure=1, invalid_or_io=2),
         statuses=dict(complete='successful original FEM fields', nonlinear_failed='actual B-H failure retained and replayed; Job status failed'),
         success_native_files=5, nonlinear_failure_native_files=3,
-        project=True, worker=True, solve=True, gui=True, gui_page="/static.html", study=False,
+        project=True, worker=True, solve=True, gui=True, gui_page="/static.html", study=True,
         limits='11 dedicated static FEM families only; saved failure is not a field solution; algebraic/Newton convergence does not certify discretization accuracy; no RF fallback')
 
 

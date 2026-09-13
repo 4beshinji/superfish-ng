@@ -383,8 +383,20 @@ def main(argv=None):
     static_study = sub.add_parser('normalize-static-study', help='validate every independent static Study point and publish the input without solving')
     static_study.add_argument('input', type=Path)
     static_study.add_argument('--out', type=Path, required=True)
+    static_study_solve = sub.add_parser('solve-static-study', help='execute every independent static Study point, retaining actual nonlinear failures')
+    static_study_solve.add_argument('input', type=Path)
+    static_study_solve.add_argument('--out', type=Path, required=True)
+    static_study_replay = sub.add_parser('replay-static-study', help='rebuild and replay every saved static Study point and outcome')
+    static_study_replay.add_argument('run', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('solve-static-study', 'replay-static-study'):
+            from .static_field_study import StaticFieldStudy
+            from .static_field_study_jobs import execute_static_field_study, read_static_field_study
+            result = (execute_static_field_study(StaticFieldStudy.load(args.input), args.out)
+                      if args.command == 'solve-static-study' else read_static_field_study(args.run))
+            print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+            return 0 if result['all_points_successful'] else 1
         if args.command == 'normalize-static-study':
             from .static_field_study import StaticFieldStudy
             study = StaticFieldStudy.load(args.input)
