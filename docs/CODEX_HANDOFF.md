@@ -1,5 +1,10 @@
 2026-09-15 JST：[TEアフィン調整版4](TE_AFFINE_TUNING.md)のGUI/CLI・場/RF追加検証を限定受入。
 
+2026-09-15 JST：[実円弧TE逐次・適応StudyのCLI・GUI](TE_CAP_STUDY_WORKFLOWS.md)を限定受入。
+CLI保存再開と未確認停止、適応GUI10項目PASS。逐次GUIは初回6項目成功後の読込タイムアウトを保持し、別ブラウザー再生1項目で補完。
+新16半領域FEM、既存API3解との16組128配列/全RF一致、247 nativeファイル保持。336製品SHA不変、全5GUIジョブ・専用プロセス終端。
+変更は検証器と記録のみ。分割切替TE対称条件・他物理/D03は残り、親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[実曲線TE調整のCLI・GUI](TE_CAP_TUNING_WORKFLOWS.md)を限定受入。
 多項式版14/指数式版11のGUI検査、両版CLIの最終細分再開がPASS。新8半領域FEM、API比較元6解を再利用。
 8組64配列・全RF一致、182 nativeファイル保持、両1 MHzゲートと元セクター順位を確認。製品コード変更なし。
@@ -16,10 +21,11 @@ full validatorは361モジュール1826件PASS（3 skip）、HTTPの1件を別�
 専用折線壁9半領域FEMで独立/逐次/適応Studyを確認し、6組48配列と全RF一致、117ファイル保持。CLI履歴再生PASS。
 実曲線workflow追加検証・専用GUI・分割切替対称条件・他物理/D03等は残る。親33=10/16/6/1、全計画goal ACTIVE。
 
-次は円弧形状の逐次/適応Studyの専用GUI・CLIを確認し、TE対称の分割切替版4/8へ進む。
+次はTE対称の分割切替Study版4/調整版8へ進む。円弧逐次/適応CLI・GUIの限定検証は完了。
 版4/8の対称条件はまだ拒否し、元参照座標・全鏡映体積・保存再開を検証してから接続する。
 旧円弧候補の鏡映拒否は座標別丸めの変更で解消。元のjoin tolerance 1e-14 mを保持した実入力と失敗ログをoutに残した。
-今回のfull/専用Study/調整/GUI/表示用サーバーはすべて終了済み。再開すべき実行handleはない。
+専用GUIサーバーPID2707565はSIGINT終了0、全5ジョブ終了。逐次初回検証はタイムアウト、補完再生と適応は終了0。
+CLI補助は期待したUNVERIFIEDの終了値1で終端、native照合は終了0。全対象プロセスは終了しており、再開すべき計算はない。
 操作要求1 MHzと独立体積/Maxwell不変量の検査を混同しない。詳細と集約結果はCURVE_COORDINATE_BOUNDSを参照。
 
 2026-09-15 JST：[TE対称曲線Projectの非アフィン変形](TE_SYMMETRY_DEFORMATION.md)をAPI/CLIへ接続。

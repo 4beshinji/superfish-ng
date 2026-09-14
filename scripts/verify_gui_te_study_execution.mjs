@@ -27,6 +27,9 @@ if (!args["--url"] || !args["--out"] || !args["--request"])
   throw Error(
     "Usage: node scripts/verify_gui_te_study_execution.mjs --url LAUNCH_URL --out NEW_DIRECTORY --request REQUEST_JSON",
   );
+const resultTimeout = Number(args["--result-timeout-ms"] ?? 180000);
+if (!Number.isSafeInteger(resultTimeout) || resultTimeout <= 0)
+  throw Error("--result-timeout-ms must be a positive integer");
 const out = resolve(args["--out"]);
 await mkdir(out, { recursive: false });
 const profile = await mkdtemp("/tmp/ng-gui-chrome-");
@@ -196,13 +199,13 @@ try {
   const loadFile=async filename=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector:'#tracked-execution-open'},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(filename)]},sessionId);};
   const launch=async selector=>{
     const previous=await ev('$("tracked-execution-job").textContent');await click(selector);
-    await wait(`!trackedExecutionBusy && $("tracked-execution-job").textContent!==${JSON.stringify(previous)}`,180000);
+    await wait(`!trackedExecutionBusy && $("tracked-execution-job").textContent!==${JSON.stringify(previous)}`,resultTimeout);
     const id=await ev('$("tracked-execution-job").textContent.match(/開始しました: ([a-zA-Z0-9-]+)/)[1]');report.job_ids.push(id);return id;
   };
   const openJob=async(id,status,count)=>{
     await wait(`document.querySelector('[data-job="${id}"] strong')?.textContent.includes(${JSON.stringify(status)})`,600000);
     await click(`[data-job="${id}"] button`);
-    await wait(`!trackedExecutionBusy && trackedExecutionResult?.document.status===${JSON.stringify(status)} && (trackedExecutionResult.document.attempts?.length ?? trackedExecutionResult.document.point_runs.length)===${count}`,180000);
+    await wait(`!trackedExecutionBusy && trackedExecutionResult?.document.status===${JSON.stringify(status)} && (trackedExecutionResult.document.attempts?.length ?? trackedExecutionResult.document.point_runs.length)===${count}`,resultTimeout);
   };
   const capture=async name=>{const rect=await ev('(()=>{const r=$("tracked-execution").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');const shot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+'/'+name,Buffer.from(shot.data,'base64'));};
   if(args['--replay-only']){
@@ -210,7 +213,7 @@ try {
     const saved=JSON.parse(expected);
     if(!isDeepStrictEqual(saved.request,request) || saved.document_type!==(adaptive?'adaptive_tracked_study':'tracked_study_checkpoint'))throw Error('replay file differs from declared request or kind');
     await fill('#tracked-execution-request','{}');await loadFile(args['--replay-only']);
-    await wait('!trackedExecutionBusy && trackedExecutionResult?.document.status==="COMPLETE" && JSON.parse($("tracked-execution-request").value).initial_ids?.[0]==="TE-fundamental"',180000);
+    await wait('!trackedExecutionBusy && trackedExecutionResult?.document.status==="COMPLETE" && JSON.parse($("tracked-execution-request").value).initial_ids?.[0]==="TE-fundamental"',resultTimeout);
     if(await ev('trackedExecutionResult.serialized')!==expected)throw Error('completed replay differs');
     await check('fresh browser replays complete TE evidence and restores electric identity','trackedExecutionResult.document.history.current_mode_ids.join(",")==="TE-fundamental" && trackedExecutionResult.document.history.steps.every(s=>s.tracking.physical_mapping.field==="Ephi_V_per_m") && $("tracked-execution-resume").disabled');
     await capture('replayed-complete.png');
@@ -231,12 +234,12 @@ try {
   if(downloaded!==await ev('trackedExecutionResult.serialized'))throw Error('download changed checkpoint text');
   report.checks.push({operation:'checkpoint download preserves exact native text',passed:true});
   await fill('#tracked-execution-request','{}');await loadFile(out+'/downloads/'+savedName);
-  await wait('!trackedExecutionBusy && JSON.parse($("tracked-execution-request").value).initial_ids?.[0]==="TE-fundamental"',180000);
+  await wait('!trackedExecutionBusy && JSON.parse($("tracked-execution-request").value).initial_ids?.[0]==="TE-fundamental"',resultTimeout);
   await check('file replay restores TE request and enables resume','!$("tracked-execution-resume").disabled && JSON.parse($("tracked-execution-request").value).study.project.case.model.polarization==="te"');
   const forged=JSON.parse(downloaded);
   if(adaptive)forged.attempts[0].decision=acceptedSweep?'BISECT':'ACCEPT';else forged.point_results[0].value=-1;
   await writeFile(out+'/forged.json',JSON.stringify(forged));await loadFile(out+'/forged.json');
-  await wait('!trackedExecutionBusy && !$("error").hidden',180000);
+  await wait('!trackedExecutionBusy && !$("error").hidden',resultTimeout);
   await check('forged evidence cannot replace the verified checkpoint','$("error").textContent.includes("replay") && !$("tracked-execution-resume").disabled');
   if(await ev('trackedExecutionResult.serialized')!==downloaded)throw Error('forged replay replaced result');
   await fill('#tracked-execution-request','{}');
@@ -244,18 +247,18 @@ try {
     const second=await launch('#tracked-execution-resume');await openJob(second,'PAUSED',2);
     await check('adaptive resume inserts only midpoint and retains original endpoints','trackedExecutionResult.document.points.length===3 && trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2" && $("tracked-adaptive-points").textContent.includes("追加点")');
   }
-  await fill('#tracked-execution-limit','');const complete=await launch('#tracked-execution-resume');await openJob(complete,'COMPLETE',adaptive && !acceptedSweep?3:2);
+  await fill('#tracked-execution-limit','');const complete=await launch('#tracked-execution-resume');await openJob(complete,'COMPLETE',adaptive ? (acceptedSweep?2:3) : request.study.values.length);
   await check('completed TE history retains electric-field identity and disables resume','trackedExecutionResult.document.history.current_mode_ids.join(",")==="TE-fundamental" && trackedExecutionResult.document.history.steps.every(s=>s.tracking.physical_mapping.field==="Ephi_V_per_m") && !$("tracked-execution-save").disabled && $("tracked-execution-resume").disabled');
   if(acceptedSweep)await check('all declared intervals complete without inserted points','trackedExecutionResult.document.accepted_point_indices.join(",")==="0,1,2" && trackedExecutionResult.document.attempts.every(a=>a.decision==="ACCEPT")');
   else if(adaptive)await check('adaptive completion keeps failed comparison and accepted order','trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2,1" && trackedExecutionResult.document.attempts[0].decision==="BISECT" && $("tracked-adaptive-attempts").textContent.includes("UNVERIFIED")');
   const completeText=await ev('trackedExecutionResult.serialized');await writeFile(out+'/complete.json',completeText);
   await capture('complete.png');await fill('#tracked-execution-request','{}');await loadFile(out+'/complete.json');
-  await wait('!trackedExecutionBusy && trackedExecutionResult?.document.status==="COMPLETE" && JSON.parse($("tracked-execution-request").value).initial_ids?.[0]==="TE-fundamental"',180000);
+  await wait('!trackedExecutionBusy && trackedExecutionResult?.document.status==="COMPLETE" && JSON.parse($("tracked-execution-request").value).initial_ids?.[0]==="TE-fundamental"',resultTimeout);
   if(completeText!==await ev('trackedExecutionResult.serialized'))throw Error('complete replay changed text');
   report.checks.push({operation:'completed TE file replays without changing evidence',passed:true});
   if(adaptive){
-    const stopped=structuredClone(request);stopped.adaptive.max_depth=0;
-    if(acceptedSweep){stopped.study.affine_coefficients.axial_scale=[1.];stopped.step_controls.forEach(c=>c.minimum_overlap=.999999);}
+    const stopped=args['--stopped-request'] ? JSON.parse(await readFile(args['--stopped-request'],'utf8')) : structuredClone(request);stopped.adaptive.max_depth=0;
+    if(acceptedSweep && !args['--stopped-request']){stopped.study.affine_coefficients.axial_scale=[1.];stopped.step_controls.forEach(c=>c.minimum_overlap=.999999);}
     await fill('#tracked-execution-request',JSON.stringify(stopped));const id=await launch('#tracked-execution-start');await openJob(id,'UNVERIFIED',1);
     await check('depth limit leaves original target unreached and prohibits resume',`trackedExecutionResult.document.unreached_target_indices.join(",")===${JSON.stringify(acceptedSweep?'1,2':'1')} && $("tracked-execution-status").textContent.includes("二分深さの上限") && $("tracked-execution-resume").disabled && !$("tracked-execution-save").disabled`);
     await writeFile(out+'/stopped.json',await ev('trackedExecutionResult.serialized'));await capture('stopped.png');

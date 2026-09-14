@@ -1,0 +1,89 @@
+{
+  "status": "PASS",
+  "new_half_eigensolves": 16,
+  "reused_api_half_solutions": 3,
+  "native_pairs": 16,
+  "npz_arrays_exact": 128,
+  "all_rf_exact": true,
+  "preserved_native_files": 247,
+  "rows": [
+    {
+      "name": "cli-sequential",
+      "status": "COMPLETE",
+      "points": 3
+    },
+    {
+      "name": "cli-adaptive",
+      "status": "COMPLETE",
+      "points": 3
+    },
+    {
+      "name": "cli-stopped",
+      "status": "UNVERIFIED",
+      "points": 2
+    },
+    {
+      "name": "gui-sequential",
+      "status": "COMPLETE",
+      "points": 3
+    },
+    {
+      "name": "gui-adaptive",
+      "status": "COMPLETE",
+      "points": 3
+    },
+    {
+      "name": "gui-stopped",
+      "status": "UNVERIFIED",
+      "points": 2
+    },
+    {
+      "name": "gui-sequential-replay",
+      "checks": 1
+    },
+    {
+      "name": "gui-sequential-checks",
+      "checks": 6,
+      "jobs": [
+        "20260915-074618-7902f08404",
+        "20260915-074659-4a907d81d1"
+      ]
+    },
+    {
+      "name": "gui-adaptive-checks",
+      "checks": 10,
+      "jobs": [
+        "20260915-074628-fc3a97d82b",
+        "20260915-075303-d51d222830",
+        "20260915-075832-0f120c909c"
+      ]
+    }
+  ],
+  "base_commit": "a935703",
+  "scope": "reflected circular-cap TE sequential/adaptive Study CLI and GUI; split sequential GUI acceptance",
+  "source_files_unchanged": 336,
+  "gui_jobs_complete": 5,
+  "external_requests": 0,
+  "gui_server_exit": 0,
+  "cli_resume": {
+    "status": "PASS",
+    "rows": [
+      {
+        "kind": "sequential",
+        "request_preserved": true,
+        "earlier_points_preserved": 1,
+        "verified_source_files": 13
+      },
+      {
+        "kind": "adaptive",
+        "request_preserved": true,
+        "earlier_points_preserved": 2,
+        "verified_source_files": 26
+      }
+    ]
+  },
+  "sequential_gui_initial_timeout_retained": true,
+  "cli_stopped_expected_exit": 1,
+  "product_code_changed": false,
+  "full_validation_reused": "benchmarks/tuning/curve-coordinate-bounds-20260915.json"
+}
