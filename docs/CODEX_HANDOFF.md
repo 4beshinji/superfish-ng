@@ -1,3 +1,35 @@
+2026-09-14 JST 最新継続状態。開始HEADf6ee460、当初clean。前goalターンは単独Project形状変形GUIの実装/検証/commitでprogress。
+今回はN04の初期メッシュ変更Studyに必要な、同じ二次領域での初期メッシュ置換と明示新履歴をAPI/CLIへ追加したprogress。
+全計画は未完、goal ACTIVE。[CURVED_PROJECT_REMESH.md](CURVED_PROJECT_REMESH.md)が入力/数学/検証/残件の最新記録。
+新curved_project_remesh.remesh_curved_project(project,plan)。plan版1はsource_meshとminimum_corner_angle_deg必須、curved_refinement_levels/stepsの片方も必須。
+直接native曲線P2、未組立/未反射、閉PEC/axis TM。元のCase/Project・RF・正規化・幾何・予算を保持し、新メッシュと全履歴だけ置換。
+旧marked番号を暗黙継承しない。新marked番号は新しい段階直前のメッシュへ解釈し、既存freezeで全split_patternを固定して返す。
+旧接続SHAに拘束されたpattern、履歴なし/両方/空steps/不正quality・予算は拒否。全新prefixで正Jacobian/辺/品質と元全二次境界の一致を検査。
+同じ解析曲線でも、弦の途中へ新しい節点を置いて再投影すると二次領域が変わる。既存compare_quadratic_space_boundariesの全区間Bezier係数一致で拒否する。
+巨大一様段数を配列へ展開せずgeneratorで段階を検査し、元max_trianglesで拒否する。
+CLI remesh-curved-project --plan ... --out ... は検査後に排他的保存。元/plan/既存出力を保持。新Study版や専用GUIはまだ追加していない。
+portable合成例examples/curved_project_remesh/source-project.jsonとremesh-plan.json。元26初期/146最終、置換28初期/188最終要素。
+変更前の独立幾何/質量2件はAPI不在red。実装後の2件は1PASS/1ERROR（keyword-only積分次数のテスト呼出し誤記）。テストだけ補修。
+新6unit7.994秒、非アフィン変形受渡し1件2.975秒、専用後の独立内部点移動/節点・要素番号付替え1件1.467秒PASS。
+最終新8件は6+1+1であり単一8件実行ではない。
+既存harmonic_deformation/frozen_refinement/project_mesh/curved_same_domain/curved_piecewiseの34unit75.672秒PASS、external_mesh_study4unit0.478秒PASS。
+旧APIのmarked履歴付き無宣言メッシュ置換拒否も維持。FEM/既存境界比較/変形数学・許容差は無変更。
+専用validate_curved_project_remesh.pyは53.996秒PASS、8新FEM。元/置換×尺度1/2と元/置換の非アフィン変形6 FEM、別生成円筒2 FEM。
+独立Green面積/体積と既知Hphi=rの質量は不変。Maxwell f/RF差最大4.441e-15、Hphi/Er/Ez尺度差最大2.919e-14。
+同一領域追跡0.9999999408013291、元→変形後の独立置換FEM追跡0.9977230877971308でPASS、両完全保存replay/native一致。
+後者は元Projectから変形した比較メッシュを用い、別接続FEMの実場を標本化した。
+円筒は初期96/384→最終384/1536要素、TM010 f相対誤差2.103e-8/1.320e-9、両RQ8.555e-6/6.233e-7、G2.330e-8/1.566e-9、TTF3.303e-9/2.006e-10。
+専用実行中1028ソース系不変、以後差分は独立番号付替え1テストだけ。製品は以後不変。索引out/curved-project-remesh-20260914/acceptance.json。
+geometry93903終了1、feature57606/deformation28487/reg97834/native12620/numbering26578終了0。external4も終了0。全検証終端、サーバー/worker/実行中handleなし。
+新API/CLIと直接消費先へ限定、全件validate/seed/browser/Hosted CI/新Wine比較/実測は未実行。過去full FAIL+対象補修+別seedを今回full PASSへ読み替えない。
+新規外部資料/依存/旧資産参照なし。subagent/skillなし。親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVE。
+次はこの置換planをStudyの条件別メッシュ規則へ接続する。元の形状法則Projectは比較用に保持し、各点の実FEMは明示した別メッシュ/新固定履歴から作る。
+同じ元/先解析曲線でも二次境界が変わる場合は既存piecewise比較を通せない点を維持。単なる自動make_mesh+旧番号流用は不正。
+条件別の計画を二分点でも決定できる明示規則、実比較点の対応メッシュ、全点preflight・保存replay/再開・GUIが残る。離散mesh切替時も物理枝は追跡が必要。
+未決定の設計案として、元形状上の置換planを値区間へ明示し、各点で独立変形し、元Projectから変形した比較用メッシュと全二次境界を照合する方法がある。まだ実装/受入済みではない。
+自動mesh生成/番号対応、Study離散曲線変更、TE/反射/半領域契約、D01一般枝回復、N04一般精度/効率、C00.V/G03/V02ほかは未完。
+旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD91e177e、当初clean。前goalターンは曲線法則Studyの実装/検証/commitでprogress。
 今回はN04残件4の単独Project形状変形GUIを実装・検証したprogress。全計画は未完、goal ACTIVE。
 [GUI_CURVED_DEFORMATION.md](GUI_CURVED_DEFORMATION.md)が入力/状態/数学/検証/残件の最新記録。

@@ -1,5 +1,8 @@
 # 曲線上の対応と調和変位による履歴付きProject変形
 
+2026-09-14追補：[初期メッシュ置換と新履歴](CURVED_PROJECT_REMESH.md)で準備したProjectも、この変形APIへ渡せる。
+実際に異なる初期接続・新固定履歴を変形し、共通二次境界と独立保存場の追跡を確認した。Studyの条件別メッシュ切替は次段階。
+
 2026-09-14追補：[単独Project変形GUI](GUI_CURVED_DEFORMATION.md)の目標準備・native二次境界プレビュー・保存・適用・Undoも接続した。初期再メッシュ/自動対応と全計画は継続中。以下は各段階の記録。
 
 2026-09-14追補：[曲線法則の形状Study](CURVED_HARMONIC_STUDY.md)へ接続した。通常Study/保存追跡/逐次・適応再開とGUIで、各条件を元Projectから独立変形する。単独Projectの変形プレビュー/適用/Undoは残る。以下は変形API/CLIを追加した時点の記録。

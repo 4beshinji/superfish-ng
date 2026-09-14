@@ -1,5 +1,10 @@
 # 独立実装・情報来歴
 
+2026-09-14 JST：[初期メッシュ置換と明示した新履歴](CURVED_PROJECT_REMESH.md)。
+既存mesh入力、曲線native再構築、全二次境界比較、分割固定、変形/保存/追跡を接続した。
+独立なGreen積分とHφ=rの質量、Maxwell f/RF/場形、別生成円筒の解析値で検査した。初回のkeyword-only引数のテスト誤記を補修。
+合成二半楕円と円筒であり、測定構造ではない。新規外部資料・依存・旧資産参照なし。FEMや許容差を変更していない。
+
 2026-09-14 JST：[単独Projectの形状変形GUI](GUI_CURVED_DEFORMATION.md)。
 既存調和変位、native P2境界、Project保存/workerと編集操作を接続した。二次LagrangeとBezierの恒等式で境界を表示する。
 別の境界多項式積分、GUI/CLI実保存場の全係数とRF再評価、明示したエネルギー・両R/Q定義を照合した。

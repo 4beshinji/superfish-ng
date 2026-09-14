@@ -1,5 +1,12 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[初期メッシュ置換API/CLI](CURVED_PROJECT_REMESH.md)は新6unit7.994秒と非アフィン受渡し1件2.975秒、独立移動/番号付替え1件1.467秒PASS。
+初回API不在redと、実装後のkeyword-only引数のテスト誤記による1失敗を保持する。最終新8件は6+1+1の分割合格。
+既存harmonic_deformation/frozen_refinement/project_mesh/curved_same_domain/curved_piecewiseの34件75.672秒とexternal_mesh_study4件0.478秒PASS。
+専用validate_curved_project_remesh.pyは53.996秒、8新FEM。独立幾何/Maxwellと元場追跡・完全保存再生、別生成円筒のf/RF解析値を確認。
+実行中1,028ソース系は不変。以後の差分は独立移動/番号付替え1テストだけ、製品は不変。
+索引out/curved-project-remesh-20260914/acceptance.json。新API/CLIと直接消費先に限定し、全件/seed/browser/Hosted CI/新Wine比較は未実行。
+
 2026-09-14 JST：[単独Project変形GUI](GUI_CURVED_DEFORMATION.md)は新3unitとGUI/履歴/Projectの直接消費先を選択。
 最終の新3/既存37件には分割合格証拠がある。初回選択は実31件合格と誤指定モジュール1件で終了1。
 正しいProject二モジュールの9件では例題の旧分類前提1件に2エラー。専用Study往復と単独Case拒否を加え、当該1件0.204秒PASS。

@@ -67,6 +67,10 @@ def main(argv=None):
     deform.add_argument('--rf-coordinates',choices=('fixed','axis_fraction'),required=True)
     deform.add_argument('--minimum-corner-angle-deg',type=float,required=True)
     deform.add_argument('--out',type=Path,required=True)
+    remesh=sub.add_parser('remesh-curved-project',help='replace an initial curved mesh and explicitly redeclare/freeze its history on the same quadratic domain')
+    remesh.add_argument('project',type=Path)
+    remesh.add_argument('--plan',type=Path,required=True,help='strict remesh plan with source_mesh and a complete new refinement declaration')
+    remesh.add_argument('--out',type=Path,required=True)
     tracking=sub.add_parser('track-modes',help='track saved PEC modes using an explicit physical or paired-mesh mapping')
     tracking.add_argument('request',type=Path)
     tracking.add_argument('--out',type=Path,required=True)
@@ -874,6 +878,15 @@ def main(argv=None):
             with args.out.open('x',encoding='utf-8') as stream:
                 json.dump(result.to_dict(),stream,indent=2,allow_nan=False);stream.write('\n')
             print(f"DEFORMED: {args.out}")
+            return 0
+        elif args.command == 'remesh-curved-project':
+            from .curved_project_remesh import remesh_curved_project
+            from .project import load_document,parse_json
+            result=remesh_curved_project(load_document(args.project.read_text(encoding='utf-8')),
+                parse_json(args.plan.read_text(encoding='utf-8')))
+            with args.out.open('x',encoding='utf-8') as stream:
+                json.dump(result.to_dict(),stream,indent=2,allow_nan=False);stream.write('\n')
+            print(f"REMESHED: {args.out}")
             return 0
         elif args.command == 'track-modes':
             from .saved_mode_tracking import save_mode_tracking

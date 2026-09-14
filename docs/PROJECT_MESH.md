@@ -1,5 +1,8 @@
 # Projectに明示元メッシュを保持する
 
+2026-09-14追補：[曲線の初期メッシュ置換API/CLI](CURVED_PROJECT_REMESH.md)で、新しいメッシュと全細分履歴を同時に宣言できる。
+旧番号を自動継承せず、二次領域全体の一致を要求する。従来の単純なメッシュ置換でmarked履歴を拒否する契約は保持する。
+
 後続実装: [外部メッシュ単体のGUI読込/解除と直線固定Study](EXTERNAL_MESH_WORKFLOW.md)を追加。以下はProject保存契約を受け入れた時点の記録。
 
 後続実装: [曲線Project一括変形](CURVED_PROJECT_TRANSFORM.md)を追加。曲線tune接続は残る。以下はこの基盤を受け入れた時点の記録。

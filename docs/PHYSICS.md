@@ -1,5 +1,9 @@
 # 物理・数値仕様 — canonical specification v28（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
+[初期メッシュ置換と新履歴](CURVED_PROJECT_REMESH.md)は、同じ解析曲線の一致に加えて全二次境界のBezier係数一致を要求する。
+新しい初期接続に対する新marked番号を明示/固定し、旧番号の対応を推定しない。独立Green面積・体積とu=1の質量∫r³drdzを確認した。
+別初期接続間の固有値完全一致やRitz単調性を仮定せず、実FEMのMaxwell尺度則・円筒解析f/RF・元場追跡を別に確認する。
+
 [単独Project変形GUI](GUI_CURVED_DEFORMATION.md)は既存調和変位APIを呼び、全履歴後のnative二次境界を同じ縮尺で重ねて表示する。
 始点a/終点b/中点mからBezier制御点2m−(a+b)/2を使い、弦へ置換しない。表示と保存場の幾何・Green積分、RF両定義を独立に照合した。
 元ProjectとRF座標・全固定履歴の保持、厳密な変形拒否、適用/Undoの状態を扱い、FEM・変形数学・精度保証は追加しない。

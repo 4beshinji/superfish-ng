@@ -1,5 +1,10 @@
 # N04の要件・証拠・残件の照合
 
+2026-09-14追補：[初期メッシュ置換と新履歴](CURVED_PROJECT_REMESH.md)を、メッシュ変更Studyの前提API/CLIとして追加した。
+明示した別接続と新履歴を固定し、全二次境界の一致と独立幾何/質量・Maxwell・円筒解析f/RFを確認。
+新8/既存38unitの分割証拠、専用8 FEMと保存追跡/完全replayがPASS。
+条件別メッシュのStudy/二分/再開・GUIと自動生成/対応は残る。親N04と全計画を完了へ変更しない。
+
 2026-09-14追補：[単独Projectの形状変形GUI](GUI_CURVED_DEFORMATION.md)の準備/二次境界プレビュー/保存/適用/Undoを接続した。
 元Projectと固定履歴・RF条件を保持し、変更中の応答/後続編集と品質・実反転を拒否する。
 新3/既存37unitの分割証拠、Chrome新21+追加6/既存9項目、GUI/CLI実保存場と独立Green/RFが確認済み。
@@ -86,7 +91,8 @@
    [調和変位](CURVED_HARMONIC_DEFORMATION.md)で非アフィンな曲線変更にも変形API/CLIを追加した。
    [曲線法則Study](CURVED_HARMONIC_STUDY.md)のCLI/GUIと保存追跡/逐次・適応再開も接続した。
    [単独Project変形GUI](GUI_CURVED_DEFORMATION.md)で目標準備・二次境界表示・保存・適用・Undoも接続した。
-   初期メッシュを作り直す掃引と独立メッシュへの自動番号対応は残る。固定形状の収束Studyとは区別する。
+   [初期メッシュ置換と新履歴](CURVED_PROJECT_REMESH.md)のAPI/CLIで、別接続を二次領域一致の条件付きで準備できる。
+   条件別の初期メッシュを指定するStudy/二分/再開・GUIと、独立メッシュへの自動番号対応は残る。固定形状の収束Studyとは区別する。
 
 この照合はN04の作業整理であり、33親課題・互換必須集合全体の完了ではない。
 親課題の受入数・他課題の残件は変更しない。
