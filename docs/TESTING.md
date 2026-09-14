@@ -1,5 +1,11 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[履歴途中への図上挿入](GUI_CURVED_HISTORY_INSERTION.md)は関連4unit（10.838秒）、
+新Chrome20項目、従来SVG6項目/大規模21項目、独立native検証31.223秒PASS。
+前半6応答/232・26,664要素の最終履歴、独立境界積分、保存場RF9量を確認。
+初回後の製品差分は列幅CSSのみで、その画像と従来操作を別途確認した。実FEMは小規模2ジョブ。
+FEM/Caseスキーマは不変。全unit/seed/全validate/Hosted CI/サーバー再起動は実施しない。
+
 2026-09-14 JST：[大規模曲線メッシュ選択](LARGE_CURVED_MESH_SELECTION.md)はtest_gui_curved_mesh_selectionの4unit（10.725秒）。
 最終製品のChromeは新17+21、従来の一様/局所履歴各6チェックと実FEM。独立native再構築/境界積分は63.546秒PASS。
 大規模UI競合は確認済みnative応答を再利用する制御検査、250,000要素の測定は描画器だけと明示する。

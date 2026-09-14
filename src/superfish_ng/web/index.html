@@ -192,8 +192,12 @@
             <label>形状を保つ細分段数<input id="curved-refinement-levels" type="number" min="0" step="1" value="0" /></label>
           </div>
           <p>段数を1増やすと要素数は4倍になります。初期の二次形状を保持し、解析曲線へ点を置き直しません。</p>
-          <button id="curved-selection-load" type="button">現在のメッシュから図上選択</button>
-          <p class="hint">現在の履歴を適用した原領域の要素を選び、末尾に選択細分を追加します。図上表示は250,000要素まで。入力変更後はメッシュを再表示してください。</p>
+          <label>図上選択の反映先<select id="curved-selection-position"><option value="end">履歴末尾へ追加</option><option value="insert">指定段階の直前へ挿入</option><option value="replace">指定段階の要素を選び直す</option></select></label>
+          <label>対象の段階（1始まり）<input id="curved-selection-stage" type="number" min="1" step="1" value="1" disabled /></label>
+          <button id="curved-selection-load" type="button">対象段階のメッシュから図上選択</button>
+          <p class="hint">対象段階より前の履歴だけを適用した原領域を表示します（250,000要素まで）。途中を変更すると後続の選択要素は再指定が必要です。旧番号を参照用に残し、未指定の間は保存・計算できません。入力変更後は再表示してください。</p>
+          <button id="curved-history-undo" type="button" disabled>直前の図上変更前の履歴に戻す</button>
+          <p id="curved-history-edit-status" role="status"></p>
           <div id="curved-selection-panel" hidden>
             <svg id="curved-selection-mesh" viewBox="0 0 800 400" style="width:100%;min-height:240px" aria-label="細分要素を選ぶメッシュ"></svg>
             <div id="curved-selection-large" hidden>
@@ -214,7 +218,7 @@
           <fieldset id="curved-history-controls" hidden disabled>
             <legend>順序付き細分履歴</legend>
             <p>上から順に実行します。選択要素の番号は各段階の直前のメッシュに対する0始まりの番号です。形状や初期メッシュを変更する場合は履歴も確認してください。</p>
-            <table id="curved-history"><thead><tr><th>方法</th><th>要素番号（カンマ区切り）</th><th>最小頂点接線角 [度]</th><th>順序・削除</th></tr></thead><tbody></tbody></table>
+            <table id="curved-history"><thead><tr><th>段階・方法</th><th>要素番号（カンマ区切り）</th><th>最小頂点接線角 [度]</th><th>選択・順序・削除</th></tr></thead><tbody></tbody></table>
             <button id="curved-add-uniform" type="button">一様細分を追加</button>
             <button id="curved-add-marked" type="button">選択要素の細分を追加</button>
           </fieldset>

@@ -1,5 +1,9 @@
 # N04の要件・証拠・残件の照合
 
+2026-09-14追補：[履歴途中への図上挿入](GUI_CURVED_HISTORY_INSERTION.md)を残件4の専用範囲で受入。
+前半nativeメッシュ、後続markedの明示再指定、保存/計算/undoと古い選択の拒否を実装。
+新Chrome20/従来6+21項目、関連4unitと独立native/境界積分/保存場RFが合格。N04全体は未受入。
+
 2026-09-14追補：[大規模メッシュの図上選択](LARGE_CURVED_MESH_SELECTION.md)を専用範囲で受入。
 5000超〜250,000要素の二次曲線表示・索引/選択・履歴追加と入力変更拒否を追加。
 元配列/native再構築・独立面積/体積、上限描画測定、実Chromeと従来SVG/実FEMを確認した。
@@ -52,7 +56,7 @@
    一般形状/効率課題を文言の読み替えだけで削除しない。
 3. 単一対称半領域は[鏡映契約](CURVED_ADAPTIVE_SYMMETRY.md)と[磁気対称の最終対照](CURVED_MAGNETIC_ADAPTIVE.md)を確認済み。一般曲線の表面前提と幾何誤差を、N03/G03と整合した仕様・独立検証へ進める。
    今の版4の受理範囲を黙って広げない。
-4. GUIの[図上要素選択](GUI_CURVED_MESH_SELECTION.md)は[大規模表示](LARGE_CURVED_MESH_SELECTION.md)で250,000要素まで拡張した。履歴途中への図上挿入は残る。番号指定の履歴編集は対応済み。
+4. GUIの[図上要素選択](GUI_CURVED_MESH_SELECTION.md)は[大規模表示](LARGE_CURVED_MESH_SELECTION.md)で250,000要素まで拡張した。[履歴途中への図上挿入](GUI_CURVED_HISTORY_INSERTION.md)と既存段階の再選択も対応済み。後続markedの番号を明示的に再指定する。番号指定の履歴編集は保持する。
    履歴付きの形状/初期メッシュ掃引も未対応であり、固定形状Studyとは区別する。
 
 この照合はN04の作業整理であり、33親課題・互換必須集合全体の完了ではない。

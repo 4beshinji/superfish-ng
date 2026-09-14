@@ -228,6 +228,8 @@ try {
   await loadMesh();await selectCell(0);
   const rect=await ev('(()=>{const r=document.querySelector("#curved-selection-panel").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
   const shot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+'/selection.png',Buffer.from(shot.data,'base64'));
+  const historyRect=await ev('(()=>{const r=document.querySelector("#curved-history-controls").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
+  const historyShot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip:historyRect},sessionId);await writeFile(out+'/history.png',Buffer.from(historyShot.data,'base64'));
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if(!report.passed)throw Error('Graphical selection checks failed');

@@ -1,3 +1,30 @@
+2026-09-14 JST 最新継続状態。開始HEAD16d0cd9、clean。前goalターンは大規模図上選択の実装/commitでprogress。
+本段階はN04残件4の履歴途中への図上挿入・既存marked段階の再選択を実装/検証したprogress。全計画は未完、goal ACTIVE。
+[GUI_CURVED_HISTORY_INSERTION.md](GUI_CURVED_HISTORY_INSERTION.md)に受入条件・操作/保存範囲・独立検証・再現入力を記録した。
+選択欠落と39→56要素で同じID20のP2参照重心が約18 mm変わる例を先に保存。旧番号を暗黙再利用しない。
+web/app.jsの内部collect(prefix)で前半だけの有効Projectを既存APIへ渡す。Case/FEM/許容差・API/保存スキーマは無変更。
+段階指定（1始まり）、先頭/途中/末尾へのmarked挿入、行ボタンからの図上置換をSVG/Canvas共通で追加。
+後続uniformとmarkedの種類/角度/順序を保持し、marked番号を空欄化、旧文字列を参照表示。未修復は保存/計算を拒否する。
+有効な前半だけで次の未指定行を図上再選択できる。直前の図上操作前の全履歴への単段undo、入力変更時のundo拒否を提供。
+選択署名は全生履歴/行ID/前半Project/反映先を含み、応答/準備/反映時に確認する。元メッシュと元領域を保持。
+一様段数方式の途中挿入にも対応。全段数の最低4^n要素が予算を超える場合は先に拒否し、通常のnative品質/予算検査を維持。
+関連test_gui_curved_mesh_selectionは4unit10.838秒PASS。新Chromeはbrowser-first20項目PASS、修復・保存再読込・実FEMを含む。
+初回画像で細分方法のselect幅不足を確認しCSS列幅だけを修正。browser-append6項目/実FEMと画像で最終CSSを確認。
+既存大規模browser-large-append21項目PASS、26,624要素の全操作/準備中入力変更/非同期破棄を確認。
+新scripts/validate_curved_history_insertion.pyは6表示応答の全native配列、232/26,664要素の最終履歴と独立Green境界積分を確認。
+31.223秒PASS、面積/回転体積は元固定二次境界に相対1e-12以内。保存場をeigsh禁止で再読込しRF9量をGUIと照合。
+232要素の保存f=1614628212.5625715 Hz、U≈1 J、E/H各≈0.5 J、accelerator R/Q≈160.8151379 Ω、circuit≈80.4075690 Ω。
+初回ブラウザー以後の製品差分はCSSのみと専用検証が記録。993ソース系/ブラウザー文書/保存場は専用検証中不変。
+全ブラウザー外部HTTP0。新規外部資料・依存・旧資産参照なし。subagent/skillなし。
+証拠索引はout/curved-history-insertion-20260914/acceptance.json。各browser*/report.json、native-verification/report.jsonを参照。
+実FEMは小規模2ジョブ。大規模eigsolve、全unit/seed/全validate/Hosted CI/サーバー再起動は実行していない。
+専用GUI PID978350の完全argvを照合してSIGINT、session60972終了0。全検証プロセス終了、実行中handleなし。
+親33=8受入/17進行/7他未受入/1範囲外は不変。N04残件4の途中挿入は完了、履歴付き形状/初期メッシュ掃引と番号対応は未完。
+次は残るN04の形状変更後の対応、またはD01の曲線変形の一般写像を、既存仕様と独立不変量から限定する。
+一般適応効率/物理精度、C00.V/G03/V02ほか全計画の残件は維持する。
+C00の旧7.17付属仕様/実行環境の所在はasync質問済み・未回答。資料探索の同じ失敗を繰り返さず、取得不要の開発を継続できる。
+全体のblocking条件なし。gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEADb6d624c、clean。前goalターンはC00版別参照の記録/commitでprogress。
 本段階はN04の大規模曲線メッシュ図上選択を実装・検証したprogress。全計画は未完、goal ACTIVE。
 [LARGE_CURVED_MESH_SELECTION.md](LARGE_CURVED_MESH_SELECTION.md)に受入条件・実装・数値/操作/費用・残件を記録した。
