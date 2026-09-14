@@ -1,3 +1,24 @@
+2026-09-15 JST：[曲線TE調整の固定RF契約](TE_CURVED_TUNING.md)を多項式版5・式版7へ接続。
+TEでは加速区間を追加せず、形状変形・凍結履歴・Eφ比較・最終細分・保存再開を保持。
+新3件の分割検証と関連34件482.550秒がPASS。独立Green積分、専用TE Study2実FEMも確認。
+実GUIと追加場/RF尺度検証は未実施。版4/8・曲線対称/鏡映等を保持し、全goal ACTIVE。
+
+開始HEADf7c9e9e。curved_harmonic_deformation/studyはTEのfixedのみ許可し、TMの従来RF処理を保持。
+TEはraw rfへactive_length/voltage_interval/phase_originを新設しない。
+te_tuning guardは版5と7(curved_harmonic)を直接閉PEC/軸P2＋piecewise_remeshで許可。
+版4/8、対称曲線/鏡映は引き続き拒否。shared Studyの生成も同fixed契約なので専用2点実行して検証した。
+新tests/test_te_curved_tuning.pyは実多項式調整、式/Study/不正RF拒否、独立Green面積体積則の3件。
+初期2件153.667sは多項式PASS、式の変数X=xに要求shape_changeが不一致で1error。
+試験入力をparameter=xへ訂正し当該1件34.140sPASS、Green1件3.982sPASS。
+関連deformation/harmonicStudy/harmonicTune/expression/TEtune/TEJob未接続拒否34件482.550sPASS。
+関連session84331は終了0、全handle終端。専用Study2実FEMのread_job completeと両R/Q N/A確認。
+GUI未起動。out/te-curved-tuning-20260915/gui-request.jsonは同Studyのx=.5保存周波数を目標に準備済み。
+次：実GUI＋原寸/倍寸/エネルギーの場/RF尺度検証、native一致を追加しTE_CURVED_TUNING受入を固める。
+GUIの旧TE曲線未対応文言もその実検証時に更新する。今はAPI接続の検証までで限定受入完了とはしない。
+その後版4 affineと版8分割、曲線対称/鏡映、実ID回復例、他物理/D03へ進む。親33=10/16/6/1。
+全suite/seed/hosted CI再実行なし。正本TE_CURVED_TUNING.md、out/te-curved-tuning-20260915。
+Wine拒否は別残件、回避しない。全計画goal ACTIVE。
+
 2026-09-15 JST：[曲線TEの宣言比較写像](TE_CURVED_TRACKING.md)をpiecewise_remesh版2/3/4/5へ接続。
 実Eφと可変体積重みを保持し、非アフィン変形・独立積分・Maxwell尺度・native再生を検証。
 型検査順と共通参照分割のTE入口を修正、最後の関連22件がPASS。旧TM保存互換も照合。

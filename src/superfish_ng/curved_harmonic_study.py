@@ -57,12 +57,14 @@ def validate_harmonic_study(study):
     from .te import is_te
     project=study.project;case=project.case
     if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None
-            or project.reflect_full or is_te(case) or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
-        raise ValueError('curved harmonic Study requires direct, unassembled native P2 closed PEC/axis TM geometry')
+            or project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
+        raise ValueError('curved harmonic Study requires direct, unassembled native P2 closed PEC/axis geometry')
     if any(step.kind=='marked' and step.split_pattern is None for step in case.curved_refinement_steps):
         raise ValueError('curved harmonic Study requires frozen marked choices; run freeze-curved-refinement first')
     if not study.parameter.strip() or study.parameter_unit not in ('m','1'):
         raise ValueError('curved harmonic Study requires a nonempty parameter name and parameter_unit m or 1')
+    if is_te(case) and study.rf_coordinates!='fixed':
+        raise ValueError('TE curved geometry requires fixed RF metadata; accelerating coordinates are not applicable')
     if study.rf_coordinates not in ('fixed','axis_fraction'):
         raise ValueError('curved harmonic Study rf_coordinates must explicitly be fixed or axis_fraction')
     floor=study.minimum_corner_angle_deg

@@ -7,6 +7,14 @@ from .te import is_te
 def validate_te_request(request,project):
     case=project.case
     mapping=request['controls'].get('mapping') if isinstance(request['controls'],dict) else None
+    curved=request['schema_version']==5 or (request['schema_version']==7 and request.get('geometry_kind')=='curved_harmonic')
+    if curved:
+        if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None or project.reflect_full
+                or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags) or mapping!='piecewise_remesh'):
+            raise ValueError('TE curved tuning requires direct native P2 closed PEC/axis geometry and piecewise_remesh')
+        if request['rf_coordinates']!='fixed':
+            raise ValueError('TE curved tuning requires fixed RF metadata; accelerating coordinates are not applicable')
+        return
     if (request['schema_version'] not in (1,2,3,7) or
             (request['schema_version']==7 and request['geometry_kind']!='profile') or
             project.sections is not None or case.geometry_order!=1 or case.geometry_type!='profile' or

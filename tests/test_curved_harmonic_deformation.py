@@ -114,7 +114,7 @@ class CurvedHarmonicDeformationTests(unittest.TestCase):
         steps=tuple(replace(s,split_pattern=None) if s.kind=='marked' else s for s in source.case.curved_refinement_steps)
         with self.assertRaisesRegex(ValueError,'freeze-curved-refinement'):call(replace(source,case=replace(source.case,curved_refinement_steps=steps)),geometry)
         from superfish_ng.model import Model
-        with self.assertRaisesRegex(ValueError,'TM'):call(replace(source,case=replace(source.case,model=replace(Model(),polarization='te'))),geometry)
+        with self.assertRaisesRegex(ValueError,'TE.*fixed'):call(replace(source,case=replace(source.case,model=replace(Model(),polarization='te'))),geometry,rf_coordinates='axis_fraction')
         small=replace(source,case=replace(source.case,contour_mesh=replace(source.case.contour_mesh,max_triangles=5)))
         with self.assertRaisesRegex(ValueError,'max_triangles'):call(small,geometry)
 

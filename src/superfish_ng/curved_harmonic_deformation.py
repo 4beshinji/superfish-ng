@@ -105,8 +105,10 @@ def deform_curved_project(project, target_geometry, *, rf_coordinates, minimum_c
     project=Project.from_dict(project.to_dict());case=project.case
     from .te import is_te
     if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None
-            or project.reflect_full or is_te(case) or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
-        raise ValueError('curved deformation requires direct, unassembled native P2 closed PEC/axis TM geometry')
+            or project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
+        raise ValueError('curved deformation requires direct, unassembled native P2 closed PEC/axis geometry')
+    if is_te(case) and rf_coordinates!='fixed':
+        raise ValueError('TE curved geometry requires fixed RF metadata; accelerating coordinates are not applicable')
     if rf_coordinates not in ('fixed','axis_fraction'):
         raise ValueError('curved deformation rf_coordinates must explicitly be fixed or axis_fraction')
     try:quality_valid=type(minimum_corner_angle_deg) in (int,float) and math.isfinite(minimum_corner_angle_deg) and 0<minimum_corner_angle_deg<60
@@ -133,10 +135,11 @@ def deform_curved_project(project, target_geometry, *, rf_coordinates, minimum_c
     contour_keys=('curves','edge_tags','join_tolerance_m','minimum_gap_m','minimum_meridional_radius_m')
     target_contour=CurvedContour.from_dict({k:v for k,v in geometry.items() if k in contour_keys})
     length=max(max(c.start_zr_m[0],c.end_zr_m[0]) for c,t in zip(target_contour.curves,target_contour.edge_tags) if t=='axis')
-    active,interval,origin=case.acceleration_parameters
-    factor=length/case.length if rf_coordinates=='axis_fraction' else 1.
-    raw['rf'].update(active_length_m=active*factor,voltage_interval_m=[v*factor for v in interval])
-    if case.phase_origin_m is not None:raw['rf']['phase_origin_m']=origin*factor
+    if not is_te(case):
+        active,interval,origin=case.acceleration_parameters
+        factor=length/case.length if rf_coordinates=='axis_fraction' else 1.
+        raw['rf'].update(active_length_m=active*factor,voltage_interval_m=[v*factor for v in interval])
+        if case.phase_origin_m is not None:raw['rf']['phase_origin_m']=origin*factor
     target=Case.from_dict(raw)
     source_mesh=make_mesh(case) if project.mesh_data is None else mesh_from_dict(case,project.mesh_data)
     limit=case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000
