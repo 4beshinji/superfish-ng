@@ -1,3 +1,33 @@
+2026-09-14 JST 最新継続状態。開始HEAD49869a6、当初clean。前goalターンは曲線アフィンStudyの実装/検証/commitでprogress。
+本段階はN04残件4の非アフィン形状変更に向けた調和変位API/CLIを実装・検証したprogress。全計画未完、goal ACTIVE。
+[CURVED_HARMONIC_DEFORMATION.md](CURVED_HARMONIC_DEFORMATION.md)が契約/数学/入力/検証/残件の最新仕様。
+新curved_harmonic_deformation.deform_curved_project(project,target_geometry,rf_coordinates=...,minimum_corner_angle_deg=...)。
+元の曲線番号/増加分率と弦分割数を保持し、元弦メッシュの平面P1 ∫|grad d|²で内部変位を求める。元座標のグラフ平均や電磁場求解ではない。
+境界分率を先の弦へ写し、P2曲線を初期メッシュで構築後、固定履歴を同じ参照分割で制限する。全体の物理写像はF1∘F0^-1。
+対象は未組立/直接native P2の閉PEC・軸TM。TE/反射/半領域は明示拒否。全marked段階を先にfreeze-curved-refinementする必要がある。
+元/先の曲線数・順序・タグを保持。先の同じ整数segments_per_curveを補完または照合し、先の弦誤差/隙間/曲率等の通常Case検査を通す。
+rf_coordinates=fixed/axis_fractionを必須とし、後者は全軸長の比で有効長/電圧区間/明示位相原点を変換。暗黙原点は暗黙のまま。
+全初期一様水準/全履歴prefixで番号・境界分率、正Jacobian/全辺、指定角度floorと元markedの品質/要素予算を検査する。
+CLI deform-curved-projectは元Projectとtarget geometry JSONから、新規Projectを排他的作成。元/既存出力を保持し、不正移動は作成前に拒否。
+携帯合成例examples/curved_harmonic_deformation/source-project.jsonとtarget-geometry.json。新Study版や専用GUIはまだ追加していない。
+変更前アフィン再現/非アフィン幾何2件はAPI不在red。最初の幾何2件4.826秒PASS、新7件35.058秒で6合格/1不合格。
+不合格は細長い凸形状なら反転するという検証入力の前提。実際には有効で製品は正しい。有効な凹輪郭で実負Jacobianとなる負例へ修正し、CLI1件2.540秒PASS。
+追加弦内境界節点/初期一様細分と標準importの幾何不変量2件3.992秒PASS。最終新8件は分割合格であり一括再実行ではない。
+既存frozen_curved_refinement/curved_project_transform/curve_partitions/curved_piecewise_remesh_tracking/mesh_inputの5モジュール33件44.101秒PASS。
+専用validate_curved_harmonic_deformation.pyは47.856秒PASS。元/先と2倍尺度の4新FEM、元26→履歴146要素。
+独立Green面積比1.125/体積比1.125²、Maxwell f/両RQ/G/TTF差最大2.110e-14、場形差1.679e-14、質量2^5差6.528e-16。
+保存場の非アフィン重なりは両尺度0.9977243304212868/0.997724330421287、完全保存replay一致。凹形状CLIは負Jacobianで終了2、出力なし。
+analytic-geometry.jsonは保存Green符号の絶対値を独立解析半楕円積分と比較。面積不足1.55314e-4、体積不足2.32210e-4は幾何近似誤差として保持。
+専用実行中1,012src/tests/scripts/examplesファイル不変、最終SHA一致。新規外部資料/依存/旧資産参照なし。subagent/skillなし。
+影響先を新Project作成API/CLIと直接消費先へ限定し、既存FEM/Study/GUI無変更。全件/seed/browser/Hosted CI/新Wine比較/実測は未実行。
+証拠索引out/curved-harmonic-deformation-20260914/acceptance.json。初回red/feature-testsの失敗、folded-fixed/additional-tests、selected-regressions、native-validation、analytic-geometry。
+selected session95801、専用94291は終了0。他のfeature/負例/追加検証handleも全て終端確認済み。サーバーを起動しておらず、実行中handleなし。
+親33=8受入/17進行/7他未受入/1範囲外は保持。全計画未完でgoal ACTIVE。
+次はこの非アフィン変形を一般形状Studyの明示法則・区間二分・保存再開へ接続し、既存piecewise_remesh版2で実比較点の対応を構成する。
+専用GUIの目標形状準備/プレビュー/Undoも残る。初期再メッシュ/自動番号対応、N04一般精度/効率、D01個別枝回復とC00.V/G03/V02ほかも未完。
+旧7.17付属仕様/Wine所在のasync質問は未回答だが、全体を止める条件ではない。gitメタデータはrequire_escalated。
+以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD8249df7、当初clean。前goalターンは曲線局所分割の固定を実装/検証/commitしたprogress。
 本段階はN04残件4の宣言アフィン形状Studyを実装・検証したprogress。全計画未完、goal ACTIVE。
 [CURVED_AFFINE_STUDY.md](CURVED_AFFINE_STUDY.md)が入力/数学/操作/受入範囲/残件の最新仕様。

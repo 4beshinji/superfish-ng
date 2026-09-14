@@ -61,6 +61,12 @@ def main(argv=None):
     freeze=sub.add_parser('freeze-curved-refinement',help='capture marked quadratic split choices in a new explicit-source Project')
     freeze.add_argument('project',type=Path)
     freeze.add_argument('--out',type=Path,required=True)
+    deform=sub.add_parser('deform-curved-project',help='move a fixed numbered curved mesh to a declared target geometry using harmonic displacement')
+    deform.add_argument('project',type=Path)
+    deform.add_argument('--geometry',type=Path,required=True,help='native curved_contour geometry JSON, with matching ordered curves/tags')
+    deform.add_argument('--rf-coordinates',choices=('fixed','axis_fraction'),required=True)
+    deform.add_argument('--minimum-corner-angle-deg',type=float,required=True)
+    deform.add_argument('--out',type=Path,required=True)
     tracking=sub.add_parser('track-modes',help='track saved PEC modes using an explicit physical or paired-mesh mapping')
     tracking.add_argument('request',type=Path)
     tracking.add_argument('--out',type=Path,required=True)
@@ -858,6 +864,16 @@ def main(argv=None):
             with args.out.open('x',encoding='utf-8') as stream:
                 json.dump(result.to_dict(),stream,indent=2,allow_nan=False);stream.write('\n')
             print(f"FROZEN: {args.out}")
+            return 0
+        elif args.command == 'deform-curved-project':
+            from .curved_harmonic_deformation import deform_curved_project
+            from .project import load_document,parse_json
+            result=deform_curved_project(load_document(args.project.read_text(encoding='utf-8')),
+                parse_json(args.geometry.read_text(encoding='utf-8')),rf_coordinates=args.rf_coordinates,
+                minimum_corner_angle_deg=args.minimum_corner_angle_deg)
+            with args.out.open('x',encoding='utf-8') as stream:
+                json.dump(result.to_dict(),stream,indent=2,allow_nan=False);stream.write('\n')
+            print(f"DEFORMED: {args.out}")
             return 0
         elif args.command == 'track-modes':
             from .saved_mode_tracking import save_mode_tracking

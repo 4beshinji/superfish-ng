@@ -1,5 +1,12 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[調和変位による曲線変形](CURVED_HARMONIC_DEFORMATION.md)の新8件は分割検証。
+最初の幾何2件4.826秒PASS、新7件は35.058秒で6合格/負例前提1不合格。凸形状は有効だったため、実反転する凹形状へ検証入力だけを修正し1件2.540秒PASS。
+追加の弦内境界節点/初期一様細分と標準importの幾何確認2件は3.992秒PASS。8件一括再実行とは呼ばない。
+既存5モジュール33件は44.101秒PASS（全一覧は同書とselected-regressions.json）。専用4 FEM/CLI/独立尺度・場形/保存追跡再生は47.856秒PASS。
+幾何の解析差は別のanalytic-geometry.json。専用実行中1,012ソース系ファイル不変、最終SHA一致。
+証拠索引out/curved-harmonic-deformation-20260914/acceptance.json。新API/CLIと直接消費先に限定し、全件/seed/browser/Hosted CI/新Wine比較は未実行。
+
 2026-09-14 JST：[曲線アフィンStudy](CURVED_AFFINE_STUDY.md)は新7件を含む14モジュール62テスト、340.117秒PASS。
 モジュール一覧とコマンドはout/curved-affine-study-20260914/selected-tests.json。巨大整数の負例追加でOverflowErrorを再現し、入力エラーへの補修後、厳密入力と旧Studyの2件を0.297秒で再検査PASS。
 専用validate_curved_affine_study.pyは9 FEM/CLI/独立尺度則/解析順位交差/実区間二分を111.541秒で検証。
