@@ -2388,13 +2388,15 @@ function showTrackedExecution(response) {
   for (const point of d.point_results) {
     const row=document.createElement("tr");
     for (const value of [point.index,point.value,({INITIAL:"初期点",PASS:"確認済み",UNVERIFIED:"未確認",NOT_COMPUTED:"未計算"})[point.status],
-      point.current_mode_ids === null ? "未計算" : point.current_mode_ids.map(id=>id ?? "個別ID未確定").join(", ")]) {
+      point.current_mode_ids === null ? "未計算" : point.current_mode_ids.map(id=>id ?? "個別ID未確定").join(", "),
+      ({PASS:"確認済み",UNVERIFIED:"未確認"})[point.identity_recovery_status] ?? (d.request.identity_recoveries?.some(p=>p.point_index===point.index) ? "未実施" : "—")]) {
       const cell=document.createElement("td");cell.textContent=value;row.append(cell);
     }
     body.append(row);
   }
   restoreExecutionRequest(d.request);
   $("tracked-execution-diagnostics").textContent=JSON.stringify({identity_groups:d.history?.current_identity_groups ?? null,
+    identity_recoveries:(d.history?.identity_recoveries ?? []).map(e=>({after_step_index:e.after_step_index,request:e.request,status:e.status,assessment:e.assessment,scope:e.scope})),
     stop_reason:d.history?.stop_reason ?? null,last_correspondence:d.history?.steps.at(-1)?.tracking ?? null,point_runs:d.point_runs},null,2);
   trackedExecutionButtons();
 }
@@ -2419,8 +2421,8 @@ bind("tracked-execution-prepare", async () => {
   $("tracked-execution-request").value=JSON.stringify(request,null,2);
 });
 bind("tracked-execution-start", async () => {
-  const request=JSON.parse($("tracked-execution-request").value), adaptive=Object.hasOwn(request,"adaptive");
-  await trackedExecutionAction(adaptive ? "start-adaptive-study" : "start-tracked-study",{request,...trackedPointLimit(adaptive)});
+  const raw=$("tracked-execution-request").value, request=JSON.parse(raw), adaptive=Object.hasOwn(request,"adaptive");
+  await trackedExecutionAction(adaptive ? "start-adaptive-study" : "start-tracked-study",{request:raw,...trackedPointLimit(adaptive)});
 });
 bind("tracked-execution-resume", async () => {
   const adaptive=trackedExecutionResult.document.document_type === "adaptive_tracked_study";

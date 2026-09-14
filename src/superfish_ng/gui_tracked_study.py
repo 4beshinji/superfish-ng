@@ -21,7 +21,8 @@ def tracked_study_response(manager,action,data):
     start=manager.start_adaptive_study if adaptive else manager.start_tracked_study
     replay=replay_adaptive_study if adaptive else replay_tracked_study
     if action==f'start-{prefix}-study':
-        return dict(id=start(data['request'],**{limit:data.get(limit)}))
+        request=parse_json(data['request']) if isinstance(data['request'],str) else data['request']
+        return dict(id=start(request,**{limit:data.get(limit)}))
     if action==f'{prefix}-study-result':
         directory=manager.directory(data['id']);state=read_job(directory)
         if state['status']!='complete' or state.get('kind')!=prefix+'_study':

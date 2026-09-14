@@ -201,6 +201,12 @@ try {
   await click("#tracked-execution-prepare");await wait('document.querySelector("#tracked-execution-request").value.includes("step_controls")');
   await check("current Study and tracking controls produce a reviewable execution request",'JSON.parse(document.querySelector("#tracked-execution-request").value).study.study_version===1');
   await check("execution request editor uses the available panel width",'document.querySelector("#tracked-execution-request").getBoundingClientRect().width > .8*document.querySelector("#tracked-execution").getBoundingClientRect().width');
+  if(args["--recovery"]) {
+    const originalJobMessage=await ev('document.querySelector("#tracked-execution-job").textContent');
+    await fill("#tracked-execution-request",JSON.stringify(request).replace('"schema_version":2','"schema_version":2,"schema_version":2'));
+    await click("#tracked-execution-start");await wait('!trackedExecutionBusy && !document.querySelector("#error").hidden');
+    await check("duplicate keys in the original request text are rejected before starting a worker",`document.querySelector("#error").textContent.includes("duplicate JSON key") && document.querySelector("#tracked-execution-job").textContent===${JSON.stringify(originalJobMessage)}`);
+  }
   await fill("#tracked-execution-request",JSON.stringify(request));await fill("#tracked-execution-limit","1");
   const first=await launch("#tracked-execution-start");await openJob(first,"PAUSED",1);
   await check("first point can pause without a pair history and shows later points as uncomputed",'trackedExecutionResult.document.history===null && document.querySelector("#tracked-execution-points tbody").rows[1].textContent.includes("未計算") && !document.querySelector("#tracked-execution-resume").disabled');
@@ -216,11 +222,32 @@ try {
   await check("modified checkpoint is rejected while the previous verified result remains",'document.querySelector("#error").textContent.includes("replay") && trackedExecutionResult.document.point_results[0].value===.055');
   await fill("#tracked-execution-request",'{}');const second=await launch("#tracked-execution-resume");await openJob(second,"PAUSED",2);
   await check("resume retains saved settings despite editor changes and carries a degenerate ID set",'trackedExecutionResult.document.request.initial_ids[0]==="TM010" && trackedExecutionResult.document.history.current_identity_groups.some(g=>g.ids.length===2) && document.querySelector("#tracked-execution-points tbody").rows[1].textContent.includes("個別ID未確定")');
-  await fill("#tracked-execution-limit","");const third=await launch("#tracked-execution-resume");await openJob(third,"COMPLETE",3);
-  await check("completed tracking cannot resume and retains the subspace after split",'document.querySelector("#tracked-execution-resume").disabled && trackedExecutionResult.document.history.current_identity_groups.some(g=>g.ids.length===2)');
-  const stopped=structuredClone(request);for (const c of stopped.step_controls){delete c.cluster_transition_policy;delete c.minimum_cluster_link;}
+  let third,afterRecovery;
+  if(args["--recovery"]) {
+    await fill("#tracked-execution-limit","1");third=await launch("#tracked-execution-resume");await openJob(third,"PAUSED",3);
+    await check("a pause at the recovery point preserves individual IDs and visible recovery status",'trackedExecutionResult.document.schema_version===2 && trackedExecutionResult.document.history.current_mode_ids.join(",")==="TM010,TM011,TM020" && document.querySelector("#tracked-execution-points tbody").rows[2].cells[4].textContent==="確認済み" && !document.querySelector("#tracked-execution-resume").disabled');
+    const recovered=await ev('trackedExecutionResult.serialized');await writeFile(out+"/recovered-pause.json",recovered);
+    await loadFile(out+"/recovered-pause.json");await wait('!trackedExecutionBusy && trackedExecutionResult?.document.history?.individual_ids_complete');
+    await check("replayed recovery restores the full plan and earlier-anchor evidence",'JSON.parse(document.querySelector("#tracked-execution-request").value).identity_recoveries.length===2 && JSON.parse(document.querySelector("#tracked-execution-diagnostics").textContent).identity_recoveries[0].request.anchor_snapshot_index===0');
+    const forged=JSON.parse(recovered);forged.history.identity_recoveries[0].assessment.current_mode_ids[1]="forged";
+    await writeFile(out+"/forged-recovery.json",JSON.stringify(forged));await loadFile(out+"/forged-recovery.json");await wait('!trackedExecutionBusy && !document.querySelector("#error").hidden');
+    await check("modified recovery evidence cannot replace a resumable checkpoint",'trackedExecutionResult.document.history.current_mode_ids[1]==="TM011" && !document.querySelector("#tracked-execution-resume").disabled && document.querySelector("#error").textContent.includes("replay")');
+    await fill("#tracked-execution-request",'{}');await fill("#tracked-execution-limit","");afterRecovery=await launch("#tracked-execution-resume");await openJob(afterRecovery,"COMPLETE",6);
+    await check("resume after recovery crosses the next ordering change and uses a recovered anchor",'trackedExecutionResult.document.point_results[3].current_mode_ids.join(",")==="TM010,TM020,TM011" && trackedExecutionResult.document.history.identity_recoveries.length===2 && trackedExecutionResult.document.history.identity_recoveries[1].request.anchor_snapshot_index===2 && document.querySelector("#tracked-execution-resume").disabled');
+    await writeFile(out+"/completed-recovery.json",await ev('trackedExecutionResult.serialized'));
+  } else {
+    await fill("#tracked-execution-limit","");third=await launch("#tracked-execution-resume");await openJob(third,"COMPLETE",3);
+    await check("completed tracking cannot resume and retains the subspace after split",'document.querySelector("#tracked-execution-resume").disabled && trackedExecutionResult.document.history.current_identity_groups.some(g=>g.ids.length===2)');
+  }
+  const stopped=structuredClone(request);
+  if(args["--recovery"])stopped.identity_recoveries[0].point_index=1;
+  else for (const c of stopped.step_controls){delete c.cluster_transition_policy;delete c.minimum_cluster_link;}
   await fill("#tracked-execution-request",JSON.stringify(stopped));const fourth=await launch("#tracked-execution-start");await openJob(fourth,"UNVERIFIED",2);
   await check("unverified correspondence stops computation and remains downloadable",'document.querySelector("#tracked-execution-resume").disabled && !document.querySelector("#tracked-execution-save").disabled && document.querySelector("#tracked-execution-points tbody").rows[2].textContent.includes("未計算")');
+  if(args["--recovery"]) {
+    await check("unverified recovery retains the passing adjacent comparison and leaves the next point uncomputed",'trackedExecutionResult.document.history.steps[0].status==="PASS" && trackedExecutionResult.document.history.identity_recoveries[0].status==="UNVERIFIED" && document.querySelector("#tracked-execution-points tbody").rows[1].cells[4].textContent==="未確認"');
+    await writeFile(out+"/unverified-recovery.json",await ev('trackedExecutionResult.serialized'));
+  }
   const rect=await ev('(()=>{const r=document.querySelector("#tracked-execution").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
   const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/tracked-execution.png",Buffer.from(shot.data,"base64"));
   const large=structuredClone(request);large.study.project.case.mesh.nr=350;large.study.project.case.mesh.nz=350;
@@ -228,7 +255,7 @@ try {
   await wait(`document.querySelector('[data-job="${fifth}"] button')?.textContent==="中止"`);await click(`[data-job="${fifth}"] button`);
   await wait(`document.querySelector('[data-job="${fifth}"] strong')?.textContent.startsWith("中止")`);
   await check("running tracked Study can be cancelled without publishing success",`document.querySelector('[data-job="${fifth}"] button').disabled`);
-  report.job_ids={first,second,third,fourth,fifth};
+  report.job_ids={first,second,third,afterRecovery,fourth,fifth};
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if (!report.passed) throw Error("tracked execution GUI checks failed");console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));
 } catch(e){report.error=String(e);process.exitCode=1;console.error(e);}

@@ -12,13 +12,17 @@ from .saved import read_solution
 from .saved_mode_tracking import build_saved_mode_tracking, validate_tracking_controls, _canonical
 from .mode_tracking_history import start_mode_history, extend_mode_history
 from .study_shape_tracking import pair_controls
+from .study_identity_recovery import recovery_requests
+from .mode_identity_recovery import recover_mode_history
 
 
 def _request(request):
+    version=request.get('schema_version') if isinstance(request,dict) else None
+    if type(version) is not int or version not in (1,2):
+        raise ValueError('tracked Study execution requires schema_version 1 or 2')
     fields=('schema_version','study','initial_ids','step_controls')
+    if version==2:fields+=('identity_recoveries',)
     keys(request,fields,fields,'tracked Study execution request')
-    if type(request['schema_version']) is not int or request['schema_version']!=1:
-        raise ValueError('tracked Study execution requires schema_version 1')
     _canonical(request)
     study=Study.from_dict(request['study']);projects=study.projects()
     ids=request['initial_ids']
@@ -30,6 +34,7 @@ def _request(request):
         raise ValueError('step_controls requires one object per adjacent Study point pair')
     for i,(control,previous,current) in enumerate(zip(controls,study.values,study.values[1:])):
         pair_controls(study,control,previous,current,projects=projects[i:i+2])
+    if version==2:recovery_requests(study,request['identity_recoveries'],projects=projects)
     return study,projects
 
 
@@ -48,13 +53,15 @@ def _point_sources(directory,project):
 
 def _assemble(request,runs):
     study,projects=_request(request)
+    version=request['schema_version']
+    recoveries=recovery_requests(study,request['identity_recoveries'],projects=projects) if version==2 else {}
     if type(runs) is not list or not 1<=len(runs)<=len(projects) or any(type(x) is not str for x in runs):
         raise ValueError('tracked Study requires an ordered nonempty prefix of point directories')
     if len(set(runs))!=len(runs):raise ValueError('tracked Study point directories must be distinct')
     sources=[];history=None;records=[]
     for i,run in enumerate(runs):
         if history is not None and not history['can_extend']:
-            raise ValueError('tracked Study continues after an unverified correspondence')
+            raise ValueError('tracked Study continues after an unverified correspondence or identity recovery')
         directory=Path(run);sources.append(_point_sources(directory,projects[i]))
         if i==1:
             pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=str(Path(runs[0])/'solution'),
@@ -62,17 +69,22 @@ def _assemble(request,runs):
             history=start_mode_history(pair)
         elif i>1:
             history=extend_mode_history(history,dict(current_run=str(directory/'solution'),controls=pair_controls(study,request['step_controls'][i-1],study.values[i-1],study.values[i],projects=projects[i-1:i+1])))
+        if i in recoveries and history['can_extend']:history=recover_mode_history(history,recoveries[i])
         records.append(dict(index=i,value=study.values[i],status='INITIAL' if i==0 else history['status'],
             current_mode_ids=request['initial_ids'] if i==0 else history['current_mode_ids']))
     for i in range(len(runs),len(projects)):
         records.append(dict(index=i,value=study.values[i],status='NOT_COMPUTED',current_mode_ids=None))
+    if version==2:
+        events={e['after_step_index']+1:e for e in (history or {}).get('identity_recoveries',[])}
+        for record in records:record['identity_recovery_status']=events[record['index']]['status'] if record['index'] in events else None
     if sources!=[_point_sources(Path(run),projects[i]) for i,run in enumerate(runs)]:
         raise ValueError('tracked Study sources changed during tracking')
     status='UNVERIFIED' if history is not None and not history['can_extend'] else 'COMPLETE' if len(runs)==len(projects) else 'PAUSED'
-    return dict(schema_version=1,document_type='tracked_study_checkpoint',request=deepcopy(request),point_runs=list(runs),
+    return dict(schema_version=version,document_type='tracked_study_checkpoint',request=deepcopy(request),point_runs=list(runs),
         point_sources_sha256=sources,history=history,point_results=records,status=status,
         can_resume=status=='PAUSED',
-        scope='sequential native FEM solves with sampled correspondence; not a convergence or continuous-branch certificate')
+        scope=('sequential native FEM solves with sampled correspondence and declared individual identity recovery; not a convergence or continuous-branch certificate'
+               if version==2 else 'sequential native FEM solves with sampled correspondence; not a convergence or continuous-branch certificate'))
 
 
 def replay_tracked_study(document):

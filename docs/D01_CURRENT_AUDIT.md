@@ -1,5 +1,10 @@
 # D01の元要件と現在の残件 — 2026-09-14
 
+2026-09-14：[逐次Studyの個別ID回復と再開](TRACKED_STUDY_IDENTITY_RECOVERY.md)を要求版2・CLI/JobManager/GUIへ接続。
+回復指定を完了Studyと共有し、回復前後の停止・再開、未確認時の次点未計算、元JSON重複拒否と回復状態表示を追加した。
+新7/関連44unit、独立20FEM・再作成worker8FEM、既存18保存解再検証、Chrome新16/旧11/適応10項目が合格。
+適応Study・tuneへの回復接続と親D01は継続中。親33=9/17/6/1、goal ACTIVE。以下は各段階の記録。
+
 2026-09-14：[完了Studyの個別ID回復](STUDY_IDENTITY_RECOVERY.md)を要求版2・API/CLI/GUIへ追加。
 指定点で過去の個別場と継承集合を照合し、成功後は後続点へIDを渡す。失敗後の点は未追跡として保存する。
 関連54unitの分割証拠、18保存解の解析/尺度則、新GUI8項目と単独履歴17項目が合格。逐次/適応Study・tune接続と親D01は継続中。

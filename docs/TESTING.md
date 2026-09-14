@@ -1,5 +1,12 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14：[逐次Study個別ID回復](TRACKED_STUDY_IDENTITY_RECOVERY.md)は新7件48.608秒と関連44件97.141秒がPASS。
+専用20FEM53.017秒、実worker8FEM26.550秒、共有検査の既存完了Study18保存解74.532秒（新FEM0）がPASS。
+全1067sourceは不変。Chrome新16/旧11/適応10項目、326製品SHA不変、外部HTTP0。全16GUIジョブ終端確認後に専用GUIを終了。
+直接/API worker/GUIの全6点でnative全配列・RFが完全一致。GUI照合の追加FEM0、180保存ファイル不変。
+最初の追加照合は配列/RF成功後にSHA検証器の文字列/Pathの型違いで停止し、検証器だけ補修した。
+対象一覧・実行の並行範囲・全終端はout/tracked-study-identity-recovery-20260914/acceptance.json。全suite/seed/Hosted CI/新Wine比較は今回未実行。
+
 2026-09-14：[完了StudyのID回復](STUDY_IDENTITY_RECOVERY.md)は関連50unitが19.852秒PASS。
 専用18FEMは全回復検査後、解析零電場成分の相対分母により停止。E全体のノルムへ検証器を直し、同じ18解を19.333秒でPASS、追加FEM0。
 曲線Study直接利用先3件237.351秒と追加の表面収束拒否1件7.055秒もPASS。最終54件の分割証拠。

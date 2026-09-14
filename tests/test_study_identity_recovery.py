@@ -85,7 +85,7 @@ class StudyIdentityRecoveryTests(unittest.TestCase):
         from superfish_ng.study_shape_tracking import pair_controls
         from superfish_ng.studies import Study
         study=Study.from_dict(json.loads((self.root/'study/study.json').read_text()))
-        with patch('superfish_ng.study_mode_tracking.pair_controls',wraps=pair_controls) as derived:
+        with patch('superfish_ng.study_identity_recovery.pair_controls',wraps=pair_controls) as derived:
             build_study_mode_tracking(self.request(),base_directory=self.root)
         pairs=[call.args[2:4] for call in derived.call_args_list]
         self.assertIn((study.values[0],study.values[2]),pairs)

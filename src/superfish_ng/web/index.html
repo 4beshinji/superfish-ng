@@ -494,6 +494,7 @@
           </div>
           <button id="tracked-execution-prepare">現在のStudy・追跡設定を取り込む</button>
           <label>計算するStudyと追跡設定（JSON）<textarea id="tracked-execution-request" rows="6" placeholder="設定を取り込むか、追跡付きStudyのrequest JSONを入力"></textarea></label>
+          <p class="hint">通常の逐次計算では、回復する点・過去の基準点・比較条件を含む要求版2を入力できます。回復の指定と根拠は一時停止・再開でも保持され、未確認なら後続点を計算せず停止します。</p>
           <label>今回の処理上限（通常は点数、適応は比較回数。空欄なら最後まで）<input id="tracked-execution-limit" type="number" min="1" step="1" /></label>
           <div class="actions"><button id="tracked-execution-start">追跡付きStudyを開始</button><button id="tracked-execution-resume" disabled>確認済みの続きから再開</button></div>
           <p id="tracked-execution-job" role="status"></p>
@@ -501,7 +502,7 @@
           <button id="tracked-execution-save" disabled>検証済みチェックポイントを保存</button>
           <p id="tracked-execution-status" role="status">計算結果はまだ開いていません。</p>
           <p class="hint">表示は最後に検証した結果です。再開は保存文書のID・閾値・Studyを使用し、入力欄の編集を反映しません。元の保存先が必要です。全点の対応確認は物理的収束の保証ではありません。</p>
-          <table id="tracked-execution-points"><thead><tr><th>点（0始まり）</th><th>パラメータ値</th><th>追跡状態</th><th>個別ID</th></tr></thead><tbody></tbody></table>
+          <table id="tracked-execution-points"><thead><tr><th>点（0始まり）</th><th>パラメータ値</th><th>追跡状態</th><th>個別ID</th><th>個別ID回復</th></tr></thead><tbody></tbody></table>
           <div id="tracked-adaptive-results" hidden>
             <p id="tracked-adaptive-pending"></p>
             <table id="tracked-adaptive-points"><thead><tr><th>計算点番号（0始まり）</th><th>パラメータ値</th><th>点の種類</th><th>採用状態</th></tr></thead><tbody></tbody></table>

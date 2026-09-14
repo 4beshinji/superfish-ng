@@ -1,3 +1,23 @@
+2026-09-14 最新：D01の逐次Study個別ID回復を要求版2・CLI/JobManager/GUIへ実装・限定受入。
+開始HEAD2ed8c72。正本[TRACKED_STUDY_IDENTITY_RECOVERY.md](TRACKED_STUDY_IDENTITY_RECOVERY.md)、索引out/tracked-study-identity-recovery-20260914/acceptance.json。
+新study_identity_recovery.recovery_requestsで完了Study/逐次Studyの回復指定検査を共有。元点/回復点の実際のProjectから写像を導出。
+回復前2点で停止→1点追加で回復/停止→残り3点で再合流/回復済みanchor利用を接続。旧要求/チェックポイント版1は維持。
+新7unit48.608秒+既存8モジュール44unit97.141秒=51件の二実行がPASS。変更前の版2不在redを保持した。
+専用は基準/寸法2倍/U4各6点と失敗停止2点、20FEM53.017秒PASS。再開前ファイル不変・次点未計算・CLI再生・Bessel/Maxwellを確認。
+追加worker8FEM26.550秒PASS。JobManager再作成後の再開とUNVERIFIED停止、直接実行との全6点の全配列・RF完全一致。
+共有検査の完了Studyは既存18保存解を74.532秒で再検証PASS、新FEM0。専用数値と新版browser等は一部並行、単独性能と扱わない。
+尺度則最大RF5.063e-14/場3.106e-14、解析周波数最大5.614e-6。全1067ソース系が実行中不変/最終一致。
+Chrome新16/旧逐次11/旧適応10項目PASS、外部HTTP0、326製品SHA一致。元JSON文字列の重複拒否・回復状態列・改変拒否・編集無視の再開を確認。
+GUIで完了した新FEMは計18解。新版6点は直接実行と全配列/RF完全一致、180ファイル不変、追加FEM0。
+最初の追加native照合は配列/RF一致後のSHA lambdaがstrをPathと扱って失敗。検証器だけ修正し終端PASS、製品は無変更。
+全16GUIジョブ13完了/3中止、専用GUI PID1931726をSIGINT終了、session58306終了0回収。全validator/worker/browser/unit終端回収、live handleなし。
+全suite/seed/Hosted CI/新Wine比較は今回未実行。親33=9/17/6/1、全計画goal ACTIVE。
+次は適応Studyへの回復指定とチェックポイントの接続、その後tune。適応では二分点が挿入されるため、元目標番号と履歴snapshot番号を混同しない設計が必要。
+明記した一般写像残件は保持し、元要件にない連続枝証明を必須へ追加しない。
+Wine専用永続領域/home/sin/.local/share/superfish-referenceは作成・単体検証済み。
+旧installerコピーは自動承認レビューによる拒否で明示例外許可待ち。別経路で回避せず、SUPERFISH本体/SFCODESは未復元。
+以下は完了Studyと以前の記録。
+
 2026-09-14 最新：D01の完了済みStudy個別ID回復を要求版2・API/CLI/GUIへ実装・限定受入。
 開始HEAD b14b62e（単独履歴回復のcommit）。正本[STUDY_IDENTITY_RECOVERY.md](STUDY_IDENTITY_RECOVERY.md)、索引out/study-identity-recovery-20260914/acceptance.json。
 identity_recoveriesの各point_index/anchor_snapshot_index/controlsを全入力検査し、指定した実際の2点から写像を導出する。
