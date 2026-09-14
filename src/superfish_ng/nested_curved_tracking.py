@@ -75,7 +75,7 @@ def _nested_transfer(previous,current):
             refined=refine_curved_space(space)
         else:
             refined=refine_marked_curved_space(space,list(step.marked_cells),max_triangles=limit,
-                                              minimum_corner_angle_deg=step.minimum_corner_angle_deg)
+                                              minimum_corner_angle_deg=step.minimum_corner_angle_deg,split_pattern=step.split_pattern)
         transfer=refined.prolongation@transfer;space=refined.space
     if not _same_space(space,fine):
         raise ValueError('nested_curved final space differs from composed history')

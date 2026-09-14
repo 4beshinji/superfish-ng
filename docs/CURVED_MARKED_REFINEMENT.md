@@ -1,5 +1,10 @@
 # 選択した曲線要素の適合細分
 
+2026-09-14追補：[分割選択の保存](FROZEN_CURVED_REFINEMENT.md)を追加。
+返り値のsplit_patternは、元番号付き接続・要求要素・実分割辺・遷移対角線を持つ不変宣言。
+任意のsplit_pattern引数で既存参照テンプレートを再構築し、現在の品質・予算・幾何を再検査する。
+省略時の最長弦辺/短い対角線選択は従来どおり。以下は各段階の履歴。
+
 2026-09-08、直前基準9af9cf6。N04の曲線局所細分基盤。
 `curved_marked_refinement.refine_marked_curved_space` は既存のCurvedSpaceを受け取り、
 選択した二次曲線三角形と必要な隣接要素を細分する。場はP2。

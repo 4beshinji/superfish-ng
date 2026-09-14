@@ -1,5 +1,10 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14 JST：[曲線局所分割の固定](docs/FROZEN_CURVED_REFINEMENT.md)を追加。
+元メッシュと分割選択を保存し、異方的な形状変換・曲線周波数調整でも同じ親子関係を使用できます。
+関連23テスト、専用8 FEMの独立尺度則/保存再生と実tune、Chrome新9/既存20項目が合格。
+一般Studyの形状掃引・自動番号対応とN04全体は残り、全計画goalを継続中。
+
 2026-09-14 JST：[曲線比較メッシュによる非線形対応](docs/CURVED_PIECEWISE_REMESH_TRACKING.md)を追加。
 明示した二次比較メッシュで、異なるFEM接続の曲線場を比較・保存再検証・GUI履歴継続できます。
 関連23テスト、独立4 FEMの体積/場形/尺度則、CLIとChrome8項目を確認。D01全体と全計画goalは継続中。

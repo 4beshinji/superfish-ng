@@ -58,6 +58,9 @@ def main(argv=None):
         history.add_argument('document',type=Path)
         if command=='extend-mode-history':history.add_argument('request',type=Path)
         if command!='replay-mode-history':history.add_argument('--out',type=Path,required=True)
+    freeze=sub.add_parser('freeze-curved-refinement',help='capture marked quadratic split choices in a new explicit-source Project')
+    freeze.add_argument('project',type=Path)
+    freeze.add_argument('--out',type=Path,required=True)
     tracking=sub.add_parser('track-modes',help='track saved PEC modes using an explicit physical or paired-mesh mapping')
     tracking.add_argument('request',type=Path)
     tracking.add_argument('--out',type=Path,required=True)
@@ -848,6 +851,14 @@ def main(argv=None):
             else:result=read_mode_history(args.document)
             print(f"{result['status']}: {getattr(args,'out',args.document)}")
             return 0 if result['status']=='PASS' else 1
+        elif args.command == 'freeze-curved-refinement':
+            from .frozen_curved_refinement import freeze_curved_refinement
+            from .project import load_document
+            result=freeze_curved_refinement(load_document(args.project.read_text(encoding='utf-8')))
+            with args.out.open('x',encoding='utf-8') as stream:
+                json.dump(result.to_dict(),stream,indent=2,allow_nan=False);stream.write('\n')
+            print(f"FROZEN: {args.out}")
+            return 0
         elif args.command == 'track-modes':
             from .saved_mode_tracking import save_mode_tracking
             from .project import parse_json

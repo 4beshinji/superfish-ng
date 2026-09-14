@@ -1,5 +1,12 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[曲線局所分割の固定](FROZEN_CURVED_REFINEMENT.md)は関連21件（14.777秒）+追加2件（2.139秒）、専用8 FEM/実TUNED（75.988秒）、Chrome新9/既存20項目がPASS。
+保存契約の共有先を確認するため全validateを一度起動し、全1,602件を888.194秒で回収した。1,598合格・2skip・2不合格、終了1。
+不合格は既存幾何診断の版/対応版一覧の旧期待値。製品を変えず2テストファイルを補修し、両モジュール12件を1.198秒で再実行PASS。
+seedは別の--skip-tests実行でPASS、基準9モード19量の周波数差0・最大相対差8.882e-16。
+初回FAILと補修後の対象再実行・seed別実行を区別し、修正後の単一full PASSとは呼ばない。以後の製品変更はなく成功証拠を再利用する。
+証拠索引out/frozen-curved-refinement-20260914/acceptance.json、全件一覧out/validation-frozen-curved-refinement-20260914/test-run/report.json。
+Hosted CI/新Wine比較/実測検証は未実行。
 2026-09-14 JST：[曲線比較メッシュ追跡](CURVED_PIECEWISE_REMESH_TRACKING.md)は新8/直線区分5/同一曲線6/曲線アフィン4の関連23テスト。
 初回20件中19合格（30.864秒）。負例Caseのcached contour修正後2件（3.014秒）、追加2件（11.563秒）が合格。
 専用4実FEM/CLI/保存逆向き再生/独立体積/場形/Maxwell尺度則は28.933秒PASS。

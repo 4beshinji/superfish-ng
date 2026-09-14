@@ -187,6 +187,7 @@ def create_server(workspace, port=0):
                     "normalize": ["document"],
                     "replace-mesh": ["document", "mesh_document"],
                     "curved-selection-mesh": ["document"],
+                    "freeze-curved-refinement": ["document"],
                     "tangent": ["document", "candidate_index"],
                     "replay-tangent": ["document"],
                     "assemble": ["case", "sections", "reflect_full"],
@@ -265,6 +266,11 @@ def create_server(workspace, port=0):
                     return self.reply(tangent_document(data["document"],
                                                        candidate_index=data.get("candidate_index"),
                                                        replay=action == "replay-tangent"))
+                if action == "freeze-curved-refinement":
+                    from .frozen_curved_refinement import freeze_curved_refinement
+                    project = (load_document(data["document"]) if isinstance(data["document"], str)
+                               else Project.from_dict(data["document"]))
+                    return self.reply(freeze_curved_refinement(project).to_dict())
                 if action == "curved-selection-mesh":
                     from .gui_curved_mesh import curved_mesh_document
                     project = (load_document(data["document"]) if isinstance(data["document"], str)

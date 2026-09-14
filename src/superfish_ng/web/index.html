@@ -219,6 +219,8 @@
             <legend>順序付き細分履歴</legend>
             <p>上から順に実行します。選択要素の番号は各段階の直前のメッシュに対する0始まりの番号です。形状や初期メッシュを変更する場合は履歴も確認してください。</p>
             <table id="curved-history"><thead><tr><th>段階・方法</th><th>要素番号（カンマ区切り）</th><th>最小頂点接線角 [度]</th><th>選択・順序・削除</th></tr></thead><tbody></tbody></table>
+            <button id="curved-freeze" type="button">現在の局所分割を固定する</button>
+            <p class="hint">形状調整の前に、現在の元メッシュと局所分割の選択を保存します。変形後も同じ親子関係を使い、品質・要素数を再検査します。固定した要素番号の編集は、その段階の固定を解除するか図上で選び直してください。</p>
             <button id="curved-add-uniform" type="button">一様細分を追加</button>
             <button id="curved-add-marked" type="button">選択要素の細分を追加</button>
           </fieldset>

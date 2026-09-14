@@ -116,7 +116,7 @@ def _apply(space,step,maximum):
         if 4*len(space.geometry.cell_nodes)>maximum:raise ValueError(f'uniform refinement exceeds max_triangles={maximum}')
         return refine_curved_space(space).space
     return refine_marked_curved_space(space,list(step.marked_cells),max_triangles=maximum,
-                                     minimum_corner_angle_deg=step.minimum_corner_angle_deg).space
+                                     minimum_corner_angle_deg=step.minimum_corner_angle_deg,split_pattern=step.split_pattern).space
 
 
 def next_plan(case,request,levels,solution):

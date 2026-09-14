@@ -1,4 +1,37 @@
 2026-09-14 JST 最新継続状態。開始HEADa26f3cc、clean。前goalターンの履歴途中図上挿入は実装/検証/commitでprogress。
+
+2026-09-14 JST 最新継続状態。開始HEAD cb94270、当初clean。前goalターンは曲線比較メッシュ追跡の実装/commitでprogress。
+本段階はN04の局所分割選択の固定/保存と宣言アフィン形状変更を実装・検証したprogress。全計画未完、goal ACTIVE。
+[FROZEN_CURVED_REFINEMENT.md](FROZEN_CURVED_REFINEMENT.md)に受入条件/入力/数学/操作/回帰/残件を記録。
+freeze_curved_refinement(Project)は元の番号付き弦メッシュと全marked段階の実分割辺/遷移対角線を保存する。
+新CurvedSplitPatternは入れ子版1、parent_topology_sha256/marked_cells/split_edges/transition_diagonalsを厳密受理。
+Case版3の任意split_patternで、未指定の旧JSONは不変。座標を除いたSHAは番号付き接続/境界所属への拘束で、任意メッシュの物理対応証明ではない。
+refine_marked_curved_space、native再構築、nested追跡、適応の履歴適用へ接続。品質/予算/正Jacobian/全辺・境界検査は保持。
+固定前のmarked→uniform→markedはdiag(2,.5)変形で接続不一致拒否。固定後は108要素の全接続と参照制限/変形の可換性が成立する。
+既存transform_curved_project自体は変更せず、未固定の拒否をテストに残した。
+CLI freeze-curved-refinementは新規Projectへ保存、GUIは固定状態/番号保護/解除/後続再指定/保存再読込とUndoへ接続。
+新GUI応答中の入力変更を拒否し、図上再選択は固定を明示解除する。
+関連21unit14.777秒と追加2unit2.139秒PASS。最終新モジュールは8件。
+専用validate_frozen_curved_refinement.pyは75.988秒PASS、四形状I/A/2I/2Aとtune四試行の新規8 FEM。
+独立質量a^4*c差最大4.660e-16、Green面積ac/回転体積a²c、f/両RQ/G/TTF尺度差最大3.176e-14、場差4.103e-12。
+元50kHzの目標/メッシュ差条件で実TUNED、x=1.1、最終差7498.935Hz。全固定prefixと完全保存replayが一致。
+新Chrome9項目/旧途中挿入20項目PASS、各実worker/native保存を含む。外部HTTP0、固定行画像を目視。
+専用/seedの1,002ソース系SHAは一致し、両browserの製品311ファイルも最終一致。
+共有保存契約のため全scripts/validate.pyを一度起動。全320モジュール1,602unitは888.194秒、1,598合格/2skip/2不合格で終了1。
+不合格はtest_coincident_circle_arcsの新診断版8期待（現行13）とtest_construction_diagnosticsの対応版一覧9止まり（現行10を含む）。
+製品無変更で2テストのみ補修。旧版1の完全保存/CLI再生と未対応構築拒否を維持し、両モジュール12件1.198秒PASS。
+初回全件FAILは保持し、修正後の単一full PASSにはしない。全件は再実行せず、補修対象の結果で補う。
+seed別実行--skip-testsはPASS、benchmarks/validationの9モード19量のf差0、RF/エネルギー最大8.882e-16。
+以後のsrc/tests/scripts/examples差分は前記2テストのみとdiagnostic-test-repair.jsonに記録。以後製品変更なし。
+証拠索引out/frozen-curved-refinement-20260914/acceptance.json。full試行はout/validation-frozen-curved-refinement-20260914、seedは同frozen-curved-refinement-seed-20260914。
+専用GUI PID1056389の完全argv照合後SIGINT、session3977終了0。full54011終了1、補修23187終了0。全検証終了、実行中handleなし。
+新規外部資料/依存/旧資産参照なし。Hosted CI・新Wine比較・実測は未実行。subagent/skillなし。
+親33=8受入/17進行/7他未受入/1範囲外は保持。N04は宣言アフィン変形/tuneへ進んだが、一般Studyの履歴付き形状/初期メッシュ掃引・自動番号対応・一般精度/効率は残る。
+次はStudyへの宣言アフィン変換接続を限定する。studies.pyは現状Study版1、明示mesh/履歴付きsweepを先頭で拒否し、fixed_geometry_convergenceだけ受理する。
+元Projectから各値を独立変換し、既存tuneのRF方針/相対写像と整合する形が候補。形状変更を固定領域収束として扱わず、番号対応を暗黙推定しない。
+D01自動対応推定/個別枝回復、C00.V/G03/V02ほか全計画の残件も保持。
+C00の旧7.17付属仕様/Wine所在はasync質問済み・未回答。取得不要の開発を継続でき、全体のblocking条件はない。
+gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
 本段階はD01の曲線比較メッシュによる非線形対応を実装/検証したprogress。全計画は未完、goal ACTIVE。
 [CURVED_PIECEWISE_REMESH_TRACKING.md](CURVED_PIECEWISE_REMESH_TRACKING.md)が受入条件/数学/入力/検証/残件の最新仕様。
 既存paired_meshはnative接続一致を要求するため、piecewise_remeshの独立比較メッシュを曲線へ拡張した。

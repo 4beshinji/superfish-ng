@@ -1,5 +1,12 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 曲線局所分割の固定 — 2026-09-14
+
+[FROZEN_CURVED_REFINEMENT.md](FROZEN_CURVED_REFINEMENT.md)のCLI一致/固定状態・保護/保存再読込/解除・後続再指定/図上再選択/Undo/実worker保存/非同期変更拒否をChrome9項目で確認。
+既存途中挿入20項目も再実行し、実FEMと6,656要素Canvasを含めPASS。
+証拠はout/frozen-curved-refinement-20260914のbrowser/とhistory-regression/。外部HTTP0、各実行中の製品ファイル不変。
+固定履歴の画像を目視した。固定を物理精度保証とする表示は追加していない。
+
 ## N03通常RF結果の連続離散ピーク統合 — 2026-09-08
 
 直前基準add9938。[仕様と操作](RF_DISCRETE_PEAKS.md)。直線P1/P2・二次曲線P2の

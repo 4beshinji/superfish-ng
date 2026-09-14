@@ -144,7 +144,7 @@ def case_curved_space(case, mesh):
                 from .curved_marked_refinement import refine_marked_curved_space
                 space = refine_marked_curved_space(
                     space, list(step.marked_cells), max_triangles=limit,
-                    minimum_corner_angle_deg=step.minimum_corner_angle_deg).space
+                    minimum_corner_angle_deg=step.minimum_corner_angle_deg,split_pattern=step.split_pattern).space
         except ValueError as exc:
             raise ValueError(f'curved_refinement_steps step {index}: {exc}') from exc
     return space

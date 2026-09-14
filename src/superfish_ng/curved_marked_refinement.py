@@ -6,6 +6,7 @@ from types import MappingProxyType
 import numpy as np
 from scipy.sparse import coo_matrix
 from .config import integer
+from .curved_split_pattern import CurvedSplitPattern,curved_topology_digest
 from .curved_space import CurvedSpace,check_curved_edges
 from .curved_refinement import RestrictedGeometry,_REFERENCE,_CHILDREN
 from .quadratic_geometry import QuadraticTriangle,quadratic_minimum,_VANDERMONDE
@@ -21,6 +22,7 @@ class CurvedMarkedRefinement:
     requested_cells: np.ndarray
     split_edges: np.ndarray
     quality: object
+    split_pattern: CurvedSplitPattern
 
 
 def _maps(points,cells):
@@ -46,7 +48,7 @@ def _minimum_corner_angle(maps):
     return float(np.rad2deg(min(angles)))
 
 
-def refine_marked_curved_space(parent,marked_cells,*,max_triangles=250000,minimum_corner_angle_deg=5.):
+def refine_marked_curved_space(parent,marked_cells,*,max_triangles=250000,minimum_corner_angle_deg=5.,split_pattern=None):
     """Restrict selected curved triangles and conforming transition neighbors.
 
     Selection splits all three edges of each requested cell; a touched cell's
@@ -54,6 +56,8 @@ def refine_marked_curved_space(parent,marked_cells,*,max_triangles=250000,minimu
     split-edge templates live in parent reference coordinates. No point is
     reprojected to an analytic curve. Corner angles measure mapped tangents,
     not a global Jacobian-conditioning or physical-error bound.
+    An explicit split_pattern replays its topological choices and still checks
+    the current geometry, conformity, positive maps, quality and cell budget.
     """
     if not isinstance(parent,CurvedSpace):raise ValueError('marked curved refinement requires a CurvedSpace')
     integer(max_triangles,'max_triangles')
@@ -82,12 +86,28 @@ def refine_marked_curved_space(parent,marked_cells,*,max_triangles=250000,minimu
     edges,inverse=np.unique(np.sort(vertices[:,[[0,1],[1,2],[2,0]]].reshape(-1,2),axis=1),axis=0,return_inverse=True)
     cell_edges=inverse.reshape(-1,3);marked=np.zeros(len(edges),dtype=bool);marked[cell_edges[requested]]=True
     scale=float(np.max(np.ptp(points_array,axis=0)))
-    lengths=np.linalg.norm((points_array[edges[:,1]]-points_array[edges[:,0]])/scale,axis=1)
-    longest=cell_edges[np.arange(len(vertices)),np.argmax(lengths[cell_edges],axis=1)]
-    while True:
-        required=longest[marked[cell_edges].any(axis=1)]
-        if marked[required].all():break
-        marked[required]=True
+    if split_pattern is None:
+        lengths=np.linalg.norm((points_array[edges[:,1]]-points_array[edges[:,0]])/scale,axis=1)
+        longest=cell_edges[np.arange(len(vertices)),np.argmax(lengths[cell_edges],axis=1)]
+        while True:
+            required=longest[marked[cell_edges].any(axis=1)]
+            if marked[required].all():break
+            marked[required]=True
+    else:
+        if not isinstance(split_pattern,CurvedSplitPattern):raise ValueError('split_pattern requires an immutable CurvedSplitPattern')
+        split_pattern.__post_init__()
+        if split_pattern.parent_topology_sha256!=curved_topology_digest(parent):
+            raise ValueError('split pattern parent topology differs; use its original numbered mesh and preceding history, or capture a new pattern')
+        if split_pattern.marked_cells!=tuple(map(int,requested)):raise ValueError('split pattern marked cells differ from the request')
+        lookup={tuple(map(int,edge)):i for i,edge in enumerate(edges)}
+        if any(edge not in lookup for edge in split_pattern.split_edges):raise ValueError('split pattern names an absent parent edge')
+        marked[:]=False;marked[[lookup[edge] for edge in split_pattern.split_edges]]=True
+        if not marked[cell_edges[requested]].all():raise ValueError('split pattern must split all three edges of every requested cell')
+        expected=set(map(int,np.flatnonzero(marked[cell_edges].sum(axis=1)==2)))
+        if {cell for cell,_ in split_pattern.transition_diagonals}!=expected:
+            raise ValueError('split pattern must declare exactly the two-edge transition diagonals')
+    declared_diagonals={} if split_pattern is None else dict(split_pattern.transition_diagonals)
+    chosen_diagonals=[]
     count=len(vertices)+int(marked[cell_edges].sum())
     if count>max_triangles:raise ValueError(f'curved refinement needs {count} triangles, exceeding max_triangles={max_triangles}')
     points=list(points_array.copy());coefficients=[{i:1.} for i in range(len(points))]
@@ -103,7 +123,10 @@ def refine_marked_curved_space(parent,marked_cells,*,max_triangles=250000,minimu
         else:
             i=int(np.flatnonzero(~flags)[0]);a,b,c=np.roll(np.arange(3),-i);bc=3+(i+1)%3;ca=3+(i+2)%3
             children=[(ca,bc,c)]
-            if np.linalg.norm((points_array[nodes[a]]-points_array[nodes[bc]])/scale)<=np.linalg.norm((points_array[nodes[b]]-points_array[nodes[ca]])/scale):
+            diagonal=declared_diagonals[cell] if split_pattern is not None else int(
+                np.linalg.norm((points_array[nodes[a]]-points_array[nodes[bc]])/scale)>np.linalg.norm((points_array[nodes[b]]-points_array[nodes[ca]])/scale))
+            chosen_diagonals.append((cell,diagonal))
+            if diagonal==0:
                 children.extend(((a,b,bc),(a,bc,ca)))
             else:children.extend(((a,b,ca),(b,bc,ca)))
         for child in children:
@@ -143,4 +166,6 @@ def refine_marked_curved_space(parent,marked_cells,*,max_triangles=250000,minimu
     prolongation=coo_matrix((values,(rows,columns)),shape=(len(points),len(points_array))).tocsr()
     quality=MappingProxyType(dict(triangles=len(cells),minimum_corner_angle_deg=angle,required_minimum_corner_angle_deg=float(minimum_corner_angle_deg),max_triangles=max_triangles,
         scope='mapped tangent angles at element corners and validated quadratic maps/edges; no global conditioning or physical error bound'))
-    return CurvedMarkedRefinement(space,prolongation,owners,references,requested,split_edges,quality)
+    pattern=CurvedSplitPattern(curved_topology_digest(parent),tuple(map(int,requested)),
+                               tuple(tuple(map(int,edge)) for edge in split_edges),tuple(chosen_diagonals))
+    return CurvedMarkedRefinement(space,prolongation,owners,references,requested,split_edges,quality,pattern)

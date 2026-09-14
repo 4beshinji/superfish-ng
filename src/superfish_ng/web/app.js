@@ -166,7 +166,7 @@ function curvedHistoryDraft() {
   return {mode:$("curved-refinement-mode").value, levels:$("curved-refinement-levels").value,
     rows:curvedHistoryRows().map(row => ({id:row.dataset.historyId,
       kind:row.querySelector('.step-kind').value, cells:row.querySelector('.step-cells').value,
-      angle:row.querySelector('.step-angle').value, previous:row.querySelector('.step-previous').textContent}))};
+      angle:row.querySelector('.step-angle').value, previous:row.querySelector('.step-previous').textContent, splitPattern:structuredClone(row._splitPattern)}))};
 }
 function curvedSelectionTarget() {
   const mode = $("curved-selection-position").value;
@@ -195,12 +195,27 @@ function curvedSelectionMatches(signature) {
 function curvedRefinementRow(step = {kind: "uniform"}) {
   const row = $("curved-history").tBodies[0].insertRow();
   row.dataset.historyId = String(++curvedHistoryRowId);
-  row.innerHTML = '<td><span class="step-number"></span><select class="step-kind" aria-label="細分方法"><option value="uniform">一様</option><option value="marked">選択要素</option></select></td><td><input class="step-cells" aria-label="細分する要素番号" /><span class="step-previous hint"></span></td><td><input class="step-angle" aria-label="最小頂点接線角" type="number" min="0" max="60" step="any" /></td><td><button type="button" class="step-pick">図上で選び直す</button><button type="button" class="step-up" aria-label="この段階を上へ">↑</button><button type="button" class="step-down" aria-label="この段階を下へ">↓</button><button type="button" class="step-remove">削除</button></td>';
+  row.innerHTML = '<td><span class="step-number"></span><span class="step-split-note hint"></span><select class="step-kind" aria-label="細分方法"><option value="uniform">一様</option><option value="marked">選択要素</option></select></td><td><input class="step-cells" aria-label="細分する要素番号" /><span class="step-previous hint"></span></td><td><input class="step-angle" aria-label="最小頂点接線角" type="number" min="0" max="60" step="any" /></td><td><button type="button" class="step-release">固定を解除</button><button type="button" class="step-pick">図上で選び直す</button><button type="button" class="step-up" aria-label="この段階を上へ">↑</button><button type="button" class="step-down" aria-label="この段階を下へ">↓</button><button type="button" class="step-remove">削除</button></td>';
   const kind = row.querySelector('.step-kind'), cells = row.querySelector('.step-cells'), angle = row.querySelector('.step-angle');
   kind.value = step.kind;
   cells.value = (step.marked_cells || []).join(', ');
   angle.value = step.minimum_corner_angle_deg ?? 5;
-  const update = () => { cells.disabled = angle.disabled = row.querySelector('.step-pick').disabled = kind.value === 'uniform'; };
+  row._splitPattern=structuredClone(step.split_pattern ?? null);
+  const update = () => {
+    const fixed=!!row._splitPattern;
+    kind.disabled=fixed;cells.disabled=kind.value==='uniform' || fixed;
+    angle.disabled=row.querySelector('.step-pick').disabled=kind.value==='uniform';
+    row.querySelector('.step-release').hidden=!fixed;
+    row.querySelector('.step-split-note').textContent=fixed?'分割固定済み':'';
+  };
+  row.updateRefinementFields=update;
+  row.querySelector('.step-release').onclick=()=>{
+    row._splitPattern=null;update();
+    const pending=invalidateCurvedSuffix(curvedHistoryRows().indexOf(row)+1);
+    clearCurvedSelection();
+    $("curved-history-edit-status").textContent=pending ? `${pending}段階の後続要素を再指定してください。` : 'この段階は形状に応じて分割を選び直します。';
+    markDirty();
+  };
   kind.addEventListener('change', update); update();
   row.querySelector('.step-pick').onclick = () => {
     $("curved-selection-position").value = "replace";
@@ -215,6 +230,26 @@ function curvedRefinementRow(step = {kind: "uniform"}) {
 }
 bind('curved-add-uniform', () => { curvedRefinementRow(); markDirty(); });
 bind('curved-add-marked', () => { curvedRefinementRow({kind: 'marked'}); markDirty(); });
+function invalidateCurvedSuffix(start) {
+  let pending=0;
+  for(const row of curvedHistoryRows().slice(start)) {
+    if(row.querySelector('.step-kind').value!=='marked')continue;
+    const input=row.querySelector('.step-cells');
+    if(input.value.trim())row.querySelector('.step-previous').textContent=`変更前の番号（参照用）: ${input.value}。この段階のメッシュで再指定してください。`;
+    input.value='';row._splitPattern=null;row.updateRefinementFields();pending++;
+  }
+  return pending;
+}
+bind('curved-freeze',async()=>{
+  $('curved-freeze').disabled=true;
+  try {
+    const project=collect(),signature=JSON.stringify(project);
+    const result=await api('freeze-curved-refinement',{document:project});
+    if(JSON.stringify(collect())!==signature)throw Error('分割を固定する間に入力が変わりました。現在の入力でやり直してください');
+    applyProject(result);markDirty();
+    $('curved-history-edit-status').textContent='元メッシュと局所分割を固定しました。形状調整でも同じ親子関係を使います。';
+  } finally {$('curved-freeze').disabled=false;}
+});
 function collectCurvedRefinementSteps(limit = null) {
   const rows = limit === null ? curvedHistoryRows() : curvedHistoryRows().slice(0,limit);
   if (!rows.length) throw Error('順序付き細分履歴を1段以上追加するか、一様細分の段数を選んでください');
@@ -226,7 +261,7 @@ function collectCurvedRefinementSteps(limit = null) {
       throw Error(`細分履歴${index + 1}段目の要素番号は、重複のない0以上の整数をカンマで区切ってください`);
     const angle = Number(row.querySelector('.step-angle').value);
     if (!Number.isFinite(angle) || angle <= 0 || angle >= 60) throw Error(`細分履歴${index + 1}段目の最小頂点接線角は0より大きく60より小さい値を指定してください`);
-    return {kind: 'marked', marked_cells: cells, minimum_corner_angle_deg: angle};
+    return {kind: 'marked', marked_cells: cells, minimum_corner_angle_deg: angle, ...(row._splitPattern ? {split_pattern:structuredClone(row._splitPattern)} : {})};
   });
 }
 let curvedSelection = null;
@@ -318,7 +353,8 @@ bind("curved-selection-append", () => {
   let changed = true;
   if (mode === "replace") {
     const row=curvedHistoryRows()[index];
-    changed = row.querySelector('.step-cells').value !== ids.join(', ') || Number(row.querySelector('.step-angle').value) !== angle;
+    changed = !!row._splitPattern || row.querySelector('.step-cells').value !== ids.join(', ') || Number(row.querySelector('.step-angle').value) !== angle;
+    row._splitPattern=null;row.updateRefinementFields();
     row.querySelector('.step-cells').value=ids.join(', ');
     row.querySelector('.step-angle').value=angle;
     row.querySelector('.step-previous').textContent='';
@@ -327,13 +363,7 @@ bind("curved-selection-append", () => {
     const row=curvedRefinementRow({kind:"marked",marked_cells:ids,minimum_corner_angle_deg:angle});
     if(before)before.before(row);
   }
-  let pending=0;
-  if(changed)for(const row of curvedHistoryRows().slice(index+1)) {
-    if(row.querySelector('.step-kind').value !== 'marked')continue;
-    const input=row.querySelector('.step-cells');
-    if(input.value.trim())row.querySelector('.step-previous').textContent=`変更前の番号（参照用）: ${input.value}。この段階のメッシュで再指定してください。`;
-    input.value='';pending++;
-  }
+  const pending=changed ? invalidateCurvedSuffix(index+1) : 0;
   curvedHistoryUndo=undo;$("curved-history-undo").disabled=false;
   $("curved-history-edit-status").textContent=pending ? `${pending}段階の選択要素を再指定してください。保存・計算は再指定後に行えます。` : "図上選択を履歴に反映しました。";
   clearCurvedSelection();
@@ -349,7 +379,7 @@ bind("curved-history-undo", () => {
   $("curved-refinement-mode").value=draft.mode;$("curved-refinement-levels").value=draft.levels;
   $("curved-history").tBodies[0].replaceChildren();
   for(const step of draft.rows) {
-    const row=curvedRefinementRow({kind:step.kind});
+    const row=curvedRefinementRow({kind:step.kind,split_pattern:step.splitPattern});
     row.querySelector('.step-cells').value=step.cells;row.querySelector('.step-angle').value=step.angle;
     row.querySelector('.step-previous').textContent=step.previous;
   }
