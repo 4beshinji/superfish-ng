@@ -1,7 +1,7 @@
 # 単位付きの非多項式スカラー式
 
 2026-09-15 JST、開始HEAD `7061866`。D02の非多項式関数連動に使う式評価基盤。
-**この段階ではtune/Project/保存/GUIへ未接続であり、D02の関数連動が利用可能になったとは扱わない。**
+式基盤の受入時点では未接続だった。現在は[要求版7](EXPRESSION_TUNING.md)でtuneへ接続し、実ブラウザー・曲線RF等の検証を継続中。
 
 `validate_scalar_expression(expression, variable_units, expected_unit=...)` は全構文と次元を検査し、
 使われる変数名とノード数を返す。`evaluate_scalar_expression` は同じ入力に変数値を与えて評価する。

@@ -1,3 +1,19 @@
+<!-- expression-tuning-current-begin -->
+2026-09-15 JST：D02の[単位付き式によるtune版7](EXPRESSION_TUNING.md)をprofile/曲線の実形状生成へ接続。
+実FEM円筒調整・保存再開・途中定義域エラー保持、非アフィン曲線の独立面積/体積則を検証。
+GUIコードも追加したが、実ブラウザーと曲線の専用RF/場検証は残る。親33=10/16/6/1、全計画goal ACTIVE。
+
+開始HEAD7d3455e。要求版7 geometry_kind=profile/curved_harmonic、bindings=[{path,expression}]。
+曲線pathも/case/geometryから。m/1の次元を対象葉から決定し、元形状へ全式を反映して調和変位。
+外側回復版6は内部7を許可、比較は曲線版5と同じ実親/固定履歴。GUI新2選択肢と式JSON復元。
+次：新GUI実ブラウザー、曲線実FEM/RF/場尺度則、版7の実回復・再開を検証。
+関連8モジュール50件232.352秒PASS、回復要求の追加1件0.355秒PASS（計51件、分割実行）。
+CLI/worker各1実FEM、保存12配列・全RF一致、元16ファイル保持。node --check終了0。
+全検証handle終端、live processなし。実ブラウザー/曲線専用RF/版7実回復は未検証。
+今回の詳細と証拠はEXPRESSION_TUNING.mdおよびout/expression-tuning-20260915/acceptance.json。
+Wine本体復元は以前の自動承認拒否のまま、例外許可の返答なし。回避しない。
+<!-- expression-tuning-current-end -->
+
 <!-- scalar-expression-current-begin -->
 2026-09-15 JST：D02の[非多項式スカラー式](SCALAR_EXPRESSIONS.md)の評価基盤を追加。
 単位検査、数学関数、遅延条件分岐、有限実数の定義域、構文/深さ/ノード予算を検査し、新8件0.124秒PASS。

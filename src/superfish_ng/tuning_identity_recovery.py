@@ -17,8 +17,8 @@ def validate_request(request):
     fields=('schema_version','tune_request','identity_recovery')
     keys(request,fields,fields,'tune identity recovery request')
     base=request['tune_request']
-    if not isinstance(base,dict) or type(base.get('schema_version')) is not int or base['schema_version'] not in (1,2,3,4,5):
-        raise ValueError('tune_request must be a complete tune request of version 1 through 5; nested recovery requests are forbidden')
+    if not isinstance(base,dict) or type(base.get('schema_version')) is not int or base['schema_version'] not in (1,2,3,4,5,7):
+        raise ValueError('tune_request must be a complete tune request of version 1 through 5 or 7; nested recovery requests are forbidden')
     project=_request(base);policy=request['identity_recovery']
     fields=('anchor_selection','controls')
     if isinstance(policy,dict) and policy.get('anchor_selection')=='fixed_trial':fields+=('anchor_trial_index',)

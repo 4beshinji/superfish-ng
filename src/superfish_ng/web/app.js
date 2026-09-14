@@ -2474,7 +2474,9 @@ function tuningParameterMode() {
   $("tune-polynomial-help").hidden=$("tune-binding-law").value!=="polynomial";
   $("tune-affine-settings").hidden=$("tune-binding-law").value!=="affine";
   $("tune-harmonic-settings").hidden=$("tune-binding-law").value!=="harmonic";
-  $("tune-profile-bindings").hidden=["affine","harmonic"].includes($("tune-binding-law").value);
+  $("tune-profile-bindings").hidden=["affine","harmonic","expression-profile","expression-curved"].includes($("tune-binding-law").value);
+  $("tune-expression-settings").hidden=!$("tune-binding-law").value.startsWith("expression-");
+  $("tune-expression-curve-settings").hidden=$("tune-binding-law").value!=="expression-curved";
   $("tune-vertex").disabled=coupled;$("tune-coordinate").disabled=coupled;
   for(const label of document.querySelectorAll(".tune-unit-label"))label.textContent=unit==="1" ? "無次元" : unit;
 }
@@ -2523,10 +2525,15 @@ function showTuning(response) {
     body.append(row);
   }
   $("tune-request").value=JSON.stringify(d.request,null,2);$("tune-coupled").checked=r.schema_version>=2;
-  $("tune-binding-law").value=r.schema_version===5 ? "harmonic" : r.schema_version===4 ? "affine" : r.schema_version===3 ? "polynomial" : "linear";
+  $("tune-binding-law").value=r.schema_version===7 ? (r.geometry_kind==="profile" ? "expression-profile" : "expression-curved") : r.schema_version===5 ? "harmonic" : r.schema_version===4 ? "affine" : r.schema_version===3 ? "polynomial" : "linear";
   if(r.schema_version>=2) {
     $("tune-parameter-name").value=r.parameter;$("tune-parameter-unit").value=r.parameter_unit;
-    if(r.schema_version===5) {
+    if(r.schema_version===7) {
+      $("tune-expression-bindings").value=JSON.stringify(r.bindings,null,2);
+      if(r.geometry_kind==="curved_harmonic") {
+        $("tune-expression-rf").value=r.rf_coordinates;$("tune-expression-angle").value=r.minimum_corner_angle_deg;
+      }
+    } else if(r.schema_version===5) {
       $("tune-geometry-coefficients").value=JSON.stringify(r.geometry_coefficients,null,2);
       $("tune-harmonic-rf").value=r.rf_coordinates;$("tune-harmonic-angle").value=r.minimum_corner_angle_deg;
     } else if(r.schema_version===4) {
@@ -2576,13 +2583,22 @@ bind("tune-prepare",async()=>{
   if(signature!==tuningInputSignature())throw Error("調整入力の確認中に入力が変わりました。現在の入力でやり直してください。");
   const coupled=$("tune-coupled").checked,vertex=coupled ? 0 : number("tune-vertex");
   const affine=coupled && $("tune-binding-law").value==="affine";
-  const harmonic=coupled && $("tune-binding-law").value==="harmonic";
+  const expression=coupled && $("tune-binding-law").value.startsWith("expression-");
+  const expressionCurved=expression && $("tune-binding-law").value==="expression-curved";
+  const harmonic=coupled && ($("tune-binding-law").value==="harmonic" || expressionCurved);
   if(!Number.isInteger(vertex) || vertex<0) throw Error("頂点番号は0以上の整数で指定してください");
   const initial_ids=$("tune-ids").value.trim() ? JSON.parse($("tune-ids").value) : Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`);
   const request={schema_version:1,project,parameter:`/case/geometry/points_zr_m/${vertex}/${$("tune-coordinate").value}`,
     bounds:[number("tune-low"),number("tune-high")],target_hz:number("tune-target")*1e6,frequency_tolerance_hz:number("tune-frequency-tolerance"),
     parameter_tolerance:number("tune-parameter-tolerance"),max_trials:number("tune-max-trials"),initial_ids,mode_id:$("tune-mode-id").value,
     controls:trackingControls(affine,harmonic),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
+  if(expression) {
+    Object.assign(request,{schema_version:7,geometry_kind:expressionCurved ? "curved_harmonic" : "profile",
+      parameter:$("tune-parameter-name").value,parameter_unit:$("tune-parameter-unit").value});
+    if(expressionCurved) Object.assign(request,{rf_coordinates:$("tune-expression-rf").value,minimum_corner_angle_deg:number("tune-expression-angle")});
+    $("tune-request").value=JSON.stringify(request,null,2).slice(0,-1)+',"bindings":'+$("tune-expression-bindings").value+'}';
+    return;
+  }
   if(harmonic) {
     Object.assign(request,{schema_version:5,parameter:$("tune-parameter-name").value,parameter_unit:$("tune-parameter-unit").value,
       rf_coordinates:$("tune-harmonic-rf").value,minimum_corner_angle_deg:number("tune-harmonic-angle")});
