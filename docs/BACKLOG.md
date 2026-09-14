@@ -1,5 +1,11 @@
 # 実装バックログ
 
+2026-09-15 JST：[TE逐次・適応Studyのnative読取](TE_TRACKED_STUDY.md)を接続。
+新2件を含む24unitが76.496秒でPASS。逐次CLIは停止/再開後COMPLETE、既存独立掃引との2組全配列/RF一致。
+適応CLIは初回BISECTから再開し、10点/17試行で元終点まで到達。専用計12実FEM。
+実GUI・その他のTE形状/セクター/回復例、TE版8・曲線対称/鏡映・他物理/D03は残る。
+親33=10/16/6/1、全goal ACTIVE。詳細と保存再生の検証範囲はリンク先を参照。
+
 2026-09-15 JST：[TEアフィンStudy](TE_AFFINE_STUDY.md)を直接閉PEC・固定RFで限定受入。
 新規を含む23unit、GUI実経路12項目、説明修正後の定義/画面3項目がPASS。専用4実FEM。
 2組nativeの12配列/全RF一致、57ファイル保持、Maxwell場/RF尺度差最大8.990e-15。

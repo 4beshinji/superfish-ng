@@ -45,7 +45,12 @@ def _point_sources(directory,project):
     if read_job(directory)['status']!='complete':raise ValueError('tracked Study point is incomplete; cannot skip it')
     if _canonical(Project.load(directory/'project.json').to_dict())!=_canonical(project.to_dict()):
         raise ValueError('tracked Study point project differs from declared order/value')
-    read_solution(directory/'solution')
+    from .te import is_te
+    if is_te(project.case):
+        from .te_saved import read_te_run
+        read_te_run(directory/'solution')
+    else:
+        read_solution(directory/'solution')
     after={p.relative_to(directory).as_posix():digest(p) for p in directory.rglob('*') if p.is_file()}
     if before!=after:raise ValueError('tracked Study point sources changed during verification')
     return before
