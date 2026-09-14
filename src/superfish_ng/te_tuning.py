@@ -1,18 +1,19 @@
 # SPDX-License-Identifier: Apache-2.0
-"""TE cylinder tuning guards and native readers, without TM field aliases."""
+"""TE profile tuning guards and native readers, without TM field aliases."""
 from pathlib import Path
 from .te import is_te
 
 
 def validate_te_request(request,project):
     case=project.case
+    mapping=request['controls'].get('mapping') if isinstance(request['controls'],dict) else None
     if (request['schema_version'] not in (1,2,3,7) or
             (request['schema_version']==7 and request['geometry_kind']!='profile') or
             project.sections is not None or case.geometry_order!=1 or case.geometry_type!='profile' or
-            any(r!=case.profile[0][1] for _,r in case.profile) or
+            (mapping=='normalized_cylinder' and any(r!=case.profile[0][1] for _,r in case.profile)) or
             sum(t!='pec' for t in (case.z_min,case.z_max))>1 or
-            not isinstance(request['controls'],dict) or request['controls'].get('mapping')!='normalized_cylinder'):
-        raise ValueError('TE tuning/tracking integration is pending for this geometry or mapping; use a straight constant-radius profile, normalized_cylinder and at most one symmetry end')
+            mapping not in ('normalized_cylinder','normalized_profile')):
+        raise ValueError('TE tuning/tracking integration is pending for this geometry or mapping; use a straight positive-radius profile, normalized_profile (or normalized_cylinder for cylinders) and at most one symmetry end')
     if project.reflect_full and case.z_min==case.z_max=='pec':
         raise ValueError('TE reflected tuning requires one source symmetry plane')
 

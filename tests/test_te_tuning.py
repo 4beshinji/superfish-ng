@@ -71,7 +71,7 @@ class TETuningTests(unittest.TestCase):
         from superfish_ng.saved import read_solution
         r=te_request()
         changed=deepcopy(r);changed['project']['case']['geometry']['points_zr_m'][1][1]=.11
-        bad=[changed,dict(r,controls=dict(r['controls'],mapping='normalized_profile'))]
+        bad=[changed,dict(r,controls=dict(r['controls'],mapping='same_domain'))]
         for value in bad:
             with self.assertRaisesRegex(ValueError,'TE'):_request(value)
         for version in (4,5,8):

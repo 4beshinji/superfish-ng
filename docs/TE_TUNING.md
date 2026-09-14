@@ -1,5 +1,11 @@
 # TE円筒チューニングの限定受入
 
+2026-09-15 JST：[TE一般profile調整](TE_PROFILE_TUNING.md)をnormalized_profileへ接続。
+非円筒の連動寸法・局所半径式、閉PEC/半領域/鏡映、保存再開と最終粗細判定を検証。
+新2件51.729秒＋関連48件94.247秒PASS。専用尺度8FEM、Chrome11項目/4FEMがPASS。
+5組native全配列/RF一致、元81ファイル保持。曲線TE・他物理調整とD03は残り、全goal ACTIVE。
+
+
 2026-09-15 JST、開始HEAD `c92ba87`。D02の他物理調整のうち、既存のTE円筒追跡を
 実FEMの寸法調整、保存再開、個別ID回復、CLI/worker/GUIへ接続する。
 受入条件は独立Bessel周波数と場、RF・尺度則、交差時のID維持、粗細差の独立ゲート、

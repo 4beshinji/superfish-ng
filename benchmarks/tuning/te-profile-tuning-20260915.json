@@ -1,0 +1,31 @@
+{
+  "status": "PASS_SUPPORTED_TE_PROFILE_TUNING",
+  "starting_head": "ee65a15",
+  "unit_runs": [
+    {
+      "count": 2,
+      "seconds": 51.729
+    },
+    {
+      "count": 48,
+      "seconds": 94.247
+    }
+  ],
+  "native": {
+    "status": "PASS",
+    "new_fem": 8,
+    "max_scale_error": 3.9336414007758354e-14
+  },
+  "fidelity": {
+    "status": "PASS",
+    "pairs": 5,
+    "files_preserved": 81,
+    "product_files": 336
+  },
+  "browser_checks": 11,
+  "browser_new_fem": 4,
+  "diagnostic_fem": 4,
+  "pilot_fem": 2,
+  "all_handles_terminal": true,
+  "goal_status": "active"
+}

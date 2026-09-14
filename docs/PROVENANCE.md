@@ -1,5 +1,11 @@
 # 独立実装・情報来歴
 
+2026-09-15 JST：[TE一般profile調整](TE_PROFILE_TUNING.md)をnormalized_profileへ接続。
+非円筒の連動寸法・局所半径式、閉PEC/半領域/鏡映、保存再開と最終粗細判定を検証。
+新2件51.729秒＋関連48件94.247秒PASS。専用尺度8FEM、Chrome11項目/4FEMがPASS。
+5組native全配列/RF一致、元81ファイル保持。曲線TE・他物理調整とD03は残り、全goal ACTIVE。
+
+
 2026-09-15 JST：[TE一般profile追跡](TE_PROFILE_TRACKING.md)の体積重み付きEφ写像を追加。
 閉PEC・同端条件の一対称面・鏡映に対応。解析積分、P1/P2左右両対称条件、保存再生、実FEM尺度則を検証。
 関連40件は39成功＋失敗入力修正後1成功の分割証拠。専用4実FEMもPASS。

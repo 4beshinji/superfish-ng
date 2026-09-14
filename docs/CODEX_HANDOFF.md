@@ -1,3 +1,22 @@
+2026-09-15 JST：[TE一般profile調整](TE_PROFILE_TUNING.md)をnormalized_profileへ接続。
+非円筒の連動寸法・局所半径式、閉PEC/半領域/鏡映、保存再開と最終粗細判定を検証。
+新2件51.729秒＋関連48件94.247秒PASS。専用尺度8FEM、Chrome11項目/4FEMがPASS。
+5組native全配列/RF一致、元81ファイル保持。曲線TE・他物理調整とD03は残り、全goal ACTIVE。
+
+開始HEAD ee65a15。te_tuning guardはnormalized_profileを許可、円筒写像だけ一定半径を要求。
+要求版1/2/3/7、同端条件一対称面/鏡映、TE専用readerを保持。曲線/階段は拒否。
+新tests/test_te_profile_tuning.py：連動全座標尺度と局所半径exp式、pause2/restart/最終細分。
+初期nr12/nz18は粗細59.671kHzで目標10kHzを満たさず正しくREFINEMENT_FAILED。
+nr32/nz48に増し、許容差を保って新2件PASS。GUI鏡映式は粗細3664.3188Hzで4試行TUNED。
+関連48件PASS。専用原寸/倍寸各4実FEM、場/RF尺度差最大3.934e-14。GUI11項目、製品336SHA固定。
+5組native全配列/RF一致、元81ファイル保持。全3GUI Job complete、PID2275569 SIGINT/session19940終了0。
+全handle終端。検証driver初回constantをvalueと誤記してFEM前KeyError、訂正後PASS（ログ保持）。
+専用成功比較12FEMのほか粗い診断4FEMと目標pilot2FEMあり。unit内部FEMは別。
+次は曲線TE追跡の必要な実写像/重みを既存曲線比較へ照合して接続する。
+非円筒の実個別ID回復専用例も残る（円筒の回復証拠を一般形状へ拡大解釈しない）。
+full suite/seed/hosted CIなし。親33=10/16/6/1、D02/D03/全goal継続。
+正本TE_PROFILE_TUNING.md、out/te-profile-tuning-20260915。Wine拒否は別残件、回避しない。
+
 2026-09-15 JST：[TE一般profile追跡](TE_PROFILE_TRACKING.md)の体積重み付きEφ写像を追加。
 閉PEC・同端条件の一対称面・鏡映に対応。解析積分、P1/P2左右両対称条件、保存再生、実FEM尺度則を検証。
 関連40件は39成功＋失敗入力修正後1成功の分割証拠。専用4実FEMもPASS。
