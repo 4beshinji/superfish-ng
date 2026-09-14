@@ -16,18 +16,24 @@ MAX_SAMPLES = 262144
 
 
 def validate_curved_comparison_meshes(value):
-    """Version 2 declares a source chord mesh and its own refinement history.
+    """Versions 2/3 declare a source chord mesh and its own refinement history.
 
     Each side uses its corresponding native Case's curve declarations. No Case
-    override, inferred node pairing or solver coefficients enter this document.
+    override or solver coefficients enter this document. Version 3 explicitly
+    selects boundary pairing before topology-based numbering inference.
     """
     if type(value) is not list or len(value)!=2:
         raise ValueError('curved comparison meshes require [previous,current]')
     for mesh in value:
         names=('schema_version','source_mesh','curved_refinement_levels','curved_refinement_steps')
-        keys(mesh,names,('schema_version','source_mesh'),'curved comparison mesh')
-        if type(mesh['schema_version']) is not int or mesh['schema_version']!=2:
-            raise ValueError('both curved comparison meshes require schema_version=2; mixed geometry is unsupported')
+        version=mesh.get('schema_version') if isinstance(mesh,dict) else None
+        required=('schema_version','source_mesh')
+        if version==3:names+=('boundary_pairing',);required+=('boundary_pairing',)
+        keys(mesh,names,required,'curved comparison mesh')
+        if type(version) is not int or version not in (2,3):
+            raise ValueError('both curved comparison meshes require schema_version=2 or 3; mixed geometry is unsupported')
+        if version==3 and mesh['boundary_pairing'] not in ('same_curve_fractions','ordered_curve_vertices'):
+            raise ValueError('boundary_pairing must be same_curve_fractions or ordered_curve_vertices')
         if 'curved_refinement_levels' in mesh and 'curved_refinement_steps' in mesh:
             raise ValueError('curved comparison mesh must use levels or steps, not both')
         levels=mesh.get('curved_refinement_levels',0)
@@ -37,7 +43,14 @@ def validate_curved_comparison_meshes(value):
         if not isinstance(mesh['source_mesh'],dict) or mesh['source_mesh'].get('schema_version')!=1:
             raise ValueError('curved comparison source_mesh requires a schema_version=1 chord mesh')
     from .piecewise_remesh_tracking import validate_comparison_meshes
-    validate_comparison_meshes([mesh['source_mesh'] for mesh in value])
+    if value[0]['schema_version']!=value[1]['schema_version']:
+        raise ValueError('curved comparison mesh versions must agree')
+    if value[0]['schema_version']==2:
+        validate_comparison_meshes([mesh['source_mesh'] for mesh in value])
+    else:
+        if value[0]['boundary_pairing']!=value[1]['boundary_pairing']:
+            raise ValueError('both curved comparison meshes must declare the same boundary_pairing')
+        for mesh in value:validate_comparison_meshes([mesh['source_mesh'],mesh['source_mesh']])
 
 
 def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,sample_order,comparison_meshes,**controls):
@@ -71,15 +84,25 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
         boundaries.append(compare_quadratic_space_boundaries(case,space,solution.case,solution.space))
         spaces.append(space)
     first,second=spaces
-    if any(not np.array_equal(getattr(first.geometry,key),getattr(second.geometry,key)) for key in ('cell_nodes','boundary_nodes')) or not np.array_equal(first.boundary_tags,second.boundary_tags):
+    automatic=comparison_meshes[0]['schema_version']==3;correspondence=None
+    if automatic:
+        from .curved_comparison_correspondence import infer_curved_comparison_correspondence
+        correspondence=infer_curved_comparison_correspondence([s.case for s in solutions],spaces,
+            boundary_pairing=comparison_meshes[0]['boundary_pairing'])
+    elif any(not np.array_equal(getattr(first.geometry,key),getattr(second.geometry,key)) for key in ('cell_nodes','boundary_nodes')) or not np.array_equal(first.boundary_tags,second.boundary_tags):
         raise ValueError('curved comparison spaces must share full oriented P2 connectivity and boundary tags; check both declared histories')
     cells=len(first.geometry.cell_nodes);count=cells*sample_order**2
     if count>MAX_SAMPLES:raise ValueError('curved piecewise_remesh exceeds 262144 samples; reduce sample_order or comparison mesh size')
     rule=list(triangle_quadrature(order=sample_order));q=np.array([b[1:] for b,_ in rule])
     weights=np.tile([w for _,w in rule],cells)
     samples=[];volumes=[];det_ranges=[]
-    for solution,space in zip(solutions,spaces):
-        data=[mapping_cell.evaluate(q) for mapping_cell in space.geometry.local_maps]
+    for side,(solution,space) in enumerate(zip(solutions,spaces)):
+        if automatic:
+            from .quadratic_geometry import QuadraticTriangle
+            nodes=np.asarray(correspondence['previous_reference_cell_nodes'])
+            if side:nodes=np.asarray(correspondence['current_node_for_previous'])[nodes]
+            data=[QuadraticTriangle(space.geometry.points_rz_m[cell]).evaluate(q) for cell in nodes]
+        else:data=[mapping_cell.evaluate(q) for mapping_cell in space.geometry.local_maps]
         points=np.concatenate([item['points_rz_m'] for item in data])
         det=np.concatenate([item['determinant_m2'] for item in data]);r=points[:,0]
         with np.errstate(over='ignore',invalid='ignore',divide='ignore',under='ignore'):
@@ -100,4 +123,5 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
         comparison_edge_checks=[dict(s.edge_check) for s in spaces],field='Hphi_A_per_m',
         field_multiplier='sqrt(r/max(r))*sqrt(detJ/max(detJ)) independently per comparison space',
         scope='explicit piecewise quadratic coordinate correspondence with matching native domain boundaries and independent curved FEM fields; variable volume retained; sample-order convergence required; not inferred physical correspondence, continuous branch identity or a physical error bound')
+    if automatic:report['physical_mapping']['numbering_correspondence']=correspondence
     return report

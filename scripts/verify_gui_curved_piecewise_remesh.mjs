@@ -212,7 +212,7 @@ try {
   await fill('#tracking-overlap',.9);await fill('#tracking-margin',.05);await fill('#tracking-gap',1e-6);await fill('#tracking-rank',1e-8);
   await fill('#tracking-comparison-json',JSON.stringify(meshes));await click('#tracking-compare');
   await wait('trackingResult?.document.status==="PASS" && !trackingBusy');
-  await check('GUI uses version-2 curved comparison declarations with independent native meshes',
+  await check('GUI uses curved comparison declarations with independent native meshes',
     'trackingResult.document.tracking.physical_mapping.comparison_geometry_order===2 && trackingResult.document.tracking.physical_mapping.solver_triangle_counts[1]===4*trackingResult.document.tracking.physical_mapping.solver_triangle_counts[0] && !$("tracking-comparison").hidden');
   const pair=await ev('trackingResult.document');
   await writeFile(out+'/pair.json',JSON.stringify(pair,null,2));
@@ -224,6 +224,17 @@ try {
   delete expectedTracking.physical_mapping.comparison_mesh_sha256;
   if(!isDeepStrictEqual(actualTracking,expectedTracking))throw Error('GUI tracking differs from independent Python/CLI report');
   report.checks.push({operation:'GUI numerical tracking report equals Python/CLI',passed:true});
+  if(meshes[0].schema_version===3) {
+    await check('automatic correspondence and the explicit boundary policy are visible',
+      '$("tracking-status").textContent.includes("曲線上の節点順") && trackingResult.document.tracking.physical_mapping.numbering_correspondence.current_cell_for_previous.length===26');
+    const strict=structuredClone(meshes);
+    for(const m of strict)m.boundary_pairing='same_curve_fractions';
+    await fill('#tracking-comparison-json',JSON.stringify(strict));await click('#tracking-compare');
+    await wait('!$("error").hidden && !trackingBusy && $("error").textContent.includes("fractions")');
+    if(!isDeepStrictEqual(await ev('trackingResult.document'),pair))throw Error('Failed correspondence policy replaced verified pair');
+    report.checks.push({operation:'incompatible fraction policy fails without replacing verified pair',passed:true});
+    await fill('#tracking-comparison-json',JSON.stringify(meshes));
+  }
   await click('#tracking-start');await wait('trackingResult?.document.document_type==="mode_tracking_history" && !trackingBusy');
   const one=await ev('trackingResult.document');
   await select('tracking-current',imported.old);await click('#tracking-extend');
@@ -233,7 +244,7 @@ try {
   await click('#tracking-comparison-swap');await click('#tracking-extend');
   await wait('trackingResult?.document.steps?.length===2 && !trackingBusy');
   await check('explicitly swapped nonlinear maps retain the mode ID on return',
-    'trackingResult.document.status==="PASS" && trackingResult.document.current_mode_ids[0]==="fundamental" && trackingResult.document.steps[1].request.controls.comparison_meshes[0].schema_version===2');
+    `trackingResult.document.status==="PASS" && trackingResult.document.current_mode_ids[0]==="fundamental" && trackingResult.document.steps[1].request.controls.comparison_meshes[0].schema_version===${meshes[0].schema_version}`);
   await click('#tracking-save');
   let saved;
   for(let n=0;n<100;n++){try{saved=JSON.parse(await readFile(out+'/downloads/mode-tracking-history.json','utf8'));break;}catch{}await sleep(100);}

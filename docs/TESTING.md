@@ -1,5 +1,16 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[曲線比較メッシュ番号対応](CURVED_COMPARISON_CORRESPONDENCE.md)は新8件の分割検証。
+初回2件API不在red、幾何2件の最終0.759秒PASS。全8件16.409秒は7PASS/境界負例1FAIL、明示境界節点へ直した当該1件0.332秒PASS。
+負例は番号変更後の内部節点を動かしていたため有効だった。製品/許容差は不変。単一8件合格とはしない。
+専用validate_curved_piecewise_remesh_tracking.py --automatic-numberingは4新FEM/35.946秒PASS、1037ソース系不変。
+独立P2幾何・既知Hφ=rの二重積分/Green・Maxwell・完全保存/CLIを確認した。
+実Chrome版3の10/従来版2の8項目、外部HTTP0、320製品SHA不変、両画面目視済み。ブラウザーで新FEMは行わない。
+対象は新test_curved_comparison_correspondenceと既存curved_piecewise/piecewise/curved_same_domain/curved_affine_remesh/saved_mode_tracking/mode_tracking_history/gui_mode_tracking/curved_harmonic_study/curved_remesh_study。
+既存9モジュール56件701.015秒PASS。全コマンド/終端証拠はout/curved-comparison-correspondence-20260914/acceptance.jsonとselected-regressions.log。
+同じ分率方針の追加実保存場自己比較は局所→一様/132比較要素で内積1.0、6.463秒PASS、元9ファイル不変、新FEMなし。
+数値/両ブラウザーのSHAは最終実装と一致し、全handle/GUIサーバーは終了。全件/seed/Hosted CI/新Wine比較を今回の証拠としない。
+
 2026-09-14 JST：[固定二次境界の内部再生成](CURVED_REMESH_GENERATION.md)は新9件の分割証拠、既存58件を確認した。
 初回独立2件はAPI不在red、最初の2件4.350秒PASS。新7件10.470秒のうち6合格、相似Case上限の入力漏れ1ERROR。
 相似修正/追加凹形状2件3.892秒は1合格/方向符号前提1FAIL、凹形状修正1件0.605秒PASS、予算/粗化2件2.681秒PASS。

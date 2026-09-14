@@ -2207,6 +2207,8 @@ function showTracking(response) {
       ? " 鏡映された部分スペクトルの対応です。番号は全空洞の周波数順位ではありません。"
       : " 同じ端条件の半領域を比較しました。";
   }
+  const numbering=r.physical_mapping?.numbering_correspondence;
+  if(numbering) $("tracking-status").textContent+=` 比較メッシュ${numbering.current_cell_for_previous.length}要素の番号を、${numbering.boundary_pairing==="same_curve_fractions" ? "同じ曲線分率" : "曲線上の節点順"}と隣接関係で対応させました。`;
   const body = $("tracking-matches").querySelector("tbody"); body.replaceChildren();
   for (const m of r.matches) {
     const row = document.createElement("tr");

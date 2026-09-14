@@ -20,15 +20,61 @@ from superfish_ng.mode_tracking_history import start_mode_history,extend_mode_hi
 from validate_large_curved_mesh_selection import boundary_moments,fingerprints
 
 
+def independent_polynomial_overlap(cases,maps):
+    """Integrate Hphi=r with separately written P2 basis/Jacobian and dblquad.
+
+    These original unpermuted cells define the expected map independently of
+    the inferred numbering. The polynomial adapter is not an eigenmode.
+    """
+    from scipy.integrate import dblquad
+    from superfish_ng.curved_space import case_curved_space
+    from superfish_ng.mesh_input import mesh_from_dict
+    spaces=[case_curved_space(c,mesh_from_dict(c,m['source_mesh'])) for c,m in zip(cases,maps)]
+    def evaluate(p,x,y):
+        l=1-x-y
+        values=np.array([l*(2*l-1),x*(2*x-1),y*(2*y-1),4*l*x,4*x*y,4*y*l])
+        dx=np.array([1-4*l,4*x-1,0,4*(l-x),4*y,-4*y])
+        dy=np.array([1-4*l,0,4*y-1,-4*x,4*x,4*(l-y)])
+        return (values@p)[0],np.linalg.det(np.column_stack((dx@p,dy@p)))
+    totals=np.zeros(3)
+    for cell in range(len(spaces[0].geometry.cell_nodes)):
+        nodes=[s.geometry.points_rz_m[s.geometry.cell_nodes[cell]] for s in spaces]
+        def integrand(x,y,kind):
+            (r0,d0),(r1,d1)=[evaluate(p,x,y) for p in nodes]
+            return ((r0*r1)**1.5*np.sqrt(d0*d1),r0**3*d0,r1**3*d1)[kind]
+        for kind in range(3):
+            totals[kind]+=dblquad(lambda y,x:integrand(x,y,kind),0,1,lambda x:0,lambda x:1-x,epsabs=1e-15,epsrel=1e-10)[0]
+    return float(totals[0]/np.sqrt(totals[1]*totals[2]))
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--out',type=Path,required=True);args=parser.parse_args()
+    parser.add_argument('--out',type=Path,required=True)
+    parser.add_argument('--automatic-numbering',action='store_true');args=parser.parse_args()
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
-    started=time.monotonic();before=fingerprints();rows=[];solutions=[];requests=[]
+    started=time.monotonic();before=fingerprints();rows=[];solutions=[];requests=[];numbering_checks=[]
     for scale in (1,2):
         cases,maps=curved_comparison_fixture(scale)
         stages=[solve(cases[0],mesh_data=maps[0]['source_mesh']),
                 solve(replace(cases[1],curved_refinement_levels=1),mesh_data=maps[1]['source_mesh'])]
+        if args.automatic_numbering:
+            from test_curved_comparison_correspondence import automatic_maps
+            from superfish_ng.piecewise_remesh_tracking import track_piecewise_remesh_modes
+            original_maps=maps;maps=automatic_maps(maps)
+            reports=[]
+            for declaration in (automatic_maps(original_maps,renumber=False),maps):
+                reports.append(track_piecewise_remesh_modes(*stages,['fundamental'],**dict(CONTROLS,comparison_meshes=declaration)))
+            difference=float(np.max(np.abs(np.asarray(reports[0]['overlap_matrix'])-reports[1]['overlap_matrix'])))
+            assert difference<2e-14
+            check=dict(scale=scale,numbering_overlap_difference=difference)
+            if scale==1:
+                expected=independent_polynomial_overlap(cases,original_maps)
+                adapter=[replace(s,u=np.ones_like(s.u)) for s in stages]
+                report=track_piecewise_remesh_modes(*adapter,['polynomial'],**dict(CONTROLS,comparison_meshes=maps))
+                observed=report['matches'][0]['minimum_principal_overlap']
+                assert abs(observed-expected)<1e-8
+                check.update(independent_polynomial_overlap=expected,observed_polynomial_overlap=observed)
+            numbering_checks.append(check)
         names=[f'scale-{scale}-{name}' for name in ('old','new')]
         rf=[];geometry=[]
         for name,solution in zip(names,stages):
@@ -88,6 +134,7 @@ def main():
     assert fingerprints()==before
     report=dict(status='PASS',scope='two synthetic joined-ellipse domains with nonlinear curved comparison maps, independent FEM histories; Maxwell scaling and whole-boundary volume, no general physical error bound',
                 rows=rows,similarity=similarity,new_fem_solves=4,cli_matches_python=True,source_files_unchanged=len(before),seconds=time.monotonic()-started)
+    if args.automatic_numbering:report['automatic_numbering_checks']=numbering_checks
     (out/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     (out/'source-sha256.json').write_text(json.dumps(before,indent=2)+'\n')
     print(json.dumps(dict(status=report['status'],seconds=report['seconds'],new_fem_solves=4,similarity=similarity)))

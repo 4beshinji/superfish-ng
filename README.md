@@ -1,5 +1,9 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14 JST：[曲線比較メッシュの番号自動対応](docs/CURVED_COMPARISON_CORRESPONDENCE.md)を追加。
+境界の対応方針と隣接関係から独立番号付けを照合し、局所履歴・保存追跡・CLI/GUIへ接続しました。
+新8件の分割検証・既存56件、独立P2幾何/既知場積分、4実FEMの尺度則と保存再生、Chrome版3の10/旧版2の8項目を確認。全計画goalは継続中。
+
 2026-09-14 JST：[二次境界を保つ内部メッシュの自動再生成](docs/CURVED_REMESH_GENERATION.md)を追加。
 元の内部座標/接続を使わず、サイズ・面積・品質・予算を満たす置換計画を生成し、CLIとStudyのGUIへ接続しました。
 新9/既存58テストの分割検証、独立幾何/質量・6 FEMの尺度則/解析RF、実worker再開とChrome新22/旧13項目が合格。全計画goalは継続中。

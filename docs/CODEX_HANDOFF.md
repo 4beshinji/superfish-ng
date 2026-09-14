@@ -1,4 +1,38 @@
-2026-09-14 JST 最新継続状態。開始HEADf73ff2d、当初clean。前goalターンは供給初期メッシュの条件別Study版4を実装/検証/commitしたprogress。
+2026-09-14 JST 最新継続状態。開始HEAD55fed30、当初clean。前goalターンは固定二次境界の内部メッシュ自動生成を実装/検証/commitしたprogress。
+今回はN04残件4/D01の独立番号比較を、曲線比較宣言版3のAPI/保存/CLI/GUIへ追加したprogress。全計画は未完、goal ACTIVE。
+[CURVED_COMPARISON_CORRESPONDENCE.md](CURVED_COMPARISON_CORRESPONDENCE.md)が入力/数学/検証/制約の最新記録。
+新curved_comparison_correspondence.infer_curved_comparison_correspondence(cases,spaces,boundary_pairing=...)は検査済み二次比較空間の全節点/要素対応を返す。
+境界のcurve index/増加分率順/タグから、境界辺に接する三角形の第三頂点と隣接セルへ一意な対応を伝播する。座標近傍/固有値/場係数は使わない。
+全P2節点/要素の全単射・巡回向き・辺中点と全域到達を検査し、不整合を部分対応として返さない。
+比較宣言schema_version=3はsource_meshとboundary_pairing必須、levels/stepsは片方か省略0段。両側は版/方針一致が必要。
+same_curve_fractionsは同じ曲線分率を512epsで照合。ordered_curve_verticesは曲線内の節点順を明示対応とし、分率値の移動を許す。
+曲線数/種類/順序・境界タグ/各曲線辺数、最終の向き付き三角形隣接関係が対応することを要求。同数でも内部対角線が異なれば拒否。
+各側の旧marked番号/patternは各側の元メッシュ/段階で先に再構築する。自動番号対応を旧選択領域の別分割への移送とは扱わない。
+source/要素行/局所巡回/境界行と向きが異なっても、境界からの正規順序で求積セル/参照頂点を固定し、非対称求積則の標本も番号に依存させない。
+従来の全二次境界/正Jacobian/全辺検査・Hphi可変体積内積・標本/要素予算を保持。版1直線/版2曲線の明示番号契約と外側保存版は不変。
+physical_mapping.numbering_correspondenceに旧ID添字の新node/cell配列、共通参照6節点、方針/分率差/丸め幅を保存し、replayで再構築/改変拒否。
+GUI既存比較JSONで版3を受理し、方針と対応要素数を表示。CLI track-modes/逆向き履歴/保存再生へ既存経路で接続する。
+初回独立2件はAPI不在red。初期幾何2件は二段細分1PASS/非アフィンの軸分率不一致1ERROR。
+分率一致と節点順を明示区別する契約を実装し、前者での拒否を保持。幾何2件0.759秒PASS。
+新8件16.409秒は7PASS/境界負例1FAIL。番号変更後の0番は有効な内部節点だったため、負例で境界節点を明示して当該1件0.332秒PASS。
+最終新8件は分割合格。製品の幾何/許容差は変更していない。局所→一様履歴、異なる対角線、厳密入力、実FEM内積/保存/表改変も含む。
+専用validate_curved_piecewise_remesh_tracking.py --automatic-numberingは4新FEM35.946秒PASS、1037ソース系不変。
+旧26/新104の実FEM、独立番号の比較26要素。両尺度で番号変更前後の内積差0、独立Hphi=r二重積分0.9954490990489955対実装0.9954490990489956。
+f/両RQ/G/TTF尺度差最大3.364e-14、Hphi/Er/Ez差1.566e-13。Green体積・次数4/8・逆向き・完全保存/CLI一致もPASS。
+重なり次数4/8は0.9963257474285827/0.9963243587214313。版2と参照求積順が異なるので有限次数での旧値完全一致を要求しない。
+実Chrome新版3の10/旧版2の8項目PASS、外部HTTP0、320製品SHA不変、両画像目視。ブラウザーは保存済みnativeを使い新FEMなし。
+同じ分率方針は実保存固有場の局所→一様/独立番号の132比較要素で自己内積1.0、6.463秒PASS。元native9ファイルと入力不変、新FEMなし。
+一時ブラウザーrunnerのURL形式、追加native runnerのimport/ディレクトリー誤指定は製品実行前の失敗として保持し、正しい入口で補修した。
+既存9モジュール56件701.015秒PASS。曲線/直線/同一領域/アフィン比較・保存/履歴/HTTP GUI・曲線Study版3/4を含む。全一覧/コマンドと結果はacceptance.json/selected-regressions.log。
+feature58066は終了1、補修負例は終了0。数値86571/既存28580/browser56781・66913/追加native27474は終了0、GUI server27750もSIGINTで終了0。
+全handle/サーバー/workerは終端。数値1037ソース系と両browser320製品SHAが最終実装に一致し、証拠索引out/curved-comparison-correspondence-20260914/acceptance.jsonはPASS。
+全件validate/seed/Hosted CI/新Wine比較/実測は未実行。過去full失敗+補修+別seedをfull PASSとしない。
+FEM/物理定数/既存許容差は不変。新規外部資料/依存/旧資産参照なし。subagent/skillなし。
+親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVE。次は同型でない分割の共通比較メッシュ生成、境界分割を変える一般再メッシュ、旧marked領域の異なる分割への移送、またはN04一般精度/効率とC00.V/G03/V02残件へ進む。
+同型比較メッシュの番号自動対応は今回実装済み。連続物理枝回復・TE/反射/半領域の契約は別に未受入。
+旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
+2026-09-14 JST 継続履歴。開始HEADf73ff2d、当初clean。前goalターンは供給初期メッシュの条件別Study版4を実装/検証/commitしたprogress。
 今回はN04残件4の固定二次境界の内部メッシュ自動生成をAPI/CLI/Study GUIへ追加したprogress。全計画は未完、goal ACTIVE。
 [CURVED_REMESH_GENERATION.md](CURVED_REMESH_GENERATION.md)が入力/数学/検証/制約の最新記録。
 新curved_remesh_generation.generate_curved_remesh_plan(project,settings)は既存の完全置換plan版1を返す。Study版4/保存形式は不変。
