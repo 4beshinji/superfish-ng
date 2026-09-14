@@ -1,5 +1,14 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[RF探索の幾何変数版3](RF_OPTIMIZATION_GEOMETRY.md)の限定受入を完了。
+新独立2件の変更前失敗を保持し、実装後4.139秒でGreen面積/体積・混合項・単位換算がPASS。
+関連29unitは937.813秒で28合格/1ERROR。軸原点契約に違反した試験データ1件を軸長変化へ直し、別実行0.818秒で合格した分割証拠。
+専用36FEMは6206.019秒PASS。全3系列で両変数・個別追跡・保存再生/改変拒否・Green/MaxwellのRF五量と内部三場を確認。
+Chrome新版24/旧版13/追加入力11項目PASS、324製品SHA一致。粗いCLI/GUIの既存6水準はnative配列とRF数値が一致。
+1059ソース系は専用実行中不変、終了後の差は合格済み試験データ1件とmodule docstringのみ。他AST一致を保持する。
+初期粗系列の未収束と検証器の仮定違反は同書に記録。索引はout/rf-optimization-geometry-20260914/acceptance.json。
+全suite/seed/Hosted CI/新Wine比較は今回未実行。D03の親依存全体の受入とは区別する。
+
 2026-09-14 JST：[非アフィン曲線tune版5](CURVED_HARMONIC_TUNING.md)の関連35unitは309.382秒PASS。
 新test_curved_harmonic_tuning6件と、curved_tuning/tuning/coupled_tuning/polynomial_tuning/gui_tuningを実行した。
 直接利用先のtest_tuning_jobs7件も7.212秒PASS。合計42件の二つの実行記録。

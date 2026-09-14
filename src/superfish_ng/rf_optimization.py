@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Two-variable RF coordinate search with native FEM evidence and replay."""
+"""RF coordinate search with native FEM evidence and replay."""
 from copy import deepcopy
 from dataclasses import replace
 import json
@@ -19,9 +19,11 @@ from .jobs import execute_project, _implementation_hashes, _digest
 def validate_optimization_request(request):
     fields=('schema_version','project','variables','criteria','constraint_scales',
             'objective_improvement','max_trials','initial_ids','mode_id','controls','rf_coordinates')
+    geometry=isinstance(request,dict) and request.get('schema_version')==3
+    if geometry:fields+=('geometry_terms','minimum_corner_angle_deg')
     keys(request,fields,fields,'RF optimization request')
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2):
-        raise ValueError('RF optimization requires schema_version 1 or 2')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3):
+        raise ValueError('RF optimization requires schema_version 1, 2 or 3')
     validate_design_criteria(request['criteria'])
     scales=request['constraint_scales'];names=[c['quantity'] for c in request['criteria']['constraints']]
     keys(scales,names,names,'constraint_scales')
@@ -31,16 +33,19 @@ def validate_optimization_request(request):
     if not _number(gain) or gain<0:raise ValueError('objective_improvement must be finite and nonnegative in the objective unit')
     integer(request['max_trials'],'max_trials',2)
     variables=request['variables'];seen=set()
-    if type(variables) is not list or len(variables)!=2:
-        raise ValueError('variables must define radial_scale and axial_scale')
+    if type(variables) is not list or not variables or (not geometry and len(variables)!=2):
+        raise ValueError('variables must be nonempty; versions 1/2 require radial_scale and axial_scale')
     for variable in variables:
         names=('name','lower','upper','initial','step','tolerance')
+        if geometry:names+=('unit',)
         keys(variable,names,names,'optimization variable');name=variable['name']
-        if type(name) is not str or name not in ('radial_scale','axial_scale') or name in seen:
-            raise ValueError('variables require distinct radial_scale and axial_scale names')
+        if type(name) is not str or not name.strip() or name in seen or (not geometry and name not in ('radial_scale','axial_scale')):
+            raise ValueError('variables require distinct nonempty names; versions 1/2 use radial_scale and axial_scale')
         seen.add(name)
-        if any(not _number(variable[n]) or variable[n]<=0 for n in names[1:]):
-            raise ValueError('optimization bounds, initial, step and tolerance must be finite and positive')
+        if geometry and variable['unit'] not in ('m','1'):raise ValueError('design variable unit must be m or 1')
+        if any(not _number(variable[n]) or ((not geometry or n in ('step','tolerance')) and variable[n]<=0)
+               for n in ('lower','upper','initial','step','tolerance')):
+            raise ValueError('optimization values must be finite; step/tolerance and version 1/2 bounds must be positive')
         if not variable['lower']<variable['upper'] or not variable['lower']<=variable['initial']<=variable['upper']:
             raise ValueError('optimization initial must lie inside increasing bounds')
         if variable['tolerance']>variable['step']:raise ValueError('variable tolerance must not exceed step')
@@ -59,11 +64,18 @@ def validate_optimization_request(request):
         if marked and project.mesh_data is None:
             raise ValueError('RF optimization with marked history requires the explicit source mesh saved by freeze-curved-refinement')
     if case.z_min!='pec' or case.z_max!='pec':raise ValueError('RF optimization requires full closed PEC geometry')
-    if request['rf_coordinates'] not in ('fixed','axial'):raise ValueError('rf_coordinates must be fixed or axial')
     controls=request['controls']
-    if not isinstance(controls,dict) or controls.get('mapping')!='affine_remesh' or 'affine_map' in controls:
-        raise ValueError('optimization requires affine_remesh controls without affine_map; trial maps are derived')
-    validate_tracking_controls(dict(controls,affine_map=IDENTITY))
+    if geometry:
+        from .rf_optimization_geometry import validate_geometry_request
+        validate_geometry_request(request,project)
+        if not isinstance(controls,dict) or controls.get('mapping')!='piecewise_remesh' or 'comparison_meshes' in controls:
+            raise ValueError('geometry optimization requires piecewise_remesh controls without comparison_meshes; actual trial maps are derived')
+        validate_tracking_controls(dict(controls,mapping='curved_same_domain'))
+    else:
+        if request['rf_coordinates'] not in ('fixed','axial'):raise ValueError('rf_coordinates must be fixed or axial')
+        if not isinstance(controls,dict) or controls.get('mapping')!='affine_remesh' or 'affine_map' in controls:
+            raise ValueError('optimization requires affine_remesh controls without affine_map; trial maps are derived')
+        validate_tracking_controls(dict(controls,affine_map=IDENTITY))
     ids=request['initial_ids']
     if (type(ids) is not list or len(ids)!=case.modes or any(type(x) is not str or not x.strip() for x in ids)
             or len(set(ids))!=len(ids) or type(request['mode_id']) is not str or request['mode_id'] not in ids):
@@ -77,8 +89,12 @@ def _map(request, values):
 
 
 def _projects(request, trial):
-    project=transform_curved_project(Project.from_dict(request['project']),_map(request,trial['values']),
-                                     rf_coordinates=request['rf_coordinates'])
+    if request['schema_version']==3:
+        from .rf_optimization_geometry import trial_project
+        project=trial_project(request,Project.from_dict(request['project']),trial['values'])
+    else:
+        project=transform_curved_project(Project.from_dict(request['project']),_map(request,trial['values']),
+                                         rf_coordinates=request['rf_coordinates'])
     offset=1 if trial['phase']=='final' else 0
     if project.case.curved_refinement_steps:
         from .studies import Study
@@ -156,8 +172,12 @@ def _assemble(request, directories, *, _cache=None):
         ids=list(request['initial_ids']);tracking=None;assessment=None;history=None
         parent=trial['parent_index'];resolved=True
         if parent is not None:
-            controls=dict(request['controls'],affine_map=relative_affine_map(
-                _map(request,trials[parent]['values']),_map(request,trial['values'])))
+            if request['schema_version']==3:
+                from .curved_harmonic_tuning import pair_controls
+                controls=pair_controls(request,_projects(request,trials[parent])[0],projects[0])
+            else:
+                controls=dict(request['controls'],affine_map=relative_affine_map(
+                    _map(request,trials[parent]['values']),_map(request,trial['values'])))
             tracking=build_saved_mode_tracking(dict(schema_version=1,
                 previous_run=str(Path(directories[parent])/'level-0/solution'),current_run=str(runs[0]/'solution'),
                 previous_ids=trials[parent]['current_mode_ids'],controls=controls))
@@ -181,7 +201,7 @@ def _assemble(request, directories, *, _cache=None):
         trial_directories=list(directories),trial_sources_sha256=sources,trials=trials,decision=state,
         status=state['status'],can_resume=state['status']=='PAUSED',completed_fem_solves=3*len(trials),
         max_fem_solves=3*request['max_trials'],
-        scope='bounded two-variable coordinate polling with empirical RF constraints, individual sampled identity and a separately solved finer final assessment; budget includes initial and final three-level trials; no global/local optimality or physical-error certificate')
+        scope=('bounded multivariable coordinate polling with declared curve laws' if request['schema_version']==3 else 'bounded two-variable coordinate polling')+' with empirical RF constraints, individual sampled identity and a separately solved finer final assessment; budget includes initial and final three-level trials; no global/local optimality or physical-error certificate')
 
 
 def _replay(document, *, _cache=None):

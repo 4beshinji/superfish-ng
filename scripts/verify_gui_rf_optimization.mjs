@@ -193,7 +193,17 @@ try {
   const loadFile=async(selector,filename)=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(filename)]},sessionId);};
   request.max_trials=2;const input=out+'/request.json';await writeFile(input,JSON.stringify(request,null,2));
   await loadFile('#rf-opt-request-open',input);await wait('document.querySelector("#rf-opt-request").value.includes("constraint_scales")');
-  await check('RF request restores project, constraints and variable order',`document.querySelector('#rf-opt-mode-id').value===${JSON.stringify(request.mode_id)} && document.querySelector('#rf-opt-order').value===${JSON.stringify(request.variables[0].name)}`);
+  await check('RF request restores project, constraints and variable order',`document.querySelector('#rf-opt-mode-id').value===${JSON.stringify(request.mode_id)} && ${request.schema_version===3 ? `JSON.stringify(JSON.parse(document.querySelector('#rf-opt-design-variables').value))===JSON.stringify(${JSON.stringify(request.variables)})` : `document.querySelector('#rf-opt-order').value===${JSON.stringify(request.variables[0].name)}`}`);
+  if(request.schema_version===3) {
+    await check('multivariate input restores units, law terms and RF policy',`document.querySelector('#rf-opt-geometry-kind').value==='harmonic' && !document.querySelector('#rf-opt-harmonic').hidden && document.querySelector('#rf-opt-affine-variables').hidden && document.querySelector('#rf-opt-rf-coordinates').value===${JSON.stringify(request.rf_coordinates)} && JSON.stringify(JSON.parse(document.querySelector('#rf-opt-geometry-terms').value))===JSON.stringify(${JSON.stringify(request.geometry_terms)})`);
+    await click('#rf-opt-geometry-template');await wait(`JSON.parse(document.querySelector('#rf-opt-geometry-terms').value)['/curves/0/start_zr_m/0']!==undefined`);
+    await check('geometry template respects the declared variable count',`Object.values(JSON.parse(document.querySelector('#rf-opt-geometry-terms').value)).every(terms=>terms[0].powers.length===${request.variables.length} && terms[0].powers.every(p=>p===0))`);
+    await fill('#rf-opt-geometry-terms',JSON.stringify(request.geometry_terms));
+    const originalVariables=JSON.stringify(request.variables),duplicate=originalVariables.replace('"name":','"name":"duplicate","name":');
+    await fill('#rf-opt-design-variables',duplicate);await click('#rf-opt-prepare');await wait('!document.querySelector("#error").hidden');
+    await check('duplicate variable keys are rejected during strict preparation','document.querySelector("#error").textContent.includes("duplicate")');
+    await fill('#rf-opt-design-variables',originalVariables);
+  }
   await fill('#rf-opt-request','');await click('#rf-opt-prepare');await wait('document.querySelector("#rf-opt-request").value.includes("constraint_scales")');
   const prepared=await ev('JSON.parse(document.querySelector("#rf-opt-request").value)');
   if(!isDeepStrictEqual(prepared,request)) {await writeFile(out+'/prepared.json',JSON.stringify(prepared,null,2));throw Error('complete RF request differs after form round trip');}
@@ -243,7 +253,7 @@ try {
   }
   await check('final assessment uses three independently solved finer levels','JSON.stringify(rfOptResult.document.trials[1].assessment.assessment.rows.map(r=>r.refinement_level))==="[1,2,3]"');
   if(prefix.length) {
-    await check('history request and explicit source mesh survive saved resumption',`rfOptResult.document.request.schema_version===2 && JSON.stringify(rfOptResult.document.request.project.mesh_data)===${JSON.stringify(JSON.stringify(request.project.mesh_data))}`);
+    await check('history request and explicit source mesh survive saved resumption',`rfOptResult.document.request.schema_version===${request.schema_version} && JSON.stringify(rfOptResult.document.request.project.mesh_data)===${JSON.stringify(JSON.stringify(request.project.mesh_data))}`);
     await check('RF result explains refinement after the original history',`document.querySelector('#rf-opt-status').textContent.includes('元の細分履歴${prefix.length}段')`);
     // Preserve the server's numeric types. JSON.stringify would change 0.0 to
     // 0 in the saved diagnostics and invalidate their exact replay contract.
@@ -255,6 +265,10 @@ try {
     await wait('!surfaceBusy && (surfaceResult?.document.schema_version===2 || !document.querySelector("#error").hidden)',600000);
     await check('surface assessment opens without a visible error','surfaceResult?.document.schema_version===2 && document.querySelector("#error").hidden');
     await check('surface report replays its fixed prefix and names additional uniform levels',`document.querySelector('#surface-status').textContent.includes('固定履歴${prefix.length}段') && JSON.stringify(surfaceResult.document.rows.map(r=>r.refinement_level))==='[1,2,3]'`);
+  }
+  if(request.schema_version===3) {
+    await check('trial columns show each variable name and unit',`${JSON.stringify(request.variables)}.every(v=>document.querySelector('#rf-opt-trials thead').textContent.includes(v.name+' ['+(v.unit==='1'?'無次元':v.unit)+']')) && document.querySelector('#rf-opt-trials tbody tr').children.length===${request.variables.length+4}`);
+    await check('final comparison derives original history on both actual shape meshes','JSON.stringify(rfOptResult.document.trials[1].tracking.request.controls.comparison_meshes[0])===JSON.stringify(rfOptResult.document.trials[1].tracking.request.controls.comparison_meshes[1])');
   }
   report.result=await ev('rfOptResult.document');
   for(const [trial,level,refinement] of [[0,0,0],[1,2,3]]) {

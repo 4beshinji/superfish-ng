@@ -1,5 +1,12 @@
 # 汎用GUI・共通入出力の受入記録
 
+2026-09-14：[多変数曲線寸法のRF探索版3](RF_OPTIMIZATION_GEOMETRY.md)はChrome新版24/旧版13項目がPASS。
+入力の単位/法則/厳密JSON、実worker中止と所有保存からの再開、改変拒否、別3水準、固定履歴の表面評価再生、各試行の元場表示を確認。
+追加11項目は3変数の往復と混合項、準備/ひな形の待機中の編集保護、旧版2への切替。追加FEMなし。
+新版browser入力は精度増加前の固定1段、現在の入力例は固定3段。前者の初期UNVERIFIED/最終CRITERIA_METを画面でも区別した。
+全3回で外部HTTP0、324製品SHA一致/不変。入力/結果画像を目視し、全job終端後に専用GUIを停止した。
+証拠はout/rf-optimization-geometry-20260914/browser-new、browser-old、browser-input。全GUIの一括再受入ではない。
+
 2026-09-14：[非アフィン曲線tune版5](CURVED_HARMONIC_TUNING.md)のChrome新版12/旧版7項目を確認。
 新版の法則ひな形・元入力数値/固定履歴保持・重複拒否・編集中の古い応答拒否、実4試行の保存再開・対象場表示がPASS。
 旧版も17試行・保存再開と場表示がPASS。外部HTTP0、323製品SHA不変、画面目視済み。

@@ -2848,6 +2848,15 @@ for(const [key,label,unit] of rfOptQuantities) {
 }
 for(const [key,label,value] of rfOptControlFields) {const element=document.createElement('label');element.textContent=label;element.append(rfOptInput(`rf-opt-control-${key}`,value));$('rf-opt-controls').append(element);}
 function rfOptUnit() {$('rf-opt-objective-unit').textContent=`[${rfOptQuantities.find(q=>q[0]===$('rf-opt-objective').value)[2]}]`;}
+function rfOptGeometryMode() {
+  const harmonic=$('rf-opt-geometry-kind').value==='harmonic';
+  $('rf-opt-harmonic').hidden=!harmonic;$('rf-opt-affine-variables').hidden=harmonic;
+  for(const option of $('rf-opt-rf-coordinates').options)option.disabled=option.value==='axial' ? harmonic : option.value==='axis_fraction' ? !harmonic : false;
+  if($('rf-opt-rf-coordinates').selectedOptions[0]?.disabled)$('rf-opt-rf-coordinates').value='fixed';
+}
+function rfOptInputSignature() {
+  return JSON.stringify({project:collect(),fields:[...$('rf-optimization').querySelectorAll('input,select,textarea')].map(e=>[e.id,e.value,e.checked])});
+}
 function rfOptButtons() {
   for(const element of $('rf-optimization').querySelectorAll('button,input,select,textarea'))element.disabled=rfOptBusy;
   $('rf-opt-start').disabled=rfOptBusy || !$('rf-opt-request').value.trim();$('rf-opt-request-save').disabled=$('rf-opt-start').disabled;
@@ -2859,8 +2868,14 @@ function rfOptButtons() {
 }
 function restoreRFOptimizationRequest(r) {
   rfOptVersion=r.schema_version;
-  $('rf-opt-order').value=r.variables[0].name;
-  for(const variable of r.variables)for(const field of ['lower','upper','initial','step','tolerance'])$(`rf-opt-${variable.name}-${field}`).value=variable[field];
+  $('rf-opt-geometry-kind').value=r.schema_version===3 ? 'harmonic' : 'affine';rfOptGeometryMode();
+  if(r.schema_version===3) {
+    $('rf-opt-design-variables').value=JSON.stringify(r.variables,null,2);$('rf-opt-geometry-terms').value=JSON.stringify(r.geometry_terms,null,2);
+    $('rf-opt-harmonic-angle').value=r.minimum_corner_angle_deg;
+  } else {
+    $('rf-opt-order').value=r.variables[0].name;
+    for(const variable of r.variables)for(const field of ['lower','upper','initial','step','tolerance'])$(`rf-opt-${variable.name}-${field}`).value=variable[field];
+  }
   $('rf-opt-objective').value=r.criteria.objective.quantity;$('rf-opt-direction').value=r.criteria.objective.direction;rfOptUnit();
   $('rf-opt-improvement').value=r.objective_improvement;$('rf-opt-max-trials').value=r.max_trials;$('rf-opt-rf-coordinates').value=r.rf_coordinates;
   $('rf-opt-ids').value=JSON.stringify(r.initial_ids);$('rf-opt-mode-id').value=r.mode_id;
@@ -2878,9 +2893,14 @@ function showRFOptimization(response) {
   $('rf-opt-status').textContent=`${d.status} — ${status[d.status]}。${d.completed_fem_solves}/${d.max_fem_solves} 完了解、対象ID ${r.mode_id}。停止理由: ${d.decision.search_stop || '探索途中'}。`;
   if(r.project.case.mesh.curved_refinement_steps?.length)$('rf-opt-status').textContent+=` 元の細分履歴${r.project.case.mesh.curved_refinement_steps.length}段を保ち、その後に全域細分して評価しました。`;
   const body=$('rf-opt-trials').querySelector('tbody'),select=$('rf-opt-field-trial');body.replaceChildren();select.replaceChildren();
+  const columns=r.schema_version===3 ? r.variables : [{name:'radial_scale',label:'半径倍率'},{name:'axial_scale',label:'軸方向倍率'}];
+  const heading=$('rf-opt-trials').querySelector('thead tr');heading.replaceChildren();
+  for(const label of ['試行（0始まり）','種類',...columns.map(v=>v.label ?? `${v.name} [${v.unit==='1' ? '無次元' : v.unit}]`),'設計判定','目的関数の採用値']) {
+    const cell=document.createElement('th');cell.textContent=label;heading.append(cell);
+  }
   for(const trial of d.trials) {
     const values=Object.fromEntries(r.variables.map((v,i)=>[v.name,trial.values[i]])),a=trial.assessment,row=document.createElement('tr');
-    for(const value of [trial.index,trial.phase==='final' ? '最終細分' : '探索',values.radial_scale,values.axial_scale,a?.status ?? 'UNVERIFIED',a?.objective.eligible_value==null ? 'N/A' : `${a.objective.eligible_value} ${a.objective.unit}`])rfOptCell(row,value);
+    for(const value of [trial.index,trial.phase==='final' ? '最終細分' : '探索',...columns.map(v=>values[v.name]),a?.status ?? 'UNVERIFIED',a?.objective.eligible_value==null ? 'N/A' : `${a.objective.eligible_value} ${a.objective.unit}`])rfOptCell(row,value);
     body.append(row);const option=document.createElement('option');option.value=trial.index;option.textContent=`試行 ${trial.index} (${trial.phase})`;select.append(option);
   }
   if(d.trials.length)select.value=d.trials.at(-1).index;
@@ -2904,15 +2924,36 @@ async function openRFOptimizationCheckpoints(id) {
     if(r.indices.length)select.value=r.indices.at(-1);$('rf-opt-checkpoint-job').textContent=`${id}: ${r.indices.length ? '保存地点を選んで再検証してください。' : '保存済み試行はありません。'}`;$('rf-optimization').scrollIntoView({behavior:'smooth'});
   }finally{rfOptBusy=false;rfOptButtons();}
 }
+bind('rf-opt-geometry-template',async()=>{
+  const signature=rfOptInputSignature(),project=await preview();
+  if(signature!==rfOptInputSignature())throw Error('形状確認中に入力が変わりました。現在の入力でやり直してください。');
+  const variables=JSON.parse($('rf-opt-design-variables').value);
+  if(!Array.isArray(variables)||!variables.length)throw Error('先に設計変数の配列を入力してください。');
+  if(!project.case.geometry.curves)throw Error('native曲線のProjectを先に開いてください。');
+  const terms={},add=(path,value)=>terms[path]=[{coefficient:value,powers:variables.map(()=>0)}];
+  project.case.geometry.curves.forEach((curve,i)=>{
+    for(const key of ['start_zr_m','end_zr_m','center_zr_m','semiaxes_m'])if(Array.isArray(curve[key]))curve[key].forEach((value,j)=>add(`/curves/${i}/${key}/${j}`,value));
+    for(const key of ['rotation_rad','start_rad','sweep_rad','start_parameter','end_parameter'])if(typeof curve[key]==='number')add(`/curves/${i}/${key}`,curve[key]);
+  });
+  $('rf-opt-geometry-terms').value=JSON.stringify(terms,null,2);
+});
 bind('rf-opt-prepare',async()=>{
-  const project=await preview(),order=$('rf-opt-order').value==='radial_scale' ? ['radial_scale','axial_scale'] : ['axial_scale','radial_scale'];
-  const variables=order.map(name=>Object.assign({name},Object.fromEntries(['lower','upper','initial','step','tolerance'].map(k=>[k,number(`rf-opt-${name}-${k}`)]))));
+  const signature=rfOptInputSignature(),project=await preview();
+  if(signature!==rfOptInputSignature())throw Error('形状確認中に入力が変わりました。現在の入力でやり直してください。');
+  const harmonic=$('rf-opt-geometry-kind').value==='harmonic',order=$('rf-opt-order').value==='radial_scale' ? ['radial_scale','axial_scale'] : ['axial_scale','radial_scale'];
+  const variables=harmonic ? null : order.map(name=>Object.assign({name},Object.fromEntries(['lower','upper','initial','step','tolerance'].map(k=>[k,number(`rf-opt-${name}-${k}`)]))));
   const constraints=[],constraint_scales={},keys=[...rfOptConstraintOrder,...rfOptQuantities.map(q=>q[0]).filter(q=>!rfOptConstraintOrder.includes(q))];
   for(const key of keys)if($(`rf-opt-${key}-use`).checked){const c={quantity:key};for(const side of ['lower','upper'])if($(`rf-opt-${key}-${side}`).value.trim())c[side]=number(`rf-opt-${key}-${side}`);constraints.push(c);constraint_scales[key]=number(`rf-opt-${key}-scale`);}
-  const controls={...rfOptControls,mapping:'affine_remesh',...Object.fromEntries(rfOptControlFields.map(([key])=>[key,number(`rf-opt-control-${key}`)]))};
+  const controls={...rfOptControls,mapping:harmonic ? 'piecewise_remesh' : 'affine_remesh',...Object.fromEntries(rfOptControlFields.map(([key])=>[key,number(`rf-opt-control-${key}`)]))};
   const initial_ids=$('rf-opt-ids').value.trim() ? JSON.parse($('rf-opt-ids').value) : Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`);
-  const request={schema_version:Math.max(rfOptVersion,project.case.mesh.curved_refinement_steps?.length ? 2 : 1),project,variables,criteria:{schema_version:1,objective:{quantity:$('rf-opt-objective').value,direction:$('rf-opt-direction').value},constraints},constraint_scales,objective_improvement:number('rf-opt-improvement'),max_trials:number('rf-opt-max-trials'),initial_ids,mode_id:$('rf-opt-mode-id').value,controls,rf_coordinates:$('rf-opt-rf-coordinates').value};
-  const r=await api('prepare-rf-optimization',{request});$('rf-opt-request').value=r.serialized;rfOptButtons();
+  let request={schema_version:harmonic ? 3 : Math.max(Math.min(rfOptVersion,2),project.case.mesh.curved_refinement_steps?.length ? 2 : 1),project,variables,criteria:{schema_version:1,objective:{quantity:$('rf-opt-objective').value,direction:$('rf-opt-direction').value},constraints},constraint_scales,objective_improvement:number('rf-opt-improvement'),max_trials:number('rf-opt-max-trials'),initial_ids,mode_id:$('rf-opt-mode-id').value,controls,rf_coordinates:$('rf-opt-rf-coordinates').value};
+  if(harmonic) {
+    delete request.variables;request.minimum_corner_angle_deg=number('rf-opt-harmonic-angle');
+    request=JSON.stringify(request).slice(0,-1)+',"variables":'+$('rf-opt-design-variables').value+',"geometry_terms":'+$('rf-opt-geometry-terms').value+'}';
+  }
+  const r=await api('prepare-rf-optimization',{request});
+  if(signature!==rfOptInputSignature())throw Error('探索入力の検証中に入力が変わりました。現在の入力でやり直してください。');
+  $('rf-opt-request').value=r.serialized;rfOptButtons();
 });
 bind('rf-opt-start',()=>rfOptAction('start-rf-optimization',{request:$('rf-opt-request').value,...rfOptLimit()}));
 bind('rf-opt-resume',()=>rfOptAction('resume-rf-optimization',{document:rfOptResult.serialized,...rfOptLimit()}));
@@ -2933,6 +2974,7 @@ bind('rf-opt-open-field',async()=>{
   finally{rfOptBusy=false;rfOptButtons();}
 });
 $('rf-opt-objective').addEventListener('change',rfOptUnit);$('rf-opt-request').addEventListener('input',rfOptButtons);$('rf-opt-field-trial').addEventListener('change',rfOptButtons);rfOptUnit();rfOptButtons();
+$('rf-opt-geometry-kind').addEventListener('change',rfOptGeometryMode);rfOptGeometryMode();
 
 $("polarization").onchange = () => {
   const polarization = $("polarization").value;

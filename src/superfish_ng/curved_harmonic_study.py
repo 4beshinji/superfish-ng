@@ -8,6 +8,20 @@ from .curved_harmonic_deformation import deform_curved_project
 _CURVE_PATH=re.compile(r'/curves/(0|[1-9][0-9]*)/(?:((?:start|end|center)_zr_m|semiaxes_m)/(0|1)|(rotation_rad|start_rad|sweep_rad|start_parameter|end_parameter))\Z')
 
 
+def curve_numeric_leaf(geometry,path):
+    """Resolve only existing continuous primitive leaves, never topology/settings."""
+    match=_CURVE_PATH.fullmatch(path) if type(path) is str else None
+    if match is None:raise ValueError(f'geometry law path {path!r} must name an existing continuous numeric /curves/index/... field')
+    try:
+        parent=geometry['curves'][int(match[1])]
+        key=match[4]
+        if key is None:parent=parent[match[2]];key=int(match[3])
+        if type(parent[key]) not in (int,float):raise KeyError(key)
+    except (KeyError,IndexError,TypeError,ValueError) as exc:
+        raise ValueError(f'geometry law path {path!r} does not name an existing numeric primitive field') from exc
+    return parent,key
+
+
 def geometry_at_value(study,value):
     """Set numeric primitive leaves simultaneously, in their native SI units.
 
@@ -20,15 +34,7 @@ def geometry_at_value(study,value):
         raise ValueError('geometry_coefficients requires a nonempty object of curve paths and ascending-power arrays')
     active=False
     for path,coefficients in laws.items():
-        match=_CURVE_PATH.fullmatch(path) if type(path) is str else None
-        if match is None:raise ValueError(f'geometry law path {path!r} must name an existing continuous numeric /curves/index/... field')
-        try:
-            parent=geometry['curves'][int(match[1])]
-            key=match[4]
-            if key is None:parent=parent[match[2]];key=int(match[3])
-            if type(parent[key]) not in (int,float):raise KeyError(key)
-        except (KeyError,IndexError,TypeError,ValueError) as exc:
-            raise ValueError(f'geometry law path {path!r} does not name an existing numeric primitive field') from exc
+        parent,key=curve_numeric_leaf(geometry,path)
         if type(coefficients) is not list or not coefficients:
             raise ValueError(f'geometry law {path}: coefficients must be a nonempty array in ascending power order')
         for coefficient in coefficients:

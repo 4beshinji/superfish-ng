@@ -1,4 +1,25 @@
-2026-09-14 JST 最新継続状態。開始HEAD4e49de6、当初clean。前goalターンは固定履歴付きRF探索の実装/検証/commitでprogress。
+<!-- current-rf-geometry-begin -->
+2026-09-14 最新状態: D03/P2-02の単位付き多変数曲線寸法RF探索版3の実装・限定検証を完了。
+開始HEAD6e746d2、途中のWine永続化文書commit1de6f71。親33=9受入/17進行/6他未受入/1範囲外、全計画goal ACTIVE。
+正本は[RF_OPTIMIZATION_GEOMETRY.md](RF_OPTIMIZATION_GEOMETRY.md)。索引はout/rf-optimization-geometry-20260914/acceptance.json。
+新geometry_termsは既存曲線leafを多変数多項式で同時変更し、調和変位/元固定履歴/実3水準・最終別3水準/個別ID/厳密保存再開へ接続。
+関連29unitは937.813秒で28合格/1ERROR。軸原点契約に反したfixtureだけを軸長変化へ直し、別1件0.818秒PASS。
+専用数値終了後にその合格済みfixtureをrepoへ反映。他の試験ASTは同一。module docstringのTwo-variable表記だけも修正した。
+最終36FEMは6206.019秒PASS、handle68843終了0を回収済み。1059ソース系は実行中不変、後続差はfixture/docstringのみ。
+基準/無次元半径/寸法2倍の各4試行がCRITERIA_MET、両変数探索・全native再生/改変比較履歴拒否・固定履歴・Green/MaxwellのRF/場を確認。
+探索146/584/2336、最終584/2336/9344要素。基準目的の上側包絡1614723199.2864945→1599730640.1691456Hz、TRIAL_LIMIT。
+尺度則最大RF/区間1.530e-13、内部H/Er/Ez1.132e-13。benchmarks/optimization/curved-geometry-20260914.jsonに保存。
+初回粗い12FEMは初期/探索候補NOT_CONVERGED・不採用、最終だけCRITERIA_MET。検証器のeligible値ありの仮定がTypeErrorとなった。
+許容差/法則/範囲を変えず、入力例の元固定履歴をmarked→uniform→markedへ増した。初期失敗と全原入力はindependent/に保持。
+Chrome新版24/旧版13/追加入力11項目PASS。324製品SHA一致・外部HTTP0、元場/表面評価/改変拒否/中止再開/3変数混合項/編集競合を確認。
+新版browserは固定1段の粗いsnapshotで、最終入力例の固定3段と区別する。新旧各完了系列6FEM。追加入力の新FEM/workerは0。
+CLI粗系列との既存6水準は10native配列と全RF mode数値が完全一致。Case hashは各原JSONを個別照合。新FEMなし。
+全8GUIjobの終端確認・専用GUI停止済み。現在この課題のlive sessionは0。全suite/seed/Hosted CI/新Wine比較は未実行。
+次はD01/D02とN03の元.S/.I/.V・依存を最新証拠へ照合し、D03親の受入を判断する。
+任意関数/新物理/一般性能保証など元行にない拡張を、無条件に親の必須へ追加しない。次工程メモはout内next-parent-audit.md。
+Wineは専用永続領域で単体動作PASSだが、旧installerコピーは自動承認レビューが2回拒否。許可待ちを回避せず、本計画の独立作業を進める。
+以下は過去履歴。
+<!-- current-rf-geometry-end -->
 今回はD02/P2-02の非アフィン曲線寸法tune版5を実装・検証したprogress。全計画は未完、goal ACTIVE。親33=9受入/17進行/6他未受入/1範囲外は不変。
 [CURVED_HARMONIC_TUNING.md](CURVED_HARMONIC_TUNING.md)が入力/数学/受入/制約/初期失敗の正本。
 元Studyのgeometry_coefficientsをtune版5へ接続。native曲線P2・真空closed PEC/axis TM・非組立/非鏡映・全marked固定を要求する。

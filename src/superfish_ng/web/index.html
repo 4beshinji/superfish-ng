@@ -623,15 +623,28 @@
         </section>
         <section id="rf-optimization">
           <div class="section-title"><span>RF</span><h2>制約を満たす形状を探索する</h2></div>
-          <p class="hint">曲線P2の全PEC形状で半径・軸方向の倍率を探索します。各候補を3水準、最後の候補をさらに細かい3水準で確認します。探索終了は最適性や物理誤差の証明ではありません。</p>
+          <p class="hint">曲線P2の全PEC形状で、倍率または連動する曲線寸法を探索します。各候補を3水準、最後の候補をさらに細かい3水準で確認します。探索終了は最適性や物理誤差の証明ではありません。</p>
           <p class="hint">局所細分を使う形状は、先に「現在の局所分割を固定する」で元メッシュと分割を保存してください。探索ではその履歴を保ち、末尾に全域細分を追加して確認します。</p>
+          <label>形状の変更方法<select id="rf-opt-geometry-kind"><option value="affine">半径・軸方向の倍率</option><option value="harmonic">複数変数から曲線寸法を変更（調和変位）</option></select></label>
+          <div id="rf-opt-affine-variables">
           <label>探索順<select id="rf-opt-order"><option value="radial_scale">半径 → 軸方向</option><option value="axial_scale">軸方向 → 半径</option></select></label>
           <table id="rf-opt-variables"><thead><tr><th>倍率（無次元）</th><th>下限</th><th>上限</th><th>初期値</th><th>初期幅</th><th>最小幅</th></tr></thead><tbody></tbody></table>
+          </div>
+          <fieldset id="rf-opt-harmonic" hidden>
+            <legend>設計変数と曲線寸法の連動</legend>
+            <p class="hint">変数を配列順に探索します。nameは一意な名前、unitはmまたは1（無次元）。lower/upperは範囲、initialは初期値、step/toleranceは初期幅/最小幅です。幅は正の値を指定します。</p>
+            <label>単位付き設計変数（JSON配列）<textarea id="rf-opt-design-variables" rows="5">[{"name":"radius","unit":"m","lower":0.08,"upper":0.0808,"initial":0.08,"step":0.0008,"tolerance":0.0008},{"name":"asymmetry","unit":"1","lower":-0.02,"upper":0.02,"initial":0.01,"step":0.01,"tolerance":0.01}]</textarea></label>
+            <p class="hint">各曲線寸法は項の和です。各項をcoefficient × x₀^powers[0] × x₁^powers[1] × …で指定します。指数は変数配列と同じ順の非負整数です。係数の単位は対象寸法の単位を各変数の単位のべき積で割ったものです。曲線の種類・数・境界分割は固定します。</p>
+            <label>曲線寸法の項（JSONオブジェクト）<textarea id="rf-opt-geometry-terms" rows="6">{}</textarea></label>
+            <button id="rf-opt-geometry-template">現在の曲線から定数項のひな形を作る</button>
+            <label>許容する要素の最小頂点角 [度]<input id="rf-opt-harmonic-angle" type="number" min="0" max="60" step="any" value="1" /></label>
+            <p class="hint">すべての変数を非零の非定数項へ使ってください。各候補を元形状から作り、内部節点を調和変位で移動します。無効形状や写像では停止し、先行保存を保持します。</p>
+          </fieldset>
           <div class="grid two"><label>目的関数<select id="rf-opt-objective"></select></label><label>方向<select id="rf-opt-direction"><option value="minimize">最小化</option><option value="maximize">最大化</option></select></label></div>
           <label>採用する改善の最小量 <span id="rf-opt-objective-unit"></span><input id="rf-opt-improvement" type="number" min="0" step="any" value="1" /></label>
           <table id="rf-opt-constraints"><thead><tr><th>使う</th><th>制約と単位</th><th>下限（空欄可）</th><th>上限（空欄可）</th><th>違反量の基準値</th></tr></thead><tbody></tbody></table>
           <p class="hint">基準値は各制約と同じ単位で、違反量の比較に使います。細分の許容差を緩める設定ではありません。</p>
-          <div class="grid two"><label>試行上限（初期・最終確認を含む）<input id="rf-opt-max-trials" type="number" min="2" step="1" value="4" /></label><label>RF評価座標<select id="rf-opt-rf-coordinates"><option value="axial">軸方向の倍率に連動</option><option value="fixed">固定</option></select></label></div>
+          <div class="grid two"><label>試行上限（初期・最終確認を含む）<input id="rf-opt-max-trials" type="number" min="2" step="1" value="4" /></label><label>RF評価座標<select id="rf-opt-rf-coordinates"><option value="axial">軸方向の倍率に連動</option><option value="fixed">固定</option><option value="axis_fraction" disabled>軸上の相対位置に連動</option></select></label></div>
           <label>初期順位ごとのID（JSON配列、空欄は自動）<input id="rf-opt-ids" type="text" /></label>
           <label>対象ID<input id="rf-opt-mode-id" type="text" value="mode-1" /></label>
           <details><summary>個別モードを追跡する条件</summary><div id="rf-opt-controls" class="grid two"></div><p class="hint">試行間の写像は自動導出します。その他の明示条件は下のJSONで確認できます。</p></details>
