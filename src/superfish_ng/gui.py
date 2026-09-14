@@ -106,6 +106,7 @@ def create_server(workspace, port=0):
             name = {
                 "/": "index.html",
                 "/app.js": "app.js",
+                "/curved-mesh-canvas.js": "curved-mesh-canvas.js",
                 "/style.css": "style.css",
                 "/planar.html": "planar.html",
                 "/planar.js": "planar.js",

@@ -183,19 +183,52 @@ function collectCurvedRefinementSteps() {
   });
 }
 let curvedSelection = null;
+let curvedCanvasPicker = null;
+function clearCurvedSelection() {
+  curvedCanvasPicker?.dispose();curvedCanvasPicker=null;
+  curvedSelection=null;$("curved-selection-panel").hidden=true;
+  $("curved-selection-mesh").replaceChildren();
+  $("curved-selection-canvas").width=1;
+  $("curved-selection-append").disabled=true;
+}
 function selectionStatus() {
   const ids = [...curvedSelection.cells].sort((a,b)=>a-b);
   $("curved-selection-status").textContent = `選択 ${ids.length} 要素: ${ids.join(", ")}`;
   $("curved-selection-append").disabled = !ids.length;
 }
+bind("curved-selection-zoom-in",()=>curvedCanvasPicker?.zoomAt(1.6));
+bind("curved-selection-zoom-out",()=>curvedCanvasPicker?.zoomAt(1/1.6));
+bind("curved-selection-fit",()=>curvedCanvasPicker?.fit());
+bind("curved-selection-focus",()=>curvedCanvasPicker?.focusCell(number("curved-selection-cell")));
 bind("curved-selection-load", async () => {
   $("curved-selection-load").disabled = true;
   try {
     const project = collect(), signature = JSON.stringify(project);
     const mesh = await api("curved-selection-mesh", {document:project});
     if (JSON.stringify(collect()) !== signature) throw Error("メッシュ作成中に入力が変わりました。再表示してください");
+    clearCurvedSelection();
     curvedSelection = {signature, cells:new Set()};
+    selectionStatus();
     const svg = $("curved-selection-mesh"), ns = "http://www.w3.org/2000/svg";
+    const large=mesh.cell_nodes.length>5000;
+    svg.toggleAttribute("hidden",large);$("curved-selection-large").hidden=!large;
+    $("curved-selection-panel").hidden=false;
+    if(large) {
+      const controls=$("curved-selection-large").querySelectorAll('button,input');
+      for(const control of controls)control.disabled=true;
+      const picker=new CurvedMeshCanvas($("curved-selection-canvas"),mesh,curvedSelection.cells,selectionStatus,index=>{
+        $("curved-selection-cell").value=index;
+        $("curved-selection-canvas").setAttribute("aria-label",`要素 ${index}、${curvedSelection.cells.has(index)?"選択済み":"未選択"}。EnterまたはSpaceで選択を切り替えます`);
+      });
+      curvedCanvasPicker=picker;
+      try {await picker.build();} catch(error) {clearCurvedSelection();throw error;}
+      if(picker.disposed)return;
+      if(JSON.stringify(collect())!==signature) {
+        clearCurvedSelection();throw Error("メッシュ作成中に入力が変わりました。再表示してください");
+      }
+      for(const control of controls)control.disabled=false;
+      selectionStatus();return;
+    }
     svg.replaceChildren();
     const radii=mesh.points_rz_m.map(p=>p[0]), zs=mesh.points_rz_m.map(p=>p[1]);
     const z0=Math.min(...zs), r0=Math.min(...radii);
@@ -231,7 +264,7 @@ bind("curved-selection-append", () => {
     $("curved-refinement-mode").value="steps";
   }
   curvedRefinementRow({kind:"marked",marked_cells:ids,minimum_corner_angle_deg:angle});
-  curvedSelection=null;$("curved-selection-panel").hidden=true;
+  clearCurvedSelection();
   updateCurvedControls();markDirty();
 });
 function showGeometry() {
@@ -400,8 +433,7 @@ function setGeometry(g) {
 function applyProject(p) {
   explicitProjectMesh=p.mesh_data ? structuredClone(p.mesh_data) : null;
   $("explicit-project-mesh").textContent=explicitProjectMesh ? `明示元メッシュを使用: ${explicitProjectMesh.points.length}頂点 / ${explicitProjectMesh.triangles.length}三角形。通常のメッシュ生成設定では置き換えません。` : "メッシュは形状と生成設定から作成します。";
-  curvedSelection = null;
-  $("curved-selection-panel").hidden = true;
+  clearCurvedSelection();
   const c = p.case;
   $("geometry-order").value = c.mesh.geometry_order ?? 1;
   $("curved-refinement-levels").value = c.mesh.curved_refinement_levels ?? 0;

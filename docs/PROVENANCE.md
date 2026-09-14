@@ -1,5 +1,11 @@
 # 独立実装・情報来歴
 
+2026-09-14 JST：[大規模曲線メッシュの図上選択](LARGE_CURVED_MESH_SELECTION.md)。
+既存のnative二次節点からLagrange/Bezierの係数恒等式で辺を復元し、制御点の凸包による索引を自前に実装。
+クリック参照はP2重心、合成二次辺の膨らみと解析的な一様格子の所属。別の閉境界Green積分で面積/回転体積を照合した。
+既存のBrowser Canvas/Path2Dを使用し、新依存・外部資料・旧ソルバー/資産参照なし。
+初回画像のCSPによる表示寸法の不足を修正し、最終画像/準備中入力変更も検査した。
+
 2026-09-14 JST：[C00/K02旧曲線入力の版別参照](C00_CONIC_INPUT_RESEARCH.md)。
 新規一次資料はDOE OSTIのMenzel/Stokes, LA-UR-87-115, January 1987。
 [原本](https://www.osti.gov/servlets/purl/10140823)の表紙/目次と入力表・§2.2.3を画像で確認し、

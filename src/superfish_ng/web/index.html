@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Superfish-NG — 空洞ワークスペース</title>
     <link rel="stylesheet" href="/style.css" />
+    <script defer src="/curved-mesh-canvas.js"></script>
     <script defer src="/app.js"></script>
   </head>
   <body>
@@ -192,9 +193,20 @@
           </div>
           <p>段数を1増やすと要素数は4倍になります。初期の二次形状を保持し、解析曲線へ点を置き直しません。</p>
           <button id="curved-selection-load" type="button">現在のメッシュから図上選択</button>
-          <p class="hint">現在の履歴を適用した原領域の要素を選び、末尾に選択細分を追加します。図上表示は5000要素まで。入力変更後はメッシュを再表示してください。</p>
+          <p class="hint">現在の履歴を適用した原領域の要素を選び、末尾に選択細分を追加します。図上表示は250,000要素まで。入力変更後はメッシュを再表示してください。</p>
           <div id="curved-selection-panel" hidden>
             <svg id="curved-selection-mesh" viewBox="0 0 800 400" style="width:100%;min-height:240px" aria-label="細分要素を選ぶメッシュ"></svg>
+            <div id="curved-selection-large" hidden>
+              <div class="grid">
+                <button id="curved-selection-zoom-in" type="button">拡大</button>
+                <button id="curved-selection-zoom-out" type="button">縮小</button>
+                <button id="curved-selection-fit" type="button">全体を表示</button>
+              </div>
+              <canvas id="curved-selection-canvas" tabindex="0" aria-label="要素0。EnterまたはSpaceで選択を切り替えます" aria-describedby="curved-selection-help"></canvas>
+              <p id="curved-selection-help" class="hint">クリックで選択、ドラッグまたは矢印キーで移動、ホイールまたは＋/−キーで拡大縮小、0キーで全体表示。要素番号へ移動した後はEnter/Spaceで選択を切り替えられます。</p>
+              <label>移動する要素番号（0始まり）<input id="curved-selection-cell" type="number" min="0" step="1" value="0" /></label>
+              <button id="curved-selection-focus" type="button">要素番号へ移動</button>
+            </div>
             <p id="curved-selection-status" role="status"></p>
             <label>選択細分の最小頂点接線角 [度]<input id="curved-selection-angle" type="number" min="0" max="60" step="any" value="5" /></label>
             <button id="curved-selection-append" type="button" disabled>選択要素の細分を履歴末尾へ追加</button>

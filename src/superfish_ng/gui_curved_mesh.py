@@ -6,7 +6,7 @@ from .mesh import make_mesh
 from .curved_space import case_curved_space
 
 
-def curved_mesh_document(project, *, maximum_cells=5000):
+def curved_mesh_document(project, *, maximum_cells=250000):
     integer(maximum_cells,'maximum_cells')
     case=project.case
     if case.geometry_order!=2:

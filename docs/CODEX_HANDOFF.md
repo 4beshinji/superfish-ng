@@ -1,3 +1,31 @@
+2026-09-14 JST 最新継続状態。開始HEADb6d624c、clean。前goalターンはC00版別参照の記録/commitでprogress。
+本段階はN04の大規模曲線メッシュ図上選択を実装・検証したprogress。全計画は未完、goal ACTIVE。
+[LARGE_CURVED_MESH_SELECTION.md](LARGE_CURVED_MESH_SELECTION.md)に受入条件・実装・数値/操作/費用・残件を記録した。
+元の5,000上限拒否を26,624要素の合成Caseで再現してから、gui_curved_mesh.pyの既定を250,000へ拡張。
+Case自身の小さい予算を守り、native節点/要素番号/二次曲線を変更しない。FEM/保存契約/許容差は無変更。
+新web/curved-mesh-canvas.jsは5000超のPath2D曲線/制御点凸包索引、画面範囲の描画と背景再利用を提供。
+従来SVGを保持し、クリック/ドラッグ/矢印/ホイール/拡大ボタン/番号移動/Enter/Spaceを接続。
+入力署名を要求前/応答後/準備後/追加時に確認。準備中の操作を無効にし、Project変更/追加/再表示で旧描画とイベントを破棄。
+既存CSPを保持。初回画像でinline styleが適用されず既定300x150となる問題を発見し配布CSSへ移した。最終は344x360表示。
+関連test_gui_curved_mesh_selectionは4unit10.725秒PASS。大規模の全配列・4^n要素数・元予算/Case・明示メッシュを確認。
+最終製品の実Chromeはbrowser-final17（250,000上限測定）、browser-pointer-fixed21、小規模一様/局所履歴各6がPASS。
+中間browser-races19/初回browser-first15は保持。pointer初回は検証式の負数埋込でSyntaxError、検証器だけ括弧修正後に21件PASS。
+全最終ブラウザーの308製品ファイルは現在と完全一致、外部HTTP0。小規模2例は元worker/FEMの保存Caseで選択番号を確認。
+大規模は26,624要素/53,569節点。HTTPから準備終了18.758秒、ブラウザー準備216.4ms/描画40.8ms、5クリックCDP往復3.77〜3.90ms。
+独立合成格子250,000要素/501,501節点は準備2178.6ms/描画250.7ms、解析24点の判定合計0.2ms。大規模eigsolveではない。
+新scripts/validate_large_curved_mesh_selection.pyが表示全配列/Caseと実計算用空間を照合し、選択履歴を再構築。
+番号0/1999/2000/13312/26623、26,624→26,676要素と元履歴が一致。独立二次境界Green面積/体積は元26要素とも相対1e-12以内。
+63.546秒PASS、専用検証中991ソース系ファイルとブラウザー3文書不変。以後は検証mjsへ追加ポインター検査のみ、製品308は不変。
+証拠はout/large-curved-mesh-selection-20260914/acceptance.json、各browser*/report.json、native-verification/report.json。
+2枚の新表示と従来画像の表示確認範囲は専用文書。新依存/外部資料/旧資産参照なし。subagent/skillなし。
+全unit/seed/全validate/Hosted CI/サーバー再起動は実施していない。今回のFEM実行は従来SVGの小規模2例だけ。
+全ブラウザー/専用検証は終了。専用GUI PID936153と完全argvを照合してSIGINT、session70647終了0。実行中handleなし。
+親33=8受入/17進行/7他未受入/1範囲外を保持。N04大規模図上選択は完了、履歴途中への図上挿入/形状変更後番号対応/一般適応効率は未完。
+次はN04残件4の履歴途中への図上挿入、またはD01の未対応な曲線写像を、独立不変量と直接の利用先から限定する。
+C00の旧7.17付属仕様/実行環境の所在はasync質問済み・未回答。前段の同じ資料探索を繰り返さず、取得不要の開発を継続できる。
+C00.V/G03/V02ほか全計画の残件は保持。現段階に全体のblocking条件はない。gitメタデータはrequire_escalated。
+以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD398817a、cleanからC00/K02・C02の旧曲線仕様を調査したprogress。
 [C00_CONIC_INPUT_RESEARCH.md](C00_CONIC_INPUT_RESEARCH.md)に版付き原本、矛盾、独立数学対応と次の受入条件を保存。
 現存の元台帳7入力/設定/数値出力は全bytes/SHA/版表示一致。7.17 release 1-13-2006を保持。

@@ -1,5 +1,10 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[大規模曲線メッシュ選択](LARGE_CURVED_MESH_SELECTION.md)はtest_gui_curved_mesh_selectionの4unit（10.725秒）。
+最終製品のChromeは新17+21、従来の一様/局所履歴各6チェックと実FEM。独立native再構築/境界積分は63.546秒PASS。
+大規模UI競合は確認済みnative応答を再利用する制御検査、250,000要素の測定は描画器だけと明示する。
+FEM/保存契約は不変で、全unit/seed/全validate/Hosted CI/サーバー再起動は実施しない。
+
 2026-09-14 JST：[C00/K02版別入力参照](C00_CONIC_INPUT_RESEARCH.md)は文書・参照台帳だけの変更。
 元入力/設定/出力7ファイルのhash/版表示、JSON/文書差分を照合。
 文中の数学対応は自作36弧612点、陰関数/頂点距離/接線/線積分と負例2件で確認した。
