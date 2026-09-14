@@ -33,8 +33,12 @@ def validate_te_request(request,project):
             raise ValueError('TE curved tuning requires native P2 geometry and the matching affine_remesh or piecewise_remesh mapping')
         if affine:
             validate_te_affine_sector(project,request['affine_coefficients'])
-        elif project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags):
-            raise ValueError('TE non-affine curved tuning requires direct native P2 closed PEC/axis geometry and piecewise_remesh')
+        elif request['schema_version']==8:
+            if project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags):
+                raise ValueError('TE partition tuning requires direct native P2 closed PEC/axis geometry and piecewise_remesh')
+        else:
+            from .curved_same_domain_tracking import _te_end_conditions
+            _te_end_conditions([case,case])
         if request['rf_coordinates']!='fixed':
             raise ValueError('TE curved tuning requires fixed RF metadata; accelerating coordinates are not applicable')
         return
