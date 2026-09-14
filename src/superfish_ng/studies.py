@@ -35,24 +35,33 @@ class Study:
     kind: str
     parameter: str
     values: list
+    parameter_unit: str | None = None
+    affine_coefficients: dict | None = None
+    rf_coordinates: str | None = None
 
     def __post_init__(self):
-        if self.project.mesh_data is not None and self.kind!='fixed_geometry_convergence':
+        affine=self.kind=='curved_affine_sweep'
+        if self.project.mesh_data is not None and self.kind!='fixed_geometry_convergence' and not affine:
             raise ValueError('explicit project meshes require fixed_geometry_convergence; geometry/mesh sweeps need a declared mesh transformation')
-        if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence", "fixed_geometry_convergence"):
+        if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence", "fixed_geometry_convergence", "curved_affine_sweep"):
             raise ValueError(
-                "study kind must be sweep, mesh_convergence, geometry_convergence or fixed_geometry_convergence"
+                "study kind must be sweep, mesh_convergence, geometry_convergence, fixed_geometry_convergence or curved_affine_sweep"
             )
-        if (
-            not isinstance(self.values, list)
-            or len(self.values) < 2
-            or any(
-                type(v) not in (int, float) or not math.isfinite(v) for v in self.values
-            )
-        ):
+        try:
+            finite_values=(isinstance(self.values,list) and len(self.values)>=2
+                           and all(type(v) in (int,float) and math.isfinite(v) for v in self.values))
+        except OverflowError:
+            finite_values=False
+        if not finite_values:
             raise ValueError("study values must contain at least two finite numbers")
         if not isinstance(self.parameter, str):
             raise ValueError("study parameter must be a string")
+        if affine:
+            from .curved_affine_study import validate_affine_study
+            validate_affine_study(self)
+            return
+        if any(value is not None for value in (self.parameter_unit,self.affine_coefficients,self.rf_coordinates)):
+            raise ValueError('affine Study fields require kind curved_affine_sweep')
         has_history = bool(self.project.case.curved_refinement_steps)
         if has_history and not (self.kind == 'fixed_geometry_convergence'
                                 and self.parameter == 'additional_uniform_refinements'):
@@ -99,29 +108,37 @@ class Study:
             )
 
     def to_dict(self):
-        return {
-            "study_version": 1,
+        result = {
+            "study_version": 2 if self.kind=='curved_affine_sweep' else 1,
             "project": self.project.to_dict(),
             "kind": self.kind,
             "parameter": self.parameter,
             "values": self.values,
         }
+        if self.kind=='curved_affine_sweep':
+            result.update(parameter_unit=self.parameter_unit,affine_coefficients=deepcopy(self.affine_coefficients),rf_coordinates=self.rf_coordinates)
+        return result
 
     @classmethod
     def from_dict(cls, data):
+        fields=["study_version", "project", "kind", "parameter", "values"]
+        if isinstance(data,dict) and type(data.get('study_version')) is int and data['study_version']==2:
+            fields += ['parameter_unit','affine_coefficients','rf_coordinates']
         keys(
             data,
-            ["study_version", "project", "kind", "parameter", "values"],
-            ["study_version", "project", "kind", "parameter", "values"],
+            fields,fields,
             "study",
         )
-        if type(data["study_version"]) is not int or data["study_version"] != 1:
-            raise ValueError("only study_version 1 is supported")
+        if type(data["study_version"]) is not int or data["study_version"] not in (1,2):
+            raise ValueError("study_version must be 1 or 2")
+        if (data['study_version']==2)!=(data['kind']=='curved_affine_sweep'):
+            raise ValueError('study_version 2 requires curved_affine_sweep; all previous kinds require version 1')
         return cls(
             Project.from_dict(data["project"]),
             data["kind"],
             data["parameter"],
             data["values"],
+            data.get('parameter_unit'),deepcopy(data.get('affine_coefficients')),data.get('rf_coordinates'),
         )
 
     def save(self, path):
@@ -132,6 +149,10 @@ class Study:
 
     def projects(self):
         self.__post_init__()
+        if self.kind=='curved_affine_sweep':
+            from .curved_affine_study import value_map
+            from .curved_project_transform import transform_curved_project
+            return [transform_curved_project(self.project,value_map(self,value),rf_coordinates=self.rf_coordinates) for value in self.values]
         if self.kind=='fixed_geometry_convergence' and self.project.case.geometry_order==1:
             from .project_mesh_operations import _straight_mesh_refinement_projects
             return _straight_mesh_refinement_projects(self.project,self.values)
@@ -395,7 +416,7 @@ def execute_study(study, directory, prepared=False):
             )
             if 'geometry_approximation' in result:
                 points[-1]['geometry_approximation'] = result['geometry_approximation']
-            if i and study.kind != "sweep":
+            if i and study.kind not in ("sweep","curved_affine_sweep"):
                 comparisons.append(
                     compare_refinement(
                         directory / points[-2]["directory"] / "solution",
@@ -432,6 +453,8 @@ def execute_study(study, directory, prepared=False):
                 if any(source != sources[0] for source in sources[1:]):
                     raise ValueError('fixed geometry Study source meshes differ')
                 report['geometry_refinement'] = 'same verified source mesh and initial quadratic maps; uniform restrictions without curve reprojection'
+        if study.kind=='curved_affine_sweep':
+            report['geometry_refinement']='declared affine transformations of the original numbered mesh and quadratic restrictions; independent spectra, not a fixed-domain convergence estimate'
         if implementation != _implementation_hashes():
             raise RuntimeError(
                 "implementation changed during study; retry with stable source"

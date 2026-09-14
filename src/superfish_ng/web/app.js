@@ -1297,7 +1297,12 @@ async function updateStudyParameters(preferred) {
     studyParameterUnits.set(value, scale);
   };
   const kind = $("study-kind").value;
-  if (kind === "mesh_convergence") {
+  $("study-affine").hidden=kind!=="curved_affine_sweep";
+  $("study-parameter-label").hidden=kind==="curved_affine_sweep";
+  if (kind === "curved_affine_sweep") {
+    add("affine_parameter","宣言変換の変数");
+    $("study-hint").textContent="TMの二次曲線Projectで使用します。元メッシュと参照細分の親子関係を保ち、各点で形状・品質・予算を再検査します。独立スペクトルの掃引であり、固定形状の収束判定ではありません。追跡時は各区間のaffine_remesh閾値を使用し、写像は宣言から導出します。";
+  } else if (kind === "mesh_convergence") {
     add("mesh_scale", "基準メッシュに対する細分倍率");
     $("study-hint").textContent =
       "nr/nzを倍率倍し、指定された最大辺長を倍率で割ります。元曲線と弦誤差は固定ですが、二次境界は変わることがあります。周波数・RF・軸場を別々に判定します。";
@@ -1349,9 +1354,17 @@ async function updateStudyParameters(preferred) {
     $("study-parameter").value = "/case/geometry/points_zr_m/1/0";
   return p;
 }
+function curvedStudySignature() {
+  return JSON.stringify({project:collect(),kind:$("study-kind").value,values:$("study-values").value,
+    name:$("study-affine-parameter").value,unit:$("study-affine-unit").value,
+    coefficients:$("study-affine-coefficients").value,rf:$("study-affine-rf").value});
+}
 async function studyDefinition() {
+  const kind=$("study-kind").value, affine=kind==="curved_affine_sweep";
+  const signature=affine ? curvedStudySignature() : null;
   const selected = $("study-parameter").value;
   const project = await updateStudyParameters(selected);
+  if(kind!==$("study-kind").value || (affine && signature!==curvedStudySignature()))throw Error("Studyの確認中に入力が変わりました。現在の入力でやり直してください。");
   if (!$("study-parameter").value)
     throw Error("変更する項目を選択してください");
   const values = $("study-values")
@@ -1360,6 +1373,13 @@ async function studyDefinition() {
     .map(Number);
   if (values.length < 2 || values.some((v) => !Number.isFinite(v)))
     throw Error("2個以上の有限な数値を入力してください");
+  if(affine) {
+    const result=await api('normalize-study',{document:JSON.stringify({study_version:2,project,kind,
+      parameter:$("study-affine-parameter").value,parameter_unit:$("study-affine-unit").value,values,
+      affine_coefficients:JSON.parse($("study-affine-coefficients").value),rf_coordinates:$("study-affine-rf").value})});
+    if(signature!==curvedStudySignature())throw Error("Studyの確認中に入力が変わりました。現在の入力でやり直してください。");
+    return result;
+  }
   const parameter = $("study-parameter").value;
   return {
     study_version: 1,
@@ -1371,7 +1391,9 @@ async function studyDefinition() {
 }
 bind("study-parameters", () => updateStudyParameters());
 $("study-kind").onchange = () => {
-  if ($("study-kind").value === "mesh_convergence")
+  if ($("study-kind").value === "curved_affine_sweep")
+    $("study-values").value = "1, 1.1, 1.2";
+  else if ($("study-kind").value === "mesh_convergence")
     $("study-values").value = "1, 2, 4";
   else if ($("study-kind").value === "fixed_geometry_convergence")
     $("study-values").value = "0, 1";
@@ -1394,9 +1416,13 @@ $("open-study").onchange = async (event) => {
     const data = await api("normalize-study", { document: await file.text() });
     applyProject(data.project);
     $("study-kind").value = data.kind;
+    if(data.kind==='curved_affine_sweep') {
+      $("study-affine-parameter").value=data.parameter;$("study-affine-unit").value=data.parameter_unit;
+      $("study-affine-rf").value=data.rf_coordinates;$("study-affine-coefficients").value=JSON.stringify(data.affine_coefficients,null,2);
+    }
     await updateStudyParameters(data.parameter);
     $("study-values").value = data.values
-      .map((v) => v / studyParameterUnits.get(data.parameter))
+      .map((v) => data.kind==='curved_affine_sweep' ? v : v / studyParameterUnits.get(data.parameter))
       .join(", ");
   } catch (e) {
     failure(e);
@@ -1413,7 +1439,7 @@ async function openStudy(id) {
   $("study-report").replaceChildren();
   const title = document.createElement("p");
   title.textContent = `計算完了 / 数値判定: ${report.numerical_status}（最後の細分段階）。一般のモード追跡は未実施。`;
-  if (report.study.kind === "sweep")
+  if (["sweep","curved_affine_sweep"].includes(report.study.kind))
     title.textContent =
       "掃引の計算完了。独立したスペクトルを表示します。収束判定・モード追跡は未実施。";
   const reflectedTE = report.physics === "axisymmetric_m0_te" && report.study.project.reflect_full;
@@ -2060,7 +2086,11 @@ trackingButtons();
 bind("tracking-study-run", async () => {
   const data = {study_id: $("tracking-study").value, initial_ids: JSON.parse($("tracking-study-ids").value)};
   if ($("tracking-study-controls").value.trim()) data.step_controls = JSON.parse($("tracking-study-controls").value);
-  else data.controls = trackingControls();
+  else {
+    const report=await api('study-result',{id:data.study_id});
+    if(data.study_id!==$("tracking-study").value)throw Error("追跡するStudyが変わりました。選び直してください。");
+    data.controls = trackingControls(report.study.kind==='curved_affine_sweep');
+  }
   await runTracking("track-study-modes", data);
 });
 
@@ -2117,7 +2147,7 @@ async function openTrackedExecution(id,adaptive=false) {
 bind("tracked-execution-prepare", async () => {
   const study=await studyDefinition(), explicit=$("tracking-study-controls").value.trim();
   const request={schema_version:1,study,initial_ids:JSON.parse($("tracking-study-ids").value),
-    step_controls:explicit ? JSON.parse(explicit) : study.values.slice(1).map(()=>trackingControls())};
+    step_controls:explicit ? JSON.parse(explicit) : study.values.slice(1).map(()=>trackingControls(study.kind==='curved_affine_sweep'))};
   if ($("tracked-execution-adaptive").checked) request.adaptive={max_depth:Number($("tracked-adaptive-depth").value),max_attempts:Number($("tracked-adaptive-attempts-limit").value),minimum_parameter_step:Number($("tracked-adaptive-step").value)};
   $("tracked-execution-request").value=JSON.stringify(request,null,2);
 });

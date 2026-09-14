@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Bounded interval bisection for real FEM geometry sweeps with retained failures."""
 from copy import deepcopy
+from dataclasses import replace
 import json
 import math
 from pathlib import Path
@@ -11,6 +12,7 @@ from .jobs import execute_project,_implementation_hashes
 from .tracked_study import _request as validate_tracking_request,_point_sources
 from .saved_mode_tracking import build_saved_mode_tracking,_canonical
 from .mode_tracking_history import start_mode_history,extend_mode_history
+from .curved_affine_study import pair_controls
 
 
 def _request(request):
@@ -18,8 +20,8 @@ def _request(request):
     keys(request,fields,fields,'adaptive tracked Study request')
     base={key:request[key] for key in fields if key!='adaptive'}
     study,_=validate_tracking_request(base)
-    if study.kind!='sweep' or not study.parameter.startswith('/case/geometry/'):
-        raise ValueError('adaptive tracking currently requires a continuous numeric /case/geometry/ sweep')
+    if study.kind!='curved_affine_sweep' and (study.kind!='sweep' or not study.parameter.startswith('/case/geometry/')):
+        raise ValueError('adaptive tracking requires a continuous numeric /case/geometry/ sweep or declared curved_affine_sweep')
     values=study.values
     if not (all(b>a for a,b in zip(values,values[1:])) or all(b<a for a,b in zip(values,values[1:]))):
         raise ValueError('adaptive Study values must be strictly monotone')
@@ -38,7 +40,7 @@ def _midpoint(a,b):return .5*a+.5*b
 
 
 def _project(study,value):
-    return Study(study.project,'sweep',study.parameter,[value,value]).projects()[0]
+    return replace(study,values=[value,value]).projects()[0]
 
 
 def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_checkpoint=None):
@@ -72,7 +74,7 @@ def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_ch
         if len(attempts)>=limits['max_attempts']:
             stop='maximum_attempts';break
         target=pending.pop();previous=accepted[-1];current=point(target['value'])
-        controls=request['step_controls'][target['target_index']-1]
+        controls=pair_controls(study,request['step_controls'][target['target_index']-1],points[previous]['value'],points[current]['value'])
         if history is None:
             pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=str(Path(points[previous]['run'])/'solution'),
                 current_run=str(Path(points[current]['run'])/'solution'),previous_ids=request['initial_ids'],controls=controls))

@@ -1,0 +1,402 @@
+{
+  "study_version": 2,
+  "project": {
+    "project_version": 2,
+    "case": {
+      "schema_version": 3,
+      "name": "synthetic joined half-ellipses; frozen affine Study",
+      "geometry": {
+        "type": "curved_contour",
+        "curves": [
+          {
+            "type": "line",
+            "start_zr_m": [
+              0.0,
+              0.0
+            ],
+            "end_zr_m": [
+              0.2,
+              0.0
+            ]
+          },
+          {
+            "type": "ellipse_arc",
+            "center_zr_m": [
+              0.1,
+              0.0
+            ],
+            "semiaxes_m": [
+              0.1,
+              0.08
+            ],
+            "start_rad": 0.0,
+            "sweep_rad": 3.141592653589793,
+            "rotation_rad": 0.0
+          }
+        ],
+        "edge_tags": [
+          "axis",
+          "pec"
+        ],
+        "join_tolerance_m": 1e-14,
+        "minimum_gap_m": 0.0,
+        "chord_tolerance_m": 0.008,
+        "chord_max_segments": 20000
+      },
+      "mesh": {
+        "nr": 24,
+        "nz": 32,
+        "geometry_order": 2,
+        "curved_refinement_steps": [
+          {
+            "kind": "marked",
+            "marked_cells": [
+              0
+            ],
+            "minimum_corner_angle_deg": 1.0,
+            "split_pattern": {
+              "schema_version": 1,
+              "parent_topology_sha256": "0aed6d318af07b4da0deecc9837b61d9142179a391bc4f3d218fe6cf35d5f7fd",
+              "marked_cells": [
+                0
+              ],
+              "split_edges": [
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  9
+                ],
+                [
+                  1,
+                  10
+                ],
+                [
+                  5,
+                  9
+                ],
+                [
+                  7,
+                  9
+                ],
+                [
+                  9,
+                  10
+                ]
+              ],
+              "transition_diagonals": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  9,
+                  0
+                ]
+              ]
+            }
+          },
+          {
+            "kind": "uniform"
+          },
+          {
+            "kind": "marked",
+            "marked_cells": [
+              0
+            ],
+            "minimum_corner_angle_deg": 1.0,
+            "split_pattern": {
+              "schema_version": 1,
+              "parent_topology_sha256": "286aa8a5e79ee5525b159fb859e2309d3d3d5a97a069037bc23c0477ed593fe4",
+              "marked_cells": [
+                0
+              ],
+              "split_edges": [
+                [
+                  9,
+                  41
+                ],
+                [
+                  9,
+                  43
+                ],
+                [
+                  9,
+                  51
+                ],
+                [
+                  9,
+                  52
+                ],
+                [
+                  41,
+                  43
+                ]
+              ],
+              "transition_diagonals": [
+                [
+                  18,
+                  1
+                ],
+                [
+                  30,
+                  1
+                ]
+              ]
+            }
+          }
+        ],
+        "contour_mesh": {
+          "max_edge_m": 0.08,
+          "min_angle_deg": 5.0,
+          "max_triangles": 250000,
+          "max_rounds": 12
+        }
+      },
+      "solver": {
+        "modes": 1,
+        "quadrature_order": 8,
+        "element_order": 2
+      },
+      "rf": {
+        "beta": 1.0,
+        "conductivity_s_per_m": 58000000.0,
+        "normalization_j": 1.0
+      },
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "axisymmetric",
+        "polarization": "tm",
+        "azimuthal_index": 0,
+        "materials": [
+          {
+            "id": "vacuum",
+            "type": "vacuum"
+          }
+        ],
+        "regions": [
+          {
+            "id": "cavity",
+            "material": "vacuum",
+            "domain": "interior"
+          }
+        ]
+      }
+    },
+    "reflect_full": false,
+    "display_length_unit": "mm",
+    "mesh_data": {
+      "schema_version": 1,
+      "length_unit": "m",
+      "coordinate_order": "rz",
+      "index_base": 0,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.2
+        ],
+        [
+          0.056568542494923796,
+          0.17071067811865476
+        ],
+        [
+          0.08,
+          0.1
+        ],
+        [
+          0.05656854249492381,
+          0.029289321881345254
+        ],
+        [
+          0.0,
+          0.1
+        ],
+        [
+          0.04474873734152916,
+          0.13566941738241595
+        ],
+        [
+          0.029943078726273553,
+          0.11137191431491912
+        ],
+        [
+          0.0,
+          0.05
+        ],
+        [
+          0.0,
+          0.15000000000000002
+        ],
+        [
+          0.0262520717125453,
+          0.15355040196319797
+        ],
+        [
+          0.02766010484021594,
+          0.06661490708586813
+        ],
+        [
+          0.04854293151535333,
+          0.07681903582053314
+        ]
+      ],
+      "triangles": [
+        [
+          9,
+          10,
+          1
+        ],
+        [
+          5,
+          7,
+          9
+        ],
+        [
+          7,
+          10,
+          9
+        ],
+        [
+          8,
+          11,
+          5
+        ],
+        [
+          0,
+          4,
+          8
+        ],
+        [
+          4,
+          11,
+          8
+        ],
+        [
+          12,
+          11,
+          4
+        ],
+        [
+          7,
+          5,
+          11
+        ],
+        [
+          7,
+          11,
+          12
+        ],
+        [
+          10,
+          2,
+          1
+        ],
+        [
+          10,
+          7,
+          6
+        ],
+        [
+          7,
+          12,
+          3
+        ],
+        [
+          12,
+          4,
+          3
+        ],
+        [
+          3,
+          6,
+          7
+        ],
+        [
+          2,
+          10,
+          6
+        ],
+        [
+          6,
+          3,
+          2
+        ]
+      ],
+      "boundary_edges": [
+        [
+          0,
+          8
+        ],
+        [
+          8,
+          5
+        ],
+        [
+          5,
+          9
+        ],
+        [
+          9,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          0
+        ]
+      ],
+      "boundary_tags": [
+        "axis",
+        "axis",
+        "axis",
+        "axis",
+        "pec",
+        "pec",
+        "pec",
+        "pec"
+      ]
+    }
+  },
+  "kind": "curved_affine_sweep",
+  "parameter": "shape_scale",
+  "parameter_unit": "1",
+  "values": [
+    1.0,
+    2.0
+  ],
+  "affine_coefficients": {
+    "radial_scale": [
+      0.0,
+      2.0
+    ],
+    "axial_scale": [
+      0.0,
+      0.5
+    ],
+    "axial_shear": [
+      0.0
+    ]
+  },
+  "rf_coordinates": "axial"
+}

@@ -611,12 +611,23 @@
             <label
               >操作<select id="study-kind">
                 <option value="sweep">パラメータ掃引</option>
+                <option value="curved_affine_sweep">元メッシュを保つ曲線アフィン掃引</option>
                 <option value="mesh_convergence">メッシュ収束確認</option>
                 <option value="geometry_convergence">曲線の形状近似確認</option>
                 <option value="fixed_geometry_convergence">形状を固定した細分比較</option>
               </select></label
-            ><label>変更する値<select id="study-parameter"></select></label>
+            ><label id="study-parameter-label">変更する値<select id="study-parameter"></select></label>
           </div>
+          <fieldset id="study-affine" hidden>
+            <legend>元形状からの変形則</legend>
+            <div class="grid">
+              <label>変数名<input id="study-affine-parameter" value="shape_scale" /></label>
+              <label>変数の単位<select id="study-affine-unit"><option value="1">無次元</option><option value="m">m（SI）</option></select></label>
+              <label>RF座標<select id="study-affine-rf"><option value="axial">有効長・電圧区間・位相原点を軸方向倍率で変換</option><option value="fixed">元の有効長・電圧区間・位相原点を保持</option></select></label>
+            </div>
+            <label>半径倍率・軸方向倍率・せん断の多項式係数<textarea id="study-affine-coefficients" rows="6">{"radial_scale":[0,1],"axial_scale":[0,1],"axial_shear":[0]}</textarea></label>
+            <p class="hint">各配列は定数項、一次項、二次項の順です。(r,z) → (a(x)r, b(x)r+c(x)z)。値の一覧は上で選んだ単位です。各点を元の入力から独立に変形します。局所分割を保持する場合は、形状編集欄で先に固定してください。追跡を選ぶ場合の写像は実際の条件値から導出します。</p>
+          </fieldset>
           <button id="study-parameters">現在の入力から項目を更新</button
           ><label id="study-values-label"
             >値の一覧（カンマ区切り）<input

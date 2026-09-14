@@ -1,5 +1,12 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 曲線アフィンStudy — 2026-09-14
+
+[CURVED_AFFINE_STUDY.md](CURVED_AFFINE_STUDY.md)の元番号/固定分割を含む定義往復、無効な法則の拒否、実Study worker/保存場、独立スペクトル表示、完了Studyの追跡/保存再生、逐次要求準備、非同期入力変更拒否と旧版1切替をChrome10項目で確認。
+係数欄の幅をCSSで補修し、定義往復/幅の3項目と最終画像を別検証した。外部HTTP0、表示確認には新規FEMを使わない。
+初回は要求生成を待たずに空欄を読む検証器の失敗で、7項目後に停止。待機を修正した最終結果と区別する。
+実逐次/適応workerの再開は別の専用5 FEMで検証した。全GUIの再受入やHosted CIとはしない。
+
 ## 曲線局所分割の固定 — 2026-09-14
 
 [FROZEN_CURVED_REFINEMENT.md](FROZEN_CURVED_REFINEMENT.md)のCLI一致/固定状態・保護/保存再読込/解除・後続再指定/図上再選択/Undo/実worker保存/非同期変更拒否をChrome9項目で確認。

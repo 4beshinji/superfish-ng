@@ -312,7 +312,7 @@ input[aria-invalid="true"] {
 #tangent-diagnostics { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow: auto; }
 #tangent-table { font-size: 0.8rem; }
 
-#mode-tracking textarea, #tracked-execution textarea, #tuning textarea, #rf-optimization textarea, #adaptive-refinement textarea { display: block; width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid #b8cbe0; border-radius: 4px; font: inherit; }
+#mode-tracking textarea, #tracked-execution textarea, #tuning textarea, #rf-optimization textarea, #adaptive-refinement textarea, #studies textarea { display: block; width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid #b8cbe0; border-radius: 4px; font: inherit; }
 #tracking-origin, #tracking-diagnostics { overflow-wrap: anywhere; white-space: pre-wrap; }
 .surface-table { overflow-x: auto; }
 #surface-diagnostics { white-space: pre-wrap; overflow-wrap: anywhere; }

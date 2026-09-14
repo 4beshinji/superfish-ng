@@ -11,6 +11,7 @@ from .completion import digest
 from .saved import read_solution
 from .saved_mode_tracking import build_saved_mode_tracking, validate_tracking_controls, _canonical
 from .mode_tracking_history import start_mode_history, extend_mode_history
+from .curved_affine_study import pair_controls
 
 
 def _request(request):
@@ -27,7 +28,8 @@ def _request(request):
     controls=request['step_controls']
     if type(controls) is not list or len(controls)!=len(projects)-1:
         raise ValueError('step_controls requires one object per adjacent Study point pair')
-    for control in controls:validate_tracking_controls(control)
+    for control,previous,current in zip(controls,study.values,study.values[1:]):
+        pair_controls(study,control,previous,current)
     return study,projects
 
 
@@ -56,10 +58,10 @@ def _assemble(request,runs):
         directory=Path(run);sources.append(_point_sources(directory,projects[i]))
         if i==1:
             pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=str(Path(runs[0])/'solution'),
-                current_run=str(directory/'solution'),previous_ids=request['initial_ids'],controls=request['step_controls'][0]))
+                current_run=str(directory/'solution'),previous_ids=request['initial_ids'],controls=pair_controls(study,request['step_controls'][0],study.values[0],study.values[1])))
             history=start_mode_history(pair)
         elif i>1:
-            history=extend_mode_history(history,dict(current_run=str(directory/'solution'),controls=request['step_controls'][i-1]))
+            history=extend_mode_history(history,dict(current_run=str(directory/'solution'),controls=pair_controls(study,request['step_controls'][i-1],study.values[i-1],study.values[i])))
         records.append(dict(index=i,value=study.values[i],status='INITIAL' if i==0 else history['status'],
             current_mode_ids=request['initial_ids'] if i==0 else history['current_mode_ids']))
     for i in range(len(runs),len(projects)):

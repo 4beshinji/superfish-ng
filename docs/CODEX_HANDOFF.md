@@ -1,4 +1,35 @@
-2026-09-14 JST 最新継続状態。開始HEADa26f3cc、clean。前goalターンの履歴途中図上挿入は実装/検証/commitでprogress。
+2026-09-14 JST 最新継続状態。開始HEAD8249df7、当初clean。前goalターンは曲線局所分割の固定を実装/検証/commitしたprogress。
+本段階はN04残件4の宣言アフィン形状Studyを実装・検証したprogress。全計画未完、goal ACTIVE。
+[CURVED_AFFINE_STUDY.md](CURVED_AFFINE_STUDY.md)が入力/数学/操作/受入範囲/残件の最新仕様。
+Study版2はcurved_affine_sweep専用。parameter_unit=m/1、有限多項式三法則、rf_coordinates=fixed/axialを厳密必須とする。
+既存tune.trial_mapとtransform_curved_projectを使い、元Projectから各条件を独立変形。旧版1の各kind/保存フィールドは維持。
+native曲線P2/未組立TMを対象とし、TEは専用座標契約が必要と拒否する。全点の品質/範囲/要素予算を出力作成前に検査。
+固定元メッシュ/分割の親子関係を保持。未固定履歴の接続不一致拒否、RF座標の従来条件を維持する。
+通常Studyはcomparisons空/UNVERIFIED/独立スペクトル。曲線アフィン変形を固定領域の収束比較と呼ばない。
+完了Study追跡・逐次/適応実行・全保存replayへ接続。新Studyのcontrolsはaffine_remeshで手動affine_mapを禁じ、実際の前後値から相対写像を導出する。
+区間二分も元区間の閾値を継承しつつ、実比較点の写像を使う。外側要求/保存版・上限・失敗/祖先出所の契約を維持。
+GUIに三法則/変数単位/RF方針を追加。定義往復、全点事前検査、非同期変更拒否、追跡要求生成・保存再生へ接続。
+変更前の独立座標/Maxwell尺度則2件は新版拒否のred。関連14モジュール62unitは340.117秒PASS。
+巨大整数の追加負例でOverflowErrorを再現し、有限性検査でValueErrorへ補修。厳密入力と旧版Studyの2件を0.297秒で再検査PASS。
+専用validate_curved_affine_study.pyは111.541秒PASS、合成半楕円4/円筒2/適応3の9新FEM。
+独立Green面積ac/体積a²c、質量a⁴c差4.660e-16、Maxwell f/両RQ/G/TTF差3.176e-14、場形差1.353e-13。
+SIのm/無次元のCaseとuは完全一致。円筒TM020/TM011の解析順位交差を保存追跡し、最大f誤差7.352e-5。
+適応1→1.5はBISECT、1→1.25はSTOP/UNVERIFIEDで実写像1.25。全3点と拒否比較を保持しreplay一致。
+初回楕円せん断のz範囲外拒否は固有値計算前。別の有効な合成円錐2条件で非零せん断の幾何/質量を検査、追加FEMとは数えない。
+専用--workers-onlyは174.721秒PASS、新5 FEM。逐次PAUSED→COMPLETE、適応BISECT後PAUSED→STOP/UNVERIFIED。
+JobManagerを同じ検証プロセス内で閉じて再生成し、元点を再利用して実workerで再開、完了後も再生成/全保存検証。異常終了復旧試験ではない。
+Chrome最終10項目と、係数欄CSS補修後の表示3項目がPASS。初回7項目後の空要求JSON読込は検証器待機不足で、待機を補修した。
+外部HTTP0。最終画像目視済み。browser最終は通常Study2 FEM/完了追跡と再生を含み、表示専用実行は新FEMなし。
+数値検証中1,007ファイル不変。その後の差分はCSSと二つの検証器だけ。最後のworker1,007ファイルと表示browser製品SHAは最終ソースと一致。
+証拠索引out/curved-affine-study-20260914/acceptance.json。selected-tests/overflow-red/overflow-fixed、native-final、workers、browser-final/browser-layout。
+Studyと直接消費先へ影響を限定し、今回は全件/seed/Hosted CI/新Wine比較/実測を再実行しない。前段の全件FAIL+対象補修+別seedを単一full PASSとはしない。
+GUI PID1112537/1119852は完全argv照合後SIGINT、session85454/38575終了0。selected20308/native91494/browser18126/layout1390/workers1845も終了0。
+全検証終了、実行中handleなし。新規外部資料/依存/旧資産参照なし。subagent/skillなし。
+親33=8受入/17進行/7他未受入/1範囲外は維持。N04一般形状/初期再メッシュの掃引、自動番号対応、TE座標契約、一般精度/効率は残る。
+次はN04残件4の非アフィン宣言変形・履歴対応か一般精度/効率を、既存の物理/保存契約と独立不変量でさらに限定して進める。
+D01自動対応推定/個別枝回復、C00.V/G03/V02ほか全計画の残件も保持する。
+C00旧7.17付属仕様/Wine所在はasync質問済み・未回答。他の開発を継続でき、全体を止める条件ではない。
+gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
 
 2026-09-14 JST 最新継続状態。開始HEAD cb94270、当初clean。前goalターンは曲線比較メッシュ追跡の実装/commitでprogress。
 本段階はN04の局所分割選択の固定/保存と宣言アフィン形状変更を実装・検証したprogress。全計画未完、goal ACTIVE。
@@ -32,6 +63,8 @@ seed別実行--skip-testsはPASS、benchmarks/validationの9モード19量のf�
 D01自動対応推定/個別枝回復、C00.V/G03/V02ほか全計画の残件も保持。
 C00の旧7.17付属仕様/Wine所在はasync質問済み・未回答。取得不要の開発を継続でき、全体のblocking条件はない。
 gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+2026-09-14 JST 最新継続状態。開始HEADa26f3cc、clean。前goalターンの履歴途中図上挿入は実装/検証/commitでprogress。
+
 本段階はD01の曲線比較メッシュによる非線形対応を実装/検証したprogress。全計画は未完、goal ACTIVE。
 [CURVED_PIECEWISE_REMESH_TRACKING.md](CURVED_PIECEWISE_REMESH_TRACKING.md)が受入条件/数学/入力/検証/残件の最新仕様。
 既存paired_meshはnative接続一致を要求するため、piecewise_remeshの独立比較メッシュを曲線へ拡張した。

@@ -1,5 +1,13 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[曲線アフィンStudy](CURVED_AFFINE_STUDY.md)は新7件を含む14モジュール62テスト、340.117秒PASS。
+モジュール一覧とコマンドはout/curved-affine-study-20260914/selected-tests.json。巨大整数の負例追加でOverflowErrorを再現し、入力エラーへの補修後、厳密入力と旧Studyの2件を0.297秒で再検査PASS。
+専用validate_curved_affine_study.pyは9 FEM/CLI/独立尺度則/解析順位交差/実区間二分を111.541秒で検証。
+同スクリプトの--workers-onlyは追加5 FEM、JobManager再生成・逐次/適応一時停止と再開・全保存再検証を174.721秒でPASS。既存点を再利用し、適応の実UNVERIFIEDを維持した。
+Chrome最終10項目PASS後の製品変更はCSSのみ。表示3項目と画像を別検証し、新しいFEMは不要とした。外部HTTP0。
+最初の入力拒否、巨大整数のred、専用楕円せん断の範囲外拒否、初回browserの非同期待機不足も保持。
+証拠索引out/curved-affine-study-20260914/acceptance.json。今回の対象はStudyと直接消費先で、全件/seed/Hosted CI/新Wine比較は再実行しない。前段の全件試行と混同しない。
+
 2026-09-14 JST：[曲線局所分割の固定](FROZEN_CURVED_REFINEMENT.md)は関連21件（14.777秒）+追加2件（2.139秒）、専用8 FEM/実TUNED（75.988秒）、Chrome新9/既存20項目がPASS。
 保存契約の共有先を確認するため全validateを一度起動し、全1,602件を888.194秒で回収した。1,598合格・2skip・2不合格、終了1。
 不合格は既存幾何診断の版/対応版一覧の旧期待値。製品を変えず2テストファイルを補修し、両モジュール12件を1.198秒で再実行PASS。

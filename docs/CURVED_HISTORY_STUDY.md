@@ -1,5 +1,7 @@
 # 局所履歴を保持した固定形状Study
 
+2026-09-14追補：固定形状のStudy版1は維持し、別の[宣言アフィンStudy版2](CURVED_AFFINE_STUDY.md)を追加した。元メッシュと履歴を保持する形状掃引・保存追跡/逐次・適応再開に対応する。以下の固定領域の収束比較とは区別する。
+
 2026-09-09。`fixed_geometry_convergence`に
 `parameter: "additional_uniform_refinements"`を追加する。
 `project.case.mesh.curved_refinement_steps`がある場合だけ使用でき、

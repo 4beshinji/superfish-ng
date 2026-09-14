@@ -11,6 +11,7 @@ from .completion import digest
 from .saved import read_solution
 from .saved_mode_tracking import build_saved_mode_tracking,_canonical,validate_tracking_controls
 from .mode_tracking_history import start_mode_history,extend_mode_history
+from .curved_affine_study import pair_controls
 
 
 def _study_inputs(directory):
@@ -62,7 +63,7 @@ def build_study_mode_tracking(request,*,base_directory=None):
     study,runs,before=_study_inputs(directory)
     controls=request['step_controls']
     if type(controls) is not list or len(controls)!=len(runs)-1:raise ValueError('step_controls requires one explicit control object per adjacent Study point pair')
-    for control in controls:validate_tracking_controls(control)
+    controls=[pair_controls(study,control,previous,current) for control,previous,current in zip(controls,study.values,study.values[1:])]
     pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=runs[0],current_run=runs[1],previous_ids=request['initial_ids'],controls=controls[0]))
     history=start_mode_history(pair)
     for i in range(2,len(runs)):
