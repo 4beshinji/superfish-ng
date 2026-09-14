@@ -12,12 +12,15 @@ def value_map(study,value):
 
 
 def validate_affine_study(study):
-    from .te import is_te
+    from .te import is_te,validate_te_case
     case=study.project.case
     if case.curved_contour is None or case.geometry_order!=2 or study.project.sections is not None:
         raise ValueError('curved affine Study requires an unassembled native curved_contour with geometry_order=2')
     if is_te(case):
-        raise ValueError('curved affine Study uses TM accelerating-coordinate conventions; TE shape sweeps require a separate coordinate contract')
+        validate_te_case(case)
+        if study.rf_coordinates!='fixed':raise ValueError('TE affine Study requires fixed RF metadata')
+        if study.project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags):
+            raise ValueError('TE affine Study requires direct closed PEC/axis geometry')
     if not study.parameter.strip() or study.parameter_unit not in ('m','1'):
         raise ValueError('curved affine Study requires a nonempty parameter name and parameter_unit m or 1')
     if study.rf_coordinates not in ('fixed','axial'):

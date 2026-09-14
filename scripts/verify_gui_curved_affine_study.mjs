@@ -221,12 +221,19 @@ try {
   const native=await ev('activeStudy');await writeFile(out+'/study-result.json',JSON.stringify(native,null,2));
   if(!isDeepStrictEqual(native.study,expected) || native.points.length!==2)throw Error('Worker result changed the affine declaration');
   const a=native.points[0].modes[0],b=native.points[1].modes[0];
-  if(Math.abs(2*b.frequency_hz/a.frequency_hz-1)>1e-10 || Math.abs(b.r_over_q_accelerator_ohm/a.r_over_q_accelerator_ohm-1)>1e-9)throw Error('GUI FEM violates Maxwell scaling');
-  report.checks.push({operation:'actual GUI Study worker preserves the declaration and Maxwell frequency/RQ scaling',passed:true});
+  if(Math.abs(2*b.frequency_hz/a.frequency_hz-1)>1e-10)throw Error('GUI FEM violates Maxwell frequency scaling');
+  if(expected.project.case.model?.polarization==='te') {
+    if([a,b].some(m=>m.r_over_q_accelerator_ohm!==null || m.r_over_q_circuit_ohm!==null) || Math.abs(b.geometry_factor_ohm/a.geometry_factor_ohm-1)>1e-9)throw Error('TE GUI Study loses N/A or geometry-factor scaling');
+    report.checks.push({operation:'TE Study preserves independent spectra, Maxwell frequency/G scaling and accelerating quantities N/A',passed:true});
+  } else {
+    if(!Number.isFinite(b.r_over_q_accelerator_ohm/a.r_over_q_accelerator_ohm) || Math.abs(b.r_over_q_accelerator_ohm/a.r_over_q_accelerator_ohm-1)>1e-9)throw Error('TM GUI Study violates R/Q scaling');
+    report.checks.push({operation:'actual GUI Study worker preserves the declaration and Maxwell frequency/RQ scaling',passed:true});
+  }
   await ev('$("tracking-study-panel").open=true;$("tracking-study").value=__studyJob');
   await fill('#tracking-study-ids','["A"]');await fill('#tracking-study-controls','');await fill('#tracking-order',5);await fill('#tracking-overlap',.8);
   await click('#tracking-study-run');await wait('trackingResult?.document.document_type==="study_mode_tracking" && !trackingBusy',180000);
   await check('completed Study tracking derives the relative map and preserves independent spectra','trackingResult.document.status==="PASS" && trackingResult.document.history.steps[0].request.controls.affine_map.radial_scale===2 && !Object.hasOwn(trackingResult.document.request.step_controls[0],"affine_map") && activeStudy.mode_tracking==="not performed; independent spectra"');
+  if(expected.project.case.model?.polarization==='te') await check('completed TE Study tracking uses the electric field',`trackingResult.document.history.steps[0].tracking.physical_mapping.field==='Ephi_V_per_m'`);
   await click('#tracking-save');let tracking;
   for(let n=0;n<150;n++){try{tracking=JSON.parse(await readFile(out+'/downloads/study-mode-tracking.json','utf8'));break;}catch{}await sleep(100);}
   if(!tracking || !isDeepStrictEqual(tracking,await ev('trackingResult.document')))throw Error('Tracking download differs');
