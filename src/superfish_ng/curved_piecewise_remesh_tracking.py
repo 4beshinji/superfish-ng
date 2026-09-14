@@ -16,12 +16,13 @@ MAX_SAMPLES = 262144
 
 
 def validate_curved_comparison_meshes(value):
-    """Versions 2/3/4 declare a source chord mesh and its own refinement history.
+    """Versions 2/3/4/5 declare a source chord mesh and its own refinement history.
 
     Each side uses its corresponding native Case's curve declarations. No Case
     override or solver coefficients enter this document. Version 3 explicitly
     selects boundary pairing before topology-based numbering inference. Version
     4 pairs initial triangulations and intersects independent final histories.
+    Version 5 declares common vertex charts for independent initial connectivity.
     """
     if type(value) is not list or len(value)!=2:
         raise ValueError('curved comparison meshes require [previous,current]')
@@ -29,14 +30,17 @@ def validate_curved_comparison_meshes(value):
         names=('schema_version','source_mesh','curved_refinement_levels','curved_refinement_steps')
         version=mesh.get('schema_version') if isinstance(mesh,dict) else None
         required=('schema_version','source_mesh')
-        if version in (3,4):names+=('boundary_pairing',);required+=('boundary_pairing',)
-        if version==4:names+=('max_pair_tests',);required+=('max_pair_tests',)
+        if version in (3,4,5):names+=('boundary_pairing',);required+=('boundary_pairing',)
+        if version in (4,5):names+=('max_pair_tests',);required+=('max_pair_tests',)
+        if version==5:names+=('reference_vertices',);required+=('reference_vertices',)
         keys(mesh,names,required,'curved comparison mesh')
-        if type(version) is not int or version not in (2,3,4):
-            raise ValueError('both curved comparison meshes require schema_version=2, 3 or 4; mixed geometry is unsupported')
+        if type(version) is not int or version not in (2,3,4,5):
+            raise ValueError('both curved comparison meshes require schema_version=2, 3, 4 or 5; mixed geometry is unsupported')
         if version in (3,4) and mesh['boundary_pairing'] not in ('same_curve_fractions','ordered_curve_vertices'):
             raise ValueError('boundary_pairing must be same_curve_fractions or ordered_curve_vertices')
-        if version==4:integer(mesh['max_pair_tests'],'max_pair_tests')
+        if version in (4,5):integer(mesh['max_pair_tests'],'max_pair_tests')
+        if version==5 and mesh['boundary_pairing']!='declared_reference_polylines':
+            raise ValueError('version 5 boundary_pairing must be declared_reference_polylines')
         if 'curved_refinement_levels' in mesh and 'curved_refinement_steps' in mesh:
             raise ValueError('curved comparison mesh must use levels or steps, not both')
         levels=mesh.get('curved_refinement_levels',0)
@@ -53,8 +57,15 @@ def validate_curved_comparison_meshes(value):
     else:
         if value[0]['boundary_pairing']!=value[1]['boundary_pairing']:
             raise ValueError('both curved comparison meshes must declare the same boundary_pairing')
-        for mesh in value:validate_comparison_meshes([mesh['source_mesh'],mesh['source_mesh']])
-        if value[0]['schema_version']==4 and value[0]['max_pair_tests']!=value[1]['max_pair_tests']:
+        for mesh in value:
+            validate_comparison_meshes([mesh['source_mesh'],mesh['source_mesh']])
+            if mesh['schema_version']==5:
+                points=mesh['reference_vertices']
+                if (type(points) is not list or len(points)!=len(mesh['source_mesh']['points'])
+                        or any(type(p) is not list or len(p)!=2 for p in points)
+                        or any(type(x) not in (int,float) or not np.isfinite(x) for p in points for x in p)):
+                    raise ValueError('reference_vertices require one finite dimensionless pair per initial source vertex')
+        if value[0]['schema_version'] in (4,5) and value[0]['max_pair_tests']!=value[1]['max_pair_tests']:
             raise ValueError('both curved comparison meshes must declare the same max_pair_tests')
 
 
@@ -89,12 +100,16 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
         space=case_curved_space(case,mesh)
         boundaries.append(compare_quadratic_space_boundaries(case,space,solution.case,solution.space))
         spaces.append(space)
-        if document['schema_version']==4:
+        if document['schema_version'] in (4,5):
             from .project import Project
             projects.append(Project(case,mesh_data=document['source_mesh']))
     first,second=spaces
     automatic=comparison_meshes[0]['schema_version']==3;correspondence=None;overlay=None
-    if comparison_meshes[0]['schema_version']==4:
+    if comparison_meshes[0]['schema_version']==5:
+        from .curved_reference_partition import build_curved_reference_partition
+        overlay=build_curved_reference_partition(*projects,reference_vertices=[m['reference_vertices'] for m in comparison_meshes],
+            max_pair_tests=comparison_meshes[0]['max_pair_tests'],max_triangles=MAX_SAMPLES//sample_order**2)
+    elif comparison_meshes[0]['schema_version']==4:
         from .curved_comparison_overlay import build_curved_comparison_overlay
         overlay=build_curved_comparison_overlay(*projects,boundary_pairing=comparison_meshes[0]['boundary_pairing'],
             max_pair_tests=comparison_meshes[0]['max_pair_tests'],max_triangles=MAX_SAMPLES//sample_order**2)

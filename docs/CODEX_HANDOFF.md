@@ -1,3 +1,24 @@
+<!-- curved-reference-partition-current-begin -->
+2026-09-15 JST：[明示参照座標による曲線比較版5](CURVED_REFERENCE_PARTITION.md)を実装・限定受入。
+旧新の初期接続と境界分割が異なる場合に、各実P2写像と全親被覆を確認して保存場を比較する。
+新6/既存36unitの分割42件、非アフィン4実FEM/独立重み積分/尺度則/CLI、Chrome新版11・旧版10項目がPASS。
+元24ファイルとGUI取り込み4場の全配列/RF一致を確認。全handle終端回収。親33=9/17/6/1、D01親監査と全計画goalは継続する。
+開始HEAD3b30e3b。要求版5はreference_vertices/declared_reference_polylines/max_pair_testsを各比較メッシュに明示。
+初期chart辺と曲線別参照折線/タグを検査し、独立初期接続/追加境界点/全固定履歴を共通有理数分割へ写す。
+各側の実P2局所写像を別々の親内座標から評価し、Jacobianを合成。旧版1〜4の契約は維持。
+41unit37.673秒＋追加strict1unit0.081秒の分割42件PASS。初期redと予算拒否ログを保持した。
+専用39.115秒4FEM：内部対角線変更＋軸境界分割、26/27比較・26/108実FEM、29共通三角形。
+独立Hphi=r積分0.9954271360619864/観測0.9954271360619866、最大RF尺度差2.754e-14/場差2.708e-13未満。
+Chrome新版11/旧版10、説明文修正後の最終新版11項目PASS。全外部HTTP0、画像目視。取り込み6jobすべてcomplete。
+元24ファイルのSHA保持、GUI4場の全配列/RF完全一致、照合新FEM0。1080source後の差は説明HTML＋追加strictテストのみ。
+全検証handle終端。GUI PID2136146 SIGINT、session59636終了0回収。live handleなし。
+正本CURVED_REFERENCE_PARTITION.md、out/curved-reference-partition-20260915/acceptance.json、共有benchmark同名。
+次：D01の元S/I/V・BACKLOG明示約束を現在の写像/回復/保存証拠へ照合し、親受入可否を判断する。
+本版の境界対応は宣言であり自動推定ではない。親にない連続枝証明を追加せず、明示要件を撤回しない。
+Wineは専用永続環境のみ受入済み。本体/SFCODES復元は自動承認レビューのコピー拒否で例外許可待ち、別経路回避禁止。
+以下は基盤commitまでの履歴。
+<!-- curved-reference-partition-current-end -->
+
 <!-- reference-partition-current-begin -->
 2026-09-15 JST：D01の[異なる初期接続の共通参照分割](REFERENCE_PARTITION.md)を計算基盤として追加。
 全親面積の厳密被覆・独立二次積分・境界分割変更・二つの親内座標・番号/方向・不正入力/予算を新5件で検査。

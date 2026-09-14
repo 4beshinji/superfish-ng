@@ -209,7 +209,7 @@ try {
   const meshes=JSON.parse(await readFile(resolve(args['--sources'],'scale-1-comparison-meshes.json'),'utf8'));
   // Full version-4 history replay reconstructs multiple common partitions;
   // the measured native reverse/replay takes more than the old 15-second wait.
-  if(meshes[0].schema_version===4)uiWaitMs=60000;
+  if([4,5].includes(meshes[0].schema_version))uiWaitMs=60000;
   report.ui_wait_ms=uiWaitMs;
   await select('tracking-previous',imported.old);await select('tracking-current',imported.new);
   await select('tracking-mapping','piecewise_remesh');
@@ -218,7 +218,7 @@ try {
   await fill('#tracking-comparison-json',JSON.stringify(meshes));await click('#tracking-compare');
   await wait('trackingResult?.document.status==="PASS" && !trackingBusy');
   await check('GUI uses curved comparison declarations with independent native meshes',
-    'trackingResult.document.tracking.physical_mapping.comparison_geometry_order===2 && trackingResult.document.tracking.physical_mapping.solver_triangle_counts[1]===4*trackingResult.document.tracking.physical_mapping.solver_triangle_counts[0] && !$("tracking-comparison").hidden');
+    `trackingResult.document.tracking.physical_mapping.comparison_geometry_order===2 && trackingResult.document.tracking.physical_mapping.solver_triangle_counts[0]===${meshes[0].source_mesh.triangles.length} && trackingResult.document.tracking.physical_mapping.solver_triangle_counts[1]===${4*meshes[1].source_mesh.triangles.length} && !$("tracking-comparison").hidden`);
   const pair=await ev('trackingResult.document');
   await writeFile(out+'/pair.json',JSON.stringify(pair,null,2));
   const expected=JSON.parse(await readFile(resolve(args['--sources'],'scale-1-order-8-pair.json'),'utf8'));
@@ -229,6 +229,21 @@ try {
   delete expectedTracking.physical_mapping.comparison_mesh_sha256;
   if(!isDeepStrictEqual(actualTracking,expectedTracking))throw Error('GUI tracking differs from independent Python/CLI report');
   report.checks.push({operation:'GUI numerical tracking report equals Python/CLI',passed:true});
+  if(meshes[0].schema_version===5) {
+    await check('independent initial charts and boundary subdivision are visible',
+      '$("tracking-status").textContent.includes("明示した共通参照座標") && trackingResult.document.tracking.physical_mapping.common_reference_partition.final_cell_counts.join(",")==="26,27"');
+    const invalid=structuredClone(meshes);invalid[1].reference_vertices[0][0]+=.01;
+    await fill('#tracking-comparison-json',JSON.stringify(invalid));await click('#tracking-compare');
+    await wait('!$("error").hidden && !trackingBusy');
+    if(!isDeepStrictEqual(await ev('trackingResult.document'),pair))throw Error('Invalid reference chart replaced the verified pair');
+    report.checks.push({operation:'invalid reference boundary preserves verified pair',passed:true});
+    const limited=structuredClone(meshes);for(const m of limited)m.max_pair_tests=1;
+    await fill('#tracking-comparison-json',JSON.stringify(limited));await click('#tracking-compare');
+    await wait('!$("error").hidden && !trackingBusy && $("error").textContent.includes("max_pair_tests")');
+    if(!isDeepStrictEqual(await ev('trackingResult.document'),pair))throw Error('Reference chart budget replaced the verified pair');
+    report.checks.push({operation:'reference chart total pair budget preserves verified pair',passed:true});
+    await fill('#tracking-comparison-json',JSON.stringify(meshes));
+  }
   if(meshes[0].schema_version===4) {
     await check('the complete common integration partition and both history sizes are visible',
       '$("tracking-status").textContent.includes("共通積分分割") && $("tracking-status").textContent.includes("曲線上の節点順") && trackingResult.document.tracking.physical_mapping.common_reference_partition.final_cell_counts.join(",")==="111,112"');

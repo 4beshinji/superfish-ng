@@ -52,14 +52,31 @@ def main():
     parser.add_argument('--out',type=Path,required=True)
     choice=parser.add_mutually_exclusive_group()
     choice.add_argument('--automatic-numbering',action='store_true')
-    choice.add_argument('--common-partition',action='store_true');args=parser.parse_args()
+    choice.add_argument('--common-partition',action='store_true')
+    choice.add_argument('--reference-charts',action='store_true');args=parser.parse_args()
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     started=time.monotonic();before=fingerprints();rows=[];solutions=[];requests=[];numbering_checks=[]
     for scale in (1,2):
         cases,maps=curved_comparison_fixture(scale)
+        if args.reference_charts:
+            from validate_reference_chart_fixture import reference_chart_fixture,independent_chart_overlap
+            maps=reference_chart_fixture(cases,maps,scale)
         stages=[solve(cases[0],mesh_data=maps[0]['source_mesh']),
                 solve(replace(cases[1],curved_refinement_levels=1),mesh_data=maps[1]['source_mesh'])]
-        if args.common_partition:
+        if args.reference_charts:
+            from superfish_ng.piecewise_remesh_tracking import track_piecewise_remesh_modes
+            if scale==1:
+                expected=independent_chart_overlap(cases,maps)
+                adapter=[replace(s,u=np.ones_like(s.u)) for s in stages]
+                report=track_piecewise_remesh_modes(*adapter,['polynomial'],**dict(CONTROLS,comparison_meshes=maps))
+                observed=report['matches'][0]['minimum_principal_overlap'];assert abs(observed-expected)<1e-8
+                partition=report['physical_mapping']['common_reference_partition']
+                assert partition['final_cell_counts']==[26,27]
+                assert maps[0]['source_mesh']['triangles']!=maps[1]['source_mesh']['triangles']
+                assert len(maps[1]['source_mesh']['boundary_edges'])==len(maps[0]['source_mesh']['boundary_edges'])+1
+                numbering_checks.append(dict(scale=scale,independent_polynomial_overlap=expected,observed_polynomial_overlap=observed,
+                    final_comparison_cells=partition['final_cell_counts'],common_triangles=len(partition['triangles'])))
+        elif args.common_partition:
             from validate_curved_selection_transfer import fixture
             from superfish_ng.piecewise_remesh_tracking import track_piecewise_remesh_modes
             original_maps=maps
@@ -154,6 +171,7 @@ def main():
                 rows=rows,similarity=similarity,new_fem_solves=4,cli_matches_python=True,source_files_unchanged=len(before),seconds=time.monotonic()-started)
     if args.automatic_numbering:report['automatic_numbering_checks']=numbering_checks
     if args.common_partition:report['common_partition_checks']=numbering_checks
+    if args.reference_charts:report['reference_chart_checks']=numbering_checks
     (out/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     (out/'source-sha256.json').write_text(json.dumps(before,indent=2)+'\n')
     print(json.dumps(dict(status=report['status'],seconds=report['seconds'],new_fem_solves=4,similarity=similarity)))

@@ -13,7 +13,7 @@ from .sampling import FieldSampler
 
 def validate_comparison_meshes(value):
     if type(value) is not list or len(value)!=2:raise ValueError('comparison_meshes requires [previous_mesh,current_mesh]')
-    if any(isinstance(mesh,dict) and mesh.get('schema_version') in (2,3,4) for mesh in value):
+    if any(isinstance(mesh,dict) and mesh.get('schema_version') in (2,3,4,5) for mesh in value):
         from .curved_piecewise_remesh_tracking import validate_curved_comparison_meshes
         validate_curved_comparison_meshes(value)
         return
@@ -48,7 +48,7 @@ def track_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,sample_
     if mapping!='piecewise_remesh':raise ValueError('explicit mapping must be piecewise_remesh')
     if type(sample_order) is not int or not 2<=sample_order<=32:raise ValueError('piecewise_remesh sample_order must be an integer from 2 to 32')
     validate_comparison_meshes(comparison_meshes)
-    if comparison_meshes[0]['schema_version'] in (2,3,4):
+    if comparison_meshes[0]['schema_version'] in (2,3,4,5):
         from .curved_piecewise_remesh_tracking import track_curved_piecewise_remesh_modes
         return track_curved_piecewise_remesh_modes(previous,current,previous_ids,mapping=mapping,
             sample_order=sample_order,comparison_meshes=comparison_meshes,**controls)

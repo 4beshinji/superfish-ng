@@ -1,0 +1,137 @@
+{
+  "status": "PASS",
+  "base_commit": "3b30e3b",
+  "scope": "Version 5 declared reference charts for closed PEC axis-connected direct curved TM; independent initial connectivity and boundary subdivision; no inferred or continuous physical branch guarantee",
+  "new_fem_solves": 4,
+  "seconds": 39.11503436099156,
+  "reference_chart_checks": [
+    {
+      "scale": 1,
+      "independent_polynomial_overlap": 0.9954271360619864,
+      "observed_polynomial_overlap": 0.9954271360619866,
+      "final_comparison_cells": [
+        26,
+        27
+      ],
+      "common_triangles": 29
+    }
+  ],
+  "similarity": [
+    {
+      "rf_relative_errors": {
+        "frequency_hz": 2.220446049250313e-16,
+        "r_over_q_accelerator_ohm": 1.9317880628477724e-14,
+        "r_over_q_circuit_ohm": 1.9317880628477724e-14,
+        "geometry_factor_ohm": 5.551115123125783e-16,
+        "transit_time_factor_abs": 9.880984919163893e-15
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 2.8087513557706503e-15,
+        "Er_quadrature_V_per_m": 3.4342120141719334e-14,
+        "Ez_quadrature_V_per_m": 4.294186089843203e-15
+      }
+    },
+    {
+      "rf_relative_errors": {
+        "frequency_hz": 1.7763568394002505e-15,
+        "r_over_q_accelerator_ohm": 2.7533531010703882e-14,
+        "r_over_q_circuit_ohm": 2.7533531010703882e-14,
+        "geometry_factor_ohm": 8.881784197001252e-16,
+        "transit_time_factor_abs": 1.2989609388114332e-14
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 1.1594637299518067e-14,
+        "Er_quadrature_V_per_m": 2.7075180435899965e-13,
+        "Ez_quadrature_V_per_m": 1.3777410085511995e-14
+      }
+    }
+  ],
+  "rows": [
+    {
+      "scale": 1,
+      "geometry": [
+        {
+          "signed_area_m2": -0.012564418886561327,
+          "signed_volume_m3": -0.0026802032168880443
+        },
+        {
+          "signed_area_m2": -0.014134971247381492,
+          "signed_volume_m3": -0.0033921321963739292
+        }
+      ],
+      "comparisons": [
+        {
+          "order": 4,
+          "overlap": 0.9962963032319909,
+          "reciprocity_difference": 0.0
+        },
+        {
+          "order": 8,
+          "overlap": 0.9962957952378796,
+          "reciprocity_difference": 0.0
+        }
+      ]
+    },
+    {
+      "scale": 2,
+      "geometry": [
+        {
+          "signed_area_m2": -0.05025767554624531,
+          "signed_volume_m3": -0.021441625735104355
+        },
+        {
+          "signed_area_m2": -0.05653988498952597,
+          "signed_volume_m3": -0.027137057570991434
+        }
+      ],
+      "comparisons": [
+        {
+          "order": 4,
+          "overlap": 0.996296303231991,
+          "reciprocity_difference": 0.0
+        },
+        {
+          "order": 8,
+          "overlap": 0.9962957952378797,
+          "reciprocity_difference": 0.0
+        }
+      ]
+    }
+  ],
+  "unit_tests": {
+    "selected": 41,
+    "selected_seconds": 37.673,
+    "additional_strict": 1,
+    "total": 42,
+    "strict_invalid_variants": 11
+  },
+  "browser_checks": {
+    "browser-new": 11,
+    "browser-old": 10,
+    "browser-new-final": 11
+  },
+  "external_http_requests": 0,
+  "native_fidelity": {
+    "report": "native-source-fidelity.json",
+    "comparisons": 4,
+    "preserved_files": 24,
+    "new_fem_solves": 0
+  },
+  "source_changes_since_numerical": [
+    "src/superfish_ng/web/index.html",
+    "tests/test_curved_reference_partition.py"
+  ],
+  "source_change_reasons": [
+    "GUI explanatory paragraph clarified after image inspection",
+    "added strict declaration test after numerical/browser acceptance"
+  ],
+  "live_handles": [],
+  "parent_counts": {
+    "accepted": 9,
+    "in_progress": 17,
+    "other_unaccepted": 6,
+    "out_of_scope": 1,
+    "total": 33
+  },
+  "goal": "active"
+}
