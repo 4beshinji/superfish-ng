@@ -1,3 +1,19 @@
+2026-09-15 JST：[TE円筒チューニング](TE_TUNING.md)を同端条件の直線円筒へ接続し、限定受入。
+EφによるID、半領域・鏡映の元セクター順位、加速量N/A、保存再開・回復・最終粗細ゲートを保持。
+関連53unit（52＋1の分割実行）、専用44実FEM、Chrome閉PEC9/鏡映11/旧TM9項目がPASS。
+8組native全配列/RF一致、元114ファイル保持。一般TE形状・他物理調整とD03は残る。
+親33=10受入/16進行/6他未受入/1範囲外、D02と全計画goalは継続中。
+
+開始HEAD c92ba87。te_tuning.pyでTE専用native readerと全Job検証を追加。shared tracked Studyは変更なし。
+要求1/2/3/7 profile、normalized_cylinder、直線一定半径P1/P2、同じ一対称面まで。外側回復6も接続。
+候補生成後も円筒条件を検査し、内部で非円筒になる式は実FEM前に拒否。旧TM checkpoint再生は完全一致。
+52unit113.689秒＋P1拒否1unit1.549秒PASS。専用12解析/尺度、6回復、CLI1、GUI4/4/17＝44実FEM。
+周波数最大相対誤差1.619e-6、G .003716、場 .002055、尺度4.487e-14。鏡映全領域p2場 .001507未満。
+Chrome製品335SHA固定、全9Job complete、PID2245893 SIGINT/session21213終了0。P1最終ログOK、handle消滅確認。
+full suite/seed/hosted CI再実行なし。実FEM核は変更なし。詳細TE_TUNING.md、out/te-tuning-20260915。
+次はD02の一般TE形状・曲線追跡と他物理調整を元要件へ照合する。ガード削除だけで対応扱いにしない。
+D03一般制約付き探索も保持。Wine永続prefix作成済み、solver復元は自動承認拒否の別残件、回避しない。
+
 <!-- partition-tuning-current-begin -->
 2026-09-15 JST：[曲線分割切替tune版8](PARTITION_TUNING.md)を実装・宣言分割方式で受入。
 初期接続/PEC境界分割/履歴の異なる候補を実値から選び、式変形・実FEM・比較版5・保存再開/ID回復へ接続。

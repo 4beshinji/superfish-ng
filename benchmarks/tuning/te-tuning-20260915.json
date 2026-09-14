@@ -1,0 +1,35 @@
+{
+  "status": "PASS_SUPPORTED_TE_CYLINDER_TUNING",
+  "date": "2026-09-15",
+  "starting_head": "c92ba87",
+  "unit_runs": [
+    {
+      "count": 52,
+      "seconds": 113.689
+    },
+    {
+      "count": 1,
+      "seconds": 1.549
+    }
+  ],
+  "dedicated_new_fem": 44,
+  "browser_checks": {
+    "browser-closed": 9,
+    "browser-reflected": 11,
+    "browser-tm": 9
+  },
+  "native_equal_pairs": 8,
+  "preserved_files": 114,
+  "all_jobs_complete": true,
+  "full_suite_rerun": false,
+  "seed_rerun": false,
+  "hosted_ci_observed": false,
+  "remaining": [
+    "general TE profile and curved tracking/tuning",
+    "other physics tuning",
+    "D03 constrained optimization"
+  ],
+  "goal_status": "active",
+  "evidence_root": "out/te-tuning-20260915",
+  "product_files": 335
+}

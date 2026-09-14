@@ -9,8 +9,7 @@ from .config import keys,positive,integer
 from .project import Project,parse_json
 from .studies import Study
 from .jobs import execute_project,_implementation_hashes
-from .tracked_study import _point_sources
-from .saved import read_solution
+from .te_tuning import trial_sources as _point_sources,read_trial_solution
 from .saved_mode_tracking import build_saved_mode_tracking,validate_tracking_controls,_canonical
 from .mode_tracking import tracked_frequency_hz
 from .tuning_identity_recovery import base_request,recover_trial
@@ -44,7 +43,10 @@ def _request(request):
         raise ValueError('coupled tune requires a nonempty parameter name and parameter_unit m or 1')
     project=Project.from_dict(request['project']);case=project.case
     from .te import is_te
-    if is_te(case):raise ValueError('TE tuning/tracking integration is pending; use an ordinary TE Project solve')
+    te=is_te(case)
+    if te:
+        from .te_tuning import validate_te_request
+        validate_te_request(request,project)
     curved=request['schema_version'] in (4,5,8) or (request['schema_version']==7 and request['geometry_kind']=='curved_harmonic')
     if request['schema_version']==4:
         from .curved_tuning import validate_request
@@ -60,7 +62,7 @@ def _request(request):
         validate_request(request,project)
     if not curved and project.mesh_data is not None:
         raise ValueError('tuning an explicit project mesh requires a declared per-trial mesh transformation')
-    if not curved and (project.sections is not None or project.reflect_full or case.geometry_type!='profile' or case.z_min!='pec' or case.z_max!='pec'):
+    if not curved and (project.sections is not None or (project.reflect_full and not te) or case.geometry_type!='profile' or (not te and (case.z_min!='pec' or case.z_max!='pec'))):
         raise ValueError('tune requires an unassembled continuous positive-radius profile with closed PEC ends')
     ids=request['initial_ids']
     if type(ids) is not list or len(ids)!=case.modes or any(type(x) is not str or not x.strip() for x in ids) or len(set(ids))!=len(ids):
@@ -82,6 +84,15 @@ def _request(request):
 
 
 def _project(request,value,phase):
+    project=_geometry_project(request,value,phase)
+    from .te import is_te
+    if is_te(project.case):
+        from .te_tuning import validate_te_request
+        validate_te_request(base_request(request),project)
+    return project
+
+
+def _geometry_project(request,value,phase):
     request=base_request(request)
     project=Project.from_dict(request['project'])
     if request['schema_version']==4:
@@ -185,7 +196,7 @@ def pair_controls(request,previous_value,current_value,previous_project,current_
 
 
 def _assemble(request,runs):
-    _request(request)
+    initial_project=_request(request)
     original=request;request=base_request(original);recovery_enabled=original['schema_version']==6
     if type(runs) is not list or any(type(p) is not str for p in runs) or len(set(runs))!=len(runs):
         raise ValueError('tune trial_runs must be distinct native Job directory strings')
@@ -197,7 +208,7 @@ def _assemble(request,runs):
         trial=decision['next_trial'];project=_project(request,trial['value'],trial['phase']);projects.append(project)
         directory=Path(run);sources.append(_point_sources(directory,project));pair=None;frequency=None;recovery=None
         if i==0:
-            ids=list(request['initial_ids']);frequency=float(read_solution(directory/'solution').frequencies_hz[ids.index(request['mode_id'])]);status='INITIAL'
+            ids=list(request['initial_ids']);frequency=float(read_trial_solution(directory/'solution',project).frequencies_hz[ids.index(request['mode_id'])]);status='INITIAL'
         else:
             parent=trial['parent_index']
             controls=pair_controls(request,trials[parent]['value'],trial['value'],projects[parent],project)
@@ -218,10 +229,13 @@ def _assemble(request,runs):
     if sources!=[_point_sources(Path(run),project) for run,project in zip(runs,projects)]:
         raise ValueError('tune trial sources changed during verification')
     decision=_decision(request,trials)
-    return dict(schema_version=2 if recovery_enabled else 1,document_type='tune_checkpoint',request=deepcopy(original),trial_runs=list(runs),
+    result=dict(schema_version=2 if recovery_enabled else 1,document_type='tune_checkpoint',request=deepcopy(original),trial_runs=list(runs),
         trial_sources_sha256=sources,trials=trials,decision=decision,status=decision['status'],can_resume=decision['status']=='PAUSED',
         scope=('bracketed scalar native FEM search with explicit earlier-trial identity recovery and a separate two-mesh frequency gate; no continuous-branch, discretization-error, RF-convergence or global-root certificate'
                if recovery_enabled else 'bracketed scalar native FEM search with sampled individual identity and a separate two-mesh frequency gate; no continuous-branch, discretization-error, RF-convergence or global-root certificate'))
+    from .te_tuning import scope_note
+    result['scope']+=scope_note(initial_project)
+    return result
 
 
 def replay_tune(document):
