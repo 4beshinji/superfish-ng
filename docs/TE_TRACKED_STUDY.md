@@ -42,9 +42,51 @@ CLIでも逐次実行を1点で停止して別ディレクトリへ再開し、C
 追加FEMなしの保存再生にも数分を要した。全履歴の再構築コストは今後の改善対象として残る。
 全実行handleは終端を回収済み。
 
+## GUI追加検証（2026-09-15 JST）
+
+`out/te-study-gui-20260915/` に実Chrome・GUI workerの記録を保存した。
+製品ソースの変更はなく、`scripts/verify_gui_te_study_execution.mjs`を追加。
+TM固定モード名に依存せずTE要求を入力し、重複JSONキーのFEM前拒否、1点/1試行停止、
+正確なダウンロード、改変拒否、編集欄変更後も元の要求で再開すること、EφのID継承、
+完了後の再開禁止と未確認時の保存を検査する。
+
+逐次は既存の倍寸2点、適応は前節の全区間中の[1,1.125]を同じ閾値0.999で使用した。
+適応GUIはBISECT→ACCEPT→ACCEPTの3試行、採用順序[0,2,1]を表示する。
+別のmax_depth=0要求では元終点が未到達のままUNVERIFIEDで停止し、再開を禁止する。
+このGUI部分区間の結果を前節の全区間10点/17試行の代用にしない。
+
+実経路の報告は逐次8項目・適応11項目PASS、外部HTTP要求0。
+初版検証器の完了ファイル待機には、直前の完了表示だけで条件を満たす余地があった。
+製品の不具合とは断定せず、要求欄をクリアして復元を待つ条件に修正した。
+さらに`--replay-only`で新しいブラウザーから完了ファイルを開き、直前の状態に依存しない証拠を得る。
+初版報告の完了再生1項目は、この別証拠で置き換える。追加FEMは行わない。
+新ブラウザーの逐次/適応は各1項目PASS。全4ブラウザー実行の製品hashが実行前後・最終ソースと一致した。
+
+既存GUI直接利用先の`test_gui_tracked_study`と`test_gui_adaptive_study`は6件7.246秒PASS。
+全suite/seedや前節の24件は再実行していない。計算・追跡・保存の製品コードは不変で、
+前節の独立Maxwell検証を再利用する。画面の完了/未確認、点/比較/到達目標と再開ボタンも目視確認。
+
+専用7実FEM（逐次2、適応完了3、深さ停止2）。GUI–既存CLIの7組について
+42配列・全モードRF値が完全一致、両R/QのN/Aと元144ファイルのhash保持も確認した。
+適応の初回2点のレコードと0.999閾値、採用順序も一致（acceptance.json）。
+GUI全6ジョブはcompleteで、tracking_statusのUNVERIFIEDと区別した。
+専用サーバーPID 2415819へSIGINT、終了0を回収。全handle終端済み。
+
+再現時は`tests/test_te_tracked_study.py`の`te_tracking_request()`を逐次入力に使う。
+適応入力は軸方向係数[.5]、values=[1,1.125]、minimum_overlap=.999、
+max_depth=6、max_attempts=32、minimum_parameter_step=1e-6とする。
+専用GUI起動後、次の検証器に起動URL・新規出力・要求JSONを渡す。
+
+```sh
+node scripts/verify_gui_te_study_execution.mjs --url "$GUI_URL" --out NEW_DIRECTORY --request REQUEST_JSON
+# 保存再生だけを新しいブラウザーで検証（追加FEMなし）
+node scripts/verify_gui_te_study_execution.mjs --url "$GUI_URL" --out NEW_REPLAY_DIRECTORY --request REQUEST_JSON --replay-only COMPLETE_JSON
+```
+
+
 ## 残件と出典
 
-実GUIでの逐次/適応TE計算、その他のTE形状/対称セクター/個別ID回復への実経路照合は後続。
+直接閉PECアフィンTEの逐次/適応GUIを限定検証済み。その他のTE形状/対称セクター/個別ID回復への実経路照合は後続。
 既存TM GUI/workerの成功をTE GUIの検証実績として数えない。
 TE版8・曲線対称/鏡映・未接続物理とD03も保持し、親D02と全計画goalは継続する。
 親33=10受入/16進行/6他未受入/1範囲外。

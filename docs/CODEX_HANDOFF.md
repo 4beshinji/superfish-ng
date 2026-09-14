@@ -1,5 +1,14 @@
 2026-09-15 JST：[TEアフィン調整版4](TE_AFFINE_TUNING.md)のGUI/CLI・場/RF追加検証を限定受入。
 
+次の限定課題候補はTE調整版8。`curved_partition_schedule.build_partition_schedule`のTE一律拒否と
+`te_tuning.validate_te_request`の版8未接続を、直接閉PEC・固定RF・実Eφ比較版5の契約で照合する。
+初期接続/境界分割の切替、独立幾何/Maxwell則、保存再開を検証してから親要件へ戻る。
+
+2026-09-15 JST：[TE逐次/適応Studyの実GUI](TE_TRACKED_STUDY.md)を限定検証。
+Chrome逐次8/適応11項目、完了再生は新ブラウザー各1項目で補強。GUI関連6unitもPASS。
+専用7実FEM、7組nativeの42配列/全RF一致、144ファイル保持。全6ジョブ・全handle終端。
+他TE形状/対称セクター/回復例、TE版8・曲線対称/鏡映・他物理/D03は残る。親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[TE逐次・適応Studyのnative読取](TE_TRACKED_STUDY.md)を接続。
 新2件を含む24unitが76.496秒でPASS。逐次CLIは停止/再開後COMPLETE、既存独立掃引との2組全配列/RF一致。
 適応CLIは初回BISECTから再開し、10点/17試行で元終点まで到達。専用計12実FEM。
