@@ -1,7 +1,7 @@
 # 設計変数で選ぶ曲線の分割候補
 
 2026-09-15 JST、開始HEAD `f8b0638`。D02の境界分割変更のための計算基盤。
-**この段階ではtuneの要求・実行・保存・GUIへ未接続であり、D02の境界分割変更を受入済みとはしない。**
+基盤受入時点ではtuneへ未接続だった。現在は[要求版8](PARTITION_TUNING.md)へ接続して実経路を検証済み。
 
 `build_partition_schedule(project, schedule)` は、同じ解析曲線と物理設定を持つ
 複数の初期メッシュ・明示細分履歴を検証し、各候補のportable Projectを返す。

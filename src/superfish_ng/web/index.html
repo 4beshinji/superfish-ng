@@ -597,8 +597,10 @@
               <div id="tune-expression-curve-settings" hidden>
                 <label>RF評価座標<select id="tune-expression-rf"><option value="fixed">入力Caseの座標で固定</option><option value="axis_fraction">軸上の相対位置に連動</option></select></label>
                 <label>許容する要素の最小頂点角 [度]<input id="tune-expression-angle" type="number" min="0" max="60" step="any" value="1" /></label>
+                <label><input id="tune-partition-enabled" type="checkbox" />設計変数でメッシュ分割を切り替える</label>
+                <label id="tune-partition-settings" hidden>分割候補と切替値（JSON）<textarea id="tune-mesh-schedule" rows="8">{}</textarea></label>
               </div>
-              <p class="hint">曲線の種類・境界分割・局所細分履歴は固定します。式の定義域や形状が途中で無効になれば停止し、直前の保存を保持します。区間全体の連続性・単調性は保証しません。</p>
+              <p class="hint">曲線の種類は固定します。分割切替を使う場合は各候補のメッシュ・参照座標・新しい細分履歴を明示し、切替値と等しい点で右側の候補を選びます。切替を使わない場合は元の分割と履歴を保持します。式の定義域や形状が途中で無効になれば停止し、直前の保存を保持します。区間全体の連続性・単調性は保証しません。</p>
             </div>
             <div id="tune-harmonic-settings" hidden>
               <p>各寸法・角度を c₀+c₁x+c₂x²+… で連動させます。geometryの /curves/番号/数値項目 を指定し、係数を定数項から順に入力します。係数cₖの単位は各項目の単位（m、rad、無次元）/(設計変数の単位)ᵏです。曲線の種類と数は固定します。局所細分は先に分割を固定してください。最終細分には2の累乗を指定します。</p>

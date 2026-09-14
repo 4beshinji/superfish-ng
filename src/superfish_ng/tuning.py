@@ -25,11 +25,12 @@ def _request(request):
     if isinstance(request,dict) and request.get('schema_version') in (2,3):fields+=('bindings','parameter_unit')
     if isinstance(request,dict) and request.get('schema_version')==4:fields+=('affine_coefficients','parameter_unit','rf_coordinates')
     if isinstance(request,dict) and request.get('schema_version')==5:fields+=('geometry_coefficients','parameter_unit','rf_coordinates','minimum_corner_angle_deg')
-    if isinstance(request,dict) and request.get('schema_version')==7:
+    if isinstance(request,dict) and request.get('schema_version') in (7,8):
         fields+=('geometry_kind','bindings','parameter_unit')
         if request.get('geometry_kind')=='curved_harmonic':fields+=('rf_coordinates','minimum_corner_angle_deg')
+    if isinstance(request,dict) and request.get('schema_version')==8:fields+=('mesh_schedule',)
     keys(request,fields,fields,'tune request');_canonical(request)
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3,4,5,7):raise ValueError('tune requires geometry schema_version 1, 2, 3, 4, 5 or 7')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3,4,5,7,8):raise ValueError('tune requires geometry schema_version 1, 2, 3, 4, 5, 7 or 8')
     for name in ('target_hz','frequency_tolerance_hz','parameter_tolerance','mesh_frequency_tolerance_hz'):positive(request[name],name)
     integer(request['max_trials'],'max_trials',2);integer(request['refinement_scale'],'refinement_scale',2)
     bounds=request['bounds']
@@ -44,7 +45,7 @@ def _request(request):
     project=Project.from_dict(request['project']);case=project.case
     from .te import is_te
     if is_te(case):raise ValueError('TE tuning/tracking integration is pending; use an ordinary TE Project solve')
-    curved=request['schema_version'] in (4,5) or (request['schema_version']==7 and request['geometry_kind']=='curved_harmonic')
+    curved=request['schema_version'] in (4,5,8) or (request['schema_version']==7 and request['geometry_kind']=='curved_harmonic')
     if request['schema_version']==4:
         from .curved_tuning import validate_request
         validate_request(request,project)
@@ -53,6 +54,9 @@ def _request(request):
         validate_request(request,project)
     elif request['schema_version']==7:
         from .expression_tuning import validate_request
+        validate_request(request,project)
+    elif request['schema_version']==8:
+        from .partition_tuning import validate_request
         validate_request(request,project)
     if not curved and project.mesh_data is not None:
         raise ValueError('tuning an explicit project mesh requires a declared per-trial mesh transformation')
@@ -72,7 +76,7 @@ def _request(request):
             raise ValueError('normalized_cylinder tune bounds must retain constant radius')
         _project(request,value,'refinement')
         endpoint_geometries.append(p.case.curved_contour if curved else p.case.profile)
-    if request['schema_version'] in (2,3,4,5,7) and endpoint_geometries[0]==endpoint_geometries[1]:
+    if request['schema_version'] in (2,3,4,5,7,8) and endpoint_geometries[0]==endpoint_geometries[1]:
         raise ValueError('bindings do not change representable geometry across bounds')
     return project
 
@@ -88,6 +92,9 @@ def _project(request,value,phase):
         return trial_project(request,project,value,phase)
     if request['schema_version']==7:
         from .expression_tuning import trial_project
+        return trial_project(request,project,value,phase)
+    if request['schema_version']==8:
+        from .partition_tuning import trial_project
         return trial_project(request,project,value,phase)
     if request['schema_version']==1:
         project=Study(project,'sweep',request['parameter'],[value,value]).projects()[0]
@@ -171,6 +178,9 @@ def pair_controls(request,previous_value,current_value,previous_project,current_
     if request['schema_version']==5 or (request['schema_version']==7 and request['geometry_kind']=='curved_harmonic'):
         from .curved_harmonic_tuning import pair_controls as harmonic_controls
         return harmonic_controls(request,previous_project,current_project)
+    if request['schema_version']==8:
+        from .partition_tuning import pair_controls as partition_controls
+        return partition_controls(request,previous_value,current_value,previous_project,current_project)
     return deepcopy(request['controls'])
 
 

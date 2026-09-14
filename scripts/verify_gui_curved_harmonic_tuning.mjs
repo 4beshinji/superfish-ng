@@ -186,7 +186,7 @@ try {
   await wait('document.querySelector("#shape polygon")');
   report.startup_ms = performance.now() - begin;
   const check=async (operation,expression)=>{if (!await ev(expression)) throw Error(operation);report.checks.push({operation,passed:true});};
-  const request=JSON.parse(await readFile(args['--request'],'utf8')),harmonic=request.schema_version===5,expression=request.schema_version===7;
+  const request=JSON.parse(await readFile(args['--request'],'utf8')),harmonic=request.schema_version===5,expression=[7,8].includes(request.schema_version);
   report.scope='form generation and strict input, real worker pause/resume, exact download/replay and final native field';
   const set=async(id,value)=>ev(`(()=>{const e=document.querySelector('#'+${JSON.stringify(id)});e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('change'))})()`);
   const loadFile=async filename=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector:'#tune-open'},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(filename)]},sessionId);};
@@ -195,6 +195,7 @@ try {
     const curved=request.geometry_kind==='curved_harmonic';
     await ev(`document.querySelector('#tune-coupled').checked=true`);
     await set('tune-binding-law',curved ? 'expression-curved' : 'expression-profile');
+    if(request.schema_version===8){await ev(`document.querySelector('#tune-partition-enabled').checked=true;document.querySelector('#tune-partition-enabled').dispatchEvent(new Event('change'))`);await fill('#tune-mesh-schedule',JSON.stringify(request.mesh_schedule));}
     await fill('#tune-expression-bindings',JSON.stringify(request.bindings));
     await fill('#tune-parameter-name',request.parameter);await set('tune-parameter-unit',request.parameter_unit);
     if(curved){await set('tune-expression-rf',request.rf_coordinates);await fill('#tune-expression-angle',request.minimum_corner_angle_deg);}
@@ -250,6 +251,7 @@ try {
   const first=await launch('#tune-start');await openJob(first,'PAUSED');
   await check('real worker publishes two verified trials and enables resume',`tuningResult.document.trials.length===2 && !document.querySelector('#tune-resume').disabled`);
   if(expression) await check('checkpoint restores expression input without polynomial conversion',`document.querySelector('#tune-binding-law').value===${JSON.stringify(request.geometry_kind==='profile'?'expression-profile':'expression-curved')} && JSON.stringify(JSON.parse(document.querySelector('#tune-expression-bindings').value))===JSON.stringify(${JSON.stringify(request.bindings)})`);
+  if(request.schema_version===8) await check('checkpoint restores selected partition schedule and actual pair charts',`document.querySelector('#tune-partition-enabled').checked && !document.querySelector('#tune-partition-settings').hidden && JSON.stringify(JSON.parse(document.querySelector('#tune-mesh-schedule').value))===JSON.stringify(${JSON.stringify(request.mesh_schedule)}) && tuningResult.document.trials[1].tracking.request.controls.comparison_meshes.every(m=>m.schema_version===5)`);
   if(harmonic) await check('checkpoint restores nonlinear laws and RF policy',`document.querySelector('#tune-binding-law').value==='harmonic' && document.querySelector('#tune-harmonic-rf').value===${JSON.stringify(request.rf_coordinates)} && JSON.stringify(JSON.parse(document.querySelector('#tune-geometry-coefficients').value))===JSON.stringify(${JSON.stringify(request.geometry_coefficients)})`);
   await click('#tune-save');let downloaded;
   for(let n=0;n<100;n++){try{downloaded=await readFile(out+'/downloads/tune-checkpoint.json','utf8');break;}catch{}await sleep(100);}

@@ -1,0 +1,39 @@
+{
+  "status": "PASS_DECLARED_PARTITION_TUNING",
+  "start_commit": "547e62b",
+  "selected_tests": 36,
+  "selected_seconds": 80.402,
+  "browser_checks": {
+    "browser-partition": 10,
+    "browser-expression": 9
+  },
+  "dedicated_fem": {
+    "native_with_pilot": 11,
+    "identity_recovery": 5,
+    "cli_resume": 1,
+    "browser_new": 5,
+    "browser_old": 17,
+    "total": 39,
+    "note": "unittest internal solves counted separately"
+  },
+  "max_rf_scale_error": 2.2648549702353193e-14,
+  "max_field_scale_error": 1.2967096661740544e-14,
+  "native_comparisons": 8,
+  "native_files_unchanged": 124,
+  "gui_terminal_jobs": 6,
+  "product_files": 334,
+  "external_http": 0,
+  "parent_counts": [
+    10,
+    16,
+    6,
+    1
+  ],
+  "remaining": [
+    "other-physics tuning",
+    "D03 general constrained search"
+  ],
+  "full_suite_run": false,
+  "seed_run": false,
+  "hosted_ci_observed": false
+}

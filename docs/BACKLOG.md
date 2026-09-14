@@ -1,5 +1,11 @@
 # 実装バックログ
 
+2026-09-15 JST：[曲線分割切替tune版8](PARTITION_TUNING.md)を実装・宣言分割方式で受入。
+初期接続/PEC境界分割/履歴の異なる候補を実値から選び、式変形・実FEM・比較版5・保存再開/ID回復へ接続。
+関連36unit、専用39実FEM、Chrome新10/旧9項目がPASS。8組のnative全配列/RF一致、元124ファイル保持。
+親D02の他物理調整とD03一般制約付き探索は残り、親33=10/16/6/1、全計画goal ACTIVE。
+
+
 2026-09-15 JST：D02の[曲線分割候補](CURVED_PARTITION_SCHEDULE.md)の検証基盤を追加。
 区間ごとの初期接続/境界分割/明示履歴と共通参照座標を検証する。tune/保存/GUIへの接続は次の課題。
 矩形の解析面積/体積、曲線PEC分割でのP2領域差、従来の同一境界拒否を検査した。
@@ -1148,7 +1154,7 @@ D01 Study保存結果接続の今回の受入基準: 完了manifestと各点の�
 | P1-05 | 未着手 | 外部実機参照 | 寸法・境界・材料・規約・参照値の来歴と比較。合成例を実測に数えない | P0-01。資料入手の外部依存を記録 |
 | P1-06 | 完了（ローカルO01範囲） | Job管理と直接保存の完了公開・hash検査 | 他OS/配布はV02。電源断耐性は未保証 | SAVE_COMPLETION.md。中断/失敗・同名競合・外部mesh取込を検証 |
 | P2-01 | 完了（D01契約） | 一般の宣言写像・独立再メッシュ・部分空間/多対多・個別ID回復・保存履歴、Study/tune/GUI接続 | 元D01と明示後続要件は受入済み。対象外物理や旧版互換性は他親課題で継続 | [D01原要件受入](D01_ACCEPTANCE.md)。周波数順位とIDを分離し、未確認値をtuneへ渡さない |
-| P2-02 | 一部 | 独立掃引・比較、明示円筒/profile写像の単一/連動座標の追跡付きtune/再開/最終細分API/CLI・JobManager・GUI | 任意関数連動・境界分割変更/他物理の調整、一般形状の制約付き探索 | [CURVED_HARMONIC_TUNING.md](CURVED_HARMONIC_TUNING.md)、[TUNING.md](TUNING.md)、[RF_OPTIMIZATION.md](RF_OPTIMIZATION.md)。曲線2変数の制約付き実FEM探索を追加。各試行の全個別ID確認を必須とする |
+| P2-02 | 一部 | 独立掃引・比較、明示円筒/profile写像の単一/連動座標、非多項式の式連動・曲線分割候補切替の追跡付きtune/再開/最終細分API/CLI・JobManager・GUI | 他物理の調整、一般形状の制約付き探索 | [CURVED_HARMONIC_TUNING.md](CURVED_HARMONIC_TUNING.md)、[TUNING.md](TUNING.md)、[RF_OPTIMIZATION.md](RF_OPTIMIZATION.md)。曲線2変数の制約付き実FEM探索を追加。各試行の全個別ID確認を必須とする |
 | P2-03 | 完了（native R01範囲） | 加速長・電圧区間・位相原点、保存/CLI/GUI | 旧の任意位相入力変換はC02/C03/C04 | ACCELERATING_CONVENTIONS.md。独立積分、半/全領域、旧既定値不変を検証 |
 | P2-04 | 完了（GUI範囲） | 共通APIのGUI・保存・表示・掃引 | G0〜G5技術的受入済み。一般追跡/tune・外部メッシュUIは後続 | GUI_IO_PLAN.md、GUI_ACCEPTANCE.md。notebook専用UIは未計画 |
 

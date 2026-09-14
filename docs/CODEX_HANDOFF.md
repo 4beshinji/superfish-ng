@@ -1,3 +1,21 @@
+<!-- partition-tuning-current-begin -->
+2026-09-15 JST：[曲線分割切替tune版8](PARTITION_TUNING.md)を実装・宣言分割方式で受入。
+初期接続/PEC境界分割/履歴の異なる候補を実値から選び、式変形・実FEM・比較版5・保存再開/ID回復へ接続。
+関連36unit、専用39実FEM、Chrome新10/旧9項目がPASS。8組のnative全配列/RF一致、元124ファイル保持。
+親D02の他物理調整とD03一般制約付き探索は残り、親33=10/16/6/1、全計画goal ACTIVE。
+
+開始HEAD547e62b。要求8は曲線式7＋mesh_schedule、外側回復6は内部8を許可。
+全候補事前検査、実値で候補選択→候補自身の弦数/履歴へ式変形。比較は実Project全履歴＋その候補chartの版5。
+新3unit初回1失敗は矩形境界の向きとGreen期待符号の違い。期待符号訂正後36件80.402秒PASS、許容差変更なし。
+専用曲線はPEC初期26/27候補でx=.05切替、.075目標の5試行、最終108要素。倍寸法も5＋pilot1＝11実FEM。
+最大RF尺度差2.265e-14/全場1.297e-14未満。回復5実FEM/4回復で参照26/現在27を確認。CLI追加1、GUI新5/旧17。
+Chrome新10/旧9、製品334SHA一致、8組native全配列/RF一致、元124ファイル保持。全6job完了、GUI PID2220488 SIGINT/session99016終了0。
+全handle終端、live processなし。物理/solver核変更なし。full suite/seed再実行なし。
+次：D02他物理調整の明示残件を、現在対応する物理・場追跡・元親要件へ照合し、未接続部分を実装する。
+D03一般制約付き探索も保持。D02親は進行中。Wine復元の拒否は別残件で例外返答なし、回避しない。
+正本PARTITION_TUNING.md、out/partition-tuning-20260915/acceptance.json、共有benchmark同名。
+<!-- partition-tuning-current-end -->
+
 <!-- curved-partition-schedule-current-begin -->
 2026-09-15 JST：D02の[曲線分割候補](CURVED_PARTITION_SCHEDULE.md)の検証基盤を追加。
 区間ごとの初期接続/境界分割/明示履歴と共通参照座標を検証する。tune/保存/GUIへの接続は次の課題。
