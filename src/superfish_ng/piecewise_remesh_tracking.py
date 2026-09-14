@@ -13,6 +13,10 @@ from .sampling import FieldSampler
 
 def validate_comparison_meshes(value):
     if type(value) is not list or len(value)!=2:raise ValueError('comparison_meshes requires [previous_mesh,current_mesh]')
+    if any(isinstance(mesh,dict) and mesh.get('schema_version')==2 for mesh in value):
+        from .curved_piecewise_remesh_tracking import validate_curved_comparison_meshes
+        validate_curved_comparison_meshes(value)
+        return
     names=('schema_version','length_unit','coordinate_order','index_base','points','triangles','boundary_edges','boundary_tags')
     for mesh in value:
         keys(mesh,names,names,'comparison mesh')
@@ -44,6 +48,10 @@ def track_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,sample_
     if mapping!='piecewise_remesh':raise ValueError('explicit mapping must be piecewise_remesh')
     if type(sample_order) is not int or not 2<=sample_order<=32:raise ValueError('piecewise_remesh sample_order must be an integer from 2 to 32')
     validate_comparison_meshes(comparison_meshes)
+    if comparison_meshes[0]['schema_version']==2:
+        from .curved_piecewise_remesh_tracking import track_curved_piecewise_remesh_modes
+        return track_curved_piecewise_remesh_modes(previous,current,previous_ids,mapping=mapping,
+            sample_order=sample_order,comparison_meshes=comparison_meshes,**controls)
     count=len(comparison_meshes[0]['triangles'])*sample_order**2
     if count>262144:raise ValueError('piecewise_remesh exceeds 262144 samples; reduce sample_order or comparison mesh size')
     solutions=(previous,current);meshes=[];tolerances=[]

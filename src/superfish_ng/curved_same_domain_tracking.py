@@ -40,20 +40,26 @@ def _compare_quadratic_boundaries(previous,current,affine=None):
     """
     solutions=(previous,current)
     if any(not isinstance(s,CurvedSolution) for s in solutions):raise ValueError('curved_same_domain requires native curved solutions on both sides')
-    if affine is None and previous.case.curved_contour.to_dict()!=current.case.curved_contour.to_dict():
+    return compare_quadratic_space_boundaries(previous.case,previous.space,current.case,current.space,affine=affine)
+
+
+def compare_quadratic_space_boundaries(previous_case,previous_space,current_case,current_space,*,affine=None):
+    """Compare whole boundaries of two already validated native quadratic spaces."""
+    cases=(previous_case,current_case);spaces=(previous_space,current_space)
+    if affine is None and previous_case.curved_contour.to_dict()!=current_case.curved_contour.to_dict():
         raise ValueError('curved_same_domain requires identical native curve declarations and parameterization')
-    if len(previous.case.curved_contour.curves)!=len(current.case.curved_contour.curves):
+    if len(previous_case.curved_contour.curves)!=len(current_case.curved_contour.curves):
         raise ValueError('affine quadratic boundary comparison requires corresponding native primitive indices and parameters')
-    for s in solutions:
-        if any(tag not in ('axis','pec') for tag in s.space.boundary_tags):raise ValueError('curved_same_domain requires closed PEC and axis boundaries')
-    coordinates=[s.space.geometry.points_rz_m for s in solutions]
+    for space in spaces:
+        if any(tag not in ('axis','pec') for tag in space.boundary_tags):raise ValueError('curved_same_domain requires closed PEC and axis boundaries')
+    coordinates=[s.geometry.points_rz_m for s in spaces]
     if affine is not None:coordinates[1]=_affine_points(coordinates[1],affine,inverse=True)
     scale=max(float(np.max(np.abs(p))) for p in coordinates)
     tolerance=512*np.finfo(float).eps*scale;parameter_tolerance=512*np.finfo(float).eps
     partitions=[]
-    for solution,points in zip(solutions,coordinates):
-        geometry=solution.space.geometry;curves=[[] for _ in solution.case.curved_contour.curves]
-        for nodes,owner,parameters,tag in zip(geometry.boundary_nodes,geometry.boundary_curve_indices,geometry.boundary_parameters,solution.space.boundary_tags):
+    for case,space,points in zip(cases,spaces,coordinates):
+        geometry=space.geometry;curves=[[] for _ in case.curved_contour.curves]
+        for nodes,owner,parameters,tag in zip(geometry.boundary_nodes,geometry.boundary_curve_indices,geometry.boundary_parameters,space.boundary_tags):
             lo,hi=map(float,parameters);a,b,mid=points[nodes]
             if hi<lo:lo,hi=hi,lo;a,b=b,a
             if not hi-lo>parameter_tolerance:raise ValueError('quadratic boundary parameter interval is unresolved at roundoff scale')

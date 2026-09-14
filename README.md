@@ -1,5 +1,9 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14 JST：[曲線比較メッシュによる非線形対応](docs/CURVED_PIECEWISE_REMESH_TRACKING.md)を追加。
+明示した二次比較メッシュで、異なるFEM接続の曲線場を比較・保存再検証・GUI履歴継続できます。
+関連23テスト、独立4 FEMの体積/場形/尺度則、CLIとChrome8項目を確認。D01全体と全計画goalは継続中。
+
 2026-09-14 JST：[曲線細分履歴の途中への図上挿入](docs/GUI_CURVED_HISTORY_INSERTION.md)を追加。
 指定段階の直前のnativeメッシュで選択し、後続の旧番号を参照用に残して再指定できます。
 Chrome20項目と従来6+21項目、232/26,664要素のnative再構築・独立境界積分・保存場RF検証が合格。

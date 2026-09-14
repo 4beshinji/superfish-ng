@@ -1,3 +1,33 @@
+2026-09-14 JST 最新継続状態。開始HEADa26f3cc、clean。前goalターンの履歴途中図上挿入は実装/検証/commitでprogress。
+本段階はD01の曲線比較メッシュによる非線形対応を実装/検証したprogress。全計画は未完、goal ACTIVE。
+[CURVED_PIECEWISE_REMESH_TRACKING.md](CURVED_PIECEWISE_REMESH_TRACKING.md)が受入条件/数学/入力/検証/残件の最新仕様。
+既存paired_meshはnative接続一致を要求するため、piecewise_remeshの独立比較メッシュを曲線へ拡張した。
+新curved_piecewise_remesh_tracking.pyは比較宣言schema_version2、source_meshの完全版1弦メッシュと独立levels/stepsを受理する。
+各native Caseの曲線/元メッシュから有効な比較空間を構築し、二次全接続/境界タグと実FEM境界の全区間係数を照合。
+可変r detJを含むHφ特徴を元独立保存場で評価。対応はF1∘F0^-1で、物理座標で二次多項式とは限らない。
+直接構築した閉PEC/axisの曲線TMを受理。反射構築・半領域・混在・未知schema/fields・反転要素・接続不一致・予算超過を拒否。
+旧直線比較宣言版1、外側tracking版1/2、FEM/Case/物理定数/求積/許容差を保持。
+既存曲線境界照合をcase/spaceで呼べる関数へ抽出。旧same-domain/affine呼出しは同じアルゴリズムを使用する。
+初回新テストは版2入力拒否でred。関連20件は19合格/負例Caseの古いcontour残し1error（30.864秒）。
+その検証入力をcontour=Noneで修正し、生成設定省略ケースも含む2件が3.014秒PASS。順序付き比較/中点改変拒否2件も11.563秒PASS。
+最終対象は新8+従来直線5/同一曲線6/アフィン4=23テスト。分割実行の証拠を保持し全23を一括実行したとはしない。
+独立u=1/Hφ=r adapterの別P2基底・二重積分が次数8の重なりと小数8桁で一致。adapterは固有モードではない。
+新validate_curved_piecewise_remesh_tracking.pyは28.933秒PASS、合成2半楕円接続の旧/新2尺度4実FEMと保存/CLI/逆向き履歴。
+旧26/新104/比較26要素、次数4/8重なり0.9963266026323123/0.9963244749453846。体積比1.125²と独立Greenに相対1e-12以内。
+連続解析体積との差約2.3221e-4を幾何誤差として保持。2倍尺度のf/両RQ/G/TTF差最大3.37e-14、H/Er/Ez全セル3点差最大1.57e-13。
+専用検証中997ソース系ファイル不変。以後は追加2テストとブラウザー検証器だけ変更、製品ソースは不変。
+GUI最終browser-visualは8項目PASS、外部HTTP0。native保存読込/数値報告/逆向き拒否と交換/履歴保護/保存再読込/改変拒否を確認。
+初回browserは0.0→0のJSON表記による宣言hash差で停止。数値報告からhashだけを別扱いし、各宣言の再検証は保持した。
+browser-finalは8項目PASSだが最終画像が再読込待ち中だった。入力欄復元も待つよう検証器を直しbrowser-visualの最終画面を目視。
+証拠索引out/curved-piecewise-remesh-20260914/acceptance.json、native-validation/report.json、browser-visual/report.json。
+GUIは保存済み4FEMを読むだけ。全unit/seed/全validate/Hosted CI/GUIサーバー再起動は未実行。新規依存/外部資料/旧資産参照なし。
+専用GUI PID1009602の完全argvを照合しSIGINT、session30859終了0。全検証終了、実行中handleなし。subagent/skillなし。
+親33=8受入/17進行/7他未受入/1範囲外を保持。D01の明示曲線比較写像は追加したが、自動対応推定/個別枝回復/一般物理精度は未完。
+N04の形状変更後の細分番号移送/履歴付き形状掃引、C00.V/G03/V02ほか全計画の残件も保持。
+次はN04の分割選択自体の保存/移送による形状掃引、またはD01の対応推定/個別枝回復を既存契約から限定する。
+C00の旧7.17付属仕様/Wine所在はasync質問済み・未回答。取得不要の開発を継続でき、全体のblocking条件はない。
+gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD16d0cd9、clean。前goalターンは大規模図上選択の実装/commitでprogress。
 本段階はN04残件4の履歴途中への図上挿入・既存marked段階の再選択を実装/検証したprogress。全計画は未完、goal ACTIVE。
 [GUI_CURVED_HISTORY_INSERTION.md](GUI_CURVED_HISTORY_INSERTION.md)に受入条件・操作/保存範囲・独立検証・再現入力を記録した。

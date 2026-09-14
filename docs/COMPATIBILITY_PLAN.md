@@ -1,5 +1,9 @@
 # 互換開発の作業分割 v0
 
+2026-09-14 JST：D01の[曲線比較メッシュによる非線形対応](CURVED_PIECEWISE_REMESH_TRACKING.md)を限定受入。
+明示した比較元メッシュ/履歴を再構築し、二次境界全体と可変体積を保って独立FEM場を比較する。
+API/保存/CLI/GUIを確認。対応推定・個別枝回復と一般精度は残る。親33=8/17/7/1、全計画goal ACTIVEは不変。
+
 2026-09-14 JST：N04の[大規模図上選択](LARGE_CURVED_MESH_SELECTION.md)と
 [履歴途中への図上挿入・再選択](GUI_CURVED_HISTORY_INSERTION.md)を専用範囲で受入。
 後続番号を明示再指定し、保存/実FEMとnative幾何を確認。一般適応効率・物理精度と履歴付き形状掃引は残る。
