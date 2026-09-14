@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "pairs": 6,
+  "arrays_equal": 48,
+  "all_rf_equal": true,
+  "preserved_files": 156,
+  "jobs": [
+    "20260915-053305-d4ace3072e",
+    "20260915-053308-93cbcb08eb",
+    "20260915-053323-9f0c1072b9",
+    "20260915-053354-f116878131",
+    "20260915-053609-e4d0cfc907",
+    "20260915-053842-9dea03768a",
+    "20260915-054005-f007b89718",
+    "20260915-054715-51f77dbfb8"
+  ],
+  "gui_checks": {
+    "tune-browser": 12,
+    "sequential-browser": 8,
+    "adaptive-browser": 10
+  },
+  "source_counts": {
+    "tune-browser": 336,
+    "sequential-browser": 336,
+    "adaptive-browser": 336
+  },
+  "adaptive_stopped": {
+    "status": "UNVERIFIED",
+    "reason": "maximum_depth",
+    "unreached": [
+      1,
+      2
+    ]
+  },
+  "dedicated_fem": 17,
+  "gui_fem": 10,
+  "cli_fem": 6,
+  "target_pilot_fem": 1,
+  "unit_tests": 11,
+  "unit_seconds": 26.787,
+  "old_closed_pec_replay_checks": 1,
+  "scope": "z_max magnetic-symmetry reflected curved TE; affine tuning and sequential/adaptive GUI and CLI; successful adaptive run accepts declared intervals, no inserted midpoint",
+  "render_regression": {
+    "baseline_failed": true,
+    "fixed_checks": 1,
+    "new_fem": 0,
+    "scope": "presentation of previously verified document; no server replay",
+    "original_gui_label_check": "insufficient for curved boundary tags; superseded by targeted render check"
+  },
+  "all_handles_terminal": true
+}

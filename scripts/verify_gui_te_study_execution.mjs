@@ -189,6 +189,8 @@ try {
   const request=JSON.parse(await readFile(args["--request"],"utf8"));
   if(request.study.project.case.model?.polarization!=='te')throw Error('TE request required');
   const adaptive=Object.hasOwn(request,'adaptive');
+  const acceptedSweep=!!args['--accepted-sweep'];
+  if(acceptedSweep && (!adaptive || request.study.values.length!==3))throw Error('accepted sweep requires three adaptive target values');
   const savedName=adaptive ? 'adaptive-study-checkpoint.json' : 'tracked-study-checkpoint.json';
   report.kind=adaptive?'adaptive':'sequential';report.job_ids=[];
   const loadFile=async filename=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector:'#tracked-execution-open'},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(filename)]},sessionId);};
@@ -221,7 +223,8 @@ try {
   const first=await launch('#tracked-execution-start');await openJob(first,'PAUSED',1);
   if(!isDeepStrictEqual(await ev('trackedExecutionResult.document.request'),request))throw Error('GUI changed TE request');
   report.checks.push({operation:'native TE request preserved exactly through worker execution',passed:true});
-  if(adaptive)await check('failed coarse comparison and pending midpoint are visible','trackedExecutionResult.document.points.length===2 && trackedExecutionResult.document.accepted_point_indices.length===1 && $("tracked-adaptive-attempts").textContent.includes("二分") && $("tracked-adaptive-pending").textContent.includes("1.0625")');
+  if(acceptedSweep)await check('accepted first interval pauses before the third target','trackedExecutionResult.document.points.length===2 && trackedExecutionResult.document.accepted_point_indices.join(",")==="0,1" && trackedExecutionResult.document.attempts[0].decision==="ACCEPT"');
+  else if(adaptive)await check('failed coarse comparison and pending midpoint are visible','trackedExecutionResult.document.points.length===2 && trackedExecutionResult.document.accepted_point_indices.length===1 && $("tracked-adaptive-attempts").textContent.includes("二分") && $("tracked-adaptive-pending").textContent.includes("1.0625")');
   else await check('first TE point pauses and later point remains uncomputed','trackedExecutionResult.document.history===null && $("tracked-execution-points").textContent.includes("未計算")');
   await click('#tracked-execution-save');let downloaded;
   for(let n=0;n<100;n++){try{downloaded=await readFile(out+'/downloads/'+savedName,'utf8');break;}catch{}await sleep(100);}
@@ -231,19 +234,20 @@ try {
   await wait('!trackedExecutionBusy && JSON.parse($("tracked-execution-request").value).initial_ids?.[0]==="TE-fundamental"',180000);
   await check('file replay restores TE request and enables resume','!$("tracked-execution-resume").disabled && JSON.parse($("tracked-execution-request").value).study.project.case.model.polarization==="te"');
   const forged=JSON.parse(downloaded);
-  if(adaptive)forged.attempts[0].decision='ACCEPT';else forged.point_results[0].value=-1;
+  if(adaptive)forged.attempts[0].decision=acceptedSweep?'BISECT':'ACCEPT';else forged.point_results[0].value=-1;
   await writeFile(out+'/forged.json',JSON.stringify(forged));await loadFile(out+'/forged.json');
   await wait('!trackedExecutionBusy && !$("error").hidden',180000);
   await check('forged evidence cannot replace the verified checkpoint','$("error").textContent.includes("replay") && !$("tracked-execution-resume").disabled');
   if(await ev('trackedExecutionResult.serialized')!==downloaded)throw Error('forged replay replaced result');
   await fill('#tracked-execution-request','{}');
-  if(adaptive){
+  if(adaptive && !acceptedSweep){
     const second=await launch('#tracked-execution-resume');await openJob(second,'PAUSED',2);
     await check('adaptive resume inserts only midpoint and retains original endpoints','trackedExecutionResult.document.points.length===3 && trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2" && $("tracked-adaptive-points").textContent.includes("追加点")');
   }
-  await fill('#tracked-execution-limit','');const complete=await launch('#tracked-execution-resume');await openJob(complete,'COMPLETE',adaptive?3:2);
+  await fill('#tracked-execution-limit','');const complete=await launch('#tracked-execution-resume');await openJob(complete,'COMPLETE',adaptive && !acceptedSweep?3:2);
   await check('completed TE history retains electric-field identity and disables resume','trackedExecutionResult.document.history.current_mode_ids.join(",")==="TE-fundamental" && trackedExecutionResult.document.history.steps.every(s=>s.tracking.physical_mapping.field==="Ephi_V_per_m") && !$("tracked-execution-save").disabled && $("tracked-execution-resume").disabled');
-  if(adaptive)await check('adaptive completion keeps failed comparison and accepted order','trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2,1" && trackedExecutionResult.document.attempts[0].decision==="BISECT" && $("tracked-adaptive-attempts").textContent.includes("UNVERIFIED")');
+  if(acceptedSweep)await check('all declared intervals complete without inserted points','trackedExecutionResult.document.accepted_point_indices.join(",")==="0,1,2" && trackedExecutionResult.document.attempts.every(a=>a.decision==="ACCEPT")');
+  else if(adaptive)await check('adaptive completion keeps failed comparison and accepted order','trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2,1" && trackedExecutionResult.document.attempts[0].decision==="BISECT" && $("tracked-adaptive-attempts").textContent.includes("UNVERIFIED")');
   const completeText=await ev('trackedExecutionResult.serialized');await writeFile(out+'/complete.json',completeText);
   await capture('complete.png');await fill('#tracked-execution-request','{}');await loadFile(out+'/complete.json');
   await wait('!trackedExecutionBusy && trackedExecutionResult?.document.status==="COMPLETE" && JSON.parse($("tracked-execution-request").value).initial_ids?.[0]==="TE-fundamental"',180000);
@@ -251,8 +255,9 @@ try {
   report.checks.push({operation:'completed TE file replays without changing evidence',passed:true});
   if(adaptive){
     const stopped=structuredClone(request);stopped.adaptive.max_depth=0;
+    if(acceptedSweep){stopped.study.affine_coefficients.axial_scale=[1.];stopped.step_controls.forEach(c=>c.minimum_overlap=.999999);}
     await fill('#tracked-execution-request',JSON.stringify(stopped));const id=await launch('#tracked-execution-start');await openJob(id,'UNVERIFIED',1);
-    await check('depth limit leaves original target unreached and prohibits resume','trackedExecutionResult.document.unreached_target_indices.join(",")==="1" && $("tracked-execution-status").textContent.includes("二分深さの上限") && $("tracked-execution-resume").disabled && !$("tracked-execution-save").disabled');
+    await check('depth limit leaves original target unreached and prohibits resume',`trackedExecutionResult.document.unreached_target_indices.join(",")===${JSON.stringify(acceptedSweep?'1,2':'1')} && $("tracked-execution-status").textContent.includes("二分深さの上限") && $("tracked-execution-resume").disabled && !$("tracked-execution-save").disabled`);
     await writeFile(out+'/stopped.json',await ev('trackedExecutionResult.serialized'));await capture('stopped.png');
   }
   }

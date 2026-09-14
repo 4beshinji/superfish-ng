@@ -2513,7 +2513,7 @@ function showTuning(response) {
   $("tune-status").textContent=`${d.status} — ${names[d.status]}。計算済み ${d.trials.length} 試行。対象ID: ${r.mode_id}`;
   if(d.request.identity_recovery) $("tune-status").textContent+=`。個別ID回復 ${d.trials.filter(t=>t.identity_recovery).length} 回`;
   if(r.project.case.model?.polarization==="te") {
-    const sector=[r.project.case.boundaries?.z_min ?? "pec",r.project.case.boundaries?.z_max ?? "pec"].some(t=>t!=="pec");
+    const sector=[r.project.case.boundaries?.z_min ?? "pec",r.project.case.boundaries?.z_max ?? "pec"].some(t=>t!=="pec") || (r.project.case.geometry.edge_tags ?? []).some(t=>["electric_symmetry","magnetic_symmetry"].includes(t));
     $("tune-status").textContent+=sector ? "。TE Eφで同定・順位は元の対称セクター内（全スペクトルではありません）。加速量は適用外です。" : "。TE Eφで同定。加速量は適用外です。";
   }
   const verdict=v=>v===undefined ? "未実施" : v ? "条件内" : "未達", display=v=>Number(v.toPrecision(9));

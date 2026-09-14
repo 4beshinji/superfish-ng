@@ -190,6 +190,15 @@ try {
   report.scope='form generation and strict input, real worker pause/resume, exact download/replay and final native field';
   const set=async(id,value)=>ev(`(()=>{const e=document.querySelector('#'+${JSON.stringify(id)});e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('change'))})()`);
   const loadFile=async filename=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector:'#tune-open'},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(filename)]},sessionId);};
+  if(args['--render-only']) {
+    const serialized=await readFile(args['--render-only'],'utf8'),document=JSON.parse(serialized);
+    if(!isDeepStrictEqual(document.request,request))throw Error('render input differs from request');
+    await ev(`showTuning(${JSON.stringify({document,serialized})})`);
+    await check('curved TE symmetry ranks are explicitly labelled',`document.querySelector('#tune-status').textContent.includes('元の対称セクター内') && document.querySelector('#tune-status').textContent.includes('全スペクトルではありません')`);
+    const clip=await ev(`(()=>{const a=document.querySelector('#tune-status').getBoundingClientRect(),b=document.querySelector('#tune-trials').getBoundingClientRect();return {x:a.x+scrollX,y:a.y+scrollY,width:a.width,height:b.bottom-a.top,scale:1}})()`);
+    const shot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip},sessionId);await writeFile(out+'/result.png',Buffer.from(shot.data,'base64'));
+    report.scope='render existing verified evidence only; no server replay or FEM';report.new_fem_solves=0;report.job_ids={};
+  } else {
   await ev(`applyProject(${JSON.stringify(request.project)})`);
   if(expression) {
     const curved=request.geometry_kind==='curved_harmonic';
@@ -268,7 +277,7 @@ try {
   const first=await launch('#tune-start');await openJob(first,'PAUSED');
   await check('real worker publishes two verified trials and enables resume',`tuningResult.document.trials.length===2 && !document.querySelector('#tune-resume').disabled`);
   if(request.project.case.model?.polarization==='te') {
-    const sector=Object.values(request.project.case.boundaries ?? {}).some(t=>t!=='pec');
+    const sector=Object.values(request.project.case.boundaries ?? {}).some(t=>t!=='pec') || (request.project.case.geometry.edge_tags ?? []).some(t=>['electric_symmetry','magnetic_symmetry'].includes(t));
     await check('TE tuning labels electric identity and source-sector ranks',`document.querySelector('#tune-status').textContent.includes('TE Eφ') && document.querySelector('#tune-status').textContent.includes('加速量は適用外') && ${sector ? "document.querySelector('#tune-status').textContent.includes('対称セクター内')" : "true"}`);
   }
   if(expression) await check('checkpoint restores expression input without polynomial conversion',`document.querySelector('#tune-binding-law').value===${JSON.stringify(request.geometry_kind==='profile'?'expression-profile':'expression-curved')} && JSON.stringify(JSON.parse(document.querySelector('#tune-expression-bindings').value))===JSON.stringify(${JSON.stringify(request.bindings)})`);
@@ -293,6 +302,7 @@ try {
   if(request.project.case.model?.polarization==='te') await check('imported TE field preserves polarization and accelerating quantities N/A',`currentResult.result.physics==='axisymmetric_m0_te' && currentResult.result.modes.every(m=>m.r_over_q_accelerator_ohm===null && m.r_over_q_circuit_ohm===null)`);
   if(harmonic)await check('final field retains frozen source history plus one uniform step',`currentResult.result.case.mesh.curved_refinement_steps.length===${request.project.case.mesh.curved_refinement_steps.length+1} && currentResult.result.case.mesh.curved_refinement_steps.at(-1).kind==='uniform'`);
   report.job_ids={first,last};report.new_fem_solves=await ev('tuningResult.document.trials.length');
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if(!report.passed)throw Error('GUI checks failed');console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));
 } catch(e){report.error=String(e);process.exitCode=1;console.error(e);}
