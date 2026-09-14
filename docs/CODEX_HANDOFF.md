@@ -18,6 +18,27 @@ Wine専用永続領域/home/sin/.local/share/superfish-referenceは作成・単�
 旧installerコピーは自動承認レビューによる拒否で明示例外許可待ち。別経路で回避せず、SUPERFISH本体/SFCODESは未復元。
 以下は完了Studyと以前の記録。
 
+2026-09-14 最新：D01/P2-01の適応Study個別ID回復を実装・限定検証済み。開始HEAD2992794。
+正本[ADAPTIVE_STUDY_IDENTITY_RECOVERY.md](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)、索引out/adaptive-study-identity-recovery-20260914/acceptance.json。
+要求版2のtarget_index/anchor_target_indexは元目標番号。中点が増えた採用履歴へ実行時に結び付け、チェックポイント版3のattemptへ全回復根拠を保存する。
+回復失敗は直前採用履歴を保持し、現在点を採用せずSTOP/identity_recovery_unverified。次点計算/二分/再開はしない。隣接PASSと回復失敗は別保存。
+新8件41.647秒・関連46件83.750秒PASS。変更前red、最初の2不変条件22.074秒も保持。
+pilot3FEMの実重なりから固定閾値0.9999999988を選び、元anchorより前の二分を実現した。許容差緩和なし。
+専用25FEM37.820秒・worker11FEM17.482秒PASS。元目標1→snapshot2、回復済み元目標3→snapshot4で2回回復。
+前半は解析縮退、後半は明示gap=.2による近接集合であり、2回の物理縮退とは書かない。
+Bessel最大差2.742e-5未満、Maxwell最大RF差5.219e-14/場差1.872e-14。q12/18と逆向きは保存解を再利用。
+worker再作成後の全7native配列/RFと、Chrome新版7点の同量は直接実行と完全一致。GUI比較の新FEM0、210元ファイル不変。
+Chrome新版15/旧適応10項目PASS、外部HTTP0、画像目視済み。GUI完了解16FEM、全12ジョブ10complete/2cancelled。
+1070ソース系と327製品SHAは最終一致・実行中不変。数値/GUIの一部は並行、時間を単独性能としない。
+全新検証handle終端回収。関連regression45191の最終出力はコンテキスト切替時に保持されず、再照会はunknown。ログは46件OK。
+専用GUI PID1977513へ完全argv照合後SIGINT、session71946終了0回収。現在live handleなし。
+全suite/seed/Hosted CI/新Wine比較は未実行。親33=9/17/6/1、全計画goal ACTIVE。
+次はtuneへの回復指定・チェックポイント接続を1限定課題として設計し、その後D01一般写像残件と元親要件を監査する。
+元D01にない連続枝証明等を必須に追加せず、明記した一般写像要件は保持する。
+Wineは/home/sin/.local/share/superfish-referenceに専用永続環境作成・単体検証済み。
+旧installerコピーは自動承認レビューの2回拒否で明示例外許可待ち。別経路で回避しない。SUPERFISH本体/SFCODESは未復元。
+以下は逐次Study回復までの記録。
+
 2026-09-14 最新：D01の完了済みStudy個別ID回復を要求版2・API/CLI/GUIへ実装・限定受入。
 開始HEAD b14b62e（単独履歴回復のcommit）。正本[STUDY_IDENTITY_RECOVERY.md](STUDY_IDENTITY_RECOVERY.md)、索引out/study-identity-recovery-20260914/acceptance.json。
 identity_recoveriesの各point_index/anchor_snapshot_index/controlsを全入力検査し、指定した実際の2点から写像を導出する。

@@ -1,5 +1,10 @@
 # 互換開発の作業分割 v0
 
+2026-09-14：[適応Studyの元目標に結び付けた個別ID回復](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)を要求版2・チェックポイント版3・CLI/JobManager/GUIへ接続。
+挿入中点でずれた採用履歴の位置を元目標から解決し、回復後の再開と失敗時の採用履歴保持を検証した。
+新8/関連46unit、独立25FEM・worker11FEM、Chrome新15/旧10項目がPASS。tune接続と親D01は継続中。
+親33=9/17/6/1、全計画goal ACTIVE。以下は各段階の記録。
+
 2026-09-14 JST：D03/P2-02の[固定局所履歴付きRF探索](RF_OPTIMIZATION_HISTORY.md)を接続範囲で受入。
 元の分割を保つ形状変換、履歴後の三水準と最終別三水準、表面評価版2・保存再開・CLI/GUIを接続した。
 関連29unit/独立24FEMがPASS、Chrome新旧は分割証拠で確認。親33=9受入/17進行/6他未受入/1範囲外と全計画goal ACTIVEを維持する。

@@ -201,14 +201,21 @@ try {
   await click("#tracked-execution-adaptive");await click("#tracked-execution-prepare");
   await wait('JSON.parse(document.querySelector("#tracked-execution-request").value || "{}").adaptive?.max_depth===4');
   await check("adaptive controls produce an explicit reviewable request",'!document.querySelector("#tracked-adaptive-settings").hidden && JSON.parse(document.querySelector("#tracked-execution-request").value).adaptive.max_attempts===16');
+  if(args["--recovery"]) {
+    const previousMessage=await ev('document.querySelector("#tracked-execution-job").textContent');
+    await fill("#tracked-execution-request",JSON.stringify(request).replace('"schema_version":2','"schema_version":2,"schema_version":2'));
+    await click("#tracked-execution-start");await wait('!trackedExecutionBusy && !document.querySelector("#error").hidden');
+    await check("duplicate original recovery request keys are rejected before worker creation",`document.querySelector("#error").textContent.includes("duplicate JSON key") && document.querySelector("#tracked-execution-job").textContent===${JSON.stringify(previousMessage)}`);
+  }
   await fill("#tracked-execution-request",JSON.stringify(request));await fill("#tracked-execution-limit","1");
   const first=await launch("#tracked-execution-start");await openJob(first,"PAUSED",1);
-  await check("failed coarse comparison pauses for bisection and distinguishes computed from accepted points",'document.querySelector("#tracked-execution-status").textContent.includes("計算済み 2 点、採用 1 点") && document.querySelector("#tracked-adaptive-attempts tbody").rows[0].textContent.includes("UNVERIFIED") && document.querySelector("#tracked-adaptive-attempts tbody").rows[0].textContent.includes("二分") && document.querySelector("#tracked-adaptive-pending").textContent.includes("0.0675")');
+  await check("failed coarse comparison pauses for bisection and distinguishes computed from accepted points",'document.querySelector("#tracked-execution-status").textContent.includes("計算済み 2 点、採用 1 点") && document.querySelector("#tracked-adaptive-attempts tbody").rows[0].textContent.includes("UNVERIFIED") && document.querySelector("#tracked-adaptive-attempts tbody").rows[0].textContent.includes("二分") && document.querySelector("#tracked-adaptive-pending").textContent.includes("0.0675")'.replace('0.0675',args['--recovery'] ? '0.0475' : '0.0675'));
   await check("adaptive job is excluded from individual result selectors",`![...document.querySelector("#tracking-current").options].some(o=>o.value===${JSON.stringify(first)})`);
   await click("#tracked-execution-save");let downloaded;
   for(let n=0;n<100;n++){try{downloaded=await readFile(out+"/downloads/adaptive-study-checkpoint.json","utf8");break;}catch{}await sleep(100);}
   if(downloaded!==await ev('trackedExecutionResult.serialized'))throw Error("adaptive checkpoint download differs from verified text");
   report.checks.push({operation:"adaptive download preserves exact checkpoint text",passed:true});
+  if(args["--recovery"])await writeFile(out+"/initial-checkpoint.json",downloaded);
   await fill("#tracked-execution-request",'{}');await fill("#tracked-adaptive-depth","0");await loadFile(out+"/downloads/adaptive-study-checkpoint.json");
   await wait('!trackedExecutionBusy && JSON.parse(document.querySelector("#tracked-execution-request").value).adaptive?.max_depth===4');
   await check("file replay restores the adaptive settings and enables pending work",'document.querySelector("#tracked-adaptive-depth").value==="4" && !document.querySelector("#tracked-execution-resume").disabled');
@@ -217,17 +224,43 @@ try {
   await check("modified decision is rejected without replacing verified failure evidence",'document.querySelector("#error").textContent.includes("replay") && trackedExecutionResult.document.attempts[0].decision==="BISECT"');
   await fill("#tracked-execution-request",'{}');await click("#tracked-execution-adaptive");const second=await launch("#tracked-execution-resume");await openJob(second,"PAUSED",2);
   await check("resume uses saved adaptive settings and adds only the midpoint to accepted points",'trackedExecutionResult.document.request.adaptive.max_depth===4 && trackedExecutionResult.document.points.length===3 && trackedExecutionResult.document.accepted_point_indices.length===2 && document.querySelector("#tracked-adaptive-points tbody").rows[2].textContent.includes("追加点")');
-  await fill("#tracked-execution-limit","");const third=await launch("#tracked-execution-resume");await openJob(third,"COMPLETE",3);
-  await check("completed adaptive execution retains failed comparisons and the accepted parameter order",'document.querySelector("#tracked-execution-resume").disabled && trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2,1" && document.querySelector("#tracked-adaptive-attempts tbody").rows.length===3 && document.querySelector("#tracked-adaptive-attempts tbody").rows[0].textContent.includes("UNVERIFIED")');
+  let third,recoveredJob,finalJob;
+  if(args["--recovery"]) {
+    await fill("#tracked-execution-limit","1");third=await launch("#tracked-execution-resume");await openJob(third,"PAUSED",3);
+    await check("the declared anchor is reached after the inserted midpoint",'trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2,1" && trackedExecutionResult.document.reached_target_indices.join(",")==="0,1"');
+    await fill("#tracked-execution-limit","2");recoveredJob=await launch("#tracked-execution-resume");await openJob(recoveredJob,"PAUSED",5);
+    await check("recovery binds original target one to accepted snapshot two",'trackedExecutionResult.document.schema_version===3 && trackedExecutionResult.document.attempts[4].identity_recovery.anchor_target_index===1 && trackedExecutionResult.document.attempts[4].identity_recovery.anchor_snapshot_index===2 && trackedExecutionResult.document.history.current_mode_ids.join(",")==="TM010,TM011,TM020" && document.querySelector("#tracked-adaptive-attempts tbody").rows[4].cells[8].textContent.includes("目標 3 ← 1: 確認済み")');
+    const verified=await ev('trackedExecutionResult.serialized');await click("#tracked-execution-save");let saved;
+    for(let n=0;n<100;n++){try{saved=await readFile(out+"/downloads/adaptive-study-checkpoint.json","utf8");if(saved===verified)break;}catch{}await sleep(100);}
+    if(saved!==verified)throw Error("recovery checkpoint download differs");await writeFile(out+"/recovered-checkpoint.json",saved);
+    await loadFile(out+"/recovered-checkpoint.json");await wait('!trackedExecutionBusy && trackedExecutionResult?.document.history?.individual_ids_complete');
+    await check("saved recovery replays with its original-target plan and actual binding",'JSON.parse(document.querySelector("#tracked-execution-request").value).identity_recoveries[0].anchor_target_index===1 && JSON.parse(document.querySelector("#tracked-execution-diagnostics").textContent).identity_recoveries[0].anchor_snapshot_index===2');
+    const forged=JSON.parse(saved);forged.attempts[4].identity_recovery.anchor_snapshot_index=1;
+    await writeFile(out+"/forged-binding.json",JSON.stringify(forged));await loadFile(out+"/forged-binding.json");await wait('!trackedExecutionBusy && !document.querySelector("#error").hidden');
+    await check("changing the target-to-history binding does not replace the verified checkpoint",'trackedExecutionResult.document.attempts[4].identity_recovery.anchor_snapshot_index===2 && document.querySelector("#error").textContent.includes("replay") && !document.querySelector("#tracked-execution-resume").disabled');
+    await fill("#tracked-execution-request",'{}');await fill("#tracked-execution-limit","");finalJob=await launch("#tracked-execution-resume");await openJob(finalJob,"COMPLETE",7);
+    await check("resume reuses a previously recovered original target after later grouping",'trackedExecutionResult.document.history.identity_recoveries.length===2 && trackedExecutionResult.document.attempts[6].identity_recovery.anchor_target_index===3 && trackedExecutionResult.document.attempts[6].identity_recovery.anchor_snapshot_index===4 && trackedExecutionResult.document.points.length===7 && document.querySelector("#tracked-execution-resume").disabled');
+    await writeFile(out+"/completed-recovery.json",await ev('trackedExecutionResult.serialized'));
+  } else {
+    await fill("#tracked-execution-limit","");third=await launch("#tracked-execution-resume");await openJob(third,"COMPLETE",3);
+    await check("completed adaptive execution retains failed comparisons and the accepted parameter order",'document.querySelector("#tracked-execution-resume").disabled && trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2,1" && document.querySelector("#tracked-adaptive-attempts tbody").rows.length===3 && document.querySelector("#tracked-adaptive-attempts tbody").rows[0].textContent.includes("UNVERIFIED")');
+  }
   const capture=async name=>{const rect=await ev('(()=>{const r=document.querySelector("#tracked-execution").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/"+name,Buffer.from(shot.data,"base64"));};
   await capture("adaptive-complete.png");
-  const stopped=structuredClone(request);stopped.adaptive.max_depth=0;await fill("#tracked-execution-request",JSON.stringify(stopped));const fourth=await launch("#tracked-execution-start");await openJob(fourth,"UNVERIFIED",1);
-  await check("depth limit shows unreached targets and prohibits resume while allowing download",'document.querySelector("#tracked-execution-status").textContent.includes("二分深さの上限") && document.querySelector("#tracked-adaptive-pending").textContent.includes("未到達の元目標番号: 1") && document.querySelector("#tracked-execution-resume").disabled && !document.querySelector("#tracked-execution-save").disabled');
+  const stopped=structuredClone(request);
+  if(args["--recovery"])stopped.identity_recoveries[0].target_index=2;else stopped.adaptive.max_depth=0;
+  await fill("#tracked-execution-request",JSON.stringify(stopped));const fourth=await launch("#tracked-execution-start");await openJob(fourth,"UNVERIFIED",args["--recovery"] ? 4 : 1);
+  if(args["--recovery"]) {
+    await check("failed recovery retains the accepted prefix and stops before later targets",'trackedExecutionResult.document.stop_reason==="identity_recovery_unverified" && trackedExecutionResult.document.accepted_point_indices.join(",")==="0,2,1" && trackedExecutionResult.document.attempts[3].correspondence.status==="PASS" && document.querySelector("#tracked-adaptive-attempts tbody").rows[3].cells[8].textContent.includes("未確認") && document.querySelector("#tracked-execution-status").textContent.includes("個別ID回復が未確認") && document.querySelector("#tracked-execution-resume").disabled && !document.querySelector("#tracked-execution-save").disabled');
+    await writeFile(out+"/unverified-recovery.json",await ev('trackedExecutionResult.serialized'));
+  } else {
+    await check("depth limit shows unreached targets and prohibits resume while allowing download",'document.querySelector("#tracked-execution-status").textContent.includes("二分深さの上限") && document.querySelector("#tracked-adaptive-pending").textContent.includes("未到達の元目標番号: 1") && document.querySelector("#tracked-execution-resume").disabled && !document.querySelector("#tracked-execution-save").disabled');
+  }
   await capture("adaptive-stopped.png");
   const large=structuredClone(request);large.study.project.case.mesh.nr=350;large.study.project.case.mesh.nz=350;await fill("#tracked-execution-request",JSON.stringify(large));const fifth=await launch("#tracked-execution-start");
   await wait(`document.querySelector('[data-job="${fifth}"] button')?.textContent==="中止"`);await click(`[data-job="${fifth}"] button`);await wait(`document.querySelector('[data-job="${fifth}"] strong')?.textContent.startsWith("中止")`);
   await check("running adaptive job can be cancelled without opening a false completed result",`document.querySelector('[data-job="${fifth}"] button').disabled`);
-  report.job_ids={first,second,third,fourth,fifth};report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
+  report.job_ids={first,second,third,recoveredJob,finalJob,fourth,fifth};report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if(!report.passed)throw Error("adaptive GUI verification failed");console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));
 }catch(e){report.error=String(e);process.exitCode=1;console.error(e);}

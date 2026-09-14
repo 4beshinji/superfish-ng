@@ -1,5 +1,9 @@
 # D01 逐次Studyの個別ID回復と再開
 
+2026-09-14追補：[適応Studyの回復と再開](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)も接続済み。
+元目標番号を採用履歴へ結び付け、失敗候補を主履歴へ採用せずattemptに根拠を保存する。
+以下の適応Study未接続表記は当時の状態。tune接続と親D01は継続中。
+
 2026-09-14。逐次Studyの要求版2で、[完了Studyと同じ回復指定](STUDY_IDENTITY_RECOVERY.md)を
 実FEM・チェックポイント・CLI・JobManager・GUIへ接続した。指定点で回復した個別IDを後続点へ渡し、
 回復前後の一時停止・再開でも指定と根拠を保持する。曖昧な回復はUNVERIFIEDとして保存し、次の点を計算しない。

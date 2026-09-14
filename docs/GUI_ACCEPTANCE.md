@@ -1,5 +1,12 @@
 # 汎用GUI・共通入出力の受入記録
 
+2026-09-14：[適応Studyの回復と再開](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)はChrome新版15/旧適応版10項目PASS。
+要求版2・保存版3、原JSON重複拒否、元目標1→採用履歴2の結び付け、回復保存/再読込/改変拒否、
+回復済み元目標を参照する再開、未確認時の採用履歴保持・後続停止、中止を実操作した。
+327製品SHA一致・外部HTTP0。GUI完了16FEM、新版7点は直接実行と全配列/RF完全一致、210元ファイル不変、比較の新FEM0。
+完了/停止画像を目視。全12ジョブ10complete/2cancelledを確認し、専用GUIを終了した。
+検証器はscripts/verify_gui_adaptive_execution.mjsの--recovery true、記録はout/adaptive-study-identity-recovery-20260914/browser-new/とbrowser-old/。
+
 2026-09-14：[逐次Studyの個別ID回復と再開](TRACKED_STUDY_IDENTITY_RECOVERY.md)を要求版2・CLI/JobManager/GUIへ接続。
 回復指定を完了Studyと共有し、回復前後の停止・再開、未確認時の次点未計算、元JSON重複拒否と回復状態表示を追加した。
 新7/関連44unit、独立20FEM・再作成worker8FEM、既存18保存解再検証、Chrome新16/旧11/適応10項目が合格。

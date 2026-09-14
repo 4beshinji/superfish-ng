@@ -1,5 +1,9 @@
 # D01 完了済みStudyでの個別ID回復
 
+2026-09-14追補：[適応Studyの回復と再開](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)も接続済み。
+元目標番号を採用履歴へ結び付け、失敗候補を主履歴へ採用せずattemptに根拠を保存する。
+以下の適応Study未接続表記は当時の状態。tune接続と親D01は継続中。
+
 2026-09-14：[逐次Studyの個別ID回復と再開](TRACKED_STUDY_IDENTITY_RECOVERY.md)を要求版2・CLI/JobManager/GUIへ接続。
 回復指定を完了Studyと共有し、回復前後の停止・再開、未確認時の次点未計算、元JSON重複拒否と回復状態表示を追加した。
 新7/関連44unit、独立20FEM・再作成worker8FEM、既存18保存解再検証、Chrome新16/旧11/適応10項目が合格。

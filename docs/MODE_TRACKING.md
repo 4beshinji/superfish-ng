@@ -1,5 +1,10 @@
 # D01 重み付き標本と部分空間によるモード追跡
 
+2026-09-14：[適応Studyの元目標に結び付けた個別ID回復](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)を要求版2・チェックポイント版3・CLI/JobManager/GUIへ接続。
+挿入中点でずれた採用履歴の位置を元目標から解決し、回復後の再開と失敗時の採用履歴保持を検証した。
+新8/関連46unit、独立25FEM・worker11FEM、Chrome新15/旧10項目がPASS。tune接続と親D01は継続中。
+親33=9/17/6/1、全計画goal ACTIVE。以下は各段階の記録。
+
 2026-09-14：[逐次Studyの個別ID回復と再開](TRACKED_STUDY_IDENTITY_RECOVERY.md)を要求版2・CLI/JobManager/GUIへ接続。
 回復指定を完了Studyと共有し、回復前後の停止・再開、未確認時の次点未計算、元JSON重複拒否と回復状態表示を追加した。
 新7/関連44unit、独立20FEM・再作成worker8FEM、既存18保存解再検証、Chrome新16/旧11/適応10項目が合格。

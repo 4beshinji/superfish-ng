@@ -13,12 +13,16 @@ from .tracked_study import _request as validate_tracking_request,_point_sources
 from .saved_mode_tracking import build_saved_mode_tracking,_canonical
 from .mode_tracking_history import start_mode_history,extend_mode_history
 from .study_shape_tracking import pair_controls
+from .adaptive_study_identity_recovery import declared_recovery_requests,recover_at_target
 
 
 def _request(request):
+    version=request.get('schema_version') if isinstance(request,dict) else None
+    if type(version) is not int or version not in (1,2):raise ValueError('adaptive Study request requires schema_version 1 or 2')
     fields=('schema_version','study','initial_ids','step_controls','adaptive')
+    if version==2:fields+=('identity_recoveries',)
     keys(request,fields,fields,'adaptive tracked Study request')
-    base={key:request[key] for key in fields if key!='adaptive'}
+    base={key:request[key] for key in ('study','initial_ids','step_controls')};base['schema_version']=1
     study,_=validate_tracking_request(base)
     if study.kind not in ('curved_affine_sweep','curved_harmonic_sweep','curved_remesh_sweep') and (study.kind!='sweep' or not study.parameter.startswith('/case/geometry/')):
         raise ValueError('adaptive tracking requires a continuous numeric /case/geometry/ sweep or declared curved_affine_sweep/curved_harmonic_sweep/curved_remesh_sweep')
@@ -33,6 +37,7 @@ def _request(request):
     if type(step) not in (float,int) or not math.isfinite(step) or step<=0:raise ValueError('minimum_parameter_step must be finite and positive')
     # Reject discrete geometry fields before reserving any output.
     for a,b in zip(values,values[1:]):_project(study,_midpoint(a,b))
+    if version==2:declared_recovery_requests(study,request['identity_recoveries'])
     return study,settings
 
 
@@ -45,6 +50,9 @@ def _project(study,value):
 
 def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_checkpoint=None):
     study,limits=_request(request)
+    recovery_enabled=request['schema_version']==2
+    if (schema_version==3)!=recovery_enabled:raise ValueError('adaptive recovery request version 2 requires checkpoint version 3')
+    recoveries=declared_recovery_requests(study,request['identity_recoveries']) if recovery_enabled else {}
     points=[];point_projects=[];attempts=[];accepted=[];history=None;reached=[0];stop=None
     def point(value):
         for i,record in enumerate(points):
@@ -64,9 +72,10 @@ def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_ch
         result=dict(schema_version=schema_version,document_type='adaptive_tracked_study',request=deepcopy(request),points=points,attempts=attempts,
             accepted_point_indices=accepted,reached_target_indices=reached,unreached_target_indices=[i for i in range(len(study.values)) if i not in reached],
             history=history,status='UNVERIFIED' if stop else 'PAUSED' if pending else 'COMPLETE',stop_reason=stop,
-            scope='bounded midpoint subdivision of sampled geometry correspondence; rejected comparisons retained; no threshold relaxation, individual branch recovery or physical convergence certificate')
+            scope=('bounded midpoint subdivision with explicit original-target identity recovery; rejected comparisons and recovery failures retained; no threshold relaxation or continuous-branch/physical convergence certificate'
+                   if recovery_enabled else 'bounded midpoint subdivision of sampled geometry correspondence; rejected comparisons retained; no threshold relaxation, individual branch recovery or physical convergence certificate'))
 
-        if schema_version==2:
+        if schema_version>=2:
             result.update(can_resume=result['status']=='PAUSED',pending_targets=list(reversed(pending)))
         return deepcopy(result)
 
@@ -84,9 +93,17 @@ def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_ch
             pair=candidate['steps'][-1]
         attempt=dict(previous_point=previous,current_point=current,original_target_index=target['target_index'],depth=target['depth'],
                      correspondence=pair,decision='ACCEPT',midpoint=None,stop_reason=None)
+        if recovery_enabled:attempt['identity_recovery']=None
         if candidate['can_extend']:
-            history=candidate;accepted.append(current)
-            if target['value']==study.values[target['target_index']]:reached.append(target['target_index'])
+            original_target=target['value']==study.values[target['target_index']]
+            if original_target and target['target_index'] in recoveries:
+                candidate,attempt['identity_recovery']=recover_at_target(candidate,recoveries[target['target_index']],
+                    target['target_index'],current,points,accepted,study.values)
+            if candidate['can_extend']:
+                history=candidate;accepted.append(current)
+                if original_target:reached.append(target['target_index'])
+            else:
+                stop='identity_recovery_unverified';attempt.update(decision='STOP',stop_reason=stop)
         else:
             a=points[previous]['value'];b=target['value'];middle=_midpoint(a,b)
             if len(attempts)+1>=limits['max_attempts']:reason='maximum_attempts'
@@ -139,7 +156,7 @@ def execute_adaptive_study(request,directory,*,max_new_attempts=None,checkpoint=
             raise ValueError('adaptive resume prefix differs from verified checkpoint')
         if count>completed_attempts:_save_document(result,directory/f'checkpoint-{count:03d}.json')
     limit=None if max_new_attempts is None else completed_attempts+max_new_attempts
-    result=_run(request,obtain,schema_version=2,pause_after_attempts=limit,on_checkpoint=publish)
+    result=_run(request,obtain,schema_version=3 if request['schema_version']==2 else 2,pause_after_attempts=limit,on_checkpoint=publish)
     if implementation!=_implementation_hashes():raise RuntimeError('implementation changed during adaptive Study execution')
     _save_document(result,directory/'adaptive-study-results.json')
     return result
@@ -147,9 +164,9 @@ def execute_adaptive_study(request,directory,*,max_new_attempts=None,checkpoint=
 
 def replay_adaptive_study(document):
     version=document.get('schema_version') if isinstance(document,dict) else None
-    if type(version) is not int or version not in (1,2):raise ValueError('adaptive Study document requires schema_version 1 or 2')
+    if type(version) is not int or version not in (1,2,3):raise ValueError('adaptive Study document requires schema_version 1, 2 or 3')
     fields=('schema_version','document_type','request','points','attempts','accepted_point_indices','reached_target_indices','unreached_target_indices','history','status','stop_reason','scope')
-    if version==2:fields+=('can_resume','pending_targets')
+    if version>=2:fields+=('can_resume','pending_targets')
     keys(document,fields,fields,'saved adaptive Study')
     records=document['points']
     if type(records) is not list or not records:raise ValueError('adaptive Study requires saved points')
@@ -157,7 +174,7 @@ def replay_adaptive_study(document):
         if index>=len(records) or not isinstance(records[index],dict) or _canonical(records[index].get('value'))!=_canonical(value):
             raise ValueError('adaptive point sequence differs from deterministic subdivision')
         return records[index].get('run')
-    paused=version==2 and document['status']=='PAUSED'
+    paused=version>=2 and document['status']=='PAUSED'
     if paused and (type(document['attempts']) is not list or not document['attempts']):raise ValueError('paused adaptive Study requires completed comparison attempts')
     expected=_run(document['request'],obtain,schema_version=version,pause_after_attempts=len(document['attempts']) if paused else None)
     if _canonical(expected)!=_canonical(document):raise ValueError('adaptive Study replay differs from saved decisions or sources')

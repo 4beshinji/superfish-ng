@@ -2446,14 +2446,17 @@ function restoreExecutionRequest(request) {
 }
 function showAdaptiveExecution(response) {
   const d=response.document;
-  const reason=({maximum_attempts:"比較回数の上限",maximum_depth:"二分深さの上限",minimum_parameter_step:"追加区間の最小幅",floating_point_resolution:"数値で区別できる幅の限界"})[d.stop_reason];
+  const reason=({maximum_attempts:"比較回数の上限",maximum_depth:"二分深さの上限",minimum_parameter_step:"追加区間の最小幅",floating_point_resolution:"数値で区別できる幅の限界",identity_recovery_unverified:"指定目標での個別ID回復が未確認"})[d.stop_reason];
   $("tracked-execution-status").textContent=`${d.status} — 適応二分${d.status==="PAUSED" ? "を一時停止" : d.status==="COMPLETE" ? "で全目標の対応を確認" : "を停止"}。計算済み ${d.points.length} 点、採用 ${d.accepted_point_indices.length} 点、比較 ${d.attempts.length} 回。到達目標 ${d.reached_target_indices.length}/${d.request.study.values.length}。${reason ? " 停止理由: "+reason : ""}`;
+  if(d.request.identity_recoveries) $("tracked-execution-status").textContent+=` 個別ID回復 ${d.attempts.filter(a=>a.identity_recovery).length}/${d.request.identity_recoveries.length} 回。`;
   const rows=(id,values)=>{const body=$(id).querySelector("tbody");body.replaceChildren();for(const valuesRow of values){const row=document.createElement("tr");for(const value of valuesRow){const cell=document.createElement("td");cell.textContent=value;row.append(cell);}body.append(row);}};
   rows("tracked-adaptive-points",d.points.map((point,i)=>{const order=d.accepted_point_indices.indexOf(i),target=d.request.study.values.indexOf(point.value);return [i,point.value,target<0 ? "追加点" : `元目標 ${target}`,order<0 ? "未採用" : `採用（順序 ${order}）`];}));
-  rows("tracked-adaptive-attempts",d.attempts.map((a,i)=>[i,d.points[a.previous_point].value,d.points[a.current_point].value,a.original_target_index,a.depth,a.correspondence.status,({ACCEPT:"採用",BISECT:"二分",STOP:"停止"})[a.decision],a.midpoint ?? "—"]));
+  rows("tracked-adaptive-attempts",d.attempts.map((a,i)=>[i,d.points[a.previous_point].value,d.points[a.current_point].value,a.original_target_index,a.depth,a.correspondence.status,({ACCEPT:"採用",BISECT:"二分",STOP:"停止"})[a.decision],a.midpoint ?? "—",
+    a.identity_recovery ? `目標 ${a.identity_recovery.target_index} ← ${a.identity_recovery.anchor_target_index}: ${a.identity_recovery.status==="PASS" ? "確認済み" : "未確認"}` : "—"]));
   $("tracked-adaptive-pending").textContent=`次の比較目標: ${d.pending_targets?.map(p=>p.value).join(", ") || "なし"}。未到達の元目標番号: ${d.unreached_target_indices.join(", ") || "なし"}。`;
   restoreExecutionRequest(d.request);
   $("tracked-execution-diagnostics").textContent=JSON.stringify({identity_groups:d.history?.current_identity_groups ?? null,stop_reason:d.stop_reason,
+    identity_recoveries:d.attempts.filter(a=>a.identity_recovery).map(a=>a.identity_recovery),
     last_correspondence:d.attempts.at(-1)?.correspondence.tracking ?? null,point_runs:d.points.map(p=>p.run)},null,2);
   trackedExecutionButtons();
 }

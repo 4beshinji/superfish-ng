@@ -1,5 +1,12 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14：[適応Studyの個別ID回復](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)は新8件41.647秒と関連46件83.750秒がPASS。
+変更前redと最初の2不変条件22.074秒を保持。専用25FEM37.820秒、worker11FEM17.482秒、Chrome新15/旧10項目がPASS。
+pilot3解は専用25解に含めない。求積次数18/逆向き保存解再検証とGUI7点の全配列/RF比較は追加FEM0。
+1070ソース系/327製品SHA一致、210GUI比較元ファイル不変、外部HTTP0。全12GUIジョブ終端後に専用GUIを停止した。
+対象一覧・並行範囲・全終端は同書とout/adaptive-study-identity-recovery-20260914/acceptance.json。
+全suite/seed/Hosted CI/新Wine比較は今回未実行。次のtune接続ではその直接利用先を選択する。
+
 2026-09-14：[逐次Study個別ID回復](TRACKED_STUDY_IDENTITY_RECOVERY.md)は新7件48.608秒と関連44件97.141秒がPASS。
 専用20FEM53.017秒、実worker8FEM26.550秒、共有検査の既存完了Study18保存解74.532秒（新FEM0）がPASS。
 全1067sourceは不変。Chrome新16/旧11/適応10項目、326製品SHA不変、外部HTTP0。全16GUIジョブ終端確認後に専用GUIを終了。
