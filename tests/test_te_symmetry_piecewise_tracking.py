@@ -80,7 +80,7 @@ class TESymmetryPiecewiseTrackingTests(unittest.TestCase):
    p=root/'0/axis_001.csv';p.write_text(p.read_text()+'\n')
    with self.assertRaises(ValueError):replay_mode_tracking(report)
 
- def test_cross_sector_and_reflected_fields_are_rejected(self):
+ def test_cross_sector_and_mixed_reflection_are_rejected(self):
   from superfish_ng.symmetry import reflect_solution
   cases,maps,chart=half_fixture();a=solve(cases[0],mesh_data=maps[0]['source_mesh'])
   other,othermaps,_=half_fixture(tag='electric_symmetry');b=solve(other[1],mesh_data=othermaps[1]['source_mesh'])
@@ -90,7 +90,7 @@ class TESymmetryPiecewiseTrackingTests(unittest.TestCase):
   tm=solve(replace(cases[0],model=Model()),mesh_data=maps[0]['source_mesh'])
   with self.assertRaisesRegex(ValueError,'closed PEC'):track_piecewise_remesh_modes(tm,tm,['TM'],**controls(maps,2,chart))
   reflected=reflect_solution(a.case,a)[1]
-  with self.assertRaisesRegex(ValueError,'reflected'):track_piecewise_remesh_modes(reflected,reflected,['TE'],**controls(maps,2,chart))
+  with self.assertRaisesRegex(ValueError,'cannot mix direct and reflected'):track_piecewise_remesh_modes(a,reflected,['TE'],**controls(maps,2,chart))
 
  def test_true_elliptic_boundaries_and_maxwell_scaling(self):
   from superfish_ng.project import Project

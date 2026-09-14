@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "new_eigensolves": 0,
+  "reused_native_half_solutions": 4,
+  "reflected_native_results": 4,
+  "source_files_preserved": 36,
+  "reflected_files_preserved": 40,
+  "rf_errors": [
+    {
+      "frequency_hz": 0.0,
+      "stored_energy_j": 2.220446049250313e-16,
+      "wall_loss_w": 3.3306690738754696e-16,
+      "geometry_factor_ohm": 6.661338147750939e-16,
+      "q0": 6.661338147750939e-16
+    },
+    {
+      "frequency_hz": 0.0,
+      "stored_energy_j": 1.3322676295501878e-15,
+      "wall_loss_w": 3.3306690738754696e-16,
+      "geometry_factor_ohm": 8.881784197001252e-16,
+      "q0": 8.881784197001252e-16
+    },
+    {
+      "frequency_hz": 0.0,
+      "stored_energy_j": 1.1102230246251565e-15,
+      "wall_loss_w": 0.0,
+      "geometry_factor_ohm": 1.1102230246251565e-15,
+      "q0": 1.1102230246251565e-15
+    },
+    {
+      "frequency_hz": 0.0,
+      "stored_energy_j": 4.440892098500626e-16,
+      "wall_loss_w": 0.0,
+      "geometry_factor_ohm": 5.551115123125783e-16,
+      "q0": 4.440892098500626e-16
+    }
+  ],
+  "comparisons": [
+    {
+      "scale": 1,
+      "version": 2,
+      "overlap": 0.9901961030414683,
+      "status": "PASS"
+    },
+    {
+      "scale": 1,
+      "version": 3,
+      "overlap": 0.9901971464099968,
+      "status": "PASS"
+    },
+    {
+      "scale": 1,
+      "version": 4,
+      "overlap": 0.9901971464099968,
+      "status": "PASS"
+    },
+    {
+      "scale": 1,
+      "version": 5,
+      "overlap": 0.9901970381428922,
+      "status": "PASS"
+    },
+    {
+      "scale": 2,
+      "version": 2,
+      "overlap": 0.9901961030414683,
+      "status": "PASS"
+    },
+    {
+      "scale": 2,
+      "version": 3,
+      "overlap": 0.9901971464099965,
+      "status": "PASS"
+    },
+    {
+      "scale": 2,
+      "version": 4,
+      "overlap": 0.9901971464099965,
+      "status": "PASS"
+    },
+    {
+      "scale": 2,
+      "version": 5,
+      "overlap": 0.990197038142892,
+      "status": "PASS"
+    }
+  ],
+  "new_tests": 3,
+  "new_seconds": 28.81,
+  "related_tests": 34,
+  "related_seconds": 65.809,
+  "cli_replay": "PASS",
+  "all_handles_terminal": true,
+  "scope": "TE reflected curved piecewise_remesh 2/3/4/5 from source-half declarations; non-affine Project/tune/Study and GUI acceptance pending"
+}
