@@ -29,18 +29,7 @@ def remesh_curved_project(project, plan):
     if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None
             or project.reflect_full or is_te(case) or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
         raise ValueError('curved remeshing requires direct, unassembled native P2 closed PEC/axis TM geometry')
-    fields=('schema_version','source_mesh','curved_refinement_levels','curved_refinement_steps','minimum_corner_angle_deg')
-    keys(plan,fields,('schema_version','source_mesh','minimum_corner_angle_deg'),'curved remesh plan')
-    if type(plan['schema_version']) is not int or plan['schema_version']!=1:
-        raise ValueError('curved remesh plan schema_version must be 1')
-    choices=[name for name in ('curved_refinement_levels','curved_refinement_steps') if name in plan]
-    if len(choices)!=1:
-        raise ValueError('curved remesh plan must explicitly declare either curved_refinement_levels or curved_refinement_steps; old cell selections are not inherited')
-    angle=plan['minimum_corner_angle_deg']
-    try:valid=type(angle) in (int,float) and math.isfinite(angle) and 0<angle<60
-    except OverflowError:valid=False
-    if not valid:raise ValueError('minimum_corner_angle_deg must be finite and strictly between 0 and 60')
-    if not isinstance(plan['source_mesh'],dict):raise ValueError('curved remesh plan source_mesh must be a complete chord mesh object')
+    choice,angle=validate_remesh_plan(plan)
     original_mesh=make_mesh(case) if project.mesh_data is None else mesh_from_dict(case,project.mesh_data)
     limit=case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000
     if len(original_mesh.triangles)>limit:
@@ -49,7 +38,7 @@ def remesh_curved_project(project, plan):
     raw=project.to_dict();raw.update(project_version=2,mesh_data=deepcopy(plan['source_mesh']))
     mesh_settings=raw['case']['mesh']
     for name in ('curved_refinement_levels','curved_refinement_steps'):mesh_settings.pop(name,None)
-    mesh_settings[choices[0]]=deepcopy(plan[choices[0]])
+    mesh_settings[choice]=deepcopy(plan[choice])
     candidate=Project.from_dict(raw)
     mesh=mesh_from_dict(candidate.case,candidate.mesh_data)
     if len(mesh.triangles)>limit:
@@ -68,3 +57,25 @@ def remesh_curved_project(project, plan):
             raise ValueError(f'curved remeshing stage {index} minimum corner angle {actual:.9g} is below minimum_corner_angle_deg={angle}')
         compare_quadratic_space_boundaries(case,original_space,stage,space)
     return candidate
+
+
+def validate_remesh_plan(plan):
+    """Validate the portable declaration; geometry is checked during remeshing."""
+    fields=('schema_version','source_mesh','curved_refinement_levels','curved_refinement_steps','minimum_corner_angle_deg')
+    keys(plan,fields,('schema_version','source_mesh','minimum_corner_angle_deg'),'curved remesh plan')
+    if type(plan['schema_version']) is not int or plan['schema_version']!=1:
+        raise ValueError('curved remesh plan schema_version must be 1')
+    choices=[name for name in ('curved_refinement_levels','curved_refinement_steps') if name in plan]
+    if len(choices)!=1:
+        raise ValueError('curved remesh plan must explicitly declare either curved_refinement_levels or curved_refinement_steps; old cell selections are not inherited')
+    angle=plan['minimum_corner_angle_deg']
+    try:valid=type(angle) in (int,float) and math.isfinite(angle) and 0<angle<60
+    except OverflowError:valid=False
+    if not valid:raise ValueError('minimum_corner_angle_deg must be finite and strictly between 0 and 60')
+    if not isinstance(plan['source_mesh'],dict):raise ValueError('curved remesh plan source_mesh must be a complete chord mesh object')
+    from .config import integer
+    from .curved_refinement_steps import steps_from_dict
+    choice=choices[0]
+    if choice=='curved_refinement_levels':integer(plan[choice],choice,minimum=0)
+    else:steps_from_dict(plan[choice])
+    return choice,angle

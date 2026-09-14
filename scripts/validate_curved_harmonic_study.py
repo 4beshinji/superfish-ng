@@ -18,8 +18,8 @@ from test_curved_harmonic_study import harmonic_study_document,controls
 from validate_large_curved_mesh_selection import fingerprints,boundary_moments
 
 
-def worker(out):
-    request=dict(schema_version=1,study=harmonic_study_document(),initial_ids=['A'],step_controls=[dict(controls(),minimum_overlap=1.)],
+def worker(out,document=None):
+    request=dict(schema_version=1,study=harmonic_study_document() if document is None else document,initial_ids=['A'],step_controls=[dict(controls(),minimum_overlap=1.)],
         adaptive=dict(max_depth=1,max_attempts=4,minimum_parameter_step=.001))
     (out/'request.json').write_text(json.dumps(request,indent=2)+'\n')
     manager=JobManager(out/'workspace')
@@ -45,6 +45,10 @@ def worker(out):
         first_mesh=result['attempts'][0]['correspondence']['request']['controls']['comparison_meshes'][1]
         second_mesh=result['attempts'][1]['correspondence']['request']['controls']['comparison_meshes'][1]
         assert first_mesh!=second_mesh and result['request']==request
+        if request['study']['kind']=='curved_remesh_sweep':
+            counts=[len(read_solution(Path(p['run'])/'solution').source_mesh_data['triangles']) for p in result['points']]
+            assert counts==[26,28,26],counts
+            assert len(first_mesh['source_mesh']['triangles'])==len(second_mesh['source_mesh']['triangles'])==26
         manager.close();manager=JobManager(out/'workspace')
         assert manager.status(second,verify=True)['tracking_status']=='UNVERIFIED'
         return dict(first_job=first,second_job=second,status=state,original_points_preserved=True,actual_midpoint=.5,
@@ -55,17 +59,25 @@ def worker(out):
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--workers-only',action='store_true')
+    parser.add_argument('--remesh-study',action='store_true',help='validate Study v4 value-based initial mesh replacement')
     args=parser.parse_args();out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     started=time.monotonic();before=fingerprints()
+    from test_curved_remesh_study import remesh_study_document
+    original=remesh_study_document() if args.remesh_study else harmonic_study_document()
     if args.workers_only:
-        report=dict(status='PASS',scope='real adaptive worker pause/JobManager recreation/resume/full revalidation; not an abnormal crash recovery test',worker=worker(out),new_fem_solves=3)
+        report=dict(status='PASS',scope='real adaptive worker pause/JobManager recreation/resume/full revalidation; not an abnormal crash recovery test',worker=worker(out,original),new_fem_solves=3)
     else:
-        original=harmonic_study_document();variants=[('base',original)]
+        variants=[('base',original)]
         unit=deepcopy(original);unit['values']=[0.,.1];unit['parameter_unit']='m'
         unit['geometry_coefficients']={k:[c*10**i for i,c in enumerate(cs)] for k,cs in unit['geometry_coefficients'].items()};variants.append(('metres',unit))
+        if args.remesh_study:unit['mesh_schedule']['breakpoints']=[v/10 for v in unit['mesh_schedule']['breakpoints']]
         large=deepcopy(original);large['project']=transform_curved_project(Study.from_dict(original).project,
             dict(radial_scale=2.,axial_scale=2.,axial_shear=0.),rf_coordinates='axial').to_dict()
         large['geometry_coefficients']={k:[2*c for c in cs] for k,cs in large['geometry_coefficients'].items()};variants.append(('double',large))
+        if args.remesh_study:
+            for entry in large['mesh_schedule']['plans']:
+                if entry['kind']=='replace':
+                    mesh=entry['plan']['source_mesh'];mesh['points']=[[2*c for c in point] for point in mesh['points']]
         rows=[];solutions=[];tracking=[]
         for name,raw in variants:
             request=out/f'{name}.json';request.write_text(json.dumps(raw,indent=2)+'\n');target=out/name
@@ -101,7 +113,7 @@ def main():
         report=dict(status='PASS',scope='real CLI shape Study, independent Green ratios, unit equivalence, Maxwell RF/field scaling and full saved tracking; no continuum physical error bound',
             rows=rows,comparisons=comparisons,tracking_overlaps=tracking,new_fem_solves=6)
     assert fingerprints()==before
-    report.update(seconds=time.monotonic()-started,source_files_unchanged=len(before))
+    report.update(study_kind=original['kind'],seconds=time.monotonic()-started,source_files_unchanged=len(before))
     (out/'report.json').write_text(json.dumps(report,indent=2)+'\n');(out/'source-sha256.json').write_text(json.dumps(before,indent=2)+'\n')
     print(json.dumps({k:report[k] for k in ('status','new_fem_solves','seconds')}))
 

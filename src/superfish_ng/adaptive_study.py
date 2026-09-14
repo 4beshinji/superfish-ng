@@ -20,8 +20,8 @@ def _request(request):
     keys(request,fields,fields,'adaptive tracked Study request')
     base={key:request[key] for key in fields if key!='adaptive'}
     study,_=validate_tracking_request(base)
-    if study.kind not in ('curved_affine_sweep','curved_harmonic_sweep') and (study.kind!='sweep' or not study.parameter.startswith('/case/geometry/')):
-        raise ValueError('adaptive tracking requires a continuous numeric /case/geometry/ sweep or declared curved_affine_sweep/curved_harmonic_sweep')
+    if study.kind not in ('curved_affine_sweep','curved_harmonic_sweep','curved_remesh_sweep') and (study.kind!='sweep' or not study.parameter.startswith('/case/geometry/')):
+        raise ValueError('adaptive tracking requires a continuous numeric /case/geometry/ sweep or declared curved_affine_sweep/curved_harmonic_sweep/curved_remesh_sweep')
     values=study.values
     if not (all(b>a for a,b in zip(values,values[1:])) or all(b<a for a,b in zip(values,values[1:]))):
         raise ValueError('adaptive Study values must be strictly monotone')

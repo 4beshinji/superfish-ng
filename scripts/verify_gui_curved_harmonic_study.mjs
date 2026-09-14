@@ -188,12 +188,14 @@ try {
 
 
 
-  const expected=JSON.parse(await readFile(args['--study'],'utf8'));
+  const expected=JSON.parse(await readFile(args['--study'],'utf8')),remesh=expected.kind==='curved_remesh_sweep';
+  if(remesh && !args['--remesh-plan'])throw Error('Study v4 requires --remesh-plan for plan-import checks');
+  report.study_kind=expected.kind;
   await writeFile(out+'/source-project.json',JSON.stringify(expected.project));
   const loadFile=async(selector,path)=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(path)]},sessionId);};
   const select=async(id,value)=>ev(`(()=>{const e=$(${JSON.stringify(id)});e.value=${JSON.stringify(value)};e.dispatchEvent(new Event('change',{bubbles:true}))})()`);
   await loadFile('#open',out+'/source-project.json');await wait('curvedHistoryRows().filter(r=>r._splitPattern).length===2');
-  await select('study-kind','curved_harmonic_sweep');await wait('!$("study-harmonic").hidden && $("study-parameter").options.length===1');
+  await select('study-kind',expected.kind);await wait('!$("study-harmonic").hidden && $("study-parameter").options.length===1');
   await click('#study-harmonic-template');await wait('$("study-harmonic-coefficients").value.includes("/curves/1/semiaxes_m/1")');
   await check('template uses current curve values and continuous numeric fields','(()=>{const d=JSON.parse($("study-harmonic-coefficients").value);return d["/curves/1/semiaxes_m/1"][0]===.08 && Object.values(d).every(c=>c.length===1) && !Object.keys(d).some(k=>k.endsWith("/branch"))})()');
   await click('#save-study');await wait('!$("error").hidden && $("error").textContent.includes("nonconstant")');
@@ -201,10 +203,17 @@ try {
   await fill('#study-harmonic-parameter',expected.parameter);await select('study-harmonic-unit',expected.parameter_unit);
   await select('study-harmonic-rf',expected.rf_coordinates);await fill('#study-harmonic-angle',expected.minimum_corner_angle_deg);
   await fill('#study-harmonic-coefficients',JSON.stringify(expected.geometry_coefficients));await fill('#study-values',expected.values.join(', '));
+  if(remesh) {
+    await fill('#study-remesh-cutover',expected.mesh_schedule.breakpoints[0]);
+    await loadFile('#study-remesh-import',args['--remesh-plan']);
+    await wait('$("study-remesh-schedule").value.includes("source_mesh")');
+    if(!isDeepStrictEqual(await ev('JSON.parse($("study-remesh-schedule").value)'),expected.mesh_schedule))throw Error('Plan import changed explicit schedule');
+    report.checks.push({operation:'plan import declares right-hand cutover and complete new mesh/history',passed:true});
+  }
   await click('#save-study');let saved;
   for(let n=0;n<300;n++){try{saved=JSON.parse(await readFile(out+'/downloads/study.json','utf8'));break;}catch{}await sleep(100);}
   if(!isDeepStrictEqual(saved,expected))throw Error('GUI harmonic Study differs from native declaration');
-  report.checks.push({operation:'GUI creates the exact version-three declaration and preserves frozen source mesh',passed:true});
+  report.checks.push({operation:`GUI creates the exact version-${expected.study_version} declaration and preserves frozen source mesh`,passed:true});
   await fill('#study-harmonic-parameter','changed');await fill('#study-values','7, 8');await select('study-harmonic-unit','m');await fill('#study-harmonic-angle',5);
   await loadFile('#open-study',out+'/downloads/study.json');
   await wait('$("study-harmonic-parameter").value==="shape_change" && $("study-values").value==="0, 1" && $("study-harmonic-unit").value==="1"');
@@ -214,10 +223,24 @@ try {
   await click('#save-study');await wait('!$("error").hidden && $("error").textContent.includes("duplicate JSON key")');
   report.checks.push({operation:'duplicate law paths reach the strict reader and are rejected',passed:true});
   await fill('#study-harmonic-coefficients',JSON.stringify(expected.geometry_coefficients));
+  if(remesh) {
+    const duplicate=JSON.stringify(expected.mesh_schedule).replace('"schema_version":1','"schema_version":1,"schema_version":1');
+    await fill('#study-remesh-schedule',duplicate);await click('#save-study');
+    await wait('!$("error").hidden && $("error").textContent.includes("duplicate JSON key")');
+    report.checks.push({operation:'duplicate mesh schedule keys reach the strict server reader',passed:true});
+    await fill('#study-remesh-schedule',JSON.stringify(expected.mesh_schedule));
+    await ev('window.__oldFileText=File.prototype.text;window.__importRelease=null;File.prototype.text=async function(){const text=await __oldFileText.call(this);await new Promise(resolve=>window.__importRelease=resolve);return text}');
+    await loadFile('#study-remesh-import',args['--remesh-plan']);await wait('!!window.__importRelease');
+    await fill('#study-remesh-cutover',.6);await ev('__importRelease()');
+    await wait('!$("error").hidden && $("error").textContent.includes("読込中に入力が変わりました")');
+    await ev('File.prototype.text=__oldFileText');await fill('#study-remesh-cutover',expected.mesh_schedule.breakpoints[0]);
+    if(!isDeepStrictEqual(await ev('JSON.parse($("study-remesh-schedule").value)'),expected.mesh_schedule))throw Error('Stale import changed schedule');
+    report.checks.push({operation:'stale file import preserves the current schedule',passed:true});
+  }
   await ev('window.__baseApi=api;window.__studyJob=null;api=async(...args)=>{const r=await __baseApi(...args);if(args[0]==="start-study")window.__studyJob=r.id;return r}');
   await click('#start-study');await wait('!!window.__studyJob');const job=await ev('__studyJob'),selector=`#jobs .job[data-job="${job}"]`;
   await wait(`document.querySelector(${JSON.stringify(selector+' strong')})?.textContent.startsWith("計算完了")`,240000);
-  await click(selector+' button');await wait('activeStudy?.study.kind==="curved_harmonic_sweep"',240000);
+  await click(selector+' button');await wait(`activeStudy?.study.kind===${JSON.stringify(expected.kind)}`,240000);
   await check('actual worker displays independent spectra without a convergence claim','activeStudy.points.length===2 && activeStudy.comparisons.length===0 && activeStudy.numerical_status==="UNVERIFIED" && $("study-report").textContent.includes("独立したスペクトル")');
   const result=await ev('activeStudy');await writeFile(out+'/study-result.json',JSON.stringify(result,null,2));
   if(!isDeepStrictEqual(result.study,expected))throw Error('Actual worker lost shape laws');
@@ -248,12 +271,21 @@ try {
   await click('#save-study');await wait('!!window.__release');await fill('#study-harmonic-angle',2);await ev('__release()');
   await wait('!$("error").hidden && $("error").textContent.includes("入力が変わりました")');
   report.checks.push({operation:'in-flight validation rejects a changed quality declaration',passed:true});await ev('api=__baseApi');
+  if(remesh) {
+    await fill('#study-harmonic-angle',1);
+    await ev('window.__release=null;api=async(...args)=>{const r=await __baseApi(...args);if(args[0]==="normalize-study")await new Promise(resolve=>window.__release=resolve);return r}');
+    await click('#save-study');await wait('!!window.__release');
+    const changed=structuredClone(expected.mesh_schedule);changed.breakpoints=[.6];
+    await fill('#study-remesh-schedule',JSON.stringify(changed));await ev('__release()');
+    await wait('!$("error").hidden && $("error").textContent.includes("入力が変わりました")');
+    report.checks.push({operation:'in-flight normalization rejects a changed mesh schedule',passed:true});await ev('api=__baseApi');
+  }
   await select('study-kind','fixed_geometry_convergence');await wait('$("study-parameter").value==="additional_uniform_refinements"');
   await check('old fixed-domain Study omits new shape fields','(async()=>{const d=await studyDefinition();return d.study_version===1 && !Object.hasOwn(d,"geometry_coefficients") && !Object.hasOwn(d,"minimum_corner_angle_deg")})()');
   await loadFile('#open-study',out+'/downloads/study.json');await wait('!$("study-harmonic").hidden && $("study-harmonic-angle").value==="1" && $("study-values").value==="0, 1"');
   await check('shape law editor occupies available width','$("study-harmonic-coefficients").getBoundingClientRect().width>.9*$("study-harmonic").getBoundingClientRect().width');
   const rect=await ev('(()=>{const r=$("studies").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
-  const shot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+'/harmonic-study.png',Buffer.from(shot.data,'base64'));
+  const shot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+'/shape-study.png',Buffer.from(shot.data,'base64'));
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0;
   if(!report.passed)throw Error('Source changed or external HTTP occurred');console.log(JSON.stringify({passed:report.passed,checks:report.checks}));

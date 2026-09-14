@@ -1,5 +1,14 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[条件別初期メッシュStudy版4](CURVED_REMESH_STUDY.md)は新8unit413.395秒、既存16モジュール78件510.514秒PASS。
+変更前の独立2件は版4不在red、初回幾何2件18.157秒PASS。初回回帰起動器のvenvリンク解決誤りでsystem Pythonのimport16ERROR、FEM未実行。
+起動器だけ修正した最終78件の全一覧/コマンドはout/curved-remesh-study-20260914/selected-regressions-final.json。
+専用検証器の--remesh-studyは6 FEM137.626秒、--workers-only追加は3 FEM353.704秒、円筒解析交差は2 FEM112.694秒PASS。
+独立Green、m換算/Maxwell、実場の順位交差、元点再利用/実二分・JobManager再生成後resume/完全replayを確認。三実行の1031source不変。
+Chrome新18/既存版3の13項目PASS、各2 FEM、外部HTTP0、318製品SHA一致、画像目視済み。新GUI/CLIの同一入力/五量とnative全係数が一致。
+native追加比較1.393秒PASS、57保存ファイル不変、新FEMなし。索引out/curved-remesh-study-20260914/acceptance.json。
+限定Study/直接消費先の検証で、全件validate/seed/Hosted CI/新Wine/実測は未実行。並行検証時間を単独性能と解釈しない。
+
 2026-09-14 JST：[初期メッシュ置換API/CLI](CURVED_PROJECT_REMESH.md)は新6unit7.994秒と非アフィン受渡し1件2.975秒、独立移動/番号付替え1件1.467秒PASS。
 初回API不在redと、実装後のkeyword-only引数のテスト誤記による1失敗を保持する。最終新8件は6+1+1の分割合格。
 既存harmonic_deformation/frozen_refinement/project_mesh/curved_same_domain/curved_piecewiseの34件75.672秒とexternal_mesh_study4件0.478秒PASS。

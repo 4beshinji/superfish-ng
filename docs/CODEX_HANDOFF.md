@@ -1,3 +1,38 @@
+2026-09-14 JST 最新継続状態。開始HEADae5141e、当初clean。前goalターンは初期メッシュ置換API/CLIを実装/検証/commitしたprogress。
+今回はN04残件4の条件別初期メッシュをStudy版4・追跡/逐次/適応再開・GUIへ接続したprogress。全計画は未完、goal ACTIVE。
+[CURVED_REMESH_STUDY.md](CURVED_REMESH_STUDY.md)が入力/数学/検証/残件の最新記録。
+Study study_version=4/kind=curved_remesh_sweep。版3の曲線法則/単位/RF/角度にmesh_schedule版1を必須追加。版1/2/3への混在は拒否。
+mesh_schedule={schema_version:1,breakpoints:[...厳密昇順有限値],plans:[original又はreplace+完全plan]}。計画数=境界数+1、置換1個以上。
+bisect_rightで境界値は右区間、逆順/再訪/適応二分でも実値で選ぶ。空境界は全値に一つの置換計画。単位はStudy parameter_unitのm/1。
+curved_remesh_study.projects_at_valuesで全計画を元形状上でpreflightし、新marked履歴を既存remesh/freezeで固定する。未使用計画も無効なら拒否。
+各実FEM点は選んだbaseを元geometry lawから独立変形。比較Projectは常に元Study.projectを実値へ変形し、元接続/固定履歴を保持。
+各実点の実FEMと比較Projectの全二次境界を既存Bernstein係数比較で検査する。元形状上の一致だけで先の一致を仮定しない。
+study_shape_tracking.pair_controlsは版4に限り供給済み実FEM Projectsを比較メッシュに使わず、元Projectから実比較点を導出する。
+全点事前検査、通常の独立スペクトル/comparisons=[]/UNVERIFIED、既存piecewise_remesh閾値/手動comparison_meshes拒否と保存replayを保持。
+適応の最大深さ/試行数/最小幅、拒否履歴、元点再利用、PAUSED/UNVERIFIEDは維持。外側要求/checkpoint版は不変。
+GUIの新操作は共通寸法法則欄+区間計画JSON。完全planのfile読込で切替値未満original/以後replaceを作る。複数区間はJSONで明示。
+raw法則/区間/planテキストをstrict readerへ送り重複キー拒否。非同期読込/normalization中の変更をsignatureで拒否。版3/旧版1のGUIも確認。
+新portable合成例examples/curved_remesh_study.json。元26初期/146最終、置換28初期/188最終要素。測定構造を表さない。
+新8unit413.395秒PASS、初回独立2件は版4不在red、最初の幾何2件18.157秒PASS。
+既存16モジュール78件510.514秒PASS。選択回帰はselected-regressions-final.json/.log。初回一時runnerはPythonリンクresolveでsystem Pythonを呼びimport16ERROR/FEM未実行。
+仮想環境パスを保持するrunnerへ修正し同じ選択を実行。製品の依存やソルバーは変えていない。
+専用validate_curved_harmonic_study.py --remesh-study：6新FEM137.626秒PASS。独立Green面積比1.125/体積比1.125²、m換算/2倍Maxwell。
+f/RF相対差最大1.266e-14、場形最大3.362e-14。三Study追跡0.9977229774915644、完全replay一致。
+同検証器--workers-only --remesh-study：3新FEM353.704秒PASS。JobManager閉じ直し/再生成後resume、実0.5追加、再度全replay。
+元/終端/二分点の初期数26/28/26。二比較メッシュは元26由来で終端/二分点座標が別。異常crash試験ではない。
+validate_curved_harmonic_study_crossing.py --remesh-study：2新FEM112.694秒PASS。円筒長55→77mm、初期96→別生成384、最終105→1536。
+解析TM010/TM020/TM011→TM010/TM011/TM020の順位交差と追跡ID一致。最大f誤差6.937e-5/3.171e-7、既存.003条件維持。
+専用三実行で同一1031source不変。並行実行の秒数は単独性能測定ではない。
+実Chrome新18/既存版3の13項目PASS、各2新FEM。外部HTTP0、両318製品SHAが現行一致。画像目視済み。
+GUI/CLI同一入力・f/RF一致。追加native全f/u/二次座標/接続完全一致、57保存ファイル不変、1.393秒PASS、新FEMなし。
+red16261終了1、幾何65894/新8unit81436/数値49468/worker88611/交差46832/既存78件36104/browser88647・93732/native96252は終了0。
+GUI server65984もSIGINTで終了0。全検証終端、実行中handle/サーバー/workerなし。
+証拠索引out/curved-remesh-study-20260914/acceptance.json。全件validate/seed/Hosted CI/新Wine比較/実測は未実行。過去full失敗+対象補修+別seedをfull PASSへ読み替えない。
+FEM/変形数学/物理許容差は無変更。新規外部資料/依存/旧資産参照なし。subagent/skillなし。親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVE。
+次はN04残件4の自動mesh生成/番号対応か、N04全体の一般精度/効率とG03/C00.V/V02残件を独立受入条件へ限定して進める。
+今回の供給メッシュStudyを自動生成/一般物理枝回復・全区間形状保証へ読み替えない。TE/反射/半領域や曲線種類/個数の離散変更は未受入。
+旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEADf6ee460、当初clean。前goalターンは単独Project形状変形GUIの実装/検証/commitでprogress。
 今回はN04の初期メッシュ変更Studyに必要な、同じ二次領域での初期メッシュ置換と明示新履歴をAPI/CLIへ追加したprogress。
 全計画は未完、goal ACTIVE。[CURVED_PROJECT_REMESH.md](CURVED_PROJECT_REMESH.md)が入力/数学/検証/残件の最新記録。

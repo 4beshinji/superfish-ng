@@ -22,12 +22,14 @@ def pair_controls(study,control,previous_value,current_value,*,projects=None):
     repeating mesh construction. These are the exact declared points from Study,
     not independent user-supplied comparison meshes.
     """
-    if study.kind!='curved_harmonic_sweep':
+    if study.kind not in ('curved_harmonic_sweep','curved_remesh_sweep'):
         return affine_pair_controls(study,control,previous_value,current_value)
     result=deepcopy(control)
     if not isinstance(result,dict) or result.get('mapping')!='piecewise_remesh' or 'comparison_meshes' in result:
         raise ValueError('curved harmonic Study tracking requires piecewise_remesh controls without comparison_meshes; each pair is derived from its actual values')
-    if projects is None:projects=[project_at_value(study,x) for x in (previous_value,current_value)]
+    # Replacement FEM meshes have independent numbering and histories. Only the
+    # original Project supplies the correspondence, evaluated at actual values.
+    if projects is None or study.kind=='curved_remesh_sweep':projects=[project_at_value(study,x) for x in (previous_value,current_value)]
     result['comparison_meshes']=[comparison_mesh(project) for project in projects]
     validate_tracking_controls(result)
     return result

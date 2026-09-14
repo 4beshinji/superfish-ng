@@ -635,6 +635,7 @@
                 <option value="sweep">パラメータ掃引</option>
                 <option value="curved_affine_sweep">元メッシュを保つ曲線アフィン掃引</option>
                 <option value="curved_harmonic_sweep">曲線寸法を変える掃引（調和変位）</option>
+              <option value="curved_remesh_sweep">曲線形状と初期メッシュの掃引</option>
                 <option value="mesh_convergence">メッシュ収束確認</option>
                 <option value="geometry_convergence">曲線の形状近似確認</option>
                 <option value="fixed_geometry_convergence">形状を固定した細分比較</option>
@@ -663,6 +664,13 @@
             <label>曲線の項目と多項式係数<textarea id="study-harmonic-coefficients" rows="10">{}</textarea></label>
             <p class="hint">geometry内の連続な数値項目を指定します。例：{"/curves/1/semiaxes_m/1":[0.08,0.01]} は半径を 0.08 + 0.01 x [m] にします。配列は定数項、一次項、二次項の順です。長さはm、角度はrad、曲線番号は0から数えます。共有端点が離れないように関係する寸法を同時に指定してください。ひな形には現在値のみが入るため、掃引には変化する項を追加します。</p>
             <p class="hint">各点は元Projectから独立に作成します。曲線上の分率を対応させ、内部節点を調和変位で移動します。marked履歴は先に形状編集欄で固定してください。曲線分割数と品質・弦誤差の条件を維持し、有効な対応を作れない条件は拒否します。</p>
+          </fieldset>
+          <fieldset id="study-remesh" hidden>
+            <legend>値の区間ごとの初期メッシュ</legend>
+            <label>切替値（上の変数単位）<input id="study-remesh-cutover" type="number" step="any" value="0.75" /></label>
+            <label class="file">置換メッシュ計画を読み込む<input id="study-remesh-import" type="file" accept=".json" /></label>
+            <label>メッシュ計画の区間定義<textarea id="study-remesh-schedule" rows="9" spellcheck="false">{"schema_version":1,"breakpoints":[],"plans":[{"kind":"replace","plan":{}}]}</textarea></label>
+            <p class="hint">計画の読込で「切替値未満は元メッシュ、それ以上は置換メッシュ」の定義を作ります。複数区間はJSONで指定します。境界値は右側の区間に属し、逆順・適応二分でも同じ規則です。計画には供給する初期メッシュと新しい細分履歴を含めてください。保存・実行時に全計画を検査します。</p>
           </fieldset>
           <button id="study-parameters">現在の入力から項目を更新</button
           ><label id="study-values-label"
