@@ -1,5 +1,11 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 曲線寸法の法則による形状Study — 2026-09-14
+
+[CURVED_HARMONIC_STUDY.md](CURVED_HARMONIC_STUDY.md)の現在値ひな形・定数/重複パス拒否・全設定往復・実Study worker・CLI数値一致・完了Studyの導出追跡/保存再生・逐次/適応要求準備・非同期品質変更拒否・旧版1切替/幅をChrome14項目で確認。
+共有操作の既存アフィンStudyも11項目/実worker・保存再生がPASS。新旧それぞれ2 FEM、外部HTTP0、最終新GUI画像目視済み。
+両browserの製品315ファイルは実行中/最終一致。単独Project変形のプレビュー/適用/Undoや全GUIの一括再受入はこの範囲に含めない。
+
 ## 曲線アフィンStudy — 2026-09-14
 
 [CURVED_AFFINE_STUDY.md](CURVED_AFFINE_STUDY.md)の元番号/固定分割を含む定義往復、無効な法則の拒否、実Study worker/保存場、独立スペクトル表示、完了Studyの追跡/保存再生、逐次要求準備、非同期入力変更拒否と旧版1切替をChrome10項目で確認。

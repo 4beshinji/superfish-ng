@@ -1,5 +1,12 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[曲線法則Study](CURVED_HARMONIC_STUDY.md)は新7件239.756秒と追加二次法則1件6.998秒PASS。
+既存14モジュール65件278.056秒PASS。全一覧/コマンドはout/curved-harmonic-study-20260914/selected-regressions.json。
+専用CLI/幾何/RF/保存追跡の6 FEMは111.592秒、実適応worker再開3 FEMは223.940秒、円筒解析順位交差2 FEMは53.647秒PASS。
+Chrome新14/既存アフィン11項目PASS、各Study workerの2 FEMと保存再生を含む。外部HTTP0、画像目視済み。
+数値/worker時1018ソース系は不変。以後は円筒検証器と追加1テストのみ変更し、製品315ファイルは両browser/最終で一致する。
+索引out/curved-harmonic-study-20260914/acceptance.json。全件/seed/Hosted CI/新Wine比較/実測は今回未実行。
+
 2026-09-14 JST：[調和変位による曲線変形](CURVED_HARMONIC_DEFORMATION.md)の新8件は分割検証。
 最初の幾何2件4.826秒PASS、新7件は35.058秒で6合格/負例前提1不合格。凸形状は有効だったため、実反転する凹形状へ検証入力だけを修正し1件2.540秒PASS。
 追加の弦内境界節点/初期一様細分と標準importの幾何確認2件は3.992秒PASS。8件一括再実行とは呼ばない。

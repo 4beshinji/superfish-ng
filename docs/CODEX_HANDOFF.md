@@ -1,3 +1,33 @@
+2026-09-14 JST 最新継続状態。開始HEAD78b61f1、当初clean。前goalターンは調和変位API/CLIの実装/検証/commitでprogress。
+本段階はN04残件4の曲線法則Studyを実装・検証したprogress。全計画未完、goal ACTIVE。
+[CURVED_HARMONIC_STUDY.md](CURVED_HARMONIC_STUDY.md)が入力/数学/操作/受入/残件の最新仕様。
+Study版3はcurved_harmonic_sweep専用。parameter_unit=m/1、geometry_coefficients、rf_coordinates=fixed/axis_fraction、minimum_corner_angle_degを必須にする。
+既存曲線の連続な数値葉だけを多項式で同時指定する。パスは/curves/index/...、枝/種類/個数/タグ/予算/物理・求解設定への法則を拒否。
+新curved_harmonic_studyが有限係数/Horner/入力を検査し、各点を既存deform_curved_projectで元から独立作成。旧Study版1/アフィン版2は保持。
+通常Studyはcomparisons空/UNVERIFIED/独立スペクトル。全指定点の品質/幾何/予算を出力作成前に検査する。
+新study_shape_trackingで、版3はpiecewise_remesh controlsから実比較点の元メッシュ/全固定履歴を導出。手動comparison_meshes混在は拒否。
+旧版1/2のcontrolsは旧affine helperへ同じ引数で渡す。逐次/適応では検査・求解済みProjectを比較にも使用し、二分点へ元終点メッシュを流用しない。
+保存要求は導出メッシュなし、実比較/履歴には両メッシュを保持。元法則/条件/Project・native場・祖先出所で完全replayする。
+GUIは曲線の数値法則/単位/RF/品質と定数項ひな形を追加。文字列のJSONをstrict readerへ渡し重複パスを拒否。
+定義保存/読込、全点検査、非同期変更拒否、完了追跡と逐次/適応要求準備へ接続。単独Project変形のGUIプレビュー/適用/Undoはまだ残る。
+初回独立幾何/実比較点2件は新版/API不在red。幾何2件15.646秒、新7unit239.756秒、追加二次法則/m換算/Green1件6.998秒PASS。最終新8件は7+1で確認。
+既存14モジュール65unit278.056秒PASS。全一覧/コマンドはselected-regressions.json。旧Study/アフィン/調和変形/履歴/元メッシュ/追跡・逐次/適応のJob・GUIを含む。
+専用validate_curved_harmonic_study.pyは111.592秒PASS。無次元/m/2倍尺度の各2条件、6新FEM。独立Green面積比1.125/体積比1.125²、RF/f差最大2.221e-14、元場差2.013e-14。
+同--workers-onlyは223.940秒PASS、3新FEM。実BISECT後PAUSED、JobManager閉鎖/再生成・元二点再利用・0.5追加STOP/UNVERIFIED、完了後も再生成/全保存再検証一致。異常終了復旧試験ではない。
+追加validate_curved_harmonic_study_crossing.pyは53.647秒PASS、2新FEM。円筒R=.1 L=.055→.077mの三Besselモード、最大f相対誤差7.352e-5。
+TM020/TM011の順位交差を曲線法則/調和変位/比較メッシュ経路で追跡し、実IDと解析順序・保存replayが一致。
+実Chrome新14項目/既存アフィン11項目PASS。各2FEMのStudy worker・CLI一致/追跡再生を含む。外部HTTP0、新GUI画像目視済み。
+数値/worker実行中1018ファイル不変。以後は円筒検証器追加と二次法則1テストだけ変更。円筒1019ファイルも実行中不変、以後その1テストのみ。製品315は全browser/最終一致。
+索引out/curved-harmonic-study-20260914/acceptance.json。feature-tests、quadratic-law、selected-regressions、native-validation、workers、crossing、browser/browser-affine-regression。
+GUI PID1189653は完全argv照合後SIGINT、session12696終了0。feature37468/reg1658/native98683/worker23195/browser66115/旧browser93186/crossing43658/追加64963は全て終了0。
+全検証終了、実行中handleなし。新規外部資料/依存/旧資産参照なし。subagent/skillなし。
+Studyと直接消費先へ限定。今回は全件/seed/Hosted CI/新Wine比較/実測を再実行しない。前段全件FAIL+対象補修+別seedを今回単一full PASSとしない。
+親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVEを維持。
+次は単独Projectの非アフィン変形GUI（目標形状の準備/プレビュー/適用/Undo）か、初期メッシュ変更に伴う明示対応へ進む。
+Study曲線法則/区間二分/保存再開は今回接続済み。離散的な曲線種類/個数の変更、TE/反射/半領域の変形契約、自動番号対応と一般物理枝回復は残る。
+N04一般精度/効率、C00.V/G03/V02ほか全計画の未完了も保持。旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。
+gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD49869a6、当初clean。前goalターンは曲線アフィンStudyの実装/検証/commitでprogress。
 本段階はN04残件4の非アフィン形状変更に向けた調和変位API/CLIを実装・検証したprogress。全計画未完、goal ACTIVE。
 [CURVED_HARMONIC_DEFORMATION.md](CURVED_HARMONIC_DEFORMATION.md)が契約/数学/入力/検証/残件の最新仕様。

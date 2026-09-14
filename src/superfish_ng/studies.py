@@ -38,14 +38,17 @@ class Study:
     parameter_unit: str | None = None
     affine_coefficients: dict | None = None
     rf_coordinates: str | None = None
+    geometry_coefficients: dict | None = None
+    minimum_corner_angle_deg: float | None = None
 
     def __post_init__(self):
         affine=self.kind=='curved_affine_sweep'
-        if self.project.mesh_data is not None and self.kind!='fixed_geometry_convergence' and not affine:
+        harmonic=self.kind=='curved_harmonic_sweep'
+        if self.project.mesh_data is not None and self.kind!='fixed_geometry_convergence' and not (affine or harmonic):
             raise ValueError('explicit project meshes require fixed_geometry_convergence; geometry/mesh sweeps need a declared mesh transformation')
-        if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence", "fixed_geometry_convergence", "curved_affine_sweep"):
+        if self.kind not in ("sweep", "mesh_convergence", "geometry_convergence", "fixed_geometry_convergence", "curved_affine_sweep", "curved_harmonic_sweep"):
             raise ValueError(
-                "study kind must be sweep, mesh_convergence, geometry_convergence, fixed_geometry_convergence or curved_affine_sweep"
+                "study kind must be sweep, mesh_convergence, geometry_convergence, fixed_geometry_convergence or curved_affine_sweep or curved_harmonic_sweep"
             )
         try:
             finite_values=(isinstance(self.values,list) and len(self.values)>=2
@@ -56,6 +59,13 @@ class Study:
             raise ValueError("study values must contain at least two finite numbers")
         if not isinstance(self.parameter, str):
             raise ValueError("study parameter must be a string")
+        if not harmonic and any(value is not None for value in (self.geometry_coefficients,self.minimum_corner_angle_deg)):
+            raise ValueError('harmonic Study fields require kind curved_harmonic_sweep')
+        if harmonic:
+            if self.affine_coefficients is not None:raise ValueError('affine_coefficients cannot be mixed with curved_harmonic_sweep')
+            from .curved_harmonic_study import validate_harmonic_study
+            validate_harmonic_study(self)
+            return
         if affine:
             from .curved_affine_study import validate_affine_study
             validate_affine_study(self)
@@ -109,7 +119,7 @@ class Study:
 
     def to_dict(self):
         result = {
-            "study_version": 2 if self.kind=='curved_affine_sweep' else 1,
+            "study_version": 3 if self.kind=='curved_harmonic_sweep' else 2 if self.kind=='curved_affine_sweep' else 1,
             "project": self.project.to_dict(),
             "kind": self.kind,
             "parameter": self.parameter,
@@ -117,6 +127,9 @@ class Study:
         }
         if self.kind=='curved_affine_sweep':
             result.update(parameter_unit=self.parameter_unit,affine_coefficients=deepcopy(self.affine_coefficients),rf_coordinates=self.rf_coordinates)
+        if self.kind=='curved_harmonic_sweep':
+            result.update(parameter_unit=self.parameter_unit,geometry_coefficients=deepcopy(self.geometry_coefficients),
+                          rf_coordinates=self.rf_coordinates,minimum_corner_angle_deg=self.minimum_corner_angle_deg)
         return result
 
     @classmethod
@@ -124,21 +137,25 @@ class Study:
         fields=["study_version", "project", "kind", "parameter", "values"]
         if isinstance(data,dict) and type(data.get('study_version')) is int and data['study_version']==2:
             fields += ['parameter_unit','affine_coefficients','rf_coordinates']
+        if isinstance(data,dict) and type(data.get('study_version')) is int and data['study_version']==3:
+            fields += ['parameter_unit','geometry_coefficients','rf_coordinates','minimum_corner_angle_deg']
         keys(
             data,
             fields,fields,
             "study",
         )
-        if type(data["study_version"]) is not int or data["study_version"] not in (1,2):
-            raise ValueError("study_version must be 1 or 2")
-        if (data['study_version']==2)!=(data['kind']=='curved_affine_sweep'):
-            raise ValueError('study_version 2 requires curved_affine_sweep; all previous kinds require version 1')
+        if type(data["study_version"]) is not int or data["study_version"] not in (1,2,3):
+            raise ValueError("study_version must be 1, 2 or 3")
+        expected=3 if data['kind']=='curved_harmonic_sweep' else 2 if data['kind']=='curved_affine_sweep' else 1
+        if data['study_version']!=expected:
+            raise ValueError('study_version 3 requires curved_harmonic_sweep, version 2 requires curved_affine_sweep; previous kinds require version 1')
         return cls(
             Project.from_dict(data["project"]),
             data["kind"],
             data["parameter"],
             data["values"],
             data.get('parameter_unit'),deepcopy(data.get('affine_coefficients')),data.get('rf_coordinates'),
+            deepcopy(data.get('geometry_coefficients')),data.get('minimum_corner_angle_deg'),
         )
 
     def save(self, path):
@@ -153,6 +170,9 @@ class Study:
             from .curved_affine_study import value_map
             from .curved_project_transform import transform_curved_project
             return [transform_curved_project(self.project,value_map(self,value),rf_coordinates=self.rf_coordinates) for value in self.values]
+        if self.kind=='curved_harmonic_sweep':
+            from .curved_harmonic_study import project_at_value
+            return [project_at_value(self,value) for value in self.values]
         if self.kind=='fixed_geometry_convergence' and self.project.case.geometry_order==1:
             from .project_mesh_operations import _straight_mesh_refinement_projects
             return _straight_mesh_refinement_projects(self.project,self.values)
@@ -416,7 +436,7 @@ def execute_study(study, directory, prepared=False):
             )
             if 'geometry_approximation' in result:
                 points[-1]['geometry_approximation'] = result['geometry_approximation']
-            if i and study.kind not in ("sweep","curved_affine_sweep"):
+            if i and study.kind not in ("sweep","curved_affine_sweep","curved_harmonic_sweep"):
                 comparisons.append(
                     compare_refinement(
                         directory / points[-2]["directory"] / "solution",
@@ -455,6 +475,8 @@ def execute_study(study, directory, prepared=False):
                 report['geometry_refinement'] = 'same verified source mesh and initial quadratic maps; uniform restrictions without curve reprojection'
         if study.kind=='curved_affine_sweep':
             report['geometry_refinement']='declared affine transformations of the original numbered mesh and quadratic restrictions; independent spectra, not a fixed-domain convergence estimate'
+        if study.kind=='curved_harmonic_sweep':
+            report['geometry_refinement']='declared curve-parameter correspondence and harmonic displacement of the original numbered mesh with preserved quadratic restrictions; independent spectra, not a fixed-domain convergence estimate'
         if implementation != _implementation_hashes():
             raise RuntimeError(
                 "implementation changed during study; retry with stable source"

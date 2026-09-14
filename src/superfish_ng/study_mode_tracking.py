@@ -11,7 +11,7 @@ from .completion import digest
 from .saved import read_solution
 from .saved_mode_tracking import build_saved_mode_tracking,_canonical,validate_tracking_controls
 from .mode_tracking_history import start_mode_history,extend_mode_history
-from .curved_affine_study import pair_controls
+from .study_shape_tracking import pair_controls
 
 
 def _study_inputs(directory):

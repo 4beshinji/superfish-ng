@@ -1298,10 +1298,14 @@ async function updateStudyParameters(preferred) {
   };
   const kind = $("study-kind").value;
   $("study-affine").hidden=kind!=="curved_affine_sweep";
-  $("study-parameter-label").hidden=kind==="curved_affine_sweep";
+  $("study-harmonic").hidden=kind!=="curved_harmonic_sweep";
+  $("study-parameter-label").hidden=["curved_affine_sweep","curved_harmonic_sweep"].includes(kind);
   if (kind === "curved_affine_sweep") {
     add("affine_parameter","宣言変換の変数");
     $("study-hint").textContent="TMの二次曲線Projectで使用します。元メッシュと参照細分の親子関係を保ち、各点で形状・品質・予算を再検査します。独立スペクトルの掃引であり、固定形状の収束判定ではありません。追跡時は各区間のaffine_remesh閾値を使用し、写像は宣言から導出します。";
+  } else if (kind === "curved_harmonic_sweep") {
+    add("harmonic_parameter","曲線寸法の変数");
+    $("study-hint").textContent="閉PEC・軸のTM二次曲線で、元メッシュと固定分割を保つ形状掃引を作ります。全指定点の幾何と品質を事前検査します。独立スペクトルであり、固定領域の収束比較ではありません。追跡には各実比較点から構成した曲線比較メッシュを使います。";
   } else if (kind === "mesh_convergence") {
     add("mesh_scale", "基準メッシュに対する細分倍率");
     $("study-hint").textContent =
@@ -1357,14 +1361,17 @@ async function updateStudyParameters(preferred) {
 function curvedStudySignature() {
   return JSON.stringify({project:collect(),kind:$("study-kind").value,values:$("study-values").value,
     name:$("study-affine-parameter").value,unit:$("study-affine-unit").value,
-    coefficients:$("study-affine-coefficients").value,rf:$("study-affine-rf").value});
+    coefficients:$("study-affine-coefficients").value,rf:$("study-affine-rf").value,
+    harmonicName:$("study-harmonic-parameter").value,harmonicUnit:$("study-harmonic-unit").value,
+    harmonicRf:$("study-harmonic-rf").value,harmonicAngle:$("study-harmonic-angle").value,
+    harmonicCoefficients:$("study-harmonic-coefficients").value});
 }
 async function studyDefinition() {
-  const kind=$("study-kind").value, affine=kind==="curved_affine_sweep";
-  const signature=affine ? curvedStudySignature() : null;
+  const kind=$("study-kind").value, affine=kind==="curved_affine_sweep", harmonic=kind==="curved_harmonic_sweep";
+  const signature=affine || harmonic ? curvedStudySignature() : null;
   const selected = $("study-parameter").value;
   const project = await updateStudyParameters(selected);
-  if(kind!==$("study-kind").value || (affine && signature!==curvedStudySignature()))throw Error("Studyの確認中に入力が変わりました。現在の入力でやり直してください。");
+  if(kind!==$("study-kind").value || ((affine || harmonic) && signature!==curvedStudySignature()))throw Error("Studyの確認中に入力が変わりました。現在の入力でやり直してください。");
   if (!$("study-parameter").value)
     throw Error("変更する項目を選択してください");
   const values = $("study-values")
@@ -1380,6 +1387,17 @@ async function studyDefinition() {
     if(signature!==curvedStudySignature())throw Error("Studyの確認中に入力が変わりました。現在の入力でやり直してください。");
     return result;
   }
+  if(harmonic) {
+    const base={study_version:3,project,kind,parameter:$("study-harmonic-parameter").value,
+      parameter_unit:$("study-harmonic-unit").value,values,rf_coordinates:$("study-harmonic-rf").value,
+      minimum_corner_angle_deg:number("study-harmonic-angle")};
+    // Preserve the entered object text so the strict server reader can reject
+    // duplicate law paths instead of silently losing them in JSON.parse.
+    const document=JSON.stringify(base).slice(0,-1)+',"geometry_coefficients":'+$("study-harmonic-coefficients").value+'}';
+    const result=await api('normalize-study',{document});
+    if(signature!==curvedStudySignature())throw Error("Studyの確認中に入力が変わりました。現在の入力でやり直してください。");
+    return result;
+  }
   const parameter = $("study-parameter").value;
   return {
     study_version: 1,
@@ -1389,10 +1407,23 @@ async function studyDefinition() {
     values: values.map((v) => v * studyParameterUnits.get(parameter)),
   };
 }
+bind("study-harmonic-template",async()=>{
+  const signature=curvedStudySignature(),project=await preview();
+  if(signature!==curvedStudySignature())throw Error("Studyの確認中に入力が変わりました。現在の入力でやり直してください。");
+  if(!project.case.geometry.curves)throw Error("native曲線のProjectを先に開いてください。");
+  const laws={},arrays=["start_zr_m","end_zr_m","center_zr_m","semiaxes_m"],scalars=["rotation_rad","start_rad","sweep_rad","start_parameter","end_parameter"];
+  project.case.geometry.curves.forEach((curve,i)=>{
+    for(const key of arrays)if(Array.isArray(curve[key]))curve[key].forEach((value,j)=>laws[`/curves/${i}/${key}/${j}`]=[value]);
+    for(const key of scalars)if(typeof curve[key]==="number")laws[`/curves/${i}/${key}`]=[curve[key]];
+  });
+  $("study-harmonic-coefficients").value=JSON.stringify(laws,null,2);
+});
 bind("study-parameters", () => updateStudyParameters());
 $("study-kind").onchange = () => {
   if ($("study-kind").value === "curved_affine_sweep")
     $("study-values").value = "1, 1.1, 1.2";
+  else if ($("study-kind").value === "curved_harmonic_sweep")
+    $("study-values").value = "0, 0.5, 1";
   else if ($("study-kind").value === "mesh_convergence")
     $("study-values").value = "1, 2, 4";
   else if ($("study-kind").value === "fixed_geometry_convergence")
@@ -1420,9 +1451,14 @@ $("open-study").onchange = async (event) => {
       $("study-affine-parameter").value=data.parameter;$("study-affine-unit").value=data.parameter_unit;
       $("study-affine-rf").value=data.rf_coordinates;$("study-affine-coefficients").value=JSON.stringify(data.affine_coefficients,null,2);
     }
+    if(data.kind==='curved_harmonic_sweep') {
+      $("study-harmonic-parameter").value=data.parameter;$("study-harmonic-unit").value=data.parameter_unit;
+      $("study-harmonic-rf").value=data.rf_coordinates;$("study-harmonic-angle").value=data.minimum_corner_angle_deg;
+      $("study-harmonic-coefficients").value=JSON.stringify(data.geometry_coefficients,null,2);
+    }
     await updateStudyParameters(data.parameter);
     $("study-values").value = data.values
-      .map((v) => data.kind==='curved_affine_sweep' ? v : v / studyParameterUnits.get(data.parameter))
+      .map((v) => ['curved_affine_sweep','curved_harmonic_sweep'].includes(data.kind) ? v : v / studyParameterUnits.get(data.parameter))
       .join(", ");
   } catch (e) {
     failure(e);
@@ -1439,7 +1475,7 @@ async function openStudy(id) {
   $("study-report").replaceChildren();
   const title = document.createElement("p");
   title.textContent = `計算完了 / 数値判定: ${report.numerical_status}（最後の細分段階）。一般のモード追跡は未実施。`;
-  if (["sweep","curved_affine_sweep"].includes(report.study.kind))
+  if (["sweep","curved_affine_sweep","curved_harmonic_sweep"].includes(report.study.kind))
     title.textContent =
       "掃引の計算完了。独立したスペクトルを表示します。収束判定・モード追跡は未実施。";
   const reflectedTE = report.physics === "axisymmetric_m0_te" && report.study.project.reflect_full;
@@ -1980,11 +2016,11 @@ function trackingButtons() {
   $("tracking-link-label").hidden = !$("tracking-retain").checked;
   surfaceButtons();
 }
-function trackingControls(derivedAffine=false) {
-  const controls = {mapping: derivedAffine ? "affine_remesh" : $("tracking-mapping").value, sample_order: number("tracking-order"),
+function trackingControls(derivedAffine=false,derivedCurved=false) {
+  const controls = {mapping: derivedCurved ? "piecewise_remesh" : derivedAffine ? "affine_remesh" : $("tracking-mapping").value, sample_order: number("tracking-order"),
     minimum_overlap: number("tracking-overlap"), minimum_assignment_margin: number("tracking-margin"),
     relative_cluster_gap: number("tracking-gap"), minimum_relative_singular_value: number("tracking-rank")};
-  if (controls.mapping === "piecewise_remesh") controls.comparison_meshes = JSON.parse($("tracking-comparison-json").value);
+  if (controls.mapping === "piecewise_remesh" && !derivedCurved) controls.comparison_meshes = JSON.parse($("tracking-comparison-json").value);
   if (controls.mapping === "affine_remesh" && !derivedAffine) controls.affine_map = {radial_scale: number("tracking-affine-radial"), axial_scale: number("tracking-affine-axial"), axial_shear: number("tracking-affine-shear")};
   if (controls.mapping === "paired_mesh") controls.vertex_pairs = JSON.parse($("tracking-pairs").value);
   if ($("tracking-retain").checked) Object.assign(controls, {cluster_transition_policy: $("tracking-policy").value, minimum_cluster_link: number("tracking-link")});
@@ -2089,7 +2125,7 @@ bind("tracking-study-run", async () => {
   else {
     const report=await api('study-result',{id:data.study_id});
     if(data.study_id!==$("tracking-study").value)throw Error("追跡するStudyが変わりました。選び直してください。");
-    data.controls = trackingControls(report.study.kind==='curved_affine_sweep');
+    data.controls = trackingControls(report.study.kind==='curved_affine_sweep',report.study.kind==='curved_harmonic_sweep');
   }
   await runTracking("track-study-modes", data);
 });
@@ -2147,7 +2183,7 @@ async function openTrackedExecution(id,adaptive=false) {
 bind("tracked-execution-prepare", async () => {
   const study=await studyDefinition(), explicit=$("tracking-study-controls").value.trim();
   const request={schema_version:1,study,initial_ids:JSON.parse($("tracking-study-ids").value),
-    step_controls:explicit ? JSON.parse(explicit) : study.values.slice(1).map(()=>trackingControls(study.kind==='curved_affine_sweep'))};
+    step_controls:explicit ? JSON.parse(explicit) : study.values.slice(1).map(()=>trackingControls(study.kind==='curved_affine_sweep',study.kind==='curved_harmonic_sweep'))};
   if ($("tracked-execution-adaptive").checked) request.adaptive={max_depth:Number($("tracked-adaptive-depth").value),max_attempts:Number($("tracked-adaptive-attempts-limit").value),minimum_parameter_step:Number($("tracked-adaptive-step").value)};
   $("tracked-execution-request").value=JSON.stringify(request,null,2);
 });

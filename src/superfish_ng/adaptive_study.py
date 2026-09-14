@@ -12,7 +12,7 @@ from .jobs import execute_project,_implementation_hashes
 from .tracked_study import _request as validate_tracking_request,_point_sources
 from .saved_mode_tracking import build_saved_mode_tracking,_canonical
 from .mode_tracking_history import start_mode_history,extend_mode_history
-from .curved_affine_study import pair_controls
+from .study_shape_tracking import pair_controls
 
 
 def _request(request):
@@ -20,8 +20,8 @@ def _request(request):
     keys(request,fields,fields,'adaptive tracked Study request')
     base={key:request[key] for key in fields if key!='adaptive'}
     study,_=validate_tracking_request(base)
-    if study.kind!='curved_affine_sweep' and (study.kind!='sweep' or not study.parameter.startswith('/case/geometry/')):
-        raise ValueError('adaptive tracking requires a continuous numeric /case/geometry/ sweep or declared curved_affine_sweep')
+    if study.kind not in ('curved_affine_sweep','curved_harmonic_sweep') and (study.kind!='sweep' or not study.parameter.startswith('/case/geometry/')):
+        raise ValueError('adaptive tracking requires a continuous numeric /case/geometry/ sweep or declared curved_affine_sweep/curved_harmonic_sweep')
     values=study.values
     if not (all(b>a for a,b in zip(values,values[1:])) or all(b<a for a,b in zip(values,values[1:]))):
         raise ValueError('adaptive Study values must be strictly monotone')
@@ -45,7 +45,7 @@ def _project(study,value):
 
 def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_checkpoint=None):
     study,limits=_request(request)
-    points=[];attempts=[];accepted=[];history=None;reached=[0];stop=None
+    points=[];point_projects=[];attempts=[];accepted=[];history=None;reached=[0];stop=None
     def point(value):
         for i,record in enumerate(points):
             if record['value']==value:return i
@@ -53,7 +53,7 @@ def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_ch
         if type(run) is not str or not Path(run).is_absolute():raise ValueError('adaptive point run must be absolute')
         if any(record['run']==run for record in points):raise ValueError('adaptive points require distinct native run directories')
         sources=_point_sources(Path(run),project)
-        points.append(dict(value=value,run=run,sources_sha256=sources))
+        points.append(dict(value=value,run=run,sources_sha256=sources));point_projects.append(project)
         return len(points)-1
     accepted.append(point(study.values[0]))
     pending=[dict(value=study.values[i],target_index=i,depth=0) for i in reversed(range(1,len(study.values)))]
@@ -74,7 +74,7 @@ def _run(request,obtain_point,*,schema_version=1,pause_after_attempts=None,on_ch
         if len(attempts)>=limits['max_attempts']:
             stop='maximum_attempts';break
         target=pending.pop();previous=accepted[-1];current=point(target['value'])
-        controls=pair_controls(study,request['step_controls'][target['target_index']-1],points[previous]['value'],points[current]['value'])
+        controls=pair_controls(study,request['step_controls'][target['target_index']-1],points[previous]['value'],points[current]['value'],projects=[point_projects[previous],point_projects[current]])
         if history is None:
             pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=str(Path(points[previous]['run'])/'solution'),
                 current_run=str(Path(points[current]['run'])/'solution'),previous_ids=request['initial_ids'],controls=controls))
