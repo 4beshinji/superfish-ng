@@ -1,3 +1,16 @@
+<!-- reference-partition-current-begin -->
+2026-09-15 JST：D01の[異なる初期接続の共通参照分割](REFERENCE_PARTITION.md)を計算基盤として追加。
+全親面積の厳密被覆・独立二次積分・境界分割変更・二つの親内座標・番号/方向・不正入力/予算を新5件で検査。
+既存交差分割4件と合わせ9件0.200秒PASS。曲線P2写像/実FEM/保存/GUIへの接続は未実装、親33=9/17/6/1を維持する。
+開始HEAD95da156。元D01の一般写像を縮小せず、異なる初期比較接続と境界分割変更を継続する。
+reference_partition.pyは明示した参照三角形をFractionで交差分割。正面積自己重複拒否、旧新各親の全面積を厳密に照合。
+結果は正規化した共通三角形と旧新それぞれの親番号/重心座標。物理境界の対応・写像連続性はまだこの基盤では検証しない。
+次：曲線比較入力に各初期頂点の参照座標宣言を接続し、二つの実P2写像と履歴を評価する。境界順/タグ・被覆/正Jacobianを検査。
+その後、独立Green/体積重み・実FEM・次数/尺度則・保存CLI/GUIを検証する。既存版2〜4を保持し、新版を明示する。
+証拠out/reference-partition-20260915、baselineのAPI不在red/geometry4件/最終selected9件を保存。新FEM0、live handleなし。
+以下はtune回復までの完了記録。
+<!-- reference-partition-current-end -->
+
 <!-- tuning-identity-recovery-current-begin -->
 2026-09-15 JST最終検証：[tune個別ID回復](TUNING_IDENTITY_RECOVERY.md)の曲線保存再生20解/10条件がPASS（追加FEM0）。
 全339モジュール1742件の実行は1858.249秒で移行テスト3subtest ERROR、3skipを記録して終了1。
