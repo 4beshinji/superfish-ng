@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "rows": [
+    {
+      "workflow": "sequential",
+      "status": "COMPLETE",
+      "native_half_domain_fem": 2,
+      "preserved_files": 26,
+      "scale_errors": {
+        "frequency": 1.1102230246251565e-15,
+        "coefficients": 3.254495304269029e-15,
+        "stored_energy_j": 2.220446049250313e-16,
+        "geometry_factor_ohm": 0.0,
+        "q0": 6.661338147750939e-16,
+        "wall_loss_w": 1.5543122344752192e-15
+      },
+      "replay": true
+    },
+    {
+      "workflow": "adaptive",
+      "status": "COMPLETE",
+      "native_half_domain_fem": 3,
+      "preserved_files": 39,
+      "scale_errors": {
+        "frequency": 1.1102230246251565e-15,
+        "coefficients": 3.254495304269029e-15,
+        "stored_energy_j": 2.220446049250313e-16,
+        "geometry_factor_ohm": 0.0,
+        "q0": 6.661338147750939e-16,
+        "wall_loss_w": 1.5543122344752192e-15
+      },
+      "replay": true
+    }
+  ],
+  "diagnostic_adaptive_fem": 2,
+  "diagnostic": "Two-point adaptive run already completed after one accepted attempt; three-point request used to exercise restart",
+  "scope": "TE symmetry curved affine tune and Study API/native plus independent Study GUI; tune/Study CLI and tuning/sequence/adaptive GUI dedicated acceptance pending",
+  "unit_evidence": {
+    "new_tests": 4,
+    "split": true,
+    "unchanged_study_and_shear_tests": "passed within first 3-test run; tuning expectation failed",
+    "tuning_gate_tests": 2,
+    "tuning_gate_seconds": 688.332,
+    "related_tests": 20,
+    "related_seconds": 232.009,
+    "nonaffine_tests": 2,
+    "nonaffine_seconds": 55.707
+  },
+  "gui": {
+    "passed": true,
+    "arrays_equal": 16,
+    "pairs": 2,
+    "all_rf_equal": true,
+    "preserved_files": 57,
+    "native_half_domain_fem": 2,
+    "gui_checks": {
+      "browser-ready": 12,
+      "browser-layout": 3,
+      "browser-old-layout": 3
+    },
+    "source_counts": {
+      "browser-ready": 336,
+      "browser-layout": 336,
+      "browser-old-layout": 336
+    },
+    "sector": {
+      "source_end_conditions": {
+        "z_min": "pec",
+        "z_max": "magnetic_symmetry"
+      },
+      "reflected": true,
+      "mode_indices": "source symmetry-sector frequency order; not full-spectrum ranks"
+    }
+  }
+}

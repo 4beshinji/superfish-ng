@@ -1475,7 +1475,7 @@ async function updateStudyParameters(preferred) {
   $("study-parameter-label").hidden=["curved_affine_sweep","curved_harmonic_sweep","curved_remesh_sweep"].includes(kind);
   if (kind === "curved_affine_sweep") {
     add("affine_parameter","宣言変換の変数");
-    $("study-hint").textContent="二次曲線Projectで使用します。TEは閉PECの直接形状と固定RFメタデータに対応します。元メッシュと参照細分の親子関係を保ち、各点で形状・品質・予算を再検査します。独立スペクトルの掃引であり、固定形状の収束判定ではありません。追跡時は各区間のaffine_remesh閾値を使用し、写像は宣言から導出します。";
+    $("study-hint").textContent="二次曲線Projectで使用します。TEは固定RFメタデータで、閉PECの直接形状と、一対称面の半領域・鏡映結果に対応します。対称面がある場合はせん断の全係数をゼロにしてください。元メッシュと参照細分の親子関係を保ち、各点で形状・品質・予算を再検査します。独立スペクトルの掃引であり、固定形状の収束判定ではありません。追跡時は各区間のaffine_remesh閾値を使用し、写像は宣言から導出します。";
   } else if (isCurvedShapeStudy(kind)) {
     add("harmonic_parameter","曲線寸法の変数");
     $("study-hint").textContent="閉PEC・軸のTM二次曲線で、元メッシュと固定分割を保つ形状掃引を作ります。全指定点の幾何と品質を事前検査します。独立スペクトルであり、固定領域の収束比較ではありません。追跡には各実比較点から構成した曲線比較メッシュを使います。";

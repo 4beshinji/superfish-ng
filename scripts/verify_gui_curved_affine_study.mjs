@@ -193,7 +193,9 @@ try {
   const loadFile=async(selector,path)=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(path)]},sessionId);};
   const select=async(id,value)=>ev(`(()=>{const e=$(${JSON.stringify(id)});e.value=${JSON.stringify(value)};e.dispatchEvent(new Event('change',{bubbles:true}))})()`);
   await loadFile('#open',out+'/source-project.json');
-  await wait('curvedHistoryRows().filter(r=>r._splitPattern).length===2');
+  const expectedHistory=expected.project.case.mesh.curved_refinement_steps || [];
+  const splitCount=expectedHistory.filter(s=>s.split_pattern).length;
+  await wait(`curvedHistoryRows().filter(r=>r._splitPattern).length===${splitCount} && (collect().case.model?.polarization ?? "tm")===${JSON.stringify(expected.project.case.model.polarization)}`);
   await select('study-kind','curved_affine_sweep');await wait('!$("study-affine").hidden && $("study-parameter").options.length===1');
   await fill('#study-affine-parameter',expected.parameter);await select('study-affine-unit',expected.parameter_unit);
   await select('study-affine-rf',expected.rf_coordinates);await fill('#study-affine-coefficients',JSON.stringify(expected.affine_coefficients));
@@ -204,7 +206,7 @@ try {
   report.checks.push({operation:'GUI creates the exact native affine Study, frozen mesh and ordered history',passed:true});
   await fill('#study-affine-parameter','changed');await fill('#study-values','7, 8');await select('study-affine-unit','m');
   await loadFile('#open-study',out+'/downloads/study.json');
-  await wait('$("study-affine-parameter").value==="shape_scale" && $("study-values").value==="1, 2" && $("study-affine-unit").value==="1"');
+  await wait(`$("study-affine-parameter").value===${JSON.stringify(expected.parameter)} && $("study-values").value==="1, 2" && $("study-affine-unit").value==="1"`);
   if(!isDeepStrictEqual(await ev('studyDefinition()'),expected))throw Error('Reload lost affine settings or frozen history');
   report.checks.push({operation:'definition reload restores laws, units, RF coordinates and all frozen choices',passed:true});
   if(!args['--layout-only']) {
@@ -248,8 +250,8 @@ try {
   await wait('!$("error").hidden && $("error").textContent.includes("入力が変わりました")');
   report.checks.push({operation:'in-flight validation refuses a stale shape Study definition',passed:true});
   await ev('api=__baseApi');await fill('#study-values','1, 2');
-  await select('study-kind','fixed_geometry_convergence');await wait('$("study-parameter").value==="additional_uniform_refinements"');
-  await check('switching to existing fixed-domain Study omits affine-only fields','(async()=>{const r=await studyDefinition();return r.study_version===1 && r.kind==="fixed_geometry_convergence" && !Object.hasOwn(r,"affine_coefficients") && r.project.case.mesh.curved_refinement_steps.length===3})()');
+  await select('study-kind','fixed_geometry_convergence');await wait(`$("study-parameter").value===${JSON.stringify(expectedHistory.length ? 'additional_uniform_refinements' : '/case/mesh/curved_refinement_levels')}`);
+  await check('switching to existing fixed-domain Study omits affine-only fields',`(async()=>{const r=await studyDefinition();return r.study_version===1 && r.kind==="fixed_geometry_convergence" && !Object.hasOwn(r,"affine_coefficients") && (r.project.case.mesh.curved_refinement_steps || []).length===${expectedHistory.length}})()`);
   }
   await loadFile('#open-study',out+'/downloads/study.json');await wait('!$("study-affine").hidden && $("study-values").value==="1, 2"');
   await check('multiline affine laws occupy the available form width','$("study-affine-coefficients").getBoundingClientRect().width > .9*$("study-affine").getBoundingClientRect().width');

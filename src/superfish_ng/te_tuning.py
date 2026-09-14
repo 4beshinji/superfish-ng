@@ -4,14 +4,37 @@ from pathlib import Path
 from .te import is_te
 
 
+
+def validate_te_affine_sector(project,laws):
+    """Require a single source sector and a plane-preserving polynomial law."""
+    from .te import validate_te_case
+    case=project.case
+    validate_te_case(case)
+    ends=(case.z_min,case.z_max)
+    if (sum(t!='pec' for t in ends)>1 or
+            any(t not in ('axis','pec','electric_symmetry','magnetic_symmetry') for t in case.curved_contour.edge_tags)):
+        raise ValueError('TE affine geometry requires PEC/axis and at most one symmetry end')
+    if project.reflect_full and ends==('pec','pec'):
+        raise ValueError('TE reflected affine geometry requires one source symmetry plane')
+    if ends!=('pec','pec'):
+        shear=laws.get('axial_shear') if isinstance(laws,dict) else None
+        if type(shear) is not list or not shear or any(c!=0 for c in shear):
+            raise ValueError('TE symmetry affine law requires identically zero axial shear to preserve the symmetry plane')
+
+
 def validate_te_request(request,project):
     case=project.case
     mapping=request['controls'].get('mapping') if isinstance(request['controls'],dict) else None
     curved=request['schema_version'] in (4,5,8) or (request['schema_version']==7 and request.get('geometry_kind')=='curved_harmonic')
     if curved:
-        if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None or project.reflect_full
-                or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags) or mapping!=('affine_remesh' if request['schema_version']==4 else 'piecewise_remesh')):
-            raise ValueError('TE curved tuning requires direct native P2 closed PEC/axis geometry and piecewise_remesh')
+        affine=request['schema_version']==4
+        if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None
+                or mapping!=('affine_remesh' if affine else 'piecewise_remesh')):
+            raise ValueError('TE curved tuning requires native P2 geometry and the matching affine_remesh or piecewise_remesh mapping')
+        if affine:
+            validate_te_affine_sector(project,request['affine_coefficients'])
+        elif project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags):
+            raise ValueError('TE non-affine curved tuning requires direct native P2 closed PEC/axis geometry and piecewise_remesh')
         if request['rf_coordinates']!='fixed':
             raise ValueError('TE curved tuning requires fixed RF metadata; accelerating coordinates are not applicable')
         return

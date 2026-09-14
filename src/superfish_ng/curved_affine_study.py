@@ -19,8 +19,8 @@ def validate_affine_study(study):
     if is_te(case):
         validate_te_case(case)
         if study.rf_coordinates!='fixed':raise ValueError('TE affine Study requires fixed RF metadata')
-        if study.project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags):
-            raise ValueError('TE affine Study requires direct closed PEC/axis geometry')
+        from .te_tuning import validate_te_affine_sector
+        validate_te_affine_sector(study.project,study.affine_coefficients)
     if not study.parameter.strip() or study.parameter_unit not in ('m','1'):
         raise ValueError('curved affine Study requires a nonempty parameter name and parameter_unit m or 1')
     if study.rf_coordinates not in ('fixed','axial'):
