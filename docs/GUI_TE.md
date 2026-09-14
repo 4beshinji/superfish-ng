@@ -1,5 +1,11 @@
 # TE GUIの接続と受入
 
+2026-09-15 JST：[曲線TE調整版5/7](TE_CURVED_TUNING.md)の実GUI・場/RF追加検証がPASS。
+直接閉PEC・固定RFメタデータ・凍結履歴の範囲を限定受入。Chrome多項式14/exp式11項目、専用21実FEM。
+原寸/倍寸/4倍エネルギー、全係数・全要素の場・RF/PEC積分尺度を分離検査。8組native全配列/RF一致、元108ファイル保持。
+版4/8・曲線対称/鏡映・実ID回復例・他物理/D03は残る。親33=10/16/6/1、全goal ACTIVE。
+
+
 2026-09-15 JST：[TE一般profile調整](TE_PROFILE_TUNING.md)をnormalized_profileへ接続。
 非円筒の連動寸法・局所半径式、閉PEC/半領域/鏡映、保存再開と最終粗細判定を検証。
 新2件51.729秒＋関連48件94.247秒PASS。専用尺度8FEM、Chrome11項目/4FEMがPASS。

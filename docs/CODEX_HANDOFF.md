@@ -1,3 +1,21 @@
+2026-09-15 JST：[曲線TE調整版5/7](TE_CURVED_TUNING.md)の実GUI・場/RF追加検証がPASS。
+直接閉PEC・固定RFメタデータ・凍結履歴の範囲を限定受入。Chrome多項式14/exp式11項目、専用21実FEM。
+原寸/倍寸/4倍エネルギー、全係数・全要素の場・RF/PEC積分尺度を分離検査。8組native全配列/RF一致、元108ファイル保持。
+版4/8・曲線対称/鏡映・実ID回復例・他物理/D03は残る。親33=10/16/6/1、全goal ACTIVE。
+
+開始HEAD1f37be1。製品変更はweb/index.htmlのTE対応範囲説明のみ。前回API実装と関連34件を再実行していない。
+多項式要求はout/te-curved-tuning-20260915/gui-request.json、目標は同形状の保存Study周波数。
+新exp要求は0.5+exp(x)-1の実曲線寸法、bounds[-.1,.1]でx=0が同じ目標形状。多項式への近似ではない。
+原寸/倍寸/4倍エネルギー各4trial=12実FEM、全てpause2/restart/TUNED。CLI再開1FEM、GUI各4FEM、計21。
+verify-physical.pyは保存12解を再読し、全係数・全セル重心Ephi/Hr/Hz・全RF量・PEC接線H二乗積分の尺度を分離。
+最大RF尺度差3.109e-15、全セル場5.643e-14、係数4.323e-14、電磁エネルギー等分1.777e-15。
+Chrome14/11項目PASS、製品336SHA固定、外部通信0。両result.png目視済み、最終粗細419679.131Hz/許容1e6Hz。
+8組native全配列/RF完全一致、元108ファイル保持。両ブラウザー終了0、CLI/native/physical/fidelity終了0。
+全6GUI Job complete、PID2308114 SIGINT/session86729終了0。全handle終端、live serverなし。
+正本TE_CURVED_TUNING.md、out/te-curved-tuning-acceptance-20260915/acceptance.json、共有benchmark同名。
+次：曲線TEの版4 affine追跡/変形のRF契約、版8分割、対称曲線/鏡映、実個別ID回復を順次接続する。
+一般他物理/D03と全33親を保持。full suite/seed/hosted CIの新規実行なし。Wine拒否は別残件、回避しない。
+
 2026-09-15 JST：[曲線TE調整の固定RF契約](TE_CURVED_TUNING.md)を多項式版5・式版7へ接続。
 TEでは加速区間を追加せず、形状変形・凍結履歴・Eφ比較・最終細分・保存再開を保持。
 新3件の分割検証と関連34件482.550秒がPASS。独立Green積分、専用TE Study2実FEMも確認。

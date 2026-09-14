@@ -1,0 +1,28 @@
+{
+  "status": "PASS_SUPPORTED_CURVED_TE_TUNING_5_7",
+  "starting_head": "1f37be1",
+  "dedicated_new_fem": 21,
+  "native_fem": 12,
+  "cli_fem": 1,
+  "browser_checks": {
+    "browser": 14,
+    "browser-expression": 11
+  },
+  "browser_fem": 8,
+  "native_equal_pairs": 8,
+  "preserved_files": 108,
+  "product_files": 336,
+  "rf_max_relative_scale_error": 3.1086244689504383e-15,
+  "field_max_relative_scale_error": 5.642185892171314e-14,
+  "coefficient_max_relative_scale_error": 4.322599056074748e-14,
+  "all_handles_terminal": true,
+  "goal_status": "active",
+  "remaining": [
+    "TE affine tuning version 4",
+    "TE partition tuning version 8",
+    "curved TE symmetry and reflection",
+    "dedicated noncylindrical identity recovery",
+    "other physics tuning and D03"
+  ],
+  "evidence_root": "out/te-curved-tuning-acceptance-20260915"
+}
