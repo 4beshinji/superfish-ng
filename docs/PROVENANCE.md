@@ -1,5 +1,11 @@
 # 独立実装・情報来歴
 
+2026-09-15 JST：[曲線境界の座標別丸め余裕](CURVE_COORDINATE_BOUNDS.md)を修正・限定受入。
+新3unit、独立Decimal390座標、実曲線の体積増分・Study/調整/保存再生を確認。専用12半領域FEM、GUI/API24配列・全RF一致。
+full validatorは361モジュール1826件PASS（3 skip）、HTTPの1件を別実行で補完。残る2 skipは任意NGSolve。
+9モード207量の比較で周波数差0、RF相対差最大8.88179e-16。full後の変更はUI説明2か所のみで、表示4項目と実画像を確認。
+全handle終端。実曲線の調整/逐次/適応の専用GUI・CLI、分割切替対称条件・他物理/D03等は残る。親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[TE対称形状の非アフィンStudy・調整](TE_SYMMETRY_HARMONIC_WORKFLOWS.md)をStudy版3・調整版5/7へ接続。
 新3unit 125.895秒と拒否1件0.366秒、関連14件914.249秒PASS。独立円錐台体積、多項式/指数式の実調整・細分・保存再開を検査。
 専用折線壁9半領域FEMで独立/逐次/適応Studyを確認し、6組48配列と全RF一致、117ファイル保持。CLI履歴再生PASS。

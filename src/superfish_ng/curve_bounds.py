@@ -35,9 +35,23 @@ def curve_bounds(curve,first=0.,last=1.):
                 candidates = [math.atanh(-B/A)] if A!=0 and abs(B/A)<1 else []
             fractions.extend((x-start)/span for x in candidates if low<=x<=high)
     p = curve.evaluate(np.clip(fractions,first,last))['points_zr_m']
-    scale = float(np.max(np.abs(p)))
-    if not isinstance(curve,LineSegment):
-        scale = max(scale,max(curve.semiaxes_m),max(map(abs,curve.center_zr_m)))
+    # Coordinates are evaluated independently: translating z must not enlarge
+    # the uncertainty in r. Bound operands as well as results so cancellation
+    # in rotated conics or a narrow line interval does not erase the scale.
+    if isinstance(curve,LineSegment):
+        scale = np.max(np.abs([curve.start_zr_m,curve.end_zr_m]),axis=0)
+    else:
+        factors = (1.,1.)
+        if isinstance(curve,HyperbolaArc):
+            extent = max(abs(low),abs(high))
+            try:factors = (math.cosh(extent),math.sinh(extent))
+            except OverflowError as exc:raise ValueError('curve bounds exceed floating-point range') from exc
+        with np.errstate(over='ignore',invalid='ignore'):
+            operands = np.abs(coefficients) @ np.asarray(factors)
+            scale = np.maximum(operands,max(curve.semiaxes_m))
+        # The center enters only through the final addition, not the conic
+        # evaluation. Its rounding is covered by the outward nextafter below;
+        # multiplying the center by 128 eps would penalize a rigid translation.
     pad = 128*np.finfo(float).eps*scale
     lower = np.nextafter(p.min(axis=0)-pad,-np.inf)
     upper = np.nextafter(p.max(axis=0)+pad,np.inf)

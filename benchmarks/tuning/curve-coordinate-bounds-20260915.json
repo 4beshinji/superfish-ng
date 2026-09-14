@@ -1,0 +1,109 @@
+{
+  "status": "PASS",
+  "base_commit": "01c8e5d",
+  "scope": "coordinate-wise curve evaluation bounds; reflected circular-cap Study/tune and GUI; full validation precedes UI text-only changes",
+  "new_unit_tests": 3,
+  "new_unit_seconds": 0.13,
+  "full_modules": 361,
+  "full_tests": 1826,
+  "full_seconds": 1748.9339619759994,
+  "full_counts": {
+    "failures": 0,
+    "errors": 0,
+    "skipped": 3,
+    "expected_failures": 0,
+    "unexpected_successes": 0
+  },
+  "supplemental_http": {
+    "tests": 1,
+    "seconds": 0.557,
+    "status": "PASS"
+  },
+  "optional_ngsolve_skips": 2,
+  "seed": {
+    "status": "PASS",
+    "scope": "full validator seed results vs existing benchmarks/validation; frequency and RF, not just residual",
+    "compared_quantities": 207,
+    "frequency_max_relative": 0.0,
+    "rf_max_relative": 8.88178419700124e-16
+  },
+  "decimal": {
+    "status": "PASS",
+    "decimal_precision": 80,
+    "independent_coordinate_checks": 390,
+    "cases": "hyperbola: ordinary center, 1e16 translation, cancellation near zero",
+    "new_eigensolves": 0
+  },
+  "native_study": {
+    "status": "PASS",
+    "new_half_eigensolves": 3,
+    "symmetry": "z_min magnetic, reflected",
+    "unchanged_join_tolerance_m": 1e-14,
+    "preserved_job_files": 43,
+    "tracking_overlap": [
+      0.9999530398131506,
+      0.9999674027147631
+    ],
+    "full_vs_half_volume_relative_errors": [
+      4.440892098500626e-16,
+      4.440892098500626e-16,
+      4.440892098500626e-16,
+      2.220446049250313e-16
+    ]
+  },
+  "gui_native": {
+    "status": "PASS",
+    "native_pairs": 3,
+    "npz_arrays_exact": 24,
+    "all_rf_exact": true,
+    "preserved_files": 87,
+    "new_eigensolves": 0,
+    "api_study": "/home/sin/code/agent/reserch/superfish-ng/out/curve-coordinate-bounds-20260915/native-study",
+    "gui_study": "/home/sin/code/agent/reserch/superfish-ng/out/curve-coordinate-bounds-20260915/gui-jobs/20260915-065627-1308d282f9"
+  },
+  "gui_checks": {
+    "main": 12,
+    "tail": 2,
+    "after_text_fix": 4,
+    "evidence": "split; original fixture-assumption failures retained; last pass performs no FEM"
+  },
+  "cap_tuning": {
+    "status": "PASS",
+    "reports": [
+      {
+        "kind": "polynomial",
+        "status": "TUNED",
+        "decision": {
+          "status": "TUNED",
+          "next_trial": null,
+          "value": 0.0,
+          "refined_target_met": true,
+          "mesh_difference_met": true,
+          "mesh_frequency_difference_hz": 43511.077178001404,
+          "reason": "two-mesh frequency difference is a diagnostic, not a discretization-error bound"
+        },
+        "new_half_eigensolves": 3
+      },
+      {
+        "kind": "expression",
+        "status": "TUNED",
+        "decision": {
+          "status": "TUNED",
+          "next_trial": null,
+          "value": 0.0,
+          "refined_target_met": true,
+          "mesh_difference_met": true,
+          "mesh_frequency_difference_hz": 43511.077178001404,
+          "reason": "two-mesh frequency difference is a diagnostic, not a discretization-error bound"
+        },
+        "new_half_eigensolves": 3
+      }
+    ]
+  },
+  "dedicated_half_eigensolves": 12,
+  "files_changed_after_full": [
+    "src/superfish_ng/web/app.js",
+    "src/superfish_ng/web/index.html"
+  ],
+  "all_handles_terminal": true
+}

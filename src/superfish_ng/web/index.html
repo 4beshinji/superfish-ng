@@ -92,7 +92,7 @@
           <p>元曲線を保持し、初期分割用の直線輪郭を生成します。二次曲線要素の選択は下の計算設定で行います。FEMの最大辺長は別に指定します。</p>
           <details id="deformation-panel">
             <summary>元メッシュと細分履歴を保って形状を変える</summary>
-            <p>現在の曲線から目標形状を準備し、寸法を編集してプレビューしてください。同じ順番の曲線上の位置を対応させ、内部メッシュを調和変位で移動します。閉PEC・軸のTM二次曲線が対象です。選択細分は下の「分割を固定」で先に固定してください。</p>
+            <p>現在の曲線から目標形状を準備し、寸法を編集してプレビューしてください。同じ順番の曲線上の位置を対応させ、内部メッシュを調和変位で移動します。TMは閉PEC・軸の二次曲線、TEはそれに加えて一対称面の半領域・鏡映形状に対応します。TEのRF座標は固定です。選択細分は下の「分割を固定」で先に固定してください。</p>
             <button id="deformation-template" type="button">現在の曲線から目標形状を準備</button>
             <label class="file">目標形状JSONを開く<input id="deformation-open" type="file" accept=".json" /></label>
             <label>目標形状 [SI単位: m・rad]<textarea id="deformation-geometry" rows="12" spellcheck="false"></textarea></label>
