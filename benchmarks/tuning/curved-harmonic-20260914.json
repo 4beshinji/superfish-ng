@@ -1,0 +1,711 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "name": "base",
+      "status": "TUNED",
+      "values": [
+        0.0,
+        1.0,
+        0.5,
+        0.5
+      ],
+      "moments": [
+        {
+          "signed_area_m2": -0.012564418886561327,
+          "signed_volume_m3": -0.002680203216888043
+        },
+        {
+          "signed_area_m2": -0.01413497124738149,
+          "signed_volume_m3": -0.0033921321963739292
+        },
+        {
+          "signed_area_m2": -0.013349695066971411,
+          "signed_volume_m3": -0.0030256981628150187
+        },
+        {
+          "signed_area_m2": -0.01334969506697141,
+          "signed_volume_m3": -0.0030256981628150165
+        }
+      ],
+      "rf": [
+        {
+          "mode_index": 1,
+          "frequency_hz": 1614727370.5210028,
+          "stored_energy_j": 1.0000000000000013,
+          "electric_energy_j": 0.5000000000000012,
+          "magnetic_energy_j": 0.5000000000000001,
+          "energy_balance_relative": 1.1102230246251552e-15,
+          "surface_resistance_ohm": 0.010483721489988695,
+          "wall_loss_w": 259891.27985148702,
+          "q0": 39037.98271090878,
+          "geometry_factor_ohm": 409.2633382721615,
+          "voltage_real_v": -409267.7014715002,
+          "voltage_imag_v": -100669.8190692105,
+          "vacc_v": 421467.03778491693,
+          "beta": 1.0,
+          "active_length_m": 0.2,
+          "eacc_v_per_m": 2107335.1889245845,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.2,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.15028809130716847,
+          "r_over_q_accelerator_ohm": 17.50846831207149,
+          "r_over_q_circuit_ohm": 8.754234156035745,
+          "r_shunt_accelerator_ohm": 683495.283261141,
+          "r_shunt_circuit_ohm": 341747.6416305705,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 5572114.699525474,
+          "bpk_surface_estimate_t": 0.03724484346105806,
+          "epk_discrete_lower_bound_v_per_m": 5572114.562412108,
+          "epk_discrete_upper_bound_v_per_m": 5572114.699525474,
+          "hpk_discrete_lower_bound_a_per_m": 29638.47696302985,
+          "hpk_discrete_upper_bound_a_per_m": 29638.504711469483,
+          "epk_over_eacc_estimate": 2.6441520688358247,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 17.673905725488716
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 1444054324.6090994,
+          "stored_energy_j": 0.9999999999999998,
+          "electric_energy_j": 0.4999999999999996,
+          "magnetic_energy_j": 0.5000000000000001,
+          "energy_balance_relative": 4.996003610813205e-16,
+          "surface_resistance_ohm": 0.009914199122781122,
+          "wall_loss_w": 230011.35532382168,
+          "q0": 39447.01296324799,
+          "geometry_factor_ohm": 391.08554131656877,
+          "voltage_real_v": -507787.0977533439,
+          "voltage_imag_v": 268204.8522385034,
+          "vacc_v": 574266.1224633066,
+          "beta": 1.0,
+          "active_length_m": 0.2,
+          "eacc_v_per_m": 2871330.612316533,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.2,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.22703560735677966,
+          "r_over_q_accelerator_ohm": 36.346533235727996,
+          "r_over_q_circuit_ohm": 18.173266617863998,
+          "r_shunt_accelerator_ohm": 1433762.1677188862,
+          "r_shunt_circuit_ohm": 716881.0838594431,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 8052426.498536871,
+          "bpk_surface_estimate_t": 0.03244984777790264,
+          "epk_discrete_lower_bound_v_per_m": 8052424.580019355,
+          "epk_discrete_upper_bound_v_per_m": 8052426.498536871,
+          "hpk_discrete_lower_bound_a_per_m": 25822.750479159826,
+          "hpk_discrete_upper_bound_a_per_m": 25822.768385573258,
+          "epk_over_eacc_estimate": 2.8044233095262867,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 11.301327558278892
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 1525146908.755006,
+          "stored_energy_j": 0.9999999999999998,
+          "electric_energy_j": 0.4999999999999995,
+          "magnetic_energy_j": 0.5000000000000003,
+          "energy_balance_relative": 8.326672684688676e-16,
+          "surface_resistance_ohm": 0.010188768881323505,
+          "wall_loss_w": 243417.70297818386,
+          "q0": 39367.64060762938,
+          "geometry_factor_ohm": 401.1077915541418,
+          "voltage_real_v": -489629.2934710877,
+          "voltage_imag_v": 82376.01137111397,
+          "vacc_v": 496510.4754931264,
+          "beta": 1.0,
+          "active_length_m": 0.2,
+          "eacc_v_per_m": 2482552.377465632,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.2,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.1864522008468862,
+          "r_over_q_accelerator_ohm": 25.725586478501995,
+          "r_over_q_circuit_ohm": 12.862793239250998,
+          "r_shunt_accelerator_ohm": 1012755.6429061564,
+          "r_shunt_circuit_ohm": 506377.8214530782,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 6825074.825177058,
+          "bpk_surface_estimate_t": 0.03466811361023005,
+          "epk_discrete_lower_bound_v_per_m": 6825070.454922866,
+          "epk_discrete_upper_bound_v_per_m": 6825074.825177058,
+          "hpk_discrete_lower_bound_a_per_m": 27588.003930136234,
+          "hpk_discrete_upper_bound_a_per_m": 27588.00824734015,
+          "epk_over_eacc_estimate": 2.7492168492108857,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 13.9647058104054
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 1525133937.302841,
+          "stored_energy_j": 0.9999999999999962,
+          "electric_energy_j": 0.49999999999999606,
+          "magnetic_energy_j": 0.5000000000000001,
+          "energy_balance_relative": 4.052314039881836e-15,
+          "surface_resistance_ohm": 0.010188725553232152,
+          "wall_loss_w": 243399.37132893945,
+          "q0": 39370.27073661456,
+          "geometry_factor_ohm": 401.13288349181283,
+          "voltage_real_v": -489488.79490523075,
+          "voltage_imag_v": 81747.96654378765,
+          "vacc_v": 496268.08316858264,
+          "beta": 1.0,
+          "active_length_m": 0.2,
+          "eacc_v_per_m": 2481340.415842913,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.2,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.18647916436349063,
+          "r_over_q_accelerator_ohm": 25.7006931565653,
+          "r_over_q_circuit_ohm": 12.85034657828265,
+          "r_shunt_accelerator_ohm": 1011843.247692633,
+          "r_shunt_circuit_ohm": 505921.6238463165,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 6821005.7860156465,
+          "bpk_surface_estimate_t": 0.03468087722190846,
+          "epk_discrete_lower_bound_v_per_m": 6821001.396954699,
+          "epk_discrete_upper_bound_v_per_m": 6821005.7860156465,
+          "hpk_discrete_lower_bound_a_per_m": 27598.160754471948,
+          "hpk_discrete_upper_bound_a_per_m": 27598.165206793114,
+          "epk_over_eacc_estimate": 2.7489197945049173,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 13.976670432028305
+        }
+      ],
+      "solver_triangles": [
+        146,
+        146,
+        146,
+        584
+      ],
+      "overlaps": [
+        0.9977243304213267,
+        0.9994614104897667,
+        0.9999999078909205
+      ]
+    },
+    {
+      "name": "metres",
+      "status": "TUNED",
+      "values": [
+        0.0,
+        0.1,
+        0.05,
+        0.05
+      ],
+      "moments": [
+        {
+          "signed_area_m2": -0.012564418886561327,
+          "signed_volume_m3": -0.002680203216888043
+        },
+        {
+          "signed_area_m2": -0.01413497124738149,
+          "signed_volume_m3": -0.0033921321963739292
+        },
+        {
+          "signed_area_m2": -0.013349695066971411,
+          "signed_volume_m3": -0.003025698162815018
+        },
+        {
+          "signed_area_m2": -0.013349695066971413,
+          "signed_volume_m3": -0.0030256981628150174
+        }
+      ],
+      "rf": [
+        {
+          "mode_index": 1,
+          "frequency_hz": 1614727370.5210028,
+          "stored_energy_j": 1.0000000000000013,
+          "electric_energy_j": 0.5000000000000012,
+          "magnetic_energy_j": 0.5000000000000001,
+          "energy_balance_relative": 1.1102230246251552e-15,
+          "surface_resistance_ohm": 0.010483721489988695,
+          "wall_loss_w": 259891.27985148702,
+          "q0": 39037.98271090878,
+          "geometry_factor_ohm": 409.2633382721615,
+          "voltage_real_v": -409267.7014715002,
+          "voltage_imag_v": -100669.8190692105,
+          "vacc_v": 421467.03778491693,
+          "beta": 1.0,
+          "active_length_m": 0.2,
+          "eacc_v_per_m": 2107335.1889245845,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.2,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.15028809130716847,
+          "r_over_q_accelerator_ohm": 17.50846831207149,
+          "r_over_q_circuit_ohm": 8.754234156035745,
+          "r_shunt_accelerator_ohm": 683495.283261141,
+          "r_shunt_circuit_ohm": 341747.6416305705,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 5572114.699525474,
+          "bpk_surface_estimate_t": 0.03724484346105806,
+          "epk_discrete_lower_bound_v_per_m": 5572114.562412108,
+          "epk_discrete_upper_bound_v_per_m": 5572114.699525474,
+          "hpk_discrete_lower_bound_a_per_m": 29638.47696302985,
+          "hpk_discrete_upper_bound_a_per_m": 29638.504711469483,
+          "epk_over_eacc_estimate": 2.6441520688358247,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 17.673905725488716
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 1444054324.6090994,
+          "stored_energy_j": 0.9999999999999998,
+          "electric_energy_j": 0.4999999999999996,
+          "magnetic_energy_j": 0.5000000000000001,
+          "energy_balance_relative": 4.996003610813205e-16,
+          "surface_resistance_ohm": 0.009914199122781122,
+          "wall_loss_w": 230011.35532382168,
+          "q0": 39447.01296324799,
+          "geometry_factor_ohm": 391.08554131656877,
+          "voltage_real_v": -507787.0977533439,
+          "voltage_imag_v": 268204.8522385034,
+          "vacc_v": 574266.1224633066,
+          "beta": 1.0,
+          "active_length_m": 0.2,
+          "eacc_v_per_m": 2871330.612316533,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.2,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.22703560735677966,
+          "r_over_q_accelerator_ohm": 36.346533235727996,
+          "r_over_q_circuit_ohm": 18.173266617863998,
+          "r_shunt_accelerator_ohm": 1433762.1677188862,
+          "r_shunt_circuit_ohm": 716881.0838594431,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 8052426.498536871,
+          "bpk_surface_estimate_t": 0.03244984777790264,
+          "epk_discrete_lower_bound_v_per_m": 8052424.580019355,
+          "epk_discrete_upper_bound_v_per_m": 8052426.498536871,
+          "hpk_discrete_lower_bound_a_per_m": 25822.750479159826,
+          "hpk_discrete_upper_bound_a_per_m": 25822.768385573258,
+          "epk_over_eacc_estimate": 2.8044233095262867,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 11.301327558278892
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 1525146908.755007,
+          "stored_energy_j": 1.0000000000000007,
+          "electric_energy_j": 0.5000000000000004,
+          "magnetic_energy_j": 0.5000000000000002,
+          "energy_balance_relative": 2.2204460492503116e-16,
+          "surface_resistance_ohm": 0.010188768881323508,
+          "wall_loss_w": 243417.7029781842,
+          "q0": 39367.64060762938,
+          "geometry_factor_ohm": 401.1077915541419,
+          "voltage_real_v": -489629.2934710839,
+          "voltage_imag_v": 82376.0113711186,
+          "vacc_v": 496510.4754931234,
+          "beta": 1.0,
+          "active_length_m": 0.2,
+          "eacc_v_per_m": 2482552.377465617,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.2,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.18645220084688513,
+          "r_over_q_accelerator_ohm": 25.725586478501654,
+          "r_over_q_circuit_ohm": 12.862793239250827,
+          "r_shunt_accelerator_ohm": 1012755.642906143,
+          "r_shunt_circuit_ohm": 506377.8214530715,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 6825074.825177116,
+          "bpk_surface_estimate_t": 0.03466811361022999,
+          "epk_discrete_lower_bound_v_per_m": 6825070.454922925,
+          "epk_discrete_upper_bound_v_per_m": 6825074.825177116,
+          "hpk_discrete_lower_bound_a_per_m": 27588.003930136183,
+          "hpk_discrete_upper_bound_a_per_m": 27588.0082473401,
+          "epk_over_eacc_estimate": 2.7492168492109257,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 13.96470581040546
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 1525133937.3028417,
+          "stored_energy_j": 0.9999999999999993,
+          "electric_energy_j": 0.4999999999999993,
+          "magnetic_energy_j": 0.5,
+          "energy_balance_relative": 7.216449660063522e-16,
+          "surface_resistance_ohm": 0.010188725553232154,
+          "wall_loss_w": 243399.3713289396,
+          "q0": 39370.27073661468,
+          "geometry_factor_ohm": 401.1328834918141,
+          "voltage_real_v": -489488.79490522796,
+          "voltage_imag_v": 81747.96654379522,
+          "vacc_v": 496268.0831685811,
+          "beta": 1.0,
+          "active_length_m": 0.2,
+          "eacc_v_per_m": 2481340.4158429056,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.2,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.18647916436348916,
+          "r_over_q_accelerator_ohm": 25.700693156565052,
+          "r_over_q_circuit_ohm": 12.850346578282526,
+          "r_shunt_accelerator_ohm": 1011843.2476926262,
+          "r_shunt_circuit_ohm": 505921.6238463131,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 6821005.786015589,
+          "bpk_surface_estimate_t": 0.03468087722190832,
+          "epk_discrete_lower_bound_v_per_m": 6821001.396954643,
+          "epk_discrete_upper_bound_v_per_m": 6821005.786015589,
+          "hpk_discrete_lower_bound_a_per_m": 27598.16075447183,
+          "hpk_discrete_upper_bound_a_per_m": 27598.165206792997,
+          "epk_over_eacc_estimate": 2.748919794504902,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 13.976670432028289
+        }
+      ],
+      "solver_triangles": [
+        146,
+        146,
+        146,
+        584
+      ],
+      "overlaps": [
+        0.9977243304213267,
+        0.9994614104897664,
+        0.9999999078909203
+      ]
+    },
+    {
+      "name": "double",
+      "status": "TUNED",
+      "values": [
+        0.0,
+        1.0,
+        0.5,
+        0.5
+      ],
+      "moments": [
+        {
+          "signed_area_m2": -0.05025767554624531,
+          "signed_volume_m3": -0.021441625735104344
+        },
+        {
+          "signed_area_m2": -0.05653988498952597,
+          "signed_volume_m3": -0.027137057570991434
+        },
+        {
+          "signed_area_m2": -0.053398780267885644,
+          "signed_volume_m3": -0.02420558530252015
+        },
+        {
+          "signed_area_m2": -0.05339878026788564,
+          "signed_volume_m3": -0.024205585302520132
+        }
+      ],
+      "rf": [
+        {
+          "mode_index": 1,
+          "frequency_hz": 807363685.2605015,
+          "stored_energy_j": 0.9999999999999999,
+          "electric_energy_j": 0.5,
+          "magnetic_energy_j": 0.4999999999999999,
+          "energy_balance_relative": 1.1102230246251568e-16,
+          "surface_resistance_ohm": 0.007413110557642144,
+          "wall_loss_w": 91885.44317711862,
+          "q0": 55208.04459745352,
+          "geometry_factor_ohm": 409.263338272161,
+          "voltage_real_v": -289395.9670311283,
+          "voltage_imag_v": -71184.31172466258,
+          "vacc_v": 298022.20046432083,
+          "beta": 1.0,
+          "active_length_m": 0.4,
+          "eacc_v_per_m": 745055.5011608021,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.4,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.15028809130716805,
+          "r_over_q_accelerator_ohm": 17.50846831207142,
+          "r_over_q_circuit_ohm": 8.75423415603571,
+          "r_shunt_accelerator_ohm": 966608.2994059408,
+          "r_shunt_circuit_ohm": 483304.1497029704,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 1970040.0447918514,
+          "bpk_surface_estimate_t": 0.013168040687772798,
+          "epk_discrete_lower_bound_v_per_m": 1970039.9963149563,
+          "epk_discrete_upper_bound_v_per_m": 1970040.0447918514,
+          "hpk_discrete_lower_bound_a_per_m": 10478.78402229984,
+          "hpk_discrete_upper_bound_a_per_m": 10478.793832854753,
+          "epk_over_eacc_estimate": 2.6441520688358304,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 17.673905725488762
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 722027162.3045485,
+          "stored_energy_j": 0.9999999999999998,
+          "electric_energy_j": 0.4999999999999998,
+          "magnetic_energy_j": 0.5,
+          "energy_balance_relative": 2.2204460492503136e-16,
+          "surface_resistance_ohm": 0.007010397429752247,
+          "wall_loss_w": 81321.29454969126,
+          "q0": 55786.5007277326,
+          "geometry_factor_ohm": 391.0855413165685,
+          "voltage_real_v": -359059.700220426,
+          "voltage_imag_v": 189649.46976499018,
+          "vacc_v": 406067.4693995126,
+          "beta": 1.0,
+          "active_length_m": 0.4,
+          "eacc_v_per_m": 1015168.6734987815,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.4,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.22703560735678271,
+          "r_over_q_accelerator_ohm": 36.346533235728806,
+          "r_over_q_circuit_ohm": 18.173266617864403,
+          "r_shunt_accelerator_ohm": 2027645.902805542,
+          "r_shunt_circuit_ohm": 1013822.951402771,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 2846962.6910608285,
+          "bpk_surface_estimate_t": 0.011472753706113125,
+          "epk_discrete_lower_bound_v_per_m": 2846962.0127624557,
+          "epk_discrete_upper_bound_v_per_m": 2846962.6910608285,
+          "hpk_discrete_lower_bound_a_per_m": 9129.720986351067,
+          "hpk_discrete_upper_bound_a_per_m": 9129.727317224251,
+          "epk_over_eacc_estimate": 2.8044233095262525,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 11.301327558278812
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 762573454.3775028,
+          "stored_energy_j": 0.9999999999999998,
+          "electric_energy_j": 0.49999999999999956,
+          "magnetic_energy_j": 0.5000000000000002,
+          "energy_balance_relative": 6.661338147750941e-16,
+          "surface_resistance_ohm": 0.007204547567926323,
+          "wall_loss_w": 86061.15421836334,
+          "q0": 55674.25126593924,
+          "geometry_factor_ohm": 401.1077915541415,
+          "voltage_real_v": -346220.1936809846,
+          "voltage_imag_v": 58248.63624761419,
+          "vacc_v": 351085.92415134696,
+          "beta": 1.0,
+          "active_length_m": 0.4,
+          "eacc_v_per_m": 877714.8103783673,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.4,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.18645220084688588,
+          "r_over_q_accelerator_ohm": 25.725586478502034,
+          "r_over_q_circuit_ohm": 12.862793239251017,
+          "r_shunt_accelerator_ohm": 1432252.7655677712,
+          "r_shunt_circuit_ohm": 716126.3827838856,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 2413028.3454941628,
+          "bpk_surface_estimate_t": 0.012257029112369628,
+          "epk_discrete_lower_bound_v_per_m": 2413026.8003759757,
+          "epk_discrete_upper_bound_v_per_m": 2413028.3454941628,
+          "hpk_discrete_lower_bound_a_per_m": 9753.832329200206,
+          "hpk_discrete_upper_bound_a_per_m": 9753.833855562289,
+          "epk_over_eacc_estimate": 2.749216849210906,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 13.964705810405365
+        },
+        {
+          "mode_index": 1,
+          "frequency_hz": 762566968.6514194,
+          "stored_energy_j": 1.0000000000000013,
+          "electric_energy_j": 0.5000000000000012,
+          "magnetic_energy_j": 0.5,
+          "energy_balance_relative": 1.2212453270876706e-15,
+          "surface_resistance_ohm": 0.007204516930339107,
+          "wall_loss_w": 86054.67300161796,
+          "q0": 55677.97083002101,
+          "geometry_factor_ohm": 401.13288349181335,
+          "voltage_real_v": -346120.8461923225,
+          "voltage_imag_v": 57804.541491324446,
+          "vacc_v": 350914.5268949572,
+          "beta": 1.0,
+          "active_length_m": 0.4,
+          "eacc_v_per_m": 877286.3172373929,
+          "voltage_interval_start_m": 0.0,
+          "voltage_interval_end_m": 0.4,
+          "phase_origin_m": 0.0,
+          "transit_time_factor_abs": 0.18647916436349213,
+          "r_over_q_accelerator_ohm": 25.70069315656562,
+          "r_over_q_circuit_ohm": 12.85034657828281,
+          "r_shunt_accelerator_ohm": 1430962.4438825813,
+          "r_shunt_circuit_ohm": 715481.2219412907,
+          "wall_quadrature_order": 8,
+          "peak_status": "bounded continuous P2 discrete-field maxima; upper bounds used for estimates; physical corners and mesh convergence not certified",
+          "epk_surface_estimate_v_per_m": 2411589.722902147,
+          "bpk_surface_estimate_t": 0.01226154173055478,
+          "epk_discrete_lower_bound_v_per_m": 2411588.171134768,
+          "epk_discrete_upper_bound_v_per_m": 2411589.722902147,
+          "hpk_discrete_lower_bound_a_per_m": 9757.423308881785,
+          "hpk_discrete_upper_bound_a_per_m": 9757.42488301503,
+          "epk_over_eacc_estimate": 2.748919794504869,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 13.9766704320282
+        }
+      ],
+      "solver_triangles": [
+        146,
+        146,
+        146,
+        584
+      ],
+      "overlaps": [
+        0.9977243304213265,
+        0.9994614104897664,
+        0.9999999078909203
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "variant": "metres",
+      "trial": 0,
+      "rf_relative_errors": {
+        "frequency_hz": 0.0,
+        "r_over_q_accelerator_ohm": 0.0,
+        "r_over_q_circuit_ohm": 0.0,
+        "geometry_factor_ohm": 0.0,
+        "transit_time_factor_abs": 0.0
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 0.0,
+        "Er_quadrature_V_per_m": 0.0,
+        "Ez_quadrature_V_per_m": 0.0
+      }
+    },
+    {
+      "variant": "metres",
+      "trial": 1,
+      "rf_relative_errors": {
+        "frequency_hz": 0.0,
+        "r_over_q_accelerator_ohm": 0.0,
+        "r_over_q_circuit_ohm": 0.0,
+        "geometry_factor_ohm": 0.0,
+        "transit_time_factor_abs": 0.0
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 0.0,
+        "Er_quadrature_V_per_m": 0.0,
+        "Ez_quadrature_V_per_m": 0.0
+      }
+    },
+    {
+      "variant": "metres",
+      "trial": 2,
+      "rf_relative_errors": {
+        "frequency_hz": 6.661338147750939e-16,
+        "r_over_q_accelerator_ohm": 1.3211653993039363e-14,
+        "r_over_q_circuit_ohm": 1.3211653993039363e-14,
+        "geometry_factor_ohm": 2.220446049250313e-16,
+        "transit_time_factor_abs": 5.773159728050814e-15
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 3.4431971785723394e-15,
+        "Er_quadrature_V_per_m": 1.639995588540411e-14,
+        "Ez_quadrature_V_per_m": 4.370468270486215e-15
+      }
+    },
+    {
+      "variant": "metres",
+      "trial": 3,
+      "rf_relative_errors": {
+        "frequency_hz": 4.440892098500626e-16,
+        "r_over_q_accelerator_ohm": 9.658940314238862e-15,
+        "r_over_q_circuit_ohm": 9.658940314238862e-15,
+        "geometry_factor_ohm": 3.1086244689504383e-15,
+        "transit_time_factor_abs": 7.882583474838611e-15
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 2.7160940257385552e-15,
+        "Er_quadrature_V_per_m": 2.733542691154487e-14,
+        "Ez_quadrature_V_per_m": 6.161982199572106e-15
+      }
+    },
+    {
+      "variant": "double",
+      "trial": 0,
+      "rf_relative_errors": {
+        "frequency_hz": 2.220446049250313e-16,
+        "r_over_q_accelerator_ohm": 3.885780586188048e-15,
+        "r_over_q_circuit_ohm": 3.885780586188048e-15,
+        "geometry_factor_ohm": 1.2212453270876722e-15,
+        "transit_time_factor_abs": 2.7755575615628914e-15
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 1.084996650827646e-15,
+        "Er_quadrature_V_per_m": 1.2669556923662507e-14,
+        "Ez_quadrature_V_per_m": 2.243112680808283e-15
+      }
+    },
+    {
+      "variant": "double",
+      "trial": 1,
+      "rf_relative_errors": {
+        "frequency_hz": 1.6653345369377348e-15,
+        "r_over_q_accelerator_ohm": 2.220446049250313e-14,
+        "r_over_q_circuit_ohm": 2.220446049250313e-14,
+        "geometry_factor_ohm": 7.771561172376096e-16,
+        "transit_time_factor_abs": 1.354472090042691e-14
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 5.663670540775632e-15,
+        "Er_quadrature_V_per_m": 1.9766030772416474e-14,
+        "Ez_quadrature_V_per_m": 6.825953760837867e-15
+      }
+    },
+    {
+      "variant": "double",
+      "trial": 2,
+      "rf_relative_errors": {
+        "frequency_hz": 3.3306690738754696e-16,
+        "r_over_q_accelerator_ohm": 1.5543122344752192e-15,
+        "r_over_q_circuit_ohm": 1.5543122344752192e-15,
+        "geometry_factor_ohm": 6.661338147750939e-16,
+        "transit_time_factor_abs": 1.7763568394002505e-15
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 1.6003880670137788e-15,
+        "Er_quadrature_V_per_m": 1.2770694647770502e-14,
+        "Ez_quadrature_V_per_m": 2.7659751409916886e-15
+      }
+    },
+    {
+      "variant": "double",
+      "trial": 3,
+      "rf_relative_errors": {
+        "frequency_hz": 1.4432899320127035e-15,
+        "r_over_q_accelerator_ohm": 1.2434497875801753e-14,
+        "r_over_q_circuit_ohm": 1.2434497875801753e-14,
+        "geometry_factor_ohm": 1.3322676295501878e-15,
+        "transit_time_factor_abs": 7.993605777301127e-15
+      },
+      "field_relative_errors": {
+        "Hphi_A_per_m": 2.4597250382745347e-15,
+        "Er_quadrature_V_per_m": 2.7738607695733384e-14,
+        "Ez_quadrature_V_per_m": 5.3875225333457444e-15
+      }
+    }
+  ],
+  "crossing": {
+    "initial_ranks": [
+      2,
+      1
+    ],
+    "frequency_relative_errors": [
+      2.1757968132085637e-05,
+      1.8485020994329915e-05,
+      2.0142643481158018e-05,
+      1.3211779081867547e-06
+    ],
+    "status": "TUNED"
+  },
+  "invalid_interior": {
+    "prior_checkpoint_preserved": true,
+    "failed_trial_not_evaluated": true
+  },
+  "new_fem_solves": 18,
+  "seconds": 758.895141189998,
+  "source_files_unchanged": 1055,
+  "scope": "three non-affine native tunes with fixed histories, CLI pause/resume/replay, independent Green and Maxwell RF/field laws, separate Bessel rank crossing, invalid-interior preservation; example target came from a preliminary FEM, not an accuracy reference; no global-root or physical-error certificate"
+}

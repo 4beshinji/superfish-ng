@@ -1,5 +1,12 @@
 # 汎用GUI・共通入出力の受入記録
 
+2026-09-14：[非アフィン曲線tune版5](CURVED_HARMONIC_TUNING.md)のChrome新版12/旧版7項目を確認。
+新版の法則ひな形・元入力数値/固定履歴保持・重複拒否・編集中の古い応答拒否、実4試行の保存再開・対象場表示がPASS。
+旧版も17試行・保存再開と場表示がPASS。外部HTTP0、323製品SHA不変、画面目視済み。
+初回新版は3項目後に検証器の待機不足で失敗し、期待法則の一致を待つ修正後に全経路を再実行した。
+CLI/GUI保存配列完全一致・RF数値一致も確認し、JSON数値表記に由来する両Case hashは各原入力で個別照合した。
+生出力/失敗/終端はout/curved-harmonic-tuning-20260914/acceptance.json。旧tuner全互換や他物理の受入ではない。
+
 ## 元メッシュと履歴を保持する単独形状変形 — 2026-09-14
 
 [GUI_CURVED_DEFORMATION.md](GUI_CURVED_DEFORMATION.md)の元形状準備/ファイル入力、厳密JSON、native境界/CLI一致、別保存、適用/Undo/後続編集保護、通常保存再読込、実worker、非同期変更拒否をChrome21項目で確認。

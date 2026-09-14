@@ -51,15 +51,18 @@ def validate_request(request,project):
 
 def trial_project(request,project,value,phase):
     project=transform_curved_project(project,trial_map(request,value),rf_coordinates=request['rf_coordinates'])
-    if phase=='refinement':
-        levels=request['refinement_scale'].bit_length()-1
-        if project.case.curved_refinement_steps:
-            parameter='additional_uniform_refinements';values=[0,levels]
-        else:
-            parameter='/case/mesh/curved_refinement_levels'
-            first=project.case.curved_refinement_levels;values=[first,first+levels]
-        project=Study(project,'fixed_geometry_convergence',parameter,values).projects()[1]
-    return project
+    return refine_project(request,project) if phase=='refinement' else project
+
+
+def refine_project(request,project):
+    """Restrict the accepted quadratic domain without repeating shape motion."""
+    levels=request['refinement_scale'].bit_length()-1
+    if project.case.curved_refinement_steps:
+        parameter='additional_uniform_refinements';values=[0,levels]
+    else:
+        parameter='/case/mesh/curved_refinement_levels'
+        first=project.case.curved_refinement_levels;values=[first,first+levels]
+    return Study(project,'fixed_geometry_convergence',parameter,values).projects()[1]
 
 
 def pair_controls(request,previous_value,current_value):

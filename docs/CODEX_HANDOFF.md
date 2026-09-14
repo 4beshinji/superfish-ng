@@ -1,3 +1,31 @@
+2026-09-14 JST 最新継続状態。開始HEAD4e49de6、当初clean。前goalターンは固定履歴付きRF探索の実装/検証/commitでprogress。
+今回はD02/P2-02の非アフィン曲線寸法tune版5を実装・検証したprogress。全計画は未完、goal ACTIVE。親33=9受入/17進行/6他未受入/1範囲外は不変。
+[CURVED_HARMONIC_TUNING.md](CURVED_HARMONIC_TUNING.md)が入力/数学/受入/制約/初期失敗の正本。
+元Studyのgeometry_coefficientsをtune版5へ接続。native曲線P2・真空closed PEC/axis TM・非組立/非鏡映・全marked固定を要求する。
+毎試行を元Projectから調和変位で構成し、rf_coordinatesはfixed/axis_fraction。controlsはpiecewise_remesh、comparison_meshesは入力禁止。
+実試行の元弦メッシュと元Projectの全固定履歴から比較メッシュ版2を導出する。最終細分後も比較側の履歴は元のものを使う。
+採用親の同じ二次領域へlog2(refinement_scale)回のuniform制限を追加し、場はそれぞれの実FEM空間から評価する。採用親が端点0のケースも検証済み。
+FEM/求積/規約/探索判断/二つの周波数許容ゲートは不変。版1〜4の契約、外側checkpoint版1、strict完全再生を保持する。
+GUIに曲線寸法の法則ひな形/入力/復元を追加。元法則文字列と調整要求文字列を厳密サーバーパースし、重複キーを開始前に拒否。既存辞書APIも維持する。
+入力準備中の形状/調整設定変更を検出。保存再開は元checkpointの条件を使い、現在のフォーム編集を採用しない。
+新独立2unitは版5/API不在でred（baseline.log、終了1）、実装後15.796秒PASS。最終35unit309.382秒とtuning_jobs7件7.212秒、合計42がPASS。
+対象はtest_curved_harmonic_tuning6件、curved_tuning/tuning/coupled_tuning/polynomial_tuning/gui_tuning/tuning_jobs。独立幾何、厳密入力、採用端点親、保存/改変拒否、旧版/実workerを確認。
+専用validate_curved_harmonic_tuning.pyは18新FEM758.895141秒PASS。基準/m表現/寸法2倍は各4試行、146/146/146/584要素、0→1→0.5→0.5（mは1/10）。
+独立Green面積1+x/8/体積(1+x/8)^2、最終領域不変、両RQ/G/TTF/fのMaxwell/単位差最大2.221e-14、各要素2点H/Er/Ez最大2.774e-14。最小重なり.997724。
+別円筒4試行はTM011順位3→2、解析f最大差2.176e-5/最終1.322e-6。無効内部形状は端点2FEM後、半径負の中間値でfailure-003のみ保存し、先行checkpoint完全再生を確認。
+examples/tuning/curved_harmonic.jsonは合成半楕円対と固定marked→uniform→marked、26元要素。目標1525146908.755006Hzはx=.5の予備1FEMで選び、独立精度参照としない。
+専用18FEMに予備1FEMは含めない。数値はbenchmarks/tuning/curved-harmonic-20260914.json。数値中1055ソース系SHA不変、以後の変更はブラウザー検証器だけ。
+Chrome最終新版12/旧版7項目、4/17新FEM、外部HTTP0、323製品SHA一致、フォーム/結果を目視。
+初回browser-newは3項目後に検証器が前の入力生成完了を待たずFAIL。埋込Projectのsemiaxes数まで数えていたため、期待法則辞書との一致待機へ検証器だけ修正。
+修正後browser-correctedは全経路を再実行。実行中の製品は無変更。一時/tmp検証器で確認後、数値完了後に同一バイトをrepoへ反映した。
+CLI/GUI全4試行の保存固有値/係数/二次幾何/接続は完全一致、Case/元弦mesh/RF数値も一致。32保存ファイル不変、.028秒、新FEMなし。
+初回results.json全一致はCaseのJSON int/float表記に由来するcase_sha256差で失敗。各側の原JSONでhashを個別確認してから残りを全比較し、製品replayを緩和していない。
+証拠索引out/curved-harmonic-tuning-20260914/acceptance.json。全handle終端: baseline同期1、geometry83267=0、selected24580=0、target17689=0、jobs61685=0、数値56991=0。
+Chrome初回28336=1、修正37116=0、旧版66525=0。GUI13530/PID1626635は全worker completeを確認し、完全argv再照合後SIGINT、終了0。
+全suite/seed/Hosted CI/新Wine比較は今回未実行。影響は調整器/直接利用先へ限定し、並行時間を単独性能としない。新規外部資料/依存/旧資産/skill/subagentなし。
+次はD02一般関数/他物理の調整、D03一般形状変数の非アフィン探索、D01/N04/G03/C00.V等の残件へ進む。今回の接続受入を親D02全体へ拡張しない。
+.git書込はrequire_escalated。以下は過去履歴。
+
 2026-09-14 JST 最新継続状態。開始HEADb60e8c1、当初clean。前goalターンはA01比較とADR受入/commitでprogress。
 今回はD03/P2-02の固定局所細分履歴をRF探索へ接続し、仕様/実装/検証を完了したprogress。親D03全体と全計画goalは未完、ACTIVE。
 [RF_OPTIMIZATION_HISTORY.md](RF_OPTIMIZATION_HISTORY.md)が入力・数学・検証・失敗の正本。親33=9受入/17進行/6他未受入/1範囲外は不変。

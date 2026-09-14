@@ -2438,7 +2438,8 @@ function tuningParameterMode() {
   $("tune-linear-help").hidden=$("tune-binding-law").value!=="linear";
   $("tune-polynomial-help").hidden=$("tune-binding-law").value!=="polynomial";
   $("tune-affine-settings").hidden=$("tune-binding-law").value!=="affine";
-  $("tune-profile-bindings").hidden=$("tune-binding-law").value==="affine";
+  $("tune-harmonic-settings").hidden=$("tune-binding-law").value!=="harmonic";
+  $("tune-profile-bindings").hidden=["affine","harmonic"].includes($("tune-binding-law").value);
   $("tune-vertex").disabled=coupled;$("tune-coordinate").disabled=coupled;
   for(const label of document.querySelectorAll(".tune-unit-label"))label.textContent=unit==="1" ? "無次元" : unit;
 }
@@ -2485,10 +2486,13 @@ function showTuning(response) {
     body.append(row);
   }
   $("tune-request").value=JSON.stringify(r,null,2);$("tune-coupled").checked=r.schema_version>=2;
-  $("tune-binding-law").value=r.schema_version===4 ? "affine" : r.schema_version===3 ? "polynomial" : "linear";
+  $("tune-binding-law").value=r.schema_version===5 ? "harmonic" : r.schema_version===4 ? "affine" : r.schema_version===3 ? "polynomial" : "linear";
   if(r.schema_version>=2) {
     $("tune-parameter-name").value=r.parameter;$("tune-parameter-unit").value=r.parameter_unit;
-    if(r.schema_version===4) {
+    if(r.schema_version===5) {
+      $("tune-geometry-coefficients").value=JSON.stringify(r.geometry_coefficients,null,2);
+      $("tune-harmonic-rf").value=r.rf_coordinates;$("tune-harmonic-angle").value=r.minimum_corner_angle_deg;
+    } else if(r.schema_version===4) {
       $("tune-affine-coefficients").value=JSON.stringify(r.affine_coefficients,null,2);
       $("tune-rf-coordinates").value=r.rf_coordinates;
     } else $("tune-bindings").value=JSON.stringify(r.bindings,null,2);
@@ -2513,22 +2517,48 @@ async function tuningAction(action,data) {
   } finally {tuningBusy=false;tuningButtons();}
 }
 async function openTuning(id) {await tuningAction("tune-result",{id});$("tuning").scrollIntoView({behavior:"smooth"});}
+function tuningInputSignature() {
+  return JSON.stringify({project:collect(),inputs:[...$("tuning").querySelectorAll("input,select,textarea")].map(e=>[e.id,e.value,e.checked])});
+}
+bind("tune-harmonic-template",async()=>{
+  const signature=tuningInputSignature(),project=await preview();
+  if(signature!==tuningInputSignature())throw Error("形状の確認中に入力が変わりました。現在の入力でやり直してください。");
+  if(!project.case.geometry.curves)throw Error("native曲線のProjectを先に開いてください。");
+  const laws={};
+  project.case.geometry.curves.forEach((curve,i)=>{
+    for(const key of ["start_zr_m","end_zr_m","center_zr_m","semiaxes_m"])
+      if(Array.isArray(curve[key]))curve[key].forEach((value,j)=>laws[`/curves/${i}/${key}/${j}`]=[value]);
+    for(const key of ["rotation_rad","start_rad","sweep_rad","start_parameter","end_parameter"])
+      if(typeof curve[key]==="number")laws[`/curves/${i}/${key}`]=[curve[key]];
+  });
+  $("tune-geometry-coefficients").value=JSON.stringify(laws,null,2);
+});
 bind("tune-prepare",async()=>{
-  const project=await preview(),coupled=$("tune-coupled").checked,vertex=coupled ? 0 : number("tune-vertex");
+  const signature=tuningInputSignature(),project=await preview();
+  if(signature!==tuningInputSignature())throw Error("調整入力の確認中に入力が変わりました。現在の入力でやり直してください。");
+  const coupled=$("tune-coupled").checked,vertex=coupled ? 0 : number("tune-vertex");
   const affine=coupled && $("tune-binding-law").value==="affine";
+  const harmonic=coupled && $("tune-binding-law").value==="harmonic";
   if(!Number.isInteger(vertex) || vertex<0) throw Error("頂点番号は0以上の整数で指定してください");
   const initial_ids=$("tune-ids").value.trim() ? JSON.parse($("tune-ids").value) : Array.from({length:project.case.solver.modes},(_,i)=>`mode-${i+1}`);
   const request={schema_version:1,project,parameter:`/case/geometry/points_zr_m/${vertex}/${$("tune-coordinate").value}`,
     bounds:[number("tune-low"),number("tune-high")],target_hz:number("tune-target")*1e6,frequency_tolerance_hz:number("tune-frequency-tolerance"),
     parameter_tolerance:number("tune-parameter-tolerance"),max_trials:number("tune-max-trials"),initial_ids,mode_id:$("tune-mode-id").value,
-    controls:trackingControls(affine),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
+    controls:trackingControls(affine,harmonic),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
+  if(harmonic) {
+    Object.assign(request,{schema_version:5,parameter:$("tune-parameter-name").value,parameter_unit:$("tune-parameter-unit").value,
+      rf_coordinates:$("tune-harmonic-rf").value,minimum_corner_angle_deg:number("tune-harmonic-angle")});
+    // Keep the original law text: the strict server parser rejects duplicates.
+    $("tune-request").value=JSON.stringify(request,null,2).slice(0,-1)+',"geometry_coefficients":'+$("tune-geometry-coefficients").value+'}';
+    return;
+  }
   if(affine) Object.assign(request,{schema_version:4,parameter:$("tune-parameter-name").value,parameter_unit:$("tune-parameter-unit").value,
     affine_coefficients:JSON.parse($("tune-affine-coefficients").value),rf_coordinates:$("tune-rf-coordinates").value});
   else if(coupled) Object.assign(request,{schema_version:$("tune-binding-law").value==="polynomial" ? 3 : 2,parameter:$("tune-parameter-name").value,
     parameter_unit:$("tune-parameter-unit").value,bindings:JSON.parse($("tune-bindings").value)});
   $("tune-request").value=JSON.stringify(request,null,2);
 });
-bind("tune-start",()=>tuningAction("start-tune",{request:JSON.parse($("tune-request").value),...tuningLimit()}));
+bind("tune-start",()=>tuningAction("start-tune",{request:$("tune-request").value,...tuningLimit()}));
 bind("tune-resume",()=>tuningAction("resume-tune",{document:tuningResult.serialized,...tuningLimit()}));
 bind("tune-save",()=>download("tune-checkpoint.json",tuningResult.serialized));
 bind("tune-checkpoint-open",()=>tuningAction("open-tune-checkpoint",{id:$("tune-checkpoint-index").dataset.job,index:Number($("tune-checkpoint-index").value)}));

@@ -1,5 +1,12 @@
 # 実装バックログ
 
+2026-09-14 JST：D02/P2-02の[非アフィン曲線寸法tune版5](CURVED_HARMONIC_TUNING.md)。
+受入条件は元Project/固定履歴、独立Green/単位/Maxwellと解析順位交差、実試行写像と採用親の最終細分、
+内部失敗での保存保持、厳密再生・改変拒否、CLI/worker/GUI入力と保存再開・対象場表示。
+関連35unitとジョブ管理7unit、専用18FEMがPASS。Chrome新版12/旧版7項目・全native配列/数値RF一致も確認した。
+検証器の待機不足・JSON型によるhash差の初期失敗と補修は同書。ここで示す接続範囲を受入。
+一般関数・任意再メッシュ・他物理の調整とD02全体は継続。親33=9受入/17進行/6他未受入/1範囲外。
+
 2026-09-14 JST：D03/P2-02の[固定局所履歴付きRF探索](RF_OPTIMIZATION_HISTORY.md)を接続範囲で受入。
 受入条件は明示元メッシュ/固定分割の保持、履歴後の3水準と最終別3水準、独立な境界積分/解析五量/Maxwell尺度則、
 元場と全判断の再生・改変拒否、CLI/実worker/GUIの入力往復・中止再開・対象場と表面評価。
@@ -1066,7 +1073,7 @@ D01 Study保存結果接続の今回の受入基準: 完了manifestと各点の�
 | P1-05 | 未着手 | 外部実機参照 | 寸法・境界・材料・規約・参照値の来歴と比較。合成例を実測に数えない | P0-01。資料入手の外部依存を記録 |
 | P1-06 | 完了（ローカルO01範囲） | Job管理と直接保存の完了公開・hash検査 | 他OS/配布はV02。電源断耐性は未保証 | SAVE_COMPLETION.md。中断/失敗・同名競合・外部mesh取込を検証 |
 | P2-01 | 一部 | 同一形状の細分間対応、条件付きバンド同定、重み付き部分空間追跡・円筒写像・個別ID/部分空間ID集合の履歴/再開 | 一般写像、多対多/個別枝回復、製品操作 | studies.py/modes.py/mode_tracking.py。場評価APIが前提、P1-01は必須でない |
-| P2-02 | 一部 | 独立掃引・比較、明示円筒/profile写像の単一/連動座標の追跡付きtune/再開/最終細分API/CLI・JobManager・GUI | 非アフィン曲線・任意関数連動、一般制約付き探索/GUI | [TUNING.md](TUNING.md)、[RF_OPTIMIZATION.md](RF_OPTIMIZATION.md)。曲線2変数の制約付き実FEM探索を追加。各試行の全個別ID確認を必須とする |
+| P2-02 | 一部 | 独立掃引・比較、明示円筒/profile写像の単一/連動座標の追跡付きtune/再開/最終細分API/CLI・JobManager・GUI | 任意関数連動・境界分割変更/他物理の調整、一般形状の制約付き探索 | [CURVED_HARMONIC_TUNING.md](CURVED_HARMONIC_TUNING.md)、[TUNING.md](TUNING.md)、[RF_OPTIMIZATION.md](RF_OPTIMIZATION.md)。曲線2変数の制約付き実FEM探索を追加。各試行の全個別ID確認を必須とする |
 | P2-03 | 完了（native R01範囲） | 加速長・電圧区間・位相原点、保存/CLI/GUI | 旧の任意位相入力変換はC02/C03/C04 | ACCELERATING_CONVENTIONS.md。独立積分、半/全領域、旧既定値不変を検証 |
 | P2-04 | 完了（GUI範囲） | 共通APIのGUI・保存・表示・掃引 | G0〜G5技術的受入済み。一般追跡/tune・外部メッシュUIは後続 | GUI_IO_PLAN.md、GUI_ACCEPTANCE.md。notebook専用UIは未計画 |
 

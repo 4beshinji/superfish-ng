@@ -52,7 +52,10 @@ def tuning_response(manager,action,data):
         'open-tune-checkpoint':(('id','index'),('id','index'))}
     if action not in fields:raise ValueError('unknown tuning operation')
     allowed,required=fields[action];keys(data,allowed,required,'GUI tuning')
-    if action=='start-tune':return dict(id=manager.start_tune(data['request'],max_new_trials=data.get('max_new_trials')))
+    if action=='start-tune':
+        request=data['request']
+        if isinstance(request,str):request=parse_json(request)
+        return dict(id=manager.start_tune(request,max_new_trials=data.get('max_new_trials')))
     if action=='tune-checkpoints':
         _,execution=_checkpoint_directory(manager,data['id'])
         indices=sorted(int(p.stem.split('-')[1]) for p in execution.glob('checkpoint-*.json')

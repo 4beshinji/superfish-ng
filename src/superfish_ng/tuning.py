@@ -20,8 +20,9 @@ def _request(request):
         'parameter_tolerance','max_trials','initial_ids','mode_id','controls','refinement_scale','mesh_frequency_tolerance_hz')
     if isinstance(request,dict) and request.get('schema_version') in (2,3):fields+=('bindings','parameter_unit')
     if isinstance(request,dict) and request.get('schema_version')==4:fields+=('affine_coefficients','parameter_unit','rf_coordinates')
+    if isinstance(request,dict) and request.get('schema_version')==5:fields+=('geometry_coefficients','parameter_unit','rf_coordinates','minimum_corner_angle_deg')
     keys(request,fields,fields,'tune request');_canonical(request)
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3,4):raise ValueError('tune requires schema_version 1, 2, 3 or 4')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3,4,5):raise ValueError('tune requires schema_version 1, 2, 3, 4 or 5')
     for name in ('target_hz','frequency_tolerance_hz','parameter_tolerance','mesh_frequency_tolerance_hz'):positive(request[name],name)
     integer(request['max_trials'],'max_trials',2);integer(request['refinement_scale'],'refinement_scale',2)
     bounds=request['bounds']
@@ -36,9 +37,12 @@ def _request(request):
     project=Project.from_dict(request['project']);case=project.case
     from .te import is_te
     if is_te(case):raise ValueError('TE tuning/tracking integration is pending; use an ordinary TE Project solve')
-    curved=request['schema_version']==4
-    if curved:
+    curved=request['schema_version'] in (4,5)
+    if request['schema_version']==4:
         from .curved_tuning import validate_request
+        validate_request(request,project)
+    elif request['schema_version']==5:
+        from .curved_harmonic_tuning import validate_request
         validate_request(request,project)
     if not curved and project.mesh_data is not None:
         raise ValueError('tuning an explicit project mesh requires a declared per-trial mesh transformation')
@@ -58,7 +62,7 @@ def _request(request):
             raise ValueError('normalized_cylinder tune bounds must retain constant radius')
         _project(request,value,'refinement')
         endpoint_geometries.append(p.case.curved_contour if curved else p.case.profile)
-    if request['schema_version'] in (2,3,4) and endpoint_geometries[0]==endpoint_geometries[1]:
+    if request['schema_version'] in (2,3,4,5) and endpoint_geometries[0]==endpoint_geometries[1]:
         raise ValueError('bindings do not change representable geometry across bounds')
     return project
 
@@ -67,6 +71,9 @@ def _project(request,value,phase):
     project=Project.from_dict(request['project'])
     if request['schema_version']==4:
         from .curved_tuning import trial_project
+        return trial_project(request,project,value,phase)
+    if request['schema_version']==5:
+        from .curved_harmonic_tuning import trial_project
         return trial_project(request,project,value,phase)
     if request['schema_version']==1:
         project=Study(project,'sweep',request['parameter'],[value,value]).projects()[0]
@@ -156,6 +163,9 @@ def _assemble(request,runs):
             if request['schema_version']==4:
                 from .curved_tuning import pair_controls
                 controls=pair_controls(request,trials[parent]['value'],trial['value'])
+            elif request['schema_version']==5:
+                from .curved_harmonic_tuning import pair_controls
+                controls=pair_controls(request,projects[parent],project)
             pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=str(Path(runs[parent])/'solution'),
                 current_run=str(directory/'solution'),previous_ids=trials[parent]['current_mode_ids'],controls=controls))
             report=pair['tracking'];ids=report['current_mode_ids'];status='PASS'

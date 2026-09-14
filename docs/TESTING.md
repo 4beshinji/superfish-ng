@@ -1,5 +1,16 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[非アフィン曲線tune版5](CURVED_HARMONIC_TUNING.md)の関連35unitは309.382秒PASS。
+新test_curved_harmonic_tuning6件と、curved_tuning/tuning/coupled_tuning/polynomial_tuning/gui_tuningを実行した。
+直接利用先のtest_tuning_jobs7件も7.212秒PASS。合計42件の二つの実行記録。
+幾何2件の変更前失敗/変更後15.796秒PASS、専用数値とChromeはout/curved-harmonic-tuning-20260914に保持。
+全suite/seed/Hosted CIは今回実行せず、調整器と直接利用箇所に影響を限定する。
+専用18FEMは758.895秒PASS、1055ソース系SHA不変。独立Green/Maxwell五量・内部三場、Bessel順位交差と無効内部形状の保存保持を確認。
+Chrome新版12/旧版7項目PASS、323製品SHA一致、外部HTTP0。初回新版の検証器待機不足3項目後FAILと補修は専用文書。
+CLI/GUI全4試行の保存配列完全一致・RF数値一致、原JSONごとのCase hash照合もPASS（32保存ファイル不変、新FEMなし）。
+数値後の差はブラウザー検証器のみ。全終端/コマンド/出力SHAはout/curved-harmonic-tuning-20260914/acceptance.json。
+
+
 2026-09-14 JST：[固定局所履歴付きRF探索](RF_OPTIMIZATION_HISTORY.md)の関連29unitは614.814秒PASS。
 対象はtest_rf_optimization_history、test_surface_convergence、test_rf_design、test_rf_optimization、
 test_gui_rf_optimization、test_rf_optimization_jobs、test_rf_optimization_prefix_reuse、test_rf_optimization_start_concurrency。
