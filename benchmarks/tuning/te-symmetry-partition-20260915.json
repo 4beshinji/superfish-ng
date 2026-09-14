@@ -1,0 +1,108 @@
+{
+  "status": "PASS",
+  "base_commit": "8499503",
+  "scope": "TE symmetry Project remeshing, Study version 4 and tune version 8; API and CLI with explicit plans",
+  "new_tests": {
+    "main_count": 4,
+    "main_seconds": 221.74,
+    "marked_count": 1,
+    "marked_seconds": 0.464
+  },
+  "related_tests": {
+    "count": 27,
+    "seconds": 932.594
+  },
+  "dedicated": {
+    "status": "PASS",
+    "new_half_eigensolves": 10,
+    "cylinder_half_mode_frequency_relative_error": 0.00028321816215459705,
+    "analytical_frequency_hz": 2405059947.9683475,
+    "pilot_frequency_hz": 2405741104.6266828,
+    "commands": [
+      {
+        "args": [
+          "execute-tracked-study",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/sequential-request.json",
+          "--out",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/sequential-first",
+          "--max-new-points",
+          "1"
+        ],
+        "exit": 0
+      },
+      {
+        "args": [
+          "resume-tracked-study",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/sequential-first/checkpoint-001.json",
+          "--out",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/sequential-rest"
+        ],
+        "exit": 0
+      },
+      {
+        "args": [
+          "execute-adaptive-study",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/adaptive-request.json",
+          "--out",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/adaptive"
+        ],
+        "exit": 0
+      },
+      {
+        "args": [
+          "tune",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/tune-request.json",
+          "--out",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/tune-first",
+          "--max-new-trials",
+          "2"
+        ],
+        "exit": 0
+      },
+      {
+        "args": [
+          "resume-tune",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/tune-first/checkpoint-002.json",
+          "--out",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/tune-rest"
+        ],
+        "exit": 0
+      },
+      {
+        "args": [
+          "replay-tune",
+          "/home/sin/code/agent/reserch/superfish-ng/out/te-symmetry-partition-20260915/tune-rest/checkpoint-003.json"
+        ],
+        "exit": 0
+      }
+    ],
+    "source_unchanged": true
+  },
+  "native": {
+    "status": "PASS",
+    "native_pairs": 4,
+    "npz_arrays_exact": 32,
+    "all_rf_exact": true,
+    "preserved_native_files": 117,
+    "tune_decision": {
+      "status": "TUNED",
+      "next_trial": null,
+      "value": 0.0,
+      "refined_target_met": true,
+      "mesh_difference_met": true,
+      "mesh_frequency_difference_hz": 634601.8190441132,
+      "reason": "two-mesh frequency difference is a diagnostic, not a discretization-error bound"
+    },
+    "new_eigensolves": 0
+  },
+  "remesh_cli": {
+    "status": "PASS",
+    "command_exit": 0,
+    "api_cli_project_exact": true,
+    "new_eigensolves": 0
+  },
+  "source_files_unchanged": 336,
+  "all_handles_terminal": true,
+  "full_validator_run": false,
+  "hosted_ci_run": false
+}

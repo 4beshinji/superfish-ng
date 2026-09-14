@@ -123,7 +123,9 @@ class CurvedProjectRemeshTests(unittest.TestCase):
         self.assertEqual(reset.case.curved_refinement_steps,());self.assertEqual(reset.case.curved_refinement_levels,0)
         raw=reset.case.to_dict();raw['model']['polarization']='te'
         from superfish_ng.config import Case
-        with self.assertRaisesRegex(ValueError,'TM'):remesh_curved_project(replace(reset,case=Case.from_dict(raw)),levels)
+        te=remesh_curved_project(replace(reset,case=Case.from_dict(raw)),levels)
+        self.assertEqual(te.case.model.polarization,'te')
+        self.assertEqual(te.case.curved_refinement_steps,())
 
     def test_quality_and_element_budgets_are_checked_before_result_publication(self):
         from superfish_ng.curved_project_remesh import remesh_curved_project

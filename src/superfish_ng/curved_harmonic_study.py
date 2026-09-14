@@ -58,7 +58,7 @@ def validate_harmonic_study(study):
     project=study.project;case=project.case
     if case.curved_contour is None or case.geometry_order!=2 or project.sections is not None:
         raise ValueError('curved harmonic Study requires unassembled native P2 geometry')
-    if is_te(case) and study.kind=='curved_harmonic_sweep':
+    if is_te(case):
         from .curved_same_domain_tracking import _te_end_conditions
         _te_end_conditions([case,case])
     elif project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags):

@@ -6,6 +6,7 @@ establish correspondence even when the represented P2 boundaries differ.
 """
 from bisect import bisect_right
 from copy import deepcopy
+from dataclasses import replace
 import math
 from .config import keys, integer
 from .project import Project
@@ -70,11 +71,14 @@ def build_partition_schedule(project,schedule):
     partitions=_validate(schedule)
     if not isinstance(project,Project):raise ValueError('partition schedule requires a Project')
     project=Project.from_dict(project.to_dict());case=project.case
-    from .te import is_te,validate_te_case
-    if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None
-            or project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
-        raise ValueError('partition schedule requires direct native P2 closed PEC/axis geometry')
-    if is_te(case):validate_te_case(case)
+    from .te import is_te
+    if case.curved_contour is None or case.geometry_order!=2 or project.sections is not None:
+        raise ValueError('partition schedule requires unassembled native P2 geometry')
+    if is_te(case):
+        from .curved_same_domain_tracking import _te_end_conditions
+        _te_end_conditions([case,case])
+    elif project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags):
+        raise ValueError('TM partition schedule requires direct closed PEC/axis geometry')
     limit=case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000
     results=[];documents=[]
     for partition in partitions:
@@ -96,13 +100,19 @@ def build_partition_schedule(project,schedule):
             candidate=freeze_curved_refinement(candidate)
         for index,stage in enumerate(_prefixes(candidate.case)):
             space=case_curved_space(stage,mesh)
+            if is_te(stage) and candidate.reflect_full:
+                from .curved_reflection import reflect_curved_space
+                parity=1 if 'magnetic_symmetry' in (stage.z_min,stage.z_max) else -1
+                reflect_curved_space(stage,space,coefficient_parity=parity)
             if _minimum_corner_angle(space.geometry.local_maps)<angle:
                 raise ValueError(f'partition stage {index} violates minimum_corner_angle_deg')
         document=partition_comparison_mesh(candidate,partition,schedule['max_pair_tests'])
         validate_curved_comparison_meshes([document,document])
         results.append(candidate);documents.append(document)
     for candidate,document in zip(results,documents):
-        build_curved_reference_partition(results[0],candidate,
+        # Charts describe the original half-domain; full reflected geometry was
+        # validated above. Field tracking evaluates both lobes independently.
+        build_curved_reference_partition(replace(results[0],reflect_full=False),replace(candidate,reflect_full=False),
             reference_vertices=[documents[0]['reference_vertices'],document['reference_vertices']],
             max_pair_tests=schedule['max_pair_tests'],max_triangles=limit)
     return tuple(results)

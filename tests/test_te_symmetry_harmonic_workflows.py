@@ -69,9 +69,8 @@ class TESymmetryHarmonicWorkflowTests(unittest.TestCase):
    with self.assertRaises(ValueError):execute_study(Study.from_dict(raw),target)
    self.assertFalse(target.exists())
 
- def test_fixed_rf_and_partition_scope_guards(self):
+ def test_fixed_rf_and_invalid_mesh_schedule(self):
   from superfish_ng.tuning import _request
-  from superfish_ng.te_tuning import validate_te_request
   for expression in (False,True):
    request=symmetry_harmonic_request(expression)
    request['rf_coordinates']='axis_fraction'
@@ -81,7 +80,4 @@ class TESymmetryHarmonicWorkflowTests(unittest.TestCase):
   with self.assertRaisesRegex(ValueError,'TE.*fixed'):Study.from_dict(raw)
   raw=symmetry_harmonic_study()
   raw.update(study_version=4,kind='curved_remesh_sweep',mesh_schedule={})
-  with self.assertRaisesRegex(ValueError,'closed PEC'):Study.from_dict(raw)
-  request=symmetry_harmonic_request();request['schema_version']=8
-  with self.assertRaisesRegex(ValueError,'partition.*closed PEC'):
-   validate_te_request(request,Project.from_dict(request['project']))
+  with self.assertRaisesRegex(ValueError,'mesh_schedule'):Study.from_dict(raw)
