@@ -1,0 +1,44 @@
+{
+  "status": "PASS_SUPPORTED_EXPRESSION_TUNING",
+  "implementation_commit": "0706c70",
+  "browser_checks": {
+    "browser-profile": 9,
+    "browser-curve": 9,
+    "browser-old": 7
+  },
+  "browser_new_fem": {
+    "browser-profile": 17,
+    "browser-curve": 3,
+    "browser-old": 17
+  },
+  "external_requests": 0,
+  "curve_pilot_fem": 1,
+  "scaled_curve_fem": 3,
+  "identity_recovery_fem": 17,
+  "new_fem_this_extension": 58,
+  "max_curve_rf_scale_error": 4.651834473179406e-14,
+  "max_curve_field_scale_error": 2.8562400897996104e-14,
+  "max_recovery_frequency_error": 2.8534989462869476e-05,
+  "refined_recovery_frequency_error": 1.7961176805858514e-06,
+  "gui_imports_exact": 3,
+  "gui_source_files_unchanged": 29,
+  "terminal_gui_jobs": 9,
+  "gui_server": {
+    "pid": 2184772,
+    "signal": "SIGINT",
+    "session": 41794,
+    "exit_code": 0
+  },
+  "remaining_D02": [
+    "boundary partition changes during tuning",
+    "other physics tuning"
+  ],
+  "parent_counts": [
+    10,
+    16,
+    6,
+    1
+  ],
+  "full_suite_rerun": false,
+  "product_changed_in_extension": false
+}

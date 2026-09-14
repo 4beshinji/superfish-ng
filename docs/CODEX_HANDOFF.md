@@ -1,3 +1,21 @@
+<!-- expression-tuning-acceptance-current-begin -->
+2026-09-15 JST：[単位付き式によるtune版7](EXPRESSION_TUNING.md)の追加実経路検証がPASS。
+Chrome profile9/曲線9/旧版7項目、曲線Maxwell RF/場尺度則、指数軸長の実ID回復・再開/拒否を確認。
+追加58実FEM、全9GUIジョブ終端、取り込み3場の全配列/RF一致、元29ファイル保持。
+親D02の境界分割変更・他物理は残り、親33=10/16/6/1、全計画goal ACTIVE。
+
+開始HEAD0706c70。製品変更なし、verify_gui_curved_harmonic_tuning.mjsに版7フォーム分岐を追加。
+profile/曲線は元要求完全一致、duplicate式キー拒否、保存復元/再開/改変拒否/最終場をChrome検証。
+曲線3解の2倍尺度比較は周波数/RF/全場・独立Green形状則PASS。pilot目標を精度基準にしない。
+指数軸長の外側6/内側7回復は成功15/失敗2実FEM、14回復、粗Bessel誤差2.854e-5/細1.797e-6未満。
+全handle終端。GUI PID2184772 SIGINT、session41794終了0、live processなし。
+前回51unitを再実行せず利用。新版ブラウザー各9/旧版7、画像目視、取り込み3解のnative一致。
+次：D02境界分割変更の元要件を実装へ接続。現在の式版7は曲線分割/元履歴を固定する。
+独立比較版5の参照chartを用いた試行別再メッシュ・追跡・保存再開を設計し、適用範囲を縮めない。
+他物理の調整とD03一般制約付き探索も残る。全計画goalは継続、Wine拒否は別残件で例外返答なし。
+証拠EXPRESSION_TUNING.mdとout/expression-tuning-20260915/acceptance.json、共有benchmark同名。
+<!-- expression-tuning-acceptance-current-end -->
+
 <!-- expression-tuning-current-begin -->
 2026-09-15 JST：D02の[単位付き式によるtune版7](EXPRESSION_TUNING.md)をprofile/曲線の実形状生成へ接続。
 実FEM円筒調整・保存再開・途中定義域エラー保持、非アフィン曲線の独立面積/体積則を検証。
