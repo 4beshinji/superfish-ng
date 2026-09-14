@@ -53,12 +53,12 @@ def validate_curved_comparison_meshes(value):
     if value[0]['schema_version']!=value[1]['schema_version']:
         raise ValueError('curved comparison mesh versions must agree')
     if value[0]['schema_version']==2:
-        validate_comparison_meshes([mesh['source_mesh'] for mesh in value])
+        validate_comparison_meshes([mesh['source_mesh'] for mesh in value],allow_symmetry=True)
     else:
         if value[0]['boundary_pairing']!=value[1]['boundary_pairing']:
             raise ValueError('both curved comparison meshes must declare the same boundary_pairing')
         for mesh in value:
-            validate_comparison_meshes([mesh['source_mesh'],mesh['source_mesh']])
+            validate_comparison_meshes([mesh['source_mesh'],mesh['source_mesh']],allow_symmetry=True)
             if mesh['schema_version']==5:
                 points=mesh['reference_vertices']
                 if (type(points) is not list or len(points)!=len(mesh['source_mesh']['points'])
@@ -88,10 +88,15 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
     te=[is_te(s.case) for s in solutions]
     if any(te) and not all(te):
         raise ValueError('mixed TE/TM curved correspondence is unsupported')
+    sector=None;allowed=('axis','pec')
+    if all(te):
+        from .curved_same_domain_tracking import _te_symmetry_sector
+        sector=_te_symmetry_sector(solutions)
+        allowed+=('electric_symmetry','magnetic_symmetry')
     field='Ephi_V_per_m' if all(te) else 'Hphi_A_per_m'
     spaces=[];boundaries=[];projects=[]
     for solution,document in zip(solutions,comparison_meshes):
-        if any(tag not in ('axis','pec') for tag in solution.space.boundary_tags):
+        if any(tag not in allowed for tag in solution.space.boundary_tags):
             raise ValueError('curved comparison requires closed PEC and axis boundaries')
         levels=document.get('curved_refinement_levels',0)
         steps=steps_from_dict(document['curved_refinement_steps']) if 'curved_refinement_steps' in document else ()
@@ -158,6 +163,7 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
         field_multiplier='sqrt(r/max(r))*sqrt(detJ/max(detJ)) independently per comparison space',
         scope='explicit piecewise quadratic coordinate correspondence with matching native domain boundaries and independent curved FEM fields; variable volume retained; sample-order convergence required; not inferred physical correspondence, continuous branch identity or a physical error bound')
     if all(te):report['physical_mapping']['physics']='axisymmetric_m0_te'
+    if sector is not None:report['physical_mapping']['symmetry_sector']=sector
     if automatic:report['physical_mapping']['numbering_correspondence']=correspondence
     if overlay is not None:report['physical_mapping']['common_reference_partition']=overlay.report
     return report

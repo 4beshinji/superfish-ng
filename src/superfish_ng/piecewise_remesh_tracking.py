@@ -11,12 +11,13 @@ from .same_domain_tracking import _same_boundary
 from .sampling import FieldSampler
 
 
-def validate_comparison_meshes(value):
+def validate_comparison_meshes(value, *, allow_symmetry=False):
     if type(value) is not list or len(value)!=2:raise ValueError('comparison_meshes requires [previous_mesh,current_mesh]')
     if any(isinstance(mesh,dict) and mesh.get('schema_version') in (2,3,4,5) for mesh in value):
         from .curved_piecewise_remesh_tracking import validate_curved_comparison_meshes
         validate_curved_comparison_meshes(value)
         return
+    allowed=('axis','pec','electric_symmetry','magnetic_symmetry') if allow_symmetry else ('axis','pec')
     names=('schema_version','length_unit','coordinate_order','index_base','points','triangles','boundary_edges','boundary_tags')
     for mesh in value:
         keys(mesh,names,names,'comparison mesh')
@@ -33,7 +34,7 @@ def validate_comparison_meshes(value):
                         if type(number) not in (int,float) or not np.isfinite(number):raise ValueError('comparison points must be finite numbers')
                     elif type(number) is not int or not 0<=number<len(mesh['points']):raise ValueError('comparison indices must refer to declared points')
         if (type(mesh['boundary_tags']) is not list or len(mesh['boundary_tags'])!=len(mesh['boundary_edges'])
-                or any(tag not in ('axis','pec') for tag in mesh['boundary_tags'])):
+                or any(tag not in allowed for tag in mesh['boundary_tags'])):
             raise ValueError('comparison meshes require closed PEC and axis tags for every boundary edge')
     if (len(value[0]['points'])!=len(value[1]['points']) or any(value[0][key]!=value[1][key] for key in ('triangles','boundary_edges','boundary_tags'))):
         raise ValueError('comparison meshes must explicitly share vertex numbering, oriented triangle connectivity and boundary tags')

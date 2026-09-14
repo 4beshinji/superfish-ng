@@ -48,10 +48,16 @@ def _chart(points, base, max_pair_tests):
 
 
 def _boundary(case, base, chart):
+    from .te import is_te
+    allowed={'axis','pec'}
+    if is_te(case):
+        from .curved_same_domain_tracking import _te_end_conditions
+        _te_end_conditions([case,case])
+        allowed.update(('electric_symmetry','magnetic_symmetry'))
     result = []
     for entries in _boundary_partitions(case, base, 512*np.finfo(float).eps):
         tags = {x[5] for x in entries}
-        if len(tags) != 1 or not tags <= {'axis', 'pec'}:
+        if len(tags) != 1 or not tags <= allowed:
             raise ValueError('reference charts require closed PEC and axis boundaries')
         vertices = [chart[entries[0][2]]]
         for entry in entries:
