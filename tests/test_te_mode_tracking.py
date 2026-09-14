@@ -68,7 +68,7 @@ class TEModeTrackingTests(unittest.TestCase):
         save_run(case,solve(case),self.root/'tm')
         tm=read_solution(self.root/'tm')
         with self.assertRaisesRegex(ValueError,'mixed TE/TM'):track_cylindrical_modes(self.solutions[0],tm,self.labels[0],**CONTROLS)
-        request=self.request();request['controls']['mapping']='normalized_profile'
+        request=self.request();request['controls']['mapping']='same_domain'
         with self.assertRaisesRegex(ValueError,'normalized_cylinder'):build_saved_mode_tracking(request)
         with self.assertRaisesRegex(ValueError,'sample_order'):track_cylindrical_modes(*self.solutions[:2],self.labels[0],**(CONTROLS|dict(sample_order=True)))
 

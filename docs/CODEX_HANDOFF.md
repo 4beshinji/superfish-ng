@@ -1,3 +1,17 @@
+2026-09-15 JST：[TE一般profile追跡](TE_PROFILE_TRACKING.md)の体積重み付きEφ写像を追加。
+閉PEC・同端条件の一対称面・鏡映に対応。解析積分、P1/P2左右両対称条件、保存再生、実FEM尺度則を検証。
+関連40件は39成功＋失敗入力修正後1成功の分割証拠。専用4実FEMもPASS。
+一般profileのtune接続と曲線TEは残る。D02と全計画goalは継続中。
+
+開始HEAD103958e。te_profile_tracking.pyを追加、profile_mode_trackingはTEのみ専用dispatch。
+saved_mode_trackingのTE native readerはnormalized_profileも許可。TE tuneの円筒guardはまだ維持。
+独立Eφ=rの解析overlap (7/3)/sqrt(31/5) で可変体積因子を検査。
+新4テスト、既存profile/TE円筒/TEsector/saved/history/TEtuneの40件28.674秒で1失敗。
+旧TE拒否テストの代替paired_meshにvertex_pairsがなく別エラー。same_domainへ訂正し当該1件PASS。
+専用4実FEMの最大場尺度差1.644e-14、RF尺度差8.549e-15。全handle終端、GUI起動なし。
+次：TE tuneにnormalized_profileを接続し、非円筒の実形状調整/再開/回復/最終細分とGUIを検証。
+曲線TE追跡と他物理調整は保持。正本TE_PROFILE_TRACKING.md、out/te-profile-tracking-20260915。
+
 2026-09-15 JST：[TE円筒チューニング](TE_TUNING.md)を同端条件の直線円筒へ接続し、限定受入。
 EφによるID、半領域・鏡映の元セクター順位、加速量N/A、保存再開・回復・最終粗細ゲートを保持。
 関連53unit（52＋1の分割実行）、専用44実FEM、Chrome閉PEC9/鏡映11/旧TM9項目がPASS。

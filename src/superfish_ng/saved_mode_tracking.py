@@ -104,8 +104,8 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     if any(polarizations):
         if not all(polarizations):
             raise ValueError('mixed TE/TM tracking is unsupported; use two results with the same polarization')
-        if controls['mapping'] != 'normalized_cylinder':
-            raise ValueError('TE saved tracking currently requires normalized_cylinder mapping')
+        if controls['mapping'] not in ('normalized_cylinder','normalized_profile'):
+            raise ValueError('TE saved tracking requires normalized_cylinder or normalized_profile mapping')
         from .te_saved import read_te_run
         solutions=[read_te_run(path) for path in directories]
     else:
