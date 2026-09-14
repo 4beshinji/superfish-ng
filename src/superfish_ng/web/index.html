@@ -669,6 +669,12 @@
             <legend>値の区間ごとの初期メッシュ</legend>
             <label>切替値（上の変数単位）<input id="study-remesh-cutover" type="number" step="any" value="0.75" /></label>
             <label class="file">置換メッシュ計画を読み込む<input id="study-remesh-import" type="file" accept=".json" /></label>
+            <details><summary>元の二次境界を保って内部メッシュを自動生成</summary>
+              <label>生成条件（長さm・弦三角形面積m²・角度deg）<textarea id="study-remesh-generation-settings" rows="7" spellcheck="false">{"schema_version":1,"max_chord_edge_m":0.08,"max_chord_triangle_area_m2":0.0006,"minimum_corner_angle_deg":1,"max_triangles":10000,"max_rounds":20,"curved_refinement_levels":1}</textarea></label>
+              <p class="hint">元の内部メッシュを使わず、境界節点・辺・タグを保持して再生成します。辺長・面積は初期の弦メッシュへ、要素数予算・角度は新しい細分履歴へも適用します。元Caseの大きさ・品質条件も保持します。固定境界と両立しない指定や品質未達は拒否します。</p>
+              <button id="study-remesh-generate">元Projectから置換計画を生成</button>
+              <p class="hint">生成に成功すると、切替値以降に使う完全な計画を下の区間定義へ入れます。元Projectは保持します。新しい局所細分番号を与える場合は、再生成後の各段階の番号を指定してください。</p>
+            </details>
             <label>メッシュ計画の区間定義<textarea id="study-remesh-schedule" rows="9" spellcheck="false">{"schema_version":1,"breakpoints":[],"plans":[{"kind":"replace","plan":{}}]}</textarea></label>
             <p class="hint">計画の読込で「切替値未満は元メッシュ、それ以上は置換メッシュ」の定義を作ります。複数区間はJSONで指定します。境界値は右側の区間に属し、逆順・適応二分でも同じ規則です。計画には供給する初期メッシュと新しい細分履歴を含めてください。保存・実行時に全計画を検査します。</p>
           </fieldset>

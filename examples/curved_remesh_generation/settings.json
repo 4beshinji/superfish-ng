@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "max_chord_edge_m": 0.08,
+  "max_chord_triangle_area_m2": 0.0006,
+  "minimum_corner_angle_deg": 1.0,
+  "max_triangles": 10000,
+  "max_rounds": 20,
+  "curved_refinement_levels": 1
+}

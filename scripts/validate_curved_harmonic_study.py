@@ -18,7 +18,7 @@ from test_curved_harmonic_study import harmonic_study_document,controls
 from validate_large_curved_mesh_selection import fingerprints,boundary_moments
 
 
-def worker(out,document=None):
+def worker(out,document=None,expected_initial_cells=None):
     request=dict(schema_version=1,study=harmonic_study_document() if document is None else document,initial_ids=['A'],step_controls=[dict(controls(),minimum_overlap=1.)],
         adaptive=dict(max_depth=1,max_attempts=4,minimum_parameter_step=.001))
     (out/'request.json').write_text(json.dumps(request,indent=2)+'\n')
@@ -47,7 +47,7 @@ def worker(out,document=None):
         assert first_mesh!=second_mesh and result['request']==request
         if request['study']['kind']=='curved_remesh_sweep':
             counts=[len(read_solution(Path(p['run'])/'solution').source_mesh_data['triangles']) for p in result['points']]
-            assert counts==[26,28,26],counts
+            assert counts==([26,28,26] if expected_initial_cells is None else expected_initial_cells),counts
             assert len(first_mesh['source_mesh']['triangles'])==len(second_mesh['source_mesh']['triangles'])==26
         manager.close();manager=JobManager(out/'workspace')
         assert manager.status(second,verify=True)['tracking_status']=='UNVERIFIED'

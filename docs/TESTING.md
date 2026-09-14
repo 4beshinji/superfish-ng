@@ -1,5 +1,16 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[固定二次境界の内部再生成](CURVED_REMESH_GENERATION.md)は新9件の分割証拠、既存58件を確認した。
+初回独立2件はAPI不在red、最初の2件4.350秒PASS。新7件10.470秒のうち6合格、相似Case上限の入力漏れ1ERROR。
+相似修正/追加凹形状2件3.892秒は1合格/方向符号前提1FAIL、凹形状修正1件0.605秒PASS、予算/粗化2件2.681秒PASS。
+既存は選択49件474.822秒のうち実48件合格・誤指定test_guiのimport1ERROR、実HTTP GUI/起動清掃10件6.090秒PASS。
+全一覧/コマンドはout/curved-remesh-generation-20260914/selected-regressions.json、補充はgui-regressions.log。単一全件PASSとは呼ばない。
+専用最終6新FEM88.290秒PASS、実worker再生成/保存再開3 FEM304.515秒PASS。初回5 FEM後の不整合面積指定による生成失敗は別に保持。
+固定辺L/底角αから面積下限L²tanα/4を独立算出し、境界を明示変更した別円筒で同じ面積/角度を検証。製品/許容差は無変更。
+両実行の1035sourceはそれぞれ不変で、間の差は検証器の円筒元辺長1箇所だけ。Chrome新22/既存版3の13項目、各2 FEM、外部HTTP0、319製品SHAが現行一致。
+GUIと独立Studyの全native係数/周波数/二次座標・接続一致、57ファイル不変、1.163秒、新FEMなし。画面目視済み。
+索引out/curved-remesh-generation-20260914/acceptance.json。全件validate/seed/Hosted CI/新Wine/実測は未実行。並行時間を単独性能とはしない。
+
 2026-09-14 JST：[条件別初期メッシュStudy版4](CURVED_REMESH_STUDY.md)は新8unit413.395秒、既存16モジュール78件510.514秒PASS。
 変更前の独立2件は版4不在red、初回幾何2件18.157秒PASS。初回回帰起動器のvenvリンク解決誤りでsystem Pythonのimport16ERROR、FEM未実行。
 起動器だけ修正した最終78件の全一覧/コマンドはout/curved-remesh-study-20260914/selected-regressions-final.json。

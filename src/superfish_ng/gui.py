@@ -188,6 +188,7 @@ def create_server(workspace, port=0):
                     "replace-mesh": ["document", "mesh_document"],
                     "curved-selection-mesh": ["document"],
                     "freeze-curved-refinement": ["document"],
+                    "generate-curved-remesh-plan": ["document", "settings_document"],
                     "preview-curved-deformation": ["document", "geometry_document", "rf_coordinates", "minimum_corner_angle_deg"],
                     "tangent": ["document", "candidate_index"],
                     "replay-tangent": ["document"],
@@ -295,6 +296,11 @@ def create_server(workspace, port=0):
                         data["sections"],
                         reflect_full=data.get("reflect_full", False),
                     )
+                elif action == "generate-curved-remesh-plan":
+                    from .curved_remesh_generation import generate_curved_remesh_plan
+
+                    keys(data,('action','document','settings_document'),('action','document','settings_document'),'curved remesh generation request')
+                    return self.reply(generate_curved_remesh_plan(load_document(data['document']),parse_json(data['settings_document'])))
                 elif action == "normalize-study":
                     from .studies import Study
 

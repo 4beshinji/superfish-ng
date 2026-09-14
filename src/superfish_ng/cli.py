@@ -67,6 +67,10 @@ def main(argv=None):
     deform.add_argument('--rf-coordinates',choices=('fixed','axis_fraction'),required=True)
     deform.add_argument('--minimum-corner-angle-deg',type=float,required=True)
     deform.add_argument('--out',type=Path,required=True)
+    generate_remesh=sub.add_parser('generate-curved-remesh-plan',help='regenerate a curved interior mesh with a fixed quadratic boundary and save a complete replacement plan')
+    generate_remesh.add_argument('project',type=Path)
+    generate_remesh.add_argument('--settings',type=Path,required=True,help='strict chord edge/area, quality, iteration/element budgets and new history')
+    generate_remesh.add_argument('--out',type=Path,required=True)
     remesh=sub.add_parser('remesh-curved-project',help='replace an initial curved mesh and explicitly redeclare/freeze its history on the same quadratic domain')
     remesh.add_argument('project',type=Path)
     remesh.add_argument('--plan',type=Path,required=True,help='strict remesh plan with source_mesh and a complete new refinement declaration')
@@ -878,6 +882,15 @@ def main(argv=None):
             with args.out.open('x',encoding='utf-8') as stream:
                 json.dump(result.to_dict(),stream,indent=2,allow_nan=False);stream.write('\n')
             print(f"DEFORMED: {args.out}")
+            return 0
+        elif args.command == 'generate-curved-remesh-plan':
+            from .curved_remesh_generation import generate_curved_remesh_plan
+            from .project import load_document,parse_json
+            plan=generate_curved_remesh_plan(load_document(args.project.read_text(encoding='utf-8')),
+                parse_json(args.settings.read_text(encoding='utf-8')))
+            with args.out.open('x',encoding='utf-8') as stream:
+                json.dump(plan,stream,indent=2,allow_nan=False);stream.write('\n')
+            print(f"GENERATED REMESH PLAN: {args.out}")
             return 0
         elif args.command == 'remesh-curved-project':
             from .curved_project_remesh import remesh_curved_project

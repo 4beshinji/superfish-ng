@@ -1,5 +1,9 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14 JST：[二次境界を保つ内部メッシュの自動再生成](docs/CURVED_REMESH_GENERATION.md)を追加。
+元の内部座標/接続を使わず、サイズ・面積・品質・予算を満たす置換計画を生成し、CLIとStudyのGUIへ接続しました。
+新9/既存58テストの分割検証、独立幾何/質量・6 FEMの尺度則/解析RF、実worker再開とChrome新22/旧13項目が合格。全計画goalは継続中。
+
 2026-09-14 JST：[曲線形状と初期メッシュのStudy版4](docs/CURVED_REMESH_STUDY.md)を追加。
 宣言した値の区間で別メッシュと新履歴を選び、元Projectの形状対応を保って保存追跡・逐次/適応再開・GUIへ接続しました。
 新8/既存78テスト、専用の独立幾何/Maxwell・解析順位交差・実worker再開、Chrome新18/旧13項目が合格。全計画goalは継続中。

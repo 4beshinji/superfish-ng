@@ -1486,7 +1486,8 @@ function curvedStudySignature() {
     harmonicName:$("study-harmonic-parameter").value,harmonicUnit:$("study-harmonic-unit").value,
     harmonicRf:$("study-harmonic-rf").value,harmonicAngle:$("study-harmonic-angle").value,
     harmonicCoefficients:$("study-harmonic-coefficients").value,
-    meshSchedule:$("study-remesh-schedule").value,meshCutover:$("study-remesh-cutover").value});
+    meshSchedule:$("study-remesh-schedule").value,meshCutover:$("study-remesh-cutover").value,
+    meshGeneration:$("study-remesh-generation-settings").value});
 }
 async function studyDefinition() {
   const kind=$("study-kind").value, affine=kind==="curved_affine_sweep", harmonic=isCurvedShapeStudy(kind),remesh=kind==="curved_remesh_sweep";
@@ -1530,6 +1531,14 @@ async function studyDefinition() {
     values: values.map((v) => v * studyParameterUnits.get(parameter)),
   };
 }
+bind("study-remesh-generate",async()=>{
+  const signature=curvedStudySignature(),cutover=number("study-remesh-cutover");
+  const settings=$("study-remesh-generation-settings").value,project=await preview();
+  if(signature!==curvedStudySignature())throw Error("メッシュ生成の準備中に入力が変わりました。現在の入力でやり直してください。");
+  const plan=await api('generate-curved-remesh-plan',{document:JSON.stringify(project),settings_document:settings});
+  if(signature!==curvedStudySignature())throw Error("メッシュ生成中に入力が変わりました。現在の入力でやり直してください。");
+  $("study-remesh-schedule").value=JSON.stringify({schema_version:1,breakpoints:[cutover],plans:[{kind:'original'},{kind:'replace',plan}]},null,2);
+});
 $("study-remesh-import").onchange=async(event)=>{
   try {
     const file=event.target.files[0];if(!file)return;

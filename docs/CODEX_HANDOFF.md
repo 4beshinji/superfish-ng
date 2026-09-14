@@ -1,4 +1,43 @@
-2026-09-14 JST 最新継続状態。開始HEADae5141e、当初clean。前goalターンは初期メッシュ置換API/CLIを実装/検証/commitしたprogress。
+2026-09-14 JST 最新継続状態。開始HEADf73ff2d、当初clean。前goalターンは供給初期メッシュの条件別Study版4を実装/検証/commitしたprogress。
+今回はN04残件4の固定二次境界の内部メッシュ自動生成をAPI/CLI/Study GUIへ追加したprogress。全計画は未完、goal ACTIVE。
+[CURVED_REMESH_GENERATION.md](CURVED_REMESH_GENERATION.md)が入力/数学/検証/制約の最新記録。
+新curved_remesh_generation.generate_curved_remesh_plan(project,settings)は既存の完全置換plan版1を返す。Study版4/保存形式は不変。
+直接native P2・未組立/未反射・閉PEC/axis m=0 TM限定。元内部節点/要素/番号を破棄し、元境界だけを原点/向きで正規化する。
+既存ear clipping、内部辺分割、重心挿入、角度改善flip/平滑化で再生成。境界節点/辺/タグは固定し、全二次境界を既存置換APIで照合する。
+settings版1はmax_chord_edge_m/max_chord_triangle_area_m2/minimum_corner_angle_deg/max_triangles/max_roundsと片方の新履歴を必須にする。
+弦辺長/面積は新初期メッシュ、角度/予算は新履歴へも適用。元Caseの厳しいサイズ/品質条件を保持し、旧メッシュが新予算を超える粗化は許す。
+新marked番号だけを解釈し固定patternを計画へ保存する。旧番号/patternを暗黙継承しない。生成の失敗反復は返さない。
+CLI generate-curved-remesh-plan PROJECT --settings FILE --out PLANは全検査後に排他的保存。合成設定例examples/curved_remesh_generation/settings.json。
+GUIは版4の区間欄で生成条件を入力し、成功した完全planを切替値以降へ入れる。元Project保持、重複JSON/不適合サイズ/生成中の入力変更を拒否。
+境界と内部番号を独立変更して同じ生成結果、独立Green面積/体積とu=Hphi/r=1の質量∫r³、2倍尺度の質量32倍を確認。
+新9unitは分割証拠。初回2件API不在red、実装後2件4.350秒PASS。初回7件10.470秒は6PASS/相似入力1ERROR。
+相似入力で元Case辺長も2倍へ修正。次の2件3.892秒は相似PASS/凹形状のGreen符号前提FAIL、凹形状補修1件0.605秒PASS。
+予算と追加粗化2件2.681秒PASS。旧76初期/304最終から新30要素を予算50で生成し、新履歴超過の拒否も確認。単一9件実行ではない。
+選択既存は49件474.822秒のうち48PASS/存在しないtest_guiの1ERROR。実在するtest_gui_hphi/test_job_startup_cleanupの10件6.090秒PASSで補完。
+最終既存58件は分割合格証拠。合格済み48件は再実行していない。選択コマンド/失敗理由を保持する。
+専用初回numericalは形状4+円筒1の5新FEM後、固定25mm境界/10度/面積2.5e-5m²という不可能条件を生成器が拒否して終了1。
+独立必要条件A>=L²tanα/4=2.7551e-5m²をarea-feasibility.jsonに記録。検証器の円筒元Case辺長指定だけ.025→.015へ変更した。
+新境界の最大辺13.75mmでは下限8.3342e-6m²。元25mm境界に成功したとは扱わず、製品/許容差は不変。
+専用numerical-finalは6新FEM88.290秒PASS。元/変形を尺度1/2で独立再生成/求解し、Green面積比1.125/体積比1.125²を確認。
+f/RF尺度差最大8.216e-15、Hphi/Er/Ez差最大1.488e-14、追跡重なり約0.9977237325131574、完全保存replay一致。
+元26初期/146最終と生成36初期/144最終を使用。別円筒の初期160/456→最終640/1824、f誤差6.600e-9/2.739e-9。
+円筒の両RQ誤差3.095e-6/1.084e-6、G5.803e-9/3.257e-9、TTF1.760e-8/4.281e-8。既存条件f<.003/RF<.01維持、全量単調収束とは呼ばない。
+同検証器--workers-onlyは3新FEM304.515秒PASS。実BISECT/PAUSED後JobManager閉鎖/再生成、実0.5追加resume、STOP/UNVERIFIED、再生成/全replay一致。
+worker初期数26/36/26、元点再利用、比較メッシュは元26由来の異なる実点座標。異常crash試験ではない。
+worker/最終数値は各実行中1035ソース系不変。間の差は専用検証器の円筒元Case辺長1箇所だけ。製品は不変。
+実Chrome新22/既存版3の13項目PASS、各2新FEM、外部HTTP0、両319製品SHAは最終一致、画像目視済み。
+GUI/CLI生成計画完全一致。GUI/独立最終Studyのnative全f/u/二次座標/接続完全一致、57保存ファイル不変、1.163秒PASS、新FEMなし。
+geometry79087/予算38980/worker1202/browser79845・23831/最終数値61373/native35474/追加GUI1341は終了0。
+初回新7件56294/途中幾何90592/初回数値99832/初回既存14239は終了1を回収し上記の原因と補修を保持。GUI server68099もSIGINTで終了0。
+全検証終端、実行中handle/サーバー/workerなし。証拠索引out/curved-remesh-generation-20260914/acceptance.json。
+全件validate/seed/Hosted CI/新Wine比較/実測は未実行。過去full失敗+対象補修+別seedをfull PASSへ読み替えない。
+FEM/変形数学/比較・物理許容差は無変更。新規外部資料/依存/旧資産参照なし。subagent/skillなし。
+親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVE。限定した自動生成をN04全体の受入や任意条件での生成保証にしない。
+次はN04残件4の独立メッシュの自動番号対応または境界分割を変える一般再メッシュ、あるいはN04一般精度/効率とG03/C00.V/V02残件を限定して進める。
+固定境界の自動生成とStudy接続は今回までで実装済み。TE/反射/半領域や曲線種類/個数の離散変更、一般物理枝回復は未受入。
+旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
+2026-09-14 JST 継続履歴。開始HEADae5141e、当初clean。前goalターンは初期メッシュ置換API/CLIを実装/検証/commitしたprogress。
 今回はN04残件4の条件別初期メッシュをStudy版4・追跡/逐次/適応再開・GUIへ接続したprogress。全計画は未完、goal ACTIVE。
 [CURVED_REMESH_STUDY.md](CURVED_REMESH_STUDY.md)が入力/数学/検証/残件の最新記録。
 Study study_version=4/kind=curved_remesh_sweep。版3の曲線法則/単位/RF/角度にmesh_schedule版1を必須追加。版1/2/3への混在は拒否。

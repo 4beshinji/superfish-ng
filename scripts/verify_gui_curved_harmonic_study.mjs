@@ -210,6 +210,33 @@ try {
     if(!isDeepStrictEqual(await ev('JSON.parse($("study-remesh-schedule").value)'),expected.mesh_schedule))throw Error('Plan import changed explicit schedule');
     report.checks.push({operation:'plan import declares right-hand cutover and complete new mesh/history',passed:true});
   }
+  if(args['--generation-settings']) {
+    const settings=JSON.parse(await readFile(args['--generation-settings'],'utf8'));
+    await ev('$("study-remesh-generation-settings").closest("details").open=true');
+    await fill('#study-remesh-generation-settings',JSON.stringify(settings));await fill('#study-remesh-schedule','');
+    await click('#study-remesh-generate');await wait('$("study-remesh-schedule").value.includes("source_mesh")',60000);
+    if(!isDeepStrictEqual(await ev('JSON.parse($("study-remesh-schedule").value)'),expected.mesh_schedule))throw Error('GUI generation differs from CLI complete plan');
+    if(!isDeepStrictEqual(await ev('preview()'),expected.project))throw Error('Generation changed source Project');
+    report.checks.push({operation:'automatic generation exactly matches the CLI plan and preserves source Project',passed:true});
+    const retained=await ev('$("study-remesh-schedule").value');
+    const duplicate=JSON.stringify(settings).replace('"schema_version":1','"schema_version":1,"schema_version":1');
+    await fill('#study-remesh-generation-settings',duplicate);await click('#study-remesh-generate');
+    await wait('!$("error").hidden && $("error").textContent.includes("duplicate JSON key")');
+    if(await ev('$("study-remesh-schedule").value')!==retained)throw Error('Rejected generation lost current schedule');
+    report.checks.push({operation:'duplicate generation settings are rejected without replacing the plan',passed:true});
+    await fill('#study-remesh-generation-settings',JSON.stringify({...settings,max_chord_edge_m:.001}));await click('#study-remesh-generate');
+    await wait('!$("error").hidden && $("error").textContent.includes("fixed quadratic boundary")');
+    if(await ev('$("study-remesh-schedule").value')!==retained)throw Error('Infeasible generation lost current schedule');
+    report.checks.push({operation:'incompatible size is rejected and preserves current schedule',passed:true});
+    await fill('#study-remesh-generation-settings',JSON.stringify(settings));
+    await ev('window.__generationApi=api;window.__releaseGeneration=null;api=async(...args)=>{const r=await __generationApi(...args);if(args[0]==="generate-curved-remesh-plan")await new Promise(done=>window.__releaseGeneration=done);return r}');
+    await click('#study-remesh-generate');await wait('!!window.__releaseGeneration');
+    await fill('#study-remesh-generation-settings',JSON.stringify({...settings,max_rounds:21}));await ev('__releaseGeneration()');
+    await wait('!$("error").hidden && $("error").textContent.includes("メッシュ生成中に入力が変わりました")');
+    if(await ev('$("study-remesh-schedule").value')!==retained)throw Error('Stale generation changed schedule');
+    report.checks.push({operation:'changed generation settings reject an in-flight completed plan',passed:true});
+    await ev('api=__generationApi');await fill('#study-remesh-generation-settings',JSON.stringify(settings));
+  }
   await click('#save-study');let saved;
   for(let n=0;n<300;n++){try{saved=JSON.parse(await readFile(out+'/downloads/study.json','utf8'));break;}catch{}await sleep(100);}
   if(!isDeepStrictEqual(saved,expected))throw Error('GUI harmonic Study differs from native declaration');
