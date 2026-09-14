@@ -1,5 +1,11 @@
 # D02の元要件と明示残件
 
+2026-09-15 JST：[曲線TEの宣言比較写像](TE_CURVED_TRACKING.md)をpiecewise_remesh版2/3/4/5へ接続。
+実Eφと可変体積重みを保持し、非アフィン変形・独立積分・Maxwell尺度・native再生を検証。
+型検査順と共通参照分割のTE入口を修正、最後の関連22件がPASS。旧TM保存互換も照合。
+閉PECの直接曲線P2が対象。曲線TE tune、曲線対称/鏡映、他物理/D03は残り、全goal ACTIVE。
+
+
 2026-09-15 JST：[TE一般profile調整](TE_PROFILE_TUNING.md)をnormalized_profileへ接続。
 非円筒の連動寸法・局所半径式、閉PEC/半領域/鏡映、保存再開と最終粗細判定を検証。
 新2件51.729秒＋関連48件94.247秒PASS。専用尺度8FEM、Chrome11項目/4FEMがPASS。

@@ -82,8 +82,13 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
         raise ValueError('curved piecewise_remesh sample_order must be an integer from 2 to 32')
     validate_curved_comparison_meshes(comparison_meshes)
     solutions=(previous,current)
-    if any(not isinstance(s,CurvedSolution) or s.reflection_source_case is not None for s in solutions):
+    from .te import TESolution,is_te
+    if any(not isinstance(s,(CurvedSolution,TESolution)) or s.case.geometry_order!=2 or s.reflection_source_case is not None for s in solutions):
         raise ValueError('curved piecewise_remesh requires two direct native curved solutions; reflected construction is unsupported')
+    te=[is_te(s.case) for s in solutions]
+    if any(te) and not all(te):
+        raise ValueError('mixed TE/TM curved correspondence is unsupported')
+    field='Ephi_V_per_m' if all(te) else 'Hphi_A_per_m'
     spaces=[];boundaries=[];projects=[]
     for solution,document in zip(solutions,comparison_meshes):
         if any(tag not in ('axis','pec') for tag in solution.space.boundary_tags):
@@ -140,18 +145,19 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
         if not np.isfinite(factor).all() or np.any(factor<=0) or not np.isfinite(volume) or volume<=0:
             raise ValueError('curved comparison physical volume weights must be finite and positive')
         sampler=FieldSampler.from_solution(solution)
-        values=np.column_stack([sampler.evaluate(points,i,outside='raise')['Hphi_A_per_m'] for i in range(len(solution.frequencies_hz))])
+        values=np.column_stack([sampler.evaluate(points,i,outside='raise')[field] for i in range(len(solution.frequencies_hz))])
         samples.append(values*factor[:,None]);volumes.append(volume)
         det_ranges.append([float(min(det)),float(max(det))])
     report=track_sampled_mode_subspaces(*samples,weights,previous.frequencies_hz,current.frequencies_hz,previous_ids,
-        comparison_description='declared paired native quadratic comparison cells; independently sampled Hphi times normalized sqrt(r*detJ); common reference triangle measure',**controls)
+        comparison_description=('declared paired native quadratic comparison cells; independently sampled '+('Ephi' if all(te) else 'Hphi')+' times normalized sqrt(r*detJ); common reference triangle measure'),**controls)
     report['physical_mapping']=dict(name=mapping,comparison_geometry_order=2,sample_order=sample_order,sample_count=count,
         comparison_triangle_count=cells,solver_triangle_counts=[len(s.space.geometry.cell_nodes) for s in solutions],
         comparison_mesh_sha256=[mesh_digest(m) for m in comparison_meshes],axisymmetric_volumes_m3=volumes,
         sampled_determinant_ranges_m2=det_ranges,boundary_coincidence=boundaries,
-        comparison_edge_checks=[dict(s.edge_check) for s in spaces],field='Hphi_A_per_m',
+        comparison_edge_checks=[dict(s.edge_check) for s in spaces],field=field,
         field_multiplier='sqrt(r/max(r))*sqrt(detJ/max(detJ)) independently per comparison space',
         scope='explicit piecewise quadratic coordinate correspondence with matching native domain boundaries and independent curved FEM fields; variable volume retained; sample-order convergence required; not inferred physical correspondence, continuous branch identity or a physical error bound')
+    if all(te):report['physical_mapping']['physics']='axisymmetric_m0_te'
     if automatic:report['physical_mapping']['numbering_correspondence']=correspondence
     if overlay is not None:report['physical_mapping']['common_reference_partition']=overlay.report
     return report

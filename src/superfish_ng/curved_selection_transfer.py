@@ -30,11 +30,11 @@ def _compose(vertices,points):
     return tuple(tuple(a[k]+F(float(x))*(b[k]-a[k])+F(float(y))*(c[k]-a[k]) for k in (0,1)) for x,y in points)
 
 
-def _prepare(project):
+def _prepare(project, *, allow_te=False):
     if not isinstance(project,Project):raise ValueError('curved selection transfer requires two Projects')
     project=Project.from_dict(project.to_dict());case=project.case
     from .te import is_te
-    if case.curved_contour is None or case.geometry_order!=2 or is_te(case) or project.sections is not None or project.reflect_full:
+    if case.curved_contour is None or case.geometry_order!=2 or (is_te(case) and not allow_te) or project.sections is not None or project.reflect_full:
         raise ValueError('curved selection transfer requires direct unassembled/unreflected native P2 TM Projects')
     mesh=make_mesh(case) if project.mesh_data is None else mesh_from_dict(case,project.mesh_data)
     limit=case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000

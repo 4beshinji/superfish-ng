@@ -1,3 +1,23 @@
+2026-09-15 JST：[曲線TEの宣言比較写像](TE_CURVED_TRACKING.md)をpiecewise_remesh版2/3/4/5へ接続。
+実Eφと可変体積重みを保持し、非アフィン変形・独立積分・Maxwell尺度・native再生を検証。
+型検査順と共通参照分割のTE入口を修正、最後の関連22件がPASS。旧TM保存互換も照合。
+閉PECの直接曲線P2が対象。曲線TE tune、曲線対称/鏡映、他物理/D03は残り、全goal ACTIVE。
+
+開始HEAD5df18b8。curved_piecewise_remesh_trackingがCurvedSolution/TESolutionの型を先に確認し、
+TE/TM混在拒否、TEはEphi_V_per_mをsampling、TEのみphysicsメタデータ追加。TM文書は不変。
+saved_mode_trackingはTEのpiecewise_remeshを比較版2..5だけ許可（直線比較版1は拒否）。
+版4/5の幾何prepareはcurved_selection_transfer._prepareのallow_te=Trueを明示。
+公開の領域選択転送は既定Falseを保持。幾何/被覆/境界/履歴の検査自体を緩和しない。
+新4test：実非アフィン/保存・混在拒否・Ephi=r独立P2/dblquad・版3/4/5/尺度。
+初期新3件PASS6.883s、関連33件44.634sは2error（非曲線のcase属性参照、版3の境界パラメータ不一致）。
+型検査順と宣言ordered_curve_verticesへ訂正、12件41.246sで版4がTM限定prepareにより1error。
+幾何prepareを上記限定接続して当該＋overlay/reference/selection transfer22件10.780sPASS。
+独立にcorrespondence/overlay/partition_tuning18件41.317sPASS。失敗は全て後続で解消、分割証拠。
+旧TM partition checkpointを修正前後に再生照合（新FEM0）。full suite/seed/GUIは未実行。
+次：曲線TE tuneに版4/5/7/8を接続し、実形状変形・最終細分・native/GUIを検証する。
+対称曲線/鏡映は別残件。非円筒個別ID回復例も残る。親33=10/16/6/1、D02と全goal継続。
+正本TE_CURVED_TRACKING.md、out/te-curved-tracking-20260915。Wine拒否を回避しない。
+
 2026-09-15 JST：[TE一般profile調整](TE_PROFILE_TUNING.md)をnormalized_profileへ接続。
 非円筒の連動寸法・局所半径式、閉PEC/半領域/鏡映、保存再開と最終粗細判定を検証。
 新2件51.729秒＋関連48件94.247秒PASS。専用尺度8FEM、Chrome11項目/4FEMがPASS。

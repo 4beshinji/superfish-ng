@@ -40,7 +40,7 @@ def build_curved_comparison_overlay(previous,current,*,boundary_pairing,max_pair
     reprojected onto the analytic boundary.
     """
     integer(max_pair_tests,'max_pair_tests');integer(max_triangles,'max_triangles')
-    prepared=[_prepare(p) for p in (previous,current)];projects=[p for p,_,_ in prepared];bases=[s for _,s,_ in prepared]
+    prepared=[_prepare(p, allow_te=True) for p in (previous,current)];projects=[p for p,_,_ in prepared];bases=[s for _,s,_ in prepared]
     correspondence=infer_curved_comparison_correspondence([p.case for p in projects],bases,boundary_pairing=boundary_pairing)
     reference=correspondence['previous_reference_cell_nodes'];node_map=np.asarray(correspondence['current_node_for_previous'])
     base_maps=[];histories=[]

@@ -106,7 +106,7 @@ def build_curved_reference_partition(previous, current, *, reference_vertices, m
     integer(max_pair_tests, 'max_pair_tests'); integer(max_triangles, 'max_triangles')
     if type(reference_vertices) is not list or len(reference_vertices) != 2:
         raise ValueError('reference_vertices must contain previous and current charts')
-    prepared = [_prepare(p) for p in (previous, current)]
+    prepared = [_prepare(p, allow_te=True) for p in (previous, current)]
     reference = []; boundaries = []; maps = []; counts = []; edge_tests = 0
     for (project, base, limit), points in zip(prepared, reference_vertices):
         if project.mesh_data is None:
