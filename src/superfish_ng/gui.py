@@ -188,6 +188,7 @@ def create_server(workspace, port=0):
                     "replace-mesh": ["document", "mesh_document"],
                     "curved-selection-mesh": ["document"],
                     "freeze-curved-refinement": ["document"],
+                    "preview-curved-deformation": ["document", "geometry_document", "rf_coordinates", "minimum_corner_angle_deg"],
                     "tangent": ["document", "candidate_index"],
                     "replay-tangent": ["document"],
                     "assemble": ["case", "sections", "reflect_full"],
@@ -266,6 +267,9 @@ def create_server(workspace, port=0):
                     return self.reply(tangent_document(data["document"],
                                                        candidate_index=data.get("candidate_index"),
                                                        replay=action == "replay-tangent"))
+                if action == "preview-curved-deformation":
+                    from .gui_curved_deformation import deformation_response
+                    return self.reply(deformation_response({k:v for k,v in data.items() if k!='action'}))
                 if action == "freeze-curved-refinement":
                     from .frozen_curved_refinement import freeze_curved_refinement
                     project = (load_document(data["document"]) if isinstance(data["document"], str)

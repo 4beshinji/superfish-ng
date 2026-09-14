@@ -1,5 +1,13 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[単独Project変形GUI](GUI_CURVED_DEFORMATION.md)は新3unitとGUI/履歴/Projectの直接消費先を選択。
+最終の新3/既存37件には分割合格証拠がある。初回選択は実31件合格と誤指定モジュール1件で終了1。
+正しいProject二モジュールの9件では例題の旧分類前提1件に2エラー。専用Study往復と単独Case拒否を加え、当該1件0.204秒PASS。
+Chrome新21/既存固定履歴9項目がPASS。後続の失敗状態表示/図中文字修正とRF方針/実反転等の追加6項目もPASS、新FEMなし。
+新/既存browser各1とCLI1 FEMに加え、初回CLI比較パス誤指定のbrowser1 FEMを保持する。
+専用保存場再検証はR/Q式誤記補修後1.489秒PASS、1,023source/27native不変。最終追加browserの316製品SHAが現行一致。
+索引out/gui-curved-deformation-20260914/acceptance.json。全件/seed/Hosted CI/新Wine比較は未実行。全件の合格へ読み替えない。
+
 2026-09-14 JST：[曲線法則Study](CURVED_HARMONIC_STUDY.md)は新7件239.756秒と追加二次法則1件6.998秒PASS。
 既存14モジュール65件278.056秒PASS。全一覧/コマンドはout/curved-harmonic-study-20260914/selected-regressions.json。
 専用CLI/幾何/RF/保存追跡の6 FEMは111.592秒、実適応worker再開3 FEMは223.940秒、円筒解析順位交差2 FEMは53.647秒PASS。

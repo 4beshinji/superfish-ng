@@ -7,6 +7,9 @@
   --line: #dce3ed;
   --blue: #175ea8;
 }
+#deformation-geometry { width: 100%; resize: vertical; }
+#deformation-boundary { width: 100%; min-height: 200px; }
+#deformation-boundary text { font-size: 26px; }
 #curved-selection-canvas {
   width: 100%;
   height: 360px;

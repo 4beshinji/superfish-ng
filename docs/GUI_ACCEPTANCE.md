@@ -1,5 +1,12 @@
 # 汎用GUI・共通入出力の受入記録
 
+## 元メッシュと履歴を保持する単独形状変形 — 2026-09-14
+
+[GUI_CURVED_DEFORMATION.md](GUI_CURVED_DEFORMATION.md)の元形状準備/ファイル入力、厳密JSON、native境界/CLI一致、別保存、適用/Undo/後続編集保護、通常保存再読込、実worker、非同期変更拒否をChrome21項目で確認。
+既存の分割固定/履歴Undoと実FEMも9項目PASS。後続のプレビュー失敗表示と図中文字の補修後、RF両方針/実反転等を追加6項目で確認した。
+新/既存browser各1 FEMとCLI1 FEM、初回参照パス誤指定のbrowser1 FEMは別に保持。独立な元場/幾何/RF再検証は追加FEMなしでPASS。
+外部HTTP0、最終画像を目視。実行中316製品は各回不変、後続追加browserは現行製品とSHA一致。全GUIの一括再受入とはしない。
+
 ## 曲線寸法の法則による形状Study — 2026-09-14
 
 [CURVED_HARMONIC_STUDY.md](CURVED_HARMONIC_STUDY.md)の現在値ひな形・定数/重複パス拒否・全設定往復・実Study worker・CLI数値一致・完了Studyの導出追跡/保存再生・逐次/適応要求準備・非同期品質変更拒否・旧版1切替/幅をChrome14項目で確認。

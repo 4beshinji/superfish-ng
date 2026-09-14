@@ -1,5 +1,11 @@
 # 独立実装・情報来歴
 
+2026-09-14 JST：[単独Projectの形状変形GUI](GUI_CURVED_DEFORMATION.md)。
+既存調和変位、native P2境界、Project保存/workerと編集操作を接続した。二次LagrangeとBezierの恒等式で境界を表示する。
+別の境界多項式積分、GUI/CLI実保存場の全係数とRF再評価、明示したエネルギー・両R/Q定義を照合した。
+検証器の係数2の向きの誤記はPHYSICSの定義へ修正し、製品値/許容差を変更していない。
+合成形状のみ使用。新規外部資料・依存・旧資産参照なし。
+
 2026-09-14 JST：[曲線法則の形状Study](CURVED_HARMONIC_STUDY.md)。
 既存の調和変位/固定P2制限/曲線比較メッシュ・Study保存/worker経路を接続し、有限多項式をHorner法で評価した。
 独立な一次/二次寸法式とGreen幾何比、m変数換算、Maxwell RF/元場尺度則、既存Bessel解析の円筒順位交差を照合。

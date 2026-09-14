@@ -1,3 +1,38 @@
+2026-09-14 JST 最新継続状態。開始HEAD91e177e、当初clean。前goalターンは曲線法則Studyの実装/検証/commitでprogress。
+今回はN04残件4の単独Project形状変形GUIを実装・検証したprogress。全計画は未完、goal ACTIVE。
+[GUI_CURVED_DEFORMATION.md](GUI_CURVED_DEFORMATION.md)が入力/状態/数学/検証/残件の最新記録。
+新gui_curved_deformation.deformation_responseとpreview-curved-deformation API。document/geometry_document/rf_coordinates/minimum_corner_angle_degを必須にする。
+既存deform_curved_projectをそのまま使用。元/先の全履歴後のnative境界を始/終/中点で返し、固有値求解/ファイル作成なし。
+GUIは元形状ひな形/目標JSON読込、SIテキスト、RF方針/品質、同縮尺二次境界、節点/要素数と実RF座標、別保存/適用/Undo。
+目標JSON文字列をstrict readerへ渡し重複キー拒否。候補へ元入力・文字列/条件・編集世代を拘束し、準備中/準備後の変更を拒否する。
+Undoは適用直後のProject一致を確認し、以後のProject編集/別読込で解除。入力イベントを伴わない値変更も操作時に照合する。
+元/先Bezier制御点は2m−(a+b)/2。全native境界を表示し、内部要素の選択は適用後の既存図上操作へ渡す。
+元の単独変形API/数学/FEM/保存形式/品質閾値は無変更。閉PEC/axisの直接曲線P2 TM、全marked固定を維持。
+初回の独立境界テストは新GUI API不在red。新3unit5.506秒PASS。
+selected-testsは実31件PASS+誤指定test_project_mesh_operationsのimport1件ERRORで56.693秒/終了1。新3+既存28を含む。
+正しいtest_project_meshとtest_projectは9件1.046秒、例題往復1件にStudy例を単独Caseとみなす古い前提の2subtest ERROR。
+tests/test_project.pyだけを補修。Study専用パーサーで往復/元Project一致、単独Caseパーサーでの拒否を保持し、当該1件0.204秒PASS。
+最終異なる40unit（新3/既存37）は分割合格証拠。一括40/full PASSにはしない。
+実Chrome初回browserは10項目+実worker1 FEMまで進み、CLI参照をcli-run/result.jsonと誤指定して停止。
+正しいcli-run/solution/results.jsonでbrowser-final21項目PASS。保存/適用/Undo/非同期変更/実worker1 FEMとCLI RF一致を含む。
+既存verify_gui_frozen_curved_refinement.mjs無変更でbrowser-frozen-regression9項目/実worker1 FEMがPASS。
+後続製品修正はapp.jsのプレビュー失敗時status3行とstyle.cssの図中文字サイズ1行だけ。
+browser-additional6項目PASS、新FEMなし。RF両方針/明示座標、品質拒否/失敗表示、有効凹形状の実反転、変更して同値に戻した要求拒否、文字/幅を確認。
+全browser外部HTTP0、最終画像目視。各実行中316製品SHA不変。最終追加browserが現行316製品と完全一致。
+CLIの同じ変形Projectも1 FEM計算。成功browser2+CLI1と、初回browser1の計4 FEMを別々に保持する。
+専用validate_gui_curved_deformation.py初回は検証器R/Qの係数2の向きの誤記でFAIL。PHYSICSのV²/(omega U)とV²/(2 omega U)へ補修。
+native-validation-finalは1.489秒PASS、新FEMなし。GUI/CLIのf配列/全P2係数完全一致、146要素境界/全RF元場再評価、独立Green比/エネルギー/両RQが成立。
+検証中1023ソース系/27native不変。GUI元実行20260914-135125-2732e3ca0e、CLI cli-run。全ファイル/結果の索引はout/gui-curved-deformation-20260914/acceptance.json。
+GUI PID1219797は完全argv照合後SIGINT、session14612終了0。feature62718/CLI変形85970/追加fixture18299/browser-final60755/旧browser17545/追加89493/専用最終15164は終了0。
+初回browser77166/selected86502/project32380/専用初回61873は終了1を回収して補修。全検証終端、実行中handleなし。
+GUIと直接消費先だけへ限定。全件/seed/Hosted CI/新Wine比較/実測は未実行。過去full FAIL+対象補修+別seedを単一full PASSとしない。
+新規外部資料/依存/旧資産参照なし。subagent/skillなし。親33=8受入/17進行/7他未受入/1範囲外を維持。
+次はN04の初期メッシュ変更を伴うStudyと実比較メッシュの明示対応、または一般精度/効率の原受入条件へ進む。
+単独形状変形GUIは今回接続済み。Study曲線法則/二分/保存再開も前段で完了。これらを残件として繰り返さない。
+独立メッシュの自動番号対応、Studyの離散曲線変更、TE/反射/半領域変形、D01一般物理枝回復、C00.V/G03/V02ほかは継続。
+旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。gitメタデータはrequire_escalated。
+以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD78b61f1、当初clean。前goalターンは調和変位API/CLIの実装/検証/commitでprogress。
 本段階はN04残件4の曲線法則Studyを実装・検証したprogress。全計画未完、goal ACTIVE。
 [CURVED_HARMONIC_STUDY.md](CURVED_HARMONIC_STUDY.md)が入力/数学/操作/受入/残件の最新仕様。

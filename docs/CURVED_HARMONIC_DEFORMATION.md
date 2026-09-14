@@ -1,5 +1,7 @@
 # 曲線上の対応と調和変位による履歴付きProject変形
 
+2026-09-14追補：[単独Project変形GUI](GUI_CURVED_DEFORMATION.md)の目標準備・native二次境界プレビュー・保存・適用・Undoも接続した。初期再メッシュ/自動対応と全計画は継続中。以下は各段階の記録。
+
 2026-09-14追補：[曲線法則の形状Study](CURVED_HARMONIC_STUDY.md)へ接続した。通常Study/保存追跡/逐次・適応再開とGUIで、各条件を元Projectから独立変形する。単独Projectの変形プレビュー/適用/Undoは残る。以下は変形API/CLIを追加した時点の記録。
 
 2026-09-14 JST、N04残件4の非アフィン形状変更へ進むため、

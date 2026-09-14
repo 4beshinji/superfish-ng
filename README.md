@@ -1,5 +1,10 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14 JST：[履歴を保持する形状変形GUI](docs/GUI_CURVED_DEFORMATION.md)を追加。
+単独Projectの目標形状準備・二次境界プレビュー・別保存・適用・Undoを接続しました。
+新3/既存37テストの分割確認、Chrome新21+追加6/既存9項目、実GUI/CLI保存場・独立幾何/RF再検証を確認。
+初期再メッシュ/自動対応とN04全体は残り、全計画goalを継続中。以下は各段階の履歴。
+
 2026-09-14 JST：[曲線寸法の法則による形状Study](docs/CURVED_HARMONIC_STUDY.md)を追加。
 非アフィンな形状掃引を元メッシュ/固定履歴・保存追跡・逐次/適応再開・GUIへ接続しました。
 新8テストの分割検証と既存65件、専用6+3+2 FEM、Chrome新14/旧11項目が合格。

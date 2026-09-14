@@ -90,6 +90,28 @@
           <label>各弧の固定分割数（JSON配列、空欄は自動）<input id="curve-fixed-segments" type="text" /></label>
           <p class="hint">固定分割でも最大弦誤差を検査します。不足する指定数は拒否し、自動で変更しません。</p>
           <p>元曲線を保持し、初期分割用の直線輪郭を生成します。二次曲線要素の選択は下の計算設定で行います。FEMの最大辺長は別に指定します。</p>
+          <details id="deformation-panel">
+            <summary>元メッシュと細分履歴を保って形状を変える</summary>
+            <p>現在の曲線から目標形状を準備し、寸法を編集してプレビューしてください。同じ順番の曲線上の位置を対応させ、内部メッシュを調和変位で移動します。閉PEC・軸のTM二次曲線が対象です。選択細分は下の「分割を固定」で先に固定してください。</p>
+            <button id="deformation-template" type="button">現在の曲線から目標形状を準備</button>
+            <label class="file">目標形状JSONを開く<input id="deformation-open" type="file" accept=".json" /></label>
+            <label>目標形状 [SI単位: m・rad]<textarea id="deformation-geometry" rows="12" spellcheck="false"></textarea></label>
+            <p class="hint">Caseのgeometryオブジェクトを指定します。曲線の個数・順番・境界タグと各弧の分割数を保持し、共有端点の寸法を一緒に変更してください。解析曲線の種類は変更できます。入力欄の単位はm・radです。</p>
+            <label>RF座標の扱い<select id="deformation-rf"><option value="fixed">有効長・電圧区間・位相原点を固定</option><option value="axis_fraction">全軸長に対する分率を保持</option></select></label>
+            <label>全段階の最小頂点接線角 [度]<input id="deformation-angle" type="number" min="0" max="60" step="any" value="1" /></label>
+            <button id="deformation-preview" type="button">形状と全履歴を検査してプレビュー</button>
+            <p id="deformation-status" role="status">プレビューでは編集中のProjectを変更しません。</p>
+            <div id="deformation-view" hidden>
+              <svg id="deformation-boundary" viewBox="0 0 800 340" role="img" aria-label="元と変形後の二次メッシュ境界"></svg>
+              <p>灰色の破線: 元の境界 ／ 青色の実線: 変形後の境界。全細分履歴後の二次メッシュ境界を同じ縮尺で表示します。</p>
+              <p id="deformation-mesh-info"></p>
+              <p id="deformation-rf-info"></p>
+            </div>
+            <button id="deformation-save" type="button" disabled>変形済みProjectを別ファイルに保存</button>
+            <button id="deformation-apply" type="button" disabled>検査済みの変形を編集画面へ適用</button>
+            <button id="deformation-undo" type="button" disabled>直前の形状変形を元に戻す</button>
+            <p class="hint">適用後は入力保存・通常計算・図上メッシュ確認へ進めます。元に戻す操作は、その後にProjectを編集するまで利用できます。幾何検査の合格は電磁場の計算・精度確認を意味しません。</p>
+          </details>
         </div>
         <div id="arc-editor" hidden>
           <p class="hint">

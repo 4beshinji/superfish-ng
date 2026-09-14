@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 
 from superfish_ng.config import Case
-from superfish_ng.project import Project, assemble_geometry, load_document
+from superfish_ng.project import Project, assemble_geometry, load_document, parse_json
 
 
 class ProjectTests(unittest.TestCase):
@@ -35,11 +35,21 @@ class ProjectTests(unittest.TestCase):
         self.assertEqual(case.profile[0], (0.0, 0.04))
         self.assertAlmostEqual(case.profile[-1][1], 0.04)
 
-    def test_plain_case_roundtrip_preserves_canonical(self):
+    def test_example_documents_roundtrip_with_declared_parser(self):
+        from superfish_ng.studies import Study
         for path in Path("examples").glob("*.json"):
             with self.subTest(path=path):
-                project = load_document(path.read_text())
-                self.assertEqual(project.case.to_dict(), Case.load(path).to_dict())
+                text=path.read_text();raw=parse_json(text)
+                if 'study_version' in raw:
+                    study=Study.from_dict(raw)
+                    self.assertEqual(Study.from_dict(study.to_dict()).to_dict(),study.to_dict())
+                    self.assertEqual(study.project.to_dict(),Project.from_dict(raw['project']).to_dict())
+                    # A Study is still not a standalone Case/Project document.
+                    with self.assertRaises(ValueError):load_document(text)
+                    project=study.project
+                else:
+                    project = load_document(text)
+                    self.assertEqual(project.case.to_dict(), Case.load(path).to_dict())
                 self.assertEqual(
                     load_document(project.dumps()).to_dict(), project.to_dict()
                 )
