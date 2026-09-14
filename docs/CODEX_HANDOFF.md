@@ -1,3 +1,25 @@
+<!-- curved-partition-schedule-current-begin -->
+2026-09-15 JST：D02の[曲線分割候補](CURVED_PARTITION_SCHEDULE.md)の検証基盤を追加。
+区間ごとの初期接続/境界分割/明示履歴と共通参照座標を検証する。tune/保存/GUIへの接続は次の課題。
+矩形の解析面積/体積、曲線PEC分割でのP2領域差、従来の同一境界拒否を検査した。
+親33=10/16/6/1、全計画goal ACTIVE。
+
+開始HEADf8b0638。curved_partition_schedule.pyにbuild_partition_schedule/partition_index/partition_comparison_mesh。
+参照版5の明示chartを採用。自動物理メッシュの境界から共通chartを推定する方式は未実装。
+候補はsource_mesh/任意segments_per_curve/reference_vertices/全新履歴/角度下限を指定。
+元Caseの物理/解析曲線/RFを保持、新markedは候補上で凍結、全段階の幾何/品質と共通参照被覆を検査。
+schedule版1のbreakpoints等号は右側、値依存のみ。最大32候補。各比較にmax_pair_tests適用。
+次：tune新要求版へ接続し、候補選択→式変形→実FEM→比較版5→保存/再開/ID回復を実装する。
+前回の式版7と外側回復6を保持。最終細分/参照元それぞれの実値から候補を選ぶ。
+初期接続と境界分割を変更できる明示方式を、全自動メッシャーと呼ばない。D02受入は未完了。
+証拠out/curved-partition-schedule-20260915、API不在baseline終了1、新4件0.909秒PASS。
+Wine拒否の例外返答なし、別経路回避しない。親33/全goalは継続。
+
+関連12件5.020秒PASS（新4、既存参照分割6、既存再メッシュ拒否/履歴2）。
+既存参照分割テストにはnative場の検査を含む。新tune経路の専用FEM/GUI/全suiteは未実行。
+全handle終端、live processなし。詳細はout/curved-partition-schedule-20260915/acceptance.json。
+<!-- curved-partition-schedule-current-end -->
+
 <!-- expression-tuning-acceptance-current-begin -->
 2026-09-15 JST：[単位付き式によるtune版7](EXPRESSION_TUNING.md)の追加実経路検証がPASS。
 Chrome profile9/曲線9/旧版7項目、曲線Maxwell RF/場尺度則、指数軸長の実ID回復・再開/拒否を確認。
