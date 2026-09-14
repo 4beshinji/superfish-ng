@@ -104,8 +104,8 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     if any(polarizations):
         if not all(polarizations):
             raise ValueError('mixed TE/TM tracking is unsupported; use two results with the same polarization')
-        if controls['mapping'] not in ('normalized_cylinder','normalized_profile') and not (controls['mapping']=='piecewise_remesh' and all(m['schema_version'] in (2,3,4,5) for m in controls['comparison_meshes'])):
-            raise ValueError('TE saved tracking requires normalized_cylinder, normalized_profile or declared quadratic piecewise_remesh mapping')
+        if controls['mapping'] not in ('normalized_cylinder','normalized_profile','affine_remesh','curved_same_domain') and not (controls['mapping']=='piecewise_remesh' and all(m['schema_version'] in (2,3,4,5) for m in controls['comparison_meshes'])):
+            raise ValueError('TE saved tracking requires normalized_cylinder, normalized_profile or native curved affine_remesh/curved_same_domain/declared quadratic piecewise_remesh mapping')
         from .te_saved import read_te_run
         solutions=[read_te_run(path) for path in directories]
     else:

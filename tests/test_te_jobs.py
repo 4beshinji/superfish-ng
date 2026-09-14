@@ -161,4 +161,4 @@ class TEJobTests(unittest.TestCase):
         root=Path(__file__).resolve().parents[1]
         for filename,validator in (('examples/optimization/curved_rf.json',validate_optimization_request),('examples/tuning/curved_affine_scale.json',_request)):
             request=json.loads((root/filename).read_text());request['project']['case']['model']['polarization']='te'
-            with self.assertRaisesRegex(ValueError,'TE .*integration is pending'):validator(request)
+            with self.assertRaisesRegex(ValueError,'TE .*fixed' if validator is _request else 'TE .*integration is pending'):validator(request)

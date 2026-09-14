@@ -1,3 +1,23 @@
+2026-09-15 JST：[TEアフィン曲線調整版4](TE_AFFINE_TUNING.md)を固定RF契約でAPI接続。
+Eφのアフィン/同一曲線領域比較、native保存再開、Maxwell周波数則とせん断体積比を検証。
+新2件は分割で成功、関連35件134.814秒PASS。実GUI・追加場/RF尺度・TE affine Studyは後続。
+版8・曲線対称/鏡映・実ID回復例・他物理/D03を保持し、全計画goal ACTIVE。
+
+開始HEADc65d58e。curved_project_transformはTEのfixed/direct closed P2のみ、RF加速座標を新設しない。
+curved_same_domain_trackingはTE専用係数vでEphi=r*vを評価、TE/TM混在とTEreflection拒否。
+affine_remesh_trackingはTE curvedを同helperへdispatch、Ephi_new/aと一定体積比a²cを明記。
+saved_mode_trackingはTE affine_remesh/curved_same_domainを許可（非曲線TE affineはbackendで明示拒否）。
+te_tuningは版4 fixedを許可。TE affine Studyの旧guardは未変更、次課題。
+新test_te_affine_tuning.py：実一様尺度tune pause2/restart/最終粗細/N/A、合成coneせん断Ephi=rと体積比、同領域native再生。
+初期25.244sはcoarse refinement失敗＋楕円shearがz範囲外。許容差5e4Hz維持、TE初期levels1→3。
+合成coneの最初の入力にはcurve_chord_tolerance_m欠落があり、.001を明示して当該1件1.917sPASS。
+levels3調整の501.345s実行はtunePASS、旧入力のcone1errorだけ。新2件は分割成功（単一全件PASSではない）。
+関連35件134.814sPASS。全handle終端、GUI起動なし。製品sourceを実検証中固定。
+次：TE affine版4の実GUI/CLI/場・RF尺度/保存一致を追加し、GUI旧未対応文言を更新する。
+高細分の対称両メッシュ積分は重い（新tune約500s）。検証済み証拠を再利用し、数だけ更新する再実行はしない。
+その後affine Study、版8分割、曲線対称/鏡映、実ID回復、他物理/D03へ。親33=10/16/6/1、goal継続。
+正本TE_AFFINE_TUNING.md、out/te-affine-tuning-20260915。full/seed/hosted CIなし。Wine拒否は別残件、回避しない。
+
 2026-09-15 JST：[曲線TE調整版5/7](TE_CURVED_TUNING.md)の実GUI・場/RF追加検証がPASS。
 直接閉PEC・固定RFメタデータ・凍結履歴の範囲を限定受入。Chrome多項式14/exp式11項目、専用21実FEM。
 原寸/倍寸/4倍エネルギー、全係数・全要素の場・RF/PEC積分尺度を分離検査。8組native全配列/RF一致、元108ファイル保持。

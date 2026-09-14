@@ -29,11 +29,16 @@ def track_affine_remesh_modes(previous,current,previous_ids,*,mapping,sample_ord
     """
     if mapping!='affine_remesh':raise ValueError('explicit mapping must be affine_remesh')
     a,b,c=validate_affine_map(affine_map)
-    if any(isinstance(s,CurvedSolution) for s in (previous,current)):
+    from .te import TESolution,is_te
+    te=[is_te(s.case) if hasattr(s,'case') else False for s in (previous,current)]
+    if any(te) and not all(te):raise ValueError('mixed TE/TM affine correspondence is unsupported')
+    if any(te) and any(s.case.geometry_order!=2 for s in (previous,current)):
+        raise ValueError('TE affine correspondence requires native curved P2 fields')
+    if any(isinstance(s,(CurvedSolution,TESolution)) for s in (previous,current)):
         from .curved_same_domain_tracking import _track_curved_modes
         report=_track_curved_modes(previous,current,previous_ids,sample_order=sample_order,affine=(a,b,c),**controls)
         physical=report['physical_mapping'];volumes=physical.pop('axisymmetric_volumes_m3')
-        report['comparison_description']='declared r_new=a*r_old, z_new=b*r_old+c*z_old; whole quadratic boundary coincidence after pullback; Hphi_new/a; symmetric independent curved-mesh quadrature in old physical volume'
+        report['comparison_description']='declared r_new=a*r_old, z_new=b*r_old+c*z_old; whole quadratic boundary coincidence after pullback; '+('Ephi' if all(te) else 'Hphi')+'_new/a; symmetric independent curved-mesh quadrature in old physical volume'
         physical.update(name=mapping,affine_map=dict(radial_scale=a,axial_scale=c,axial_shear=b),physical_volume_ratio=a*a*c,
             reference_axisymmetric_volumes_m3=volumes,physical_axisymmetric_volumes_m3=[volumes[0],volumes[1]*a*a*c],
             current_field_multiplier='1/radial_scale, constant removed by subspace normalization',

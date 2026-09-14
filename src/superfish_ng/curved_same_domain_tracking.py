@@ -2,6 +2,7 @@
 """Compare curved native fields only after full quadratic boundary coincidence."""
 import numpy as np
 from .curved_solution import CurvedSolution
+from .te import TESolution,is_te
 from .quadratic_boundary import QuadraticEdge
 from .fem import triangle_quadrature
 from .sampling import FieldSampler
@@ -39,7 +40,11 @@ def _compare_quadratic_boundaries(previous,current,affine=None):
     comparisons use an explicit geometry-scaled roundoff tolerance.
     """
     solutions=(previous,current)
-    if any(not isinstance(s,CurvedSolution) for s in solutions):raise ValueError('curved_same_domain requires native curved solutions on both sides')
+    if any(not isinstance(s,(CurvedSolution,TESolution)) or s.case.geometry_order!=2 for s in solutions):raise ValueError('curved_same_domain requires native curved solutions on both sides')
+    te=[is_te(s.case) for s in solutions]
+    if any(te) and not all(te):raise ValueError('mixed TE/TM curved correspondence is unsupported')
+    if all(te) and any(s.reflection_source_case is not None for s in solutions):
+        raise ValueError('TE curved correspondence requires direct fields; reflected construction is unsupported')
     return compare_quadratic_space_boundaries(previous.case,previous.space,current.case,current.space,affine=affine)
 
 
@@ -98,6 +103,7 @@ def track_curved_same_domain_modes(previous,current,previous_ids,*,mapping,sampl
 def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None,**controls):
     if type(sample_order) is not int or not 2<=sample_order<=32:raise ValueError('curved_same_domain sample_order must be an integer from 2 to 32')
     boundary=_compare_quadratic_boundaries(previous,current,affine);solutions=(previous,current)
+    te=is_te(previous.case);field='Ephi_V_per_m' if te else 'Hphi_A_per_m'
     counts=[len(s.space.geometry.cell_nodes) for s in solutions];count=sum(counts)*sample_order**2
     if count>262144:raise ValueError('curved_same_domain exceeds 262144 samples; reduce sample_order or mesh size')
     rule=list(triangle_quadrature(order=sample_order));q=np.array([b[1:] for b,_ in rule]);reference=np.array([w for _,w in rule])
@@ -106,7 +112,7 @@ def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None
         g=solution.space.geometry;points=[];own=[];measure=[]
         for cell,mapping_cell in enumerate(g.local_maps):
             data=mapping_cell.evaluate(q);r=data['points_rz_m'][:,0];det=data['determinant_m2']
-            points.append(data['points_rz_m']);own.append(r[:,None]*(data['basis_values']@solution.u[g.cell_nodes[cell]]));measure.append(r*det*reference)
+            points.append(data['points_rz_m']);own.append(r[:,None]*(data['basis_values']@(solution.coefficients_v_per_m2 if te else solution.u)[g.cell_nodes[cell]]));measure.append(r*det*reference)
         points=np.concatenate(points);measure=np.concatenate(measure)
         if not np.isfinite(measure).all() or np.any(measure<=0):raise ValueError('curved comparison requires positive finite volume weights')
         own=np.concatenate(own)
@@ -115,12 +121,13 @@ def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None
             if side==1:own=own/a;measure=measure/(a*a*c)
             if not np.isfinite(measure).all() or np.any(measure<=0):raise ValueError('affine curved comparison requires positive finite reference volume weights')
         values[side].append(own);other=1-side
-        sampled=np.column_stack([samplers[other].evaluate(points,i,outside='raise')['Hphi_A_per_m'] for i in range(len(solutions[other].frequencies_hz))])
+        sampled=np.column_stack([samplers[other].evaluate(points,i,outside='raise')[field] for i in range(len(solutions[other].frequencies_hz))])
         if affine is not None and other==1:sampled=sampled/affine[0]
         values[other].append(sampled)
         weights.append(measure/2);volumes.append(float(2*np.pi*np.sum(measure)))
     report=track_sampled_mode_subspaces(*[np.concatenate(v) for v in values],np.concatenate(weights),previous.frequencies_hz,current.frequencies_hz,previous_ids,
-        comparison_description='same represented quadratic boundary; physical Hphi at both curved meshes quadrature points; half-sum physical r dr dz measure',**controls)
+        comparison_description=('same represented quadratic boundary; physical '+('Ephi' if te else 'Hphi')+' at both curved meshes quadrature points; half-sum physical r dr dz measure'),**controls)
     report['physical_mapping']=dict(name='curved_same_domain',sample_order=sample_order,sample_count=count,triangle_counts=counts,axisymmetric_volumes_m3=volumes,
-        boundary_coincidence=boundary,field='Hphi_A_per_m',scope='identical native curve parameterization and coincident represented quadratic boundary; independent curved P2 connectivity; sample-order convergence required; not equality of distinct curve approximations or physical convergence acceptance')
+        boundary_coincidence=boundary,field=field,scope='identical native curve parameterization and coincident represented quadratic boundary; independent curved P2 connectivity; sample-order convergence required; not equality of distinct curve approximations or physical convergence acceptance')
+    if te:report['physical_mapping']['physics']='axisymmetric_m0_te'
     return report

@@ -60,6 +60,14 @@ def transform_curved_project(project, affine_map, *, rf_coordinates):
     # Revalidate mutable nested dictionaries and all portable Project options.
     project = Project.from_dict(project.to_dict())
     case = project.case
+    from .te import is_te,validate_te_case
+    te=is_te(case)
+    if te:
+        validate_te_case(case)
+        if rf_coordinates!='fixed':raise ValueError('TE affine geometry requires fixed RF metadata')
+        if (case.geometry_order!=2 or project.reflect_full or case.curved_contour is None
+                or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
+            raise ValueError('TE affine geometry requires direct native P2 closed PEC/axis geometry')
     if case.curved_contour is None or project.sections is not None:
         raise ValueError('affine curved project requires native curved_contour without assembled sections')
     a, b, c = validate_affine_map(affine_map)
@@ -73,15 +81,15 @@ def transform_curved_project(project, affine_map, *, rf_coordinates):
     contour = replace(case.curved_contour,
         curves=tuple(transform_curve(curve, affine_map) for curve in case.curved_contour.curves),
         join_tolerance_m=case.curved_contour.join_tolerance_m*stretch)
-    active, interval, origin = case.acceleration_parameters
-    factor = c if rf_coordinates == 'axial' else 1.
+    rf={}
+    if not te:
+        active, interval, origin = case.acceleration_parameters
+        factor = c if rf_coordinates == 'axial' else 1.
+        rf=dict(active_length_m=active*factor,voltage_interval_m=tuple(v*factor for v in interval),
+            phase_origin_m=None if case.phase_origin_m is None else origin*factor)
     target = replace(case, curved_contour=contour, contour=None,
         curve_chord_tolerance_m=case.curve_chord_tolerance_m*stretch,
-        curve_segments_per_curve=counts, active_length_m=active*factor,
-        voltage_interval_m=tuple(v*factor for v in interval),
-        # An omitted phase origin defaults in the final reflected cavity.
-        # Making it explicit would move that origin when reflecting z_min.
-        phase_origin_m=None if case.phase_origin_m is None else origin*factor)
+        curve_segments_per_curve=counts, **rf)
     data = mesh_to_dict(source_mesh)
     data['points'] = _points(source_mesh.points, a, b, c).tolist()
     result = Project.from_dict(dict(project.to_dict(), case=target.to_dict(),
