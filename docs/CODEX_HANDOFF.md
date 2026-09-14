@@ -1,5 +1,10 @@
 2026-09-15 JST：[TEアフィン調整版4](TE_AFFINE_TUNING.md)のGUI/CLI・場/RF追加検証を限定受入。
 
+2026-09-15 JST：[TE分割切替のGUIと実円弧検証](TE_PARTITION_GUI_AND_CAP.md)を限定受入。
+調整版8 GUI12/実円弧Study版4 GUI8項目PASS。円弧調整は比較予算300000で停止し、別要求700000で保存再開・再生後TUNED。
+新15半領域FEM（初回停止の3場を含む）、13組104配列/全RF一致、289 nativeファイル保持。物理閾値・製品コードの変更なし。
+全handle終端。TE計画自動生成・他物理/D03等は残り、親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[TE対称形状のメッシュ交換・分割切替](TE_SYMMETRY_PARTITION_WORKFLOWS.md)をStudy版4・調整版8へ接続。
 新5unitの分割検証と関連27unit 932.594秒PASS。8対称条件の独立体積・局所細分履歴、専用10半領域FEMで円筒解析周波数/CLI保存再開を確認。
 独立/逐次/適応の4組32配列と全RF一致、117 nativeファイル保持。調整は元分割の最終細分へ戻り両1 MHzゲートを満たす。
@@ -26,9 +31,11 @@ full validatorは361モジュール1826件PASS（3 skip）、HTTPの1件を別�
 専用折線壁9半領域FEMで独立/逐次/適応Studyを確認し、6組48配列と全RF一致、117ファイル保持。CLI履歴再生PASS。
 実曲線workflow追加検証・専用GUI・分割切替対称条件・他物理/D03等は残る。親33=10/16/6/1、全計画goal ACTIVE。
 
-次はTE対称の分割切替Study版4/調整版8の実GUI・実円弧の追加検証へ進む。
+次はTE向け置換計画自動生成を確認・接続し、D02の未接続物理と元要件の監査へ進む。
 版4/8の対称条件は接続済み。明示置換計画と元半領域の参照座標を保ち、全鏡映体積・保存再開のAPI/CLI検査はPASS。
-TE向け置換計画自動生成はまだ拒否する。専用記録はout/te-symmetry-partition-20260915、全handle終了済み。
+TE向け置換計画自動生成はまだ入口で拒否する。curved_remesh_generation.pyとtest_curved_remesh_generation.pyが対象。
+分割切替のGUI・円弧追加記録はout/te-cap-partition-20260915とout/te-partition-gui-20260915/tune。
+初回300000組は最終比較で予算超過し、700000組の別要求はTUNED・再生PASS。全handle終了済み、再開すべき計算はない。
 旧円弧候補の鏡映拒否は座標別丸めの変更で解消。元のjoin tolerance 1e-14 mを保持した実入力と失敗ログをoutに残した。
 専用GUIサーバーPID2707565はSIGINT終了0、全5ジョブ終了。逐次初回検証はタイムアウト、補完再生と適応は終了0。
 CLI補助は期待したUNVERIFIEDの終了値1で終端、native照合は終了0。全対象プロセスは終了しており、再開すべき計算はない。

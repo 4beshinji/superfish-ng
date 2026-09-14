@@ -1,0 +1,4073 @@
+{
+  "status": "PASS",
+  "base_commit": "9fcb810",
+  "scope": "TE symmetry partition tune GUI, real-cap Study API/GUI and real-cap partition tune API",
+  "geometry": {
+    "status": "PASS",
+    "source_triangles": 55,
+    "replacement_triangles": 56,
+    "half_p2_volumes_m3": [
+      0.0020452922161048274,
+      0.0020452929272176874
+    ],
+    "study_changed_boundary_refusal": "quadratic boundary differs despite common analytic curves; preserve the represented boundary or declare another mapping",
+    "independent_volume_increment": true,
+    "new_eigensolves": 0
+  },
+  "execution": {
+    "status": "PASS",
+    "cap_new_half_eigensolves": 9,
+    "original_budget": 300000,
+    "retry_budget": 700000,
+    "required_overlay_pair_tests": 604450,
+    "failed_attempt_preserved": true,
+    "source_unchanged": true,
+    "tune_decision": {
+      "status": "TUNED",
+      "next_trial": null,
+      "value": 0.0,
+      "refined_target_met": true,
+      "mesh_difference_met": true,
+      "mesh_frequency_difference_hz": 43511.077178001404,
+      "reason": "two-mesh frequency difference is a diagnostic, not a discretization-error bound"
+    }
+  },
+  "native": {
+    "status": "PASS",
+    "new_half_eigensolves": 15,
+    "gui_half_eigensolves": 6,
+    "cap_half_eigensolves": 9,
+    "native_pairs": 13,
+    "npz_arrays_exact": 104,
+    "all_rf_exact": true,
+    "preserved_native_files": 289,
+    "gui_tune_checks": 12,
+    "gui_study_checks": 8,
+    "new_gui_jobs": [
+      "20260915-083251-11c9c8dfb2",
+      "20260915-083343-e42785703e",
+      "20260915-082812-04d9cb62c3",
+      "20260915-082433-9b54557f55",
+      "20260915-082931-c9c0e5e1af"
+    ],
+    "reused_workspace_jobs": [
+      "20260915-044251-363125d6ac",
+      "20260915-044648-bab7af2cbd",
+      "20260915-045135-e6f41fd8f7"
+    ],
+    "source_unchanged": true
+  },
+  "reference_budget": {
+    "pair_tests": 604450,
+    "chart_edge_pair_tests": 8372,
+    "total_pair_tests": 612822,
+    "final_cell_counts": [
+      220,
+      880
+    ]
+  },
+  "preexisting_gui_jobs": {
+    "status": "PASS",
+    "jobs": [
+      "20260915-044251-363125d6ac",
+      "20260915-044648-bab7af2cbd",
+      "20260915-045135-e6f41fd8f7"
+    ],
+    "files": 64,
+    "new_eigensolves": 0
+  },
+  "source_files_unchanged": 336,
+  "gui_server_exit": 0,
+  "all_handles_terminal": true,
+  "product_code_changed": false,
+  "unit_or_full_validator_rerun": false,
+  "hosted_ci_run": false,
+  "inputs": {
+    "gui_tune": {
+      "schema_version": 8,
+      "project": {
+        "project_version": 2,
+        "case": {
+          "schema_version": 3,
+          "name": "cavity",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.1,
+                  0.0
+                ]
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.1,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.1,
+                  0.08
+                ]
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.1,
+                  0.08
+                ],
+                "end_zr_m": [
+                  0.05,
+                  0.08
+                ]
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.05,
+                  0.08
+                ],
+                "end_zr_m": [
+                  0.0,
+                  0.08
+                ]
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.08
+                ],
+                "end_zr_m": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "magnetic_symmetry",
+              "pec",
+              "pec",
+              "pec"
+            ],
+            "join_tolerance_m": 1e-14,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.001,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "geometry_order": 2,
+            "curved_refinement_levels": 2
+          },
+          "solver": {
+            "modes": 1,
+            "quadrature_order": 12,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "te",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "reflect_full": true,
+        "display_length_unit": "mm",
+        "mesh_data": {
+          "schema_version": 1,
+          "length_unit": "m",
+          "coordinate_order": "rz",
+          "index_base": 0,
+          "points": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.1
+            ],
+            [
+              0.08,
+              0.1
+            ],
+            [
+              0.08,
+              0.05
+            ],
+            [
+              0.08,
+              0.0
+            ]
+          ],
+          "triangles": [
+            [
+              0,
+              2,
+              1
+            ],
+            [
+              0,
+              3,
+              2
+            ],
+            [
+              0,
+              4,
+              3
+            ]
+          ],
+          "boundary_edges": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              0
+            ]
+          ],
+          "boundary_tags": [
+            "axis",
+            "magnetic_symmetry",
+            "pec",
+            "pec",
+            "pec"
+          ]
+        }
+      },
+      "geometry_kind": "curved_harmonic",
+      "parameter": "x",
+      "parameter_unit": "1",
+      "bounds": [
+        0.0,
+        0.25
+      ],
+      "mesh_schedule": {
+        "schema_version": 1,
+        "breakpoints": [
+          0.125
+        ],
+        "max_pair_tests": 300000,
+        "partitions": [
+          {
+            "source_mesh": {
+              "schema_version": 1,
+              "length_unit": "m",
+              "coordinate_order": "rz",
+              "index_base": 0,
+              "points": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.1
+                ],
+                [
+                  0.08,
+                  0.1
+                ],
+                [
+                  0.08,
+                  0.05
+                ],
+                [
+                  0.08,
+                  0.0
+                ]
+              ],
+              "triangles": [
+                [
+                  0,
+                  2,
+                  1
+                ],
+                [
+                  0,
+                  3,
+                  2
+                ],
+                [
+                  0,
+                  4,
+                  3
+                ]
+              ],
+              "boundary_edges": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  2,
+                  3
+                ],
+                [
+                  3,
+                  4
+                ],
+                [
+                  4,
+                  0
+                ]
+              ],
+              "boundary_tags": [
+                "axis",
+                "magnetic_symmetry",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "reference_vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.1
+              ],
+              [
+                0.08,
+                0.1
+              ],
+              [
+                0.08,
+                0.05
+              ],
+              [
+                0.08,
+                0.0
+              ]
+            ],
+            "curved_refinement_levels": 2,
+            "minimum_corner_angle_deg": 0.1
+          },
+          {
+            "source_mesh": {
+              "schema_version": 1,
+              "length_unit": "m",
+              "coordinate_order": "rz",
+              "index_base": 0,
+              "points": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.1
+                ],
+                [
+                  0.08,
+                  0.1
+                ],
+                [
+                  0.08,
+                  0.05
+                ],
+                [
+                  0.08,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.05
+                ]
+              ],
+              "triangles": [
+                [
+                  0,
+                  2,
+                  5
+                ],
+                [
+                  5,
+                  2,
+                  1
+                ],
+                [
+                  0,
+                  3,
+                  2
+                ],
+                [
+                  0,
+                  4,
+                  3
+                ]
+              ],
+              "boundary_edges": [
+                [
+                  0,
+                  5
+                ],
+                [
+                  5,
+                  1
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  2,
+                  3
+                ],
+                [
+                  3,
+                  4
+                ],
+                [
+                  4,
+                  0
+                ]
+              ],
+              "boundary_tags": [
+                "axis",
+                "axis",
+                "magnetic_symmetry",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "reference_vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.1
+              ],
+              [
+                0.08,
+                0.1
+              ],
+              [
+                0.08,
+                0.05
+              ],
+              [
+                0.08,
+                0.0
+              ],
+              [
+                0.0,
+                0.05
+              ]
+            ],
+            "curved_refinement_levels": 2,
+            "minimum_corner_angle_deg": 0.1
+          }
+        ]
+      },
+      "bindings": [
+        {
+          "path": "/case/geometry/curves/2/end_zr_m/1",
+          "expression": {
+            "op": "add",
+            "args": [
+              {
+                "constant": 0.08,
+                "unit": "m"
+              },
+              {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0064,
+                    "unit": "m"
+                  },
+                  {
+                    "op": "sub",
+                    "args": [
+                      {
+                        "op": "exp",
+                        "args": [
+                          {
+                            "variable": "x"
+                          }
+                        ]
+                      },
+                      {
+                        "constant": 1,
+                        "unit": "1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "path": "/case/geometry/curves/3/start_zr_m/1",
+          "expression": {
+            "op": "add",
+            "args": [
+              {
+                "constant": 0.08,
+                "unit": "m"
+              },
+              {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0064,
+                    "unit": "m"
+                  },
+                  {
+                    "op": "sub",
+                    "args": [
+                      {
+                        "op": "exp",
+                        "args": [
+                          {
+                            "variable": "x"
+                          }
+                        ]
+                      },
+                      {
+                        "constant": 1,
+                        "unit": "1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "rf_coordinates": "fixed",
+      "minimum_corner_angle_deg": 1.0,
+      "target_hz": 2405741104.6266828,
+      "frequency_tolerance_hz": 1000000.0,
+      "mesh_frequency_tolerance_hz": 1000000.0,
+      "parameter_tolerance": 1e-08,
+      "max_trials": 8,
+      "initial_ids": [
+        "TE"
+      ],
+      "mode_id": "TE",
+      "controls": {
+        "mapping": "piecewise_remesh",
+        "sample_order": 5,
+        "minimum_overlap": 0.8,
+        "minimum_assignment_margin": 0.05,
+        "relative_cluster_gap": 1e-06,
+        "minimum_relative_singular_value": 1e-08
+      },
+      "refinement_scale": 2
+    },
+    "cap_study": {
+      "study_version": 4,
+      "kind": "curved_remesh_sweep",
+      "project": {
+        "project_version": 2,
+        "case": {
+          "schema_version": 3,
+          "name": "cavity",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.1875,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.125,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  0.0625,
+                  0.0625
+                ],
+                "start_rad": 0.0,
+                "sweep_rad": 1.5707963267948966,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.125,
+                  0.0625
+                ],
+                "end_zr_m": [
+                  0.0,
+                  0.0625
+                ]
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0625
+                ],
+                "end_zr_m": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "magnetic_symmetry"
+            ],
+            "join_tolerance_m": 1e-14,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.001,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "geometry_order": 2,
+            "curved_refinement_levels": 1,
+            "contour_mesh": {
+              "max_edge_m": 0.04,
+              "min_angle_deg": 5.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            }
+          },
+          "solver": {
+            "modes": 1,
+            "quadrature_order": 12,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "te",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "reflect_full": true,
+        "display_length_unit": "mm",
+        "mesh_data": {
+          "schema_version": 1,
+          "length_unit": "m",
+          "coordinate_order": "rz",
+          "index_base": 0,
+          "points": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.1875
+            ],
+            [
+              0.019313562148434212,
+              0.1844410322684471
+            ],
+            [
+              0.03673657826827957,
+              0.17556356214843422
+            ],
+            [
+              0.050563562148434216,
+              0.16173657826827956
+            ],
+            [
+              0.059441032268447096,
+              0.14431356214843422
+            ],
+            [
+              0.0625,
+              0.125
+            ],
+            [
+              0.0625,
+              0.0
+            ],
+            [
+              0.0,
+              0.09375
+            ],
+            [
+              0.03571428571428571,
+              0.0625
+            ],
+            [
+              0.03125,
+              0.0
+            ],
+            [
+              0.02629223988418959,
+              0.16617435357242624
+            ],
+            [
+              0.0350363532199399,
+              0.15236804888000607
+            ],
+            [
+              0.03715718338021082,
+              0.16396063571728653
+            ],
+            [
+              0.0625,
+              0.0625
+            ],
+            [
+              0.0,
+              0.046875
+            ],
+            [
+              0.013020833333333334,
+              0.026041666666666668
+            ],
+            [
+              0.0,
+              0.140625
+            ],
+            [
+              0.012579854989681338,
+              0.17046986252127289
+            ],
+            [
+              0.04439274299262143,
+              0.08826029216946912
+            ],
+            [
+              0.04705756712126635,
+              0.14019870682811034
+            ],
+            [
+              0.0625,
+              0.09375
+            ],
+            [
+              0.0625,
+              0.03125
+            ],
+            [
+              0.015625,
+              0.078125
+            ],
+            [
+              0.015625,
+              0.125
+            ],
+            [
+              0.02849702380952381,
+              0.034895833333333334
+            ],
+            [
+              0.030386121869063577,
+              0.10825078299911911
+            ],
+            [
+              0.046875,
+              0.03125
+            ],
+            [
+              0.0,
+              0.0234375
+            ],
+            [
+              0.0,
+              0.1640625
+            ],
+            [
+              0.0,
+              0.0703125
+            ],
+            [
+              0.0,
+              0.1171875
+            ],
+            [
+              0.028218795760610798,
+              0.08776309494703488
+            ],
+            [
+              0.031854093962251286,
+              0.13196657912174822
+            ],
+            [
+              0.015476190476190475,
+              0.053125
+            ],
+            [
+              0.01729347291578289,
+              0.15017142676549095
+            ],
+            [
+              0.04644842099086711,
+              0.11457106018640782
+            ],
+            [
+              0.014975819604945729,
+              0.101679396324359
+            ]
+          ],
+          "triangles": [
+            [
+              21,
+              36,
+              19
+            ],
+            [
+              9,
+              14,
+              19
+            ],
+            [
+              14,
+              21,
+              19
+            ],
+            [
+              25,
+              34,
+              16
+            ],
+            [
+              0,
+              10,
+              16
+            ],
+            [
+              10,
+              25,
+              16
+            ],
+            [
+              27,
+              22,
+              14
+            ],
+            [
+              10,
+              7,
+              27
+            ],
+            [
+              7,
+              22,
+              27
+            ],
+            [
+              27,
+              25,
+              10
+            ],
+            [
+              14,
+              9,
+              27
+            ],
+            [
+              9,
+              25,
+              27
+            ],
+            [
+              20,
+              36,
+              6
+            ],
+            [
+              36,
+              21,
+              6
+            ],
+            [
+              12,
+              33,
+              20
+            ],
+            [
+              33,
+              36,
+              20
+            ],
+            [
+              26,
+              32,
+              19
+            ],
+            [
+              32,
+              9,
+              19
+            ],
+            [
+              19,
+              36,
+              26
+            ],
+            [
+              36,
+              33,
+              26
+            ],
+            [
+              35,
+              11,
+              18
+            ],
+            [
+              35,
+              33,
+              12
+            ],
+            [
+              1,
+              29,
+              18
+            ],
+            [
+              29,
+              35,
+              18
+            ],
+            [
+              17,
+              31,
+              24
+            ],
+            [
+              31,
+              37,
+              24
+            ],
+            [
+              24,
+              35,
+              17
+            ],
+            [
+              35,
+              29,
+              17
+            ],
+            [
+              23,
+              34,
+              9
+            ],
+            [
+              34,
+              25,
+              9
+            ],
+            [
+              8,
+              30,
+              23
+            ],
+            [
+              30,
+              34,
+              23
+            ],
+            [
+              15,
+              28,
+              16
+            ],
+            [
+              28,
+              0,
+              16
+            ],
+            [
+              16,
+              34,
+              15
+            ],
+            [
+              34,
+              30,
+              15
+            ],
+            [
+              26,
+              33,
+              24
+            ],
+            [
+              33,
+              35,
+              24
+            ],
+            [
+              23,
+              37,
+              8
+            ],
+            [
+              37,
+              31,
+              8
+            ],
+            [
+              9,
+              32,
+              23
+            ],
+            [
+              32,
+              37,
+              23
+            ],
+            [
+              24,
+              37,
+              26
+            ],
+            [
+              37,
+              32,
+              26
+            ],
+            [
+              18,
+              2,
+              1
+            ],
+            [
+              11,
+              35,
+              12
+            ],
+            [
+              12,
+              4,
+              13
+            ],
+            [
+              20,
+              6,
+              5
+            ],
+            [
+              12,
+              13,
+              11
+            ],
+            [
+              4,
+              12,
+              20
+            ],
+            [
+              2,
+              18,
+              11
+            ],
+            [
+              11,
+              3,
+              2
+            ],
+            [
+              3,
+              11,
+              13
+            ],
+            [
+              13,
+              4,
+              3
+            ],
+            [
+              4,
+              20,
+              5
+            ]
+          ],
+          "boundary_edges": [
+            [
+              0,
+              28
+            ],
+            [
+              28,
+              15
+            ],
+            [
+              15,
+              30
+            ],
+            [
+              30,
+              8
+            ],
+            [
+              8,
+              31
+            ],
+            [
+              31,
+              17
+            ],
+            [
+              17,
+              29
+            ],
+            [
+              29,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              6,
+              21
+            ],
+            [
+              21,
+              14
+            ],
+            [
+              14,
+              22
+            ],
+            [
+              22,
+              7
+            ],
+            [
+              7,
+              10
+            ],
+            [
+              10,
+              0
+            ]
+          ],
+          "boundary_tags": [
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "magnetic_symmetry",
+            "magnetic_symmetry"
+          ]
+        }
+      },
+      "parameter": "bulge",
+      "parameter_unit": "1",
+      "values": [
+        0.0,
+        0.125,
+        0.25
+      ],
+      "rf_coordinates": "fixed",
+      "minimum_corner_angle_deg": 1.0,
+      "geometry_coefficients": {
+        "/curves/0/end_zr_m/0": [
+          0.1875,
+          0.03125
+        ],
+        "/curves/1/center_zr_m/0": [
+          0.125,
+          0.03125
+        ],
+        "/curves/2/start_zr_m/0": [
+          0.125,
+          0.03125
+        ]
+      },
+      "mesh_schedule": {
+        "schema_version": 1,
+        "breakpoints": [
+          0.125
+        ],
+        "plans": [
+          {
+            "kind": "original"
+          },
+          {
+            "kind": "replace",
+            "plan": {
+              "schema_version": 1,
+              "source_mesh": {
+                "schema_version": 1,
+                "length_unit": "m",
+                "coordinate_order": "rz",
+                "index_base": 0,
+                "points": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    0.1875
+                  ],
+                  [
+                    0.019313562148434212,
+                    0.1844410322684471
+                  ],
+                  [
+                    0.03673657826827957,
+                    0.17556356214843422
+                  ],
+                  [
+                    0.050563562148434216,
+                    0.16173657826827956
+                  ],
+                  [
+                    0.059441032268447096,
+                    0.14431356214843422
+                  ],
+                  [
+                    0.0625,
+                    0.125
+                  ],
+                  [
+                    0.0625,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    0.09375
+                  ],
+                  [
+                    0.03571428571428571,
+                    0.0625
+                  ],
+                  [
+                    0.03125,
+                    0.0
+                  ],
+                  [
+                    0.02629223988418959,
+                    0.16617435357242624
+                  ],
+                  [
+                    0.0350363532199399,
+                    0.15236804888000607
+                  ],
+                  [
+                    0.03715718338021082,
+                    0.16396063571728653
+                  ],
+                  [
+                    0.0625,
+                    0.0625
+                  ],
+                  [
+                    0.0,
+                    0.046875
+                  ],
+                  [
+                    0.013020833333333334,
+                    0.026041666666666668
+                  ],
+                  [
+                    0.0,
+                    0.140625
+                  ],
+                  [
+                    0.012579854989681338,
+                    0.17046986252127289
+                  ],
+                  [
+                    0.04439274299262143,
+                    0.08826029216946912
+                  ],
+                  [
+                    0.04705756712126635,
+                    0.14019870682811034
+                  ],
+                  [
+                    0.0625,
+                    0.09375
+                  ],
+                  [
+                    0.0625,
+                    0.03125
+                  ],
+                  [
+                    0.015625,
+                    0.078125
+                  ],
+                  [
+                    0.015625,
+                    0.125
+                  ],
+                  [
+                    0.02849702380952381,
+                    0.034895833333333334
+                  ],
+                  [
+                    0.030386121869063577,
+                    0.10825078299911911
+                  ],
+                  [
+                    0.046875,
+                    0.03125
+                  ],
+                  [
+                    0.0,
+                    0.0234375
+                  ],
+                  [
+                    0.0,
+                    0.1640625
+                  ],
+                  [
+                    0.0,
+                    0.0703125
+                  ],
+                  [
+                    0.0,
+                    0.1171875
+                  ],
+                  [
+                    0.028218795760610798,
+                    0.08776309494703488
+                  ],
+                  [
+                    0.031854093962251286,
+                    0.13196657912174822
+                  ],
+                  [
+                    0.015476190476190475,
+                    0.053125
+                  ],
+                  [
+                    0.01729347291578289,
+                    0.15017142676549095
+                  ],
+                  [
+                    0.04644842099086711,
+                    0.11457106018640782
+                  ],
+                  [
+                    0.014975819604945729,
+                    0.101679396324359
+                  ],
+                  [
+                    0.0,
+                    0.01171875
+                  ]
+                ],
+                "triangles": [
+                  [
+                    21,
+                    36,
+                    19
+                  ],
+                  [
+                    9,
+                    14,
+                    19
+                  ],
+                  [
+                    14,
+                    21,
+                    19
+                  ],
+                  [
+                    25,
+                    34,
+                    16
+                  ],
+                  [
+                    0,
+                    10,
+                    16
+                  ],
+                  [
+                    10,
+                    25,
+                    16
+                  ],
+                  [
+                    27,
+                    22,
+                    14
+                  ],
+                  [
+                    10,
+                    7,
+                    27
+                  ],
+                  [
+                    7,
+                    22,
+                    27
+                  ],
+                  [
+                    27,
+                    25,
+                    10
+                  ],
+                  [
+                    14,
+                    9,
+                    27
+                  ],
+                  [
+                    9,
+                    25,
+                    27
+                  ],
+                  [
+                    20,
+                    36,
+                    6
+                  ],
+                  [
+                    36,
+                    21,
+                    6
+                  ],
+                  [
+                    12,
+                    33,
+                    20
+                  ],
+                  [
+                    33,
+                    36,
+                    20
+                  ],
+                  [
+                    26,
+                    32,
+                    19
+                  ],
+                  [
+                    32,
+                    9,
+                    19
+                  ],
+                  [
+                    19,
+                    36,
+                    26
+                  ],
+                  [
+                    36,
+                    33,
+                    26
+                  ],
+                  [
+                    35,
+                    11,
+                    18
+                  ],
+                  [
+                    35,
+                    33,
+                    12
+                  ],
+                  [
+                    1,
+                    29,
+                    18
+                  ],
+                  [
+                    29,
+                    35,
+                    18
+                  ],
+                  [
+                    17,
+                    31,
+                    24
+                  ],
+                  [
+                    31,
+                    37,
+                    24
+                  ],
+                  [
+                    24,
+                    35,
+                    17
+                  ],
+                  [
+                    35,
+                    29,
+                    17
+                  ],
+                  [
+                    23,
+                    34,
+                    9
+                  ],
+                  [
+                    34,
+                    25,
+                    9
+                  ],
+                  [
+                    8,
+                    30,
+                    23
+                  ],
+                  [
+                    30,
+                    34,
+                    23
+                  ],
+                  [
+                    15,
+                    28,
+                    16
+                  ],
+                  [
+                    0,
+                    16,
+                    38
+                  ],
+                  [
+                    16,
+                    34,
+                    15
+                  ],
+                  [
+                    34,
+                    30,
+                    15
+                  ],
+                  [
+                    26,
+                    33,
+                    24
+                  ],
+                  [
+                    33,
+                    35,
+                    24
+                  ],
+                  [
+                    23,
+                    37,
+                    8
+                  ],
+                  [
+                    37,
+                    31,
+                    8
+                  ],
+                  [
+                    9,
+                    32,
+                    23
+                  ],
+                  [
+                    32,
+                    37,
+                    23
+                  ],
+                  [
+                    24,
+                    37,
+                    26
+                  ],
+                  [
+                    37,
+                    32,
+                    26
+                  ],
+                  [
+                    18,
+                    2,
+                    1
+                  ],
+                  [
+                    11,
+                    35,
+                    12
+                  ],
+                  [
+                    12,
+                    4,
+                    13
+                  ],
+                  [
+                    20,
+                    6,
+                    5
+                  ],
+                  [
+                    12,
+                    13,
+                    11
+                  ],
+                  [
+                    4,
+                    12,
+                    20
+                  ],
+                  [
+                    2,
+                    18,
+                    11
+                  ],
+                  [
+                    11,
+                    3,
+                    2
+                  ],
+                  [
+                    3,
+                    11,
+                    13
+                  ],
+                  [
+                    13,
+                    4,
+                    3
+                  ],
+                  [
+                    4,
+                    20,
+                    5
+                  ],
+                  [
+                    38,
+                    16,
+                    28
+                  ]
+                ],
+                "boundary_edges": [
+                  [
+                    0,
+                    38
+                  ],
+                  [
+                    28,
+                    15
+                  ],
+                  [
+                    15,
+                    30
+                  ],
+                  [
+                    30,
+                    8
+                  ],
+                  [
+                    8,
+                    31
+                  ],
+                  [
+                    31,
+                    17
+                  ],
+                  [
+                    17,
+                    29
+                  ],
+                  [
+                    29,
+                    1
+                  ],
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    3
+                  ],
+                  [
+                    3,
+                    4
+                  ],
+                  [
+                    4,
+                    5
+                  ],
+                  [
+                    5,
+                    6
+                  ],
+                  [
+                    6,
+                    21
+                  ],
+                  [
+                    21,
+                    14
+                  ],
+                  [
+                    14,
+                    22
+                  ],
+                  [
+                    22,
+                    7
+                  ],
+                  [
+                    7,
+                    10
+                  ],
+                  [
+                    10,
+                    0
+                  ],
+                  [
+                    38,
+                    28
+                  ]
+                ],
+                "boundary_tags": [
+                  "axis",
+                  "axis",
+                  "axis",
+                  "axis",
+                  "axis",
+                  "axis",
+                  "axis",
+                  "axis",
+                  "pec",
+                  "pec",
+                  "pec",
+                  "pec",
+                  "pec",
+                  "pec",
+                  "pec",
+                  "pec",
+                  "pec",
+                  "magnetic_symmetry",
+                  "magnetic_symmetry",
+                  "axis"
+                ]
+              },
+              "curved_refinement_levels": 1,
+              "minimum_corner_angle_deg": 1.0
+            }
+          }
+        ]
+      }
+    },
+    "cap_tune": {
+      "schema_version": 8,
+      "project": {
+        "project_version": 2,
+        "case": {
+          "schema_version": 3,
+          "name": "cavity",
+          "geometry": {
+            "type": "curved_contour",
+            "curves": [
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0
+                ],
+                "end_zr_m": [
+                  0.1875,
+                  0.0
+                ]
+              },
+              {
+                "type": "ellipse_arc",
+                "center_zr_m": [
+                  0.125,
+                  0.0
+                ],
+                "semiaxes_m": [
+                  0.0625,
+                  0.0625
+                ],
+                "start_rad": 0.0,
+                "sweep_rad": 1.5707963267948966,
+                "rotation_rad": 0.0
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.125,
+                  0.0625
+                ],
+                "end_zr_m": [
+                  0.0,
+                  0.0625
+                ]
+              },
+              {
+                "type": "line",
+                "start_zr_m": [
+                  0.0,
+                  0.0625
+                ],
+                "end_zr_m": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ],
+            "edge_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "magnetic_symmetry"
+            ],
+            "join_tolerance_m": 1e-14,
+            "minimum_gap_m": 0.0,
+            "chord_tolerance_m": 0.001,
+            "chord_max_segments": 20000
+          },
+          "mesh": {
+            "nr": 24,
+            "nz": 32,
+            "geometry_order": 2,
+            "curved_refinement_levels": 1,
+            "contour_mesh": {
+              "max_edge_m": 0.04,
+              "min_angle_deg": 5.0,
+              "max_triangles": 250000,
+              "max_rounds": 12
+            }
+          },
+          "solver": {
+            "modes": 1,
+            "quadrature_order": 12,
+            "element_order": 2
+          },
+          "rf": {
+            "beta": 1.0,
+            "conductivity_s_per_m": 58000000.0,
+            "normalization_j": 1.0
+          },
+          "model": {
+            "physics": "rf_eigenmode",
+            "coordinates": "axisymmetric",
+            "polarization": "te",
+            "azimuthal_index": 0,
+            "materials": [
+              {
+                "id": "vacuum",
+                "type": "vacuum"
+              }
+            ],
+            "regions": [
+              {
+                "id": "cavity",
+                "material": "vacuum",
+                "domain": "interior"
+              }
+            ]
+          }
+        },
+        "reflect_full": true,
+        "display_length_unit": "mm",
+        "mesh_data": {
+          "schema_version": 1,
+          "length_unit": "m",
+          "coordinate_order": "rz",
+          "index_base": 0,
+          "points": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.1875
+            ],
+            [
+              0.019313562148434212,
+              0.1844410322684471
+            ],
+            [
+              0.03673657826827957,
+              0.17556356214843422
+            ],
+            [
+              0.050563562148434216,
+              0.16173657826827956
+            ],
+            [
+              0.059441032268447096,
+              0.14431356214843422
+            ],
+            [
+              0.0625,
+              0.125
+            ],
+            [
+              0.0625,
+              0.0
+            ],
+            [
+              0.0,
+              0.09375
+            ],
+            [
+              0.03571428571428571,
+              0.0625
+            ],
+            [
+              0.03125,
+              0.0
+            ],
+            [
+              0.02629223988418959,
+              0.16617435357242624
+            ],
+            [
+              0.0350363532199399,
+              0.15236804888000607
+            ],
+            [
+              0.03715718338021082,
+              0.16396063571728653
+            ],
+            [
+              0.0625,
+              0.0625
+            ],
+            [
+              0.0,
+              0.046875
+            ],
+            [
+              0.013020833333333334,
+              0.026041666666666668
+            ],
+            [
+              0.0,
+              0.140625
+            ],
+            [
+              0.012579854989681338,
+              0.17046986252127289
+            ],
+            [
+              0.04439274299262143,
+              0.08826029216946912
+            ],
+            [
+              0.04705756712126635,
+              0.14019870682811034
+            ],
+            [
+              0.0625,
+              0.09375
+            ],
+            [
+              0.0625,
+              0.03125
+            ],
+            [
+              0.015625,
+              0.078125
+            ],
+            [
+              0.015625,
+              0.125
+            ],
+            [
+              0.02849702380952381,
+              0.034895833333333334
+            ],
+            [
+              0.030386121869063577,
+              0.10825078299911911
+            ],
+            [
+              0.046875,
+              0.03125
+            ],
+            [
+              0.0,
+              0.0234375
+            ],
+            [
+              0.0,
+              0.1640625
+            ],
+            [
+              0.0,
+              0.0703125
+            ],
+            [
+              0.0,
+              0.1171875
+            ],
+            [
+              0.028218795760610798,
+              0.08776309494703488
+            ],
+            [
+              0.031854093962251286,
+              0.13196657912174822
+            ],
+            [
+              0.015476190476190475,
+              0.053125
+            ],
+            [
+              0.01729347291578289,
+              0.15017142676549095
+            ],
+            [
+              0.04644842099086711,
+              0.11457106018640782
+            ],
+            [
+              0.014975819604945729,
+              0.101679396324359
+            ]
+          ],
+          "triangles": [
+            [
+              21,
+              36,
+              19
+            ],
+            [
+              9,
+              14,
+              19
+            ],
+            [
+              14,
+              21,
+              19
+            ],
+            [
+              25,
+              34,
+              16
+            ],
+            [
+              0,
+              10,
+              16
+            ],
+            [
+              10,
+              25,
+              16
+            ],
+            [
+              27,
+              22,
+              14
+            ],
+            [
+              10,
+              7,
+              27
+            ],
+            [
+              7,
+              22,
+              27
+            ],
+            [
+              27,
+              25,
+              10
+            ],
+            [
+              14,
+              9,
+              27
+            ],
+            [
+              9,
+              25,
+              27
+            ],
+            [
+              20,
+              36,
+              6
+            ],
+            [
+              36,
+              21,
+              6
+            ],
+            [
+              12,
+              33,
+              20
+            ],
+            [
+              33,
+              36,
+              20
+            ],
+            [
+              26,
+              32,
+              19
+            ],
+            [
+              32,
+              9,
+              19
+            ],
+            [
+              19,
+              36,
+              26
+            ],
+            [
+              36,
+              33,
+              26
+            ],
+            [
+              35,
+              11,
+              18
+            ],
+            [
+              35,
+              33,
+              12
+            ],
+            [
+              1,
+              29,
+              18
+            ],
+            [
+              29,
+              35,
+              18
+            ],
+            [
+              17,
+              31,
+              24
+            ],
+            [
+              31,
+              37,
+              24
+            ],
+            [
+              24,
+              35,
+              17
+            ],
+            [
+              35,
+              29,
+              17
+            ],
+            [
+              23,
+              34,
+              9
+            ],
+            [
+              34,
+              25,
+              9
+            ],
+            [
+              8,
+              30,
+              23
+            ],
+            [
+              30,
+              34,
+              23
+            ],
+            [
+              15,
+              28,
+              16
+            ],
+            [
+              28,
+              0,
+              16
+            ],
+            [
+              16,
+              34,
+              15
+            ],
+            [
+              34,
+              30,
+              15
+            ],
+            [
+              26,
+              33,
+              24
+            ],
+            [
+              33,
+              35,
+              24
+            ],
+            [
+              23,
+              37,
+              8
+            ],
+            [
+              37,
+              31,
+              8
+            ],
+            [
+              9,
+              32,
+              23
+            ],
+            [
+              32,
+              37,
+              23
+            ],
+            [
+              24,
+              37,
+              26
+            ],
+            [
+              37,
+              32,
+              26
+            ],
+            [
+              18,
+              2,
+              1
+            ],
+            [
+              11,
+              35,
+              12
+            ],
+            [
+              12,
+              4,
+              13
+            ],
+            [
+              20,
+              6,
+              5
+            ],
+            [
+              12,
+              13,
+              11
+            ],
+            [
+              4,
+              12,
+              20
+            ],
+            [
+              2,
+              18,
+              11
+            ],
+            [
+              11,
+              3,
+              2
+            ],
+            [
+              3,
+              11,
+              13
+            ],
+            [
+              13,
+              4,
+              3
+            ],
+            [
+              4,
+              20,
+              5
+            ]
+          ],
+          "boundary_edges": [
+            [
+              0,
+              28
+            ],
+            [
+              28,
+              15
+            ],
+            [
+              15,
+              30
+            ],
+            [
+              30,
+              8
+            ],
+            [
+              8,
+              31
+            ],
+            [
+              31,
+              17
+            ],
+            [
+              17,
+              29
+            ],
+            [
+              29,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              6,
+              21
+            ],
+            [
+              21,
+              14
+            ],
+            [
+              14,
+              22
+            ],
+            [
+              22,
+              7
+            ],
+            [
+              7,
+              10
+            ],
+            [
+              10,
+              0
+            ]
+          ],
+          "boundary_tags": [
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "axis",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "pec",
+            "magnetic_symmetry",
+            "magnetic_symmetry"
+          ]
+        }
+      },
+      "parameter": "x",
+      "parameter_unit": "1",
+      "rf_coordinates": "fixed",
+      "minimum_corner_angle_deg": 1.0,
+      "bounds": [
+        0.0,
+        0.25
+      ],
+      "target_hz": 2960159374.6265807,
+      "frequency_tolerance_hz": 1000000.0,
+      "parameter_tolerance": 1e-08,
+      "max_trials": 8,
+      "initial_ids": [
+        "TE"
+      ],
+      "mode_id": "TE",
+      "controls": {
+        "mapping": "piecewise_remesh",
+        "sample_order": 5,
+        "minimum_overlap": 0.8,
+        "minimum_assignment_margin": 0.05,
+        "relative_cluster_gap": 1e-06,
+        "minimum_relative_singular_value": 1e-08
+      },
+      "refinement_scale": 2,
+      "mesh_frequency_tolerance_hz": 1000000.0,
+      "geometry_kind": "curved_harmonic",
+      "bindings": [
+        {
+          "path": "/case/geometry/curves/0/end_zr_m/0",
+          "expression": {
+            "op": "add",
+            "args": [
+              {
+                "op": "add",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "constant": 0.03125,
+                        "unit": "m"
+                      },
+                      {
+                        "op": "sub",
+                        "args": [
+                          {
+                            "op": "exp",
+                            "args": [
+                              {
+                                "variable": "x"
+                              }
+                            ]
+                          },
+                          {
+                            "constant": 1,
+                            "unit": "1"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "constant": 0.0625,
+                "unit": "m"
+              }
+            ]
+          }
+        },
+        {
+          "path": "/case/geometry/curves/1/center_zr_m/0",
+          "expression": {
+            "op": "add",
+            "args": [
+              {
+                "constant": 0.125,
+                "unit": "m"
+              },
+              {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.03125,
+                    "unit": "m"
+                  },
+                  {
+                    "op": "sub",
+                    "args": [
+                      {
+                        "op": "exp",
+                        "args": [
+                          {
+                            "variable": "x"
+                          }
+                        ]
+                      },
+                      {
+                        "constant": 1,
+                        "unit": "1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "path": "/case/geometry/curves/2/start_zr_m/0",
+          "expression": {
+            "op": "add",
+            "args": [
+              {
+                "constant": 0.125,
+                "unit": "m"
+              },
+              {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.03125,
+                    "unit": "m"
+                  },
+                  {
+                    "op": "sub",
+                    "args": [
+                      {
+                        "op": "exp",
+                        "args": [
+                          {
+                            "variable": "x"
+                          }
+                        ]
+                      },
+                      {
+                        "constant": 1,
+                        "unit": "1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "mesh_schedule": {
+        "schema_version": 1,
+        "breakpoints": [
+          0.125
+        ],
+        "max_pair_tests": 700000,
+        "partitions": [
+          {
+            "source_mesh": {
+              "schema_version": 1,
+              "length_unit": "m",
+              "coordinate_order": "rz",
+              "index_base": 0,
+              "points": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.1875
+                ],
+                [
+                  0.019313562148434212,
+                  0.1844410322684471
+                ],
+                [
+                  0.03673657826827957,
+                  0.17556356214843422
+                ],
+                [
+                  0.050563562148434216,
+                  0.16173657826827956
+                ],
+                [
+                  0.059441032268447096,
+                  0.14431356214843422
+                ],
+                [
+                  0.0625,
+                  0.125
+                ],
+                [
+                  0.0625,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.09375
+                ],
+                [
+                  0.03571428571428571,
+                  0.0625
+                ],
+                [
+                  0.03125,
+                  0.0
+                ],
+                [
+                  0.02629223988418959,
+                  0.16617435357242624
+                ],
+                [
+                  0.0350363532199399,
+                  0.15236804888000607
+                ],
+                [
+                  0.03715718338021082,
+                  0.16396063571728653
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.046875
+                ],
+                [
+                  0.013020833333333334,
+                  0.026041666666666668
+                ],
+                [
+                  0.0,
+                  0.140625
+                ],
+                [
+                  0.012579854989681338,
+                  0.17046986252127289
+                ],
+                [
+                  0.04439274299262143,
+                  0.08826029216946912
+                ],
+                [
+                  0.04705756712126635,
+                  0.14019870682811034
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.03125
+                ],
+                [
+                  0.015625,
+                  0.078125
+                ],
+                [
+                  0.015625,
+                  0.125
+                ],
+                [
+                  0.02849702380952381,
+                  0.034895833333333334
+                ],
+                [
+                  0.030386121869063577,
+                  0.10825078299911911
+                ],
+                [
+                  0.046875,
+                  0.03125
+                ],
+                [
+                  0.0,
+                  0.0234375
+                ],
+                [
+                  0.0,
+                  0.1640625
+                ],
+                [
+                  0.0,
+                  0.0703125
+                ],
+                [
+                  0.0,
+                  0.1171875
+                ],
+                [
+                  0.028218795760610798,
+                  0.08776309494703488
+                ],
+                [
+                  0.031854093962251286,
+                  0.13196657912174822
+                ],
+                [
+                  0.015476190476190475,
+                  0.053125
+                ],
+                [
+                  0.01729347291578289,
+                  0.15017142676549095
+                ],
+                [
+                  0.04644842099086711,
+                  0.11457106018640782
+                ],
+                [
+                  0.014975819604945729,
+                  0.101679396324359
+                ]
+              ],
+              "triangles": [
+                [
+                  21,
+                  36,
+                  19
+                ],
+                [
+                  9,
+                  14,
+                  19
+                ],
+                [
+                  14,
+                  21,
+                  19
+                ],
+                [
+                  25,
+                  34,
+                  16
+                ],
+                [
+                  0,
+                  10,
+                  16
+                ],
+                [
+                  10,
+                  25,
+                  16
+                ],
+                [
+                  27,
+                  22,
+                  14
+                ],
+                [
+                  10,
+                  7,
+                  27
+                ],
+                [
+                  7,
+                  22,
+                  27
+                ],
+                [
+                  27,
+                  25,
+                  10
+                ],
+                [
+                  14,
+                  9,
+                  27
+                ],
+                [
+                  9,
+                  25,
+                  27
+                ],
+                [
+                  20,
+                  36,
+                  6
+                ],
+                [
+                  36,
+                  21,
+                  6
+                ],
+                [
+                  12,
+                  33,
+                  20
+                ],
+                [
+                  33,
+                  36,
+                  20
+                ],
+                [
+                  26,
+                  32,
+                  19
+                ],
+                [
+                  32,
+                  9,
+                  19
+                ],
+                [
+                  19,
+                  36,
+                  26
+                ],
+                [
+                  36,
+                  33,
+                  26
+                ],
+                [
+                  35,
+                  11,
+                  18
+                ],
+                [
+                  35,
+                  33,
+                  12
+                ],
+                [
+                  1,
+                  29,
+                  18
+                ],
+                [
+                  29,
+                  35,
+                  18
+                ],
+                [
+                  17,
+                  31,
+                  24
+                ],
+                [
+                  31,
+                  37,
+                  24
+                ],
+                [
+                  24,
+                  35,
+                  17
+                ],
+                [
+                  35,
+                  29,
+                  17
+                ],
+                [
+                  23,
+                  34,
+                  9
+                ],
+                [
+                  34,
+                  25,
+                  9
+                ],
+                [
+                  8,
+                  30,
+                  23
+                ],
+                [
+                  30,
+                  34,
+                  23
+                ],
+                [
+                  15,
+                  28,
+                  16
+                ],
+                [
+                  28,
+                  0,
+                  16
+                ],
+                [
+                  16,
+                  34,
+                  15
+                ],
+                [
+                  34,
+                  30,
+                  15
+                ],
+                [
+                  26,
+                  33,
+                  24
+                ],
+                [
+                  33,
+                  35,
+                  24
+                ],
+                [
+                  23,
+                  37,
+                  8
+                ],
+                [
+                  37,
+                  31,
+                  8
+                ],
+                [
+                  9,
+                  32,
+                  23
+                ],
+                [
+                  32,
+                  37,
+                  23
+                ],
+                [
+                  24,
+                  37,
+                  26
+                ],
+                [
+                  37,
+                  32,
+                  26
+                ],
+                [
+                  18,
+                  2,
+                  1
+                ],
+                [
+                  11,
+                  35,
+                  12
+                ],
+                [
+                  12,
+                  4,
+                  13
+                ],
+                [
+                  20,
+                  6,
+                  5
+                ],
+                [
+                  12,
+                  13,
+                  11
+                ],
+                [
+                  4,
+                  12,
+                  20
+                ],
+                [
+                  2,
+                  18,
+                  11
+                ],
+                [
+                  11,
+                  3,
+                  2
+                ],
+                [
+                  3,
+                  11,
+                  13
+                ],
+                [
+                  13,
+                  4,
+                  3
+                ],
+                [
+                  4,
+                  20,
+                  5
+                ]
+              ],
+              "boundary_edges": [
+                [
+                  0,
+                  28
+                ],
+                [
+                  28,
+                  15
+                ],
+                [
+                  15,
+                  30
+                ],
+                [
+                  30,
+                  8
+                ],
+                [
+                  8,
+                  31
+                ],
+                [
+                  31,
+                  17
+                ],
+                [
+                  17,
+                  29
+                ],
+                [
+                  29,
+                  1
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  2,
+                  3
+                ],
+                [
+                  3,
+                  4
+                ],
+                [
+                  4,
+                  5
+                ],
+                [
+                  5,
+                  6
+                ],
+                [
+                  6,
+                  21
+                ],
+                [
+                  21,
+                  14
+                ],
+                [
+                  14,
+                  22
+                ],
+                [
+                  22,
+                  7
+                ],
+                [
+                  7,
+                  10
+                ],
+                [
+                  10,
+                  0
+                ]
+              ],
+              "boundary_tags": [
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "magnetic_symmetry",
+                "magnetic_symmetry"
+              ]
+            },
+            "reference_vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.1875
+              ],
+              [
+                0.019313561730086803,
+                0.18444103188812733
+              ],
+              [
+                0.036736578680574894,
+                0.1755635617300868
+              ],
+              [
+                0.0505635617300868,
+                0.1617365786805749
+              ],
+              [
+                0.05944103188812733,
+                0.1443135617300868
+              ],
+              [
+                0.0625,
+                0.125
+              ],
+              [
+                0.0625,
+                0.0
+              ],
+              [
+                0.0,
+                0.09375
+              ],
+              [
+                0.03571428544819355,
+                0.0625
+              ],
+              [
+                0.03125,
+                0.0
+              ],
+              [
+                0.026292240247130394,
+                0.16617435403168201
+              ],
+              [
+                0.03503635339438915,
+                0.1523680491372943
+              ],
+              [
+                0.03715718351304531,
+                0.16396063566207886
+              ],
+              [
+                0.0625,
+                0.0625
+              ],
+              [
+                0.0,
+                0.046875
+              ],
+              [
+                0.013020833022892475,
+                0.026041666977107525
+              ],
+              [
+                0.0,
+                0.140625
+              ],
+              [
+                0.01257985457777977,
+                0.17046986240893602
+              ],
+              [
+                0.04439274314790964,
+                0.0882602920755744
+              ],
+              [
+                0.04705756716430187,
+                0.14019870664924383
+              ],
+              [
+                0.0625,
+                0.09375
+              ],
+              [
+                0.0625,
+                0.03125
+              ],
+              [
+                0.015625,
+                0.078125
+              ],
+              [
+                0.015625,
+                0.125
+              ],
+              [
+                0.02849702350795269,
+                0.03489583358168602
+              ],
+              [
+                0.030386121943593025,
+                0.10825078282505274
+              ],
+              [
+                0.046875,
+                0.03125
+              ],
+              [
+                0.0,
+                0.0234375
+              ],
+              [
+                0.0,
+                0.1640625
+              ],
+              [
+                0.0,
+                0.0703125
+              ],
+              [
+                0.0,
+                0.1171875
+              ],
+              [
+                0.02821879554539919,
+                0.0877630952745676
+              ],
+              [
+                0.03185409400612116,
+                0.1319665787741542
+              ],
+              [
+                0.015476190485060215,
+                0.05312499962747097
+              ],
+              [
+                0.0172934727743268,
+                0.15017142705619335
+              ],
+              [
+                0.046448420733213425,
+                0.11457106005400419
+              ],
+              [
+                0.014975819736719131,
+                0.10167939588427544
+              ]
+            ],
+            "curved_refinement_levels": 1,
+            "minimum_corner_angle_deg": 0.1
+          },
+          {
+            "source_mesh": {
+              "schema_version": 1,
+              "length_unit": "m",
+              "coordinate_order": "rz",
+              "index_base": 0,
+              "points": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.1875
+                ],
+                [
+                  0.019313562148434212,
+                  0.1844410322684471
+                ],
+                [
+                  0.03673657826827957,
+                  0.17556356214843422
+                ],
+                [
+                  0.050563562148434216,
+                  0.16173657826827956
+                ],
+                [
+                  0.059441032268447096,
+                  0.14431356214843422
+                ],
+                [
+                  0.0625,
+                  0.125
+                ],
+                [
+                  0.0625,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.09375
+                ],
+                [
+                  0.03571428571428571,
+                  0.0625
+                ],
+                [
+                  0.03125,
+                  0.0
+                ],
+                [
+                  0.02629223988418959,
+                  0.16617435357242624
+                ],
+                [
+                  0.0350363532199399,
+                  0.15236804888000607
+                ],
+                [
+                  0.03715718338021082,
+                  0.16396063571728653
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.046875
+                ],
+                [
+                  0.013020833333333334,
+                  0.026041666666666668
+                ],
+                [
+                  0.0,
+                  0.140625
+                ],
+                [
+                  0.012579854989681338,
+                  0.17046986252127289
+                ],
+                [
+                  0.04439274299262143,
+                  0.08826029216946912
+                ],
+                [
+                  0.04705756712126635,
+                  0.14019870682811034
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.03125
+                ],
+                [
+                  0.015625,
+                  0.078125
+                ],
+                [
+                  0.015625,
+                  0.125
+                ],
+                [
+                  0.02849702380952381,
+                  0.034895833333333334
+                ],
+                [
+                  0.030386121869063577,
+                  0.10825078299911911
+                ],
+                [
+                  0.046875,
+                  0.03125
+                ],
+                [
+                  0.0,
+                  0.0234375
+                ],
+                [
+                  0.0,
+                  0.1640625
+                ],
+                [
+                  0.0,
+                  0.0703125
+                ],
+                [
+                  0.0,
+                  0.1171875
+                ],
+                [
+                  0.028218795760610798,
+                  0.08776309494703488
+                ],
+                [
+                  0.031854093962251286,
+                  0.13196657912174822
+                ],
+                [
+                  0.015476190476190475,
+                  0.053125
+                ],
+                [
+                  0.01729347291578289,
+                  0.15017142676549095
+                ],
+                [
+                  0.04644842099086711,
+                  0.11457106018640782
+                ],
+                [
+                  0.014975819604945729,
+                  0.101679396324359
+                ],
+                [
+                  0.009656781074217106,
+                  0.18597051613422355
+                ]
+              ],
+              "triangles": [
+                [
+                  21,
+                  36,
+                  19
+                ],
+                [
+                  9,
+                  14,
+                  19
+                ],
+                [
+                  14,
+                  21,
+                  19
+                ],
+                [
+                  25,
+                  34,
+                  16
+                ],
+                [
+                  0,
+                  10,
+                  16
+                ],
+                [
+                  10,
+                  25,
+                  16
+                ],
+                [
+                  27,
+                  22,
+                  14
+                ],
+                [
+                  10,
+                  7,
+                  27
+                ],
+                [
+                  7,
+                  22,
+                  27
+                ],
+                [
+                  27,
+                  25,
+                  10
+                ],
+                [
+                  14,
+                  9,
+                  27
+                ],
+                [
+                  9,
+                  25,
+                  27
+                ],
+                [
+                  20,
+                  36,
+                  6
+                ],
+                [
+                  36,
+                  21,
+                  6
+                ],
+                [
+                  12,
+                  33,
+                  20
+                ],
+                [
+                  33,
+                  36,
+                  20
+                ],
+                [
+                  26,
+                  32,
+                  19
+                ],
+                [
+                  32,
+                  9,
+                  19
+                ],
+                [
+                  19,
+                  36,
+                  26
+                ],
+                [
+                  36,
+                  33,
+                  26
+                ],
+                [
+                  35,
+                  11,
+                  18
+                ],
+                [
+                  35,
+                  33,
+                  12
+                ],
+                [
+                  1,
+                  29,
+                  18
+                ],
+                [
+                  29,
+                  35,
+                  18
+                ],
+                [
+                  17,
+                  31,
+                  24
+                ],
+                [
+                  31,
+                  37,
+                  24
+                ],
+                [
+                  24,
+                  35,
+                  17
+                ],
+                [
+                  35,
+                  29,
+                  17
+                ],
+                [
+                  23,
+                  34,
+                  9
+                ],
+                [
+                  34,
+                  25,
+                  9
+                ],
+                [
+                  8,
+                  30,
+                  23
+                ],
+                [
+                  30,
+                  34,
+                  23
+                ],
+                [
+                  15,
+                  28,
+                  16
+                ],
+                [
+                  28,
+                  0,
+                  16
+                ],
+                [
+                  16,
+                  34,
+                  15
+                ],
+                [
+                  34,
+                  30,
+                  15
+                ],
+                [
+                  26,
+                  33,
+                  24
+                ],
+                [
+                  33,
+                  35,
+                  24
+                ],
+                [
+                  23,
+                  37,
+                  8
+                ],
+                [
+                  37,
+                  31,
+                  8
+                ],
+                [
+                  9,
+                  32,
+                  23
+                ],
+                [
+                  32,
+                  37,
+                  23
+                ],
+                [
+                  24,
+                  37,
+                  26
+                ],
+                [
+                  37,
+                  32,
+                  26
+                ],
+                [
+                  1,
+                  18,
+                  38
+                ],
+                [
+                  11,
+                  35,
+                  12
+                ],
+                [
+                  12,
+                  4,
+                  13
+                ],
+                [
+                  20,
+                  6,
+                  5
+                ],
+                [
+                  12,
+                  13,
+                  11
+                ],
+                [
+                  4,
+                  12,
+                  20
+                ],
+                [
+                  2,
+                  18,
+                  11
+                ],
+                [
+                  11,
+                  3,
+                  2
+                ],
+                [
+                  3,
+                  11,
+                  13
+                ],
+                [
+                  13,
+                  4,
+                  3
+                ],
+                [
+                  4,
+                  20,
+                  5
+                ],
+                [
+                  38,
+                  18,
+                  2
+                ]
+              ],
+              "boundary_edges": [
+                [
+                  0,
+                  28
+                ],
+                [
+                  28,
+                  15
+                ],
+                [
+                  15,
+                  30
+                ],
+                [
+                  30,
+                  8
+                ],
+                [
+                  8,
+                  31
+                ],
+                [
+                  31,
+                  17
+                ],
+                [
+                  17,
+                  29
+                ],
+                [
+                  29,
+                  1
+                ],
+                [
+                  1,
+                  38
+                ],
+                [
+                  2,
+                  3
+                ],
+                [
+                  3,
+                  4
+                ],
+                [
+                  4,
+                  5
+                ],
+                [
+                  5,
+                  6
+                ],
+                [
+                  6,
+                  21
+                ],
+                [
+                  21,
+                  14
+                ],
+                [
+                  14,
+                  22
+                ],
+                [
+                  22,
+                  7
+                ],
+                [
+                  7,
+                  10
+                ],
+                [
+                  10,
+                  0
+                ],
+                [
+                  38,
+                  2
+                ]
+              ],
+              "boundary_tags": [
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "axis",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "magnetic_symmetry",
+                "magnetic_symmetry",
+                "pec"
+              ]
+            },
+            "reference_vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.1875
+              ],
+              [
+                0.019313561730086803,
+                0.18444103188812733
+              ],
+              [
+                0.036736578680574894,
+                0.1755635617300868
+              ],
+              [
+                0.0505635617300868,
+                0.1617365786805749
+              ],
+              [
+                0.05944103188812733,
+                0.1443135617300868
+              ],
+              [
+                0.0625,
+                0.125
+              ],
+              [
+                0.0625,
+                0.0
+              ],
+              [
+                0.0,
+                0.09375
+              ],
+              [
+                0.03571428544819355,
+                0.0625
+              ],
+              [
+                0.03125,
+                0.0
+              ],
+              [
+                0.026292240247130394,
+                0.16617435403168201
+              ],
+              [
+                0.03503635339438915,
+                0.1523680491372943
+              ],
+              [
+                0.03715718351304531,
+                0.16396063566207886
+              ],
+              [
+                0.0625,
+                0.0625
+              ],
+              [
+                0.0,
+                0.046875
+              ],
+              [
+                0.013020833022892475,
+                0.026041666977107525
+              ],
+              [
+                0.0,
+                0.140625
+              ],
+              [
+                0.01257985457777977,
+                0.17046986240893602
+              ],
+              [
+                0.04439274314790964,
+                0.0882602920755744
+              ],
+              [
+                0.04705756716430187,
+                0.14019870664924383
+              ],
+              [
+                0.0625,
+                0.09375
+              ],
+              [
+                0.0625,
+                0.03125
+              ],
+              [
+                0.015625,
+                0.078125
+              ],
+              [
+                0.015625,
+                0.125
+              ],
+              [
+                0.02849702350795269,
+                0.03489583358168602
+              ],
+              [
+                0.030386121943593025,
+                0.10825078282505274
+              ],
+              [
+                0.046875,
+                0.03125
+              ],
+              [
+                0.0,
+                0.0234375
+              ],
+              [
+                0.0,
+                0.1640625
+              ],
+              [
+                0.0,
+                0.0703125
+              ],
+              [
+                0.0,
+                0.1171875
+              ],
+              [
+                0.02821879554539919,
+                0.0877630952745676
+              ],
+              [
+                0.03185409400612116,
+                0.1319665787741542
+              ],
+              [
+                0.015476190485060215,
+                0.05312499962747097
+              ],
+              [
+                0.0172934727743268,
+                0.15017142705619335
+              ],
+              [
+                0.046448420733213425,
+                0.11457106005400419
+              ],
+              [
+                0.014975819736719131,
+                0.10167939588427544
+              ],
+              [
+                0.009656780865043402,
+                0.18597051594406366
+              ]
+            ],
+            "curved_refinement_levels": 1,
+            "minimum_corner_angle_deg": 0.1
+          }
+        ]
+      }
+    }
+  }
+}
