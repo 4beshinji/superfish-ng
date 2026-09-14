@@ -18,6 +18,7 @@ def _solution(manager,identifier):
 def tracking_response(manager,action,data):
     fields={'compare-modes':('previous_id','current_id','previous_ids','controls'),
             'start-mode-history':('document',),'extend-mode-history':('document','current_id','controls'),
+            'recover-mode-identities':('document','request_document'),
             'replay-mode-tracking':('document',)}
     if action=='track-study-modes':fields[action]=('study_id','initial_ids','step_controls' if 'step_controls' in data else 'controls')
     if action not in fields:raise ValueError('unknown mode tracking operation')
@@ -38,6 +39,10 @@ def tracking_response(manager,action,data):
         result=build_saved_mode_tracking(dict(schema_version=1,previous_run=_solution(manager,data['previous_id']),
             current_run=_solution(manager,data['current_id']),previous_ids=data['previous_ids'],controls=data['controls']))
     elif action=='start-mode-history':result=start_mode_history(document)
+    elif action=='recover-mode-identities':
+        from .mode_identity_recovery import recover_mode_history
+        if type(data['request_document']) is not str:raise ValueError('identity recovery requires the original request JSON text')
+        result=recover_mode_history(document,parse_json(data['request_document']))
     elif action=='extend-mode-history':
         result=extend_mode_history(document,dict(current_run=_solution(manager,data['current_id']),controls=data['controls']))
     elif isinstance(document,dict) and document.get('document_type')=='study_mode_tracking':

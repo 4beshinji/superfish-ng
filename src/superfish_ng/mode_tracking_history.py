@@ -34,6 +34,9 @@ def start_mode_history(pair):
 
 def replay_mode_history(document):
     version=document.get('schema_version') if isinstance(document,dict) else None
+    if type(version) is int and version==3:
+        from .mode_identity_recovery import replay_recovered_mode_history
+        return replay_recovered_mode_history(document)
     if type(version) is not int or version not in (1,2):raise ValueError('mode history requires schema_version 1 or 2')
     fields=('schema_version','document_type','steps','status','can_extend','stop_reason','current_run','current_mode_ids','scope')
     if version==2:fields+=('current_identity_groups','individual_ids_complete')
@@ -63,6 +66,9 @@ def _continuous_ids(current,previous):
 
 
 def extend_mode_history(document,request,*,base_directory=None):
+    if isinstance(document,dict) and type(document.get('schema_version')) is int and document['schema_version']==3:
+        from .mode_identity_recovery import extend_recovered_mode_history
+        return extend_recovered_mode_history(document,request,base_directory=base_directory)
     history=replay_mode_history(document)
     if not history['can_extend']:raise ValueError('cannot extend history with unresolved identities; retain this history and investigate the last step')
     fields=('current_run','controls')

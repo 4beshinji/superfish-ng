@@ -51,6 +51,10 @@ def main(argv=None):
     study_tracking.add_argument('--out',type=Path,required=True)
     study_tracking_replay=sub.add_parser('replay-study-mode-tracking',help='verify Study source identities and recompute ordered correspondence')
     study_tracking_replay.add_argument('document',type=Path)
+    recovery=sub.add_parser('recover-mode-identities',help='recover individual IDs from an earlier resolved native snapshot within inherited ID sets')
+    recovery.add_argument('document',type=Path)
+    recovery.add_argument('request',type=Path)
+    recovery.add_argument('--out',type=Path,required=True)
     for command,help_text in [('start-mode-history','start history from a saved correspondence'),
                               ('extend-mode-history','append a verified saved-field step'),
                               ('replay-mode-history','verify all history sources and ID continuity')]:
@@ -858,6 +862,14 @@ def main(argv=None):
             from .study_mode_tracking import read_study_mode_tracking
             result=read_study_mode_tracking(args.document)
             print(f"REPLAYED {result['status']}: {args.document}")
+            return 0 if result['status']=='PASS' else 1
+        elif args.command == 'recover-mode-identities':
+            from .mode_identity_recovery import recover_mode_history
+            from .mode_tracking_history import read_mode_history,save_mode_history
+            from .project import parse_json
+            result=save_mode_history(recover_mode_history(read_mode_history(args.document),
+                parse_json(args.request.read_text(encoding='utf-8'))),args.out)
+            print(f"{result['status']}: {args.out}")
             return 0 if result['status']=='PASS' else 1
         elif args.command in ('start-mode-history','extend-mode-history','replay-mode-history'):
             from .mode_tracking_history import start_mode_history,extend_mode_history,read_mode_history,save_mode_history

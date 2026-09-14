@@ -1,5 +1,9 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14 JST：[分裂後の個別モードIDの回復](docs/MODE_IDENTITY_RECOVERY.md)をAPI/CLI/単独履歴GUIへ追加。
+以前の保存場と継承ID集合を照合し、元の比較を保持したまま回復根拠を保存・再検証できます。
+関連65unit・独立9保存解の数値検証・Chrome17項目と旧履歴2項目が合格。Study/tune接続とD01全体は残り、全計画goalは継続中です。
+
 2026-09-14 JST：[単位付き複数変数による曲線寸法のRF探索](docs/RF_OPTIMIZATION_GEOMETRY.md)を追加。
 曲線の数値項目を多変数多項式で連動させ、固定履歴・実FEM・制約評価・保存再開へ接続しました。全計画goalは継続中です。
 関連29テストの分割検証、独立36実FEM、Chrome新版24/旧版13/追加入力11項目が合格しました。

@@ -1,5 +1,14 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14：[個別ID回復](MODE_IDENTITY_RECOVERY.md)の新9件と直接利用先の計65unitは5.842秒PASS。
+対象一覧は同書、記録はout/mode-identity-recovery-20260914/selected-tests.log。
+専用検証は最初に9実FEMを保存し、RF読込の検証器不備で停止。補修後、同じ9保存解を--reuse-nativeで再検証し4.188秒PASS、追加FEM0。
+Bessel解析交差/縮退、独立ID置換/集合境界、回復/再継続/拒否、長さ/エネルギー尺度則の場とRFを確認した。
+Chrome17項目PASS、外部HTTP0。初回13項目後の同名ダウンロード検証器失敗も保持する。
+最終レビューで旧履歴版1の回復ボタン有効化を再現・補修し、追加2項目と上記17項目を再確認した。
+数値1062ソース系からの差はブラウザー検証器とapp.jsのボタン条件。325製品SHAと108nativeファイルは最終一致、全終端回収済み。
+索引out/mode-identity-recovery-20260914/acceptance.json。全suite/seed/Hosted CI/新Wine比較は今回未実行。
+
 2026-09-14 JST：[D01元要件照合](D01_CURRENT_AUDIT.md)で50件4.089秒+多対多6件0.308秒がPASS。
 専用円筒交差2・合流分裂3・多対多1の計6新FEMもPASS、1059ソース系不変。全suite/seed/新ブラウザーは未実行。
 元バックログの個別枝回復は未実装なので親受入は保留。コマンドと証拠は同書およびout/d01-original-acceptance-20260914/audit.json。

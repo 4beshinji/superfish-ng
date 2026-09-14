@@ -179,6 +179,7 @@ def create_server(workspace, port=0):
                     "compare-modes": ["previous_id", "current_id", "previous_ids", "controls"],
                     "start-mode-history": ["document"],
                     "extend-mode-history": ["document", "current_id", "controls"],
+                    "recover-mode-identities": ["document", "request_document"],
                     "replay-mode-tracking": ["document"],
                     "assess-affine-surface-convergence": ["document", "mode_id"],
                     "replay-affine-surface-convergence": ["document"],
@@ -263,7 +264,7 @@ def create_server(workspace, port=0):
                 if action in ("start-tracked-study", "resume-tracked-study", "tracked-study-result", "replay-tracked-study", "start-adaptive-study", "resume-adaptive-study", "adaptive-study-result", "replay-adaptive-study"):
                     from .gui_tracked_study import tracked_study_response
                     return self.reply(tracked_study_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
-                if action in ("track-study-modes", "compare-modes", "start-mode-history", "extend-mode-history", "replay-mode-tracking"):
+                if action in ("track-study-modes", "compare-modes", "start-mode-history", "extend-mode-history", "recover-mode-identities", "replay-mode-tracking"):
                     from .gui_mode_tracking import tracking_response
                     return self.reply(tracking_response(manager,action,{k:v for k,v in data.items() if k!='action'}))
                 if action in ("tangent", "replay-tangent"):

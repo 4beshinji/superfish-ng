@@ -445,6 +445,12 @@
             <button id="tracking-extend" disabled>次の結果へ継続</button>
             <button id="tracking-reset">新しい比較</button>
           </div>
+          <fieldset id="tracking-recovery-panel" hidden>
+            <legend>以前の保存場から個別IDを回復</legend>
+            <label>個別IDが確認された過去の時点<select id="tracking-recovery-anchor"></select></label>
+            <p class="hint">上の比較写像と閾値で過去の場と履歴末尾を比較します。集合へのまとめ直しは使いません。既存のID集合と矛盾する対応や、まだ縮退した候補は未確認として保存します。途中の連続した物理枝を証明する操作ではありません。</p>
+            <button id="tracking-recover" disabled>個別IDの回復を検査</button>
+          </fieldset>
           <details id="tracking-study-panel"><summary>完了したStudyを順番に追跡する</summary>
             <label>Study<select id="tracking-study"><option value="">Studyを選択</option></select></label>
             <label>最初の点のID（鏡映では部分スペクトル内の順位順）<textarea id="tracking-study-ids" rows="2">["mode-A"]</textarea></label>

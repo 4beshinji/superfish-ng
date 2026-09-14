@@ -2214,6 +2214,9 @@ function trackingButtons() {
   $("tracking-pairs-label").hidden = $("tracking-mapping").value !== "paired_mesh";
   $("tracking-policy-label").hidden = !$("tracking-retain").checked;
   $("tracking-link-label").hidden = !$("tracking-retain").checked;
+  $("tracking-recovery-panel").hidden = !history || study;
+  $("tracking-recovery-anchor").disabled = trackingBusy;
+  $("tracking-recover").disabled = trackingBusy || study || !history || !d?.can_extend || d?.current_mode_ids?.every(id=>typeof id==="string") || !$("tracking-recovery-anchor").options.length;
   surfaceButtons();
 }
 function trackingControls(derivedAffine=false,derivedCurved=false) {
@@ -2230,7 +2233,20 @@ function showTracking(response) {
   trackingResult = response;
   const d = response.document, study = d.document_type === "study_mode_tracking", history = study || d.document_type === "mode_tracking_history";
   const sequence = study ? d.history : d;
-  const pair = history ? sequence.steps.at(-1) : d, r = pair.tracking, controls = pair.request.controls;
+  const recovery = history ? sequence.identity_recoveries?.find(e=>e.after_step_index===sequence.steps.length-1) : null;
+  const pair = recovery?.status === "PASS" ? recovery.comparison : history ? sequence.steps.at(-1) : d, r = pair.tracking, controls = pair.request.controls;
+  const anchors=$("tracking-recovery-anchor"), oldAnchor=anchors.value;
+  anchors.replaceChildren();
+  if(history && !study) {
+    const first=sequence.steps[0], initial=first.request.previous_ids ?? first.tracking.previous_identity_groups?.flatMap(g=>g.indices.length===1 ? g.ids : [null]);
+    const snapshots=[{run:first.request.previous_run,ids:initial},...sequence.steps.map((step,i)=>({run:step.request.current_run,
+      ids:sequence.identity_recoveries?.find(e=>e.after_step_index===i && e.status==="PASS")?.assessment.current_mode_ids ?? step.tracking.current_mode_ids}))];
+    snapshots.slice(0,-1).forEach((snapshot,i)=>{
+      if(snapshot.ids?.length && snapshot.ids.every(id=>typeof id==="string")) anchors.add(new Option(`${i}: ${snapshot.ids.join(", ")} — ${snapshot.run}`,String(i)));
+    });
+    const selected=String(recovery?.request.anchor_snapshot_index ?? oldAnchor);
+    if([...anchors.options].some(option=>option.value===selected)) anchors.value=selected;
+  }
   $("tracking-study-points").hidden = !study;
   const pointBody = $("tracking-study-points").querySelector("tbody"); pointBody.replaceChildren();
   if (study) {
@@ -2256,6 +2272,7 @@ function showTracking(response) {
   if (controls.affine_map) for (const [id,key] of [["radial","radial_scale"],["axial","axial_scale"],["shear","axial_shear"]]) $( `tracking-affine-${id}` ).value = controls.affine_map[key];
 
   $("tracking-status").textContent = `${d.status} — ${study ? `Study ${d.visited_point_indices.length}/${d.point_results.length} 点を追跡。未追跡 ${d.unvisited_point_indices.length} 点。` : history ? `履歴 ${d.steps.length} 段階。` : "2時点の比較。"} ${d.status !== "PASS" ? "未確認の対応があります。" : r.individual_ids_complete ? "全個別IDの対応を確認しました。" : "部分空間の対応を確認しました。集合内の個別IDは未確定です。"}${history && !sequence.can_extend ? " この履歴からの継続はできません。" : ""}`;
+  if(recovery) $("tracking-status").textContent+=recovery.status==="PASS" ? " 過去の保存場と既存ID集合を照合し、個別IDを回復しました。" : " 個別ID回復は未確認です。元のID集合を保持しています。";
   if (r.physical_mapping?.boundary_conditions) {
     $("tracking-status").textContent += r.physical_mapping.reflected_partial_spectrum
       ? " 鏡映された部分スペクトルの対応です。番号は全空洞の周波数順位ではありません。"
@@ -2279,6 +2296,7 @@ function showTracking(response) {
     physical_mapping: r.physical_mapping ?? null,
     stop_reason: sequence.stop_reason ?? null, unmatched_previous: r.unmatched_previous, unmatched_current: r.unmatched_current,
     unresolved: r.unresolved, cluster_transitions: r.cluster_transitions ?? null, controls: pair.request.controls,
+    identity_recoveries: (sequence.identity_recoveries ?? []).map(e=>({after_step_index:e.after_step_index,request:e.request,status:e.status,assessment:e.assessment,scope:e.scope})),
     scope: d.scope}, null, 2);
   trackingButtons();
 }
@@ -2295,6 +2313,11 @@ bind("tracking-compare", async () => {
 bind("tracking-start", async () => { await runTracking("start-mode-history", {document: trackingResult.serialized}); });
 bind("tracking-extend", async () => { await runTracking("extend-mode-history", {document: trackingResult.serialized,
   current_id: $("tracking-current").value, controls: trackingControls()}); });
+bind("tracking-recover", async () => {
+  const controls=trackingControls();delete controls.cluster_transition_policy;delete controls.minimum_cluster_link;
+  await runTracking("recover-mode-identities",{document:trackingResult.serialized,
+    request_document:JSON.stringify({anchor_snapshot_index:number("tracking-recovery-anchor"),controls})});
+});
 bind("tracking-reset", () => {
   trackingResult = null; $("tracking-study-points").hidden = true; $("tracking-status").textContent = "比較する結果とIDを指定してください。";
   $("tracking-matches").querySelector("tbody").replaceChildren(); $("tracking-diagnostics").textContent = ""; trackingButtons();

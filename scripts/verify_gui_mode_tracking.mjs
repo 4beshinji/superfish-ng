@@ -221,6 +221,40 @@ try {
   await click("#tracking-reset");await loadFile(out+"/downloads/mode-tracking-history.json");
   await wait('trackingResult?.document.steps?.length===2 && !trackingBusy');
   await check("file replay restores history and policy controls",'document.querySelector("#tracking-retain").checked && document.querySelector("#tracking-gap").value==="0.001" && !document.querySelector("#tracking-extend").disabled');
+  if(args["--recover"]) {
+    await writeFile(out+"/original-history.json",await readFile(out+"/downloads/mode-tracking-history.json","utf8"));
+    await check("resolved earlier anchor is offered for split identity recovery",'!document.querySelector("#tracking-recover").disabled && document.querySelector("#tracking-recovery-anchor").value==="0"');
+    await click("#tracking-recover");await wait('trackingResult?.document.schema_version===3 && !trackingBusy');
+    await check("recovery displays individual IDs in current frequency order",'trackingResult.document.current_mode_ids.join(",")==="TM010,TM011,TM020" && document.querySelector("#tracking-matches tbody").rows.length===3 && document.querySelector("#tracking-status").textContent.includes("個別IDを回復")');
+    await check("recovery preserves original comparisons and records its separate evidence",'trackingResult.document.steps.length===2 && trackingResult.document.steps[1].tracking.current_mode_ids[1]===null && trackingResult.document.identity_recoveries[0].after_step_index===1 && trackingResult.document.identity_recoveries[0].assessment.group_checks.every(c=>c.consistent) && !("cluster_transition_policy" in trackingResult.document.identity_recoveries[0].request.controls)');
+    const recovered=await ev('trackingResult.document');await click("#tracking-save");let savedRecovery;
+    for(let n=0;n<100;n++) {
+      for(const file of await readdir(out+"/downloads")) {
+        try {const raw=await readFile(out+"/downloads/"+file,"utf8");if(isDeepStrictEqual(JSON.parse(raw),recovered)){savedRecovery=raw;break;}} catch {}
+      }
+      if(savedRecovery)break;await sleep(100);
+    }
+    if(!savedRecovery)throw Error("recovered history download differs from verified result");
+    await writeFile(out+"/recovered-history.json",savedRecovery);
+    report.checks.push({operation:"download preserves recovery evidence and original native history",passed:true});
+    await click("#tracking-reset");await loadFile(out+"/recovered-history.json");await wait('trackingResult?.document.schema_version===3 && !trackingBusy');
+    await check("replayed recovered history has the same visible individual state",'trackingResult.document.individual_ids_complete && document.querySelector("#tracking-recover").disabled && !document.querySelector("#tracking-extend").disabled && document.querySelector("#tracking-matches tbody").rows.length===3');
+    const bad=structuredClone(recovered);bad.identity_recoveries[0].assessment.current_mode_ids[1]="forged";
+    await writeFile(out+"/forged-recovery.json",JSON.stringify(bad));await loadFile(out+"/forged-recovery.json");await wait('!document.querySelector("#error").hidden && !trackingBusy');
+    await check("recovery tampering leaves the prior verified state intact",'trackingResult.document.current_mode_ids[1]==="TM011" && document.querySelector("#error").textContent.includes("replay")');
+    await ev('document.querySelector("#tracking-recovery-panel").scrollIntoView({behavior:"instant",block:"center"})');
+    const capture=await call("Page.captureScreenshot",{captureBeyondViewport:false},sessionId);
+    await writeFile(out+"/recovered-identities.png",Buffer.from(capture.data,"base64"));
+    await select("tracking-current",imported.a);await click("#tracking-extend");await wait('trackingResult?.document.steps?.length===3 && !trackingBusy');
+    await check("history extension uses recovered identities across another rank exchange",'trackingResult.document.status==="PASS" && trackingResult.document.current_mode_ids.join(",")==="TM010,TM020,TM011" && trackingResult.document.identity_recoveries.length===1');
+    await writeFile(out+"/extended-recovery.json",await ev('trackingResult.serialized'));
+    await click("#tracking-reset");await loadFile(out+"/original-history.json");await wait('trackingResult?.document.schema_version===2 && !trackingBusy');
+    await fill("#tracking-overlap",1);await click("#tracking-recover");await wait('trackingResult?.document.schema_version===3 && !trackingBusy');
+    await check("unverified recovery retains ID sets and disables extension",'trackingResult.document.status==="UNVERIFIED" && trackingResult.document.current_mode_ids[1]===null && trackingResult.document.identity_recoveries[0].status==="UNVERIFIED" && document.querySelector("#tracking-extend").disabled && !document.querySelector("#tracking-save").disabled && document.querySelector("#tracking-status").textContent.includes("元のID集合")');
+    await writeFile(out+"/unverified-recovery.json",await ev('trackingResult.serialized'));
+    await click("#tracking-reset");await loadFile(out+"/original-history.json");await wait('trackingResult?.document.schema_version===2 && !trackingBusy');
+    await check("original version two history remains independently replayable",'trackingResult.document.current_mode_ids[1]===null && !document.querySelector("#tracking-recover").disabled');
+  }
   const rect=await ev('(()=>{const r=document.querySelector("#mode-tracking").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
   const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);
   await writeFile(out+"/tracking-history.png",Buffer.from(shot.data,"base64"));

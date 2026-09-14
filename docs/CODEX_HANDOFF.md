@@ -1,3 +1,21 @@
+2026-09-14 最新：D01/P2-01の単独履歴で分裂後の個別モードID回復を実装・限定検証済み。
+開始HEAD9e1c13c。正本[MODE_IDENTITY_RECOVERY.md](MODE_IDENTITY_RECOVERY.md)、索引out/mode-identity-recovery-20260914/acceptance.json。
+以前の全個別ID確認済みnative場と現集合を比較し、全個別対応/集合内一致だけを回復。元stepsと場は保持、版3イベントへ根拠を保存する。
+回復後の継続・再合流後の複数回復・回復済みanchor・失敗UNVERIFIED保存/停止・厳密再生/改変拒否をAPI/CLI/単独履歴GUIへ接続した。
+関連65unitは5.842秒PASS。独立座標固有空間の置換/集合境界違反はAPI不在のredを先に確認。
+専用は初回9FEM保存後、検証器がnative読込結果にmassを要求して失敗。保存済みRFの利用へ修正し、同じ9解を再検証して4.188秒PASS、追加FEM0。
+Bessel解析最大差5.614e-6、Maxwell最大RF差3.220e-14/場差1.848e-14。次数12/18、尺度1/2、U1/4で回復・継続・縮退拒否を確認。
+Chrome17項目PASS、外部HTTP0。初回13項目後の同名ダウンロード検証器失敗は元履歴別保管で補修した。製品は変えていない。
+最終レビューで旧履歴版1の不要な回復ボタンを再現・補修。旧履歴2項目と全17項目を最終製品で確認した。
+数値1062ソース系からの差はブラウザー検証器とapp.jsのボタン条件。325製品SHAと108native保存ファイルは最終一致。
+全実行終端回収。最後の3GUIジョブcomplete、専用GUI PID1882122をSIGINTで停止しsession39270終了0を回収。live handleなし。
+全suite/seed/Hosted CI/新Wine比較は今回未実行。親33=9/17/6/1、全計画goal ACTIVE。
+次はStudy/逐次Study/適応Study/tuneへ回復方針・イベントの保存/再生を接続する限定課題を設計する。現在は自動回復未接続。
+元D01にない連続枝証明等を必須へ追加しない。一般写像の明記残件は撤回しない。旧mode_index・RF規約・停止契約を維持する。
+Wineは/home/sin/.local/share/superfish-referenceに専用永続環境作成・単体検証済み。
+旧installerコピーは自動承認レビューの拒否で明示例外許可待ち。別経路で回避しない。SUPERFISH本体/SFCODESは未復元。
+以下は回復実装前のD01監査および過去履歴。
+
 2026-09-14 最新: D03版3をdb8cd8fでコミット済み、worktree cleanからD01元要件監査へ進んだ。
 [D01_CURRENT_AUDIT.md](D01_CURRENT_AUDIT.md)、out/d01-original-acceptance-20260914/audit.jsonが最新監査。
 56選択検査（50件4.089秒+6件0.308秒）と6新FEM（円筒交差2・合流分裂3・多対多1）はPASS。1059ソース系は不変。
