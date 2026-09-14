@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "new_half_eigensolves": 8,
+  "new_gui_half_eigensolves": 6,
+  "new_cli_half_eigensolves": 2,
+  "reused_api_half_solutions": 6,
+  "native_pairs": 8,
+  "npz_arrays_exact": 64,
+  "all_rf_exact": true,
+  "preserved_native_files": 182,
+  "rows": [
+    {
+      "kind": "polynomial",
+      "gui_checks": 14,
+      "gui_new_half_eigensolves": 3,
+      "jobs": {
+        "first": "20260915-072354-f8385ec5ea",
+        "last": "20260915-072905-a52c2d6168"
+      }
+    },
+    {
+      "kind": "expression",
+      "gui_checks": 11,
+      "gui_new_half_eigensolves": 3,
+      "jobs": {
+        "first": "20260915-072350-e45cb0ebba",
+        "last": "20260915-072842-307e38d191"
+      }
+    }
+  ],
+  "base_commit": "4a579e9",
+  "source_unchanged_during_gui": true,
+  "external_requests": 0,
+  "all_handles_terminal": true,
+  "product_code_changed": false,
+  "scope": "circular-cap TE magnetic z_min reflection, tune 5/7: actual GUI pause/resume and CLI final-refinement resume; existing API solutions reused"
+}

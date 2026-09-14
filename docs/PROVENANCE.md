@@ -1,5 +1,10 @@
 # 独立実装・情報来歴
 
+2026-09-15 JST：[実曲線TE調整のCLI・GUI](TE_CAP_TUNING_WORKFLOWS.md)を限定受入。
+多項式版14/指数式版11のGUI検査、両版CLIの最終細分再開がPASS。新8半領域FEM、API比較元6解を再利用。
+8組64配列・全RF一致、182 nativeファイル保持、両1 MHzゲートと元セクター順位を確認。製品コード変更なし。
+全4GUIジョブ・全handle終端。逐次/適応の実曲線GUI/CLI、分割切替対称条件・他物理/D03は残る。親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[曲線境界の座標別丸め余裕](CURVE_COORDINATE_BOUNDS.md)を修正・限定受入。
 新3unit、独立Decimal390座標、実曲線の体積増分・Study/調整/保存再生を確認。専用12半領域FEM、GUI/API24配列・全RF一致。
 full validatorは361モジュール1826件PASS（3 skip）、HTTPの1件を別実行で補完。残る2 skipは任意NGSolve。

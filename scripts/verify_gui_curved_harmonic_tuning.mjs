@@ -300,7 +300,13 @@ try {
   const old=await ev('currentJob');await click('#tune-open-field');await wait(`currentJob!==${JSON.stringify(old)} && currentResult && !document.querySelector('#field-image').hidden`,300000);
   await check('final field selects the tracked identity',`Number(document.querySelector('#mode').value)===tuningResult.document.trials.at(-1).current_mode_ids.indexOf(tuningResult.document.request.mode_id)+1`);
   if(request.project.case.model?.polarization==='te') await check('imported TE field preserves polarization and accelerating quantities N/A',`currentResult.result.physics==='axisymmetric_m0_te' && currentResult.result.modes.every(m=>m.r_over_q_accelerator_ohm===null && m.r_over_q_circuit_ohm===null)`);
-  if(harmonic)await check('final field retains frozen source history plus one uniform step',`currentResult.result.case.mesh.curved_refinement_steps.length===${request.project.case.mesh.curved_refinement_steps.length+1} && currentResult.result.case.mesh.curved_refinement_steps.at(-1).kind==='uniform'`);
+  if(harmonic) {
+    const addedLevels=Math.log2(request.refinement_scale),mesh=request.project.case.mesh;
+    if(mesh.curved_refinement_steps?.length)
+      await check('final field retains frozen source history and requested uniform steps',`currentResult.result.case.mesh.curved_refinement_steps.length===${mesh.curved_refinement_steps.length+addedLevels} && currentResult.result.case.mesh.curved_refinement_steps.slice(-${addedLevels}).every(s=>s.kind==='uniform')`);
+    else
+      await check('final field retains uniform levels and requested refinement',`currentResult.result.case.mesh.curved_refinement_levels===${(mesh.curved_refinement_levels ?? 0)+addedLevels}`);
+  }
   report.job_ids={first,last};report.new_fem_solves=await ev('tuningResult.document.trials.length');
   }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
