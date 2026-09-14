@@ -1,13 +1,18 @@
 2026-09-15 JST：[TEアフィン調整版4](TE_AFFINE_TUNING.md)のGUI/CLI・場/RF追加検証を限定受入。
 
+2026-09-15 JST：[TE調整版8のGUI/CLI・個別ID回復](TE_PARTITION_TUNING.md)を追加検証。
+Chrome12項目・関連14unitがPASS。専用9実FEM、5組nativeの30配列/全RF一致、99ファイル保持。
+2モードの宣言集合から実EφでIDを回復し、回復失敗時の周波数未評価・停止も保存再生で確認。
+全3GUIジョブ・全handle終端。曲線対称/鏡映・他物理/D03等は残り、親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[TE分割切替調整版8](TE_PARTITION_TUNING.md)を直接閉PEC・固定RFでAPI接続。
 新3unitは分割証拠で成功、関連26件44.420秒PASS。粗いG/周波数差と比較予算の失敗も保持。
 曲線26/27初期分割の原寸/倍寸調整と保存再生が合格。専用成功7＋診断8実FEM、場/RF尺度差最大3.23420e-14。
 54ファイル保持、全handle終端。実GUI・ID回復・曲線対称/鏡映・他物理/D03は残り、親33=10/16/6/1、全goal ACTIVE。
 
-次はTE版8の実GUI・CLIとID回復を検証する。入力は`te_curved_partition_request()`と
-`out/te-partition-tuning-20260915/curved-budgeted/curved-base-request.json`を利用できる。
-UIのTE説明は版8未対応の旧記載が残るため更新する。今回の幾何/Maxwell検証は製品ソースを変えなければ再利用する。
+TE版8のGUI/CLI・API回復とUI説明更新は完了。次はD02の残るTE曲線対称/鏡映を、
+元のTE境界条件・保存形式・調整の要求と照合する。未対応の幾何を単に受理させず、
+全領域との周波数/場/RFおよび対称セクターの順位を独立に検証して接続する。
 
 2026-09-15 JST：[TE逐次/適応Studyの実GUI](TE_TRACKED_STUDY.md)を限定検証。
 Chrome逐次8/適応11項目、完了再生は新ブラウザー各1項目で補強。GUI関連6unitもPASS。

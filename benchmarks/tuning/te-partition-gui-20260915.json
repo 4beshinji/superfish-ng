@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "gui": {
+    "passed": true,
+    "native_pairs": 5,
+    "exact_arrays": 30,
+    "preserved_files": 99,
+    "gui_checks": 12,
+    "source_hashes": 336,
+    "terminal_gui_jobs": [
+      {
+        "id": "20260915-044648-bab7af2cbd",
+        "status": "complete",
+        "kind": "tune"
+      },
+      {
+        "id": "20260915-044251-363125d6ac",
+        "status": "complete",
+        "kind": "tune"
+      },
+      {
+        "id": "20260915-045135-e6f41fd8f7",
+        "status": "complete",
+        "kind": null
+      }
+    ]
+  },
+  "recovery": {
+    "passed": true,
+    "dedicated_fem": 5,
+    "recovered_trials": [
+      1,
+      2
+    ],
+    "failed_frequency_hz": null,
+    "scope": "Declared grouping and actual TE field reidentification, not evidence of a physical degeneracy or ordering crossing"
+  },
+  "unit_tests": {
+    "count": 14,
+    "seconds": 217.2
+  },
+  "dedicated_fem": 9,
+  "source_head": "8aa531d",
+  "scope": "GUI schema 8 and CLI resume; TE identity recovery via API and native replay. Python numerical code unchanged."
+}
