@@ -28,12 +28,15 @@ def _same_space(expected, actual):
     return set(a)==set(b) and all(np.array_equal(a[k],b[k]) for k in a)
 
 
-def _reconstruct(solution):
+def _source_case(solution):
     if not isinstance(solution,CurvedSolution) or solution.case.geometry_order!=2 or solution.source_mesh_data is None:
         raise ValueError('nested_curved requires native curved solutions with source meshes')
+    return solution.reflection_source_case if solution.reflection_source_case is not None else solution.case
+
+
+def _validate_reconstructed_solution(solution,source,half):
+    """Check a solution against geometry derived from its native source history."""
     reflected = solution.reflection_source_case is not None
-    source = solution.reflection_source_case if reflected else solution.case
-    half = case_curved_space(source,mesh_from_dict(source,solution.source_mesh_data))
     reflection = reflect_curved_space(source,half) if reflected else None
     space = reflection.space if reflected else half
     if reflected and reflected_case(source,reflection)!=solution.case:
@@ -48,13 +51,12 @@ def _reconstruct(solution):
         raise ValueError('nested_curved magnetic_symmetry coefficients violate the essential constraint')
     if reflected and not np.array_equal(reflection.apply(original),values):
         raise ValueError('nested_curved coefficients violate declared reflection parity')
-    return source,half,space,reflection,values
+    return space,reflection,values
 
 
 def _nested_transfer(previous,current):
-    old,coarse,old_space,old_reflection,a = _reconstruct(previous)
-    new,fine,new_space,new_reflection,b = _reconstruct(current)
-    if (old_reflection is None)!=(new_reflection is None):
+    old,new = _source_case(previous),_source_case(current)
+    if (previous.reflection_source_case is None)!=(current.reflection_source_case is None):
         raise ValueError('nested_curved requires the same direct or reflected construction')
     stripped = lambda case: replace(case,curved_refinement_levels=0,curved_refinement_steps=()).to_dict()
     if stripped(old)!=stripped(new) or mesh_digest(previous.source_mesh_data)!=mesh_digest(current.source_mesh_data):
@@ -62,9 +64,14 @@ def _nested_transfer(previous,current):
     before,after = _history(old),_history(new)
     if len(after)<=len(before) or after[:len(before)]!=before:
         raise ValueError('nested_curved current history must strictly extend the previous history')
-    entries=len(b)*(a.shape[1]+b.shape[1])
-    if entries>MAX_FEATURE_ENTRIES:
-        raise ValueError('nested_curved exceeds 8388608 coefficient feature entries')
+    # Reconstruct the common prefix once from the native source, never from
+    # either supplied space. Its strict extension constructs both the current
+    # geometry and the transfer in one pass; both solutions are still checked.
+    # Equal JSON digests do not establish strict in-memory input types (for
+    # example, tuple rows serialize like lists). Parse both source decks.
+    mesh_from_dict(new,current.source_mesh_data)
+    coarse=case_curved_space(old,mesh_from_dict(old,previous.source_mesh_data))
+    _,old_reflection,a = _validate_reconstructed_solution(previous,old,coarse)
     transfer=eye(len(coarse.geometry.points_rz_m),format='csr')
     space=coarse
     limit=new.contour_mesh.max_triangles if new.contour_mesh is not None else 250000
@@ -77,8 +84,10 @@ def _nested_transfer(previous,current):
             refined=refine_marked_curved_space(space,list(step.marked_cells),max_triangles=limit,
                                               minimum_corner_angle_deg=step.minimum_corner_angle_deg,split_pattern=step.split_pattern)
         transfer=refined.prolongation@transfer;space=refined.space
-    if not _same_space(space,fine):
-        raise ValueError('nested_curved final space differs from composed history')
+    new_space,new_reflection,b = _validate_reconstructed_solution(current,new,space)
+    entries=len(b)*(a.shape[1]+b.shape[1])
+    if entries>MAX_FEATURE_ENTRIES:
+        raise ValueError('nested_curved exceeds 8388608 coefficient feature entries')
     if old_reflection is not None:
         # Reflection retains all source nodes first. Extraction is a left inverse
         # only on the parity-constrained fields checked above, not arbitrary full fields.

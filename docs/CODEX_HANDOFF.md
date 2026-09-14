@@ -1,3 +1,31 @@
+2026-09-14 JST 最新継続状態。開始HEADe445a05、当初clean。前goalターンは共通比較分割版4の実装/検証/commitでprogress。
+今回はN04残件2の共通履歴再構築共有を実装/検証したprogress。全計画未完、goal ACTIVE。
+[NESTED_RECONSTRUCTION_REUSE.md](NESTED_RECONSTRUCTION_REUSE.md)が契約/数値/検証と制約の詳細。
+製品変更はnested_curved_tracking.pyのみ。旧/新Case・元メッシュ一致と真の履歴延長を確認し、旧履歴を元弦メッシュから一度だけ構築する。
+追加uniform/marked/frozen操作を一度ずつ実行し、新空間と移送を同時に導出する。両解の全幾何配列・係数寸法/有限性・本質拘束・反射Case/偶奇を従来同様照合。
+両側のmesh_from_dictを保持する。初期切出しではJSON同hashのtuple行が通ることを新unitで再現し、新側の厳密解析を戻した。
+source meshから公開呼出しごとに全履歴を再構築する。持続cache/保存値の信頼は追加しない。複数違反時の最初の理由は事前照合で変わり得る。
+求積/FEM/随伴/RF局所作用/規約/閾値/表面区間/モード割当と保存schemaは不変。
+開始時のcProfileはout/quadrature-reuse-20260914/。RF2.713秒中nested2.003秒。仮称出力先であり求積を変更したのではない。
+初回対象12unit8.447秒PASS、その後同hash型違反の追加1件0.421秒FAIL。補修後nested9件7.377秒PASS。
+最終consumer32件121.162秒PASS。RF指標/適応4・5/対称性/prefix/表面方針/保存/固定pattern、実FEM・CLI・JobManager・再開/改変拒否を含む。
+最終41unitは9+32の分割証拠。全対象/コマンドはacceptance.jsonと専用文書。
+新validate_nested_reconstruction_reuse.pyはe445a05の自作nestedモジュールだけを別名で読み、同じ読込済みnative場/ライブラリ/RFで旧新を各3回交互測定する。
+旧ソースSHA d2cf14caa0a7e2b497d50432f1b5d22381284ff2f4acd1e06ea5d7c2061cd2e5はgit内容一致。旧SUPERFISH資産ではない。
+最終paired-final/validation.jsonは45.855秒PASS、3形状の全転送/幾何/係数/履歴/追跡/RF報告完全一致。両対称の鏡映も完全一致。
+回転楕円体391→1501DOFのRF中央値1.80848→1.17957秒、電気半球89→329は.36355→.24247、磁気半球120→451は.51465→.34165。
+RF速度比1.5332/1.4994/1.5064、再構築約2倍。独立次数12質量形式差最大1.5531e-15、定数転送差0。単独交互測定であり一般速度保証ではない。
+最初のpaired/は厳密解析補修前の比較として保持。solve直後のλ丸め差とnative読込後の比較を混同しない。
+既存validate_nested_curved_tracking.pyもnative-tracking/でPASS、18既存native場/12組、円筒/楕円/双曲線両尺度のIDと質量/解析五量/実CLI/replayを再確認。
+質量差最大1.2878e-15、RF尺度差最大1.0326e-13。専用検証の新FEMなし。consumer32unitと並行した時間を単独性能としない。
+最終両検証の1045ソース系hash一致、実行中不変、native全入力不変。今回は全件validate/seed/実ブラウザー/Hosted CI/新Wine比較を実施していない。
+FEM/求積/物理定数/seed TMは不変で、曲線親子追跡と直接利用箇所へ影響を限定。過去full失敗+対象補修+別seedをfull PASSとしない。
+全handle終端: profile30153/初回focused77490/初回paired41970/補修86926/最終paired80950/consumer36273/native15666はいずれも終了0。型違反redは同期終了1。
+索引out/nested-reconstruction-reuse-20260914/acceptance.json。GUIサーバー/workerは起動していない（unit内JobManagerは終了）。subagent/skill/新外部資料/依存/旧資産参照なし。
+親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVEを保持。今回の計算共有でN04一般精度/効率を完了へ変更しない。
+次はN04残件2の適応全工程の費用/一般収束・精度対照、または残件4の対応しない初期接続間の移送/共通分割・境界変更再メッシュ、C00.V/G03/V02等へ進む。
+旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD54e8139、当初clean。前goalターンは異なる局所履歴への選択領域移送を実装/検証/commitしたprogress。
 今回はN04残件4/D01の共通比較分割を版4の保存追跡/CLI/GUIへ追加したprogress。全計画は未完、goal ACTIVE。
 [CURVED_COMPARISON_OVERLAY.md](CURVED_COMPARISON_OVERLAY.md)が入力/数学/検証/制約の最新記録。

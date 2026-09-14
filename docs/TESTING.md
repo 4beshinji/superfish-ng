@@ -1,5 +1,15 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[曲線親子追跡の共通履歴共有](NESTED_RECONSTRUCTION_REUSE.md)は最終9+32=41unitでPASS。
+test_nested_curved_trackingの9件7.377秒、RF指標/適応版4・5/対称性/prefix再利用/表面方針/保存と固定patternの32件121.162秒。
+新4件を含む。初回12件8.447秒の後、新側メッシュの同hash型違反1件を0.421秒FAILで再現し、厳密解析を保持して補修した。
+最終validate_nested_reconstruction_reuse.pyは45.855秒PASS。同一native入力の3形状×3回交互比較で転送/追跡/RF指標完全一致。
+RF指標約1.50〜1.53倍、再構築約2倍を観測。並行FEMはなし。厳密解析補修前の比較は別記録として保持した。
+既存validate_nested_curved_tracking.pyも18保存場/12組・円筒解析五量/尺度則・CLI/replayがPASS、新FEMなし。
+32unitとの並行実行であり、この時間を単独性能とは扱わない。最終両専用検証の1045ソース系SHAが一致、全native入力不変。
+全対象/コマンド/終端はout/nested-reconstruction-reuse-20260914/acceptance.json。影響は曲線親子追跡と直接利用箇所に限定。
+今回全件validate/seed/ブラウザー/Hosted CI/新Wine比較は実施していない。過去full失敗と対象補修をfull PASSへ読み替えない。
+
 2026-09-14 JST：[共通比較分割版4](CURVED_COMPARISON_OVERLAY.md)は新test_curved_comparison_overlayの7件を2+3+2で確認。
 初回独立被覆/逆方向2件API不在red、実装後0.140秒PASS。追跡/予算/保存3件1.468秒、独立番号/固定pattern2件0.318秒PASS。
 既存curved_piecewise_remesh_tracking/piecewise_remesh_tracking/curved_same_domain_tracking/curved_affine_remesh_tracking/curved_comparison_correspondence/curved_selection_transfer/saved_mode_tracking/mode_tracking_history/gui_mode_trackingの56件61.240秒PASS。

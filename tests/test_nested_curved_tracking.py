@@ -117,3 +117,52 @@ class NestedCurvedTrackingTests(unittest.TestCase):
         report=track_nested_curved_modes(a,b,['A','B'],**CONTROLS)
         self.assertEqual(report['status'],'PASS')
         self.assertEqual(report['physical_mapping']['ancestry']['previous_steps'],1)
+
+    def test_extended_marked_prefix_preserves_the_coarse_mass_form(self):
+        case=replace(self.b.case,curved_refinement_steps=self.b.case.curved_refinement_steps+(Step('marked',(1,),5.),))
+        current=solve(case)
+        transfer,space,_,_,ancestry=_nested_transfer(self.b,current)
+        self.assertEqual(ancestry['previous_steps'],2)
+        self.assertEqual(ancestry['current_steps'],3)
+        # A nested restriction preserves every coarse P2 field's r^3-weighted
+        # mass, independently of the coefficients returned by either solve.
+        coarse_mass=assemble_curved(self.b.space,quadrature_order=12)[1]
+        fine_mass=assemble_curved(space,quadrature_order=12)[1]
+        delta=transfer.T@fine_mass@transfer-coarse_mass
+        self.assertLess(np.linalg.norm(delta.data)/np.linalg.norm(coarse_mass.data),1e-11)
+        np.testing.assert_array_equal(transfer@np.ones(transfer.shape[1]),np.ones(transfer.shape[0]))
+
+    def test_each_native_geometry_is_checked_after_history_reuse(self):
+        for solution in (self.a,self.b):
+            points=solution.space.geometry.points_rz_m.copy();points[0,1]+=1e-5
+            geometry=replace(solution.space.geometry,points_rz_m=points)
+            altered=replace(solution,space=replace(solution.space,geometry=geometry))
+            pair=(altered,self.b) if solution is self.a else (self.a,altered)
+            with self.subTest(which='previous' if solution is self.a else 'current'):
+                with self.assertRaisesRegex(ValueError,'native reconstruction'):_nested_transfer(*pair)
+        # Matching fabricated metadata in both spaces is also insufficient:
+        # the comparison is against the source reconstruction, not each other.
+        pair=tuple(replace(solution,space=replace(solution.space,axis_dofs=np.array([],dtype=int)))
+                   for solution in (self.a,self.b))
+        with self.assertRaisesRegex(ValueError,'native reconstruction'):_nested_transfer(*pair)
+
+    def test_both_native_coefficient_arrays_and_constraints_are_checked(self):
+        for index,solution in enumerate((self.a,self.b)):
+            for coefficients in (solution.u[:-1],solution.u*float('nan')):
+                pair=[self.a,self.b];pair[index]=replace(solution,u=coefficients)
+                with self.subTest(index=index,shape=coefficients.shape):
+                    with self.assertRaises(ValueError):_nested_transfer(*pair)
+        case=replace(half_case('z_min','magnetic_symmetry'),modes=1)
+        a=solve(case);b=solve(replace(case,curved_refinement_steps=(Step('marked',(0,),5.),)))
+        for index,solution in enumerate((a,b)):
+            u=solution.u.copy();u[solution.space.constrained_dofs[0],0]=1.
+            pair=[a,b];pair[index]=replace(solution,u=u)
+            with self.assertRaisesRegex(ValueError,'essential constraint'):_nested_transfer(*pair)
+
+    def test_equal_mesh_digests_do_not_replace_strict_current_parsing(self):
+        from superfish_ng.mesh_input import mesh_digest
+        data=deepcopy(self.b.source_mesh_data)
+        data['triangles'][0]=tuple(data['triangles'][0])
+        self.assertEqual(mesh_digest(data),mesh_digest(self.a.source_mesh_data))
+        with self.assertRaisesRegex(ValueError,'rows'):
+            _nested_transfer(self.a,replace(self.b,source_mesh_data=data))
