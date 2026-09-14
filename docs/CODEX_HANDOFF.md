@@ -1,3 +1,18 @@
+<!-- scalar-expression-current-begin -->
+2026-09-15 JST：D02の[非多項式スカラー式](SCALAR_EXPRESSIONS.md)の評価基盤を追加。
+単位検査、数学関数、遅延条件分岐、有限実数の定義域、構文/深さ/ノード予算を検査し、新8件0.124秒PASS。
+まだtune/Project/CLI/GUIには未接続。[D02監査](D02_CURRENT_AUDIT.md)の関数連動・境界分割変更等は保持する。
+開始HEAD7061866。scalar_expressions.pyは定数{constant,unit}/変数{variable}/演算{op,args}の厳密木。
+変数値・単位マップ、結果単位m/1を指定。中間の長さ次元指数はFraction、定義域はmathの有限実数。
+四則/累乗/平方根/指数対数/三角双曲線/abs/min/max/atan2/hypot/floor/ceilと比較付きifを提供。
+次：式によるprofile/曲線寸法の生成をtuneへ接続。全試行は実FEM、個別ID、目標差/細分差、保存再開・失敗保持を守る。
+入力版の設計は未実施。既存tune版1〜5と外側回復版6は保持し、式版を明示する。既存多項式近似への置換はしない。
+D02には境界分割変更/他物理の明示残件もある。D03制約付き探索と混同しない。
+証拠out/scalar-expressions-20260915、API不在baseline終了1、最終8unit0.124秒終了0。既存製品利用先・FEMは無変更。
+全suite/数値/GUIなし、live handleなし。親33=10/16/6/1、全計画goal ACTIVE。
+以下はD01親受入までの履歴。
+<!-- scalar-expression-current-end -->
+
 <!-- d01-parent-current-begin -->
 2026-09-15 JST：[D01の元要件と明示後続要件](D01_ACCEPTANCE.md)を監査し、親D01.S/I/Vを受入済みに更新した。
 個別ID回復の全利用先接続と、異なる初期比較接続・境界分割への対応を含む21実行報告、検査内容、現在のソースを照合。
