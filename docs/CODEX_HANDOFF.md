@@ -1,3 +1,18 @@
+<!-- d01-parent-current-begin -->
+2026-09-15 JST：[D01の元要件と明示後続要件](D01_ACCEPTANCE.md)を監査し、親D01.S/I/Vを受入済みに更新した。
+個別ID回復の全利用先接続と、異なる初期比較接続・境界分割への対応を含む21実行報告、検査内容、現在のソースを照合。
+親33=10受入/16進行/6他未受入/1範囲外。D02/D03と全計画goalは継続中。以下の旧段階の未完表記は履歴である。
+監査対象HEADf25da6e。原e6271c2のD01.S/I/VとBACKLOGの後続約束を照合し、前回残件2件の実装・検証を確認。
+D01_ACCEPTANCE.mdとbenchmarks/tracking/d01-parent-acceptance-20260915.jsonが正本。
+21数値/ブラウザー報告を読み取りSHAを記録。out/d01-parent-acceptance-20260915/evidence-inventory.json。
+直前全検証後のmode_tracking/回復/Study/tune核は同一。製品差は比較版5分岐/新参照分割/GUIで、その42検査と専用FEM/GUIが別証拠。
+全検証の移行テスト初回FAILと修正後分割PASS、NGSolve任意2skipは保持。単一の全validate.py成功とは扱わない。
+今回は監査・文書だけ、新FEM/テスト/ブラウザーなし。全計画完了ではない。live handleなし。
+次：D02原S/I/VとBACKLOGの任意関数連動・境界分割変更等の明示後続要件を照合し、必要な残件を実装する。
+未対応物理や旧版互換性は他親課題のまま。Wine本体/SFCODESの復元は自動承認レビュー拒否で例外許可待ち、別経路回避禁止。
+以下はD01個別機能の実装・検証履歴。
+<!-- d01-parent-current-end -->
+
 <!-- curved-reference-partition-current-begin -->
 2026-09-15 JST：[明示参照座標による曲線比較版5](CURVED_REFERENCE_PARTITION.md)を実装・限定受入。
 旧新の初期接続と境界分割が異なる場合に、各実P2写像と全親被覆を確認して保存場を比較する。

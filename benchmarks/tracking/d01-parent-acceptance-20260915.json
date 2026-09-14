@@ -1,0 +1,94 @@
+{
+  "status": "ACCEPTED",
+  "parent": "D01",
+  "audited_commit": "f25da6eb1c2a44eb68f53e5885b2b2e4e861ed41",
+  "original_plan_commit": "e6271c2",
+  "scope": "Original D01.S/I/V plus explicit BACKLOG follow-up promises within the declared physical/mapping contract",
+  "requirements": [
+    {
+      "requirement": "C01.S and native field evaluation",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "different-shape mappings and physical weights",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "independent native and comparison connectivity including boundary subdivision",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "near-degenerate subspaces and rank",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "ambiguous assignments abstain",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "stable IDs preserve frequency rank",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "failure/crossing history and replay",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "independent analytical crossings, sign/order and basis invariance",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "many-to-many identity sets",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "individual identity recovery after splitting",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "history/Study/sequential/adaptive/GUI integration",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    },
+    {
+      "requirement": "unverified frequency never passed to tune",
+      "status": "SATISFIED",
+      "details": "docs/D01_ACCEPTANCE.md"
+    }
+  ],
+  "evidence_inventory_sha256": "cbe8ae1baae17ff17a629939b2afd8f1e688fdb406ae9fb99398101960eade91",
+  "verified_reports": 21,
+  "product_changes_since_reused_milestone": [
+    "src/superfish_ng/curved_piecewise_remesh_tracking.py",
+    "src/superfish_ng/piecewise_remesh_tracking.py",
+    "src/superfish_ng/web/app.js",
+    "src/superfish_ng/web/index.html"
+  ],
+  "new_product_since_milestone": [
+    "src/superfish_ng/reference_partition.py",
+    "src/superfish_ng/curved_reference_partition.py"
+  ],
+  "audit_new_fem_solves": 0,
+  "audit_tests_run": false,
+  "prior_milestone": "full discovery FAIL from example classification; repaired 8-test module and HTTP recheck PASS, seed PASS separately; two optional NGSolve skips retained",
+  "parent_counts": {
+    "accepted": 10,
+    "in_progress": 16,
+    "other_unaccepted": 6,
+    "out_of_scope": 1,
+    "total": 33
+  },
+  "goal_status": "active",
+  "remaining_parent_requirements": [],
+  "next_parent": "D02 original requirements and explicit follow-up audit"
+}

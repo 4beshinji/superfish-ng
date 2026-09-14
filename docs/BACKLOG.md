@@ -1,5 +1,10 @@
 # 実装バックログ
 
+2026-09-15 JST：[D01の元要件と明示後続要件](D01_ACCEPTANCE.md)を監査し、親D01.S/I/Vを受入済みに更新した。
+個別ID回復の全利用先接続と、異なる初期比較接続・境界分割への対応を含む21実行報告、検査内容、現在のソースを照合。
+親33=10受入/16進行/6他未受入/1範囲外。D02/D03と全計画goalは継続中。以下の旧段階の未完表記は履歴である。
+
+
 2026-09-15 JST：[明示参照座標による曲線比較版5](CURVED_REFERENCE_PARTITION.md)を実装・限定受入。
 旧新の初期接続と境界分割が異なる場合に、各実P2写像と全親被覆を確認して保存場を比較する。
 新6/既存36unitの分割42件、非アフィン4実FEM/独立重み積分/尺度則/CLI、Chrome新版11・旧版10項目がPASS。
@@ -1120,7 +1125,7 @@ D01 Study保存結果接続の今回の受入基準: 完了manifestと各点の�
 | P1-04 | 一部 | 角部診断・境界実長・局所細分 | 丸め形状のEpk収束、特異角で未収束表示。平滑化と数値を分離 | P1-01/02、SURFACE_FIELD_DIAGNOSTICS.md、PHYSICAL_MESH_REFINEMENT.md |
 | P1-05 | 未着手 | 外部実機参照 | 寸法・境界・材料・規約・参照値の来歴と比較。合成例を実測に数えない | P0-01。資料入手の外部依存を記録 |
 | P1-06 | 完了（ローカルO01範囲） | Job管理と直接保存の完了公開・hash検査 | 他OS/配布はV02。電源断耐性は未保証 | SAVE_COMPLETION.md。中断/失敗・同名競合・外部mesh取込を検証 |
-| P2-01 | 一部 | 同一形状の細分間対応、条件付きバンド同定、重み付き部分空間追跡・円筒写像・個別ID/部分空間ID集合の履歴/再開 | 一般写像、多対多/個別枝回復、製品操作 | studies.py/modes.py/mode_tracking.py。場評価APIが前提、P1-01は必須でない |
+| P2-01 | 完了（D01契約） | 一般の宣言写像・独立再メッシュ・部分空間/多対多・個別ID回復・保存履歴、Study/tune/GUI接続 | 元D01と明示後続要件は受入済み。対象外物理や旧版互換性は他親課題で継続 | [D01原要件受入](D01_ACCEPTANCE.md)。周波数順位とIDを分離し、未確認値をtuneへ渡さない |
 | P2-02 | 一部 | 独立掃引・比較、明示円筒/profile写像の単一/連動座標の追跡付きtune/再開/最終細分API/CLI・JobManager・GUI | 任意関数連動・境界分割変更/他物理の調整、一般形状の制約付き探索 | [CURVED_HARMONIC_TUNING.md](CURVED_HARMONIC_TUNING.md)、[TUNING.md](TUNING.md)、[RF_OPTIMIZATION.md](RF_OPTIMIZATION.md)。曲線2変数の制約付き実FEM探索を追加。各試行の全個別ID確認を必須とする |
 | P2-03 | 完了（native R01範囲） | 加速長・電圧区間・位相原点、保存/CLI/GUI | 旧の任意位相入力変換はC02/C03/C04 | ACCELERATING_CONVENTIONS.md。独立積分、半/全領域、旧既定値不変を検証 |
 | P2-04 | 完了（GUI範囲） | 共通APIのGUI・保存・表示・掃引 | G0〜G5技術的受入済み。一般追跡/tune・外部メッシュUIは後続 | GUI_IO_PLAN.md、GUI_ACCEPTANCE.md。notebook専用UIは未計画 |
