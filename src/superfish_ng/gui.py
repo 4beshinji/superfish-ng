@@ -189,6 +189,8 @@ def create_server(workspace, port=0):
                     "curved-selection-mesh": ["document"],
                     "freeze-curved-refinement": ["document"],
                     "generate-curved-remesh-plan": ["document", "settings_document"],
+                    "transfer-curved-selection": ["previous_document", "current_document", "request_document"],
+                    "replay-curved-selection-transfer": ["document"],
                     "preview-curved-deformation": ["document", "geometry_document", "rf_coordinates", "minimum_corner_angle_deg"],
                     "tangent": ["document", "candidate_index"],
                     "replay-tangent": ["document"],
@@ -296,6 +298,18 @@ def create_server(workspace, port=0):
                         data["sections"],
                         reflect_full=data.get("reflect_full", False),
                     )
+                elif action == "transfer-curved-selection":
+                    from .curved_selection_transfer import transfer_curved_cell_selection
+
+                    fields=('action','previous_document','current_document','request_document')
+                    keys(data,fields,fields,'curved selection transfer request')
+                    return self.reply(transfer_curved_cell_selection(load_document(data['previous_document']),
+                        load_document(data['current_document']),parse_json(data['request_document'])))
+                elif action == "replay-curved-selection-transfer":
+                    from .curved_selection_transfer import replay_curved_selection_transfer
+
+                    keys(data,('action','document'),('action','document'),'curved selection transfer replay')
+                    return self.reply(replay_curved_selection_transfer(parse_json(data['document'])))
                 elif action == "generate-curved-remesh-plan":
                     from .curved_remesh_generation import generate_curved_remesh_plan
 

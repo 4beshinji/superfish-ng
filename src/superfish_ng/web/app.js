@@ -379,6 +379,59 @@ function collectCurvedRefinementSteps(limit = null) {
 }
 let curvedSelection = null;
 let curvedCanvasPicker = null;
+let curvedTransferResult = null;
+function curvedTransferFormSignature() {
+  return JSON.stringify(['source','cells','boundary','policy','budget'].map(name=>$( `curved-transfer-${name}` ).value));
+}
+$("curved-transfer-source-file").onchange=async event=>{
+  try {
+    $("error").hidden=true;
+    const file=event.target.files[0];if(!file)return;
+    const signature=curvedTransferFormSignature(),text=await file.text();
+    if(signature!==curvedTransferFormSignature())throw Error('Project読込中に移送条件が変わりました。読み直してください。');
+    $("curved-transfer-source").value=text;
+  } catch(error) {failure(error);} finally {event.target.value='';}
+};
+bind('curved-transfer-run',async()=>{
+  const selection=curvedSelection;
+  if(!selection || !curvedSelectionMatches(selection.signature))throw Error('対象段階のメッシュを現在の入力で図上表示してください。');
+  const form=curvedTransferFormSignature(),{project}=curvedSelectionInput();
+  const selectedBefore=JSON.stringify([...selection.cells].sort((a,b)=>a-b));
+  const request=JSON.stringify({schema_version:1,selected_cells:null,boundary_pairing:$("curved-transfer-boundary").value,
+    coverage_policy:$("curved-transfer-policy").value,max_pair_tests:number('curved-transfer-budget')})
+    .replace('"selected_cells":null','"selected_cells":'+$("curved-transfer-cells").value);
+  $("curved-transfer-run").disabled=true;
+  try {
+    const result=await api('transfer-curved-selection',{previous_document:$("curved-transfer-source").value,
+      current_document:JSON.stringify(project),request_document:request});
+    if(selection!==curvedSelection || !curvedSelectionMatches(selection.signature) || form!==curvedTransferFormSignature()
+        || selectedBefore!==JSON.stringify([...selection.cells].sort((a,b)=>a-b)))
+      throw Error('移送の検査中に入力や対象メッシュが変わりました。現在の入力でやり直してください。');
+    selection.cells.clear();for(const cell of result.selection.selected_cells)selection.cells.add(cell);
+    for(const path of $("curved-selection-mesh").querySelectorAll('[data-cell]')) {
+      const selected=selection.cells.has(Number(path.dataset.cell));path.setAttribute('fill',selected?'#efb44c':'#d7e9f8');path.setAttribute('aria-pressed',String(selected));
+    }
+    curvedCanvasPicker?.draw(false);selectionStatus();curvedTransferResult=result;$("curved-transfer-save").disabled=false;
+    $("curved-transfer-status").textContent=`${result.selection.selected_cells.length}要素を選択しました。一部だけ重なる要素は${result.selection.partially_covered_cells.length}個です。交差面積の総和と元領域の参照面積は厳密に一致しました。`;
+  } finally {$("curved-transfer-run").disabled=false;}
+});
+bind('curved-transfer-save',()=>download('curved-selection-transfer.json',JSON.stringify(curvedTransferResult,null,2)));
+$("curved-transfer-open").onchange=async event=>{
+  try {
+    $("error").hidden=true;
+    const file=event.target.files[0];if(!file)return;
+    const signature=curvedTransferFormSignature(),text=await file.text();
+    const result=await api('replay-curved-selection-transfer',{document:text});
+    if(signature!==curvedTransferFormSignature())throw Error('再検証中に移送条件が変わりました。読み直してください。');
+    $("curved-transfer-source").value=JSON.stringify(result.previous_project,null,2);
+    $("curved-transfer-cells").value=JSON.stringify(result.request.selected_cells);
+    $("curved-transfer-boundary").value=result.request.boundary_pairing;
+    $("curved-transfer-policy").value=result.request.coverage_policy;
+    $("curved-transfer-budget").value=result.request.max_pair_tests;
+    curvedTransferResult=result;$("curved-transfer-save").disabled=false;
+    $("curved-transfer-status").textContent='保存移送を再検証し、元選択と条件を復元しました。移送先の対象段階を図上表示して再計算してください。';
+  } catch(error) {failure(error);} finally {event.target.value='';}
+};
 function clearCurvedSelection() {
   curvedCanvasPicker?.dispose();curvedCanvasPicker=null;
   curvedSelection=null;$("curved-selection-panel").hidden=true;

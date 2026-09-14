@@ -237,6 +237,21 @@
             <label>選択細分の最小頂点接線角 [度]<input id="curved-selection-angle" type="number" min="0" max="60" step="any" value="5" /></label>
             <button id="curved-selection-append" type="button" disabled>選択要素の細分を履歴末尾へ追加</button>
           </div>
+          <details id="curved-transfer-controls">
+            <summary>別の細分履歴から選択領域を移す</summary>
+            <p class="hint">対象段階のメッシュを図上表示し、変更前のProjectとその最終メッシュの選択番号を指定します。対応する初期分割を持つ曲線P2のTM領域を扱います。旧番号の代わりに領域の交差を調べ、新しい選択を図へ反映します。</p>
+            <label class="file">変更前のProjectを読み込む<input id="curved-transfer-source-file" type="file" accept=".json" /></label>
+            <label>変更前のProject JSON<textarea id="curved-transfer-source" rows="5" spellcheck="false"></textarea></label>
+            <label>変更前の選択要素番号（0始まりJSON配列）<textarea id="curved-transfer-cells" rows="2" spellcheck="false">[0]</textarea></label>
+            <label>境界の対応<select id="curved-transfer-boundary"><option value="same_curve_fractions">同じ曲線分率</option><option value="ordered_curve_vertices">曲線上の節点順</option></select></label>
+            <label>移送先の選び方<select id="curved-transfer-policy"><option value="intersects">面積を持って重なる要素を全て選ぶ</option><option value="contained">全体が元領域に含まれる要素だけ選ぶ</option></select></label>
+            <label>同じ初期要素内で調べる要素対の上限<input id="curved-transfer-budget" type="number" min="1" step="1" value="100000" /></label>
+            <button id="curved-transfer-run" type="button">領域の移送を検査して図上選択へ反映</button>
+            <button id="curved-transfer-save" type="button" disabled>最後の移送記録を保存</button>
+            <label class="file">移送記録を再検証して元選択と条件を復元<input id="curved-transfer-open" type="file" accept=".json" /></label>
+            <p id="curved-transfer-status" role="status"></p>
+            <p class="hint">一部だけ重なる要素があると、選択は元領域を覆う集合またはその内部の集合になります。交差面積は初期要素の参照座標で厳密に照合します。物理面積・体積の割合やFEM誤差推定ではありません。図で確認して既存の履歴反映ボタンを使ってください。</p>
+          </details>
           <fieldset id="curved-history-controls" hidden disabled>
             <legend>順序付き細分履歴</legend>
             <p>上から順に実行します。選択要素の番号は各段階の直前のメッシュに対する0始まりの番号です。形状や初期メッシュを変更する場合は履歴も確認してください。</p>

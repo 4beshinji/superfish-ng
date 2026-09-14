@@ -71,6 +71,13 @@ def main(argv=None):
     generate_remesh.add_argument('project',type=Path)
     generate_remesh.add_argument('--settings',type=Path,required=True,help='strict chord edge/area, quality, iteration/element budgets and new history')
     generate_remesh.add_argument('--out',type=Path,required=True)
+    transfer_selection=sub.add_parser('transfer-curved-selection',help='transfer a selected region between corresponding base meshes with independent curved refinement histories')
+    transfer_selection.add_argument('previous',type=Path)
+    transfer_selection.add_argument('current',type=Path)
+    transfer_selection.add_argument('--request',type=Path,required=True)
+    transfer_selection.add_argument('--out',type=Path,required=True)
+    replay_selection=sub.add_parser('replay-curved-selection-transfer',help='reconstruct and verify a saved exact reference-region selection transfer')
+    replay_selection.add_argument('document',type=Path)
     remesh=sub.add_parser('remesh-curved-project',help='replace an initial curved mesh and explicitly redeclare/freeze its history on the same quadratic domain')
     remesh.add_argument('project',type=Path)
     remesh.add_argument('--plan',type=Path,required=True,help='strict remesh plan with source_mesh and a complete new refinement declaration')
@@ -882,6 +889,21 @@ def main(argv=None):
             with args.out.open('x',encoding='utf-8') as stream:
                 json.dump(result.to_dict(),stream,indent=2,allow_nan=False);stream.write('\n')
             print(f"DEFORMED: {args.out}")
+            return 0
+        elif args.command == 'transfer-curved-selection':
+            from .curved_selection_transfer import transfer_curved_cell_selection
+            from .project import load_document,parse_json
+            result=transfer_curved_cell_selection(load_document(args.previous.read_text(encoding='utf-8')),
+                load_document(args.current.read_text(encoding='utf-8')),parse_json(args.request.read_text(encoding='utf-8')))
+            with args.out.open('x',encoding='utf-8') as stream:
+                json.dump(result,stream,indent=2,allow_nan=False);stream.write('\n')
+            print(f"TRANSFERRED {len(result['selection']['selected_cells'])} CELLS: {args.out}")
+            return 0
+        elif args.command == 'replay-curved-selection-transfer':
+            from .curved_selection_transfer import replay_curved_selection_transfer
+            from .project import parse_json
+            replay_curved_selection_transfer(parse_json(args.document.read_text(encoding='utf-8')))
+            print(f"REPLAYED SELECTION TRANSFER: {args.document}")
             return 0
         elif args.command == 'generate-curved-remesh-plan':
             from .curved_remesh_generation import generate_curved_remesh_plan

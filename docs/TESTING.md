@@ -1,5 +1,17 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[細分履歴間の選択領域移送](CURVED_SELECTION_TRANSFER.md)は新test_curved_selection_transferの8件を分割確認。
+初回独立2件API不在red、実装後0.084秒PASS。最初の6件は5合格/fixture履歴方式混在1ERROR、当該修正1件0.332秒PASS。
+厳密範囲/対称領域2件0.348秒、保存JSON/NumPy浮動小数修正後の関連2件0.317秒PASS。再読込のred/中間失敗も保持する。
+既存はcurved_marked_refinement/curved_refinement/frozen_curved_refinement/curved_comparison_correspondence/gui_curved_mesh_selection/project/project_mesh/gui_hphiを選択。
+初回は存在しないtest_curved_refinement_historyも指定し、43件43.847秒=41合格/1ERROR/HTTP1skip。
+実curved_refinement_steps/planar_tracking_overlapの8件3.847秒と、許可環境の同HTTP1件0.564秒で補完。最終50件の分割証拠。
+専用validate_curved_selection_transfer.pyは4新FEM6.299秒PASS。独立P2物理積分/尺度則/非nested領域/CLI/保存を確認。
+Chrome新18/既存履歴20項目、各1新FEM、外部HTTP0、両321製品SHAは最終一致。初回selectorと中間replayの失敗は別記録で保持。
+新validate_curved_selection_transfer_browser.pyは18.602秒PASS、新FEMなし。小規模/6,656要素の全再構築・独立物理積分、GUI/専用FEMの全native配列一致とRF11量を確認。
+数値時1041sourceからの差は新native検証器/ブラウザーselector/移送replay/追加unitの4パス。最終1042sourceと23保存artifact不変、3画面目視済み。
+索引out/curved-selection-transfer-20260914/acceptance.json。全件validate/seed/Hosted CI/新Wine比較は実施していない。単一全件PASSへ読み替えない。
+
 2026-09-14 JST：[曲線比較メッシュ番号対応](CURVED_COMPARISON_CORRESPONDENCE.md)は新8件の分割検証。
 初回2件API不在red、幾何2件の最終0.759秒PASS。全8件16.409秒は7PASS/境界負例1FAIL、明示境界節点へ直した当該1件0.332秒PASS。
 負例は番号変更後の内部節点を動かしていたため有効だった。製品/許容差は不変。単一8件合格とはしない。

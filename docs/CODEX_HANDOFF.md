@@ -1,3 +1,38 @@
+2026-09-14 JST 最新継続状態。開始HEADc87fab0、当初clean。前goalターンは同型曲線比較メッシュの番号自動対応を実装/検証/commitしたprogress。
+今回はN04残件4の異なる曲線細分履歴への選択領域移送をAPI/CLI/GUIへ追加したprogress。全計画は未完、goal ACTIVE。
+[CURVED_SELECTION_TRANSFER.md](CURVED_SELECTION_TRANSFER.md)が入力/数学/検証/制約の最新記録。
+新curved_selection_transfer.transfer_curved_cell_selection(previous,current,request)は元/先Projectを変更せず完全な領域移送文書を返す。
+直接native P2 TM・未組立/未反射限定。原領域の電気/磁気対称境界は試験済み。TE/鏡映後全空洞は拒否。
+初期分割は既存番号対応で全P2全単射が必要。最終分割は独立の局所履歴、同型/nestedでなくてもよい。
+要求版1はselected_cells/boundary_pairing/coverage_policy/max_pair_tests全必須。旧番号は旧全履歴後。境界方針は同分率/曲線節点順の明示二択。
+親参照写像をFractionで合成し、既存planar_tracking_overlapの有理数clipで選択旧セルと新セルの交差を計算する。
+各初期三角形を子が厳密被覆すること、全交差面積が旧選択面積と一致することを確認。pair予算は初期セル内の全組数、Case予算/品質は履歴で保持。
+intersectsは正面積で重なる覆い、containedは完全包含のみ（空も有効）。部分被覆番号を別報告し、参照面積を物理面積/体積や誤差推定と呼ばない。
+両Project/要求/初期対応/全有理交差多角形/被覆率/面積照合を文書へ保持、replayで全再構築する。status PASSは幾何選択契約のみ。
+CLI transfer-curved-selection old new --request FILE --out FILE とreplay-curved-selection-transfer FILE。厳密reader/全検査後の排他保存。
+GUIは対象段階の図へ移送し、既存の追加/途中挿入/再選択で反映する。全履歴/対象/条件/手動選択の途中変更を拒否し、失敗時は直前記録を保持。
+保存記録replayは旧Projectと元選択/条件を復元し、現在の対象段階へ再計算する。移送先Project/全後続履歴の自動置換ではない。
+新8unitは分割証拠。初回独立2件API不在red、実装後0.084秒PASS。初回6件0.523秒は5PASS/fixture履歴方式混在1ERROR、当該修正1件0.332秒PASS。
+追加原対称領域と厳密TE/予算の2件0.348秒PASS。ブラウザーで実replay不具合を再現し、JSONの0/0.0同値とNumPy float64 metadataを値比較へ修正した。
+整数ID/有理数分子分母/真偽値は厳密。追加replayのred/途中補修失敗を保持、最終関連2件0.317秒PASS。既存数値4+ブラウザー2記録の再構築もPASS、新FEMなし。
+既存初回43件43.847秒は41PASS/不存在test_curved_refinement_historyの1ERROR/HTTP権限1skip。実curved_refinement_steps/planar_tracking_overlap8件3.847秒と許可HTTP1件0.564秒で補完。
+最終既存50件の分割合格であり単一全件PASSではない。全対象/コマンドは専用文書とacceptance.json。
+専用validate_curved_selection_transfer.pyは4新FEM6.299秒PASS。非アフィン独立番号の初期26セル、旧111→新112セル、旧[0,2,6]→覆い[81,82]/包含[81]、部分82。
+新marked後126セル。独立P2基底/偏微分とGauss-Duffyで面積/回転体積/Hphi=rの幾何質量を照合、相対差最大1.555e-15。
+尺度2は面積4/体積8/質量32、選択文書完全一致。f/両RQ/G/TTF尺度差最大1.022e-14、Hphi/Er/Ez差最大1.651e-13、固定領域Ritz非増加。
+実Chrome新18/旧履歴20項目PASS、各1 FEM、外部HTTP0、各321製品SHAが最終一致。SVG/Canvas/旧履歴3画像目視済み。
+初回browser31324は8項目後selectorエスケープ失敗。browser-final15319/verified75491/corrected9616は12項目後replay失敗、FEM前で終了1。
+長寿命サーバーの旧モジュールを維持していたため、修正後は元server60348をSIGINT終了0、新server42203でbrowser-reloaded47621を実行して終了0。
+旧browser48649も終了0。新server42203もSIGINT終了0。旧選択9538は終了1、補充5809/数値93995/独立probe68268は終了0。
+新validate_curved_selection_transfer_browser.pyの59690は18.602秒PASS/終了0、新FEMなし。小規模と6656セル中96選択を全再構築し、独立物理三積分も一致。
+GUI/独立FEMの全u/f/二次座標/接続が完全一致、RF11量とU/RQ定義もPASS。1042sourceと23保存artifact不変。
+数値時1041sourceからの差は新native検証器/ブラウザーselector/replay修正/追加unitの4パス。幾何移送/FEMは不変、保存修正は別途検証した。
+全検証handle/サーバー/workerは終端。索引out/curved-selection-transfer-20260914/acceptance.json。全件validate/seed/Hosted CI/新Wine比較/実測は未実行。
+FEM/物理定数/許容差不変、新規外部資料/依存/旧資産参照なし。subagent/skillなし。過去full失敗+対象補修+別seedをfull PASSとしない。
+親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVE。次は対応しない初期接続の領域移送、同型でない分割の共通比較メッシュ、境界分割を変える一般再メッシュ、またはN04一般精度/効率とC00.V/G03/V02残件へ進む。
+今回の移送は対応した初期分割からの異なる局所履歴への限定受入。連続物理枝回復や一般TE/反射追跡は別に未受入。
+旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD55fed30、当初clean。前goalターンは固定二次境界の内部メッシュ自動生成を実装/検証/commitしたprogress。
 今回はN04残件4/D01の独立番号比較を、曲線比較宣言版3のAPI/保存/CLI/GUIへ追加したprogress。全計画は未完、goal ACTIVE。
 [CURVED_COMPARISON_CORRESPONDENCE.md](CURVED_COMPARISON_CORRESPONDENCE.md)が入力/数学/検証/制約の最新記録。
