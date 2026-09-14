@@ -1,5 +1,9 @@
 # 独立実装・情報来歴
 
+2026-09-14 JST：[固定履歴付きRF探索](RF_OPTIMIZATION_HISTORY.md)。既存の分割固定・アフィン変形・固定幾何Studyを探索器へ接続し、
+表面評価に不変な接頭部分と追加全域細分を照合する契約を追加した。源FEM・RF計算・探索アルゴリズムは変更しない。
+既存の球形解析・Green境界積分・Maxwell尺度則を独立検証に使用する。新規外部資料・依存・旧資産の参照はない。
+
 2026-09-14 JST：[A01のcavsim2d役割比較](A01_BACKEND_COMPARISON.md)とADR-018を受入。
 R6の固定commit48741ff46ca44463281a5ab5945328615881b502（0.1.0）のREADME・MIT LICENSE・依存宣言と
 現代的なPython API/NGSolve実装を参照した。過去の「READMEのみ参照」は当時の記録であり、今回の参照範囲とは区別する。

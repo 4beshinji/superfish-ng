@@ -1,3 +1,31 @@
+2026-09-14 JST 最新継続状態。開始HEADb60e8c1、当初clean。前goalターンはA01比較とADR受入/commitでprogress。
+今回はD03/P2-02の固定局所細分履歴をRF探索へ接続し、仕様/実装/検証を完了したprogress。親D03全体と全計画goalは未完、ACTIVE。
+[RF_OPTIMIZATION_HISTORY.md](RF_OPTIMIZATION_HISTORY.md)が入力・数学・検証・失敗の正本。親33=9受入/17進行/6他未受入/1範囲外は不変。
+要求版2は全markedにsplit_patternと明示元メッシュを要求し、freeze-curved-refinementを先に行う。暗黙固定なし。一様だけの履歴も受理。
+元Projectから各形状へ変形し、Studyのadditional_uniform_refinementsで元履歴の後ろへ探索0/1/2・最終1/2/3回を追加。版1の履歴拒否は維持する。
+表面評価版2は最初の履歴の末尾uniformを除く固定接頭部分と、その後の増加するuniform回数を保存/再検証する。途中挿入・marked変更・Case/源メッシュ変更・逆順を拒否。
+refinement_levelは固定接頭部分の後のuniform数。元Projectの末尾uniformも含む。旧版1の文書/行とRF設計/探索checkpoint外側の版1は維持。
+製品変更はrf_optimization.py/surface_convergence.py/web/app.js/index.htmlのみ。FEM/求積/規約/五量許容差/探索アルゴリズム/総予算は不変。
+GUIは固定履歴時に要求版2を作り、読み込んだ版も保持。元履歴の後の全域細分を結果に表示し、表面評価版2の段数・元場を表示する。
+baseline-red.logは新2件で要求版拒否とCaseの履歴/前置段数競合を再現、終了1。追加5件の初回は4合格/1失敗2.761秒。
+失敗はmesh_dataを除いたProject版2が探索器の前にProjectパーサーで拒否する検証入力。Project版1へ直して探索器の明示元メッシュ必須を検査、製品は緩和なし。
+selected-tests.logは8モジュール29件614.814秒PASS。新5件、既存の表面/設計/実FEM探索/GUI transport/JobManager中止再開/所有と予算/改変拒否を含む。
+専用validate_rf_optimization_history.pyのindependent/validation.jsonは24実FEM897.259692秒PASS。両尺度の各4試行、探索43/172/688要素・最終172/688/2752。
+値は[1,1]→[1.01,1]→[1.01,1.01]→同値最終、両尺度SEARCH_COMPLETE/TRIAL_LIMIT。CLI途中保存/再開/replay、全native場/判断/固定接頭部分と偽造拒否を確認。
+球形解析最大差f2.472e-5/RQ2.231e-6/G1.076e-7/E比1.782e-4/B比3.700e-6、元許容内。各二次境界の独立Green面積/体積と細分不変を確認。
+長さ2倍・U1→4JのRF五量尺度差最大7.039e-14、全要素2点H/Er/Ezの1/√2則最大9.762e-14、面積4/体積8倍差0。
+1050src/tests/scripts/examples SHAは専用検証中不変。その後の変更はverify_gui_rf_optimization.mjsの検証器補修だけ。製品322SHAは専用/全3browser/最終が一致。
+Chrome browser-v1は13項目PASS。browser-v2は12項目成功後、検証器が派生表面診断9箇所のfloat0.0/1.0をJSでint0/1へ再符号化し、完全再生に拒否され終了1。
+数値/製品を変えず、サーバーserialized文字列をPythonで抽出するよう検証器を補修。--checkpointで既存完了文書を開く限定確認を追加。
+browser-v2-replayは14項目PASS、後半の新FEMなし。初回12には実worker中止・所有checkpoint再生/編集に影響されない再開、後半14には表面版2・元場2水準・固定分割保持を含む。
+新版は分割証拠で初回FAILを保持。各browser外部HTTP0、フォーム/結果画像を目視。各worker完了解6は中止別分岐の部分計算を含む総呼出し数ではない。
+主要数値はbenchmarks/optimization/frozen-history-20260914.json、再現入力はexamples/optimization/frozen_history_rf.json。全証拠索引out/rf-optimization-history-20260914/acceptance.json。
+全handle終端: 初回追加5件90390=1、最終unit50912=0、専用60417=0、Chrome初回75352=1、旧版99685=0、補修後12493=0。
+専用GUI91603/PID1560264は完全argvを再確認してSIGINT、終了0。workerはcomplete/cancelled、GUIserver/検証processは残さない。
+全suite/seed/Hosted CI/新Wine比較は未実行。直接利用箇所へ影響を限定、過去full失敗をfull PASSへ変えない。新規外部資料/依存/旧資産/skill/subagentなし。
+次はD03一般形状変数/非アフィン探索、D02/D01/N04/G03/C00.V等の残件へ進む。今回の接続受入を親D03全体や他物理の完了へ拡張しない。
+gitメタデータはrequire_escalated。以下は過去履歴。
+
 2026-09-14 JST 最新継続状態。開始HEADfe1c8a8、当初clean。前goalターンは共通履歴再構築共有の実装/検証/commitでprogress。
 今回は未着手だったA01/P0-04のcavsim2d役割比較を実行し、ADR-018と原要件照合まで受入したprogress。全計画は未完、goal ACTIVE。
 [A01_BACKEND_COMPARISON.md](A01_BACKEND_COMPARISON.md)が仕様/出典/失敗/数値と受入照合の正本。親33は9受入/17進行/6他未受入/1範囲外へ更新した。

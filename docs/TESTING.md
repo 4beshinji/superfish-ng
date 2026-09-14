@@ -1,5 +1,14 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[固定局所履歴付きRF探索](RF_OPTIMIZATION_HISTORY.md)の関連29unitは614.814秒PASS。
+対象はtest_rf_optimization_history、test_surface_convergence、test_rf_design、test_rf_optimization、
+test_gui_rf_optimization、test_rf_optimization_jobs、test_rf_optimization_prefix_reuse、test_rf_optimization_start_concurrency。
+新5件の履歴保持/アフィン対応/strict入力/GUI往復/失敗保存と、既存の元FEM・表面量・設計評価・中止再開/改変拒否を確認。
+専用24FEMとChrome新旧経路の独立検証はRF_OPTIMIZATION_HISTORYの最終記録を参照する。全suite/seed/Hosted CIは今回未実行。
+専用検証は897.260秒PASS、解析五量/Green/MaxwellのRF最大7.039e-14・場最大9.762e-14。
+Chrome旧版13項目PASS。新版初回は12項目成功後に検証器のJSON型変更でFAIL、修正後は既存完了文書で14項目PASS（新FEMなし）。
+製品322SHAは全ブラウザー/専用/最終で一致し、専用1050SHAからの変更はブラウザー検証器1ファイルのみ。索引はout/rf-optimization-history-20260914/acceptance.json。
+
 2026-09-14 JST：[A01候補比較](A01_BACKEND_COMPARISON.md)は新test_cavsim_comparison4件0.026秒と既存独立比較7件が合格。
 既存の判定5件は初回10件実行で確認、当時の物理2skipを隔離NGSolve環境のReferencePhysicsTests2件0.113秒で補った。最終11件の分割証拠。
 scripts/compare_cavsim2d.pyの最終final-correctedは36実FEM/10.436秒PASS。閉PEC円筒/円錐台の双方3水準×3回、

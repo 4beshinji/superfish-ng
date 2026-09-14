@@ -1,0 +1,1124 @@
+{
+  "passed": true,
+  "dedicated_fem_solves": 24,
+  "rows": [
+    [
+      [
+        {
+          "additional_uniform_steps": 0,
+          "moments": {
+            "signed_area_m2": -0.010052600693452257,
+            "signed_volume_m3": -0.002144502220775717
+          },
+          "triangles": 43,
+          "dofs": 100
+        },
+        {
+          "additional_uniform_steps": 1,
+          "moments": {
+            "signed_area_m2": -0.010052600693452257,
+            "signed_volume_m3": -0.0021445022207757167
+          },
+          "triangles": 172,
+          "dofs": 371
+        },
+        {
+          "additional_uniform_steps": 2,
+          "moments": {
+            "signed_area_m2": -0.010052600693452256,
+            "signed_volume_m3": -0.002144502220775715
+          },
+          "triangles": 688,
+          "dofs": 1429
+        }
+      ],
+      [
+        {
+          "additional_uniform_steps": 0,
+          "moments": {
+            "signed_area_m2": -0.010153126700386778,
+            "signed_volume_m3": -0.0021876067154133084
+          },
+          "triangles": 43,
+          "dofs": 100
+        },
+        {
+          "additional_uniform_steps": 1,
+          "moments": {
+            "signed_area_m2": -0.01015312670038678,
+            "signed_volume_m3": -0.002187606715413308
+          },
+          "triangles": 172,
+          "dofs": 371
+        },
+        {
+          "additional_uniform_steps": 2,
+          "moments": {
+            "signed_area_m2": -0.010153126700386778,
+            "signed_volume_m3": -0.002187606715413306
+          },
+          "triangles": 688,
+          "dofs": 1429
+        }
+      ],
+      [
+        {
+          "additional_uniform_steps": 0,
+          "moments": {
+            "signed_area_m2": -0.010254657967390642,
+            "signed_volume_m3": -0.0022094827825674406
+          },
+          "triangles": 43,
+          "dofs": 100
+        },
+        {
+          "additional_uniform_steps": 1,
+          "moments": {
+            "signed_area_m2": -0.010254657967390645,
+            "signed_volume_m3": -0.0022094827825674406
+          },
+          "triangles": 172,
+          "dofs": 371
+        },
+        {
+          "additional_uniform_steps": 2,
+          "moments": {
+            "signed_area_m2": -0.010254657967390647,
+            "signed_volume_m3": -0.0022094827825674397
+          },
+          "triangles": 688,
+          "dofs": 1429
+        }
+      ],
+      [
+        {
+          "additional_uniform_steps": 1,
+          "moments": {
+            "signed_area_m2": -0.010254657967390645,
+            "signed_volume_m3": -0.0022094827825674406
+          },
+          "triangles": 172,
+          "dofs": 371
+        },
+        {
+          "additional_uniform_steps": 2,
+          "moments": {
+            "signed_area_m2": -0.010254657967390647,
+            "signed_volume_m3": -0.0022094827825674397
+          },
+          "triangles": 688,
+          "dofs": 1429
+        },
+        {
+          "additional_uniform_steps": 3,
+          "moments": {
+            "signed_area_m2": -0.010254657967390647,
+            "signed_volume_m3": -0.002209482782567438
+          },
+          "triangles": 2752,
+          "dofs": 5609
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "additional_uniform_steps": 0,
+          "moments": {
+            "signed_area_m2": -0.04021040277380903,
+            "signed_volume_m3": -0.017156017766205737
+          },
+          "triangles": 43,
+          "dofs": 100
+        },
+        {
+          "additional_uniform_steps": 1,
+          "moments": {
+            "signed_area_m2": -0.04021040277380903,
+            "signed_volume_m3": -0.017156017766205733
+          },
+          "triangles": 172,
+          "dofs": 371
+        },
+        {
+          "additional_uniform_steps": 2,
+          "moments": {
+            "signed_area_m2": -0.04021040277380902,
+            "signed_volume_m3": -0.01715601776620572
+          },
+          "triangles": 688,
+          "dofs": 1429
+        }
+      ],
+      [
+        {
+          "additional_uniform_steps": 0,
+          "moments": {
+            "signed_area_m2": -0.04061250680154711,
+            "signed_volume_m3": -0.017500853723306467
+          },
+          "triangles": 43,
+          "dofs": 100
+        },
+        {
+          "additional_uniform_steps": 1,
+          "moments": {
+            "signed_area_m2": -0.04061250680154712,
+            "signed_volume_m3": -0.017500853723306464
+          },
+          "triangles": 172,
+          "dofs": 371
+        },
+        {
+          "additional_uniform_steps": 2,
+          "moments": {
+            "signed_area_m2": -0.04061250680154711,
+            "signed_volume_m3": -0.01750085372330645
+          },
+          "triangles": 688,
+          "dofs": 1429
+        }
+      ],
+      [
+        {
+          "additional_uniform_steps": 0,
+          "moments": {
+            "signed_area_m2": -0.04101863186956257,
+            "signed_volume_m3": -0.017675862260539525
+          },
+          "triangles": 43,
+          "dofs": 100
+        },
+        {
+          "additional_uniform_steps": 1,
+          "moments": {
+            "signed_area_m2": -0.04101863186956258,
+            "signed_volume_m3": -0.017675862260539525
+          },
+          "triangles": 172,
+          "dofs": 371
+        },
+        {
+          "additional_uniform_steps": 2,
+          "moments": {
+            "signed_area_m2": -0.04101863186956259,
+            "signed_volume_m3": -0.017675862260539518
+          },
+          "triangles": 688,
+          "dofs": 1429
+        }
+      ],
+      [
+        {
+          "additional_uniform_steps": 1,
+          "moments": {
+            "signed_area_m2": -0.04101863186956258,
+            "signed_volume_m3": -0.017675862260539525
+          },
+          "triangles": 172,
+          "dofs": 371
+        },
+        {
+          "additional_uniform_steps": 2,
+          "moments": {
+            "signed_area_m2": -0.04101863186956259,
+            "signed_volume_m3": -0.017675862260539518
+          },
+          "triangles": 688,
+          "dofs": 1429
+        },
+        {
+          "additional_uniform_steps": 3,
+          "moments": {
+            "signed_area_m2": -0.04101863186956259,
+            "signed_volume_m3": -0.017675862260539504
+          },
+          "triangles": 2752,
+          "dofs": 5609
+        }
+      ]
+    ]
+  ],
+  "analytic_final_relative_errors": [
+    {
+      "frequency_hz": 2.4717883679858943e-05,
+      "r_over_q_accelerator_ohm": 2.230582762940969e-06,
+      "geometry_factor_ohm": 1.0751825740840104e-07,
+      "epk_over_eacc": 0.0001781801400631,
+      "bpk_over_eacc_mt_per_mv_per_m": 3.699198962148209e-06
+    },
+    {
+      "frequency_hz": 2.4717883675640095e-05,
+      "r_over_q_accelerator_ohm": 2.2305827098723086e-06,
+      "geometry_factor_ohm": 1.0751825962884709e-07,
+      "epk_over_eacc": 0.0001781801401182781,
+      "bpk_over_eacc_mt_per_mv_per_m": 3.6991989924572977e-06
+    }
+  ],
+  "maximum_rf_scaling_error": 7.038813976123492e-14,
+  "maximum_field_scaling_error": 9.76114625884119e-14,
+  "maximum_geometry_scaling_error": 0.0,
+  "source_unchanged": true,
+  "seconds": 897.2596918629933,
+  "scope": "two real frozen-history RF searches, CLI pause/resume, fixed-domain Green integrals, Maxwell field and five-quantity scaling, independent sphere final errors, native replay and forgery rejection; no general optimizer or physical-error certificate",
+  "schema_version": 1,
+  "issue": "D03/P2-02 frozen-history RF optimization",
+  "date": "2026-09-14",
+  "source_commit_before_change": "b60e8c1",
+  "raw_report_sha256": "aa7f6621d498d9841a8cf32703b437ac853c3797025a5f8cdc897e5ce9f562f4",
+  "source_files_count": 1050,
+  "changed_code_sha256": {
+    "src/superfish_ng/rf_optimization.py": "36435c3f628cd564d6fce7420d7ff3bbb978e004dc84a439dd6900db6b9617c9",
+    "src/superfish_ng/surface_convergence.py": "911f7548e8795b5615f17958fda39f1f685475bcc29511092c6565e6f9ca30d1",
+    "src/superfish_ng/web/app.js": "64211783449c768c93a559c40436d6b3b90537c435598185195359ac46a2aad2",
+    "src/superfish_ng/web/index.html": "e48cfa12d982a69c570fe6ac5de847488c1b8b8a88d52d376df4e277bddb202c",
+    "scripts/validate_rf_optimization_history.py": "856ca074ff026d9a2f7336eda0b191bee51dd942ba42ff946ef5a23d73e6ed74",
+    "examples/optimization/frozen_history_rf.json": "c96d5765085917fa143a5ab4e00b1fa1827670f1e158031f08037c1f60696b7b"
+  },
+  "trials_by_scale": {
+    "1": [
+      {
+        "values": [
+          1.0,
+          1.0
+        ],
+        "phase": "search",
+        "status": "CRITERIA_MET",
+        "objective": {
+          "quantity": "frequency_hz",
+          "direction": "minimize",
+          "unit": "Hz",
+          "observed_envelope": [
+            1636437419.8057628,
+            1636470665.2297292
+          ],
+          "eligible_value": 1636470665.2297292
+        },
+        "refinement_status": "TARGETS_MET",
+        "rows": [
+          {
+            "mode_index": 1,
+            "refinement_level": 0,
+            "triangles": 43,
+            "degrees_of_freedom": 100,
+            "intervals": {
+              "frequency_hz": [
+                1636470665.2297292,
+                1636470665.2297292
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.73798557366729,
+                53.73798557366729
+              ],
+              "geometry_factor_ohm": [
+                379.45290531232996,
+                379.45290531232996
+              ],
+              "epk_over_eacc": [
+                1.8746063213872648,
+                1.8746076563661953
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.585041980703728,
+                8.58504357664248
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 1,
+            "triangles": 172,
+            "degrees_of_freedom": 371,
+            "intervals": {
+              "frequency_hz": [
+                1636439877.6971169,
+                1636439877.6971169
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.6154198120839,
+                53.6154198120839
+              ],
+              "geometry_factor_ohm": [
+                379.5072162708918,
+                379.5072162708918
+              ],
+              "epk_over_eacc": [
+                1.8811565981990033,
+                1.881158267139975
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.606536002073279,
+                8.606544481822525
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 2,
+            "triangles": 688,
+            "degrees_of_freedom": 1429,
+            "intervals": {
+              "frequency_hz": [
+                1636437419.8057628,
+                1636437419.8057628
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61434755914579,
+                53.61434755914579
+              ],
+              "geometry_factor_ohm": [
+                379.51148030551815,
+                379.51148030551815
+              ],
+              "epk_over_eacc": [
+                1.880794423806974,
+                1.8807961778895068
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.608492345582885,
+                8.608498522662394
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "values": [
+          1.01,
+          1.0
+        ],
+        "phase": "search",
+        "status": "CRITERIA_MET",
+        "objective": {
+          "quantity": "frequency_hz",
+          "direction": "minimize",
+          "unit": "Hz",
+          "observed_envelope": [
+            1621122653.3570237,
+            1621154781.3851788
+          ],
+          "eligible_value": 1621154781.3851788
+        },
+        "refinement_status": "TARGETS_MET",
+        "rows": [
+          {
+            "mode_index": 1,
+            "refinement_level": 0,
+            "triangles": 43,
+            "degrees_of_freedom": 100,
+            "intervals": {
+              "frequency_hz": [
+                1621154781.3851788,
+                1621154781.3851788
+              ],
+              "r_over_q_accelerator_ohm": [
+                55.83381813674061,
+                55.83381813674061
+              ],
+              "geometry_factor_ohm": [
+                377.95961240188444,
+                377.95961240188444
+              ],
+              "epk_over_eacc": [
+                1.8524225281433557,
+                1.8524231327403176
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.363750468052265,
+                8.363755702086552
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 1,
+            "triangles": 172,
+            "degrees_of_freedom": 371,
+            "intervals": {
+              "frequency_hz": [
+                1621125028.8702624,
+                1621125028.8702624
+              ],
+              "r_over_q_accelerator_ohm": [
+                55.7086658558116,
+                55.7086658558116
+              ],
+              "geometry_factor_ohm": [
+                378.01254038817854,
+                378.01254038817854
+              ],
+              "epk_over_eacc": [
+                1.8590247733449141,
+                1.8590264658403288
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.384435058976319,
+                8.384436859721687
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 2,
+            "triangles": 688,
+            "degrees_of_freedom": 1429,
+            "intervals": {
+              "frequency_hz": [
+                1621122653.3570237,
+                1621122653.3570237
+              ],
+              "r_over_q_accelerator_ohm": [
+                55.707590027124255,
+                55.707590027124255
+              ],
+              "geometry_factor_ohm": [
+                378.0166951519038,
+                378.0166951519038
+              ],
+              "epk_over_eacc": [
+                1.8586519918077704,
+                1.8586528304489018
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.38631961766502,
+                8.38632546447273
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "values": [
+          1.01,
+          1.01
+        ],
+        "phase": "search",
+        "status": "CRITERIA_MET",
+        "objective": {
+          "quantity": "frequency_hz",
+          "direction": "minimize",
+          "unit": "Hz",
+          "observed_envelope": [
+            1620235069.1146157,
+            1620267985.3759687
+          ],
+          "eligible_value": 1620267985.3759687
+        },
+        "refinement_status": "TARGETS_MET",
+        "rows": [
+          {
+            "mode_index": 1,
+            "refinement_level": 0,
+            "triangles": 43,
+            "degrees_of_freedom": 100,
+            "intervals": {
+              "frequency_hz": [
+                1620267985.3759687,
+                1620267985.3759687
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.73798557366678,
+                53.73798557366678
+              ],
+              "geometry_factor_ohm": [
+                379.45290531232916,
+                379.45290531232916
+              ],
+              "epk_over_eacc": [
+                1.8746063213872965,
+                1.8746076563662268
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.585041980703773,
+                8.585043576642525
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 1,
+            "triangles": 172,
+            "degrees_of_freedom": 371,
+            "intervals": {
+              "frequency_hz": [
+                1620237502.6704125,
+                1620237502.6704125
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61541981208571,
+                53.61541981208571
+              ],
+              "geometry_factor_ohm": [
+                379.5072162708914,
+                379.5072162708914
+              ],
+              "epk_over_eacc": [
+                1.8811565981989655,
+                1.8811582671399378
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.60653600207312,
+                8.606544481822368
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 2,
+            "triangles": 688,
+            "degrees_of_freedom": 1429,
+            "intervals": {
+              "frequency_hz": [
+                1620235069.1146157,
+                1620235069.1146157
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61434755914636,
+                53.61434755914636
+              ],
+              "geometry_factor_ohm": [
+                379.5114803055174,
+                379.5114803055174
+              ],
+              "epk_over_eacc": [
+                1.8807944238069634,
+                1.8807961778894957
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.608492345582762,
+                8.608498522662272
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "values": [
+          1.01,
+          1.01
+        ],
+        "phase": "final",
+        "status": "CRITERIA_MET",
+        "objective": {
+          "quantity": "frequency_hz",
+          "direction": "minimize",
+          "unit": "Hz",
+          "observed_envelope": [
+            1620234899.4018438,
+            1620237502.6704125
+          ],
+          "eligible_value": 1620237502.6704125
+        },
+        "refinement_status": "TARGETS_MET",
+        "rows": [
+          {
+            "mode_index": 1,
+            "refinement_level": 1,
+            "triangles": 172,
+            "degrees_of_freedom": 371,
+            "intervals": {
+              "frequency_hz": [
+                1620237502.6704125,
+                1620237502.6704125
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61541981208571,
+                53.61541981208571
+              ],
+              "geometry_factor_ohm": [
+                379.5072162708914,
+                379.5072162708914
+              ],
+              "epk_over_eacc": [
+                1.8811565981989655,
+                1.8811582671399378
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.60653600207312,
+                8.606544481822368
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 2,
+            "triangles": 688,
+            "degrees_of_freedom": 1429,
+            "intervals": {
+              "frequency_hz": [
+                1620235069.1146157,
+                1620235069.1146157
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61434755914636,
+                53.61434755914636
+              ],
+              "geometry_factor_ohm": [
+                379.5114803055174,
+                379.5114803055174
+              ],
+              "epk_over_eacc": [
+                1.8807944238069634,
+                1.8807961778894957
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.608492345582762,
+                8.608498522662272
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 3,
+            "triangles": 2752,
+            "degrees_of_freedom": 5609,
+            "intervals": {
+              "frequency_hz": [
+                1620234899.4018438,
+                1620234899.4018438
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61445866662003,
+                53.61445866662003
+              ],
+              "geometry_factor_ohm": [
+                379.5117728743765,
+                379.5117728743765
+              ],
+              "epk_over_eacc": [
+                1.8809488829835588,
+                1.8809493973121663
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.60874515687367,
+                8.60874768220979
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "values": [
+          1.0,
+          1.0
+        ],
+        "phase": "search",
+        "status": "CRITERIA_MET",
+        "objective": {
+          "quantity": "frequency_hz",
+          "direction": "minimize",
+          "unit": "Hz",
+          "observed_envelope": [
+            818218709.9028858,
+            818235332.6148642
+          ],
+          "eligible_value": 818235332.6148642
+        },
+        "refinement_status": "TARGETS_MET",
+        "rows": [
+          {
+            "mode_index": 1,
+            "refinement_level": 0,
+            "triangles": 43,
+            "degrees_of_freedom": 100,
+            "intervals": {
+              "frequency_hz": [
+                818235332.6148642,
+                818235332.6148642
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.737985573667466,
+                53.737985573667466
+              ],
+              "geometry_factor_ohm": [
+                379.45290531232945,
+                379.45290531232945
+              ],
+              "epk_over_eacc": [
+                1.8746063213872681,
+                1.8746076563661984
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.585041980703723,
+                8.585043576642477
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 1,
+            "triangles": 172,
+            "degrees_of_freedom": 371,
+            "intervals": {
+              "frequency_hz": [
+                818219938.8485582,
+                818219938.8485582
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.6154198120844,
+                53.6154198120844
+              ],
+              "geometry_factor_ohm": [
+                379.5072162708908,
+                379.5072162708908
+              ],
+              "epk_over_eacc": [
+                1.8811565981990257,
+                1.8811582671399976
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.606536002073238,
+                8.606544481822485
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 2,
+            "triangles": 688,
+            "degrees_of_freedom": 1429,
+            "intervals": {
+              "frequency_hz": [
+                818218709.9028858,
+                818218709.9028858
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61434755914202,
+                53.61434755914202
+              ],
+              "geometry_factor_ohm": [
+                379.5114803055191,
+                379.5114803055191
+              ],
+              "epk_over_eacc": [
+                1.8807944238070506,
+                1.8807961778895825
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.608492345583148,
+                8.608498522662657
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "values": [
+          1.01,
+          1.0
+        ],
+        "phase": "search",
+        "status": "CRITERIA_MET",
+        "objective": {
+          "quantity": "frequency_hz",
+          "direction": "minimize",
+          "unit": "Hz",
+          "observed_envelope": [
+            810561326.6785078,
+            810577390.6925882
+          ],
+          "eligible_value": 810577390.6925882
+        },
+        "refinement_status": "TARGETS_MET",
+        "rows": [
+          {
+            "mode_index": 1,
+            "refinement_level": 0,
+            "triangles": 43,
+            "degrees_of_freedom": 100,
+            "intervals": {
+              "frequency_hz": [
+                810577390.6925882,
+                810577390.6925882
+              ],
+              "r_over_q_accelerator_ohm": [
+                55.83381813674094,
+                55.83381813674094
+              ],
+              "geometry_factor_ohm": [
+                377.9596124018844,
+                377.9596124018844
+              ],
+              "epk_over_eacc": [
+                1.8524225281433415,
+                1.8524231327403031
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.363750468052235,
+                8.363755702086522
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 1,
+            "triangles": 172,
+            "degrees_of_freedom": 371,
+            "intervals": {
+              "frequency_hz": [
+                810562514.4351315,
+                810562514.4351315
+              ],
+              "r_over_q_accelerator_ohm": [
+                55.70866585581156,
+                55.70866585581156
+              ],
+              "geometry_factor_ohm": [
+                378.0125403881785,
+                378.0125403881785
+              ],
+              "epk_over_eacc": [
+                1.8590247733449146,
+                1.8590264658403295
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.384435058976324,
+                8.384436859721692
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 2,
+            "triangles": 688,
+            "degrees_of_freedom": 1429,
+            "intervals": {
+              "frequency_hz": [
+                810561326.6785078,
+                810561326.6785078
+              ],
+              "r_over_q_accelerator_ohm": [
+                55.70759002712649,
+                55.70759002712649
+              ],
+              "geometry_factor_ohm": [
+                378.0166951519029,
+                378.0166951519029
+              ],
+              "epk_over_eacc": [
+                1.8586519918077562,
+                1.8586528304488887
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.38631961766489,
+                8.386325464472602
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "values": [
+          1.01,
+          1.01
+        ],
+        "phase": "search",
+        "status": "CRITERIA_MET",
+        "objective": {
+          "quantity": "frequency_hz",
+          "direction": "minimize",
+          "unit": "Hz",
+          "observed_envelope": [
+            810117534.5573057,
+            810133992.6879845
+          ],
+          "eligible_value": 810133992.6879845
+        },
+        "refinement_status": "TARGETS_MET",
+        "rows": [
+          {
+            "mode_index": 1,
+            "refinement_level": 0,
+            "triangles": 43,
+            "degrees_of_freedom": 100,
+            "intervals": {
+              "frequency_hz": [
+                810133992.6879845,
+                810133992.6879845
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.737985573666705,
+                53.737985573666705
+              ],
+              "geometry_factor_ohm": [
+                379.4529053123297,
+                379.4529053123297
+              ],
+              "epk_over_eacc": [
+                1.8746063213872999,
+                1.8746076563662302
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.58504198070378,
+                8.585043576642532
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 1,
+            "triangles": 172,
+            "degrees_of_freedom": 371,
+            "intervals": {
+              "frequency_hz": [
+                810118751.3352066,
+                810118751.3352066
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61541981208545,
+                53.61541981208545
+              ],
+              "geometry_factor_ohm": [
+                379.50721627089206,
+                379.50721627089206
+              ],
+              "epk_over_eacc": [
+                1.881156598198976,
+                1.8811582671399478
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.606536002073138,
+                8.606544481822386
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 2,
+            "triangles": 688,
+            "degrees_of_freedom": 1429,
+            "intervals": {
+              "frequency_hz": [
+                810117534.5573057,
+                810117534.5573057
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61434755914727,
+                53.61434755914727
+              ],
+              "geometry_factor_ohm": [
+                379.511480305517,
+                379.511480305517
+              ],
+              "epk_over_eacc": [
+                1.880794423806961,
+                1.8807961778894935
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.608492345582714,
+                8.608498522662224
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "values": [
+          1.01,
+          1.01
+        ],
+        "phase": "final",
+        "status": "CRITERIA_MET",
+        "objective": {
+          "quantity": "frequency_hz",
+          "direction": "minimize",
+          "unit": "Hz",
+          "observed_envelope": [
+            810117449.7009186,
+            810118751.3352066
+          ],
+          "eligible_value": 810118751.3352066
+        },
+        "refinement_status": "TARGETS_MET",
+        "rows": [
+          {
+            "mode_index": 1,
+            "refinement_level": 1,
+            "triangles": 172,
+            "degrees_of_freedom": 371,
+            "intervals": {
+              "frequency_hz": [
+                810118751.3352066,
+                810118751.3352066
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61541981208545,
+                53.61541981208545
+              ],
+              "geometry_factor_ohm": [
+                379.50721627089206,
+                379.50721627089206
+              ],
+              "epk_over_eacc": [
+                1.881156598198976,
+                1.8811582671399478
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.606536002073138,
+                8.606544481822386
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 2,
+            "triangles": 688,
+            "degrees_of_freedom": 1429,
+            "intervals": {
+              "frequency_hz": [
+                810117534.5573057,
+                810117534.5573057
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61434755914727,
+                53.61434755914727
+              ],
+              "geometry_factor_ohm": [
+                379.511480305517,
+                379.511480305517
+              ],
+              "epk_over_eacc": [
+                1.880794423806961,
+                1.8807961778894935
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.608492345582714,
+                8.608498522662224
+              ]
+            }
+          },
+          {
+            "mode_index": 1,
+            "refinement_level": 3,
+            "triangles": 2752,
+            "degrees_of_freedom": 5609,
+            "intervals": {
+              "frequency_hz": [
+                810117449.7009186,
+                810117449.7009186
+              ],
+              "r_over_q_accelerator_ohm": [
+                53.61445866662289,
+                53.61445866662289
+              ],
+              "geometry_factor_ohm": [
+                379.5117728743756,
+                379.5117728743756
+              ],
+              "epk_over_eacc": [
+                1.880948882983455,
+                1.8809493973120623
+              ],
+              "bpk_over_eacc_mt_per_mv_per_m": [
+                8.60874515687341,
+                8.608747682209529
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

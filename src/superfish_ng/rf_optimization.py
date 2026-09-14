@@ -20,8 +20,8 @@ def validate_optimization_request(request):
     fields=('schema_version','project','variables','criteria','constraint_scales',
             'objective_improvement','max_trials','initial_ids','mode_id','controls','rf_coordinates')
     keys(request,fields,fields,'RF optimization request')
-    if type(request['schema_version']) is not int or request['schema_version']!=1:
-        raise ValueError('RF optimization requires schema_version 1')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2):
+        raise ValueError('RF optimization requires schema_version 1 or 2')
     validate_design_criteria(request['criteria'])
     scales=request['constraint_scales'];names=[c['quantity'] for c in request['criteria']['constraints']]
     keys(scales,names,names,'constraint_scales')
@@ -47,9 +47,17 @@ def validate_optimization_request(request):
     project=Project.from_dict(request['project']);case=project.case
     from .te import is_te
     if is_te(case):raise ValueError('TE RF optimization/tracking integration is pending; use an ordinary TE Project solve')
-    if (case.curved_contour is None or case.geometry_order!=2 or case.curved_refinement_steps or
+    if (case.curved_contour is None or case.geometry_order!=2 or
             project.sections is not None or project.reflect_full):
-        raise ValueError('RF optimization requires an unassembled full native curved P2 project without marked refinement history')
+        raise ValueError('RF optimization requires an unassembled full native curved P2 project')
+    if case.curved_refinement_steps:
+        if request['schema_version']==1:
+            raise ValueError('RF optimization version 1 does not support refinement history; use version 2 with frozen marked steps')
+        marked=[step for step in case.curved_refinement_steps if step.kind=='marked']
+        if any(step.split_pattern is None for step in marked):
+            raise ValueError('RF optimization requires fixed marked choices; run freeze-curved-refinement on the source Project first')
+        if marked and project.mesh_data is None:
+            raise ValueError('RF optimization with marked history requires the explicit source mesh saved by freeze-curved-refinement')
     if case.z_min!='pec' or case.z_max!='pec':raise ValueError('RF optimization requires full closed PEC geometry')
     if request['rf_coordinates'] not in ('fixed','axial'):raise ValueError('rf_coordinates must be fixed or axial')
     controls=request['controls']
@@ -71,7 +79,12 @@ def _map(request, values):
 def _projects(request, trial):
     project=transform_curved_project(Project.from_dict(request['project']),_map(request,trial['values']),
                                      rf_coordinates=request['rf_coordinates'])
-    first=project.case.curved_refinement_levels+(1 if trial['phase']=='final' else 0)
+    offset=1 if trial['phase']=='final' else 0
+    if project.case.curved_refinement_steps:
+        from .studies import Study
+        return Study(project,'fixed_geometry_convergence','additional_uniform_refinements',
+                     [offset+i for i in range(3)]).projects()
+    first=project.case.curved_refinement_levels+offset
     return [replace(project,case=replace(project.case,curved_refinement_levels=first+i)) for i in range(3)]
 
 

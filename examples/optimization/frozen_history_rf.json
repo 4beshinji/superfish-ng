@@ -1,0 +1,539 @@
+{
+  "schema_version": 2,
+  "project": {
+    "project_version": 2,
+    "case": {
+      "schema_version": 3,
+      "name": "synthetic_optimization",
+      "geometry": {
+        "type": "curved_contour",
+        "curves": [
+          {
+            "type": "line",
+            "start_zr_m": [
+              0.0,
+              0.0
+            ],
+            "end_zr_m": [
+              0.16,
+              0.0
+            ]
+          },
+          {
+            "type": "ellipse_arc",
+            "center_zr_m": [
+              0.08,
+              0.0
+            ],
+            "semiaxes_m": [
+              0.08,
+              0.08
+            ],
+            "start_rad": 0.0,
+            "sweep_rad": 3.141592653589793,
+            "rotation_rad": 0.0
+          }
+        ],
+        "edge_tags": [
+          "axis",
+          "pec"
+        ],
+        "join_tolerance_m": 1e-14,
+        "minimum_gap_m": 0.0,
+        "chord_tolerance_m": 0.0016,
+        "chord_max_segments": 20000
+      },
+      "mesh": {
+        "nr": 24,
+        "nz": 32,
+        "geometry_order": 2,
+        "curved_refinement_steps": [
+          {
+            "kind": "marked",
+            "marked_cells": [
+              0
+            ],
+            "minimum_corner_angle_deg": 1.0,
+            "split_pattern": {
+              "schema_version": 1,
+              "parent_topology_sha256": "cc5bf09410482f553d79496c8f2e3bc6e790acc19399ea7ce86ae3d8c28c4cd6",
+              "marked_cells": [
+                0
+              ],
+              "split_edges": [
+                [
+                  1,
+                  16
+                ],
+                [
+                  1,
+                  17
+                ],
+                [
+                  10,
+                  17
+                ],
+                [
+                  16,
+                  17
+                ]
+              ],
+              "transition_diagonals": [
+                [
+                  2,
+                  0
+                ]
+              ]
+            }
+          }
+        ],
+        "contour_mesh": {
+          "max_edge_m": 0.064,
+          "min_angle_deg": 5.0,
+          "max_triangles": 250000,
+          "max_rounds": 12
+        }
+      },
+      "solver": {
+        "modes": 1,
+        "quadrature_order": 8,
+        "element_order": 2
+      },
+      "rf": {
+        "beta": 1.0,
+        "conductivity_s_per_m": 58000000.0,
+        "normalization_j": 1.0
+      },
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "axisymmetric",
+        "polarization": "tm",
+        "azimuthal_index": 0,
+        "materials": [
+          {
+            "id": "vacuum",
+            "type": "vacuum"
+          }
+        ],
+        "regions": [
+          {
+            "id": "cavity",
+            "material": "vacuum",
+            "domain": "interior"
+          }
+        ]
+      }
+    },
+    "reflect_full": false,
+    "display_length_unit": "mm",
+    "mesh_data": {
+      "schema_version": 1,
+      "length_unit": "m",
+      "coordinate_order": "rz",
+      "index_base": 0,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.16
+        ],
+        [
+          0.030614674589207184,
+          0.15391036260090296
+        ],
+        [
+          0.056568542494923796,
+          0.1365685424949238
+        ],
+        [
+          0.07391036260090295,
+          0.1106146745892072
+        ],
+        [
+          0.08,
+          0.08
+        ],
+        [
+          0.07391036260090295,
+          0.049385325410792824
+        ],
+        [
+          0.05656854249492381,
+          0.023431457505076206
+        ],
+        [
+          0.03061467458920719,
+          0.006089637399097056
+        ],
+        [
+          0.0,
+          0.08
+        ],
+        [
+          0.018601360053280096,
+          0.09336511085597102
+        ],
+        [
+          0.0372133997371556,
+          0.0858173779339371
+        ],
+        [
+          0.04920021345581033,
+          0.06902542931856646
+        ],
+        [
+          0.0544609031709791,
+          0.05330121433097935
+        ],
+        [
+          0.05735058081411586,
+          0.040007484582337494
+        ],
+        [
+          0.0,
+          0.04
+        ],
+        [
+          0.0,
+          0.12
+        ],
+        [
+          0.012919705590605702,
+          0.12744088210964222
+        ],
+        [
+          0.023908666318346358,
+          0.12165463470805885
+        ],
+        [
+          0.03688427469758442,
+          0.11501043996420296
+        ],
+        [
+          0.054399004992593494,
+          0.09874661119142414
+        ],
+        [
+          0.01287604065332667,
+          0.04552024136929455
+        ],
+        [
+          0.028040209277472732,
+          0.053666699960699206
+        ],
+        [
+          0.041087763556661015,
+          0.042620672494358997
+        ],
+        [
+          0.048016492925177394,
+          0.03309009326236982
+        ]
+      ],
+      "triangles": [
+        [
+          16,
+          17,
+          1
+        ],
+        [
+          9,
+          10,
+          16
+        ],
+        [
+          10,
+          17,
+          16
+        ],
+        [
+          15,
+          21,
+          9
+        ],
+        [
+          0,
+          8,
+          21
+        ],
+        [
+          0,
+          21,
+          15
+        ],
+        [
+          22,
+          21,
+          8
+        ],
+        [
+          10,
+          9,
+          21
+        ],
+        [
+          10,
+          21,
+          22
+        ],
+        [
+          23,
+          22,
+          8
+        ],
+        [
+          11,
+          10,
+          22
+        ],
+        [
+          22,
+          12,
+          11
+        ],
+        [
+          18,
+          17,
+          10
+        ],
+        [
+          2,
+          1,
+          17
+        ],
+        [
+          2,
+          17,
+          18
+        ],
+        [
+          18,
+          19,
+          2
+        ],
+        [
+          10,
+          11,
+          19
+        ],
+        [
+          10,
+          19,
+          18
+        ],
+        [
+          24,
+          23,
+          8
+        ],
+        [
+          12,
+          22,
+          23
+        ],
+        [
+          23,
+          13,
+          12
+        ],
+        [
+          2,
+          19,
+          3
+        ],
+        [
+          19,
+          20,
+          3
+        ],
+        [
+          12,
+          20,
+          11
+        ],
+        [
+          20,
+          19,
+          11
+        ],
+        [
+          13,
+          23,
+          24
+        ],
+        [
+          24,
+          14,
+          13
+        ],
+        [
+          3,
+          20,
+          4
+        ],
+        [
+          20,
+          5,
+          4
+        ],
+        [
+          5,
+          20,
+          12
+        ],
+        [
+          24,
+          7,
+          14
+        ],
+        [
+          5,
+          12,
+          13
+        ],
+        [
+          13,
+          6,
+          5
+        ],
+        [
+          6,
+          13,
+          14
+        ],
+        [
+          14,
+          7,
+          6
+        ],
+        [
+          7,
+          24,
+          8
+        ]
+      ],
+      "boundary_edges": [
+        [
+          0,
+          15
+        ],
+        [
+          15,
+          9
+        ],
+        [
+          9,
+          16
+        ],
+        [
+          16,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          0
+        ]
+      ],
+      "boundary_tags": [
+        "axis",
+        "axis",
+        "axis",
+        "axis",
+        "pec",
+        "pec",
+        "pec",
+        "pec",
+        "pec",
+        "pec",
+        "pec",
+        "pec"
+      ]
+    }
+  },
+  "variables": [
+    {
+      "name": "radial_scale",
+      "lower": 1.0,
+      "upper": 1.01,
+      "initial": 1.0,
+      "step": 0.01,
+      "tolerance": 0.01
+    },
+    {
+      "name": "axial_scale",
+      "lower": 1.0,
+      "upper": 1.01,
+      "initial": 1.0,
+      "step": 0.01,
+      "tolerance": 0.01
+    }
+  ],
+  "criteria": {
+    "schema_version": 1,
+    "objective": {
+      "quantity": "frequency_hz",
+      "direction": "minimize"
+    },
+    "constraints": [
+      {
+        "quantity": "r_over_q_accelerator_ohm",
+        "lower": 1.0,
+        "upper": 10000.0
+      },
+      {
+        "quantity": "epk_over_eacc",
+        "upper": 100.0
+      }
+    ]
+  },
+  "constraint_scales": {
+    "r_over_q_accelerator_ohm": 100.0,
+    "epk_over_eacc": 1.0
+  },
+  "objective_improvement": 1.0,
+  "max_trials": 4,
+  "initial_ids": [
+    "fundamental"
+  ],
+  "mode_id": "fundamental",
+  "controls": {
+    "mapping": "affine_remesh",
+    "sample_order": 3,
+    "minimum_overlap": 0.98,
+    "minimum_assignment_margin": 0.05,
+    "relative_cluster_gap": 1e-06,
+    "minimum_relative_singular_value": 1e-08
+  },
+  "rf_coordinates": "axial"
+}

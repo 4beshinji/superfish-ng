@@ -616,6 +616,7 @@
         <section id="rf-optimization">
           <div class="section-title"><span>RF</span><h2>制約を満たす形状を探索する</h2></div>
           <p class="hint">曲線P2の全PEC形状で半径・軸方向の倍率を探索します。各候補を3水準、最後の候補をさらに細かい3水準で確認します。探索終了は最適性や物理誤差の証明ではありません。</p>
+          <p class="hint">局所細分を使う形状は、先に「現在の局所分割を固定する」で元メッシュと分割を保存してください。探索ではその履歴を保ち、末尾に全域細分を追加して確認します。</p>
           <label>探索順<select id="rf-opt-order"><option value="radial_scale">半径 → 軸方向</option><option value="axial_scale">軸方向 → 半径</option></select></label>
           <table id="rf-opt-variables"><thead><tr><th>倍率（無次元）</th><th>下限</th><th>上限</th><th>初期値</th><th>初期幅</th><th>最小幅</th></tr></thead><tbody></tbody></table>
           <div class="grid two"><label>目的関数<select id="rf-opt-objective"></select></label><label>方向<select id="rf-opt-direction"><option value="minimize">最小化</option><option value="maximize">最大化</option></select></label></div>

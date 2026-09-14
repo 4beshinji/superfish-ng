@@ -85,7 +85,7 @@ class RFOptimizationTests(unittest.TestCase):
         self.assertEqual(state['search_stop'],'PARAMETER_LIMIT')
         self.assertEqual(state['status'],'SEARCH_COMPLETE')
         validate_optimization_request(r)
-        for change in ({'max_trials':True},{'schema_version':2},{'variables':[]},{'constraint_scales':{}},
+        for change in ({'max_trials':True},{'schema_version':3},{'variables':[]},{'constraint_scales':{}},
                        {'objective_improvement':-1.},{'rf_coordinates':'auto'}):
             with self.subTest(change=change),self.assertRaises(ValueError):validate_optimization_request(dict(r,**change))
 

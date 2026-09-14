@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 // Real local browser input and computation. Requires a running GUI and Chrome.
-import { spawn } from "node:child_process";
+import { spawn, execFile } from "node:child_process";
 import { mkdtemp, readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
-import { isDeepStrictEqual } from "node:util";
+import { isDeepStrictEqual, promisify } from "node:util";
 async function sourceHashes(directory = "src/superfish_ng") {
   const result = {};
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -46,6 +46,7 @@ const pending = new Map(),
 browser.stderr.on("data", (b) => (stderr += b));
 const report = {
   passed: false,
+  execution_scope: args['--checkpoint'] ? 'replay an existing completed checkpoint and inspect its fields; no new FEM or cancellation/resumption test' : 'new worker cancellation, checkpoint resumption and field inspection',
   node: process.version,
   checks: [],
   external_requests: [],
@@ -187,6 +188,7 @@ try {
   report.startup_ms = performance.now() - begin;
   const check=async (operation,expression)=>{if (!await ev(expression)) throw Error(operation);report.checks.push({operation,passed:true});};
   const request=JSON.parse(await readFile(args["--request"],"utf8"));
+  const prefix=request.project.case.mesh.curved_refinement_steps || [];
   if(!args['--workspace'])throw Error('--workspace is required for observing the saved checkpoint before cancellation');
   const loadFile=async(selector,filename)=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(filename)]},sessionId);};
   request.max_trials=2;const input=out+'/request.json';await writeFile(input,JSON.stringify(request,null,2));
@@ -203,6 +205,13 @@ try {
   await wait('!rfOptBusy && !document.querySelector("#error").hidden');
   await check('duplicate request keys fail before a worker starts','document.querySelector("#error").textContent.includes("duplicate")');
   await loadFile('#rf-opt-request-open',input);await wait('document.querySelector("#rf-opt-request").value.includes("constraint_scales")');
+  if(args['--checkpoint']) {
+    report.checkpoint=resolve(args['--checkpoint']);
+    await loadFile('#rf-opt-open',report.checkpoint);
+    await wait('!rfOptBusy && rfOptResult?.document.status==="SEARCH_COMPLETE"',600000);
+    await check('existing completed checkpoint replays without new computation','rfOptResult.document.completed_fem_solves===6 && !rfOptResult.document.can_resume');
+    if(!isDeepStrictEqual(await ev('rfOptResult.document.request'),request))throw Error('checkpoint request differs from the declared browser input');
+  } else {
   await fill('#rf-opt-limit','');await click('#rf-opt-start');
   await wait('!rfOptBusy && document.querySelector("#rf-opt-job").textContent.includes("RF探索ジョブ:")',600000);
   const first=await ev('document.querySelector("#rf-opt-job").textContent.match(/RF探索ジョブ: ([a-zA-Z0-9-]+)/)[1]');report.first_job=first;
@@ -231,11 +240,28 @@ try {
   await wait(`document.querySelector('[data-job="${second}"] strong')?.textContent.includes('SEARCH_COMPLETE')`,900000);
   await click(`[data-job="${second}"] button`);await wait('!rfOptBusy && rfOptResult?.document.status==="SEARCH_COMPLETE"',600000);
   await check('resumption uses the verified request and distinguishes budget termination','rfOptResult.document.completed_fem_solves===6 && rfOptResult.document.decision.search_stop==="TRIAL_LIMIT" && document.querySelector("#rf-opt-resume").disabled');
+  }
   await check('final assessment uses three independently solved finer levels','JSON.stringify(rfOptResult.document.trials[1].assessment.assessment.rows.map(r=>r.refinement_level))==="[1,2,3]"');
+  if(prefix.length) {
+    await check('history request and explicit source mesh survive saved resumption',`rfOptResult.document.request.schema_version===2 && JSON.stringify(rfOptResult.document.request.project.mesh_data)===${JSON.stringify(JSON.stringify(request.project.mesh_data))}`);
+    await check('RF result explains refinement after the original history',`document.querySelector('#rf-opt-status').textContent.includes('元の細分履歴${prefix.length}段')`);
+    // Preserve the server's numeric types. JSON.stringify would change 0.0 to
+    // 0 in the saved diagnostics and invalidate their exact replay contract.
+    await writeFile(out+'/verified-checkpoint.json',await ev('rfOptResult.serialized'));
+    await promisify(execFile)(resolve(args['--python'] || '.venv/bin/python'),['-c',
+      'import json,sys; from pathlib import Path; d=json.loads(Path(sys.argv[1]).read_text()); Path(sys.argv[2]).write_text(json.dumps(d["trials"][1]["assessment"]["assessment"],indent=2,allow_nan=False))',
+      out+'/verified-checkpoint.json',out+'/surface-assessment.json']);
+    await loadFile('#surface-open',out+'/surface-assessment.json');
+    await wait('!surfaceBusy && (surfaceResult?.document.schema_version===2 || !document.querySelector("#error").hidden)',600000);
+    await check('surface assessment opens without a visible error','surfaceResult?.document.schema_version===2 && document.querySelector("#error").hidden');
+    await check('surface report replays its fixed prefix and names additional uniform levels',`document.querySelector('#surface-status').textContent.includes('固定履歴${prefix.length}段') && JSON.stringify(surfaceResult.document.rows.map(r=>r.refinement_level))==='[1,2,3]'`);
+  }
   report.result=await ev('rfOptResult.document');
   for(const [trial,level,refinement] of [[0,0,0],[1,2,3]]) {
     await ev(`document.querySelector('#rf-opt-field-trial').value=${JSON.stringify(String(trial))};document.querySelector('#rf-opt-field-trial').dispatchEvent(new Event('change'));document.querySelector('#rf-opt-field-level').value=${JSON.stringify(String(level))}`);
-    await click('#rf-opt-open-field');await wait(`!rfOptBusy && (currentResult?.project.case.mesh.curved_refinement_levels ?? 0)===${refinement}`,600000);
+    const meshCondition=prefix.length ? `(currentResult?.project.case.mesh.curved_refinement_steps?.length ?? 0)===${prefix.length+refinement}` : `(currentResult?.project.case.mesh.curved_refinement_levels ?? 0)===${refinement}`;
+    await click('#rf-opt-open-field');await wait(`!rfOptBusy && ${meshCondition}`,600000);
+    if(prefix.length)await check(`trial ${trial} preserves the source split choices`, `JSON.stringify(currentResult.project.case.mesh.curved_refinement_steps.slice(0,${prefix.length}))===${JSON.stringify(JSON.stringify(prefix))}`);
     await check(`trial ${trial} level ${level} imports the verified target rank`,`currentResult.state.origin==='imported' && document.querySelector('#mode').value==='1' && document.querySelector('#rf-opt-job').textContent.includes('試行 ${trial}')`);
     await click('#plot');await wait('!document.querySelector("#plot").disabled && !document.querySelector("#field-image").hidden && document.querySelector("#field-image").naturalWidth>0',180000);
   }

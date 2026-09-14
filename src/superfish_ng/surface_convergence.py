@@ -80,6 +80,40 @@ def _target_match(step,mode_id):
     return matches[0]
 
 
+def _refinement_sequence(cases):
+    """Identify increasing uniform refinements after one unchanged history.
+
+    Local cell numbers refer to the mesh at that point in the history. Changing
+    the base level, inserting steps, or replacing a marked step is not an
+    additional uniform refinement of that same fixed prefix.
+    """
+    first=cases[0]
+    if not any(case.curved_refinement_steps for case in cases):
+        base=replace(first,curved_refinement_levels=0).to_dict()
+        if any(replace(case,curved_refinement_levels=0).to_dict()!=base for case in cases):
+            raise ValueError('surface convergence requires one base Case; only fixed-geometry refinement levels may change')
+        levels=[case.curved_refinement_levels for case in cases]
+        sequence=None
+    else:
+        prefix=first.curved_refinement_steps
+        while prefix and prefix[-1].kind=='uniform':
+            prefix=prefix[:-1]
+        base=replace(first,curved_refinement_steps=prefix).to_dict()
+        levels=[]
+        for case in cases:
+            steps=case.curved_refinement_steps
+            if (steps[:len(prefix)]!=prefix or
+                    any(step.kind!='uniform' for step in steps[len(prefix):]) or
+                    replace(case,curved_refinement_steps=prefix).to_dict()!=base):
+                raise ValueError('surface convergence requires one fixed history prefix followed only by uniform steps')
+            levels.append(len(steps)-len(prefix))
+        sequence=dict(kind='uniform_suffix',fixed_prefix=[step.to_dict() for step in prefix],
+                      refinement_level_meaning='number of uniform steps after the fixed prefix')
+    if any(b<=a for a,b in zip(levels,levels[1:])):
+        raise ValueError('surface convergence requires strictly increasing fixed-geometry refinement levels')
+    return levels,sequence
+
+
 def assess_surface_convergence(history,mode_id):
     """Revalidate a saved history and assess its last two fixed-geometry changes.
 
@@ -97,13 +131,11 @@ def assess_surface_convergence(history,mode_id):
     indices=[matches[0]['previous_indices'][0],*[m['current_indices'][0] for m in matches]]
     solutions=[read_solution(Path(run)) for run in runs]
     if any(not isinstance(s,CurvedSolution) for s in solutions):raise ValueError('surface convergence requires native curved P2 solutions')
-    first=solutions[0];base=replace(first.case,curved_refinement_levels=0).to_dict()
-    levels=[s.case.curved_refinement_levels for s in solutions]
-    if any(b<=a for a,b in zip(levels,levels[1:])):raise ValueError('surface convergence requires strictly increasing fixed-geometry refinement levels')
-    if any(replace(s.case,curved_refinement_levels=0).to_dict()!=base or s.source_mesh_data!=first.source_mesh_data for s in solutions):
-        raise ValueError('surface convergence requires one base Case and source mesh; only fixed-geometry refinement levels may change')
+    first=solutions[0];levels,sequence=_refinement_sequence([s.case for s in solutions])
+    if any(s.source_mesh_data!=first.source_mesh_data for s in solutions):
+        raise ValueError('surface convergence requires one unchanged source mesh')
     geometry=_geometry_assessment(first.case.curved_contour);rows=[]
-    for run,index,solution in zip(runs,indices,solutions):
+    for run,index,solution,level in zip(runs,indices,solutions,levels):
         # read_solution verified these RF values against the saved native fields.
         q=parse_json((Path(run)/'results.json').read_text(encoding='utf-8'))['modes'][index-1]
         names=('epk_discrete_lower_bound_v_per_m','epk_discrete_upper_bound_v_per_m',
@@ -115,15 +147,17 @@ def assess_surface_convergence(history,mode_id):
             electric=_ratio_interval(*[q[k] for k in names[:2]],q['eacc_v_per_m'])
             magnetic=_ratio_interval(*[q[k] for k in names[2:]],q['eacc_v_per_m'],factor=Fraction(MU0)*10**9)
         intervals.update(epk_over_eacc=electric,bpk_over_eacc_mt_per_mv_per_m=magnetic)
-        rows.append(dict(run=run,mode_index=index,refinement_level=solution.case.curved_refinement_levels,
+        rows.append(dict(run=run,mode_index=index,refinement_level=level,
             triangles=len(solution.space.geometry.cell_nodes),degrees_of_freedom=len(solution.u),intervals=intervals))
     diagnostic=_evaluate_rows(rows)
     status=diagnostic['status'] if geometry['status']=='SMOOTH_WITHIN_TOLERANCE' else geometry['status']
     if _canonical(replay_mode_history(history))!=_canonical(history):raise ValueError('surface convergence history sources changed during evaluation')
-    return dict(schema_version=1,document_type='surface_convergence_assessment',history=deepcopy(history),mode_id=mode_id,
+    result=dict(schema_version=1 if sequence is None else 2,document_type='surface_convergence_assessment',history=deepcopy(history),mode_id=mode_id,
         status=status,limits=dict(LIMITS),rows=rows,refinement_diagnostic=diagnostic,geometry_diagnostic=geometry,
         geometry_approximation_assessed=False,physical_error_bound=None,
         scope='last two fixed-quadratic-geometry mesh changes of a saved tracked individual mode; f, R/Q, G and bounded peak ratios assessed separately; TARGETS_MET is not a physical-error bound, analytic-geometry acceptance or certification')
+    if sequence is not None:result['refinement_sequence']=sequence
+    return result
 
 
 def save_surface_convergence(history,mode_id,path):
@@ -140,6 +174,8 @@ def replay_surface_convergence(document):
     """Rebuild a serialized assessment without creating a temporary file."""
     fields=('schema_version','document_type','history','mode_id','status','limits','rows','refinement_diagnostic',
         'geometry_diagnostic','geometry_approximation_assessed','physical_error_bound','scope')
+    if isinstance(document,dict) and type(document.get('schema_version')) is int and document['schema_version']==2:
+        fields+=('refinement_sequence',)
     keys(document,fields,fields,'surface convergence assessment')
     result=assess_surface_convergence(document['history'],document['mode_id'])
     if _canonical(document)!=_canonical(result):raise ValueError('surface convergence replay differs from saved data or sources')
