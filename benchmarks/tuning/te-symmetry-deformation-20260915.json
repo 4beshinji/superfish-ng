@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "new_native_half_eigensolves": 2,
+  "reused_reflected_solution": 1,
+  "preserved_files": 30,
+  "scale_errors": {
+    "frequency": 2.220446049250313e-16,
+    "coefficients": 1.8900858149219105e-15,
+    "stored_energy_j": 2.220446049250313e-16,
+    "geometry_factor_ohm": 1.7763568394002505e-15,
+    "q0": 1.6653345369377348e-15,
+    "wall_loss_w": 1.5543122344752192e-15
+  },
+  "independent_green_volumes_m3": [
+    0.004523251285924121,
+    0.0055105750005557275
+  ],
+  "tracking_volumes_m3": [
+    0.004523251285924127,
+    0.005510575000555733
+  ],
+  "overlap": 0.9988826486449927,
+  "new_tests": 3,
+  "new_seconds": 5.578,
+  "related_tests": 19,
+  "related_seconds": 467.93,
+  "cli_project_equality": true,
+  "all_handles_terminal": true,
+  "scope": "TE native P2 harmonic Project deformation, direct and reflected single symmetry sector; non-affine tune/Study guards remain"
+}

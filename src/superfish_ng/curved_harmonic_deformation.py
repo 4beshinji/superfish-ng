@@ -104,9 +104,13 @@ def deform_curved_project(project, target_geometry, *, rf_coordinates, minimum_c
     if not isinstance(project,Project):raise ValueError('curved deformation requires a Project')
     project=Project.from_dict(project.to_dict());case=project.case
     from .te import is_te
-    if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None
-            or project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
-        raise ValueError('curved deformation requires direct, unassembled native P2 closed PEC/axis geometry')
+    if case.curved_contour is None or case.geometry_order!=2 or project.sections is not None:
+        raise ValueError('curved deformation requires unassembled native P2 geometry')
+    if is_te(case):
+        from .curved_same_domain_tracking import _te_end_conditions
+        _te_end_conditions([case,case])
+    elif project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags):
+        raise ValueError('TM curved deformation requires direct closed PEC/axis geometry')
     if is_te(case) and rf_coordinates!='fixed':
         raise ValueError('TE curved geometry requires fixed RF metadata; accelerating coordinates are not applicable')
     if rf_coordinates not in ('fixed','axis_fraction'):
@@ -141,6 +145,7 @@ def deform_curved_project(project, target_geometry, *, rf_coordinates, minimum_c
         raw['rf'].update(active_length_m=active*factor,voltage_interval_m=[v*factor for v in interval])
         if case.phase_origin_m is not None:raw['rf']['phase_origin_m']=origin*factor
     target=Case.from_dict(raw)
+    if is_te(case):_te_end_conditions([case,target])
     source_mesh=make_mesh(case) if project.mesh_data is None else mesh_from_dict(case,project.mesh_data)
     limit=case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000
     if len(source_mesh.triangles)>limit:raise ValueError(f'curved deformation source mesh exceeds max_triangles={limit}')
@@ -158,6 +163,10 @@ def deform_curved_project(project, target_geometry, *, rf_coordinates, minimum_c
                 raise ValueError(f'curved deformation stage {index} changes numbered {key}')
         if not np.allclose(previous.geometry.boundary_parameters,current.geometry.boundary_parameters,rtol=0.,atol=512*np.finfo(float).eps):
             raise ValueError(f'curved deformation stage {index} changes declared boundary fractions')
+        if is_te(case) and project.reflect_full:
+            from .curved_reflection import reflect_curved_space
+            parity=1 if 'magnetic_symmetry' in (new_case.z_min,new_case.z_max) else -1
+            reflect_curved_space(new_case,current,coefficient_parity=parity)
         angle=_minimum_corner_angle(current.geometry.local_maps)
         if angle<minimum_corner_angle_deg:
             raise ValueError(f'curved deformation stage {index} minimum corner angle {angle:.9g} is below minimum_corner_angle_deg={minimum_corner_angle_deg}')
