@@ -1,5 +1,11 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14：[完了StudyのID回復](STUDY_IDENTITY_RECOVERY.md)は関連50unitが19.852秒PASS。
+専用18FEMは全回復検査後、解析零電場成分の相対分母により停止。E全体のノルムへ検証器を直し、同じ18解を19.333秒でPASS、追加FEM0。
+曲線Study直接利用先3件237.351秒と追加の表面収束拒否1件7.055秒もPASS。最終54件の分割証拠。
+Chrome新版8/単独履歴17項目PASS。数値1064source以後の差はStudyブラウザー検証器と追加テストだけで、325製品と282元保存ファイルは不変。
+対象一覧・曲線Study直接消費先3件・初期失敗・全終端はout/study-identity-recovery-20260914/acceptance.json。全suite/seed/Hosted CI/新Wine比較は未実行。
+
 2026-09-14：[個別ID回復](MODE_IDENTITY_RECOVERY.md)の新9件と直接利用先の計65unitは5.842秒PASS。
 対象一覧は同書、記録はout/mode-identity-recovery-20260914/selected-tests.log。
 専用検証は最初に9実FEMを保存し、RF読込の検証器不備で停止。補修後、同じ9保存解を--reuse-nativeで再検証し4.188秒PASS、追加FEM0。

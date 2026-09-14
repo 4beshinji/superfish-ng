@@ -1,5 +1,9 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14：[完了Studyの個別ID回復](docs/STUDY_IDENTITY_RECOVERY.md)を要求版2・API/CLI/GUIへ追加。
+指定点で過去の個別場と継承集合を照合し、成功後は後続点へIDを渡す。失敗後の点は未追跡として保存する。
+関連54unitの分割証拠、18保存解の解析/尺度則、新GUI8項目と単独履歴17項目が合格。逐次/適応Study・tune接続と親D01は継続中。
+
 2026-09-14 JST：[分裂後の個別モードIDの回復](docs/MODE_IDENTITY_RECOVERY.md)をAPI/CLI/単独履歴GUIへ追加。
 以前の保存場と継承ID集合を照合し、元の比較を保持したまま回復根拠を保存・再検証できます。
 関連65unit・独立9保存解の数値検証・Chrome17項目と旧履歴2項目が合格。Study/tune接続とD01全体は残り、全計画goalは継続中です。

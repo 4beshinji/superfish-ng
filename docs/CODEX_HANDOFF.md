@@ -1,3 +1,22 @@
+2026-09-14 最新：D01の完了済みStudy個別ID回復を要求版2・API/CLI/GUIへ実装・限定受入。
+開始HEAD b14b62e（単独履歴回復のcommit）。正本[STUDY_IDENTITY_RECOVERY.md](STUDY_IDENTITY_RECOVERY.md)、索引out/study-identity-recovery-20260914/acceptance.json。
+identity_recoveriesの各point_index/anchor_snapshot_index/controlsを全入力検査し、指定した実際の2点から写像を導出する。
+回復成功後はIDを後続点へ渡し、失敗後は元集合と元比較を保存して未追跡点を残す。旧要求版1・Study独立スペクトル・nativeは保持。
+GUIの既存Study読込→末尾回復→版2保存/再生に接続。複数点の事前指定はCLI/API、逐次/適応workerやtuneは未接続。
+unit最終54件=50件19.852秒+曲線Study直接利用先3件237.351秒+追加表面収束拒否1件7.055秒の分割証拠。
+新テスト8件。初回NumPy float fixture拒否、修正後の版2不在red、表面収束の拒否順を誤認した初回失敗を保持した。
+専用は基準/長さ2倍/U4の各6点、18FEM。初回は解析零のErを自身のノルムで割る検証器の判定で停止した。
+問題のEr相対差2.428e-9、電場全体に対する差1.010e-14。Eベクトルのノルムへ修正し、同じ18解を19.333秒PASS、追加FEM0。
+解析周波数最大5.614e-6、尺度則RF最大5.063e-14/場最大3.106e-14。次数12/18、2回復/回復済みanchor/失敗停止/旧文書保持/CLIを確認。
+Chrome新版8/単独履歴17項目PASS、外部HTTP0、新FEM0、画面目視済み。325製品SHAと282元Study/nativeファイルは不変。
+数値1064ソース系以後の差はStudyブラウザー検証器と追加表面収束テストのみ。製品は変えていない。
+全検証終端回収。取込3ジョブcomplete、専用GUI PID1903279をSIGINT終了、session81929終了0回収。live handleなし。
+全suite/seed/Hosted CI/新Wine比較は今回未実行。親33=9/17/6/1、全計画goal ACTIVE。
+次はtrackedStudy/適応Study/tuneへの回復方針とチェックポイントの接続。元D01にない連続枝証明を必須に追加せず、明記した一般写像残件は保持する。
+Wine専用永続領域/home/sin/.local/share/superfish-referenceは作成・単体検証済み。
+旧installerコピーは自動承認レビューによる拒否で明示例外許可待ち。別経路で回避しない。SUPERFISH本体/SFCODESは未復元。
+以下は単独履歴回復と以前の記録。
+
 2026-09-14 最新：D01/P2-01の単独履歴で分裂後の個別モードID回復を実装・限定検証済み。
 開始HEAD9e1c13c。正本[MODE_IDENTITY_RECOVERY.md](MODE_IDENTITY_RECOVERY.md)、索引out/mode-identity-recovery-20260914/acceptance.json。
 以前の全個別ID確認済みnative場と現集合を比較し、全個別対応/集合内一致だけを回復。元stepsと場は保持、版3イベントへ根拠を保存する。

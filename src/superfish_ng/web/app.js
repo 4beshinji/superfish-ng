@@ -2192,6 +2192,7 @@ function trackingJobs(jobs) {
 }
 function trackingButtons() {
   const d = trackingResult?.document, study = d?.document_type === "study_mode_tracking", history = study || d?.document_type === "mode_tracking_history";
+  const sequence=study ? d.history : d;
   $("tracking-compare").disabled = trackingBusy || history;
   $("tracking-start").disabled = trackingBusy || !d || history;
   $("tracking-extend").disabled = trackingBusy || study || !history || !d.can_extend;
@@ -2214,9 +2215,9 @@ function trackingButtons() {
   $("tracking-pairs-label").hidden = $("tracking-mapping").value !== "paired_mesh";
   $("tracking-policy-label").hidden = !$("tracking-retain").checked;
   $("tracking-link-label").hidden = !$("tracking-retain").checked;
-  $("tracking-recovery-panel").hidden = !history || study;
+  $("tracking-recovery-panel").hidden = !history;
   $("tracking-recovery-anchor").disabled = trackingBusy;
-  $("tracking-recover").disabled = trackingBusy || study || !history || !d?.can_extend || d?.current_mode_ids?.every(id=>typeof id==="string") || !$("tracking-recovery-anchor").options.length;
+  $("tracking-recover").disabled = trackingBusy || !history || !sequence?.can_extend || sequence?.current_mode_ids?.every(id=>typeof id==="string") || !$("tracking-recovery-anchor").options.length;
   surfaceButtons();
 }
 function trackingControls(derivedAffine=false,derivedCurved=false) {
@@ -2237,7 +2238,7 @@ function showTracking(response) {
   const pair = recovery?.status === "PASS" ? recovery.comparison : history ? sequence.steps.at(-1) : d, r = pair.tracking, controls = pair.request.controls;
   const anchors=$("tracking-recovery-anchor"), oldAnchor=anchors.value;
   anchors.replaceChildren();
-  if(history && !study) {
+  if(history) {
     const first=sequence.steps[0], initial=first.request.previous_ids ?? first.tracking.previous_identity_groups?.flatMap(g=>g.indices.length===1 ? g.ids : [null]);
     const snapshots=[{run:first.request.previous_run,ids:initial},...sequence.steps.map((step,i)=>({run:step.request.current_run,
       ids:sequence.identity_recoveries?.find(e=>e.after_step_index===i && e.status==="PASS")?.assessment.current_mode_ids ?? step.tracking.current_mode_ids}))];
@@ -2314,8 +2315,11 @@ bind("tracking-start", async () => { await runTracking("start-mode-history", {do
 bind("tracking-extend", async () => { await runTracking("extend-mode-history", {document: trackingResult.serialized,
   current_id: $("tracking-current").value, controls: trackingControls()}); });
 bind("tracking-recover", async () => {
-  const controls=trackingControls();delete controls.cluster_transition_policy;delete controls.minimum_cluster_link;
-  await runTracking("recover-mode-identities",{document:trackingResult.serialized,
+  const d=trackingResult.document, study=d.document_type==="study_mode_tracking", original=study ? d.request.step_controls.at(-1) : null;
+  const controls=trackingControls(study && original.mapping==="affine_remesh" && !("affine_map" in original),
+    study && original.mapping==="piecewise_remesh" && !("comparison_meshes" in original));
+  delete controls.cluster_transition_policy;delete controls.minimum_cluster_link;
+  await runTracking(study ? "recover-study-mode-identities" : "recover-mode-identities",{document:trackingResult.serialized,
     request_document:JSON.stringify({anchor_snapshot_index:number("tracking-recovery-anchor"),controls})});
 });
 bind("tracking-reset", () => {

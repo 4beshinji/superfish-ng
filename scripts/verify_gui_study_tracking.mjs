@@ -187,6 +187,32 @@ try {
   report.startup_ms = performance.now() - begin;
   const check=async (operation,expression)=>{if (!await ev(expression)) throw Error(operation);report.checks.push({operation,passed:true});};
   const loadFile=async filename=>{const {root}=await call("DOM.getDocument",{},sessionId);const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#tracking-open"},sessionId);await call("DOM.setFileInputFiles",{nodeId,files:[resolve(filename)]},sessionId);};
+  if(args["--recovery-sources"]) {
+    const sources=resolve(args["--recovery-sources"]);
+    await loadFile(sources+"/original-12.json");await wait('trackingResult?.document.document_type==="study_mode_tracking" && !trackingBusy');
+    await check("old Study history exposes resolved anchors and retains its ID sets",'trackingResult.document.schema_version===1 && document.querySelector("#tracking-study-points tbody").rows.length===6 && !document.querySelector("#tracking-recovery-panel").hidden && !document.querySelector("#tracking-recover").disabled && trackingResult.document.history.current_mode_ids[1]===null');
+    const original=await ev('trackingResult.document');
+    await click("#tracking-recover");await wait('trackingResult?.document.schema_version===2 && !trackingBusy');
+    await check("Study recovery records its point and shows recovered individual IDs",'trackingResult.document.request.identity_recoveries[0].point_index===5 && trackingResult.document.history.current_mode_ids.join(",")==="TM010,TM011,TM020" && document.querySelector("#tracking-study-points tbody").rows[5].textContent.includes("TM011") && document.querySelector("#tracking-recover").disabled && document.querySelector("#tracking-extend").disabled');
+    const recovered=await ev('trackingResult.document');
+    if(!isDeepStrictEqual(original.history.steps,recovered.history.steps))throw Error("Study recovery changed original adjacent comparisons");
+    report.checks.push({operation:"Study recovery preserves all original adjacent comparisons",passed:true});
+    await click("#tracking-save");let raw;
+    for(let n=0;n<100;n++){try{raw=await readFile(out+"/downloads/study-mode-tracking.json","utf8");if(isDeepStrictEqual(JSON.parse(raw),recovered))break;raw=null;}catch{}await sleep(100);}
+    if(!raw)throw Error("Study recovery download differs");await writeFile(out+"/recovered-study.json",raw);
+    report.checks.push({operation:"download contains the complete verified Study recovery",passed:true});
+    await click("#tracking-reset");await loadFile(out+"/recovered-study.json");await wait('trackingResult?.document.schema_version===2 && !trackingBusy');
+    await check("recovered Study replays with individual rows and recovery disabled",'trackingResult.document.history.individual_ids_complete && document.querySelector("#tracking-recover").disabled && document.querySelector("#tracking-status").textContent.includes("個別IDを回復")');
+    await loadFile(sources+"/recovered-12.json");await wait('trackingResult?.document.history?.identity_recoveries?.length===2 && !trackingBusy');
+    await check("scheduled recoveries propagate IDs across a second crossing",'trackingResult.document.point_results[2].current_mode_ids.join(",")==="TM010,TM011,TM020" && trackingResult.document.point_results[3].current_mode_ids.join(",")==="TM010,TM020,TM011" && trackingResult.document.history.identity_recoveries[1].request.anchor_snapshot_index===2');
+    const bad=await ev('structuredClone(trackingResult.document)');bad.request.identity_recoveries[1].anchor_snapshot_index=4;
+    await writeFile(out+"/modified-recovery.json",JSON.stringify(bad));await loadFile(out+"/modified-recovery.json");await wait('!document.querySelector("#error").hidden && !trackingBusy');
+    await check("an unresolved replacement anchor is rejected without replacing verified Study data",'trackingResult.document.request.identity_recoveries[1].anchor_snapshot_index===2 && !document.querySelector("#error").hidden');
+    await loadFile(sources+"/unverified-12.json");await wait('trackingResult?.document.status==="UNVERIFIED" && !trackingBusy');
+    await check("failed recovery keeps the original set and later points visibly unvisited",'trackingResult.document.visited_point_indices.length===2 && trackingResult.document.history.current_mode_ids[1]===null && document.querySelector("#tracking-study-points tbody").rows[2].textContent.includes("未追跡") && document.querySelector("#tracking-recover").disabled && !document.querySelector("#tracking-save").disabled');
+    const rect=await ev('(()=>{const r=document.querySelector("#mode-tracking").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
+    const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/study-recovery.png",Buffer.from(shot.data,"base64"));
+  } else {
   await wait('[...document.querySelector("#tracking-study").options].some(o=>o.value==="study")');
   await ev('document.querySelector("#tracking-study-panel").open=true;document.querySelector("#tracking-study").value="study"');
   await fill("#tracking-study-ids",'["TM010","TM020","TM011"]');await click("#tracking-retain");
@@ -209,6 +235,7 @@ try {
   const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/study-tracking.png",Buffer.from(shot.data,"base64"));
   controls[1].unsupported=true;await fill("#tracking-study-controls",JSON.stringify(controls));await click("#tracking-study-run");await wait('!document.querySelector("#error").hidden && !trackingBusy');
   await check("invalid controls in an unvisited step still fail validation",'document.querySelector("#error").textContent.includes("unsupported")');
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if (!report.passed) throw Error("Study tracking GUI checks failed");console.log(JSON.stringify({passed:report.passed,checks:report.checks,external_requests:report.external_requests}));
 } catch(e){report.error=String(e);process.exitCode=1;console.error(e);}
