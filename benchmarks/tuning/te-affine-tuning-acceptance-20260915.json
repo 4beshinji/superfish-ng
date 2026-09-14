@@ -1,0 +1,30 @@
+{
+  "status": "PASS_SUPPORTED_TE_AFFINE_TUNING",
+  "starting_head": "f4d8c37",
+  "dedicated_comparison_fem": 21,
+  "pilot_fem": 3,
+  "total_dedicated_fem": 24,
+  "browser_checks": {
+    "te": 12,
+    "tm": 10
+  },
+  "gui_tests": {
+    "count": 5,
+    "seconds": 19.657
+  },
+  "native_equal_pairs": 7,
+  "preserved_files": 108,
+  "product_files": 336,
+  "rf_max_relative_scale_error": 4.440892098500626e-15,
+  "field_max_relative_scale_error": 6.260141890794687e-14,
+  "all_handles_terminal": true,
+  "goal_status": "active",
+  "remaining": [
+    "TE affine Study",
+    "TE partition tuning version 8",
+    "curved TE symmetry and reflection",
+    "dedicated identity recovery",
+    "other physics tuning and D03"
+  ],
+  "evidence_root": "out/te-affine-tuning-acceptance-20260915"
+}

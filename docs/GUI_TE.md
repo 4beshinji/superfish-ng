@@ -1,5 +1,11 @@
 # TE GUIの接続と受入
 
+2026-09-15 JST：[TEアフィン調整版4](TE_AFFINE_TUNING.md)のGUI/CLI・場/RF追加検証を限定受入。
+アフィン係数の重複JSONキーを元テキストのままサーバーへ渡し、FEM前に拒否する修正も実施。
+Chrome TE12/TM10項目、GUI関連5件PASS。専用比較21実FEM＋解像度/目標pilot3実FEM。
+7組native全配列/RF一致、元108ファイル保持。TE affine Study・版8・曲線対称/鏡映・他物理/D03等は残り、全goal ACTIVE。
+
+
 2026-09-15 JST：[曲線TE調整版5/7](TE_CURVED_TUNING.md)の実GUI・場/RF追加検証がPASS。
 直接閉PEC・固定RFメタデータ・凍結履歴の範囲を限定受入。Chrome多項式14/exp式11項目、専用21実FEM。
 原寸/倍寸/4倍エネルギー、全係数・全要素の場・RF/PEC積分尺度を分離検査。8組native全配列/RF一致、元108ファイル保持。

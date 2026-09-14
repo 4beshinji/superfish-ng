@@ -1,5 +1,11 @@
 # 実装バックログ
 
+2026-09-15 JST：[TEアフィン調整版4](TE_AFFINE_TUNING.md)のGUI/CLI・場/RF追加検証を限定受入。
+アフィン係数の重複JSONキーを元テキストのままサーバーへ渡し、FEM前に拒否する修正も実施。
+Chrome TE12/TM10項目、GUI関連5件PASS。専用比較21実FEM＋解像度/目標pilot3実FEM。
+7組native全配列/RF一致、元108ファイル保持。TE affine Study・版8・曲線対称/鏡映・他物理/D03等は残り、全goal ACTIVE。
+
+
 2026-09-15 JST：[TEアフィン曲線調整版4](TE_AFFINE_TUNING.md)を固定RF契約でAPI接続。
 Eφのアフィン/同一曲線領域比較、native保存再開、Maxwell周波数則とせん断体積比を検証。
 新2件は分割で成功、関連35件134.814秒PASS。実GUI・追加場/RF尺度・TE affine Studyは後続。

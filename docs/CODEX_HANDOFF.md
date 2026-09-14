@@ -1,3 +1,24 @@
+2026-09-15 JST：[TEアフィン調整版4](TE_AFFINE_TUNING.md)のGUI/CLI・場/RF追加検証を限定受入。
+アフィン係数の重複JSONキーを元テキストのままサーバーへ渡し、FEM前に拒否する修正も実施。
+Chrome TE12/TM10項目、GUI関連5件PASS。専用比較21実FEM＋解像度/目標pilot3実FEM。
+7組native全配列/RF一致、元108ファイル保持。TE affine Study・版8・曲線対称/鏡映・他物理/D03等は残り、全goal ACTIVE。
+
+開始HEADf4d8c37。数値核は前回から固定。app.jsのaffine formだけJSON.parseで重複を消していたため、
+元JSONをrequest末尾へ付けて厳密server parserへ渡す（harmonicと同方式）。valid requestは完全一致。
+web/index.htmlのアフィン未対応文言を更新。共通Chrome verifierに版4フォーム/重複拒否/係数RF復元を追加。
+先行検証では空欄JSON.parseとフォーム反映前の読み取りがあり、waitを修正。失敗ログ全保持、先行4runはFEM0。
+前回level3比較約500sを受けlevel2/3の2TE pilotを測定、1.1倍時δ22630.804Hzが元5e4Hz以内なのでlevel2を採用。
+TM目標pilot1FEM。原寸/倍寸/4倍エネルギー各4trial=12FEM、CLI再開1、GUI TE4/TM4、比較21＋pilot3=24実FEM。
+Maxwell全RF差4.441e-15、全セル重心Ephi/Hr/Hz差6.261e-14、全係数1.347e-14、エネルギー等分2.221e-15。
+Chrome TE12/TM10項目、製品336SHA固定、外部通信0。両result.png目視、TE粗細22630.804/TM14962.132Hz。
+7組native全配列/RF完全一致、元108ファイル保持。GUI関連5件19.657sPASS、node構文check0。
+全6GUI Job complete。baseline PID2346994 SIGINT/session1385終了0、本検証PID2349993/session10637終了0。
+最終browser/native/CLI/physical/fidelity全終了0、全handle終端。full/seed/hosted CI再実行なし。
+正本TE_AFFINE_TUNING.md、out/te-affine-tuning-acceptance-20260915/acceptance.json、共有benchmark同名。
+次：TE affine Studyのfixed契約を既存生成/実Study/保存へ接続（旧guardは残っている）。
+その後TE版8分割、曲線対称/鏡映、実個別ID回復、他物理/D03。親33=10/16/6/1、goal ACTIVE。
+Wine拒否は別残件、回避しない。
+
 2026-09-15 JST：[TEアフィン曲線調整版4](TE_AFFINE_TUNING.md)を固定RF契約でAPI接続。
 Eφのアフィン/同一曲線領域比較、native保存再開、Maxwell周波数則とせん断体積比を検証。
 新2件は分割で成功、関連35件134.814秒PASS。実GUI・追加場/RF尺度・TE affine Studyは後続。

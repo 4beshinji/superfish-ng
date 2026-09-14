@@ -186,7 +186,7 @@ try {
   await wait('document.querySelector("#shape polygon")');
   report.startup_ms = performance.now() - begin;
   const check=async (operation,expression)=>{if (!await ev(expression)) throw Error(operation);report.checks.push({operation,passed:true});};
-  const request=JSON.parse(await readFile(args['--request'],'utf8')),harmonic=request.schema_version===5,expression=[7,8].includes(request.schema_version);
+  const request=JSON.parse(await readFile(args['--request'],'utf8')),harmonic=request.schema_version===5,affine=request.schema_version===4,expression=[7,8].includes(request.schema_version);
   report.scope='form generation and strict input, real worker pause/resume, exact download/replay and final native field';
   const set=async(id,value)=>ev(`(()=>{const e=document.querySelector('#'+${JSON.stringify(id)});e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('change'))})()`);
   const loadFile=async filename=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector:'#tune-open'},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(filename)]},sessionId);};
@@ -215,6 +215,23 @@ try {
     await wait(`JSON.stringify(JSON.parse(document.querySelector('#tune-request').value).bindings)===JSON.stringify(${JSON.stringify(request.bindings)})`);
     const clip=await ev(`(()=>{const r=document.querySelector('#tune-binding-settings').getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()`);
     const shot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip},sessionId);await writeFile(out+'/form.png',Buffer.from(shot.data,'base64'));
+  } else if(affine) {
+    await ev(`document.querySelector('#tune-coupled').checked=true`);await set('tune-binding-law','affine');
+    await fill('#tune-affine-coefficients',JSON.stringify(request.affine_coefficients));
+    await fill('#tune-parameter-name',request.parameter);await set('tune-parameter-unit',request.parameter_unit);await set('tune-rf-coordinates',request.rf_coordinates);
+    for(const [id,key] of [['target','target_hz'],['frequency-tolerance','frequency_tolerance_hz'],['parameter-tolerance','parameter_tolerance'],['max-trials','max_trials'],['refinement','refinement_scale'],['mesh-tolerance','mesh_frequency_tolerance_hz']])await fill('#tune-'+id,request[key]/(key==='target_hz'?1e6:1));
+    await fill('#tune-low',request.bounds[0]);await fill('#tune-high',request.bounds[1]);await fill('#tune-ids',JSON.stringify(request.initial_ids));await fill('#tune-mode-id',request.mode_id);
+    for(const [id,key] of [['order','sample_order'],['overlap','minimum_overlap'],['margin','minimum_assignment_margin'],['gap','relative_cluster_gap'],['rank','minimum_relative_singular_value']])await fill('#tracking-'+id,request.controls[key]);
+    await click('#tune-prepare');await wait(`document.querySelector('#tune-request').value.includes('affine_coefficients')`);
+    const built=await ev(`JSON.parse(document.querySelector('#tune-request').value)`);
+    if(!isDeepStrictEqual(built,request)){await writeFile(out+'/generated.json',JSON.stringify(built,null,2));throw Error('affine form request differs');}
+    report.checks.push({operation:'affine form preserves coefficients, units, project and RF policy',passed:true});
+    await fill('#tune-affine-coefficients','{"radial_scale":[1],"radial_scale":[0,1],"axial_scale":[0,1],"axial_shear":[0]}');await click('#tune-prepare');
+    await wait(`document.querySelector('#tune-request').value.includes('[1]')`);
+    await check('affine form preserves duplicate keys for strict rejection',`(document.querySelector('#tune-request').value.match(/"radial_scale"/g)||[]).length===2`);
+    const oldJob=await ev(`document.querySelector('#tune-job').textContent`);await click('#tune-start');await wait(`!tuningBusy && !document.querySelector('#error').hidden`);
+    await check('duplicate affine laws fail before worker launch',`document.querySelector('#error').textContent.includes('duplicate') && document.querySelector('#tune-job').textContent===${JSON.stringify(oldJob)}`);
+    await fill('#tune-affine-coefficients',JSON.stringify(request.affine_coefficients));await click('#tune-prepare');
   } else if(harmonic) {
     await ev(`document.querySelector('#tune-coupled').checked=true`);await set('tune-binding-law','harmonic');
     await click('#tune-harmonic-template');await wait(`document.querySelector('#tune-geometry-coefficients').value.includes('/curves/')`);
@@ -256,6 +273,7 @@ try {
   }
   if(expression) await check('checkpoint restores expression input without polynomial conversion',`document.querySelector('#tune-binding-law').value===${JSON.stringify(request.geometry_kind==='profile'?'expression-profile':'expression-curved')} && JSON.stringify(JSON.parse(document.querySelector('#tune-expression-bindings').value))===JSON.stringify(${JSON.stringify(request.bindings)})`);
   if(request.schema_version===8) await check('checkpoint restores selected partition schedule and actual pair charts',`document.querySelector('#tune-partition-enabled').checked && !document.querySelector('#tune-partition-settings').hidden && JSON.stringify(JSON.parse(document.querySelector('#tune-mesh-schedule').value))===JSON.stringify(${JSON.stringify(request.mesh_schedule)}) && tuningResult.document.trials[1].tracking.request.controls.comparison_meshes.every(m=>m.schema_version===5)`);
+  if(affine) await check('checkpoint restores affine laws and fixed RF policy',`document.querySelector('#tune-binding-law').value==='affine' && document.querySelector('#tune-rf-coordinates').value===${JSON.stringify(request.rf_coordinates)} && JSON.stringify(JSON.parse(document.querySelector('#tune-affine-coefficients').value))===JSON.stringify(${JSON.stringify(request.affine_coefficients)})`);
   if(harmonic) await check('checkpoint restores nonlinear laws and RF policy',`document.querySelector('#tune-binding-law').value==='harmonic' && document.querySelector('#tune-harmonic-rf').value===${JSON.stringify(request.rf_coordinates)} && JSON.stringify(JSON.parse(document.querySelector('#tune-geometry-coefficients').value))===JSON.stringify(${JSON.stringify(request.geometry_coefficients)})`);
   await click('#tune-save');let downloaded;
   for(let n=0;n<100;n++){try{downloaded=await readFile(out+'/downloads/tune-checkpoint.json','utf8');break;}catch{}await sleep(100);}

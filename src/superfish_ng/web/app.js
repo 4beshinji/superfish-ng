@@ -2614,9 +2614,14 @@ bind("tune-prepare",async()=>{
     $("tune-request").value=JSON.stringify(request,null,2).slice(0,-1)+',"geometry_coefficients":'+$("tune-geometry-coefficients").value+'}';
     return;
   }
-  if(affine) Object.assign(request,{schema_version:4,parameter:$("tune-parameter-name").value,parameter_unit:$("tune-parameter-unit").value,
-    affine_coefficients:JSON.parse($("tune-affine-coefficients").value),rf_coordinates:$("tune-rf-coordinates").value});
-  else if(coupled) Object.assign(request,{schema_version:$("tune-binding-law").value==="polynomial" ? 3 : 2,parameter:$("tune-parameter-name").value,
+  if(affine) {
+    Object.assign(request,{schema_version:4,parameter:$("tune-parameter-name").value,parameter_unit:$("tune-parameter-unit").value,
+      rf_coordinates:$("tune-rf-coordinates").value});
+    // Preserve duplicate keys for the strict server parser, as with curve laws.
+    $("tune-request").value=JSON.stringify(request,null,2).slice(0,-1)+',"affine_coefficients":'+$("tune-affine-coefficients").value+'}';
+    return;
+  }
+  if(coupled) Object.assign(request,{schema_version:$("tune-binding-law").value==="polynomial" ? 3 : 2,parameter:$("tune-parameter-name").value,
     parameter_unit:$("tune-parameter-unit").value,bindings:JSON.parse($("tune-bindings").value)});
   $("tune-request").value=JSON.stringify(request,null,2);
 });
