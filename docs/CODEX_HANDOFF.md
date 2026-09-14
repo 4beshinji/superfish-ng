@@ -1,3 +1,28 @@
+2026-09-14 JST 最新継続状態。開始HEAD398817a、cleanからC00/K02・C02の旧曲線仕様を調査したprogress。
+[C00_CONIC_INPUT_RESEARCH.md](C00_CONIC_INPUT_RESEARCH.md)に版付き原本、矛盾、独立数学対応と次の受入条件を保存。
+現存の元台帳7入力/設定/数値出力は全bytes/SHA/版表示一致。7.17 release 1-13-2006を保持。
+旧/tmp/superfish-wine-runtime/input-spec/SFCODES.txtは欠損。/home/sin/code/superfishと記録されたWine環境もない。
+PATHにwine/wine64なし。/home/sin/code,/tmp,/home/sin/.wine,/home/sin/Downloadsの該当ファイル名探索で付属仕様/実行ファイルは見つからない。
+旧ソルバーのソース・実行ファイル内容を取得/参照/実行していない。ユーザーへ保存先パスをasyncで質問済み、回答はまだない。
+DOE OSTIの公式1987年マニュアルをout/c00-conic-input-spec-20260914/osti.pdfへ取得。
+SHA6ba0f0374057bd3f2bdcb55a62247d0f820187b7039dafd51820087e97234851、9489185bytes、210pages。
+入力仕様は印刷2-9〜2-12、PDF1始まり39〜42。PDFはテキストなしで、画像を表示して確認した。
+この版のNT2は円のみ、NT3は第1象限、X0/Y0/THETA不使用。本文2XY=R²に対し表NT欄2XY=Rの矛盾あり。
+相対許容差は画像で10^-3。旧ネットOCRから10^-5と推定しない。対象7.17の楕円/既定値へは流用しない。
+CERN公式2010school/Indico時間割には目当てのSuperfish Exerciseリンクが見つからず、転載抜粋は仕様根拠にしていない。
+USPAS403/UNTの直接PDFは非PDF/推測旧CERNパス404、OSTI取得成功。追加ネット探索は同じ失敗の一律反復を避ける。
+自前の数学導出はnative矩形双曲線の半軸(R,R)、branch1、rotationπ/4、u=log(Y/X)/2と明示四分円。
+自作36弧612点/負例2件はPASS、最大誤差1.1102230246251565e-15、988ソース系ファイル不変。
+out/c00-conic-input-spec-20260914/{reference-audit,neutral-geometry-report,source-snapshot}.json、同check-neutral-geometry.pyが根拠。
+機械可読な追補はdocs/c00_conic_input_reference_audit.json。元inventoryは過去記録のまま保持した。
+製品/FEM/parser/CLI/保存/許容差は無変更。NT2/3は引き続き拒否。unit/seed/全validate/GUI/Hosted CIを今回実行していない。
+C00の該当旧入力照合は付属仕様/実行環境の所在待ちだが、全計画のblockerとしない。
+次は保存先回答があればその公式仕様のPO表だけを照合し、なければBACKLOG/COMPATIBILITY_PLANの取得不要な未完項目へ進む。
+同じ資料不足を繰り返すだけのターンにしない。G03の一般物理表面精度、C00.V/V02ほか親33残件は継続。
+親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVE。完了/blockedにしない。
+全ネット取得/検証プロセスは終了。subagent/skill/新依存なし。gitメタデータはrequire_escalated。
+以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD d8855b0、clean。前goalターンは構築10受入commitというprogress。
 本段階は[G03現行要件照合](G03_CURRENT_AUDIT.md)と欠けていた楕円の幾何/FEM別表面細分証拠を追加したprogress。
 G03の番号付き5要件、最小子午面半径、全フィレット/退化、旧NT=2/3、物理ピークを実装/テスト内容/記録と照合。

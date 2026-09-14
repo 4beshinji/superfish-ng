@@ -1,0 +1,131 @@
+{
+  "audit_date": "2026-09-14",
+  "start_commit": "398817a",
+  "scope": "C00/K02 and C02 conic input reference identification",
+  "status": "PARTIAL_SPECIFICATION",
+  "legacy_execution": false,
+  "legacy_binary_or_source_read": false,
+  "target_executable_version": "7.17",
+  "target_release_date": "2006-01-13",
+  "target_document_revision": null,
+  "prior_inventory_checks": [
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTAUT.TXT",
+      "exists": true,
+      "bytes": 75124,
+      "sha256": "7ca5c2e5c8ba9054135d1d067fee19ccd6f7c4acce5ad1805f833361e410404f",
+      "original_inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTFIS.TXT",
+      "exists": true,
+      "bytes": 17955,
+      "sha256": "0a7c7f0cc84d276dd6fabc498b5c2ef82789a4440f85c81dbc5f58074134f259",
+      "original_inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/CAVITY.SFO",
+      "exists": true,
+      "bytes": 145337,
+      "sha256": "444a22f6cf0272f9c3b26113b49e69cbca3842274b3317396d83f0e4a386718d",
+      "original_inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTSF7.TXT",
+      "exists": true,
+      "bytes": 34630,
+      "sha256": "49c98bfabee3da99c5555bdfb3d0a1dbf6a02ab3a5a52e9380739b2abc245e7f",
+      "original_inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/cavity.af",
+      "exists": true,
+      "bytes": 404,
+      "sha256": "68220d7c79c7aca6daad61305a60dd352b29e0b161e986f8d07679e72ec090b7",
+      "original_inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/SF.INI",
+      "exists": true,
+      "bytes": 80,
+      "sha256": "fc2016add84e9568117fd15c79f048bd6d3eb6b07dee282750e96d349c32c54b",
+      "original_inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/cavity.in7",
+      "exists": true,
+      "bytes": 944,
+      "sha256": "081a13bcc15d476d0a4ea710268bd822de133b45d9795fa608c667518fd79dc5",
+      "original_inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "/tmp/superfish-wine-runtime/input-spec/SFCODES.txt",
+      "exists": false
+    }
+  ],
+  "local_tools": {
+    "wine": null,
+    "wine64": null,
+    "pdftotext": "/usr/bin/pdftotext"
+  },
+  "public_document": {
+    "id": "C00-K02-1987-OSTI-10140823",
+    "url": "https://www.osti.gov/servlets/purl/10140823",
+    "catalog_url": "https://digital.library.unt.edu/ark:/67531/metadc1314374/",
+    "title": "User's Guide for the POISSON/SUPERFISH Group of Codes",
+    "authors": [
+      "M. T. Menzel",
+      "H. K. Stokes"
+    ],
+    "report_number": "LA-UR-87-115",
+    "issued": "January 1987",
+    "pages_in_download": 210,
+    "sha256": "6ba0f0374057bd3f2bdcb55a62247d0f820187b7039dafd51820087e97234851",
+    "bytes": 9489185,
+    "local_path": "out/c00-conic-input-spec-20260914/osti.pdf",
+    "input_specification_printed_pages": [
+      "2-9",
+      "2-10",
+      "2-11",
+      "2-12"
+    ],
+    "input_specification_pdf_pages_one_based": [
+      39,
+      40,
+      41,
+      42
+    ],
+    "review_method": "rendered page images; downloaded PDF has no extractable text",
+    "applicability": "historical specification only; not established as the 7.17 input specification",
+    "table_text_conflict": "NT=3 table prints 2*X*Y=R; section 2.2.3 prints 2*X*Y=R^2",
+    "raw_document_in_source_package": false
+  },
+  "neutral_geometry_check": {
+    "path": "out/c00-conic-input-spec-20260914/neutral-geometry-report.json",
+    "status": "PASS",
+    "curves": 36,
+    "sampled_points": 612,
+    "negative_controls": 2,
+    "maximum_error": 1.1102230246251565e-15,
+    "source_files_unchanged": 988
+  },
+  "unverified": [
+    "7.17 NT=2 ellipse axes and defaults",
+    "7.17 NT=3 shifted origin and branches",
+    "PO variable reset/persistence",
+    "curve direction and ambiguous end points",
+    "endpoint tolerance and treatment",
+    "tangent construction operation",
+    "new legacy numerical comparison"
+  ],
+  "product_changed": false,
+  "af_nt2_nt3_acceptance": "REJECTED_AS_BEFORE",
+  "c00_v": "UNVERIFIED"
+}

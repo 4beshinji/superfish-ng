@@ -1,5 +1,10 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[C00/K02版別入力参照](C00_CONIC_INPUT_RESEARCH.md)は文書・参照台帳だけの変更。
+元入力/設定/出力7ファイルのhash/版表示、JSON/文書差分を照合。
+文中の数学対応は自作36弧612点、陰関数/頂点距離/接線/線積分と負例2件で確認した。
+製品ソース系988ファイル不変。AF変換受入や旧数値比較とはせず、unit/FEM/seed/全validate/GUI/Hosted CIは実行しない。
+
 2026-09-14 JST：[G03現行照合](G03_CURRENT_AUDIT.md)は、専用validate_geometry_surface_convergence.pyを1回実行し577.959秒PASS。保存6native再検証+追加3solve、固定幾何6区間/幾何2区間の五量・場対応・解析幾何/積分・Ritzを確認。元アーカイブと988ソース系ファイルは不変。製品/FEM/GUI無変更のためunit/seed/全validate/Hosted CI/ブラウザーは再実行しない。元の全検証や旧保存を新たな全機能合格と呼ばない。
 
 2026-09-14 JST：構築版10の[非円円錐曲線フィレット](NONCIRCULAR_CONIC_FILLET.md)は関連57unit（42.890秒）と旧版3/4の追加2unitを実行。
