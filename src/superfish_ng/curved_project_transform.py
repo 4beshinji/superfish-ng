@@ -65,12 +65,15 @@ def transform_curved_project(project, affine_map, *, rf_coordinates):
     if te:
         validate_te_case(case)
         if rf_coordinates!='fixed':raise ValueError('TE affine geometry requires fixed RF metadata')
-        if (case.geometry_order!=2 or project.reflect_full or case.curved_contour is None
-                or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
-            raise ValueError('TE affine geometry requires direct native P2 closed PEC/axis geometry')
+        if (case.geometry_order!=2 or case.curved_contour is None
+                or sum(t!='pec' for t in (case.z_min,case.z_max))>1
+                or any(t not in ('axis','pec','electric_symmetry','magnetic_symmetry') for t in case.curved_contour.edge_tags)):
+            raise ValueError('TE affine geometry requires native P2 PEC/axis geometry and at most one symmetry end')
     if case.curved_contour is None or project.sections is not None:
         raise ValueError('affine curved project requires native curved_contour without assembled sections')
     a, b, c = validate_affine_map(affine_map)
+    if te and (case.z_min!='pec' or case.z_max!='pec') and b!=0:
+        raise ValueError('TE symmetry affine geometry requires zero axial shear to preserve the symmetry plane')
     matrix = np.array([[a, 0.], [b, c]])
     stretch = float(np.linalg.norm(matrix, ord=2))
     source_mesh = make_mesh(case) if project.mesh_data is None else mesh_from_dict(case, project.mesh_data)

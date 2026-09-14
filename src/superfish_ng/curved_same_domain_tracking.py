@@ -9,6 +9,27 @@ from .sampling import FieldSampler
 from .mode_tracking import track_sampled_mode_subspaces
 
 
+def _te_end_conditions(cases):
+    from .te import validate_te_case
+    for case in cases:validate_te_case(case)
+    conditions=[(case.z_min,case.z_max) for case in cases]
+    if conditions[0]!=conditions[1] or sum(tag!='pec' for tag in conditions[0])>1:
+        raise ValueError('TE curved comparison requires the same symmetry sector and at most one symmetry end')
+    return conditions[0]
+
+
+def _te_symmetry_sector(solutions):
+    reflected=[s.reflection_source_case is not None for s in solutions]
+    if reflected[0]!=reflected[1]:
+        raise ValueError('TE curved comparison cannot mix direct and reflected fields')
+    conditions=_te_end_conditions([s.reflection_source_case or s.case for s in solutions])
+    if reflected[0] and conditions==('pec','pec'):
+        raise ValueError('TE reflected comparison requires a source symmetry sector')
+    if conditions==('pec','pec'):return None
+    return dict(source_end_conditions=dict(zip(('z_min','z_max'),conditions)),reflected=reflected[0],
+                mode_indices='source symmetry-sector frequency order; not full-spectrum ranks')
+
+
 def _restricted_controls(edge,lo,hi):
     p=edge.control_points
     def evaluate(t):return (1-t)**2*p[0]+2*t*(1-t)*p[1]+t*t*p[2]
@@ -43,8 +64,10 @@ def _compare_quadratic_boundaries(previous,current,affine=None):
     if any(not isinstance(s,(CurvedSolution,TESolution)) or s.case.geometry_order!=2 for s in solutions):raise ValueError('curved_same_domain requires native curved solutions on both sides')
     te=[is_te(s.case) for s in solutions]
     if any(te) and not all(te):raise ValueError('mixed TE/TM curved correspondence is unsupported')
-    if all(te) and any(s.reflection_source_case is not None for s in solutions):
-        raise ValueError('TE curved correspondence requires direct fields; reflected construction is unsupported')
+    if all(te):
+        sector=_te_symmetry_sector(solutions)
+        if sector is not None and affine is not None and affine[1]!=0:
+            raise ValueError('TE symmetry affine comparison requires zero axial shear to preserve the symmetry plane')
     return compare_quadratic_space_boundaries(previous.case,previous.space,current.case,current.space,affine=affine)
 
 
@@ -55,8 +78,12 @@ def compare_quadratic_space_boundaries(previous_case,previous_space,current_case
         raise ValueError('curved_same_domain requires identical native curve declarations and parameterization')
     if len(previous_case.curved_contour.curves)!=len(current_case.curved_contour.curves):
         raise ValueError('affine quadratic boundary comparison requires corresponding native primitive indices and parameters')
+    allowed=('axis','pec')
+    if all(is_te(case) for case in cases):
+        _te_end_conditions(cases)
+        allowed+=('electric_symmetry','magnetic_symmetry')
     for space in spaces:
-        if any(tag not in ('axis','pec') for tag in space.boundary_tags):raise ValueError('curved_same_domain requires closed PEC and axis boundaries')
+        if any(tag not in allowed for tag in space.boundary_tags):raise ValueError('curved_same_domain requires PEC/axis boundaries or a matching TE symmetry sector')
     coordinates=[s.geometry.points_rz_m for s in spaces]
     if affine is not None:coordinates[1]=_affine_points(coordinates[1],affine,inverse=True)
     scale=max(float(np.max(np.abs(p))) for p in coordinates)
@@ -129,5 +156,8 @@ def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None
         comparison_description=('same represented quadratic boundary; physical '+('Ephi' if te else 'Hphi')+' at both curved meshes quadrature points; half-sum physical r dr dz measure'),**controls)
     report['physical_mapping']=dict(name='curved_same_domain',sample_order=sample_order,sample_count=count,triangle_counts=counts,axisymmetric_volumes_m3=volumes,
         boundary_coincidence=boundary,field=field,scope='identical native curve parameterization and coincident represented quadratic boundary; independent curved P2 connectivity; sample-order convergence required; not equality of distinct curve approximations or physical convergence acceptance')
-    if te:report['physical_mapping']['physics']='axisymmetric_m0_te'
+    if te:
+        report['physical_mapping']['physics']='axisymmetric_m0_te'
+        sector=_te_symmetry_sector(solutions)
+        if sector is not None:report['physical_mapping']['symmetry_sector']=sector
     return report

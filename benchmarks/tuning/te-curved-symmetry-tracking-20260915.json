@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "native_half_domain_fem": 8,
+  "independent_full_dense_fem": 4,
+  "preserved_files": 104,
+  "rows": [
+    {
+      "side": "z_min",
+      "tag": "electric_symmetry",
+      "scale_errors": {
+        "frequency_hz": 0.0,
+        "stored_energy_j": 2.220446049250313e-16,
+        "geometry_factor_ohm": 6.661338147750939e-16,
+        "q0": 8.881784197001252e-16,
+        "wall_loss_w": 5.551115123125783e-16,
+        "coefficients": 1.3953472278447837e-15
+      },
+      "source_sector_rank": 1,
+      "full_domain_rank": 2,
+      "full_dense_frequency_relative_error": 2.220446049250313e-16,
+      "full_dense_field_overlap": 0.9999999999999998
+    },
+    {
+      "side": "z_min",
+      "tag": "magnetic_symmetry",
+      "scale_errors": {
+        "frequency_hz": 3.3306690738754696e-16,
+        "stored_energy_j": 2.220446049250313e-16,
+        "geometry_factor_ohm": 1.1102230246251565e-15,
+        "q0": 1.3322676295501878e-15,
+        "wall_loss_w": 1.4432899320127035e-15,
+        "coefficients": 1.1212629084780768e-15
+      },
+      "source_sector_rank": 1,
+      "full_domain_rank": 1,
+      "full_dense_frequency_relative_error": 4.884981308350689e-15,
+      "full_dense_field_overlap": 1.0000000000000002
+    },
+    {
+      "side": "z_max",
+      "tag": "electric_symmetry",
+      "scale_errors": {
+        "frequency_hz": 4.440892098500626e-16,
+        "stored_energy_j": 4.440892098500626e-16,
+        "geometry_factor_ohm": 1.5543122344752192e-15,
+        "q0": 1.3322676295501878e-15,
+        "wall_loss_w": 1.4432899320127035e-15,
+        "coefficients": 1.9838844875901623e-15
+      },
+      "source_sector_rank": 1,
+      "full_domain_rank": 2,
+      "full_dense_frequency_relative_error": 5.995204332975845e-15,
+      "full_dense_field_overlap": 1.0
+    },
+    {
+      "side": "z_max",
+      "tag": "magnetic_symmetry",
+      "scale_errors": {
+        "frequency_hz": 2.220446049250313e-16,
+        "stored_energy_j": 6.661338147750939e-16,
+        "geometry_factor_ohm": 1.3322676295501878e-15,
+        "q0": 9.992007221626409e-16,
+        "wall_loss_w": 2.220446049250313e-16,
+        "coefficients": 4.006506786313506e-15
+      },
+      "source_sector_rank": 1,
+      "full_domain_rank": 1,
+      "full_dense_frequency_relative_error": 4.3298697960381105e-15,
+      "full_dense_field_overlap": 1.0
+    }
+  ],
+  "scope": "TE curved symmetry same-domain and zero-shear affine comparison/Project transform foundation; tuning and Study not connected",
+  "full_dense_scope": "Separate dense eigensolver on the reflected full-domain FEM matrices; not an independent formulation or discretization convergence proof",
+  "unit_runs": [
+    {
+      "tests": 3,
+      "seconds": 18.547
+    },
+    {
+      "tests": 27,
+      "seconds": 39.086
+    },
+    {
+      "tests": 14,
+      "seconds": 6.134
+    }
+  ]
+}
