@@ -29,7 +29,11 @@
 
 **R6. Dark-Elektron, cavsim2d.**
 [開発元リポジトリ](https://github.com/Dark-Elektron/cavsim2d)
-— 閲覧: README、機能表、依存関係、ライセンス表示。ソルバ内部は未閲覧、未実行。MITの表示とABCI別実行形式の記述を区別している。
+
+2026-09-14の[A01比較](A01_BACKEND_COMPARISON.md)ではcommit
+`48741ff46ca44463281a5ab5945328615881b502`（0.1.0）のMIT LICENSE・依存宣言・現代的Python API/NGSolve経路を参照・隔離実行した。
+全79選択Python/metadata SHAと36実FEMを記録し、製品へは採用しない。旧実行形式/ソルバ実装は取得していない。
+— 初期調査時の記録: README、機能表、依存関係、ライセンス表示のみを閲覧し、当時は内部未閲覧・未実行だった。上記A01で参照範囲を更新した。MITの表示とABCI別実行形式の記述を区別する。
 
 **R7. “Reference manual for the POISSON/SUPERFISH Group of Codes.”** Los Alamos report LA-UR-87-126 (1987)、419ページ。
 [DOE資料の保存書誌](https://digital.library.unt.edu/ark:/67531/metadc1317114/) · [OSTI識別子](https://www.osti.gov/biblio/10140827)

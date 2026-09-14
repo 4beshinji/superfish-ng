@@ -1,3 +1,33 @@
+2026-09-14 JST 最新継続状態。開始HEADfe1c8a8、当初clean。前goalターンは共通履歴再構築共有の実装/検証/commitでprogress。
+今回は未着手だったA01/P0-04のcavsim2d役割比較を実行し、ADR-018と原要件照合まで受入したprogress。全計画は未完、goal ACTIVE。
+[A01_BACKEND_COMPARISON.md](A01_BACKEND_COMPARISON.md)が仕様/出典/失敗/数値と受入照合の正本。親33は9受入/17進行/6他未受入/1範囲外へ更新した。
+COMPATIBILITY_PLANの現在の親集計、BACKLOGのP0-04、IMPLEMENTATION_STATUSも更新。過去8/17/7/1は当時の履歴として保持。
+判断は自作NGを製品として維持し、cavsim2dを限定した独立参照候補にすること。公開API全般や旧互換の受入ではない。
+cavsim2d0.1.0の固定commit48741ff46ca44463281a5ab5945328615881b502。README/MIT LICENSE/pyprojectと現代的NGSolve Pythonの入出力/規約を参照した。
+78選択Python/metadataを取得後、必須importの現代的ABCI wrapper1個を加え全79。全SHAとLICENSEを保持、ABCI/TopDrawer実行形式・旧SUPERFISH/POISSON実装の取得/実行なし。
+比較専用/tmp/superfish-a01-reference-20260914にNGSolve/Netgen6.2.2606、Gmsh4.15.2、NumPy2.5.2/SciPy1.18.1等を導入。core importのIPython必須化を再現し公式jupyter extraを補った。
+通常製品env/pyproject/FEM/求積/許容差不変。全依存版/ライセンスは専用文書とbenchmark JSON。約1.1 GiBの隔離環境は配布しない。
+公開PillboxでR100/L80/Ri20mm、beampipe none、bc11/ee指定でもPMC長.04mが残ることを実FEM/保存meshで確認。閉PEC照合には使わず失敗として保持。
+最終比較器scripts/compare_cavsim2d.pyはCavityを派生し公開Profileで4辺PEC/AXIを明示。SIの両端半径/長さとa01-profile.json/専用kindを保存し、未使用Pillbox deckを残さない。
+この比較用モデルを標準Study.load対応とは主張しない。候補のFEM/求積/RF実装は無変更、NGmesh/行列/場を参照へ渡さない。
+候補の実保存空間HCurl×H1のDOFを数える。表示値はHCurl部分のみ。requested1でもpadding3モードを解くことを報告し、NG1モードと演算量が同一とはしない。
+円筒R.1/L.08m、円錐台R.08→.1/L.12m、NG P2 nr12/24/48 nz2nr、候補h20/10/5mm p2、全真空PEC・beta1。元タグ/辺長/面積/体積を双方で独立照合。
+候補保存場のUe/Uh/報告UとTE比を検査し、U1Jへ一括正規化して内部12点E/Hを単一符号で照合する。zはL/2だけ平行移動。
+R/Qは|V|²/(omega U)の値からaccelerator定義へ対応、circuitは半値。外部呼称の違いを式なしで読み替えない。
+最終out/a01-backend-20260914/final-corrected/comparison.jsonは36実FEM/10.435824秒PASS、1047ソース系と候補79SHA不変。import実パス/SHAも別確認PASS。
+最終両側差最大、円筒f2.283e-8/RQ1.021e-6/G2.750e-4/E1.848e-5/H2.671e-4、円錐台f2.567e-8/RQ2.050e-6/G5.178e-4/E2.141e-5/H2.190e-4。
+双方最終細分も元許容f1e-4/RQ/G.005、円筒解析五量とピーク比.01に合格。Ue/Uh最大1.33e-10、報告U差2.69e-10、TE比7.85e-27。
+最細NG18721DOF、候補円筒9049/円錐台12733。時間中央値NG.64128/.63853秒、候補.42343/.66198秒。3回交互順、import/独立reload除外、各native出力込み。一般性能保証としない。
+benchmark主要数値/全3回/全環境版/候補SHAと2図はbenchmarks/cavsim2d/。両図を目視し、時間軸のラベル重なりだけを元測定値から再描画で修正した。生出力601件のSHA索引out/a01-backend-20260914/acceptance.json。
+新unit4件.026秒PASS、既存判定5件は初回10件実行でPASS（当時物理2skip）、別参照環境の物理2件.113秒PASS。最終11件の分割証拠。
+初回比較器はHphiの1-tupleで失敗、次は直線Caseへの曲線求積指定、次はFieldSampler生成APIで失敗。修正後measuredは1回12solve数値PASS。
+その後、入力記録も正しくするため専用Cavityへ変更。最初は基底がn_cellsを保持せず失敗、明示属性で修正し最終36solveがPASS。初期失敗を保持、候補数値コードは補修していない。
+全handle終端: metadata20146/venv91830/source51112/deps46670/extra88424/import99339/public80074/Hprobe26077/measured22955/final68940/plot7902/import-provenance64557/plot-correction18245=終了0。
+比較失敗18768/82959/93500/21802=終了1。その他unit/選択installは同期終了0。GUIserver/workerなし。subagent/skillなし。
+全suite/seed/ブラウザー/Hosted CI/新Wine比較は今回未実行。比較器/参照環境追加であり製品共有core変更ではない。過去full失敗をfull PASSへ読み替えない。
+次はC00.V/G03/N04/D01等の未完了親課題へ戻る。A01の完了を他物理や利用者業務V02の完了へ拡張しない。旧7.17/Wine所在質問は未回答だがgoalのblockerではない。
+gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEADe445a05、当初clean。前goalターンは共通比較分割版4の実装/検証/commitでprogress。
 今回はN04残件2の共通履歴再構築共有を実装/検証したprogress。全計画未完、goal ACTIVE。
 [NESTED_RECONSTRUCTION_REUSE.md](NESTED_RECONSTRUCTION_REUSE.md)が契約/数値/検証と制約の詳細。

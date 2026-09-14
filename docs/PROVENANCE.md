@@ -1,5 +1,13 @@
 # 独立実装・情報来歴
 
+2026-09-14 JST：[A01のcavsim2d役割比較](A01_BACKEND_COMPARISON.md)とADR-018を受入。
+R6の固定commit48741ff46ca44463281a5ab5945328615881b502（0.1.0）のREADME・MIT LICENSE・依存宣言と
+現代的なPython API/NGSolve実装を参照した。過去の「READMEのみ参照」は当時の記録であり、今回の参照範囲とは区別する。
+79の明示Python/metadataを/tmpへ選択取得し、元LICENSEと全SHAを保持。ABCIの現代的Python wrapperはimportに必要だったが、
+ABCI/TopDrawer実行形式や旧SUPERFISH/POISSON実装は取得せず、wakefieldは実行していない。
+数値実装を変更/転用せず、明示Profileを渡す比較用Cavity派生クラスと独立物理不変量を自作した。
+36実FEM・円筒解析五量・双方収束・内部場/エネルギーを測定し、製品組込みを見送る。導入版/ライセンスと実失敗は専用文書。
+
 2026-09-14 JST：[曲線親子追跡の共通履歴再構築](NESTED_RECONSTRUCTION_REUSE.md)。
 自作`e445a05`の実行を計測し、同じnative細分履歴の重複構築を除いた。旧自作モジュールだけを別名で読み、
 同じ読込済み場・RF/随伴・数値ライブラリで転送と報告を完全比較した。旧環境全体の再現や旧SUPERFISH利用ではない。

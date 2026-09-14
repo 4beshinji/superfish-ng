@@ -1,5 +1,14 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[A01候補比較](A01_BACKEND_COMPARISON.md)は新test_cavsim_comparison4件0.026秒と既存独立比較7件が合格。
+既存の判定5件は初回10件実行で確認、当時の物理2skipを隔離NGSolve環境のReferencePhysicsTests2件0.113秒で補った。最終11件の分割証拠。
+scripts/compare_cavsim2d.pyの最終final-correctedは36実FEM/10.436秒PASS。閉PEC円筒/円錐台の双方3水準×3回、
+解析五量/境界長/面積/体積/エネルギー/内部E・Hと実DOF・交互順の時間を確認。1047ソース系と候補79ファイルSHAは不変。
+初回importと公開Pillboxの端条件不一致、比較器のtuple/Case/Sampler/基底Cavityの修正前失敗はout/a01-backend-20260914に保持。
+measuredの先行1回PASSには未使用Pillbox入力記録があったため、専用Cavity/Profile記録へ替えた最終36 solveを正式証拠とする。
+データと誤差対DOF/時間の図をbenchmarks/cavsim2dへ保存、出典/生出力/全終端の索引はout/a01-backend-20260914/acceptance.json。
+製品/求積/許容差は不変。全suite/seed/ブラウザー/Hosted CI/新Wine比較は実行していない。
+
 2026-09-14 JST：[曲線親子追跡の共通履歴共有](NESTED_RECONSTRUCTION_REUSE.md)は最終9+32=41unitでPASS。
 test_nested_curved_trackingの9件7.377秒、RF指標/適応版4・5/対称性/prefix再利用/表面方針/保存と固定patternの32件121.162秒。
 新4件を含む。初回12件8.447秒の後、新側メッシュの同hash型違反1件を0.421秒FAILで再現し、厳密解析を保持して補修した。

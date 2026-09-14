@@ -1,5 +1,16 @@
 # 依存関係と配布方針
 
+## A01の候補比較環境 — 2026-09-14
+
+ADR-018/[A01比較](A01_BACKEND_COMPARISON.md)のため`/tmp/superfish-a01-reference-20260914`へ隔離導入した。
+cavsim2d0.1.0/固定48741ffの選択Pythonだけをeditableで読み、実行形式は取得しない。
+NGSolve/Netgen6.2.2606はLGPL-2.1-only、Gmsh4.15.2はGPL v2以降と添付例外、netgen-occt7.8.1は添付LGPL2.1、
+ngsolve-openblas0.3.33はBSD-3-Clause。metadataと添付licenseを確認した。
+NumPy2.5.2/SciPy1.18.1は現製品環境と同版。core宣言だけではIPython importに失敗し、公式jupyter extraを補った。
+IPython9.17.1/ipywidgets8.1.9を含む全版をbenchmarks/cavsim2d/a01-20260914.jsonへ保存した。
+環境の約1.1 GiBを製品配布へ含めない。MITのwrapper条件を依存binary全体へ拡張しない。
+比較solveはオフライン。測定後の決定は製品組込み見送りで、pyproject/通常環境は不変。
+
 ## G02の独立照合環境 — 2026-09-08
 
 既存ADR-011のNGSolve参照を一般輪郭へ拡張。検証専用

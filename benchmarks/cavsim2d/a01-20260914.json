@@ -1,0 +1,2148 @@
+{
+  "schema_version": 1,
+  "issue": "A01 / P0-04",
+  "date": "2026-09-14",
+  "passed": true,
+  "decision": "retain native NG; optional candidate reference only",
+  "source_commit_before_change": "fe1c8a8",
+  "comparison_script_sha256": "511e311c92462e8cbbe89979cad1ace6e9be3952069fb739eae91d6c8c7c9796",
+  "candidate_commit": "48741ff46ca44463281a5ab5945328615881b502",
+  "candidate_source_files_sha256": {
+    "cavsim2d/__init__.py": "b2297c0a9e95e870d8074fd505386c3b89b0fbc54a0f778e3bee61400a71f723",
+    "cavsim2d/analysis/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cavsim2d/analysis/impedance.py": "7d28a4a1cf9c73e7eac0655b66ea432ad63e0cd8fe7df3486421b46dc28d70d0",
+    "cavsim2d/analysis/multipacting/__init__.py": "04c3d56d1276ce7eaf591cddd50133412f87211aaae9476de96b34e41d845744",
+    "cavsim2d/analysis/multipacting/driver.py": "e52e6e0f4a2c7476bea327ce4dd5ecc5b8bd1b179d3f5faf79861b3d57cb7f5f",
+    "cavsim2d/analysis/multipacting/fields.py": "9ef1ce2a456c1579923826d6f85bac399f88e5cc46b1e09fc2b7b0418072c62b",
+    "cavsim2d/analysis/multipacting/integrators.py": "71b11f035a8fa2de1619945ac830eb0a259bd4db10b77234ac99d35486724ca2",
+    "cavsim2d/analysis/multipacting/metrics.py": "523ae815e7f08cc35d585a1c4f140b066bf7b54be6a1338ba7825425fcb1026e",
+    "cavsim2d/analysis/multipacting/particles.py": "0554c0f1df1b83b77edbb7a04fc27b948092e49a722b57b2206b737680d5cde0",
+    "cavsim2d/analysis/multipacting/plots.py": "e8f5877a0e6c493737aeface9dd13495beec15d4ed3ac86ae028e50cc31b8463",
+    "cavsim2d/analysis/multipacting/sey.py": "5b989983f57ccdfe13f76226433c9911a2c48fdbcc948cea9bf14ff2504b04a3",
+    "cavsim2d/analysis/optimisation.py": "07d708fbdfea873b495c8e4d0852f793bc3e54f1c1b1f5718e2ed1629f1c2395",
+    "cavsim2d/analysis/tune/__init__.py": "15213b22e695a82d42e0addb1853a69eb31dad578317ea29ab66be87a1207ce5",
+    "cavsim2d/analysis/tune/pyTuner.py": "0609aefad708e1350ff9237a18d8182f044c7ed6b35fec023ddc60f0049996e3",
+    "cavsim2d/analysis/tune/tuner.py": "0582141a0f5d0c90c74aa1cdadf7845264d350ac9f32e656097f4057f7117f72",
+    "cavsim2d/analysis/uq/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cavsim2d/analysis/uq/sobol_sa.py": "62a904c91f9b2e5a14154997c3a38b02c124184a5bb28617e4f1bb85a971096b",
+    "cavsim2d/analysis/wakefield/__init__.py": "15213b22e695a82d42e0addb1853a69eb31dad578317ea29ab66be87a1207ce5",
+    "cavsim2d/config_files/optimisation_config.py": "46f45279408edea9ca0be0ed2353f59fc2da167b6c5a08b21c01e5a0a0b71079",
+    "cavsim2d/config_files/uq_config.py": "db3ddbb5135fd1c325a91a4ddb6441703ba7eddbde730d2d8dec65f28622e0af",
+    "cavsim2d/constants.py": "4d500d6f3007a77410a234c05bc599bdecedde676933dc243838d87a8729d83c",
+    "cavsim2d/data_module/__init__.py": "15213b22e695a82d42e0addb1853a69eb31dad578317ea29ab66be87a1207ce5",
+    "cavsim2d/data_module/abci_data.py": "ca4fb10dde06dab4adfd8c49c53e9fefe63a497d47e0870441b80ceb8bf7a349",
+    "cavsim2d/data_module/operating_points.py": "18d3371318bf73d1b4e72312c63f691a64d3e0e8e84d2d080b32e880af025c3a",
+    "cavsim2d/geometry/__init__.py": "f1960511541c8788bb3e383fc180461c0ad382b384ceca29fddcf11b7b2971bc",
+    "cavsim2d/geometry/beampipes.py": "0ac791fa5f15a7683b1b75ae290906e5bca6e7fff8121893db2dc56b5faea633",
+    "cavsim2d/geometry/contours.py": "c2ccc01762a0de3fae45aa62f9053e5d41c0b5a7287e0cac426cf820aaf2cd10",
+    "cavsim2d/geometry/plotting.py": "cb5c3385f86bdc30f0f9bd588f8fc2fa8851315183d1a06dd4dabd89f9b14290",
+    "cavsim2d/geometry/primitives.py": "7fc557d54eeaabff95de798f37f99a6dec41067780e9f42cbb7cc6fbee80ae54",
+    "cavsim2d/geometry/profile.py": "125ea899813b97afc576545381d569b1483fd8ddaa3d30dfc1109551bfec99ff",
+    "cavsim2d/geometry/tangency.py": "5d6312bdcc8d0b6f707323fd4cbd3a2e63d2ab30fbe6d8e6f7f57f35a4d011da",
+    "cavsim2d/geometry/writers/__init__.py": "a8b4ff3c94918c70fb792d63cb41fcce4b565d8a8c8f3c990a349214b4cb4f77",
+    "cavsim2d/geometry/writers/cst.py": "0e83a76fba7fd78c9afa5530ba61c0db43889f4fea19fa883e3b8762bcfa2694",
+    "cavsim2d/geometry/writers/gmsh.py": "60364b8c44014bc6641ab7c2e8c6b912e191bc1c4bad4a842394d877db08ed08",
+    "cavsim2d/geometry/writers/multipac.py": "828594253ad240a97625832a7710f3419e03fe0471e5aae98705e55c0077a253",
+    "cavsim2d/models/__init__.py": "65530d3b936b9170b6fbf31a36c196fd5a74c8eff6e8d9780eb21334ab5cb498",
+    "cavsim2d/models/base.py": "021a8e50f367682eac3795110705e7070bfd9564ea94c359e852047ccd38b681",
+    "cavsim2d/models/circular_waveguide.py": "31553690804884f3c454e32b3f4842e222cf04ea721eb267d138a558190db71c",
+    "cavsim2d/models/elliptical.py": "11463e0f1884c286e6aab59958bcd52da63714ec3257e460b587e3360d1f77c7",
+    "cavsim2d/models/elliptical_flattop.py": "d48df5363dec419686751a9a7d86bdb1ec43c548683f94badee023cd6d1b58de",
+    "cavsim2d/models/pillbox.py": "3632a83bffd375de122382132feb2ab79d161eea100a796e6d5f0826aca02d6a",
+    "cavsim2d/models/rfgun.py": "596d4a37eede50483102c15f2496205fa7e1b1d51353f0361bdc7b28ea9ff3fb",
+    "cavsim2d/models/spline.py": "ce7d74d8e76253b44fcf23464414629323afcde598bfae99f55e1f3e93c36f30",
+    "cavsim2d/processes/__init__.py": "40fc31e693d31ca938ebf3648c0fa867cff30cfc914978b4cd4b9e2bd41173a1",
+    "cavsim2d/processes/eigenmode.py": "ad068727d060246fe3085083c108d7bad4ce184162f5db7eb3d936b43639316a",
+    "cavsim2d/processes/tune.py": "1b99696ecd2680070e68b92b8376d4134d81739ed96b456747d0a799efb06291",
+    "cavsim2d/processes/uq.py": "7902595d75a58cfb59c7f9071edb04a75f549c80965f0dfc1360ac0e59a787cd",
+    "cavsim2d/processes/wakefield.py": "d4e0945229adc6ec37e2bf76d4b16b298698d9a414bfc13b8d174698d09ddc6c",
+    "cavsim2d/solvers/NGSolve/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cavsim2d/solvers/NGSolve/eigen_ngsolve.py": "a9d5722072e6c7f7097207df1a19e5a12e4417f3895e1c53ec8f24e7f3598e11",
+    "cavsim2d/solvers/__init__.py": "1796407b75f0db0e8b308f719d71f08e871db5f53f3e10c300b3eb1822204675",
+    "cavsim2d/solvers/eigenmode_result.py": "4550f7bd785ce48cf2cce801783477e6bce4ccf8b99d3f0c74918b3cdf3c0a11",
+    "cavsim2d/solvers/objectives.py": "198d116c340300aa0dd75d69e3ed90e511462fd798409c42769d177dada554fb",
+    "cavsim2d/solvers/solver_objects.py": "34ee8280bc36d06a71006397c179582e11e4a94b98266c872c1ae94421283dcb",
+    "cavsim2d/solvers/wakefield/__init__.py": "c564ea5c73566babe63129ba10d65b650eec01c1e017fc3e70f47e6f30a94ac2",
+    "cavsim2d/solvers/wakefield/abci.py": "3d8c48499406fac4a3e03cdc4f13e285d357d6340ef5c3ac9cbca9d0eec21f61",
+    "cavsim2d/solvers/wakefield/base.py": "8b625e73a2302d9af096b956da21cc667c70b839c8f35f037c7f70879b24757f",
+    "cavsim2d/study.py": "71a29fb02984927f42d652a16c26b10b170f3ef26117eecec2373ff383a37c1e",
+    "cavsim2d/utils/__init__.py": "35e1bbb727ad23dc7dbe5322ccbf19f83581d40f9e970a2b73a3b0c95d295584",
+    "cavsim2d/utils/config_validation.py": "0462a7edc7592e3304f1c94a26e9631d8942dde3e7d41e53edd3f4cf2d27bba5",
+    "cavsim2d/utils/cubature.py": "c6b61f0a8c1ed09393b29a66b2f9cc0da06b0bda43a2630df2dbef65ea73cc09",
+    "cavsim2d/utils/data_utils.py": "799335b36c397f115e4f602e58aa7d22653dea9e1e3bb13ed9c3ad46e7c80da7",
+    "cavsim2d/utils/printing.py": "49ffb22da46a52e90dda687a467e8908812a254a7f151bc5074c63e4ab6ba694",
+    "cavsim2d/utils/quadrature.py": "3bdc82286c636fb278683fcdb48798c75d67bb65249539db958146e82dfb80ac",
+    "cavsim2d/utils/run_log.py": "56fa0e2213eec554947aae251037e2753cbd9b574d768e7b630c25c84fc9a252",
+    "cavsim2d/utils/sampling.py": "d3754e27d08e1916c0025d557120b6bfb7836d76697be47002dc4b7b555fb5ce",
+    "cavsim2d/utils/sensitivity.py": "cb698b74aa4b82a43cb5569b27b623a726bdfaa15d51fba20f3cd034b778d5b2",
+    "cavsim2d/utils/shapes.py": "ac97f519db430765e4206fc29e9d6ecf8d3230091b5b65c3d09d9dd202e04172",
+    "cavsim2d/utils/shared_classes.py": "1795126bf040ced9a3d81247513e4670328f453b8972fc1e9ac2a2b7ef7756ea",
+    "cavsim2d/utils/shared_functions.py": "a53f2b2f37bde1a5ff8dd8c7f0ae19195c1e76247c79fa5bd8de88ed8c66fac9",
+    "cavsim2d/utils/style.py": "8cb64af26d150af27ec81a7d9d209b50196af6f2ea6e59b116b890b1287cae7e",
+    "cavsim2d/utils/surrogate.py": "79c0d5e1e78aa2e9151767a75326a6bee98efe1529b4f434599a6095b5032e9c",
+    "cavsim2d/utils/welcome.py": "11c30aec8e343b1bdb5c30febe2494ba426f30a5a401e3cc49b356ee33b4617a",
+    "LICENSE": "98029c1cbbf4c637d38d4b3356f2b46ac9061c6d641293d88d148bd703391547",
+    "pyproject.toml": "f09e9403fd96185a5b7dad71e9fc3087a4a7c763063a3be7e6b66103f12af038",
+    "README.md": "beb80903e0d5ab41b0fa3fa78e740d5ba90ca23392979ac0b7417319d81354d5",
+    "tests/test_cavity_types.py": "8894b5da9de49055383c2172f5bb3270aa427a53474a68d2f908aa2df9ead84b",
+    "tests/test_eigenmode.py": "6b1d530e27ee8ac168b5c8adeb88b7c1e03d5e84e2b52cde4dc2faa152e0e19f",
+    "cavsim2d/solvers/ABCI/abci.py": "934418d8848d74a3a9d0bf64806e8bc7188661374c93af94d6146080edf48266"
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-139-generic-x86_64-with-glibc2.39",
+    "packages": {
+      "superfish-ng": "0.1.0",
+      "ngsolve": "6.2.2606",
+      "pure_eval": "0.2.4",
+      "jupyterlab_widgets": "3.0.17",
+      "contourpy": "1.4.0",
+      "stack-data": "0.6.3",
+      "et_xmlfile": "2.0.0",
+      "joblib": "1.6.0",
+      "python-dateutil": "2.9.0.post0",
+      "pillow": "12.3.0",
+      "prompt_toolkit": "3.0.53",
+      "wheel": "0.46.3",
+      "ptyprocess": "0.7.0",
+      "parso": "0.8.7",
+      "ipython": "9.17.1",
+      "jedi": "0.20.0",
+      "fonttools": "4.65.0",
+      "asttokens": "3.0.2",
+      "packaging": "26.0",
+      "ngsolve_openblas": "0.3.33",
+      "executing": "2.2.1",
+      "widgetsnbextension": "4.0.16",
+      "narwhals": "2.26.0",
+      "termcolor": "3.3.0",
+      "cloudpickle": "3.1.2",
+      "netgen-mesher": "6.2.2606",
+      "matplotlib": "3.11.2",
+      "numba": "0.67.0",
+      "Pygments": "2.21.0",
+      "ipywidgets": "8.1.9",
+      "scipy": "1.18.1",
+      "llvmlite": "0.49.0",
+      "traitlets": "5.16.1",
+      "dill": "0.4.1",
+      "openpyxl": "3.1.5",
+      "numpy": "2.5.2",
+      "psutil": "7.2.2",
+      "pandas": "3.0.5",
+      "wcwidth": "0.8.3",
+      "pyparsing": "3.3.2",
+      "tqdm": "4.70.1",
+      "netgen_occt": "7.8.1",
+      "ipython_pygments_lexers": "1.1.1",
+      "six": "1.17.0",
+      "scikit-learn": "1.9.1",
+      "SALib": "1.5.2",
+      "paretoset": "1.2.5",
+      "pexpect": "4.9.0",
+      "kiwisolver": "1.5.1",
+      "cavsim2d": "0.1.0",
+      "matplotlib-inline": "0.2.2",
+      "setuptools": "84.0.0",
+      "gmsh": "4.15.2",
+      "cycler": "0.12.1",
+      "threadpoolctl": "3.6.0",
+      "comm": "0.2.3",
+      "pip": "24.0",
+      "multiprocess": "0.70.19",
+      "jaraco.text": "4.0.0",
+      "zipp": "3.23.0",
+      "jaraco.functools": "4.4.0",
+      "autocommand": "2.2.2",
+      "tomli": "2.4.0",
+      "more-itertools": "10.8.0",
+      "platformdirs": "4.4.0",
+      "importlib_metadata": "8.7.1",
+      "jaraco.context": "6.1.0",
+      "backports.tarfile": "1.2.0"
+    },
+    "OPENBLAS_NUM_THREADS": "1",
+    "ngsolve_threads": 1
+  },
+  "limits": {
+    "frequency_hz": 0.0001,
+    "r_over_q_accelerator_ohm": 0.005,
+    "geometry_factor_ohm": 0.005
+  },
+  "cases": {
+    "cylinder": {
+      "passed": true,
+      "repetitions": [
+        {
+          "passed": true,
+          "rows": [
+            {
+              "level": 0,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 6.430875788110413e-06,
+                "r_over_q_accelerator_ohm": 0.0003180182356410377,
+                "geometry_factor_ohm": 0.005293687303921768
+              },
+              "field_relative_l2": {
+                "E": 0.0002958696003092772,
+                "Hphi": 0.0018293499765417664
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.0552105889946688,
+                "dofs": 1225,
+                "computed_modes": 1,
+                "relative_eigen_residual": 2.5854748312370753e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.2799999999999998,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.00799999999999997,
+                "volume_m3": 0.0025132741228718327,
+                "quantities": {
+                  "frequency_hz": 1147425357.6327527,
+                  "r_over_q_accelerator_ohm": 215.27925741667212,
+                  "geometry_factor_ohm": 201.32677872111896,
+                  "r_over_q_circuit_ohm": 107.63962870833606,
+                  "epk_over_eacc_estimate": 1.1726640564369581,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2759431714747005
+                }
+              },
+              "candidate": {
+                "seconds": 0.032133582993992604,
+                "dofs": 559,
+                "free_dofs": 463,
+                "reported_dofs": 342,
+                "computed_modes": 3,
+                "mesh_elements": 42,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 20.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999947,
+                  "PEC": 0.27999999999999814
+                },
+                "area_m2": 0.007999999999999867,
+                "volume_m3": 0.0025132741228717924,
+                "energy_balance_relative": 1.320323399526949e-10,
+                "reported_energy_relative_difference": 2.6876789682717117e-10,
+                "te_electric_energy_fraction": 2.722624807681789e-29,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147432736.5827038,
+                  "r_over_q_accelerator_ohm": 215.34772014628587,
+                  "geometry_factor_ohm": 200.2610177086635,
+                  "r_over_q_circuit_ohm": 107.67386007314293,
+                  "epk_over_eacc_estimate": 1.172552587152978,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.3237510519969673
+                }
+              }
+            },
+            {
+              "level": 1,
+              "candidate_global_sign": 1.0,
+              "relative_difference": {
+                "frequency_hz": 4.149602308434197e-07,
+                "r_over_q_accelerator_ohm": 1.7491949080294944e-05,
+                "geometry_factor_ohm": 0.0016066600496190686
+              },
+              "field_relative_l2": {
+                "E": 6.255829047114695e-05,
+                "Hphi": 0.0006650046672863953
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.16091554499871563,
+                "dofs": 4753,
+                "computed_modes": 1,
+                "relative_eigen_residual": 1.0862900445658604e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.28000000000000014,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.008000000000000331,
+                "volume_m3": 0.0025132741228718245,
+                "quantities": {
+                  "frequency_hz": 1147425283.345686,
+                  "r_over_q_accelerator_ohm": 215.2740026829783,
+                  "geometry_factor_ohm": 201.3268165580945,
+                  "r_over_q_circuit_ohm": 107.63700134148915,
+                  "epk_over_eacc_estimate": 1.1726610667969326,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2760053341274142
+                }
+              },
+              "candidate": {
+                "seconds": 0.09554113099875394,
+                "dofs": 2365,
+                "free_dofs": 2173,
+                "reported_dofs": 1464,
+                "computed_modes": 3,
+                "mesh_elements": 188,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 10.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999947,
+                  "PEC": 0.27999999999999814
+                },
+                "area_m2": 0.007999999999999865,
+                "volume_m3": 0.002513274122871794,
+                "energy_balance_relative": 1.3203193338784998e-10,
+                "reported_energy_relative_difference": 2.6876789682717117e-10,
+                "te_electric_energy_fraction": 2.2157731210914248e-30,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147425759.4815464,
+                  "r_over_q_accelerator_ohm": 215.27776824487157,
+                  "geometry_factor_ohm": 201.0033528050136,
+                  "r_over_q_circuit_ohm": 107.63888412243578,
+                  "epk_over_eacc_estimate": 1.1726655131149046,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2786135416659663
+                }
+              }
+            },
+            {
+              "level": 2,
+              "candidate_global_sign": 1.0,
+              "relative_difference": {
+                "frequency_hz": 2.2823255507731233e-08,
+                "r_over_q_accelerator_ohm": 1.0201739075732519e-06,
+                "geometry_factor_ohm": 0.00027497041340007744
+              },
+              "field_relative_l2": {
+                "E": 1.8458067611668887e-05,
+                "Hphi": 0.0002670225317997552
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.6874265650039888,
+                "dofs": 18721,
+                "computed_modes": 1,
+                "relative_eigen_residual": 4.7696537421524225e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.27999999999999947,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.007999999999998562,
+                "volume_m3": 0.0025132741228718427,
+                "quantities": {
+                  "frequency_hz": 1147425278.6651578,
+                  "r_over_q_accelerator_ohm": 215.27361430106552,
+                  "geometry_factor_ohm": 201.32681896130117,
+                  "r_over_q_circuit_ohm": 107.63680715053276,
+                  "epk_over_eacc_estimate": 1.172660834479242,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.276010141234315
+                }
+              },
+              "candidate": {
+                "seconds": 0.4368376040001749,
+                "dofs": 9049,
+                "free_dofs": 8665,
+                "reported_dofs": 5628,
+                "computed_modes": 3,
+                "mesh_elements": 736,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 5.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999949,
+                  "PEC": 0.27999999999999825
+                },
+                "area_m2": 0.00799999999999986,
+                "volume_m3": 0.0025132741228717946,
+                "energy_balance_relative": 1.3203036520916208e-10,
+                "reported_energy_relative_difference": 2.6876612047033177e-10,
+                "te_electric_energy_fraction": 1.2241374988649388e-28,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147425304.8531382,
+                  "r_over_q_accelerator_ohm": 215.27383391758983,
+                  "geometry_factor_ohm": 201.27146004266285,
+                  "r_over_q_circuit_ohm": 107.63691695879491,
+                  "epk_over_eacc_estimate": 1.1726657562605634,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.276807817766699
+                }
+              }
+            }
+          ]
+        },
+        {
+          "passed": true,
+          "rows": [
+            {
+              "level": 0,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 6.430875787888368e-06,
+                "r_over_q_accelerator_ohm": 0.00031801820776178324,
+                "geometry_factor_ohm": 0.005293687303967065
+              },
+              "field_relative_l2": {
+                "E": 0.0002958739050616861,
+                "Hphi": 0.0018293499766143864
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.04633702999853995,
+                "dofs": 1225,
+                "computed_modes": 1,
+                "relative_eigen_residual": 2.5854748312370753e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.2799999999999998,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.00799999999999997,
+                "volume_m3": 0.0025132741228718327,
+                "quantities": {
+                  "frequency_hz": 1147425357.6327527,
+                  "r_over_q_accelerator_ohm": 215.27925741667212,
+                  "geometry_factor_ohm": 201.32677872111896,
+                  "r_over_q_circuit_ohm": 107.63962870833606,
+                  "epk_over_eacc_estimate": 1.1726640564369581,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2759431714747005
+                }
+              },
+              "candidate": {
+                "seconds": 0.027736894000554457,
+                "dofs": 559,
+                "free_dofs": 463,
+                "reported_dofs": 342,
+                "computed_modes": 3,
+                "mesh_elements": 42,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 20.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999947,
+                  "PEC": 0.27999999999999814
+                },
+                "area_m2": 0.007999999999999867,
+                "volume_m3": 0.0025132741228717924,
+                "energy_balance_relative": 1.3203222379131063e-10,
+                "reported_energy_relative_difference": 2.68768340916381e-10,
+                "te_electric_energy_fraction": 5.03601312766186e-31,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147432736.5827036,
+                  "r_over_q_accelerator_ohm": 215.34772014028405,
+                  "geometry_factor_ohm": 200.26101770865438,
+                  "r_over_q_circuit_ohm": 107.67386007014203,
+                  "epk_over_eacc_estimate": 1.1725525561285137,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.323751052029319
+                }
+              }
+            },
+            {
+              "level": 1,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 4.149602299552413e-07,
+                "r_over_q_accelerator_ohm": 1.7512729488355916e-05,
+                "geometry_factor_ohm": 0.001606660049625841
+              },
+              "field_relative_l2": {
+                "E": 6.255913140795313e-05,
+                "Hphi": 0.0006650046672953228
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.15956581800128333,
+                "dofs": 4753,
+                "computed_modes": 1,
+                "relative_eigen_residual": 1.0862900445658604e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.28000000000000014,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.008000000000000331,
+                "volume_m3": 0.0025132741228718245,
+                "quantities": {
+                  "frequency_hz": 1147425283.345686,
+                  "r_over_q_accelerator_ohm": 215.2740026829783,
+                  "geometry_factor_ohm": 201.3268165580945,
+                  "r_over_q_circuit_ohm": 107.63700134148915,
+                  "epk_over_eacc_estimate": 1.1726610667969326,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2760053341274142
+                }
+              },
+              "candidate": {
+                "seconds": 0.09109472799900686,
+                "dofs": 2365,
+                "free_dofs": 2173,
+                "reported_dofs": 1464,
+                "computed_modes": 3,
+                "mesh_elements": 188,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 10.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999947,
+                  "PEC": 0.27999999999999814
+                },
+                "area_m2": 0.007999999999999865,
+                "volume_m3": 0.002513274122871794,
+                "energy_balance_relative": 1.3203199146854214e-10,
+                "reported_energy_relative_difference": 2.687681188717761e-10,
+                "te_electric_energy_fraction": 1.0399404647190217e-29,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147425759.4815454,
+                  "r_over_q_accelerator_ohm": 215.2777727183532,
+                  "geometry_factor_ohm": 201.00335280501224,
+                  "r_over_q_circuit_ohm": 107.6388863591766,
+                  "epk_over_eacc_estimate": 1.1726648889263591,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2786135179911433
+                }
+              }
+            },
+            {
+              "level": 2,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 2.2823271494942787e-08,
+                "r_over_q_accelerator_ohm": 9.493799184578933e-07,
+                "geometry_factor_ohm": 0.0002749704133800934
+              },
+              "field_relative_l2": {
+                "E": 1.8476296875134956e-05,
+                "Hphi": 0.0002670225318266914
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.6412761389947264,
+                "dofs": 18721,
+                "computed_modes": 1,
+                "relative_eigen_residual": 4.7696537421524225e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.27999999999999947,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.007999999999998562,
+                "volume_m3": 0.0025132741228718427,
+                "quantities": {
+                  "frequency_hz": 1147425278.6651578,
+                  "r_over_q_accelerator_ohm": 215.27361430106552,
+                  "geometry_factor_ohm": 201.32681896130117,
+                  "r_over_q_circuit_ohm": 107.63680715053276,
+                  "epk_over_eacc_estimate": 1.172660834479242,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.276010141234315
+                }
+              },
+              "candidate": {
+                "seconds": 0.42343396299838787,
+                "dofs": 9049,
+                "free_dofs": 8665,
+                "reported_dofs": 5628,
+                "computed_modes": 3,
+                "mesh_elements": 736,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 5.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999949,
+                  "PEC": 0.27999999999999825
+                },
+                "area_m2": 0.00799999999999986,
+                "volume_m3": 0.0025132741228717946,
+                "energy_balance_relative": 1.3203129450023633e-10,
+                "reported_energy_relative_difference": 2.6876700864875147e-10,
+                "te_electric_energy_fraction": 1.5209616826999882e-29,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147425304.8531563,
+                  "r_over_q_accelerator_ohm": 215.2738186775119,
+                  "geometry_factor_ohm": 201.2714600426669,
+                  "r_over_q_circuit_ohm": 107.63690933875596,
+                  "epk_over_eacc_estimate": 1.172660792309271,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2768078983587983
+                }
+              }
+            }
+          ]
+        },
+        {
+          "passed": true,
+          "rows": [
+            {
+              "level": 0,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 6.430875788554502e-06,
+                "r_over_q_accelerator_ohm": 0.0003180173295760369,
+                "geometry_factor_ohm": 0.005293687303965955
+              },
+              "field_relative_l2": {
+                "E": 0.0002958694635509653,
+                "Hphi": 0.0018293499766167903
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.045618248004757334,
+                "dofs": 1225,
+                "computed_modes": 1,
+                "relative_eigen_residual": 2.5854748312370753e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.2799999999999998,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.00799999999999997,
+                "volume_m3": 0.0025132741228718327,
+                "quantities": {
+                  "frequency_hz": 1147425357.6327527,
+                  "r_over_q_accelerator_ohm": 215.27925741667212,
+                  "geometry_factor_ohm": 201.32677872111896,
+                  "r_over_q_circuit_ohm": 107.63962870833606,
+                  "epk_over_eacc_estimate": 1.1726640564369581,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2759431714747005
+                }
+              },
+              "candidate": {
+                "seconds": 0.027239151000685524,
+                "dofs": 559,
+                "free_dofs": 463,
+                "reported_dofs": 342,
+                "computed_modes": 3,
+                "mesh_elements": 42,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 20.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999947,
+                  "PEC": 0.27999999999999814
+                },
+                "area_m2": 0.007999999999999867,
+                "volume_m3": 0.0025132741228717924,
+                "energy_balance_relative": 1.3203286267892417e-10,
+                "reported_energy_relative_difference": 2.6876856296098595e-10,
+                "te_electric_energy_fraction": 6.374741872991512e-33,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147432736.5827043,
+                  "r_over_q_accelerator_ohm": 215.34771995122887,
+                  "geometry_factor_ohm": 200.2610177086546,
+                  "r_over_q_circuit_ohm": 107.67385997561443,
+                  "epk_over_eacc_estimate": 1.1725526243060707,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.32375105304935
+                }
+              }
+            },
+            {
+              "level": 1,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 4.1496022906706287e-07,
+                "r_over_q_accelerator_ohm": 1.752870681848151e-05,
+                "geometry_factor_ohm": 0.00160666004967569
+              },
+              "field_relative_l2": {
+                "E": 6.255826557828811e-05,
+                "Hphi": 0.0006650046673005611
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.153929790998518,
+                "dofs": 4753,
+                "computed_modes": 1,
+                "relative_eigen_residual": 1.0862900445658604e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.28000000000000014,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.008000000000000331,
+                "volume_m3": 0.0025132741228718245,
+                "quantities": {
+                  "frequency_hz": 1147425283.345686,
+                  "r_over_q_accelerator_ohm": 215.2740026829783,
+                  "geometry_factor_ohm": 201.3268165580945,
+                  "r_over_q_circuit_ohm": 107.63700134148915,
+                  "epk_over_eacc_estimate": 1.1726610667969326,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2760053341274142
+                }
+              },
+              "candidate": {
+                "seconds": 0.08971826999913901,
+                "dofs": 2365,
+                "free_dofs": 2173,
+                "reported_dofs": 1464,
+                "computed_modes": 3,
+                "mesh_elements": 188,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 10.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999947,
+                  "PEC": 0.27999999999999814
+                },
+                "area_m2": 0.007999999999999865,
+                "volume_m3": 0.002513274122871794,
+                "energy_balance_relative": 1.3203268843684771e-10,
+                "reported_energy_relative_difference": 2.6876767478256625e-10,
+                "te_electric_energy_fraction": 2.391970646642197e-27,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147425759.4815445,
+                  "r_over_q_accelerator_ohm": 215.27777615785698,
+                  "geometry_factor_ohm": 201.0033528050022,
+                  "r_over_q_circuit_ohm": 107.63888807892849,
+                  "epk_over_eacc_estimate": 1.1726642210093323,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.278613499788321
+                }
+              }
+            },
+            {
+              "level": 2,
+              "candidate_global_sign": 1.0,
+              "relative_difference": {
+                "frequency_hz": 2.2823272383121207e-08,
+                "r_over_q_accelerator_ohm": 9.85644340811831e-07,
+                "geometry_factor_ohm": 0.000274970413343234
+              },
+              "field_relative_l2": {
+                "E": 1.8472558012764934e-05,
+                "Hphi": 0.0002670225318421171
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.6347880680041271,
+                "dofs": 18721,
+                "computed_modes": 1,
+                "relative_eigen_residual": 4.7696537421524225e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.27999999999999947,
+                  "AXI": 0.08
+                },
+                "area_m2": 0.007999999999998562,
+                "volume_m3": 0.0025132741228718427,
+                "quantities": {
+                  "frequency_hz": 1147425278.6651578,
+                  "r_over_q_accelerator_ohm": 215.27361430106552,
+                  "geometry_factor_ohm": 201.32681896130117,
+                  "r_over_q_circuit_ohm": 107.63680715053276,
+                  "epk_over_eacc_estimate": 1.172660834479242,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.276010141234315
+                }
+              },
+              "candidate": {
+                "seconds": 0.4192925080060377,
+                "dofs": 9049,
+                "free_dofs": 8665,
+                "reported_dofs": 5628,
+                "computed_modes": 3,
+                "mesh_elements": 736,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 5.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.04,
+                      0
+                    ],
+                    [
+                      -0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0.1
+                    ],
+                    [
+                      0.04,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.07999999999999949,
+                  "PEC": 0.27999999999999825
+                },
+                "area_m2": 0.00799999999999986,
+                "volume_m3": 0.0025132741228717946,
+                "energy_balance_relative": 1.320313525809284e-10,
+                "reported_energy_relative_difference": 2.6876589842572685e-10,
+                "te_electric_energy_fraction": 3.8935810263855454e-29,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1147425304.8531575,
+                  "r_over_q_accelerator_ohm": 215.2738264842852,
+                  "geometry_factor_ohm": 201.2714600426743,
+                  "r_over_q_circuit_ohm": 107.6369132421426,
+                  "epk_over_eacc_estimate": 1.1726621977053329,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.2768078570754313
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "analytic": {
+        "frequency_hz": 1147425278.3521001,
+        "r_over_q_accelerator_ohm": 215.2735841905728,
+        "geometry_factor_ohm": 201.32681912266395,
+        "r_over_q_circuit_ohm": 107.6367920952864,
+        "epk_over_eacc_estimate": 1.1726608156770388,
+        "bpk_over_eacc_estimate_mt_per_mv_per_m": 2.27600972043186
+      },
+      "probes_rz_m": [
+        [
+          0.020000000000000004,
+          0.013600000000000001
+        ],
+        [
+          0.05,
+          0.013600000000000001
+        ],
+        [
+          0.08000000000000002,
+          0.013600000000000001
+        ],
+        [
+          0.020000000000000004,
+          0.031200000000000002
+        ],
+        [
+          0.05,
+          0.031200000000000002
+        ],
+        [
+          0.08000000000000002,
+          0.031200000000000002
+        ],
+        [
+          0.020000000000000004,
+          0.0488
+        ],
+        [
+          0.05,
+          0.0488
+        ],
+        [
+          0.08000000000000002,
+          0.0488
+        ],
+        [
+          0.020000000000000004,
+          0.0664
+        ],
+        [
+          0.05,
+          0.0664
+        ],
+        [
+          0.08000000000000002,
+          0.0664
+        ]
+      ]
+    },
+    "frustum": {
+      "passed": true,
+      "repetitions": [
+        {
+          "passed": true,
+          "rows": [
+            {
+              "level": 0,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 1.2523130443087283e-05,
+                "r_over_q_accelerator_ohm": 0.0005354494380618302,
+                "geometry_factor_ohm": 0.014031694000697037
+              },
+              "field_relative_l2": {
+                "E": 0.0005845615100405992,
+                "Hphi": 0.006747053382281824
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.04565669099974912,
+                "dofs": 1225,
+                "computed_modes": 1,
+                "relative_eigen_residual": 1.2372532521410508e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.3016552506059643,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.0108,
+                "volume_m3": 0.003066194429903639,
+                "quantities": {
+                  "frequency_hz": 1262477924.5109491,
+                  "r_over_q_accelerator_ohm": 187.94050842993659,
+                  "geometry_factor_ohm": 247.65746399465002,
+                  "r_over_q_circuit_ohm": 93.97025421496829,
+                  "epk_over_eacc_estimate": 1.7628503718101005,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636081730686942
+                }
+              },
+              "candidate": {
+                "seconds": 0.035047151999606285,
+                "dofs": 700,
+                "free_dofs": 592,
+                "reported_dofs": 429,
+                "computed_modes": 3,
+                "mesh_elements": 53,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 20.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.11999999999999919,
+                  "PEC": 0.3016552506059624
+                },
+                "area_m2": 0.010799999999999822,
+                "volume_m3": 0.003066194429903587,
+                "energy_balance_relative": 1.3203199146854214e-10,
+                "reported_energy_relative_difference": 2.6876789682717117e-10,
+                "te_electric_energy_fraction": 6.772773078089644e-30,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262493734.6866794,
+                  "r_over_q_accelerator_ohm": 188.04114106956445,
+                  "geometry_factor_ohm": 244.18241024288844,
+                  "r_over_q_circuit_ohm": 94.02057053478222,
+                  "epk_over_eacc_estimate": 1.7626322630782356,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.693108317698014
+                }
+              }
+            },
+            {
+              "level": 1,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 6.205857847607632e-07,
+                "r_over_q_accelerator_ohm": 2.2317779694969175e-05,
+                "geometry_factor_ohm": 0.0030432760914014256
+              },
+              "field_relative_l2": {
+                "E": 6.387695364172276e-05,
+                "Hphi": 0.0012818445357392798
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.15444393499637954,
+                "dofs": 4753,
+                "computed_modes": 1,
+                "relative_eigen_residual": 4.825758526229337e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.30165525060596443,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.010799999999999945,
+                "volume_m3": 0.0030661944299036348,
+                "quantities": {
+                  "frequency_hz": 1262477760.8043983,
+                  "r_over_q_accelerator_ohm": 187.93542643908654,
+                  "geometry_factor_ohm": 247.65754081659477,
+                  "r_over_q_circuit_ohm": 93.96771321954327,
+                  "epk_over_eacc_estimate": 1.7628580038176247,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636144535512747
+                }
+              },
+              "candidate": {
+                "seconds": 0.11820759900001576,
+                "dofs": 3031,
+                "free_dofs": 2815,
+                "reported_dofs": 1878,
+                "computed_modes": 3,
+                "mesh_elements": 242,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 10.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.1199999999999992,
+                  "PEC": 0.30165525060596254
+                },
+                "area_m2": 0.010799999999999824,
+                "volume_m3": 0.003066194429903589,
+                "energy_balance_relative": 1.3203286267892412e-10,
+                "reported_energy_relative_difference": 2.68768340916381e-10,
+                "te_electric_energy_fraction": 1.8394236868198954e-27,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262478544.2801502,
+                  "r_over_q_accelerator_ohm": 187.9396207405307,
+                  "geometry_factor_ohm": 246.90385054377236,
+                  "r_over_q_circuit_ohm": 93.96981037026535,
+                  "epk_over_eacc_estimate": 1.7628710800718443,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.633382090913879
+                }
+              }
+            },
+            {
+              "level": 2,
+              "candidate_global_sign": 1.0,
+              "relative_difference": {
+                "frequency_hz": 2.566001300330356e-08,
+                "r_over_q_accelerator_ohm": 1.8882612646820007e-06,
+                "geometry_factor_ohm": 0.0005177847931319146
+              },
+              "field_relative_l2": {
+                "E": 2.140277071829244e-05,
+                "Hphi": 0.00021899820539641123
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.6788526119999005,
+                "dofs": 18721,
+                "computed_modes": 1,
+                "relative_eigen_residual": 2.3701714876288914e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.3016552506059644,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.010799999999999933,
+                "volume_m3": 0.003066194429903629,
+                "quantities": {
+                  "frequency_hz": 1262477748.5581439,
+                  "r_over_q_accelerator_ohm": 187.93505111652937,
+                  "geometry_factor_ohm": 247.65754516723615,
+                  "r_over_q_circuit_ohm": 93.96752555826468,
+                  "epk_over_eacc_estimate": 1.7628585696782728,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636146546360542
+                }
+              },
+              "candidate": {
+                "seconds": 0.6619827440008521,
+                "dofs": 12733,
+                "free_dofs": 12301,
+                "reported_dofs": 7926,
+                "computed_modes": 3,
+                "mesh_elements": 1040,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 5.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.1199999999999992,
+                  "PEC": 0.30165525060596227
+                },
+                "area_m2": 0.010799999999999825,
+                "volume_m3": 0.003066194429903591,
+                "energy_balance_relative": 1.3203286267892412e-10,
+                "reported_energy_relative_difference": 2.687692290948007e-10,
+                "te_electric_energy_fraction": 5.384046266722159e-28,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262477780.9533393,
+                  "r_over_q_accelerator_ohm": 187.93540598700667,
+                  "geometry_factor_ohm": 247.52931185644417,
+                  "r_over_q_circuit_ohm": 93.96770299350334,
+                  "epk_over_eacc_estimate": 1.7628622446433129,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.6379142948232883
+                }
+              }
+            }
+          ]
+        },
+        {
+          "passed": true,
+          "rows": [
+            {
+              "level": 0,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 1.2523130443087283e-05,
+                "r_over_q_accelerator_ohm": 0.0005354542275264329,
+                "geometry_factor_ohm": 0.014031694000696593
+              },
+              "field_relative_l2": {
+                "E": 0.0005845596589703177,
+                "Hphi": 0.006747053382265761
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.045303270999283995,
+                "dofs": 1225,
+                "computed_modes": 1,
+                "relative_eigen_residual": 1.2372532521410508e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.3016552506059643,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.0108,
+                "volume_m3": 0.003066194429903639,
+                "quantities": {
+                  "frequency_hz": 1262477924.5109491,
+                  "r_over_q_accelerator_ohm": 187.94050842993659,
+                  "geometry_factor_ohm": 247.65746399465002,
+                  "r_over_q_circuit_ohm": 93.97025421496829,
+                  "epk_over_eacc_estimate": 1.7628503718101005,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636081730686942
+                }
+              },
+              "candidate": {
+                "seconds": 0.03511402900039684,
+                "dofs": 700,
+                "free_dofs": 592,
+                "reported_dofs": 429,
+                "computed_modes": 3,
+                "mesh_elements": 53,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 20.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.11999999999999919,
+                  "PEC": 0.3016552506059624
+                },
+                "area_m2": 0.010799999999999822,
+                "volume_m3": 0.003066194429903587,
+                "energy_balance_relative": 1.320323399526949e-10,
+                "reported_energy_relative_difference": 2.687681188717761e-10,
+                "te_electric_energy_fraction": 4.814675598365639e-30,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262493734.6866794,
+                  "r_over_q_accelerator_ohm": 188.04114196969886,
+                  "geometry_factor_ohm": 244.18241024288855,
+                  "r_over_q_circuit_ohm": 94.02057098484943,
+                  "epk_over_eacc_estimate": 1.7626322364741982,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.6931083088587786
+                }
+              }
+            },
+            {
+              "level": 1,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 6.205857923102798e-07,
+                "r_over_q_accelerator_ohm": 2.232835443805037e-05,
+                "geometry_factor_ohm": 0.00304327609167665
+              },
+              "field_relative_l2": {
+                "E": 6.388088389730395e-05,
+                "Hphi": 0.0012818445359292696
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.15418630699423375,
+                "dofs": 4753,
+                "computed_modes": 1,
+                "relative_eigen_residual": 4.825758526229337e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.30165525060596443,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.010799999999999945,
+                "volume_m3": 0.0030661944299036348,
+                "quantities": {
+                  "frequency_hz": 1262477760.8043983,
+                  "r_over_q_accelerator_ohm": 187.93542643908654,
+                  "geometry_factor_ohm": 247.65754081659477,
+                  "r_over_q_circuit_ohm": 93.96771321954327,
+                  "epk_over_eacc_estimate": 1.7628580038176247,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636144535512747
+                }
+              },
+              "candidate": {
+                "seconds": 0.11848627700237557,
+                "dofs": 3031,
+                "free_dofs": 2815,
+                "reported_dofs": 1878,
+                "computed_modes": 3,
+                "mesh_elements": 242,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 10.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.1199999999999992,
+                  "PEC": 0.30165525060596254
+                },
+                "area_m2": 0.010799999999999824,
+                "volume_m3": 0.003066194429903589,
+                "energy_balance_relative": 1.3203251419477128e-10,
+                "reported_energy_relative_difference": 2.6876856296098595e-10,
+                "te_electric_energy_fraction": 1.8154517746173264e-28,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262478544.2801597,
+                  "r_over_q_accelerator_ohm": 187.93962272789955,
+                  "geometry_factor_ohm": 246.9038505437042,
+                  "r_over_q_circuit_ohm": 93.96981136394977,
+                  "epk_over_eacc_estimate": 1.7628706333534052,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.6333820717058685
+                }
+              }
+            },
+            {
+              "level": 2,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 2.5659973479363885e-08,
+                "r_over_q_accelerator_ohm": 1.7899301811841184e-06,
+                "geometry_factor_ohm": 0.000517784793561904
+              },
+              "field_relative_l2": {
+                "E": 2.1400033910018475e-05,
+                "Hphi": 0.00021899820567793687
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.6385344539958169,
+                "dofs": 18721,
+                "computed_modes": 1,
+                "relative_eigen_residual": 2.3701714876288914e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.3016552506059644,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.010799999999999933,
+                "volume_m3": 0.003066194429903629,
+                "quantities": {
+                  "frequency_hz": 1262477748.5581439,
+                  "r_over_q_accelerator_ohm": 187.93505111652937,
+                  "geometry_factor_ohm": 247.65754516723615,
+                  "r_over_q_circuit_ohm": 93.96752555826468,
+                  "epk_over_eacc_estimate": 1.7628585696782728,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636146546360542
+                }
+              },
+              "candidate": {
+                "seconds": 0.6671864729942172,
+                "dofs": 12733,
+                "free_dofs": 12301,
+                "reported_dofs": 7926,
+                "computed_modes": 3,
+                "mesh_elements": 1040,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 5.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.1199999999999992,
+                  "PEC": 0.30165525060596227
+                },
+                "area_m2": 0.010799999999999825,
+                "volume_m3": 0.003066194429903591,
+                "energy_balance_relative": 1.3203332732446126e-10,
+                "reported_energy_relative_difference": 2.6876789682717117e-10,
+                "te_electric_energy_fraction": 2.306826269867348e-27,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262477780.9532895,
+                  "r_over_q_accelerator_ohm": 187.93538750714944,
+                  "geometry_factor_ohm": 247.5293118563377,
+                  "r_over_q_circuit_ohm": 93.96769375357472,
+                  "epk_over_eacc_estimate": 1.7628612054339823,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.6379144736832494
+                }
+              }
+            }
+          ]
+        },
+        {
+          "passed": true,
+          "rows": [
+            {
+              "level": 0,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 1.2523130442421149e-05,
+                "r_over_q_accelerator_ohm": 0.0005354627064131368,
+                "geometry_factor_ohm": 0.014031694000707917
+              },
+              "field_relative_l2": {
+                "E": 0.0005845623077403016,
+                "Hphi": 0.006747053382275798
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.045536553996498697,
+                "dofs": 1225,
+                "computed_modes": 1,
+                "relative_eigen_residual": 1.2372532521410508e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.3016552506059643,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.0108,
+                "volume_m3": 0.003066194429903639,
+                "quantities": {
+                  "frequency_hz": 1262477924.5109491,
+                  "r_over_q_accelerator_ohm": 187.94050842993659,
+                  "geometry_factor_ohm": 247.65746399465002,
+                  "r_over_q_circuit_ohm": 93.97025421496829,
+                  "epk_over_eacc_estimate": 1.7628503718101005,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636081730686942
+                }
+              },
+              "candidate": {
+                "seconds": 0.03439871399314143,
+                "dofs": 700,
+                "free_dofs": 592,
+                "reported_dofs": 429,
+                "computed_modes": 3,
+                "mesh_elements": 53,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 20.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.11999999999999919,
+                  "PEC": 0.3016552506059624
+                },
+                "area_m2": 0.010799999999999822,
+                "volume_m3": 0.003066194429903587,
+                "energy_balance_relative": 1.320318172264657e-10,
+                "reported_energy_relative_difference": 2.6876789682717117e-10,
+                "te_electric_energy_fraction": 2.4737027618231718e-30,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262493734.6866784,
+                  "r_over_q_accelerator_ohm": 188.04114356322512,
+                  "geometry_factor_ohm": 244.18241024288574,
+                  "r_over_q_circuit_ohm": 94.02057178161256,
+                  "epk_over_eacc_estimate": 1.7626323207215389,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.693108293210483
+                }
+              }
+            },
+            {
+              "level": 1,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 6.205857912000567e-07,
+                "r_over_q_accelerator_ohm": 2.2364066092350754e-05,
+                "geometry_factor_ohm": 0.0030432760917250556
+              },
+              "field_relative_l2": {
+                "E": 6.388942210233099e-05,
+                "Hphi": 0.0012818445359126204
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.15453500800504116,
+                "dofs": 4753,
+                "computed_modes": 1,
+                "relative_eigen_residual": 4.825758526229337e-13,
+                "boundary_lengths_m": {
+                  "PEC": 0.30165525060596443,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.010799999999999945,
+                "volume_m3": 0.0030661944299036348,
+                "quantities": {
+                  "frequency_hz": 1262477760.8043983,
+                  "r_over_q_accelerator_ohm": 187.93542643908654,
+                  "geometry_factor_ohm": 247.65754081659477,
+                  "r_over_q_circuit_ohm": 93.96771321954327,
+                  "epk_over_eacc_estimate": 1.7628580038176247,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636144535512747
+                }
+              },
+              "candidate": {
+                "seconds": 0.11813297800108558,
+                "dofs": 3031,
+                "free_dofs": 2815,
+                "reported_dofs": 1878,
+                "computed_modes": 3,
+                "mesh_elements": 242,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 10.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.1199999999999992,
+                  "PEC": 0.30165525060596254
+                },
+                "area_m2": 0.010799999999999824,
+                "volume_m3": 0.003066194429903589,
+                "energy_balance_relative": 1.320322818720027e-10,
+                "reported_energy_relative_difference": 2.6876856296098595e-10,
+                "te_electric_energy_fraction": 7.842825002050408e-27,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262478544.2801583,
+                  "r_over_q_accelerator_ohm": 187.93962943938453,
+                  "geometry_factor_ohm": 246.90385054369222,
+                  "r_over_q_circuit_ohm": 93.96981471969227,
+                  "epk_over_eacc_estimate": 1.762872233201666,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.6333820068304017
+                }
+              }
+            },
+            {
+              "level": 2,
+              "candidate_global_sign": -1.0,
+              "relative_difference": {
+                "frequency_hz": 2.5659981917058872e-08,
+                "r_over_q_accelerator_ohm": 2.049228175149409e-06,
+                "geometry_factor_ohm": 0.0005177847932404944
+              },
+              "field_relative_l2": {
+                "E": 2.1405423912327298e-05,
+                "Hphi": 0.00021899820536347932
+              },
+              "physical_checks_passed": true,
+              "ng": {
+                "seconds": 0.6308262219972676,
+                "dofs": 18721,
+                "computed_modes": 1,
+                "relative_eigen_residual": 2.3701714876288914e-12,
+                "boundary_lengths_m": {
+                  "PEC": 0.3016552506059644,
+                  "AXI": 0.12
+                },
+                "area_m2": 0.010799999999999933,
+                "volume_m3": 0.003066194429903629,
+                "quantities": {
+                  "frequency_hz": 1262477748.5581439,
+                  "r_over_q_accelerator_ohm": 187.93505111652937,
+                  "geometry_factor_ohm": 247.65754516723615,
+                  "r_over_q_circuit_ohm": 93.96752555826468,
+                  "epk_over_eacc_estimate": 1.7628585696782728,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.636146546360542
+                }
+              },
+              "candidate": {
+                "seconds": 0.6596715760024381,
+                "dofs": 12733,
+                "free_dofs": 12301,
+                "reported_dofs": 7926,
+                "computed_modes": 3,
+                "mesh_elements": 1040,
+                "config": {
+                  "processes": 1,
+                  "rerun": true,
+                  "boundary_conditions": "ee",
+                  "polarisation": "monopole",
+                  "n_modes": 1,
+                  "mode_of_interest": 1,
+                  "mesh_config": {
+                    "h": 5.0,
+                    "p": 2
+                  },
+                  "pinvit_maxit": 100
+                },
+                "profile": {
+                  "points_zr_m": [
+                    [
+                      -0.06,
+                      0
+                    ],
+                    [
+                      -0.06,
+                      0.08
+                    ],
+                    [
+                      0.06,
+                      0.1
+                    ],
+                    [
+                      0.06,
+                      0
+                    ]
+                  ],
+                  "tags": [
+                    "PEC",
+                    "PEC",
+                    "PEC",
+                    "AXI"
+                  ]
+                },
+                "boundary_lengths_m": {
+                  "AXI": 0.1199999999999992,
+                  "PEC": 0.30165525060596227
+                },
+                "area_m2": 0.010799999999999825,
+                "volume_m3": 0.003066194429903591,
+                "energy_balance_relative": 1.3203315308238477e-10,
+                "reported_energy_relative_difference": 2.687690070501958e-10,
+                "te_electric_energy_fraction": 9.639990854870775e-28,
+                "field_scope": "loaded saved candidate field, scaled to total peak-phasor energy 1 J; coordinates translated by L/2",
+                "physical_checks_passed": true,
+                "quantities": {
+                  "frequency_hz": 1262477780.9533,
+                  "r_over_q_accelerator_ohm": 187.93543623833122,
+                  "geometry_factor_ohm": 247.52931185641728,
+                  "r_over_q_circuit_ohm": 93.96771811916561,
+                  "epk_over_eacc_estimate": 1.7628609365749193,
+                  "bpk_over_eacc_estimate_mt_per_mv_per_m": 3.6379140020322924
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "analytic": null,
+      "probes_rz_m": [
+        [
+          0.01668,
+          0.0204
+        ],
+        [
+          0.0417,
+          0.0204
+        ],
+        [
+          0.06672,
+          0.0204
+        ],
+        [
+          0.017560000000000003,
+          0.0468
+        ],
+        [
+          0.0439,
+          0.0468
+        ],
+        [
+          0.07024000000000001,
+          0.0468
+        ],
+        [
+          0.01844,
+          0.0732
+        ],
+        [
+          0.0461,
+          0.0732
+        ],
+        [
+          0.07376,
+          0.0732
+        ],
+        [
+          0.019320000000000004,
+          0.0996
+        ],
+        [
+          0.0483,
+          0.0996
+        ],
+        [
+          0.07728000000000002,
+          0.0996
+        ]
+      ]
+    }
+  },
+  "total_comparison_seconds": 10.43582406600035,
+  "scope": "A01: two synthetic exact PEC polygons, fundamental TM, both three-level refinements; candidate geometry-only Profile adapter, unmodified numerical solver and QOI evaluator; all candidate modes/actual product-space DOFs retained; no runtime network",
+  "timing_scope": "3 repetitions, alternating solver order; mesh/solve/RF and each package native output included, imports and independent reload/field checks excluded; different formulations and candidate 3 padded modes vs NG 1, no equal-work or general speed claim",
+  "public_api_probe": {
+    "input": {
+      "n_cells": 1,
+      "dims_mm": [
+        80,
+        100,
+        20,
+        0,
+        0
+      ],
+      "beampipe": "none",
+      "boundary_conditions": "ee",
+      "explicit_bc": 11
+    },
+    "observed_boundary_lengths_m": {
+      "AXI": 0.07999999999999977,
+      "PEC": 0.23999999999999932,
+      "PMC": 0.03999999999999988
+    },
+    "closed_pec_contract_passed": false,
+    "observed_frequency_hz": 1161939579.9184742
+  }
+}
