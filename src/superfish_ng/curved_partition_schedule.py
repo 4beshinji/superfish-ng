@@ -70,10 +70,11 @@ def build_partition_schedule(project,schedule):
     partitions=_validate(schedule)
     if not isinstance(project,Project):raise ValueError('partition schedule requires a Project')
     project=Project.from_dict(project.to_dict());case=project.case
-    from .te import is_te
+    from .te import is_te,validate_te_case
     if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None
-            or project.reflect_full or is_te(case) or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
-        raise ValueError('partition schedule requires direct native P2 closed PEC/axis TM geometry')
+            or project.reflect_full or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags)):
+        raise ValueError('partition schedule requires direct native P2 closed PEC/axis geometry')
+    if is_te(case):validate_te_case(case)
     limit=case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000
     results=[];documents=[]
     for partition in partitions:

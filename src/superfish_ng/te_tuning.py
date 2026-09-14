@@ -7,7 +7,7 @@ from .te import is_te
 def validate_te_request(request,project):
     case=project.case
     mapping=request['controls'].get('mapping') if isinstance(request['controls'],dict) else None
-    curved=request['schema_version'] in (4,5) or (request['schema_version']==7 and request.get('geometry_kind')=='curved_harmonic')
+    curved=request['schema_version'] in (4,5,8) or (request['schema_version']==7 and request.get('geometry_kind')=='curved_harmonic')
     if curved:
         if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None or project.reflect_full
                 or any(t not in ('axis','pec') for t in case.curved_contour.edge_tags) or mapping!=('affine_remesh' if request['schema_version']==4 else 'piecewise_remesh')):

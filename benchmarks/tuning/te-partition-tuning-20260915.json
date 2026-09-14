@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "dedicated_fem": 7,
+  "preserved_files": 54,
+  "rows": [
+    {
+      "index": 0,
+      "errors": {
+        "frequency_hz": 0.0,
+        "stored_energy_j": 2.220446049250313e-16,
+        "geometry_factor_ohm": 1.4432899320127035e-15,
+        "q0": 1.2212453270876722e-15,
+        "wall_loss_w": 1.5543122344752192e-15,
+        "Ephi_V_per_m": 2.086490393911124e-15,
+        "Hr_quadrature_A_per_m": 1.4060207531342532e-14,
+        "Hz_quadrature_A_per_m": 4.962383675592271e-15
+      },
+      "cells": 104,
+      "geometry_moments": {
+        "signed_area_m2": -0.012564418886561329,
+        "signed_volume_m3": -0.0026802032168880426
+      }
+    },
+    {
+      "index": 1,
+      "errors": {
+        "frequency_hz": 4.440892098500626e-16,
+        "stored_energy_j": 6.661338147750939e-16,
+        "geometry_factor_ohm": 2.220446049250313e-16,
+        "q0": 0.0,
+        "wall_loss_w": 2.220446049250313e-16,
+        "Ephi_V_per_m": 1.9989985758249507e-15,
+        "Hr_quadrature_A_per_m": 1.1702720147463718e-14,
+        "Hz_quadrature_A_per_m": 3.5475401747809665e-15
+      },
+      "cells": 108,
+      "geometry_moments": {
+        "signed_area_m2": -0.013886167248139611,
+        "signed_volume_m3": -0.0032736553239627367
+      }
+    },
+    {
+      "index": 2,
+      "errors": {
+        "frequency_hz": 2.220446049250313e-16,
+        "stored_energy_j": 4.440892098500626e-16,
+        "geometry_factor_ohm": 2.220446049250313e-16,
+        "q0": 4.440892098500626e-16,
+        "wall_loss_w": 7.771561172376096e-16,
+        "Ephi_V_per_m": 4.951088702435547e-15,
+        "Hr_quadrature_A_per_m": 3.2341990701804556e-14,
+        "Hz_quadrature_A_per_m": 7.67456953409219e-15
+      },
+      "cells": 416,
+      "geometry_moments": {
+        "signed_area_m2": -0.012564418886561329,
+        "signed_volume_m3": -0.002680203216888042
+      }
+    }
+  ],
+  "scope": "Direct closed PEC native P2 TE partition tune schema 8; API and saved replay; GUI and identity recovery not verified in this stage",
+  "new_unit_tests": "3 unique tests passed across split runs; final real test 418.664 s",
+  "related_unit_tests": {
+    "count": 26,
+    "seconds": 44.42
+  },
+  "diagnostic_fem": 8,
+  "total_dedicated_fem": 15,
+  "source_head": "acce2fa",
+  "max_scale_relative_error": 3.2341990701804556e-14
+}
