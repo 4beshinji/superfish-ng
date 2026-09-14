@@ -127,14 +127,15 @@ try {
     if (r.exceptionDetails) throw Error(JSON.stringify(r.exceptionDetails));
     return r.result.value;
   };
-  const wait = async (expression, ms = 15000) => {
+  let uiWaitMs=15000;
+  const wait = async (expression, ms = uiWaitMs) => {
     const start = performance.now();
     while (performance.now() - start < ms) {
       if (await ev(expression)) return;
       await sleep(100);
     }
     throw Error(
-      `UI timeout: ${expression}; ${await ev('document.querySelector("#error")?.textContent')}`,
+      `UI timeout: ${expression}; ${JSON.stringify(await ev('({busy:trackingBusy,errorHidden:$("error").hidden,error:$("error").textContent})'))}`,
     );
   };
   const click = async (selector) => {
@@ -206,6 +207,10 @@ try {
     imported[stage]=ids.find(id=>!known.has(id));known.add(imported[stage]);
   }
   const meshes=JSON.parse(await readFile(resolve(args['--sources'],'scale-1-comparison-meshes.json'),'utf8'));
+  // Full version-4 history replay reconstructs multiple common partitions;
+  // the measured native reverse/replay takes more than the old 15-second wait.
+  if(meshes[0].schema_version===4)uiWaitMs=60000;
+  report.ui_wait_ms=uiWaitMs;
   await select('tracking-previous',imported.old);await select('tracking-current',imported.new);
   await select('tracking-mapping','piecewise_remesh');
   await fill('#tracking-ids','["fundamental"]');await fill('#tracking-order',8);
@@ -224,6 +229,16 @@ try {
   delete expectedTracking.physical_mapping.comparison_mesh_sha256;
   if(!isDeepStrictEqual(actualTracking,expectedTracking))throw Error('GUI tracking differs from independent Python/CLI report');
   report.checks.push({operation:'GUI numerical tracking report equals Python/CLI',passed:true});
+  if(meshes[0].schema_version===4) {
+    await check('the complete common integration partition and both history sizes are visible',
+      '$("tracking-status").textContent.includes("共通積分分割") && $("tracking-status").textContent.includes("曲線上の節点順") && trackingResult.document.tracking.physical_mapping.common_reference_partition.final_cell_counts.join(",")==="111,112"');
+    const limited=structuredClone(meshes);for(const m of limited)m.max_pair_tests=1;
+    await fill('#tracking-comparison-json',JSON.stringify(limited));await click('#tracking-compare');
+    await wait('!$("error").hidden && !trackingBusy && $("error").textContent.includes("max_pair_tests")');
+    if(!isDeepStrictEqual(await ev('trackingResult.document'),pair))throw Error('Failed common partition budget replaced verified pair');
+    report.checks.push({operation:'common partition pair budget rejects before replacing the verified result',passed:true});
+    await fill('#tracking-comparison-json',JSON.stringify(meshes));
+  }
   if(meshes[0].schema_version===3) {
     await check('automatic correspondence and the explicit boundary policy are visible',
       '$("tracking-status").textContent.includes("曲線上の節点順") && trackingResult.document.tracking.physical_mapping.numbering_correspondence.current_cell_for_previous.length===26');

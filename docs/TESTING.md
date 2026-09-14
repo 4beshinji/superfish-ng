@@ -1,5 +1,17 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[共通比較分割版4](CURVED_COMPARISON_OVERLAY.md)は新test_curved_comparison_overlayの7件を2+3+2で確認。
+初回独立被覆/逆方向2件API不在red、実装後0.140秒PASS。追跡/予算/保存3件1.468秒、独立番号/固定pattern2件0.318秒PASS。
+既存curved_piecewise_remesh_tracking/piecewise_remesh_tracking/curved_same_domain_tracking/curved_affine_remesh_tracking/curved_comparison_correspondence/curved_selection_transfer/saved_mode_tracking/mode_tracking_history/gui_mode_trackingの56件61.240秒PASS。
+選択前に全モジュールの実在を確認した。全コマンドと終端はout/curved-comparison-overlay-20260914/selected-regressions.json。
+専用validate_curved_piecewise_remesh_tracking.py --common-partitionは4新FEM127.848秒PASS、1044ソース系不変。
+独立二重積分/Green体積・尺度則・次数4/8・逆方向/完全保存/CLIを確認。初期26→比較111/112→共通119三角形。
+実Chrome版4/旧版3の各10項目PASS、外部HTTP0、各322製品SHAが実行中不変。ブラウザーで新FEMは実行せず、両画像を目視した。
+初回版4は5項目後に15秒待機で終了1。保存pairの直接逆方向再生28.241秒PASSを確認し、版4の検証器待機だけ60秒へ変更した。
+数値時からブラウザー完了までの差はブラウザー待機/診断と追加2unitだけ。追加元native比較0.498秒PASS、全u/f/P2座標/接続がGUI取込前後で完全一致、36保存ファイル不変。
+最終レビューでは標本評価から未使用の初期要素基底/Jacobianを除き、共通物理点/行列式だけを返すようにした。専用4保存比較の全再構築は全報告値が完全一致、新FEMなし。
+この製品差はcurved_comparison_overlay.pyのみ。最終1044sourceはreviewed-source-sha256.json、受入索引はacceptance.json。全件validate/seed/Hosted CI/新Wine比較は今回実施していない。
+
 2026-09-14 JST：[細分履歴間の選択領域移送](CURVED_SELECTION_TRANSFER.md)は新test_curved_selection_transferの8件を分割確認。
 初回独立2件API不在red、実装後0.084秒PASS。最初の6件は5合格/fixture履歴方式混在1ERROR、当該修正1件0.332秒PASS。
 厳密範囲/対称領域2件0.348秒、保存JSON/NumPy浮動小数修正後の関連2件0.317秒PASS。再読込のred/中間失敗も保持する。

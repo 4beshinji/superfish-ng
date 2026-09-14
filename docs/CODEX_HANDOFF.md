@@ -1,3 +1,35 @@
+2026-09-14 JST 最新継続状態。開始HEAD54e8139、当初clean。前goalターンは異なる局所履歴への選択領域移送を実装/検証/commitしたprogress。
+今回はN04残件4/D01の共通比較分割を版4の保存追跡/CLI/GUIへ追加したprogress。全計画は未完、goal ACTIVE。
+[CURVED_COMPARISON_OVERLAY.md](CURVED_COMPARISON_OVERLAY.md)が入力/数学/検証/制約の最新記録。
+comparison_meshesの両側schema_version=4はsource_mesh/boundary_pairing/max_pair_tests必須、levels/stepsは片方か省略0段。版/境界方針/組数上限は両側一致。
+直接閉PEC/軸接続native曲線TM二解。初期P2分割は境界方針からの向き付き全単射が必要、最終分割は非同型/非nestedでよい。TE/対称半領域/反射/直線混在は旧追跡範囲どおり拒否。
+新curved_comparison_overlay.build_curved_comparison_overlay(previous,current,*,boundary_pairing,max_pair_tests,max_triangles)が初期参照座標で全最終要素を交差させる。
+既存selection_transferの_prepare/_lineageとFraction、planar_tracking_overlapのclip/crossを再利用。初期節点順/参照座標で正規化し、共線頂点除去/最小頂点fan/正規順で旧新入替えや独立番号に依存しない求積点を作る。
+各旧新の最終要素と各初期要素を交差三角形が厳密被覆することを確認。初期別の全旧数×全新数を先にmax_pair_testsで制約し、Case品質/予算・262144標本を履歴/交差生成時にも守る。
+初期P2写像を各共通参照三角形へ制限し、物理detJへ共通参照detを掛ける。元二次境界を再投影しない。元FEMのHphiと可変体積内積・RF/規格化/周波数順位契約は保持。
+physical_mapping.common_reference_partitionに初期対応/全有理三角形/旧新親番号/各要素被覆/予算を保存し、通常CLI・履歴開始/逆方向/継続/全replayへ接続する。
+base_cellはbase_correspondence.previous_reference_cell_nodesの正規順添字。前のsource_mesh要素番号ではない。previous/current_cellは各最終比較空間の番号。
+新生成物は共通積分分割であり新FEM解/適合空間ではない。宣言比較履歴と実FEM履歴が違う場合、実FEM全内部境界の包含は保証せず次数確認を残す。
+GUIは既存JSON欄で版4を受理し、111/112→119共通三角形・初期境界方針・厳密被覆を表示。失敗は前の結果/履歴を保持。従来版1/2/3の契約は不変。
+新test_curved_comparison_overlayは7件の分割証拠。初回被覆/逆方向2件API不在red、実装後2件0.140秒PASS。追跡/厳密予算/保存3件1.468秒PASS、独立番号/固定pattern2件0.318秒PASS。
+既存9モジュール56件61.240秒PASS。全実在を先に確認、selected-regressions.json/.logにコマンドと結果。直線/曲線/同領域/アフィン/番号/選択移送/保存/履歴/GUI応答を含む。
+専用validate_curved_piecewise_remesh_tracking.py --common-partitionは4新FEM127.848秒PASS。初期26→比較111/112→共通119、501組、次数8で7616標本。実FEMは別26/104セル。
+独立P2基底/偏微分のSciPy二重積分でHphi=r内積0.9954490990489955、実装0.9954490990489957。Green体積一致/体積比1.125²。
+実場内積は次数4/8で0.9963240036177756/0.9963240033839375、逆向き差は両方0。保存全再構築/CLI完全一致。
+尺度2のf/両RQ/G/TTF相対差最大3.364e-14、Hphi/Er/Ez差最大1.566e-13。一般精度/連続枝/表面ピーク収束へ読み替えない。
+実Chrome版4/旧版3は各10項目PASS、外部HTTP0、各322製品SHA実行中不変、画像目視。両native取込を使い、ブラウザー中の新FEMなし。
+初回browser34333は5項目後、逆方向履歴の15秒waitで終了1。診断は直前の非表示エラー文字列も出していた。保存pair直接逆再生34326は28.241秒PASS/終了0。
+版4の検証器waitだけ60秒へ変更し、busy/hidden診断を追加。browser-v4-final40531とbrowser-v3 98183は終了0、専用server27745もSIGINTで終了0。
+GUI/独立の全tracking報告は宣言SHA以外完全一致、各保存文書は自身の要求でreplayする。元nativeの全u/f/P2座標/接続も完全一致、36保存ファイル不変、source-fidelity.json 0.498秒PASS、新FEMなし。
+数値時1044sourceからブラウザー完了までは追加2unitと検証器wait/診断の2パスだけ変更。最終レビューで共通標本評価から未使用の初期要素基底/Jacobianを除いた。
+この最後の製品差はcurved_comparison_overlay.pyだけ。物理点/共通detの計算式は不変。尺度1/2×次数4/8の全保存比較を18.724秒で再構築し全報告完全一致、eigsh禁止、新FEMなし。
+最終ソースはreviewed-source-sha256.jsonの1044ファイル。数値/両browser時のSHAが最終に全一致したとはしない。sampling-result-replay.jsonに最後の補完証拠を保持。
+tracking81040/numerical93754/regression24363/sampling-replay35426は終了0。全handle/サーバー/workerは終端。
+証拠索引out/curved-comparison-overlay-20260914/acceptance.json。全件validate/seed/Hosted CI/新Wine比較/実測は未実行。過去full失敗+対象補修+別seedをfull PASSとしない。
+FEM/物理定数/許容差不変、新規外部資料/依存/旧資産参照なし。subagent/skillなし。親33=8受入/17進行/7他未受入/1範囲外、goal ACTIVE。
+次は対応しない初期接続間の領域移送/共通分割、境界分割を変える一般再メッシュ、またはN04一般精度/効率とC00.V/G03/V02残件へ進む。今回の共通分割は対応した初期分割からの別履歴への限定受入。
+旧7.17仕様/Wine所在のasync質問は未回答だが全体のblocking条件ではない。gitメタデータはrequire_escalated。以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEADc87fab0、当初clean。前goalターンは同型曲線比較メッシュの番号自動対応を実装/検証/commitしたprogress。
 今回はN04残件4の異なる曲線細分履歴への選択領域移送をAPI/CLI/GUIへ追加したprogress。全計画は未完、goal ACTIVE。
 [CURVED_SELECTION_TRANSFER.md](CURVED_SELECTION_TRANSFER.md)が入力/数学/検証/制約の最新記録。

@@ -2,7 +2,7 @@
 """Declared nonlinear quadratic comparison maps for independent native fields."""
 from dataclasses import replace
 import numpy as np
-from .config import keys
+from .config import keys,integer
 from .curved_refinement_steps import steps_from_dict
 from .curved_solution import CurvedSolution
 from .curved_space import case_curved_space
@@ -16,11 +16,12 @@ MAX_SAMPLES = 262144
 
 
 def validate_curved_comparison_meshes(value):
-    """Versions 2/3 declare a source chord mesh and its own refinement history.
+    """Versions 2/3/4 declare a source chord mesh and its own refinement history.
 
     Each side uses its corresponding native Case's curve declarations. No Case
     override or solver coefficients enter this document. Version 3 explicitly
-    selects boundary pairing before topology-based numbering inference.
+    selects boundary pairing before topology-based numbering inference. Version
+    4 pairs initial triangulations and intersects independent final histories.
     """
     if type(value) is not list or len(value)!=2:
         raise ValueError('curved comparison meshes require [previous,current]')
@@ -28,12 +29,14 @@ def validate_curved_comparison_meshes(value):
         names=('schema_version','source_mesh','curved_refinement_levels','curved_refinement_steps')
         version=mesh.get('schema_version') if isinstance(mesh,dict) else None
         required=('schema_version','source_mesh')
-        if version==3:names+=('boundary_pairing',);required+=('boundary_pairing',)
+        if version in (3,4):names+=('boundary_pairing',);required+=('boundary_pairing',)
+        if version==4:names+=('max_pair_tests',);required+=('max_pair_tests',)
         keys(mesh,names,required,'curved comparison mesh')
-        if type(version) is not int or version not in (2,3):
-            raise ValueError('both curved comparison meshes require schema_version=2 or 3; mixed geometry is unsupported')
-        if version==3 and mesh['boundary_pairing'] not in ('same_curve_fractions','ordered_curve_vertices'):
+        if type(version) is not int or version not in (2,3,4):
+            raise ValueError('both curved comparison meshes require schema_version=2, 3 or 4; mixed geometry is unsupported')
+        if version in (3,4) and mesh['boundary_pairing'] not in ('same_curve_fractions','ordered_curve_vertices'):
             raise ValueError('boundary_pairing must be same_curve_fractions or ordered_curve_vertices')
+        if version==4:integer(mesh['max_pair_tests'],'max_pair_tests')
         if 'curved_refinement_levels' in mesh and 'curved_refinement_steps' in mesh:
             raise ValueError('curved comparison mesh must use levels or steps, not both')
         levels=mesh.get('curved_refinement_levels',0)
@@ -51,6 +54,8 @@ def validate_curved_comparison_meshes(value):
         if value[0]['boundary_pairing']!=value[1]['boundary_pairing']:
             raise ValueError('both curved comparison meshes must declare the same boundary_pairing')
         for mesh in value:validate_comparison_meshes([mesh['source_mesh'],mesh['source_mesh']])
+        if value[0]['schema_version']==4 and value[0]['max_pair_tests']!=value[1]['max_pair_tests']:
+            raise ValueError('both curved comparison meshes must declare the same max_pair_tests')
 
 
 def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,sample_order,comparison_meshes,**controls):
@@ -58,7 +63,8 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
 
     Reconstructed comparison spaces cover the respective native domains, have
     positive Jacobians and nonintersecting conforming edges, and share full P2
-    connectivity. FEM evaluation uses each original independent solved space.
+    connectivity or a common reference partition. FEM evaluation uses each
+    original independent solved space.
     """
     if mapping!='piecewise_remesh':raise ValueError('explicit mapping must be piecewise_remesh')
     if type(sample_order) is not int or not 2<=sample_order<=32:
@@ -67,7 +73,7 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
     solutions=(previous,current)
     if any(not isinstance(s,CurvedSolution) or s.reflection_source_case is not None for s in solutions):
         raise ValueError('curved piecewise_remesh requires two direct native curved solutions; reflected construction is unsupported')
-    spaces=[];boundaries=[]
+    spaces=[];boundaries=[];projects=[]
     for solution,document in zip(solutions,comparison_meshes):
         if any(tag not in ('axis','pec') for tag in solution.space.boundary_tags):
             raise ValueError('curved comparison requires closed PEC and axis boundaries')
@@ -83,21 +89,29 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
         space=case_curved_space(case,mesh)
         boundaries.append(compare_quadratic_space_boundaries(case,space,solution.case,solution.space))
         spaces.append(space)
+        if document['schema_version']==4:
+            from .project import Project
+            projects.append(Project(case,mesh_data=document['source_mesh']))
     first,second=spaces
-    automatic=comparison_meshes[0]['schema_version']==3;correspondence=None
-    if automatic:
+    automatic=comparison_meshes[0]['schema_version']==3;correspondence=None;overlay=None
+    if comparison_meshes[0]['schema_version']==4:
+        from .curved_comparison_overlay import build_curved_comparison_overlay
+        overlay=build_curved_comparison_overlay(*projects,boundary_pairing=comparison_meshes[0]['boundary_pairing'],
+            max_pair_tests=comparison_meshes[0]['max_pair_tests'],max_triangles=MAX_SAMPLES//sample_order**2)
+    elif automatic:
         from .curved_comparison_correspondence import infer_curved_comparison_correspondence
         correspondence=infer_curved_comparison_correspondence([s.case for s in solutions],spaces,
             boundary_pairing=comparison_meshes[0]['boundary_pairing'])
     elif any(not np.array_equal(getattr(first.geometry,key),getattr(second.geometry,key)) for key in ('cell_nodes','boundary_nodes')) or not np.array_equal(first.boundary_tags,second.boundary_tags):
         raise ValueError('curved comparison spaces must share full oriented P2 connectivity and boundary tags; check both declared histories')
-    cells=len(first.geometry.cell_nodes);count=cells*sample_order**2
+    cells=len(overlay.report['triangles']) if overlay is not None else len(first.geometry.cell_nodes);count=cells*sample_order**2
     if count>MAX_SAMPLES:raise ValueError('curved piecewise_remesh exceeds 262144 samples; reduce sample_order or comparison mesh size')
     rule=list(triangle_quadrature(order=sample_order));q=np.array([b[1:] for b,_ in rule])
     weights=np.tile([w for _,w in rule],cells)
     samples=[];volumes=[];det_ranges=[]
     for side,(solution,space) in enumerate(zip(solutions,spaces)):
-        if automatic:
+        if overlay is not None:data=overlay.evaluate(side,q)
+        elif automatic:
             from .quadratic_geometry import QuadraticTriangle
             nodes=np.asarray(correspondence['previous_reference_cell_nodes'])
             if side:nodes=np.asarray(correspondence['current_node_for_previous'])[nodes]
@@ -124,4 +138,5 @@ def track_curved_piecewise_remesh_modes(previous,current,previous_ids,*,mapping,
         field_multiplier='sqrt(r/max(r))*sqrt(detJ/max(detJ)) independently per comparison space',
         scope='explicit piecewise quadratic coordinate correspondence with matching native domain boundaries and independent curved FEM fields; variable volume retained; sample-order convergence required; not inferred physical correspondence, continuous branch identity or a physical error bound')
     if automatic:report['physical_mapping']['numbering_correspondence']=correspondence
+    if overlay is not None:report['physical_mapping']['common_reference_partition']=overlay.report
     return report

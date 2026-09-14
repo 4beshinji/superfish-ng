@@ -2262,6 +2262,8 @@ function showTracking(response) {
   }
   const numbering=r.physical_mapping?.numbering_correspondence;
   if(numbering) $("tracking-status").textContent+=` 比較メッシュ${numbering.current_cell_for_previous.length}要素の番号を、${numbering.boundary_pairing==="same_curve_fractions" ? "同じ曲線分率" : "曲線上の節点順"}と隣接関係で対応させました。`;
+  const partition=r.physical_mapping?.common_reference_partition;
+  if(partition) $("tracking-status").textContent+=` 異なる細分履歴の${partition.final_cell_counts.join(" / ")}要素から、${partition.triangles.length}三角形の共通積分分割を生成しました。初期境界の対応は${partition.base_correspondence.boundary_pairing==="same_curve_fractions" ? "同じ曲線分率" : "曲線上の節点順"}です。両側の全要素を参照座標で厳密に被覆しています。`;
   const body = $("tracking-matches").querySelector("tbody"); body.replaceChildren();
   for (const m of r.matches) {
     const row = document.createElement("tr");

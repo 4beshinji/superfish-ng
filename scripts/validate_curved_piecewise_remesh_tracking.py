@@ -50,14 +50,32 @@ def independent_polynomial_overlap(cases,maps):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out',type=Path,required=True)
-    parser.add_argument('--automatic-numbering',action='store_true');args=parser.parse_args()
+    choice=parser.add_mutually_exclusive_group()
+    choice.add_argument('--automatic-numbering',action='store_true')
+    choice.add_argument('--common-partition',action='store_true');args=parser.parse_args()
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     started=time.monotonic();before=fingerprints();rows=[];solutions=[];requests=[];numbering_checks=[]
     for scale in (1,2):
         cases,maps=curved_comparison_fixture(scale)
         stages=[solve(cases[0],mesh_data=maps[0]['source_mesh']),
                 solve(replace(cases[1],curved_refinement_levels=1),mesh_data=maps[1]['source_mesh'])]
-        if args.automatic_numbering:
+        if args.common_partition:
+            from validate_curved_selection_transfer import fixture
+            from superfish_ng.piecewise_remesh_tracking import track_piecewise_remesh_modes
+            original_maps=maps
+            maps=[dict(schema_version=4,source_mesh=p.mesh_data,curved_refinement_steps=[s.to_dict() for s in p.case.curved_refinement_steps],
+                boundary_pairing='ordered_curve_vertices',max_pair_tests=100000) for p in fixture(scale)]
+            if scale==1:
+                expected=independent_polynomial_overlap(cases,original_maps)
+                adapter=[replace(s,u=np.ones_like(s.u)) for s in stages]
+                report=track_piecewise_remesh_modes(*adapter,['polynomial'],**dict(CONTROLS,comparison_meshes=maps))
+                observed=report['matches'][0]['minimum_principal_overlap'];assert abs(observed-expected)<1e-8
+                partition=report['physical_mapping']['common_reference_partition']
+                assert partition['final_cell_counts']==[111,112]
+                assert len(partition['triangles'])>112
+                numbering_checks.append(dict(scale=scale,independent_polynomial_overlap=expected,observed_polynomial_overlap=observed,
+                    final_comparison_cells=partition['final_cell_counts'],common_triangles=len(partition['triangles'])))
+        elif args.automatic_numbering:
             from test_curved_comparison_correspondence import automatic_maps
             from superfish_ng.piecewise_remesh_tracking import track_piecewise_remesh_modes
             original_maps=maps;maps=automatic_maps(maps)
@@ -135,6 +153,7 @@ def main():
     report=dict(status='PASS',scope='two synthetic joined-ellipse domains with nonlinear curved comparison maps, independent FEM histories; Maxwell scaling and whole-boundary volume, no general physical error bound',
                 rows=rows,similarity=similarity,new_fem_solves=4,cli_matches_python=True,source_files_unchanged=len(before),seconds=time.monotonic()-started)
     if args.automatic_numbering:report['automatic_numbering_checks']=numbering_checks
+    if args.common_partition:report['common_partition_checks']=numbering_checks
     (out/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     (out/'source-sha256.json').write_text(json.dumps(before,indent=2)+'\n')
     print(json.dumps(dict(status=report['status'],seconds=report['seconds'],new_fem_solves=4,similarity=similarity)))
