@@ -1,3 +1,33 @@
+2026-09-14 JST 最新継続状態。開始HEAD c21c54f、cleanからG03一般非円フィレット構築を実装。
+前goalターンは等距離/反対枝の診断13受入commitというprogress。本段階も実装・受入証拠を伴うprogress。
+[非円円錐曲線同士の全元点対からのフィレット構築](NONCIRCULAR_CONIC_FILLET.md)を限定受入。
+noncircular_conic_fillet.pyが同一支持の共有端点/全反射対、反対枝、一般有限射影の全相手元点を展開する。
+元点対を中心数で潰さず、同じ第一元点の分率囲みを共有して第二分率、別元点なら第一分率で順序を証明。
+有向元接線の内積符号と距離符号から厳密零長を判定。元/相手カスプでも元曲線は正則。
+構築版10を厳密parser/dispatch・付属診断13・GUIへ接続し、旧構築1〜9/保存診断1〜13を保持。
+構築10+診断12以下は拒否。無限対/所属・順序不足はUNVERIFIED、列挙PASSと個々の出力/Caseの可否は別。
+共通_fillets_from_search/既存分類/FEMは変更していない。
+初回9unit9.408秒、関連57unit42.890秒+旧版3/4追加2unitがPASS。
+独立32条件61参照元点対と解析面積/体積・実FEM尺度則が146.511秒PASS、987ファイル不変。
+初回は逆順反転で厳密共有端点を保持すると誤って仮定し1対対2対で停止。EllipseArc開始角の二進π正規化で実際に端点は弧外だった。
+製品を変えず、参照で真のπと実保存範囲の所属を確認して専用全検査を再実行した。
+合成例は最初の軸[-L/2,L/2]が正しくCase拒否され、[0,L]への平行移動後に正式fixture化した。
+独立A=15.1289918351868313、V=167.1595705414297741、実Caseとの差は0/2.22e-16。
+FEM各7519幾何節点、同接続/2倍座標、f比0.4999999999999984、両R/Q/G/TTF比は1との差<2e-14。
+場係数相関1.0000000000000002。これは相似不変量であり離散化誤差/物理ピーク収束ではない。
+Chrome初回56/実再起動54、9入力・計42取得・全21組の保存バイト一致・3画像目視PASS。
+旧構築8/9と新10、同一中心4足/零長/カスプ/無限対/出力精度不足、beta不正と改変拒否を確認。
+製品307ファイル不変、外部HTTP0。全Chrome/GUI/検証プロセス終了確認。GUIは専用PID+argvを照合してSIGINT exit0。
+準備のfixture名/実行Python名の誤りも製品と分けてログへ保持。
+証拠はout/noncircular-conic-fillet-20260914/acceptance.json、独立-fixed/ブラウザーinitial/restarted報告。
+構築9fixtureは53925 bytes、SHA ad2b9fe40c302939192954ed55e6bc5fd8f4e900089549847985db02191f642d、開始HEADで全文再現済み。
+次はG03_ACCEPTANCE.md/CONIC_GEOMETRY.md/COMPATIBILITY_PLAN.mdの最新要件照合から一件を限定する。
+一般フィレットの構築10まで接続したが、物理ピーク収束、旧曲線指定対応・対象版入力/数値照合、G03全体/C00.V/V02は残る。
+親33=8受入/17進行/7他未受入/1範囲外、全計画goalはACTIVE。完了/blockedにしない。
+新幾何専用FEMを実行した。seed/全validate/Hosted CIは実行していない。現時点にblocking条件なし。
+現在worktreeは/home/sin/code/agent/reserch/superfish-ng。旧資産は触らず、subagent/追加skillなし。
+gitメタデータ更新はrequire_escalated。以下の過去履歴より先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD1692c5c、cleanから一般非円フィレット構築を調べ、必要な恒等零残件を先に解決した。
 前goalターンは一般有限射影の相手実点回復・診断12受入/commitというprogress。本段階も実装・受入証拠を伴うprogress。
 [同じ円錐曲線の等距離オフセットと反対枝](EQUAL_DISTANCE_CONIC_BRANCHES.md)を限定受入。

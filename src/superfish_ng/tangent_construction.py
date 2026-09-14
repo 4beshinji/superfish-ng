@@ -29,8 +29,8 @@ def _canonical(value):
 def _request(request):
     keys(request, ('schema_version', 'case_template', 'pair_start', 'controls'),
          ('schema_version', 'case_template', 'pair_start', 'controls'), 'tangent construction request')
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4, 5, 6, 7, 8, 9):
-        raise ValueError('tangent construction request requires schema_version 1, 2, 3, 4, 5, 6, 7, 8 or 9')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
+        raise ValueError('tangent construction request requires schema_version 1, 2, 3, 4, 5, 6, 7, 8, 9 or 10')
     _canonical(request)  # Reject nonfinite JSON values even in the unfinished template.
     template = request['case_template']
     keys(template, ('schema_version', 'name', 'geometry', 'mesh', 'solver', 'rf', 'model', 'boundaries'),
@@ -68,6 +68,9 @@ def _request(request):
     if request['schema_version']==9:
         if not all(isinstance(c,EllipseArc) and c.semiaxes_m[0]==c.semiaxes_m[1] for c in pair):
             raise ValueError('version 9 requires two circular arcs with equal semiaxes')
+    if request['schema_version']==10:
+        if any(isinstance(c,EllipseArc) and c.semiaxes_m[0]==c.semiaxes_m[1] for c in pair):
+            raise ValueError('version 10 requires two noncircular ellipse or hyperbola arcs')
     if tags[index:index+2] != ['pec','pec']:
         raise ValueError('tangent construction currently requires two PEC primitives')
     controls = request['controls']
@@ -86,7 +89,7 @@ def _request(request):
         allowed=('radius_m','turn_direction','max_sweep_rad','position_tolerance_m','angle_tolerance_rad',
                  'fraction_width','max_boxes','precision_bits','endpoint_width','max_series_terms')
     if request['schema_version']==6:allowed+=('allow_extension',)
-    if request['schema_version'] in (7,8):
+    if request['schema_version'] in (7,8,10):
         allowed=('radius_m','turn_direction','max_sweep_rad','position_tolerance_m','angle_tolerance_rad',
                  'fraction_width','max_root_boxes','max_refinements','max_fraction_steps',
                  'endpoint_width','max_series_terms')
@@ -138,6 +141,10 @@ def construct_tangent_case(request, *, candidate_index=None):
         from .circular_fillet import circular_fillet_candidates, connect_circular_fillet
         enumerate_candidates,connect=circular_fillet_candidates,connect_circular_fillet
 
+    elif request['schema_version']==10:
+        from .noncircular_conic_fillet import noncircular_conic_fillet_candidates, connect_noncircular_conic_fillet
+        enumerate_candidates,connect=noncircular_conic_fillet_candidates,connect_noncircular_conic_fillet
+
     if candidate_index is None:
         enumeration = enumerate_candidates(first, second, **controls)
         case, joins = None, None
@@ -171,7 +178,9 @@ def construct_tangent_case(request, *, candidate_index=None):
                                   if request['schema_version']==7 else
                                   'all algebraic circular/noncircular source pairs, certified order and bounded fillet contact error; nonempty retained endpoints; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve'
                                   if request['schema_version']==8 else
-                                  'all algebraic circular source pairs including isolated coincident-support endpoints, certified order and bounded fillet contact error; nonempty retained endpoints; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve')))
+                                  'all algebraic circular source pairs including isolated coincident-support endpoints, certified order and bounded fillet contact error; nonempty retained endpoints; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve'
+                                  if request['schema_version']==9 else
+                                  'all finite noncircular source pairs including shared-support endpoints and reflected contacts, certified order and bounded fillet contact error; nonempty retained endpoints; explicit radius/turn/sweep; floating G1; canonical case validation; no FEM solve')))
 
 
 def save_construction(request, path, *, candidate_index=None):

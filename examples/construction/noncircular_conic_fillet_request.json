@@ -1,0 +1,139 @@
+{
+  "schema_version": 10,
+  "case_template": {
+    "schema_version": 3,
+    "name": "synthetic opposite-hyperbola fillet cavity",
+    "geometry": {
+      "type": "curved_contour",
+      "curves": [
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.0,
+            0.0
+          ],
+          "end_zr_m": [
+            4.510503860825523,
+            0.0
+          ]
+        },
+        {
+          "type": "line",
+          "start_zr_m": [
+            4.510503860825523,
+            0.0
+          ],
+          "end_zr_m": [
+            4.510503860825523,
+            1.4789046945062525
+          ]
+        },
+        {
+          "type": "hyperbola_arc",
+          "center_zr_m": [
+            2.2552519304127614,
+            2.0
+          ],
+          "semiaxes_m": [
+            2.0,
+            1.0
+          ],
+          "start_parameter": -0.5,
+          "end_parameter": 0.5,
+          "branch": 1,
+          "rotation_rad": 0.0
+        },
+        {
+          "type": "hyperbola_arc",
+          "center_zr_m": [
+            2.2552519304127614,
+            2.0
+          ],
+          "semiaxes_m": [
+            2.0,
+            1.0
+          ],
+          "start_parameter": 0.5,
+          "end_parameter": -0.5,
+          "branch": -1,
+          "rotation_rad": 0.0
+        },
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.0,
+            1.4789046945062525
+          ],
+          "end_zr_m": [
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "edge_tags": [
+        "axis",
+        "pec",
+        "pec",
+        "pec",
+        "pec"
+      ],
+      "join_tolerance_m": 1e-10,
+      "minimum_gap_m": 0.0,
+      "chord_tolerance_m": 0.002,
+      "chord_max_segments": 20000
+    },
+    "mesh": {
+      "nr": 24,
+      "nz": 32,
+      "contour_mesh": {
+        "max_edge_m": 0.4,
+        "min_angle_deg": 10.0,
+        "max_triangles": 250000,
+        "max_rounds": 12
+      },
+      "geometry_order": 2
+    },
+    "solver": {
+      "modes": 1,
+      "element_order": 2
+    },
+    "rf": {
+      "beta": 1.0,
+      "conductivity_s_per_m": 58000000.0,
+      "normalization_j": 1.0
+    },
+    "model": {
+      "physics": "rf_eigenmode",
+      "coordinates": "axisymmetric",
+      "polarization": "tm",
+      "azimuthal_index": 0,
+      "materials": [
+        {
+          "id": "vacuum",
+          "type": "vacuum"
+        }
+      ],
+      "regions": [
+        {
+          "id": "cavity",
+          "material": "vacuum",
+          "domain": "interior"
+        }
+      ]
+    }
+  },
+  "pair_start": 2,
+  "controls": {
+    "radius_m": 2.0,
+    "turn_direction": 1,
+    "max_sweep_rad": 3.141592653589793,
+    "position_tolerance_m": 1e-10,
+    "angle_tolerance_rad": 1e-08,
+    "fraction_width": 5.684341886080802e-14,
+    "max_root_boxes": 10000,
+    "max_refinements": 512,
+    "max_fraction_steps": 128,
+    "endpoint_width": 7.888609052210118e-31,
+    "max_series_terms": 96
+  }
+}
