@@ -1,5 +1,7 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-14 JST：[G03現行照合](G03_CURRENT_AUDIT.md)は、専用validate_geometry_surface_convergence.pyを1回実行し577.959秒PASS。保存6native再検証+追加3solve、固定幾何6区間/幾何2区間の五量・場対応・解析幾何/積分・Ritzを確認。元アーカイブと988ソース系ファイルは不変。製品/FEM/GUI無変更のためunit/seed/全validate/Hosted CI/ブラウザーは再実行しない。元の全検証や旧保存を新たな全機能合格と呼ばない。
+
 2026-09-14 JST：構築版10の[非円円錐曲線フィレット](NONCIRCULAR_CONIC_FILLET.md)は関連57unit（42.890秒）と旧版3/4の追加2unitを実行。
 初回新9unitもPASS。対象モジュール/ケースは同書に記載した。
 専用validate_noncircular_conic_fillet.pyの32条件61元点対、解析面積/体積と実FEM尺度則は146.511秒PASS。

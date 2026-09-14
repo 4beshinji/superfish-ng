@@ -1,3 +1,26 @@
+2026-09-14 JST 最新継続状態。開始HEAD d8855b0、clean。前goalターンは構築10受入commitというprogress。
+本段階は[G03現行要件照合](G03_CURRENT_AUDIT.md)と欠けていた楕円の幾何/FEM別表面細分証拠を追加したprogress。
+G03の番号付き5要件、最小子午面半径、全フィレット/退化、旧NT=2/3、物理ピークを実装/テスト内容/記録と照合。
+旧G03_ACCEPTANCE.mdの表は履歴と明示し、現在の専用受入と未完項目をG03_CURRENT_AUDIT.mdへ整理。
+既存out/validation-g03-native-geometry-separated-20260908は幾何3水準×FEM2水準のf/場/RF/モーメントPASSだが物理ピーク未確認。
+楕円の保存上下界は存在した。各2FEMでは2区間条件を満たせないため、元6nativeを再検証し各系列を第3FEMへ延長。
+新scripts/validate_geometry_surface_convergence.pyは3新solveと元6結果を分け、全9結果/固定幾何6区間/幾何2区間を検証。
+独立二次補間位置上界max(a,b)h^3/(72sqrt(3))と140桁節点差×5/4、楕円解析面積/体積、固定領域不変、Ritzと高次積分を別々に確認。
+577.959秒PASS、終了0、元アーカイブと988ソース系ファイル不変。初回失敗なし。全検証プロセス終了済み。
+追加要素5760/18576/53808、位置上界6.07011e-6→7.58764e-7→9.94340e-8 m。五量の全比較は元の目標内。
+楕円はSMOOTH_WITHIN_TOLERANCE、既存双曲線はUNVERIFIED_GEOMETRY。双曲線を滑らかなピーク合格へ読み替えない。
+証拠はout/g03-separated-surface-independent-20260914/report.json、archive-provenance.json、out/g03-separated-surface-20260914/acceptance.json。
+これは合成楕円1例の経験的な幾何/FEM別細分。独立な非球形Maxwell参照や一般物理誤差上界ではない。計算スペクトルは保存例の1モード。
+製品/FEM/保存/GUI/許容差/benchmarksは無変更。unit/seed/全validate/Hosted CI/Chromeは本段階で再実行していない。
+次はC00/K02・C02の対象版旧曲線NT=2/3仕様の確認とnative変換。既存legacy_input.py/LEGACY_INPUT.mdはNT=2/3,X0/Y0,極座標を拒否。
+既存inventoryの/tmp/superfish-wine-runtime/input-spec/SFCODES.txtは現在存在しない（過去SHA8203169713608903bcf5d4ac600efd2b98f221af9ab8856213ea306eab675627）。
+PROVENANCE.mdは付属公式SFCODES.DOCの入力仕様をR25と記録している。許可済みの公式文書または公開仕様を探し、欠けた文書から既定値を推定しない。
+対象実行版は保存記録でAutomesh/Fish/SFO/SF7 7.17 release 1-13-2006。インストーラー名7.20や文書改訂日と混同しない。
+旧solverコード/バイナリ内部は参照禁止。既存exeのblack-box実行・入力/設定/数値出力は2026-09-05の許可範囲。生結果はignored out。
+C00.V/旧入力/物理精度/V02と全計画は未完、親33=8/17/7/1。goal ACTIVE、現段階blockingなし。手元の確認材料を広げて続行可能。
+worktreeは/home/sin/code/agent/reserch/superfish-ng。subagent/追加skill/外部資料/依存なし。gitメタデータはrequire_escalated。
+以下の過去履歴よりこの先頭を優先する。
+
 2026-09-14 JST 最新継続状態。開始HEAD c21c54f、cleanからG03一般非円フィレット構築を実装。
 前goalターンは等距離/反対枝の診断13受入commitというprogress。本段階も実装・受入証拠を伴うprogress。
 [非円円錐曲線同士の全元点対からのフィレット構築](NONCIRCULAR_CONIC_FILLET.md)を限定受入。
