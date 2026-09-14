@@ -187,6 +187,7 @@ try {
   report.startup_ms = performance.now() - begin;
   const check=async (operation,expression)=>{if (!await ev(expression)) throw Error(operation);report.checks.push({operation,passed:true});};
   const request=JSON.parse(await readFile(args["--request"],"utf8"));
+  const recovery=Boolean(args["--identity-recovery"]),base=r=>r.tune_request ?? r;
   const loadFile=async filename=>{const {root}=await call("DOM.getDocument",{},sessionId);const {nodeId}=await call("DOM.querySelector",{nodeId:root.nodeId,selector:"#tune-open"},sessionId);await call("DOM.setFileInputFiles",{nodeId,files:[resolve(filename)]},sessionId);};
   const launch=async selector=>{
     const old=await ev('document.querySelector("#tune-job").textContent');await click(selector);
@@ -201,33 +202,52 @@ try {
   await click("#tune-prepare");await wait('document.querySelector("#tune-request").value.includes("target_hz")');
   await check("form builds an SI request from current geometry and tracking controls",'JSON.parse(document.querySelector("#tune-request").value).target_hz===2000000000 && JSON.parse(document.querySelector("#tune-request").value).parameter==="/case/geometry/points_zr_m/1/0"');
   await check("request editor fills its panel",'document.querySelector("#tune-request").getBoundingClientRect().width>.8*document.querySelector("#tuning").getBoundingClientRect().width');
+  if(recovery) {
+    const previous=await ev('document.querySelector("#tune-job").textContent');
+    await fill("#tune-request",JSON.stringify(request).replace('"anchor_trial_index":0','"anchor_trial_index":0,"anchor_trial_index":0'));
+    await click("#tune-start");await wait('!tuningBusy && !document.querySelector("#error").hidden');
+    await check("duplicate recovery policy keys fail before a worker is created",`document.querySelector("#error").textContent.includes("duplicate JSON key") && document.querySelector("#tune-job").textContent===${JSON.stringify(previous)}`);
+  }
   await fill("#tune-request",JSON.stringify(request));await fill("#tune-limit","2");
   const first=await launch("#tune-start");await openJob(first,"PAUSED",2);
   await check("paused tune displays tracked rank crossing and permits resume",'tuningResult.document.trials[0].current_mode_ids.indexOf("TM011")===2 && tuningResult.document.trials[1].current_mode_ids.indexOf("TM011")===1 && !document.querySelector("#tune-resume").disabled');
+  if(recovery)await check("verified subspace and recovered individual IDs are shown separately",'tuningResult.document.schema_version===2 && tuningResult.document.trials[1].tracking.tracking.individual_ids_complete===false && tuningResult.document.trials[1].identity_recovery.status==="PASS" && document.querySelector("#tune-trials tbody").rows[1].cells[7].textContent.includes("試行 0 から: 確認済み")');
   await check("tune jobs are excluded from individual result selectors",`![...document.querySelector("#tracking-current").options].some(o=>o.value===${JSON.stringify(first)})`);
   await click("#tune-save");let downloaded;
   for(let n=0;n<100;n++){try{downloaded=await readFile(out+"/downloads/tune-checkpoint.json","utf8");break;}catch{}await sleep(100);}
   if(downloaded!==await ev('tuningResult.serialized'))throw Error("download differs from verified text");
   report.checks.push({operation:"checkpoint download preserves server-verified JSON text",passed:true});
-  await fill("#tune-request",'{}');await loadFile(out+"/downloads/tune-checkpoint.json");await wait('!tuningBusy && JSON.parse(document.querySelector("#tune-request").value).mode_id==="TM011"');
+  if(recovery)await writeFile(out+"/recovery-checkpoint.json",downloaded);
+  await fill("#tune-request",'{}');await loadFile(out+"/downloads/tune-checkpoint.json");await wait('!tuningBusy && (JSON.parse(document.querySelector("#tune-request").value).tune_request ?? JSON.parse(document.querySelector("#tune-request").value)).mode_id==="TM011"');
+  if(recovery) {
+    await check("replay restores the complete wrapper and its recovery policy",'JSON.parse(document.querySelector("#tune-request").value).schema_version===6 && JSON.parse(document.querySelector("#tune-diagnostics").textContent).identity_recovery_policy.anchor_trial_index===0');
+    const forged=JSON.parse(downloaded);forged.trials[1].identity_recovery.anchor_trial_index=1;
+    await writeFile(out+"/forged-recovery.json",JSON.stringify(forged));await loadFile(out+"/forged-recovery.json");await wait('!tuningBusy && !document.querySelector("#error").hidden');
+    await check("a forged recovery binding cannot replace the verified checkpoint",'tuningResult.document.trials[1].identity_recovery.anchor_trial_index===0 && document.querySelector("#error").textContent.includes("replay")');
+  }
   await check("checkpoint replay restores editable settings",'document.querySelector("#tune-mode-id").value==="TM011" && document.querySelector("#tune-low").value==="0.06"');
   const changed=JSON.parse(downloaded);changed.trials[0].value=.5;await writeFile(out+"/modified.json",JSON.stringify(changed));await loadFile(out+"/modified.json");
   await wait('!tuningBusy && !document.querySelector("#error").hidden');
   await check("modified checkpoint cannot replace the verified result",'document.querySelector("#error").textContent.includes("replay") && tuningResult.document.trials[0].value===.06');
   await fill("#tune-request",'{}');await fill("#tune-limit","");const second=await launch("#tune-resume");await openJob(second,"TUNED",17);
-  await check("resume uses verified settings and separates final frequency gates",'tuningResult.document.request.mode_id==="TM011" && tuningResult.document.decision.refined_target_met && tuningResult.document.decision.mesh_difference_met && document.querySelector("#tune-gates").textContent.includes("粗細差: 条件内") && document.querySelector("#tune-resume").disabled');
+  await check("resume uses verified settings and separates final frequency gates",'(tuningResult.document.request.tune_request ?? tuningResult.document.request).mode_id==="TM011" && tuningResult.document.decision.refined_target_met && tuningResult.document.decision.mesh_difference_met && document.querySelector("#tune-gates").textContent.includes("粗細差: 条件内") && document.querySelector("#tune-resume").disabled');
   await check("trial table distinguishes final refinement",'document.querySelector("#tune-trials tbody").rows[16].textContent.includes("最終細分")');
+  if(recovery)await writeFile(out+"/completed-recovery.json",await ev('tuningResult.serialized'));
   const rect=await ev('(()=>{const r=document.querySelector("#tune-status").getBoundingClientRect(),b=document.querySelector("#tune-trials").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:b.bottom-r.top,scale:1}})()');
   const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/tuning-result.png",Buffer.from(shot.data,"base64"));
   const oldJob=await ev('currentJob');await click("#tune-open-field");await wait(`currentJob!==${JSON.stringify(oldJob)} && document.querySelector("#mode").value==="2" && !document.querySelector("#field-image").hidden`,60000);
   await check("final field opens the tracked mode rather than frequency rank one",'Number(document.querySelector("#mode").value)===tuningResult.document.trials.at(-1).current_mode_ids.indexOf("TM011")+1');
-  const unresolved=structuredClone(request);unresolved.controls.minimum_overlap=1;
+  const unresolved=structuredClone(request);if(recovery)unresolved.identity_recovery.controls.relative_cluster_gap=.2;else base(unresolved).controls.minimum_overlap=1;
   await fill("#tune-request",JSON.stringify(unresolved));const third=await launch("#tune-start");await openJob(third,"UNVERIFIED",2);
   await check("unverified correspondence cannot resume or open a tuned field",'document.querySelector("#tune-resume").disabled && document.querySelector("#tune-open-field").disabled && document.querySelector("#tune-trials tbody").rows[1].textContent.includes("評価不可")');
-  const fine=structuredClone(request);fine.mesh_frequency_tolerance_hz=1;
+  if(recovery) {
+    await check("failed recovery cannot provide a root frequency or a subsequent trial",'tuningResult.document.trials[1].tracking.status==="PASS" && tuningResult.document.trials[1].identity_recovery.status==="UNVERIFIED" && tuningResult.document.trials[1].frequency_hz===null && document.querySelector("#tune-trials tbody").rows[1].cells[7].textContent.includes("未確認")');
+    await writeFile(out+"/unverified-recovery.json",await ev('tuningResult.serialized'));
+  }
+  const fine=structuredClone(request);base(fine).mesh_frequency_tolerance_hz=1;
   await fill("#tune-request",JSON.stringify(fine));const fourth=await launch("#tune-start");await openJob(fourth,"REFINEMENT_FAILED",17);
   await check("failed mesh gate is visible despite completed execution",'document.querySelector("#tune-gates").textContent.includes("粗細差: 未達") && document.querySelector("#tune-open-field").disabled && !document.querySelector("#tune-save").disabled');
-  const large=structuredClone(request);large.project.case.mesh.nr=350;large.project.case.mesh.nz=350;
+  const large=structuredClone(request);base(large).project.case.mesh.nr=350;base(large).project.case.mesh.nz=350;
   await fill("#tune-request",JSON.stringify(large));const fifth=await launch("#tune-start");
   await wait(`document.querySelector('[data-job="${fifth}"] button')?.textContent==="中止"`);await click(`[data-job="${fifth}"] button`);
   await wait(`document.querySelector('[data-job="${fifth}"] strong')?.textContent.startsWith("中止")`);
@@ -240,7 +260,7 @@ try {
   await wait('!tuningBusy && tuningResult.document.trials.length===1');
   await check("selected earlier checkpoint is verified before enabling resume",'tuningResult.document.status==="PAUSED" && !document.querySelector("#tune-resume").disabled');
   if(args["--workspace"]) {
-    const recoverable=structuredClone(request);recoverable.project.case.mesh.nr=64;recoverable.project.case.mesh.nz=64;
+    const recoverable=structuredClone(request);base(recoverable).project.case.mesh.nr=64;base(recoverable).project.case.mesh.nz=64;
     await fill("#tune-request",JSON.stringify(recoverable));await fill("#tune-limit","");
     const interrupted=await launch("#tune-start");let saved=false;
     for(let n=0;n<300;n++){try{JSON.parse(await readFile(resolve(args["--workspace"],interrupted,"execution/checkpoint-001.json"),"utf8"));saved=true;break;}catch{}await sleep(20);}
@@ -249,7 +269,7 @@ try {
     await wait(`document.querySelector('[data-job="${interrupted}"] strong')?.textContent.startsWith("中止")`);
     await click(`[data-tune-checkpoints="${interrupted}"]`);await wait('!tuningBusy && document.querySelector("#tune-checkpoint-index").options.length>0');
     await ev('document.querySelector("#tune-checkpoint-index").value="1"');await click("#tune-checkpoint-open");
-    await wait('!tuningBusy && tuningResult.document.request.project.case.mesh.nr===64 && tuningResult.document.trials.length===1');
+    await wait('!tuningBusy && (tuningResult.document.request.tune_request ?? tuningResult.document.request).project.case.mesh.nr===64 && tuningResult.document.trials.length===1');
     await fill("#tune-limit","1");const resumed=await launch("#tune-resume");await openJob(resumed,"PAUSED",2);
     await check("cancelled tuning resumes from the selected saved trial",`tuningResult.document.trial_runs[0].includes(${JSON.stringify(interrupted)}) && tuningResult.document.trial_runs[1].includes(${JSON.stringify(resumed)})`);
     const rect=await ev('(()=>{const a=document.querySelector("#tune-checkpoint-job").getBoundingClientRect(),b=document.querySelector("#tune-trials").getBoundingClientRect();return {x:a.x+scrollX,y:a.y+scrollY,width:a.width,height:b.bottom-a.top,scale:1}})()');

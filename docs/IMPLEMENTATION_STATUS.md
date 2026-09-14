@@ -1,5 +1,18 @@
 # 実装・検証の現状
 
+2026-09-15 JST最終検証：[tune個別ID回復](TUNING_IDENTITY_RECOVERY.md)の曲線保存再生20解/10条件がPASS（追加FEM0）。
+全339モジュール1742件の実行は1858.249秒で移行テスト3subtest ERROR、3skipを記録して終了1。
+Study例をCaseとして読むテストを修正し、当該8件が0.383秒PASS。HTTP制限のskip1件も許可環境で0.563秒PASS。
+最終証拠は1740件成功・任意NGSolve参照2件skipの分割実行。単一の全validate.py成功とは呼ばない。
+標準数値は別の--skip-testsでPASS、既存9モード23量のf差0/最大相対差8.882e-16未満。曲線検証後のソース差は移行テスト1ファイルだけ。
+受入索引out/tuning-identity-recovery-20260914/acceptance.json。全handle終端回収。親33=9/17/6/1、全計画goal ACTIVE。
+
+
+2026-09-14：[tuneの個別ID回復](TUNING_IDENTITY_RECOVERY.md)を外側要求版6・チェックポイント版2へ接続。
+既存入力版1〜5を保持し、固定/直近の参照試行、回復済みIDの継承、失敗時の周波数未評価・停止、CLI/worker/GUI再開を検証した。
+新9/関連51unit、専用55FEM・worker19FEM、Chrome新21/旧16項目がPASS。親33=9/17/6/1、全計画goal ACTIVE。
+次は元D01/D02の要件と最新の写像・回復・保存証拠を照合する。以下は各段階の記録。
+
 2026-09-14：[適応Studyの元目標に結び付けた個別ID回復](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)を要求版2・チェックポイント版3・CLI/JobManager/GUIへ接続。
 挿入中点でずれた採用履歴の位置を元目標から解決し、回復後の再開と失敗時の採用履歴保持を検証した。
 新8/関連46unit、独立25FEM・worker11FEM、Chrome新15/旧10項目がPASS。tune接続と親D01は継続中。

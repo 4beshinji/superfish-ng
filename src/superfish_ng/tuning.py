@@ -13,9 +13,13 @@ from .tracked_study import _point_sources
 from .saved import read_solution
 from .saved_mode_tracking import build_saved_mode_tracking,validate_tracking_controls,_canonical
 from .mode_tracking import tracked_frequency_hz
+from .tuning_identity_recovery import base_request,recover_trial
 
 
 def _request(request):
+    if isinstance(request,dict) and type(request.get('schema_version')) is int and request['schema_version']==6:
+        from .tuning_identity_recovery import validate_request
+        return validate_request(request)
     fields=('schema_version','project','parameter','bounds','target_hz','frequency_tolerance_hz',
         'parameter_tolerance','max_trials','initial_ids','mode_id','controls','refinement_scale','mesh_frequency_tolerance_hz')
     if isinstance(request,dict) and request.get('schema_version') in (2,3):fields+=('bindings','parameter_unit')
@@ -68,6 +72,7 @@ def _request(request):
 
 
 def _project(request,value,phase):
+    request=base_request(request)
     project=Project.from_dict(request['project'])
     if request['schema_version']==4:
         from .curved_tuning import trial_project
@@ -113,11 +118,15 @@ def _project(request,value,phase):
 
 
 def _decision(request,trials):
+    request=base_request(request)
     def stop(status,**data):return dict(status=status,next_trial=None,**data)
     def next_trial(value,phase='search',parent=None):
         return dict(status='PAUSED',next_trial=dict(value=value,phase=phase,parent_index=parent))
     if not trials:return next_trial(request['bounds'][0])
-    if trials[-1]['status']=='UNVERIFIED':return stop('UNVERIFIED',reason='sampled correspondence does not resolve all individual identities')
+    if trials[-1]['status']=='UNVERIFIED':
+        reason=('explicit individual identity recovery is unverified' if trials[-1].get('identity_recovery')
+                else 'sampled correspondence does not resolve all individual identities')
+        return stop('UNVERIFIED',reason=reason)
     if len(trials)==1:return next_trial(request['bounds'][1],parent=0)
     last=trials[-1]
     if last['phase']=='refinement':
@@ -144,8 +153,21 @@ def _decision(request,trials):
     return next_trial(middle,parent=len(trials)-1)
 
 
+def pair_controls(request,previous_value,current_value,previous_project,current_project):
+    """Derive a comparison from its actual two trials, including refinement."""
+    request=base_request(request)
+    if request['schema_version']==4:
+        from .curved_tuning import pair_controls as affine_controls
+        return affine_controls(request,previous_value,current_value)
+    if request['schema_version']==5:
+        from .curved_harmonic_tuning import pair_controls as harmonic_controls
+        return harmonic_controls(request,previous_project,current_project)
+    return deepcopy(request['controls'])
+
+
 def _assemble(request,runs):
     _request(request)
+    original=request;request=base_request(original);recovery_enabled=original['schema_version']==6
     if type(runs) is not list or any(type(p) is not str for p in runs) or len(set(runs))!=len(runs):
         raise ValueError('tune trial_runs must be distinct native Job directory strings')
     if len(runs)>request['max_trials']+1:raise ValueError('tune trial count exceeds declared search and refinement budget')
@@ -154,31 +176,33 @@ def _assemble(request,runs):
         decision=_decision(request,trials)
         if decision['status']!='PAUSED':raise ValueError('tune contains trials after a terminal decision')
         trial=decision['next_trial'];project=_project(request,trial['value'],trial['phase']);projects.append(project)
-        directory=Path(run);sources.append(_point_sources(directory,project));pair=None;frequency=None
+        directory=Path(run);sources.append(_point_sources(directory,project));pair=None;frequency=None;recovery=None
         if i==0:
             ids=list(request['initial_ids']);frequency=float(read_solution(directory/'solution').frequencies_hz[ids.index(request['mode_id'])]);status='INITIAL'
         else:
             parent=trial['parent_index']
-            controls=request['controls']
-            if request['schema_version']==4:
-                from .curved_tuning import pair_controls
-                controls=pair_controls(request,trials[parent]['value'],trial['value'])
-            elif request['schema_version']==5:
-                from .curved_harmonic_tuning import pair_controls
-                controls=pair_controls(request,projects[parent],project)
+            controls=pair_controls(request,trials[parent]['value'],trial['value'],projects[parent],project)
             pair=build_saved_mode_tracking(dict(schema_version=1,previous_run=str(Path(runs[parent])/'solution'),
                 current_run=str(directory/'solution'),previous_ids=trials[parent]['current_mode_ids'],controls=controls))
             report=pair['tracking'];ids=report['current_mode_ids'];status='PASS'
-            if report['status']!='PASS' or not report['individual_ids_complete']:status='UNVERIFIED'
+            if recovery_enabled and report['status']=='PASS' and not report['individual_ids_complete']:
+                recovery=recover_trial(original,trials,projects,runs,trial,pair)
+                ids=recovery['assessment']['current_mode_ids']
+                if recovery['status']=='PASS':
+                    frequency=tracked_frequency_hz(recovery['comparison']['tracking'],request['mode_id'])
+                else:status='UNVERIFIED'
+            elif report['status']!='PASS' or not report['individual_ids_complete']:status='UNVERIFIED'
             else:frequency=tracked_frequency_hz(report,request['mode_id'])
         trials.append(dict(index=i,**trial,status=status,current_mode_ids=ids,frequency_hz=frequency,
             target_error_hz=None if frequency is None else frequency-request['target_hz'],tracking=pair))
+        if recovery_enabled:trials[-1]['identity_recovery']=recovery
     if sources!=[_point_sources(Path(run),project) for run,project in zip(runs,projects)]:
         raise ValueError('tune trial sources changed during verification')
     decision=_decision(request,trials)
-    return dict(schema_version=1,document_type='tune_checkpoint',request=deepcopy(request),trial_runs=list(runs),
+    return dict(schema_version=2 if recovery_enabled else 1,document_type='tune_checkpoint',request=deepcopy(original),trial_runs=list(runs),
         trial_sources_sha256=sources,trials=trials,decision=decision,status=decision['status'],can_resume=decision['status']=='PAUSED',
-        scope='bracketed scalar native FEM search with sampled individual identity and a separate two-mesh frequency gate; no continuous-branch, discretization-error, RF-convergence or global-root certificate')
+        scope=('bracketed scalar native FEM search with explicit earlier-trial identity recovery and a separate two-mesh frequency gate; no continuous-branch, discretization-error, RF-convergence or global-root certificate'
+               if recovery_enabled else 'bracketed scalar native FEM search with sampled individual identity and a separate two-mesh frequency gate; no continuous-branch, discretization-error, RF-convergence or global-root certificate'))
 
 
 def replay_tune(document):

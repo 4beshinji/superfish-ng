@@ -615,6 +615,7 @@
           <label>調整するID<input id="tune-mode-id" type="text" value="mode-1" /></label>
           <button id="tune-prepare">現在の形状・追跡設定から入力を作成</button>
           <label>確認して開始する調整入力（JSON）<textarea id="tune-request" rows="6"></textarea></label>
+          <p class="hint">個別ID回復を指定する要求版6では、tune_requestに従来の調整入力、identity_recoveryに参照試行の選び方と場比較条件を指定します。回復が未確認なら周波数を評価せず停止します。回復比較はFEM試行数に追加しません。</p>
           <label>今回の計算回数上限（細分を含む。空欄なら最後まで）<input id="tune-limit" type="number" min="1" step="1" /></label>
           <div class="actions"><button id="tune-start">周波数調整を開始</button><button id="tune-resume" disabled>確認済みの続きから再開</button></div>
           <p id="tune-job" role="status"></p>
@@ -626,7 +627,7 @@
           <p id="tune-status" role="status">計算結果はまだ開いていません。</p>
           <p id="tune-gates"></p>
           <p class="hint">表示は最後に検証した結果です。再開には保存文書の条件を使い、入力欄の編集を反映しません。目標との差と粗細差の両方を検査します。二水準の差は離散化誤差上界ではなく、RF・ピーク場の収束も保証しません。</p>
-          <table id="tune-trials"><thead><tr><th>試行（0始まり）</th><th>種類</th><th id="tune-variable-heading">座標 [m]</th><th>対応</th><th>対象の順位</th><th>周波数 [MHz]</th><th>目標との差 [Hz]</th></tr></thead><tbody></tbody></table>
+          <table id="tune-trials"><thead><tr><th>試行（0始まり）</th><th>種類</th><th id="tune-variable-heading">座標 [m]</th><th>対応</th><th>対象の順位</th><th>周波数 [MHz]</th><th>目標との差 [Hz]</th><th>個別ID回復</th></tr></thead><tbody></tbody></table>
           <details><summary>停止判断・追跡設定・保存先</summary><pre id="tune-diagnostics"></pre></details>
         </section>
         <section id="rf-optimization">

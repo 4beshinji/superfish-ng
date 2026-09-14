@@ -1,5 +1,10 @@
 # 独立実装・情報来歴
 
+2026-09-14：[tuneの個別ID回復](TUNING_IDENTITY_RECOVERY.md)は既存の保存場比較とassess_identity_recoveryを使用する。
+既存調整入力1〜5の上に明示回復方針を組み合わせ、二つの実試行から比較写像を導出する。
+Bessel円筒の解析周波数/実縮退拒否とMaxwell尺度則、非アフィン曲線3モードの実FEM/Green面積体積を確認した。
+曲線unitの初期FEM由来の調整目標を解析精度基準と扱わない。新文献・依存・旧資産参照はない。
+
 2026-09-14：[適応Studyの回復](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)は既存個別回復API・共有指定検査・実形状写像を使用する。
 実FEM pilotで固定閾値の上下にある隣接/中点比較を確認し、元目標の参照先とBessel周波数・Maxwell尺度則を検証した。
 後半の再グループ化は明示gapによる近接集合であり、二つ目の物理縮退とは記録しない。

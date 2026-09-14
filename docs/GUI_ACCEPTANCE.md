@@ -1,5 +1,19 @@
 # 汎用GUI・共通入出力の受入記録
 
+2026-09-15 JST最終検証：[tune個別ID回復](TUNING_IDENTITY_RECOVERY.md)の曲線保存再生20解/10条件がPASS（追加FEM0）。
+全339モジュール1742件の実行は1858.249秒で移行テスト3subtest ERROR、3skipを記録して終了1。
+Study例をCaseとして読むテストを修正し、当該8件が0.383秒PASS。HTTP制限のskip1件も許可環境で0.563秒PASS。
+最終証拠は1740件成功・任意NGSolve参照2件skipの分割実行。単一の全validate.py成功とは呼ばない。
+標準数値は別の--skip-testsでPASS、既存9モード23量のf差0/最大相対差8.882e-16未満。曲線検証後のソース差は移行テスト1ファイルだけ。
+受入索引out/tuning-identity-recovery-20260914/acceptance.json。全handle終端回収。親33=9/17/6/1、全計画goal ACTIVE。
+
+
+2026-09-14：[tune回復の要求版6](TUNING_IDENTITY_RECOVERY.md)はChrome新版21/旧版16項目PASS。
+重複キー拒否、元部分空間と回復IDの区別、参照番号/全要求の保存再読込、改変拒否、編集に影響されない再開、
+未確認時の周波数未評価、二つの細分ゲートと回復後の実順位での場表示、中止/所有チェックポイント選択を実操作した。
+328製品SHA一致、外部HTTP0。新版GUI17点とCLI追加1点は直接実行と全配列/RF完全一致、525元ファイル不変、照合の新FEM0。
+画像を目視し、12ジョブ10complete/2cancelledを確認して専用GUIを終了。検証器はverify_gui_tuning.mjsの--identity-recovery true。
+
 2026-09-14：[適応Studyの回復と再開](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)はChrome新版15/旧適応版10項目PASS。
 要求版2・保存版3、原JSON重複拒否、元目標1→採用履歴2の結び付け、回復保存/再読込/改変拒否、
 回復済み元目標を参照する再開、未確認時の採用履歴保持・後続停止、中止を実操作した。

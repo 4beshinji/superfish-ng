@@ -1,5 +1,10 @@
 # Superfish-NG — 0.1.0 research seed
 
+2026-09-14：[tuneの個別ID回復](docs/TUNING_IDENTITY_RECOVERY.md)を外側要求版6・チェックポイント版2へ接続。
+既存入力版1〜5を保持し、固定/直近の参照試行、回復済みIDの継承、失敗時の周波数未評価・停止、CLI/worker/GUI再開を検証した。
+新9/関連51unit、専用55FEM・worker19FEM、Chrome新21/旧16項目がPASS。親33=9/17/6/1、全計画goal ACTIVE。
+次は元D01/D02の要件と最新の写像・回復・保存証拠を照合する。以下は各段階の記録。
+
 2026-09-14：[適応Studyの元目標に結び付けた個別ID回復](docs/ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)を要求版2・チェックポイント版3・CLI/JobManager/GUIへ接続。
 挿入中点でずれた採用履歴の位置を元目標から解決し、回復後の再開と失敗時の採用履歴保持を検証した。
 新8/関連46unit、独立25FEM・worker11FEM、Chrome新15/旧10項目がPASS。tune接続と親D01は継続中。

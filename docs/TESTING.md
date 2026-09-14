@@ -1,5 +1,19 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+2026-09-15 JST最終検証：[tune個別ID回復](TUNING_IDENTITY_RECOVERY.md)の曲線保存再生20解/10条件がPASS（追加FEM0）。
+全339モジュール1742件の実行は1858.249秒で移行テスト3subtest ERROR、3skipを記録して終了1。
+Study例をCaseとして読むテストを修正し、当該8件が0.383秒PASS。HTTP制限のskip1件も許可環境で0.563秒PASS。
+最終証拠は1740件成功・任意NGSolve参照2件skipの分割実行。単一の全validate.py成功とは呼ばない。
+標準数値は別の--skip-testsでPASS、既存9モード23量のf差0/最大相対差8.882e-16未満。曲線検証後のソース差は移行テスト1ファイルだけ。
+受入索引out/tuning-identity-recovery-20260914/acceptance.json。全handle終端回収。親33=9/17/6/1、全計画goal ACTIVE。
+
+
+2026-09-14：[tuneの個別ID回復](TUNING_IDENTITY_RECOVERY.md)は新9件195.776秒・関連51件319.436秒PASS。
+追加TE直接利用先1件0.044秒と外側版6のTE拒否2確認もPASS。unit計61件。対象一覧と独立不変条件は同書。専用55FEM54.516秒、実worker19FEM13.340秒、CLI再開1新FEM、Chrome新21/旧16項目がPASS。
+全17点のnative配列/RFは直接実行・worker・GUIで完全一致し、CLIの1追加点も一致。照合の追加FEM0、525元ファイル不変。
+GUI外部HTTP0、全12ジョブ終端後に専用GUI停止。全suite/seed/Hosted CI/新Wine比較は今回未実行。
+数値の実行範囲と追加の曲線保存解再利用はout/tuning-identity-recovery-20260914/acceptance.jsonと同書に記録する。
+
 2026-09-14：[適応Studyの個別ID回復](ADAPTIVE_STUDY_IDENTITY_RECOVERY.md)は新8件41.647秒と関連46件83.750秒がPASS。
 変更前redと最初の2不変条件22.074秒を保持。専用25FEM37.820秒、worker11FEM17.482秒、Chrome新15/旧10項目がPASS。
 pilot3解は専用25解に含めない。求積次数18/逆向き保存解再検証とGUI7点の全配列/RF比較は追加FEM0。

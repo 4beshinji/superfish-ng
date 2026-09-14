@@ -33,6 +33,8 @@ def declared(case):
 class ModelContractTests(unittest.TestCase):
     def test_legacy_hashes_and_example_migration(self):
         from superfish_ng.model import upgrade_case
+        from superfish_ng.project import parse_json
+        from superfish_ng.studies import Study
         cases = [Case(((0., .1), (.2, .1))),
                  Case(((0., .1), (.2, .1)), z_min='magnetic_symmetry', triangulation='crossed')]
         hashes = ['5f51598800c715c138ef8069fa213353ba0089249ed3feadb5088a897967228b',
@@ -42,9 +44,13 @@ class ModelContractTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256(canonical.encode()).hexdigest(), digest)
         for path in Path('examples').glob('*.json'):
             with self.subTest(path=path):
-                old = Case.load(path)
+                data = parse_json(path.read_text(encoding="utf-8"))
+                old = (Study.from_dict(data).project.case if "study_version" in data
+                       else Case.from_dict(data))
                 new = Case.from_dict(upgrade_case(old.to_dict()))
-                self.assertEqual(replace(new, model=None), old)
+                self.assertEqual(replace(new, model=old.model), old)
+                if old.model is not None:
+                    self.assertEqual(new.model, old.model)
                 self.assertEqual(Case.from_dict(new.to_dict()), new)
                 self.assertEqual(upgrade_case(new.to_dict()), new.to_dict())
 

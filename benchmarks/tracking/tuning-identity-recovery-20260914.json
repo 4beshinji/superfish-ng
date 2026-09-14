@@ -1,0 +1,453 @@
+{
+  "status": "PASS",
+  "base_commit": "991560aec4060425301c022f73b23cff44a2e675",
+  "scope": "native P2 cylinder TM011 tuning across frequency rank exchange; explicit subspace recovery before root updates, analytical degeneracy refusal, Bessel dispersion and Maxwell field/RF scaling; no continuous-branch or RF-convergence certificate",
+  "new_fem_solves": 55,
+  "seconds": 54.51569865400961,
+  "rows": [
+    {
+      "variant": "base",
+      "frequency_error": 5.6307124458587765e-06,
+      "decision": {
+        "status": "TUNED",
+        "next_trial": null,
+        "value": 0.08300048828124998,
+        "refined_target_met": true,
+        "mesh_difference_met": true,
+        "mesh_frequency_difference_hz": 3551.5044388771057,
+        "reason": "two-mesh frequency difference is a diagnostic, not a discretization-error bound"
+      },
+      "trial_count": 17,
+      "recovery_count": 15,
+      "orders_12_18_same_decisions": true,
+      "latest_anchor_same_decisions": true,
+      "base_versions_2_3_same_decisions": true
+    },
+    {
+      "variant": "double",
+      "frequency_error": 5.630712446302866e-06,
+      "decision": {
+        "status": "TUNED",
+        "next_trial": null,
+        "value": 0.16600097656249996,
+        "refined_target_met": true,
+        "mesh_difference_met": true,
+        "mesh_frequency_difference_hz": 1775.752230644226,
+        "reason": "two-mesh frequency difference is a diagnostic, not a discretization-error bound"
+      },
+      "trial_count": 17,
+      "recovery_count": 15,
+      "orders_12_18_same_decisions": true,
+      "latest_anchor_same_decisions": true,
+      "base_versions_2_3_same_decisions": true
+    },
+    {
+      "variant": "energy4",
+      "frequency_error": 5.6307124458587765e-06,
+      "decision": {
+        "status": "TUNED",
+        "next_trial": null,
+        "value": 0.08300048828124998,
+        "refined_target_met": true,
+        "mesh_difference_met": true,
+        "mesh_frequency_difference_hz": 3551.5044388771057,
+        "reason": "two-mesh frequency difference is a diagnostic, not a discretization-error bound"
+      },
+      "trial_count": 17,
+      "recovery_count": 15,
+      "orders_12_18_same_decisions": true,
+      "latest_anchor_same_decisions": true,
+      "base_versions_2_3_same_decisions": true
+    }
+  ],
+  "maximum_errors": {
+    "frequency": 5.630712446302866e-06,
+    "rf_scale": 6.861178292183467e-14,
+    "field_scale": 4.599822878782526e-14
+  },
+  "normalization_scaling": [
+    "length times two at one joule",
+    "energy one to four joules"
+  ],
+  "field_probe_count_per_mode": 16,
+  "rf_metrics": [
+    "frequency_hz",
+    "r_over_q_accelerator_ohm",
+    "r_over_q_circuit_ohm",
+    "geometry_factor_ohm"
+  ],
+  "comparison_count": 102,
+  "worker": {
+    "new_fem_solves": 19,
+    "seconds": 13.339832750003552,
+    "matching_native_points": 17
+  },
+  "browser_checks": {
+    "browser-new": 21,
+    "browser-old": 16
+  },
+  "gui_matching_native_points": 17,
+  "cli_additional_matching_point": 1,
+  "failures": [
+    {
+      "case": "unresolved",
+      "status": "UNVERIFIED",
+      "frequency_evaluated": false
+    },
+    {
+      "case": "degenerate",
+      "status": "UNVERIFIED",
+      "frequency_evaluated": false
+    }
+  ],
+  "curved_saved_replay": {
+    "status": "PASS",
+    "new_fem_solves": 0,
+    "reused_native_solutions": 20,
+    "seconds": 2859.9662330830033,
+    "scope": "recovery on saved curved P2 cylinder samples, two scales/units, affine and fixed-history harmonic comparison maps; genuine non-affine three-mode recovery is covered separately by the unit fixture",
+    "report": "curved-replay/validation.json",
+    "report_sha256": "aa623e9ff57b8317febcbfbaf820d223cc4338b3526a593fbbf38dd244493ac8",
+    "session": 87685,
+    "exit_code": 0,
+    "reconstructed_checkpoints": 10,
+    "retained_native_files": 325,
+    "unchanged_source_files": 1075,
+    "maximum_frequency_error": 2.2744724768042346e-05,
+    "maximum_final_frequency_error": 1.3926781810003064e-06,
+    "maximum_rf_scale_error": 1.6209256159527285e-14,
+    "rows": [
+      {
+        "variant": "affine-1-m",
+        "geometry_request_version": 4,
+        "selection": "fixed_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 0
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 0
+          }
+        ],
+        "frequency_errors": [
+          2.2744724768042346e-05,
+          1.954492807509922e-05,
+          2.1172833458482643e-05,
+          1.3926781810003064e-06
+        ]
+      },
+      {
+        "variant": "affine-1-m",
+        "geometry_request_version": 4,
+        "selection": "latest_resolved_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 1
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 2
+          }
+        ],
+        "frequency_errors": [
+          2.2744724768042346e-05,
+          1.954492807509922e-05,
+          2.1172833458482643e-05,
+          1.3926781810003064e-06
+        ]
+      },
+      {
+        "variant": "affine-1-1",
+        "geometry_request_version": 4,
+        "selection": "fixed_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 0
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 0
+          }
+        ],
+        "frequency_errors": [
+          2.2744724768042346e-05,
+          1.954492807509922e-05,
+          2.1172833458482643e-05,
+          1.3926781810003064e-06
+        ]
+      },
+      {
+        "variant": "affine-1-1",
+        "geometry_request_version": 4,
+        "selection": "latest_resolved_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 1
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 2
+          }
+        ],
+        "frequency_errors": [
+          2.2744724768042346e-05,
+          1.954492807509922e-05,
+          2.1172833458482643e-05,
+          1.3926781810003064e-06
+        ]
+      },
+      {
+        "variant": "affine-2-m",
+        "geometry_request_version": 4,
+        "selection": "fixed_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 0
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 0
+          }
+        ],
+        "frequency_errors": [
+          2.2744724766932123e-05,
+          1.9544928074877177e-05,
+          2.117283345692833e-05,
+          1.3926781792239495e-06
+        ]
+      },
+      {
+        "variant": "affine-2-m",
+        "geometry_request_version": 4,
+        "selection": "latest_resolved_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 1
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 2
+          }
+        ],
+        "frequency_errors": [
+          2.2744724766932123e-05,
+          1.9544928074877177e-05,
+          2.117283345692833e-05,
+          1.3926781792239495e-06
+        ]
+      },
+      {
+        "variant": "affine-2-1",
+        "geometry_request_version": 4,
+        "selection": "fixed_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 0
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 0
+          }
+        ],
+        "frequency_errors": [
+          2.2744724766932123e-05,
+          1.9544928074877177e-05,
+          2.117283345692833e-05,
+          1.3926781792239495e-06
+        ]
+      },
+      {
+        "variant": "affine-2-1",
+        "geometry_request_version": 4,
+        "selection": "latest_resolved_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 1
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 2
+          }
+        ],
+        "frequency_errors": [
+          2.2744724766932123e-05,
+          1.9544928074877177e-05,
+          2.117283345692833e-05,
+          1.3926781792239495e-06
+        ]
+      },
+      {
+        "variant": "harmonic",
+        "geometry_request_version": 5,
+        "selection": "fixed_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 0
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 0
+          }
+        ],
+        "frequency_errors": [
+          2.175796813230768e-05,
+          1.8485020994329915e-05,
+          2.0142643481158018e-05,
+          1.3211779081867547e-06
+        ]
+      },
+      {
+        "variant": "harmonic",
+        "geometry_request_version": 5,
+        "selection": "latest_resolved_trial",
+        "status": "TUNED",
+        "bindings": [
+          {
+            "trial": 1,
+            "parent": 0,
+            "anchor": 0
+          },
+          {
+            "trial": 2,
+            "parent": 1,
+            "anchor": 1
+          },
+          {
+            "trial": 3,
+            "parent": 2,
+            "anchor": 2
+          }
+        ],
+        "frequency_errors": [
+          2.175796813230768e-05,
+          1.8485020994329915e-05,
+          2.0142643481158018e-05,
+          1.3211779081867547e-06
+        ]
+      }
+    ]
+  },
+  "milestone": {
+    "status": "ACCEPTED_WITH_SPLIT_REPAIR_EVIDENCE",
+    "full_run": {
+      "status": "FAIL",
+      "session": 18120,
+      "exit_code": 1,
+      "report": "out/validation-identity-recovery-milestone-20260914/test-run/report.json",
+      "tests": 1742,
+      "modules": 339,
+      "passing_modules": 338,
+      "seconds": 1858.248853186,
+      "errors": 3,
+      "skipped": 3
+    },
+    "repair": {
+      "module": "test_model_contract",
+      "tests": 8,
+      "seconds": 0.383,
+      "exit_code": 0,
+      "log": "model-contract-fixed-final.log",
+      "initial_repair_import_error_log": "model-contract-fixed.log"
+    },
+    "http_recheck": {
+      "tests": 1,
+      "seconds": 0.563,
+      "exit_code": 0,
+      "log": "milestone-http.log"
+    },
+    "remaining_skips": "2 optional NGSolve reference tests",
+    "seed": {
+      "report": "out/validation-identity-recovery-seed-20260915/validation.json",
+      "scope": "seed-numerics",
+      "exit_code": 0,
+      "comparison": "seed-comparison.json",
+      "modes": 9,
+      "metrics_per_mode": 23,
+      "maximum_relative_difference": 8.881784197001248e-16,
+      "maximum_frequency_absolute_difference_hz": 0
+    },
+    "interpretation": "Full discovery ran once and failed on a test harness classification error. Only that test module changed, then all 8 tests passed. HTTP skip verified separately. 1740 distinct tests have successful final evidence; 2 optional reference tests remain skipped. Not a single successful full validate.py run."
+  }
+}

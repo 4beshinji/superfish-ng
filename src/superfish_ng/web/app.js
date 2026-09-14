@@ -2502,9 +2502,10 @@ function tuningLimit() {
   return {max_new_trials:n};
 }
 function showTuning(response) {
-  tuningResult=response;const d=response.document,r=d.request;
+  tuningResult=response;const d=response.document,r=d.request.tune_request ?? d.request;
   const names={PAUSED:"一時停止",TUNED:"目標周波数と粗細差の条件を確認",UNVERIFIED:"個別モードの対応未確認で停止",REFINEMENT_FAILED:"細メッシュの検査未達",UNBRACKETED:"両端で目標を挟めません",ITERATION_LIMIT:"探索回数の上限",PARAMETER_LIMIT:"探索幅の下限"};
   $("tune-status").textContent=`${d.status} — ${names[d.status]}。計算済み ${d.trials.length} 試行。対象ID: ${r.mode_id}`;
+  if(d.request.identity_recovery) $("tune-status").textContent+=`。個別ID回復 ${d.trials.filter(t=>t.identity_recovery).length} 回`;
   const verdict=v=>v===undefined ? "未実施" : v ? "条件内" : "未達", display=v=>Number(v.toPrecision(9));
   $("tune-gates").textContent=`細メッシュの目標差: ${verdict(d.decision.refined_target_met)}（許容 ${r.frequency_tolerance_hz} Hz）。粗細差: ${verdict(d.decision.mesh_difference_met)}（${d.decision.mesh_frequency_difference_hz===undefined ? "—" : display(d.decision.mesh_frequency_difference_hz)} Hz / 許容 ${r.mesh_frequency_tolerance_hz} Hz）。`;
   const body=$("tune-trials").querySelector("tbody");body.replaceChildren();
@@ -2512,12 +2513,13 @@ function showTuning(response) {
     const rank=trial.current_mode_ids.indexOf(r.mode_id),row=document.createElement("tr");
     for (const value of [trial.index,trial.phase==="refinement" ? "最終細分" : "探索",display(trial.value),
       {INITIAL:"初期ID",PASS:"確認済み",UNVERIFIED:"未確認"}[trial.status],rank<0 ? "—" : rank+1,
-      trial.frequency_hz===null ? "評価不可" : (trial.frequency_hz/1e6).toFixed(6),trial.target_error_hz===null ? "—" : display(trial.target_error_hz)]) {
+      trial.frequency_hz===null ? "評価不可" : (trial.frequency_hz/1e6).toFixed(6),trial.target_error_hz===null ? "—" : display(trial.target_error_hz),
+      trial.identity_recovery ? `試行 ${trial.identity_recovery.anchor_trial_index} から: ${trial.identity_recovery.status==="PASS" ? "確認済み" : "未確認"}` : "—"]) {
       const cell=document.createElement("td");cell.textContent=value;row.append(cell);
     }
     body.append(row);
   }
-  $("tune-request").value=JSON.stringify(r,null,2);$("tune-coupled").checked=r.schema_version>=2;
+  $("tune-request").value=JSON.stringify(d.request,null,2);$("tune-coupled").checked=r.schema_version>=2;
   $("tune-binding-law").value=r.schema_version===5 ? "harmonic" : r.schema_version===4 ? "affine" : r.schema_version===3 ? "polynomial" : "linear";
   if(r.schema_version>=2) {
     $("tune-parameter-name").value=r.parameter;$("tune-parameter-unit").value=r.parameter_unit;
@@ -2536,7 +2538,8 @@ function showTuning(response) {
   $("tune-low").value=r.bounds[0];$("tune-high").value=r.bounds[1];$("tune-target").value=r.target_hz/1e6;
   for (const [id,key] of [["frequency-tolerance","frequency_tolerance_hz"],["parameter-tolerance","parameter_tolerance"],["max-trials","max_trials"],["refinement","refinement_scale"],["mesh-tolerance","mesh_frequency_tolerance_hz"]]) $(`tune-${id}`).value=r[key];
   $("tune-ids").value=JSON.stringify(r.initial_ids);$("tune-mode-id").value=r.mode_id;
-  $("tune-diagnostics").textContent=JSON.stringify({decision:d.decision,controls:r.controls,trial_runs:d.trial_runs,last_correspondence:d.trials.at(-1)?.tracking?.tracking ?? null},null,2);
+  $("tune-diagnostics").textContent=JSON.stringify({decision:d.decision,controls:r.controls,identity_recovery_policy:d.request.identity_recovery ?? null,
+    identity_recoveries:d.trials.filter(t=>t.identity_recovery).map(t=>t.identity_recovery),trial_runs:d.trial_runs,last_correspondence:d.trials.at(-1)?.tracking?.tracking ?? null},null,2);
   tuningButtons();
 }
 async function tuningAction(action,data) {
@@ -2601,7 +2604,7 @@ $("tune-open").addEventListener("change",async event=>{
 });
 bind("tune-open-field",async()=>{
   await tuningAction("replay-tune",{document:tuningResult.serialized});
-  const d=tuningResult.document,mode=d.trials.at(-1).current_mode_ids.indexOf(d.request.mode_id)+1;
+  const d=tuningResult.document,r=d.request.tune_request ?? d.request,mode=d.trials.at(-1).current_mode_ids.indexOf(r.mode_id)+1;
   const result=await api("import",{path:d.trial_runs.at(-1)});await refreshJobs();await openResult(result.id,mode);
 });
 tuningButtons();

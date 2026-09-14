@@ -1,3 +1,21 @@
+<!-- tuning-identity-recovery-current-begin -->
+2026-09-15 JST最終検証：[tune個別ID回復](TUNING_IDENTITY_RECOVERY.md)の曲線保存再生20解/10条件がPASS（追加FEM0）。
+全339モジュール1742件の実行は1858.249秒で移行テスト3subtest ERROR、3skipを記録して終了1。
+Study例をCaseとして読むテストを修正し、当該8件が0.383秒PASS。HTTP制限のskip1件も許可環境で0.563秒PASS。
+最終証拠は1740件成功・任意NGSolve参照2件skipの分割実行。単一の全validate.py成功とは呼ばない。
+標準数値は別の--skip-testsでPASS、既存9モード23量のf差0/最大相対差8.882e-16未満。曲線検証後のソース差は移行テスト1ファイルだけ。
+受入索引out/tuning-identity-recovery-20260914/acceptance.json。全handle終端回収。親33=9/17/6/1、全計画goal ACTIVE。
+開始HEAD991560a。要求版6は既存tune版1〜5と明示回復方針を組み合わせ、チェックポイント版2に全根拠を保存。
+専用55FEM/worker19FEM、CLI追加1FEM、GUI新21/旧16項目と72完了FEMがPASS。native全17点は直接/worker/GUIで完全一致。
+新9unit・関連51unit・TE直接利用先1unitの限定検証も保持。曲線再生2859.966秒PASS、325元/1075source不変。
+milestoneの初回修正は重複キー関数のimport先を誤り1ERROR、project.parse_jsonへ修正後8PASS。初期ログは保持。
+現在live handleなし、ソース凍結解除。tune回復の実装・検証・文書を一つの変更にまとめた。次は一般比較写像の残件へ進む。
+D01監査準備はout/.../next-parent-audit.md。異なる実FEM接続は対応済みだが、比較用初期接続が異なる場合は未対応。
+明示された一般写像/境界分割変更の残件を保持。入力契約と独立不変量案は未実装であり親受入の根拠ではない。
+Wine永続環境は作成/単体検証済み。本体/SFCODESは自動承認レビューのinstallerコピー拒否で例外許可待ち、別経路回避禁止。
+以下は前回以前の履歴。本ブロックを現在の状態として優先する。
+<!-- tuning-identity-recovery-current-end -->
+
 2026-09-14 最新：D01の逐次Study個別ID回復を要求版2・CLI/JobManager/GUIへ実装・限定受入。
 開始HEAD2ed8c72。正本[TRACKED_STUDY_IDENTITY_RECOVERY.md](TRACKED_STUDY_IDENTITY_RECOVERY.md)、索引out/tracked-study-identity-recovery-20260914/acceptance.json。
 新study_identity_recovery.recovery_requestsで完了Study/逐次Studyの回復指定検査を共有。元点/回復点の実際のProjectから写像を導出。
