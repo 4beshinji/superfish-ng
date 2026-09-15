@@ -104,6 +104,10 @@ def read_job(directory, verify=True):
         if is_planar_convergence(directory, state, manifest):
             verify_planar_convergence(directory, state, manifest)
             return state
+        from .planar_tuning_jobs import is_planar_tune, verify_planar_tune_job
+        if is_planar_tune(directory, state, manifest):
+            verify_planar_tune_job(directory, state, manifest)
+            return state
         from .planar_study_jobs import is_planar_study, verify_planar_study
         if is_planar_study(directory, state, manifest):
             verify_planar_study(directory, state, manifest)
@@ -439,6 +443,11 @@ class JobManager:
         """Run tracked frequency tuning in an isolated local worker."""
         from .tuning_jobs import start_tune
         return start_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+    def start_planar_tune(self, request, *, max_new_trials=None, checkpoint=None):
+        """Run Cartesian cutoff tuning with dedicated native field identities."""
+        from .planar_tuning_jobs import start_planar_tune
+        return start_planar_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
 
     def start_adaptive_refinement(self, request, *, max_new_levels=None, checkpoint=None):
         """Run adaptive FEM refinement in an isolated local worker."""
