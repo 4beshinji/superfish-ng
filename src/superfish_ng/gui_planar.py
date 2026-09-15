@@ -13,6 +13,10 @@ from .planar_project import PlanarProject
 from .project import parse_json
 
 ACTIONS = {
+    'planar-normalize-tune': ['request'], 'planar-start-tune': ['request','max_new_trials'],
+    'planar-resume-tune': ['document','max_new_trials'], 'planar-replay-tune': ['document'],
+    'planar-tune-result': ['id'], 'planar-tune-checkpoints': ['id'],
+    'planar-open-tune-checkpoint': ['id','index'], 'planar-tune-trial': ['document','index'],
     'planar-normalize-study': ['document'], 'planar-start-study': ['document'],
     'planar-study-result': ['id'], 'planar-study-point': ['id', 'index'],
     'planar-normalize-convergence': ['document'], 'planar-start-convergence': ['document'],
@@ -36,6 +40,10 @@ ACTIONS = {
 def planar_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown planar operation')
+    if action in ('planar-normalize-tune','planar-start-tune','planar-resume-tune','planar-replay-tune',
+                  'planar-tune-result','planar-tune-checkpoints','planar-open-tune-checkpoint','planar-tune-trial'):
+        from .gui_planar_tuning import planar_tuning_response
+        return planar_tuning_response(manager,action,data),'application/json; charset=utf-8'
     if action in ('planar-normalize-history','planar-start-history','planar-extend-history','planar-history-result','planar-history-source'):
         return planar_history_response(manager,action,data)
     if action in ('planar-normalize-tracking','planar-start-tracking','planar-tracking-result','planar-tracking-source'):

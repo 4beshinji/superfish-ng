@@ -1,3 +1,8 @@
+2026-09-15 JST：[平面RF調整GUI](GUI_PLANAR_TUNING.md)を接続。
+新4/関連11unit、Chrome主実行10項目＋保存再生で補完3項目を確認。実中止/保存地点選択/別ジョブ再開、対象IDの実順位を表示。
+8保存完了FEM＋中止未保存1試行、取込2件。API/GUI等の8組80配列/全RF一致、比較119/GUI全133ファイル保持（重複あり）。
+全handle終端。Hphi系調整・一般形状/回復・D03等は残り、親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[平面RF調整の専用worker](PLANAR_TUNING_WORKERS.md)を接続。
 新5種類の分割検証と関連32unit PASS。実中止/保存再開/管理器再作成、各checkpointの履歴prefixと元場保持を確認。
 専用4実FEM＋診断1実FEM。APIとの4組40配列/全RF一致、72 nativeファイル保持。状態照合追加後は既存2ジョブを再検証。
@@ -46,7 +51,10 @@ full validatorは361モジュール1826件PASS（3 skip）、HTTPの1件を別�
 専用折線壁9半領域FEMで独立/逐次/適応Studyを確認し、6組48配列と全RF一致、117ファイル保持。CLI履歴再生PASS。
 実曲線workflow追加検証・専用GUI・分割切替対称条件・他物理/D03等は残る。親33=10/16/6/1、全計画goal ACTIVE。
 
-次は平面調整の専用GUIを接続し、続いてHphiの周波数/ID/単位に対応する調整要求を実装する。
+次はHphiの周波数/ID/単位に対応する調整要求を実装する。
+平面調整GUIはGUI_PLANAR_TUNING.mdの範囲で接続済み。13項目は10＋3の分割検証であり、一括PASSではない。
+out/planar-tuning-gui-20260915に全記録。全worker/browser/serverは終了、再開すべき計算はない。
+同一ファイル再読込を修正、投入データ照合の追加後は既存完了/中止checkpointを再検証した。
 workerはPLANAR_TUNING_WORKERS.mdの範囲で接続済み。out/planar-tuning-worker-20260915に全証拠。
 新規5種類の分割検証と関連32件、専用2ジョブの保存再開/2回の管理器再作成、API完全一致を確認。
 全handle終端、実行中のジョブはない。初回probeはclaim集合診断用で成功件数へ加えない。

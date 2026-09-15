@@ -1,5 +1,10 @@
 # 実装バックログ
 
+2026-09-15 JST：[平面RF調整GUI](GUI_PLANAR_TUNING.md)を接続。
+新4/関連11unit、Chrome主実行10項目＋保存再生で補完3項目を確認。実中止/保存地点選択/別ジョブ再開、対象IDの実順位を表示。
+8保存完了FEM＋中止未保存1試行、取込2件。API/GUI等の8組80配列/全RF一致、比較119/GUI全133ファイル保持（重複あり）。
+全handle終端。Hphi系調整・一般形状/回復・D03等は残り、親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[平面RF調整の専用worker](PLANAR_TUNING_WORKERS.md)を接続。
 新5種類の分割検証と関連32unit PASS。実中止/保存再開/管理器再作成、各checkpointの履歴prefixと元場保持を確認。
 専用4実FEM＋診断1実FEM。APIとの4組40配列/全RF一致、72 nativeファイル保持。状態照合追加後は既存2ジョブを再検証。

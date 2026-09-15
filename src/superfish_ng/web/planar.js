@@ -32,22 +32,24 @@ function fresh(){return {format:'superfish_ng_planar_project',project_version:1,
 function clearImage(){request++;if(imageURL)URL.revokeObjectURL(imageURL);imageURL=null;imageBlob=null;$('image').hidden=true;$('save-image').disabled=true;}
 function showQuantities(){if(!result)return;const q=result.modes[Number($('mode').value)-1];$('quantities').textContent=`f = ${(q.frequency_hz/1e6).toFixed(6)} MHz / U′ = ${q.stored_energy_j_per_m.toPrecision(6)} J/m / 壁損失 P′ = ${q.wall_loss_w_per_m.toPrecision(6)} W/m / Q0 = ${q.q0.toPrecision(6)} / G = ${q.geometry_factor_ohm.toPrecision(6)} Ω`;$('na').textContent='R/Q（加速器定義・回路定義）・加速電圧：N/A。遮断断面には有限の加速経路を定義していません。';}
 async function openResult(id){
- const jobs=await api('jobs'),kind=jobs.find(job=>job.id===id)?.kind;if(kind==='planar_study')return openStudy(id);if(kind==='planar_convergence')return openConvergence(id);if(kind==='planar_tracking')return openTracking(id);if(kind==='planar_tracking_history')return openHistory(id);
+ const jobs=await api('jobs'),kind=jobs.find(job=>job.id===id)?.kind;if(kind==='planar_tune')return openTune(id);if(kind==='planar_study')return openStudy(id);if(kind==='planar_convergence')return openConvergence(id);if(kind==='planar_tracking')return openTracking(id);if(kind==='planar_tracking_history')return openHistory(id);
  const sequence=++request;const data=await api('planar-result',{id});if(sequence!==request)return;
  selected=id;result=data.result;loadProject(data.project);clearImage();$('result').hidden=false;$('selection').textContent=`${result.case.name} / ${id}`;
  $('mode').replaceChildren();result.modes.forEach((q,i)=>{const option=document.createElement('option');option.value=i+1;option.textContent=`${i+1}: ${(q.frequency_hz/1e6).toFixed(6)} MHz`;$('mode').append(option);});showQuantities();
  $('files').replaceChildren();for(const file of data.files){const button=document.createElement('button');button.textContent=file;button.onclick=run(async()=>download(await api('planar-download',{id,file},true),file));$('files').append(button);}
 }
 async function refresh(){
- const jobs=(await api('jobs')).filter(job=>['planar_solve','planar_study','planar_convergence','planar_tracking','planar_tracking_history'].includes(job.kind));
+ const jobs=(await api('jobs')).filter(job=>['planar_solve','planar_study','planar_convergence','planar_tracking','planar_tracking_history','planar_tune'].includes(job.kind));
  // Preserve focused controls when only an unrelated state changes.
  const signature=JSON.stringify(jobs);if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;
  refreshTrackingSources(jobs);refreshHistorySources(jobs);$('jobs').replaceChildren();if(!jobs.length)$('jobs').textContent='平面RFの計算はまだありません。';
  for(const job of jobs){const row=document.createElement('div');row.className='job';row.dataset.job=job.id;
- const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='planar_study'?' / 独立掃引':job.kind==='planar_convergence'?' / 細分診断':job.kind==='planar_tracking'?' / モード追跡':job.kind==='planar_tracking_history'?' / 追跡履歴':''} / ${job.id}`;row.append(label);
+ const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='planar_tune'?' / 周波数調整':job.kind==='planar_study'?' / 独立掃引':job.kind==='planar_convergence'?' / 細分診断':job.kind==='planar_tracking'?' / モード追跡':job.kind==='planar_tracking_history'?' / 追跡履歴':''} / ${job.id}`;row.append(label);
  const details=document.createElement('small');details.textContent=job.error||job.stage||'';row.append(details);
  const button=document.createElement('button'),active=['queued','running'].includes(job.status);button.textContent=active?'中止':'結果を開く';button.disabled=!active&&job.status!=='complete';
- button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else await openResult(job.id);});row.append(button);$('jobs').append(row);}
+ button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else await openResult(job.id);});row.append(button);
+ if(job.kind==='planar_tune'&&!active){const checkpoints=document.createElement('button');checkpoints.textContent='保存地点を選ぶ';checkpoints.dataset.tuneCheckpoints=job.id;checkpoints.onclick=run(async()=>{const data=await api('planar-tune-checkpoints',{id:job.id});let list=row.querySelector('.tune-checkpoints');if(!list){list=document.createElement('div');list.className='tune-checkpoints';row.append(list);}list.replaceChildren();if(!data.indices.length)list.textContent='完了した保存地点はありません。';for(const index of data.indices){const open=document.createElement('button');open.textContent=`試行 ${index} までを再検証`;open.dataset.checkpoint=index;open.onclick=run(async()=>{const data=await api('planar-open-tune-checkpoint',{id:job.id,index});showTune(data,`${job.id} / 試行 ${index}`);});list.append(open);}});row.append(checkpoints);}
+ $('jobs').append(row);}
 }
 $('new').onclick=run(async()=>loadProject(await api('planar-normalize',{document:fresh()})));
 $('open').onchange=run(async()=>{const file=$('open').files[0];if(file)loadProject(await api('planar-normalize',{document:await file.text()}));});
@@ -168,3 +170,38 @@ $('history-result-save').onclick=()=>{if(currentHistory)download(new Blob([JSON.
 $('history-source').onclick=run(async()=>{if(!selectedHistory)throw Error('追跡履歴を選択してください');const value=await api('planar-history-source',{id:selectedHistory});await refresh();await openResult(value.id);});
 $('history-use-groups').onclick=run(async()=>{if(currentHistory?.result.status!=='PASS')throw Error('対応が確認できた追跡履歴を選択してください');const value=await api('planar-history-source',{id:selectedHistory});loadTracking(currentHistory.result.steps.at(-1).request);await refresh();refreshTrackingSources(trackingJobs);$('tracking-previous').value=value.id;$('tracking-current').value='';$('tracking-previous-count').value=currentHistory.result.current_mode_count;$('tracking-ids').value='null';$('tracking-groups').value=JSON.stringify(currentHistory.result.current_identity_groups);$('dirty').textContent='履歴のID集合を引継ぎ済み。次の保存場と写像を指定してください。';});
 for(const id of ['history-step-ids','history-budget'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の履歴条件';});
+
+let currentTune=null,tuneSelection='',tuneInputVersion=0;
+document.addEventListener('input',()=>{tuneInputVersion++;});
+const tuneFields={target_hz:'tune-target',frequency_tolerance_hz:'tune-frequency-tolerance',mesh_frequency_tolerance_hz:'tune-mesh-tolerance',parameter_tolerance:'tune-parameter-tolerance',max_trials:'tune-max-trials',refinement_levels:'tune-refinements',max_triangles:'tune-max-triangles'};
+function tuneRequestText(){
+ const value={format:'superfish_ng_planar_tune',schema_version:1,project:documentFromForm(),parameter:$('tune-parameter').value,mode_id:$('tune-mode-id').value};
+ for(const [key,id] of Object.entries(tuneFields))value[key]=numeric(id);
+ const fields=Object.entries(value).map(([key,data])=>JSON.stringify(key)+':'+JSON.stringify(data));
+ for(const [key,id] of [['bounds','tune-bounds'],['initial_ids','tune-ids'],['controls','tune-controls']])fields.push(JSON.stringify(key)+':'+$(id).value);
+ return '{'+fields.join(',')+'}';
+}
+function tuneLimit(){return $('tune-new-trials').value.trim()?numeric('tune-new-trials'):null;}
+function loadTune(value){
+ loadProject(value.project);$('tune-parameter').value=value.parameter;$('tune-mode-id').value=value.mode_id;
+ for(const [key,id] of Object.entries(tuneFields))$(id).value=value[key];
+ $('tune-bounds').value=JSON.stringify(value.bounds);$('tune-ids').value=JSON.stringify(value.initial_ids);$('tune-controls').value=JSON.stringify(value.controls,null,2);tuneInputVersion++;
+}
+function showTune(data,label){
+ currentTune=data;tuneSelection=label;const d=data.document;loadTune(d.request);$('tune-result').hidden=false;$('tune-selection').textContent=`${d.status} / ${label} / 対象ID ${d.request.mode_id}`;
+ const decision=d.decision;$('tune-decision').textContent=Object.hasOwn(decision,'mesh_difference_met')?`最終目標: ${decision.refined_target_met?'達成':'未達'} / 粗細差: ${decision.mesh_frequency_difference_hz.toPrecision(8)} Hz / 粗細差の条件: ${decision.mesh_difference_met?'達成':'未達'}`:d.status==='PAUSED'?'途中保存済み。保存地点から追加計算できます。':d.status==='UNVERIFIED'?'個別IDを確認できず停止しました。この試行の周波数は調整に使用していません。':`調整は ${d.status} で停止しました。`;
+ $('tune-resume').disabled=!d.can_resume;$('tune-trials').replaceChildren();
+ const table=document.createElement('table'),header=document.createElement('tr');for(const text of ['試行','段階','寸法/倍率','対象順位','周波数 [Hz]','目標との差 [Hz]','状態','保存場']){const cell=document.createElement('th');cell.textContent=text;header.append(cell);}table.append(header);
+ for(const trial of d.trials){const row=document.createElement('tr'),rank=trial.current_mode_ids.indexOf(d.request.mode_id)+1;row.dataset.trial=trial.index+1;
+ for(const value of [trial.index+1,trial.phase==='refinement'?'最終細分':'探索',trial.value,rank||'未確認',trial.frequency_hz===null?'未評価':trial.frequency_hz.toPrecision(10),trial.target_error_hz===null?'未評価':trial.target_error_hz.toPrecision(8),trial.status]){const cell=document.createElement('td');cell.textContent=value;row.append(cell);}
+ const cell=document.createElement('td'),button=document.createElement('button');button.textContent='対象モードの場を開く';button.disabled=!rank;button.dataset.tuneTrial=trial.index+1;
+ button.onclick=run(async()=>{const imported=await api('planar-tune-trial',{document:data.serialized,index:trial.index+1});await refresh();await openResult(imported.id);$('mode').value=imported.mode;showQuantities();});cell.append(button);row.append(cell);table.append(row);}
+ $('tune-trials').append(table);
+}
+async function openTune(id){showTune(await api('planar-tune-result',{id}),id);}
+$('tune-start').onclick=run(async()=>{const data=await api('planar-start-tune',{request:tuneRequestText(),max_new_trials:tuneLimit()});$('dirty').textContent=`調整投入済み: ${data.id}`;await refresh();});
+$('tune-save').onclick=run(async()=>{const version=tuneInputVersion,text=tuneRequestText();const normalized=await api('planar-normalize-tune',{request:text});if(version!==tuneInputVersion||text!==tuneRequestText())throw Error('入力が変わりました。現在の条件を再確認してください。');download(new Blob([JSON.stringify(normalized,null,2)+'\n'],{type:'application/json'}),'planar-tune.json');});
+$('tune-open').onchange=run(async()=>{const file=$('tune-open').files[0];$('tune-open').value='';if(!file)return;const version=tuneInputVersion;const normalized=await api('planar-normalize-tune',{request:await file.text()});if(version!==tuneInputVersion)throw Error('入力が変わりました。読み込みをやり直してください。');loadTune(normalized);});
+$('tune-checkpoint-open').onchange=run(async()=>{const file=$('tune-checkpoint-open').files[0];$('tune-checkpoint-open').value='';if(!file)return;const version=tuneInputVersion;const data=await api('planar-replay-tune',{document:await file.text()});if(version!==tuneInputVersion)throw Error('入力が変わりました。保存地点を再選択してください。');showTune(data,file.name);});
+$('tune-checkpoint-save').onclick=()=>{if(currentTune)download(new Blob([currentTune.serialized],{type:'application/json'}),'planar-tune-checkpoint.json');};
+$('tune-resume').onclick=run(async()=>{if(!currentTune?.document.can_resume)throw Error('再開できる保存地点を選択してください');const data=await api('planar-resume-tune',{document:currentTune.serialized,max_new_trials:tuneLimit()});$('dirty').textContent=`再開投入済み: ${data.id}`;await refresh();});
