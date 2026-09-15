@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Strict vacuum Hphi uniform-scale tuning requests and independent trials."""
 from copy import deepcopy
-from dataclasses import replace
+from dataclasses import dataclass, replace
 import math
 from pathlib import Path
 
@@ -15,6 +15,11 @@ from .hphi_project import HphiProject
 from .hphi_study import HphiStudy
 from .hphi_tracking import HphiTrackingControls
 from .project import parse_json
+from .hphi_field_overlap import _declared_mesh, _verified_solution
+from .hphi_native import solve_hphi
+from .hphi_tracking import HphiTrackingRequest, _track_hphi_modes
+from .mode_tracking import tracked_frequency_hz
+from .tuning import _decision
 
 
 def _json_types(value):
@@ -143,3 +148,108 @@ def trial_hphi_project(request, value, phase):
     if phase not in ('search', 'refinement'):
         raise ValueError('Hphi tune phase must be search or refinement')
     return _trial(project, value, phase, request['refinement_levels'])
+
+
+@dataclass(frozen=True)
+class HphiTuneRun:
+    """In-memory execution evidence; owned native/checkpoint I/O is separate."""
+    report: dict
+    projects: tuple
+    solutions: tuple
+
+
+def _tune_decision(request, trials):
+    # Keep dedicated budget stops outside the shared bisection vocabulary.
+    if trials and trials[-1]['status'] == 'MESH_LIMIT':
+        return dict(status='MESH_LIMIT', next_trial=None, reason=trials[-1]['tracking']['verification_reasons'][0])
+    decision = _decision(request, trials)
+    if decision['status'] == 'PAUSED' and trials and decision['next_trial']['phase'] == 'search':
+        # Uniform scaling has one fixed shape reference. An intermediate
+        # non-binary scale ratio can introduce avoidable contour roundoff.
+        # Keep bracket selection shared; declare the actual comparison parent.
+        decision['next_trial']['parent_index'] = 0
+    return decision
+
+
+def _assess_trial(request, trials, solutions, solution):
+    decision = _tune_decision(request, trials)
+    if decision['status'] != 'PAUSED':
+        raise ValueError('Hphi tune contains trials after a terminal decision')
+    trial = decision['next_trial']
+    expected = trial_hphi_project(request, trial['value'], trial['phase'])
+    if not hasattr(solution, 'case') or solution.case.to_dict() != expected.case.to_dict():
+        raise ValueError('Hphi tune solution differs from the declared trial Project')
+    solution = _verified_solution(solution)
+    index = len(trials)
+    parent = trial['parent_index']
+    previous = solution if index == 0 else solutions[parent]
+    ids = request['initial_ids'] if index == 0 else trials[parent]['current_mode_ids']
+    scale = 1. if index == 0 else trial['value']/trials[parent]['value']
+    controls = HphiTrackingControls.from_dict(request['controls'])
+    try:
+        comparison = HphiTrackingRequest(_refine_mesh(_declared_mesh(previous)),
+            _refine_mesh(_declared_mesh(solution)), previous_mode_count=len(ids),
+            current_mode_count=len(ids), previous_mode_ids=ids, controls=controls)
+        tracking = _track_hphi_modes(previous, solution, comparison, previous_scale=scale)
+        passed = tracking['status'] == 'PASS' and tracking['individual_ids_complete']
+        status = ('INITIAL' if index == 0 else 'PASS') if passed else 'UNVERIFIED'
+        frequency = tracked_frequency_hz(tracking, request['mode_id']) if passed else None
+    except ValueError as exc:
+        # Comparison refusal is evidence of no identity, never a frequency match.
+        reason = str(exc)
+        mesh_limit = reason in ('input meshes exceed max_overlay_triangles',
+            'meridional intersections exceed max_overlay_triangles', 'Hphi mass coupling exceeds max_dofs')
+        status = 'MESH_LIMIT' if mesh_limit else 'UNVERIFIED'
+        frequency = None
+        tracking = dict(status=status, individual_ids_complete=False,
+            current_mode_ids=[None]*len(ids), verification_reasons=[reason],
+            mapping=dict(kind='uniform_scale', previous_scale=scale))
+    return dict(index=index, **trial, status=status, current_mode_ids=tracking['current_mode_ids'],
+        frequency_hz=frequency, target_error_hz=None if frequency is None else frequency-request['target_hz'],
+        tracking=tracking), expected
+
+
+def _run_result(request, trials, projects, solutions):
+    decision = _tune_decision(request, trials)
+    report = dict(format='superfish_ng_hphi_tune_result', schema_version=1,
+        request=deepcopy(request), trials=deepcopy(trials), decision=decision,
+        status=decision['status'], can_resume=decision['status'] == 'PAUSED',
+        scope='vacuum_uniform_scale', parameter_unit='dimensionless', frequency_unit='Hz',
+        interpretation='original Hphi FEM and individually confirmed E/H identities; separate target and two-mesh frequency gates; no RF convergence or continuum error certificate')
+    return HphiTuneRun(report, tuple(projects), tuple(solutions))
+
+
+def assess_hphi_tune(request, solutions):
+    """Reconstruct decisions from ordered, verified original in-memory FEMs."""
+    request = deepcopy(request)
+    validate_hphi_tune(request)
+    if type(solutions) not in (list, tuple) or len(solutions) > request['max_trials']+1:
+        raise ValueError('Hphi tune requires solutions within search plus final trial budget')
+    trials, projects, accepted = [], [], []
+    for solution in solutions:
+        trial, project = _assess_trial(request, trials, accepted, solution)
+        trials.append(trial); projects.append(project); accepted.append(solution)
+    return _run_result(request, trials, projects, accepted)
+
+
+def run_hphi_tune(request, *, max_new_trials=None):
+    """Run actual dedicated FEMs; pause only between complete trials.
+
+    This API returns original solutions and a serializable decision report.
+    Persistent checkpoints, replay/resume and process cancellation belong to
+    the separate ownership/worker layers, not this in-memory runner.
+    """
+    request = deepcopy(request)
+    validate_hphi_tune(request)
+    if max_new_trials is not None:
+        integer(max_new_trials, 'max_new_trials')
+    trials, projects, solutions = [], [], []
+    while _tune_decision(request, trials)['status'] == 'PAUSED':
+        if max_new_trials is not None and len(trials) >= max_new_trials:
+            break
+        candidate = _tune_decision(request, trials)['next_trial']
+        project = trial_hphi_project(request, candidate['value'], candidate['phase'])
+        solution = solve_hphi(project.case)
+        trial, project = _assess_trial(request, trials, solutions, solution)
+        trials.append(trial); projects.append(project); solutions.append(solution)
+    return _run_result(request, trials, projects, solutions)

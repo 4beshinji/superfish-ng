@@ -1,5 +1,7 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+Hφ調整の要求/試行生成は`test_hphi_tuning.HphiTuneRequestTests`、実FEM二分は`HphiTuneExecutionTests`。比較核は`test_hphi_tracking`/`test_hphi_field_overlap`、独立TEM・場/RF尺度と停止理由は`scripts/validate_hphi_tuning.py --out out/<new-name>`を使う。H03/H04の実行範囲・分割証拠は[HPHI_TUNING.md](HPHI_TUNING.md)。所有保存/CLI/workerはこの検証器の対象外。
+
 2026-09-15 JST：[平面RF調整GUI](GUI_PLANAR_TUNING.md)を接続。
 新4/関連11unit、Chrome主実行10項目＋保存再生で補完3項目を確認。実中止/保存地点選択/別ジョブ再開、対象IDの実順位を表示。
 8保存完了FEM＋中止未保存1試行、取込2件。API/GUI等の8組80配列/全RF一致、比較119/GUI全133ファイル保持（重複あり）。

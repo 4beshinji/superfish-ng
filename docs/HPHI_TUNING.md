@@ -2,7 +2,8 @@
 
 作業カード [H01](development-plan/02-hphi.md#h01)（親D02/P03/P04）の成果物。
 H01で仕様を固定し、H03で`hphi_tuning.py`のstrict要求reader・試行生成を実装した。
-実FEM runner・保存・CLI以降は各カードの実装記録を参照する。
+H04で実FEM runnerと判断再構築を実装した。所有保存・CLI・workerはH05以降であり、
+本APIのメモリー上の結果を所有checkpointと呼ばない。
 後続H02〜H16は本書の名称・状態・保存契約を実装し、本書を実装済み範囲に合わせて更新する。
 
 ## 目的と範囲
@@ -74,8 +75,12 @@ FEM実行前に拒否する。
 ## 実行（`run_hphi_tune(...)`）
 
 実専用FEM→元場の比較→個別ID確認→（確認済みのみ）周波数評価→二分判断、の順で進む。
-実装名・引数は既存runner（[hphi_native.py](../src/superfish_ng/hphi_native.py)、
-[hphi_jobs.py](../src/superfish_ng/hphi_jobs.py)）との整合をH04で確定する。
+実装は`run_hphi_tune(request, *, max_new_trials=None)`（メモリー上の実行）、
+`assess_hphi_tune(request, solutions)`（全元FEMからの判断再構築）。返値`HphiTuneRun`は
+`report/projects/solutions`を持つ。初期試行もE/H自己比較とguard診断を通す。
+探索試行の比較親は常に初期試行、最終細分の比較親は採用候補であり、二分ブラケットの親と混同しない。
+保存runnerへの接続はH05で行う。既存runner（[hphi_native.py](../src/superfish_ng/hphi_native.py)、
+[hphi_jobs.py](../src/superfish_ng/hphi_jobs.py)）の専用FEM型をそのまま使う。
 
 - 場比較は既存の`hphi_field_grams`/`hphi_mass_coupling`/`project_hphi_coefficients`を使い、
   零モード・正則化は各空間の既存契約に従う。
@@ -91,15 +96,15 @@ FEM実行前に拒否する。
 |---|---|---|---|
 | `PAUSED` | 中止、または`max_new_trials`到達で保存 | 評価済みのみ | 可（checkpoint選択） |
 | `TUNED` | 目標差と粗細差の**両ゲート**を満たす | あり | 不可（完了） |
-| `UNBRACKETED` | 探索範囲内に符号変化なくブラケット不成立 | 末端のみ | 可（範囲変更は新要求） |
-| `UNVERIFIED` | 個別ID未確認・集合合流・guard不足 | null | 可 |
-| `MESH_LIMIT` | 要素/自由度上限超過（Hφ固有） | 直近の確認済み以下 | 可 |
+| `UNBRACKETED` | 探索範囲内に符号変化なくブラケット不成立 | 確認済みのみ | 不可（範囲変更は新要求） |
+| `UNVERIFIED` | 個別ID未確認・集合合流・guard不足 | null | 不可（改善は新要求） |
+| `MESH_LIMIT` | 要素/自由度上限超過（Hφ固有） | 超過試行はnull | 不可（改善は新要求） |
 | `REFINEMENT_FAILED` | 最終細分で目標/粗細ゲート未達 | あり | 不可（改善は新要求） |
-| `ITERATION_LIMIT` | `max_trials`到達 | 評価済みのみ | 可 |
+| `ITERATION_LIMIT` | `max_trials`到達 | 評価済みのみ | 不可（改善は新要求） |
 | `PARAMETER_LIMIT` | 二分点が`parameter_tolerance`未満 | あり | 不可 |
 
 `MESH_LIMIT`は`max_triangles`/`max_dofs`/`max_overlay_triangles`のいずれか超過で発生し、
-`tuning._decision`の共有語彙へ無断追加しない。H04で共有判定と分離した専用停止として実装する。
+`tuning._decision`の共有語彙へ無断追加しない。H04で共有判定と分離した専用停止として実装した。候補探索の`max_candidate_tests`超過は比較未確認として`UNVERIFIED`で停止する。
 
 ## 予算とゲート
 
@@ -180,9 +185,9 @@ N/Aの量には尺度比較を行わない。
 
 1. **成功**：合成同軸の`uniform_scale`を`bounds=[1,2]`、`target_hz`=解析共振の半分、
    `mesh_frequency_tolerance_hz`を達成可能値に設定 → 探索→最終細分で`TUNED`、`can_resume=false`。
-2. **ブラケット不成立**：`bounds`が目標を挟まない → `UNBRACKETED`、末端周波数のみ、再開可。
+2. **ブラケット不成立**：`bounds`が目標を挟まない → `UNBRACKETED`、確認済み周波数のみ。再開不可、範囲変更は新要求。
 3. **個別ID未確認**：実順位交差または縮退で上側guard不足 → `UNVERIFIED`、`frequency_hz=null`、
-   失敗解をブラケットに使わない。再開可。
+   失敗解をブラケットに使わない。再開不可、改善は新要求。
 4. **要素上限**：`max_triangles`/`max_dofs`を最終細分が超える要求 → FEM前に`validate_hphi_tune`が拒否。
    実行中の超過は`MESH_LIMIT`で保存し、上限を完了に読み替えない。
 5. **中止**：`max_new_trials`到達または実中止 → `PAUSED`、所有checkpoint、`can_resume=true`。
@@ -250,3 +255,53 @@ bool数値・NumPy型・未対応変数/物理・guard/範囲の拒否、細分�
 → 新3/既存11の14件PASS、11.429秒、終了0。
 既存Studyの実FEM/RF尺度則を再利用。seed TMへの影響なし、seed/full validateは未実行。
 H03完了。H04の実FEM二分実行、H05の所有保存/CLIはまだ未受入。
+
+
+### H04 実装方式と範囲（2026-09-16）
+
+`hphi_native.solve_hphi`の実FEM、H02の元E/H積分、既存Hφの有限比較空間による
+スペクトル診断・guard・E/H一致・個別ID確認を接続した。既存`track_hphi_modes`の
+版1/same_vacuum公開契約は維持し、内部の評価部分を共有する。調整の比較結果は
+`superfish_ng_hphi_tune_tracking_result`、比較要求は`superfish_ng_hphi_tune_comparison`版1で、
+明示尺度・両比較空間・controlsを記録する。以前の周波数は対応判断内だけでf/sへ写し、
+元周波数・場・RF量は変更しない。有限空間の診断は各元SI領域で計算する。
+
+共有`tuning._decision`は変更していない。探索の比較親だけを初期試行へ固定し、
+採用候補の最終細分には採用親を渡す。終端後の追加元FEMを拒否し、
+未確認・予算超過試行は周波数/目標差をnullにしてブラケット更新を止める。
+`max_new_trials`は完了試行間のPAUSEDを返す。永続再開・実プロセス中止はH05/H06で接続する。
+
+**座標表現の制限と判断**：中間試行を順次比較した初回の1.5→1.25は、
+尺度比の丸めにより厳密輪郭一致を満たさずUNVERIFIEDとなった。物理閾値は緩めず、
+一様尺度で共通の初期形状から各候補を直接比較する方式へ変更した。
+初期試行→候補でもbinary64座標の厳密相似が成立しない入力は引き続きUNVERIFIEDとなる。
+任意の非二進尺度・非相似変形での対応成功を保証しない。明示一般写像のH08/H09での検討対象とする。
+失敗理由を保存し、座標を丸め直して入力領域をすり替えない。
+
+来歴：HphiStudy、H02、hphi_tracking、tuning._decisionの独立実装を再利用した。
+新規外部資料・依存・旧tuner比較はない。対象版/実機資料の未確認を変更しない。
+
+
+H04受入記録：
+
+- `OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-uv-cache uv run --no-sync --python .venv/bin/python python -m unittest -v test_hphi_tuning test_hphi_tracking test_hphi_field_overlap test_tuning`
+  → 29件PASS、89.701秒、終了0。初回はテスト属性`run`がunittestのメソッドと衝突して停止し、修正した。
+- 比較親を初期試行へ固定した後、同じrunnerで`test_hphi_tuning.HphiTuneExecutionTests`を再実行
+  → 4件PASS、61.118秒、終了0。29件のうち変更に直接依存する4件の証拠を置換した分割検証である。
+- `OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-uv-cache uv run --no-sync --python .venv/bin/python python scripts/validate_hphi_tuning.py --out out/hphi-tuning-h04-final-20260916`
+  → 専用4実FEM、12判定PASS、終了0。元Project/nativeと判断・各拒否を保存した。
+  合成同軸TEMの独立式f=c/(2L)に対し、探索誤差最大1.573e-5、最終細分1.009e-6。
+  二尺度の周波数・U・体積・G・Q0・損失の相対差最大1.777e-14、元E/Hの尺度誤差最大4.758e-14。
+  目標ゲートのみ失敗/粗細ゲートのみ失敗、UNBRACKETED、UNVERIFIEDの周波数null、
+  探索上限/変数幅上限、FEM前の要素予算拒否を別判定した。
+- 追加の6実FEMは`out/hphi-tuning-h04-anchor-20260916`。
+  1→2→1.5→1.25→1.375→最終細分でTUNED、最終比較親は4。
+  `request.json`の要求で`run_hphi_tune`を実行すれば再現できる。
+  変更前の1.25でのUNVERIFIEDとテスト初回失敗は最終証拠の`logs/`に保持する。
+
+H04は真空一様尺度のAPI受入。CLI/所有checkpoint/replay/resume/worker/GUI、
+一般写像、対象版照合、RF/表面ピークの収束受入ではない。
+初期試行からも厳密相似輪郭を作れない入力の未確認停止は上記制限として残す。
+同じ導電率/全周Uを保持し、両R/QのN/Aを数値へ置換しない。
+seed TM経路と共有二分判定は不変で、seed/full validateは未実行。
+次はH05（所有保存・改変検出・CLI再開）。
