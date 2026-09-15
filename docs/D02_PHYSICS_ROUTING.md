@@ -10,7 +10,7 @@ D02は引き続き未受入。全計画の受入範囲を今回の機能へ縮�
 | 軸接続真空m=0 TM | tuning.py、式版7、分割版8、保存/CLI/worker/GUI | 非曲線の一般輪郭/階段を含む要求との最終照合 |
 | 軸接続真空m=0 TE | te_tuning.py、profile・native P2曲線・最大1対称面/鏡映、Study/調整/保存/GUI | 直線階段の専用写像/接続、親要件との最終照合。TE自動計画生成はe4fb07dで接続済み |
 | 平面cutoff TE/TM（P02） | PlanarProject・planar_tracking.py。今回[専用調整API/CLI](PLANAR_TUNING.md)を追加 | [worker](PLANAR_TUNING_WORKERS.md)と[GUI](GUI_PLANAR_TUNING.md)は接続済み。既存多角形アフィン比較と形状法則の接続、個別ID回復と全体受入 |
-| 内導体/材料Hphi（P03/P04） | HphiProject・hphi_study.py・hphi_tracking.py・保存履歴が存在 | 専用物理の調整要求・実試行・ID継承・保存再開・UI接続は未実装。軸対称真空Projectへ流用しない |
+| 内導体/材料Hphi（P03/P04） | HphiProject・hphi_study.py・hphi_tracking.py・保存履歴が存在 | [専用調整契約](HPHI_TUNING.md)（H01）を定義済み。調整要求・実試行・ID継承・保存再開・UI接続は未実装。軸対称真空Projectへ流用しない |
 | 静電/静磁場（S系） | 専用源問題のStudy/後処理 | cutoff周波数という目標は定義されない。静的設計探索を周波数tuneの成功として数えず、必要な目的量/制約は別仕様で扱う |
 
 D02の共通受入は、変数・範囲・目標・停止条件、追跡付き実FEM、無効形状と失敗履歴、
