@@ -1,5 +1,5 @@
 task_id	parent_ids	depends_on	kind	status	document	title
-B01	C00		監査	PLANNED	01-baseline.md#b01	残要件と証拠を一行ずつ固定する
+B01	C00		監査	DONE	01-baseline.md#b01	残要件と証拠を一行ずつ固定する
 B02	C00	B01	調査	PLANNED	01-baseline.md#b02	対象版の機能と入力資料を確認する
 B03	C00	B02	仕様	PLANNED	01-baseline.md#b03	必須範囲と不足仕様を確定する
 B04	C00	B01	文書	PLANNED	01-baseline.md#b04	全体状態の更新手順を短い入口へ集約する
