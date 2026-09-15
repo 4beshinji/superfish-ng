@@ -63,14 +63,16 @@ async function openResult(id){
  history.replaceState(null,'',`/hphi.html?job=${encodeURIComponent(id)}`);
 }
 async function refresh(){
- const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study','hphi_convergence','hphi_tracking','hphi_tracking_history'].includes(job.kind)),signature=JSON.stringify(jobs);
+ const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study','hphi_convergence','hphi_tracking','hphi_tracking_history','hphi_tune'].includes(job.kind)),signature=JSON.stringify(jobs);
  trackingCandidates(jobs);historyCandidates(jobs);if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;$('jobs').replaceChildren();
  if(!jobs.length)$('jobs').textContent='Hφの計算はまだありません。';
  for(const job of jobs){const row=document.createElement('div');row.className='job';row.dataset.job=job.id;
- const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='hphi_study'?' / 独立掃引':job.kind==='hphi_convergence'?' / 細分差診断':job.kind==='hphi_tracking_history'?' / 追跡履歴':job.kind==='hphi_tracking'?' / 部分空間対応':''} / ${job.id}`;row.append(label);
+ const label=document.createElement('strong');label.textContent=`${job.status}${job.kind==='hphi_tune'?' / 周波数調整':job.kind==='hphi_study'?' / 独立掃引':job.kind==='hphi_convergence'?' / 細分差診断':job.kind==='hphi_tracking_history'?' / 追跡履歴':job.kind==='hphi_tracking'?' / 部分空間対応':''} / ${job.id}`;row.append(label);
  const details=document.createElement('small');details.textContent=job.error||job.stage||'';row.append(details);
  const button=document.createElement('button'),active=['queued','running'].includes(job.status);button.textContent=active?'中止':'結果を開く';button.disabled=!active&&job.status!=='complete';
- button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(job.kind==='hphi_study')await openStudy(job.id);else if(job.kind==='hphi_convergence')await openConvergence(job.id);else if(job.kind==='hphi_tracking_history')await openHphiHistory(job.id);else if(job.kind==='hphi_tracking')await openTracking(job.id);else await openResult(job.id);});row.append(button);$('jobs').append(row);}
+ button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(job.kind==='hphi_tune')await openHphiTune(job.id);else if(job.kind==='hphi_study')await openStudy(job.id);else if(job.kind==='hphi_convergence')await openConvergence(job.id);else if(job.kind==='hphi_tracking_history')await openHphiHistory(job.id);else if(job.kind==='hphi_tracking')await openTracking(job.id);else await openResult(job.id);});row.append(button);
+ if(job.kind==='hphi_tune'&&!active){const checkpoints=document.createElement('button');checkpoints.textContent='保存地点を選ぶ';checkpoints.dataset.hphiTuneCheckpoints=job.id;checkpoints.onclick=run(async()=>{const data=await api('hphi-tune-checkpoints',{id:job.id});let list=row.querySelector('.hphi-tune-checkpoints');if(!list){list=document.createElement('div');list.className='hphi-tune-checkpoints';row.append(list);}list.replaceChildren();if(!data.indices.length)list.textContent='完了した保存地点はありません。';for(const index of data.indices){const open=document.createElement('button');open.textContent=`試行 ${index} までを再検証`;open.dataset.hphiTuneCheckpoint=index;open.onclick=run(async()=>showHphiTune(await api('hphi-open-tune-checkpoint',{id:job.id,index}),`${job.id} / 試行 ${index}`));list.append(open);}});row.append(checkpoints);}
+ $('jobs').append(row);}
 }
 $('new').onclick=run(async()=>loadProject(await api('hphi-normalize',{document:fresh()})));
 $('open').onchange=run(async()=>{const file=$('open').files[0];if(file)loadProject(await api('hphi-normalize',{document:await file.text()}));});
@@ -225,6 +227,44 @@ $('history-start').onclick=run(async()=>{const reply=await api('hphi-start-histo
 $('history-extend').onclick=run(async()=>{if(!currentHphiHistory||!$('history-next').value)throw Error('保存した履歴と次の比較を選択してください');const reply=await api('hphi-extend-history',{id:currentHphiHistory.id,next_id:$('history-next').value});$('history-note').textContent=`新しい保存先へ延長: ${reply.id}`;await refresh();});
 $('history-result-save').onclick=run(async()=>{if(!currentHphiHistory)throw Error('履歴を選択してください');download(new Blob([JSON.stringify(currentHphiHistory.result,null,2)+'\n'],{type:'application/json'}),'hphi-history-results.json');});
 
+let currentHphiTune=null,hphiTuneInputVersion=0;
+function hphiTuneLimit(){const value=$('hphi-tune-new-trials').value.trim();return value?numeric('hphi-tune-new-trials'):null;}
+function hphiTuneRequestText(){const value=$('hphi-tune-document').value;if(!value.trim())throw Error('Hφ調整要求を開いてください');return value;}
+function hphiTuneUnit(request){return request.project?.display_length_unit||'m';}
+function loadHphiTune(request){
+ loadProject(request.project);$('hphi-tune-document').value=JSON.stringify(request,null,2);hphiTuneInputVersion++;
+ const mesh=request.project.case.format==='superfish_ng_coaxial_case'?request.project.case.mesh:request.project.case.mesh||request.project.case.fem;
+ const triangles=request.project.case.format==='superfish_ng_coaxial_case'?2*mesh.nr*mesh.nz:mesh.triangles.length;
+ $('hphi-tune-preview').textContent=`uniform_scale / 範囲 ${JSON.stringify(request.bounds)}（無次元） / 目標 ${(request.target_hz/1e6).toPrecision(8)} MHz / 対象ID ${request.mode_id} / 保存座標 SI [m]・Project表示 ${hphiTuneUnit(request)} / ${triangles}三角形`;
+ $('hphi-tune-start').disabled=false;$('hphi-tune-dirty').textContent='';
+}
+function hphiTuneFrequency(value){return value===null?'未評価':Number(value).toPrecision(10);}
+function hphiTuneRank(trial,target){const ids=Array.isArray(trial.current_mode_ids)?trial.current_mode_ids:[];const index=ids.indexOf(target);return index<0?'未確認':index+1;}
+function hphiTuneReasons(trial){const reasons=trial.tracking?.verification_reasons||[];return reasons.length?reasons.join(' / '):'';}
+function showHphiTune(data,label){
+ currentHphiTune=data;const d=data.document;loadHphiTune(d.request);$('hphi-tune-result').hidden=false;$('hphi-tune-selection').textContent=label;$('hphi-tune-resume').disabled=!d.can_resume;
+ const decision=d.decision,requestData=d.request;
+ if(Object.hasOwn(decision,'mesh_difference_met'))$('hphi-tune-gates').textContent=`最終細分の目標ゲート: ${decision.refined_target_met?'PASS':'未達'}（許容 ${requestData.frequency_tolerance_hz} Hz） / 粗細差ゲート: ${decision.mesh_difference_met?'PASS':'未達'}（${decision.mesh_frequency_difference_hz.toPrecision(10)} Hz / 許容 ${requestData.mesh_frequency_tolerance_hz} Hz）`;
+ else if(d.status==='PAUSED')$('hphi-tune-gates').textContent=`途中保存: 目標ゲート未確定 / 粗細差ゲート未実施。追加試行は保存地点から行います（許容 ${requestData.frequency_tolerance_hz} Hz、粗細差 ${requestData.mesh_frequency_tolerance_hz} Hz）。`;
+ else $('hphi-tune-gates').textContent=`停止理由: ${decision.reason||d.status}。未確認値を目標達成として扱いません。`;
+ $('hphi-tune-status').textContent=`実行状態: ${label.includes('/')?label.split('/')[0]:'保存結果'} / 調整状態: ${d.status} / 対象ID: ${requestData.mode_id} / parameter unit: ${d.parameter_unit||'dimensionless'} / frequency unit: ${d.frequency_unit||'Hz'}`;
+ $('hphi-tune-trials').replaceChildren();
+ const table=document.createElement('table'),header=document.createElement('tr');for(const text of ['試行','段階','倍率','対象ID','実順位','周波数 [Hz]','目標との差 [Hz]','状態','元場']){const cell=document.createElement('th');cell.textContent=text;header.append(cell);}table.append(header);
+ for(const trial of d.trials){const row=document.createElement('tr'),rank=hphiTuneRank(trial,requestData.mode_id);for(const value of [trial.index+1,trial.phase==='refinement'?'最終細分':'探索',trial.value,requestData.mode_id,rank,hphiTuneFrequency(trial.frequency_hz),hphiTuneFrequency(trial.target_error_hz),trial.status]){const cell=document.createElement('td');cell.textContent=value;row.append(cell);}
+  const cell=document.createElement('td'),button=document.createElement('button');button.textContent='対象モードの場を開く';button.disabled=rank==='未確認';button.dataset.hphiTuneTrial=trial.index+1;button.onclick=run(async()=>{const imported=await api('hphi-tune-trial',{document:data.serialized,index:trial.index+1});await refresh();await openResult(imported.id);$('mode').value=imported.mode;showQuantities();$('hphi-tune-status').textContent+=` / 試行 ${trial.index+1} の元場を表示中`;});cell.append(button);row.append(cell);table.append(row);
+  const reason=hphiTuneReasons(trial);if(reason){const detail=document.createElement('tr'),message=document.createElement('td');message.colSpan=9;message.textContent=`試行 ${trial.index+1} の未確認理由: ${reason}`;detail.append(message);table.append(detail);}
+ }
+ $('hphi-tune-trials').append(table);
+}
+async function openHphiTune(id){const data=await api('hphi-tune-result',{id});showHphiTune(data,id);history.replaceState(null,'',`/hphi.html?tune=${encodeURIComponent(id)}`);}
+$('hphi-tune-open').onchange=run(async()=>{const file=$('hphi-tune-open').files[0];$('hphi-tune-open').value='';if(!file)return;const version=hphiTuneInputVersion;const normalized=await api('hphi-normalize-tune',{request:await file.text()});if(version!==hphiTuneInputVersion)throw Error('入力が変わりました。読み込みをやり直してください。');loadHphiTune(normalized);});
+$('hphi-tune-apply').onclick=run(async()=>loadHphiTune(await api('hphi-normalize-tune',{request:hphiTuneRequestText()})));
+$('hphi-tune-save-request').onclick=run(async()=>{const version=hphiTuneInputVersion,text=hphiTuneRequestText(),normalized=await api('hphi-normalize-tune',{request:text});if(version!==hphiTuneInputVersion||text!==hphiTuneRequestText())throw Error('入力が変わりました。現在の条件を再確認してください。');loadHphiTune(normalized);download(new Blob([JSON.stringify(normalized,null,2)+'\n'],{type:'application/json'}),'hphi-tune-request.json');$('hphi-tune-dirty').textContent='調整要求を保存しました';});
+$('hphi-tune-start').onclick=run(async()=>{const data=await api('hphi-start-tune',{request:hphiTuneRequestText(),max_new_trials:hphiTuneLimit()});$('hphi-tune-dirty').textContent=`調整投入済み: ${data.id}`;await refresh();});
+$('hphi-tune-checkpoint-open').onchange=run(async()=>{const file=$('hphi-tune-checkpoint-open').files[0];$('hphi-tune-checkpoint-open').value='';if(!file)return;const version=hphiTuneInputVersion;const data=await api('hphi-replay-tune',{document:await file.text()});if(version!==hphiTuneInputVersion)throw Error('入力が変わりました。保存地点を再選択してください。');showHphiTune(data,file.name);});
+$('hphi-tune-checkpoint-save').onclick=()=>{if(currentHphiTune)download(new Blob([currentHphiTune.serialized],{type:'application/json'}),'hphi-tune-checkpoint.json');};
+$('hphi-tune-resume').onclick=run(async()=>{if(!currentHphiTune?.document.can_resume)throw Error('再開できるHφ保存地点を選択してください');const data=await api('hphi-resume-tune',{document:currentHphiTune.serialized,max_new_trials:hphiTuneLimit()});$('hphi-tune-dirty').textContent=`保存地点から再開投入済み: ${data.id}`;await refresh();});
+$('hphi-tune-document').addEventListener('input',()=>{hphiTuneInputVersion++;$('hphi-tune-dirty').textContent='未保存の調整要求';});
 
-run(async()=>{loadProject(await api('hphi-normalize',{document:fresh()}));await refresh();const parameters=new URLSearchParams(location.search),id=parameters.get('job'),studyId=parameters.get('study'),convergenceId=parameters.get('convergence'),trackingId=parameters.get('tracking'),historyId=parameters.get('history');if(historyId)await openHphiHistory(historyId);else if(trackingId)await openTracking(trackingId);else if(convergenceId)await openConvergence(convergenceId);else if(studyId)await openStudy(studyId);else if(id)await openResult(id);})();// Explicit operations retain errors; background refresh does not clear them.
+run(async()=>{loadProject(await api('hphi-normalize',{document:fresh()}));await refresh();const parameters=new URLSearchParams(location.search),id=parameters.get('job'),studyId=parameters.get('study'),convergenceId=parameters.get('convergence'),trackingId=parameters.get('tracking'),historyId=parameters.get('history'),tuneId=parameters.get('tune');if(tuneId)await openHphiTune(tuneId);else if(historyId)await openHphiHistory(historyId);else if(trackingId)await openTracking(trackingId);else if(convergenceId)await openConvergence(convergenceId);else if(studyId)await openStudy(studyId);else if(id)await openResult(id);})();// Explicit operations retain errors; background refresh does not clear them.
 setInterval(()=>refresh().catch(failure),2000);

@@ -142,7 +142,7 @@ H05の`read_hphi_tune`はworkerの`execution/`配置も解決するよう更新�
 
 ### Hφ調整GUIを接続する
 
-- **親課題**：D02 / O02。**種別**：実装。初期状態：未着手。
+- **親課題**：D02 / O02。**種別**：実装。状態：完了。
 - **先行条件**：[H06](02-hphi.md#h06)
 - **コミット件名案**：`feat: Hφ調整GUIを接続する`
 - **既存の入口・影響先**：`src/superfish_ng/gui_hphi.py`、`src/superfish_ng/web/hphi.js`、`src/superfish_ng/web/hphi.html`
@@ -156,6 +156,12 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ```
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
+
+#### H07受入記録（2026-09-16 JST）
+
+`gui_hphi_tuning.py`を追加し、Hφ専用APIへ要求の正規化/読込、実worker開始、共通中止、停止ジョブのcheckpoint列挙・完全replay、別ジョブ再開、対象試行のnative場取込を接続した。`hphi.html`/`hphi.js`には、無次元uniform_scale、保存SI座標、Hzの二つの周波数ゲート、対象IDと各試行の実順位、未確認理由、元場/RF表示への導線を追加した。checkpointと完了結果はURLの`tune`で再読込できる。
+
+`OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-uv-cache uv run --no-sync --python .venv/bin/python python -m unittest -v test_gui_hphi test_gui_hphi_tracking test_gui_hphi_tuning`は8件中7件PASS・既存HTTP 1件skip、76.357秒、終了0。新設`test_gui_hphi_tuning`では要求ファイルの正規化、実workerの保存地点再検証、対象IDの実順位での元native取込、別ジョブcheckpoint差替え/要求改変の拒否を確認した。`node --check src/superfish_ng/web/hphi.js`とChromium headlessの`/hphi.html`配信・調整UI初期化も終了0で確認した。sandboxではloopback bindが拒否されたため、HTTP認証を含む実サーバー操作の既存1件はskipであり、実ブラウザーの開始→中止→再開クリック列はAPI/worker回帰で補完し、未確認として残す。新規外部資料・依存・legacy比較はない。次はH08の同軸寸法/直線一般写像契約。
 
 ## H08
 

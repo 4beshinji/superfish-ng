@@ -3,6 +3,7 @@
 2026-09-16 JST：H05のHφ調整所有保存・再生・新規出力への再開と専用CLIを受入。専用5件（実FEMを含む）とH05指定の既存回帰/H04依存15件が終了0、専用validator 9実FEM・全17チェックがPASS。元Project/native/RF全量、要求・係数・順序・親の改変拒否、最終細分直前・未確認終端の再生、元出力移動後の再生を確認した。次はH06のworker中止/再起動。H01〜H05完了、90カード中6完了。
 
 2026-09-16 JST：H06のHφ調整workerをJobManagerへ接続。実workerのPAUSED再開・実中止後のcheckpoint再利用・管理器再作成・入力前拒否・失敗時manifest非公開を、`tests.test_hphi_tuning_jobs` 4件（43.784秒、終了0）で確認した。workerの要求/全native/判断/対象IDはH05の所有保存と照合する。次はH07のHφ調整GUI。H01〜H06完了、90カード中7完了。
+2026-09-16 JST：H07のHφ調整GUIを接続。要求編集/読込、開始/中止、checkpoint選択・replay・別ジョブ再開、対象IDの実順位による元native場/RF表示を、`test_gui_hphi_tuning` 2件と既存Hφ GUI回帰で確認した。JS構文とChromium headlessの専用画面初期化も終了0。sandboxのloopback bind制約により実ブラウザーのクリック列は未確認として記録した。次はH08の同軸寸法/直線一般写像。H01〜H07完了、90カード中8完了。
 
 2026-09-16 JST：H03/H04の要求・試行生成・真空一様尺度二分APIを受入。範囲と座標表現の制限は[HPHI_TUNING.md](HPHI_TUNING.md)。次はH05の所有保存/CLI。親課題全体の受入状態は維持。
 

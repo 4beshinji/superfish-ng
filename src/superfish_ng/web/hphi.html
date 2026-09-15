@@ -22,6 +22,15 @@
 <label>値の配列（SI、2点以上）<textarea id="study-values" rows="2">[1, 2]</textarea></label>
 <button id="study-start">掃引を開始</button><button id="study-save">Studyを保存</button><label class="file">Studyを開く<input id="study-open" type="file" accept=".json"></label>
 <div id="study-result" hidden><h3>選択した掃引</h3><p id="study-selection"></p><p>独立スペクトル：追跡未実施・精度未検証。各点の「結果を取り込む」で元メッシュと保存係数を持つ結果を開きます。</p><button id="study-result-save">掃引結果を保存</button><div id="study-points"></div></div>
+</section><section id="hphi-tuning"><h2>Hφ周波数調整</h2>
+<p>真空の一様尺度だけを変数にした専用調整です。保存座標は常にSIの(r,z) [m]、倍率は無次元です。対象IDを確認できない試行は周波数評価と調整に使いません。</p>
+<label class="file">調整要求を開く<input id="hphi-tune-open" type="file" accept=".json"></label><button id="hphi-tune-save-request">調整要求を保存</button>
+<details open><summary>調整要求JSONを編集</summary><textarea id="hphi-tune-document" rows="18" aria-label="Hφ調整要求JSON"></textarea><button id="hphi-tune-apply">JSONを適用</button><p id="hphi-tune-preview">専用調整要求を開いてください。</p></details>
+<label>今回の最大追加試行数（空欄=終端まで）<input id="hphi-tune-new-trials" type="number" min="1" step="1"></label>
+<button id="hphi-tune-start" class="primary" disabled>Hφ調整を開始</button><p id="hphi-tune-dirty"></p>
+<div id="hphi-tune-result" hidden><h3>選択したHφ調整</h3><p id="hphi-tune-selection"></p><p id="hphi-tune-status"></p><p id="hphi-tune-gates"></p><p>倍率は無次元、周波数と目標差は保存されたSI/Hzです。個別IDと実順位を別々に表示します。</p>
+<button id="hphi-tune-checkpoint-save">表示中のcheckpointを保存</button><button id="hphi-tune-resume" disabled>選択した保存地点から再開</button><label class="file">checkpointを開いて再検証<input id="hphi-tune-checkpoint-open" type="file" accept=".json"></label><div id="hphi-tune-trials"></div></div>
+</section><section><h2>同形状メッシュ列の細分差診断</h2>
 </section><section><h2>同形状メッシュ列の細分差診断</h2>
 <p>同じ形状を細かくした3水準以上のProjectを含む要求を開きます。最後の3水準の差を調べます。連続問題の誤差上界や永続的なモードIDは判定しません。材料と明示曲線は未対応です。</p>
 <label class="file">診断要求を開く<input id="convergence-open" type="file" accept=".json"></label><button id="convergence-save" disabled>診断要求を保存</button>

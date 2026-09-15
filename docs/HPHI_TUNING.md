@@ -3,7 +3,7 @@
 作業カード [H01](development-plan/02-hphi.md#h01)（親D02/P03/P04）の成果物。
 H01で仕様を固定し、H03で`hphi_tuning.py`のstrict要求reader・試行生成を実装した。
 H04で実FEM runnerと判断再構築を実装し、H05で所有保存・再生・再開CLIを接続した。
-workerはH06で接続済み、GUIはH07以降である。
+workerはH06、GUIはH07で接続済みである。
 後続H02〜H16は本書の名称・状態・保存契約を実装し、本書を実装済み範囲に合わせて更新する。
 
 ## 目的と範囲
@@ -171,9 +171,13 @@ python -m superfish_ng replay-tune-hphi out/hphi-tune-rest/checkpoint-004.json
   別ジョブ再開、ロック解放、完了manifestの`numerical_validation`区別）をHφの所有保存へ適用する。
   workerの公開結果はjob直下、所有trial/checkpointは`execution/`直下に置き、実中止後も完了済み
   checkpointを再利用できる。完了manifestは要求・全native・全checkpointを束縛し、失敗時は公開しない。
-- GUIは[H07](development-plan/02-hphi.md#h07)で`gui_hphi.py`/`web/hphi.js`/`hphi.html`へ
-  要求編集/読込、開始/中止、保存地点選択、再開、両周波数ゲート、対象IDと実順位、対象元場を追加する。
-  表示単位と保存SIを分ける。実ブラウザーで開始→中止→別ジョブ再開→元場表示を確認する。
+- GUIは[H07](development-plan/02-hphi.md#h07)で`gui_hphi.py`/`gui_hphi_tuning.py`/
+  `web/hphi.js`/`hphi.html`へ要求編集/読込、開始/中止、保存地点選択、再開、両周波数ゲート、
+  対象IDと実順位、対象元場を追加した。倍率は無次元、周波数はHz、Project座標はSI保存で、
+  Projectの表示単位とは分離している。停止ジョブのcheckpointは行番号を選択して完全replayし、
+  対象試行の確認済みIDから元nativeを既存Hφ結果表示へ渡す。URLの`tune`で完了結果を再読込できる。
+  API/worker回帰とChromium headlessの画面初期化は確認済み。sandboxのloopback bind制約により、
+  実ブラウザーの開始→中止→別ジョブ再開→元場クリック列は未確認である。
 
 ## `same_vacuum`制限を越える前提
 
@@ -260,6 +264,14 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用
   `tests.test_hphi_tuning_jobs` 4件（実workerの中止/再開を含む、43.784秒、終了0）がPASS。
   新規外部資料・依存・旧SUPERFISH比較はない。次はH07のGUI接続である。
 
+- **H07**（GUI接続）：`gui_hphi_tuning.py`を追加し、H06 workerの要求を既存Hφ画面へ接続した。
+  要求の正規化/同一ファイル再読込、開始/中止後の保存地点列挙、選択時の所属・祖先・native完全
+  replay、PAUSED保存地点からの別ジョブ再開、確認済み対象IDの実順位による元native取込を検査する。
+  結果表は探索/最終細分、倍率、Hz、目標差、二つの周波数ゲート、未確認理由を表示し、取込後は
+  既存のHφ RF量/N/A表示を使う。`test_gui_hphi_tuning` 2件を含むHφ GUI回帰8件（既存HTTP
+  1 skip）が終了0、JS構文と画面初期化も終了0。実ブラウザーのクリック列はloopback bind制約で
+  未確認として残す。新規外部資料・依存・legacy比較はない。次はH08である。
+
 - **H02**（`feat: 真空Hφの一様尺度比較を追加する`）：`hphi_field_grams`へ明示キーワード
   `previous_scale`（既定1.0）を追加した。`previous_scale=1.0`は既存の同領域経路と全配列一致する。
   1.0以外では前Projectの領域と全PEC穴を尺度倍して現領域とoverlayし、前E/Hへ`previous_scale**(-3/2)`を
@@ -270,7 +282,6 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用
 
 ## 残件
 
-- H07以降のv1 GUI接続。
 - 同軸寸法（H08）、一般写像／曲線（H11〜H13）、材料（H14〜H16）の比較・回復。
 - 対象版C00.Vと旧tuner照合（[D02_PHYSICS_ROUTING.md](D02_PHYSICS_ROUTING.md)）。
 

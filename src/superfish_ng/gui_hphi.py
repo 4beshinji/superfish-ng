@@ -13,6 +13,10 @@ from .hphi_project import HphiProject
 from .project import parse_json
 
 ACTIONS = {
+    'hphi-normalize-tune': ['request'], 'hphi-start-tune': ['request','max_new_trials'],
+    'hphi-resume-tune': ['document','max_new_trials'], 'hphi-replay-tune': ['document'],
+    'hphi-tune-result': ['id'], 'hphi-tune-checkpoints': ['id'],
+    'hphi-open-tune-checkpoint': ['id','index'], 'hphi-tune-trial': ['document','index'],
     'hphi-normalize-history': ['document'], 'hphi-start-history': ['document','step_ids'],
     'hphi-extend-history': ['id','next_id'], 'hphi-history-result': ['id'],
     'hphi-history-source': ['id','index','side'],
@@ -34,6 +38,10 @@ ACTIONS = {
 def hphi_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown hphi operation')
+    if action in ('hphi-normalize-tune','hphi-start-tune','hphi-resume-tune','hphi-replay-tune',
+                  'hphi-tune-result','hphi-tune-checkpoints','hphi-open-tune-checkpoint','hphi-tune-trial'):
+        from .gui_hphi_tuning import hphi_tuning_response
+        return hphi_tuning_response(manager, action, data), 'application/json; charset=utf-8'
     if action in ('hphi-normalize-history','hphi-start-history','hphi-extend-history','hphi-history-result','hphi-history-source'):
         return hphi_history_response(manager,action,data)
     if action in ('hphi-normalize-tracking','hphi-start-tracking','hphi-tracking-result','hphi-tracking-side','hphi-repeat-tracking'):

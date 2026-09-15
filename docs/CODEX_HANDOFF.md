@@ -1,4 +1,5 @@
 2026-09-16 JST：H05のHφ調整所有保存・再生・新規出力への再開・CLIを受入。専用5件、H05指定の既存回帰/H04依存15件、専用validator 9実FEM・全17チェックがPASS。要求・全Project/native/RF・hash・判断履歴を保存し、solverなし再生、最終細分直前・未確認終端の再生、要求/係数/順序/親の改変拒否、元出力移動後の再生を確認した。詳細は[HPHI_TUNING.md](HPHI_TUNING.md)。次はH06のworker中止/再起動。H01〜H05完了、90カード中6完了。
+2026-09-16 JST：H07のHφ調整GUIを接続。専用transport、実worker開始/中止後checkpointのreplay・別ジョブ再開、対象ID/実順位/元native場取込、二つの周波数ゲートとSI表示を追加した。`test_gui_hphi test_gui_hphi_tracking test_gui_hphi_tuning` 8件中7件PASS・既存HTTP 1件skip、終了0。JS構文とChromium headless画面初期化はPASS、loopback bind制約のため実クリック列は未確認。次はH08の同軸寸法/直線一般写像。
 
 2026-09-16 JST：H03のstrict要求・独立試行生成を完了。細分と比較予算の決定・新3/既存11件PASSは[HPHI_TUNING.md](HPHI_TUNING.md)。次はH04、保存/CLIはH05。
 
