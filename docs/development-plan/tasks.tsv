@@ -1,0 +1,91 @@
+task_id	parent_ids	depends_on	kind	status	document	title
+B01	C00		監査	PLANNED	01-baseline.md#b01	残要件と証拠を一行ずつ固定する
+B02	C00	B01	調査	PLANNED	01-baseline.md#b02	対象版の機能と入力資料を確認する
+B03	C00	B02	仕様	PLANNED	01-baseline.md#b03	必須範囲と不足仕様を確定する
+B04	C00	B01	文書	PLANNED	01-baseline.md#b04	全体状態の更新手順を短い入口へ集約する
+H01	D02 P03 P04	B01	仕様	PLANNED	02-hphi.md#h01	Hφ調整と比較写像の専用契約を決める
+H02	P03 D02	H01	実装	PLANNED	02-hphi.md#h02	真空Hφの一様尺度比較を追加する
+H03	D02	H02	実装	PLANNED	02-hphi.md#h03	Hφ調整のstrict要求と試行Project生成を実装する
+H04	D02	H03	実装	PLANNED	02-hphi.md#h04	Hφの実FEM二分調整を実装する
+H05	D02 O02	H04	実装	PLANNED	02-hphi.md#h05	Hφ調整の所有保存とCLI再開を実装する
+H06	D02 O02	H05	実装	PLANNED	02-hphi.md#h06	Hφ調整workerの中止と再起動を接続する
+H07	D02 O02	H06	実装	PLANNED	02-hphi.md#h07	Hφ調整GUIを接続する
+H08	P03 D02	H07	実装	PLANNED	02-hphi.md#h08	同軸寸法と直線一般形状の写像契約を追加する
+H09	P03 D02	H08	実装	PLANNED	02-hphi.md#h09	直線一般写像を追跡と調整へ接続する
+H10	P03 P04 D02	H09	実装	PLANNED	02-hphi.md#h10	Hφの個別ID回復を専用履歴へ追加する
+H11	P03	H08	実装	PLANNED	02-hphi.md#h11	曲線Hφの比較領域を構成する
+H12	P03	H11	実装	PLANNED	02-hphi.md#h12	曲線Hφの場比較と細分診断を実装する
+H13	P03 D02 O02	H10 H12	実装	PLANNED	02-hphi.md#h13	曲線Hφの履歴と調整を保存・操作へ接続する
+H14	P04 D02	H08	仕様	PLANNED	02-hphi.md#h14	材料界面を保つ比較契約を定義する
+H15	P04	H14	実装	PLANNED	02-hphi.md#h15	材料Hφの領域比較とID追跡を実装する
+H16	P04 D02 O02	H10 H15	実装	PLANNED	02-hphi.md#h16	材料Hφ調整と保存・GUIを接続する
+H17	P04	B03 H16	条件付き仕様	PLANNED	02-hphi.md#h17	P04の損失モデルの必要範囲を確定する
+H18	P03 P04	H13 H16 H17 C07-hphi C07-material	監査	PLANNED	02-hphi.md#h18	P03/P04の要件受入を監査する
+P01	P02 D02	B01	実装	PLANNED	03-planar.md#p01	平面アフィン形状法則を調整要求へ追加する
+P02	P02 D02	P01	実装	PLANNED	03-planar.md#p02	平面の個別ID回復を履歴・調整へ追加する
+P03	P02	P02	実装	PLANNED	03-planar.md#p03	平面非線形写像の契約と幾何検査を追加する
+P04	P02 D02	P03	実装	PLANNED	03-planar.md#p04	平面非線形比較と調整を接続する
+P05	P02	P03	仕様	PLANNED	03-planar.md#p05	平面曲線P2の幾何・弱形式を設計する
+P06	P02	P05	実装	PLANNED	03-planar.md#p06	平面曲線幾何とP2空間を実装する
+P07	P02	P06	実装	PLANNED	03-planar.md#p07	平面曲線の実解と元場・RFを実装する
+P08	P02 O02	P07	実装	PLANNED	03-planar.md#p08	平面曲線native・Project・GUIを接続する
+P09	P02 D02	P04 P08	実装	PLANNED	03-planar.md#p09	平面曲線の比較・調整を接続する
+P10	P02	P09 C07-planar	監査	PLANNED	03-planar.md#p10	P02の物理範囲と残要件を受入監査する
+D01	D02 P01	B01	仕様	PLANNED	04-design.md#d01	非曲線TM/TE調整の形状対応を確定する
+D02	D02	D01	実装	PLANNED	04-design.md#d02	TMの階段・一般輪郭調整を接続する
+D03	P01 D02	D01	実装	PLANNED	04-design.md#d03	TEの階段・一般輪郭調整を接続する
+D04	P01 D02	D02 D03 H18 P10 C07-TE	監査	PLANNED	04-design.md#d04	P01とD02の原要件を最終照合する
+D05	D03	B01	仕様	PLANNED	04-design.md#d05	D03の目的量と制約の残要件を固定する
+D06	D03	D02 D05	実装	PLANNED	04-design.md#d06	一般TM形状のRF探索候補を生成する
+D07	D03 N03	D06 N03	実装	PLANNED	04-design.md#d07	RF制約の収束と独立最終評価を拡張する
+D08	D03	D05 D03 P09	実装	PLANNED	04-design.md#d08	TEと平面RFの制約評価を追加する
+D09	D03	D05 H16	実装	PLANNED	04-design.md#d09	HφのRF制約評価を追加する
+D10-TE	D03 O02	D07 D08	実装	PLANNED	04-design.md#d10-te	追加RFの探索実行と保存再開を接続する：軸対称TE
+D10-planar	D03 O02	D07 D08	実装	PLANNED	04-design.md#d10-planar	追加RFの探索実行と保存再開を接続する：平面RF
+D10-hphi	D03 O02	D07 D09	実装	PLANNED	04-design.md#d10-hphi	追加RFの探索実行と保存再開を接続する：Hφ
+D10	D03 O02	D10-TE D10-planar D10-hphi	監査	PLANNED	04-design.md#d10	追加RFの探索実行と保存再開を接続する（統合照合）
+D11-TE	D03 O02	D10-TE	実装	PLANNED	04-design.md#d11-te	追加RF探索のGUIとD03受入を仕上げる：TEのGUI
+D11-planar	D03 O02	D10-planar	実装	PLANNED	04-design.md#d11-planar	追加RF探索のGUIとD03受入を仕上げる：平面のGUI
+D11-hphi	D03 O02	D10-hphi	実装	PLANNED	04-design.md#d11-hphi	追加RF探索のGUIとD03受入を仕上げる：HφのGUI
+D11	D03 O02	D11-TE D11-planar D11-hphi	監査	PLANNED	04-design.md#d11	追加RF探索のGUIとD03受入を仕上げる（統合照合）
+N01	G03 N03	B01	仕様	PLANNED	05-accuracy.md#n01	幾何・表面場の受入ケースを固定する
+N02	G03 N03	N01	実装	PLANNED	05-accuracy.md#n02	幾何と表面場の独立比較器を拡充する
+N03	G03 N03	N02	検証	PLANNED	05-accuracy.md#n03	非球形と丸め形状の物理精度を検証する
+N04	N03 G03	N03 C03	監査	PLANNED	05-accuracy.md#n04	N03とG03の受入範囲を確定する
+N05	N04	N01	仕様	PLANNED	05-accuracy.md#n05	適応細分の精度対費用の比較条件を固定する
+N06	N04	N05	実装	PLANNED	05-accuracy.md#n06	適応と一様細分の比較を実行する
+N07	N04	N06	条件付き実装	PLANNED	05-accuracy.md#n07	測定された適応処理の不足を修正する
+N08	N04 O02	N07	実装	PLANNED	05-accuracy.md#n08	適応の一般ケース・保存・N04受入を確認する
+C01	C00 C02 G03	B02	条件付き仕様	PLANNED	06-compatibility.md#c01	旧曲線入力の変換仕様を確定する
+C02	C02 G03	C01	条件付き実装	PLANNED	06-compatibility.md#c02	NT=2/3のstrict読込と変換記録を追加する
+C03	C02 G03	C02	検証	PLANNED	06-compatibility.md#c03	旧曲線変換の等価計算を検証する
+C04	C03	B03	条件付き仕様	PLANNED	06-compatibility.md#c04	旧テキスト出力とプローブの契約を固定する
+C05	C03	C04	条件付き実装	PLANNED	06-compatibility.md#c05	必要なプローブ列とテキスト変換を実装する
+C06	C03	C05	検証	PLANNED	06-compatibility.md#c06	旧後処理への受渡しを実証する
+C07-TM	C04 C00	B03 C03	検証	PLANNED	06-compatibility.md#c07-tm	機能別ブラックボックス比較を整備する：既存真空TMと曲線変換
+C07-TE	C04 C00	B03 D03	検証	PLANNED	06-compatibility.md#c07-te	機能別ブラックボックス比較を整備する：軸対称TE
+C07-planar	C04 C00	B03 P09	検証	PLANNED	06-compatibility.md#c07-planar	機能別ブラックボックス比較を整備する：平面TE/TM
+C07-hphi	C04 C00	B03 H13	検証	PLANNED	06-compatibility.md#c07-hphi	機能別ブラックボックス比較を整備する：真空/内導体Hφ
+C07-material	C04 C00	B03 H16	検証	PLANNED	06-compatibility.md#c07-material	機能別ブラックボックス比較を整備する：材料Hφ
+C07-static	C04 C00	B03 S01 S02 S03 S04 S05	検証	PLANNED	06-compatibility.md#c07-static	機能別ブラックボックス比較を整備する：静的S01〜S05の確認済み範囲
+C07	C04 C00	C07-TM C07-TE C07-planar C07-hphi C07-material C07-static	監査	PLANNED	06-compatibility.md#c07	機能別ブラックボックス比較を整備する（統合照合）
+C08	C04 C00	C03 C06 C07 S06 L04	監査	PLANNED	06-compatibility.md#c08	新規変換と各物理の旧版比較を完了する
+S01	S01	B03	監査	PLANNED	07-static-and-integration.md#s01	S01の旧境界・電極仕様を照合する
+S02	S02	B03	監査	PLANNED	07-static-and-integration.md#s02	S02の旧ポテンシャル・電流仕様を照合する
+S03	S03	B03	監査	PLANNED	07-static-and-integration.md#s03	S03の旧永久磁石モデルを照合する
+S04	S04	B03	監査	PLANNED	07-static-and-integration.md#s04	S04の旧B-Hモデルと失敗仕様を照合する
+S05	S05	B03	監査	PLANNED	07-static-and-integration.md#s05	S05の旧多極・力・トルク規約を照合する
+S06	S01 S02 S03 S04 S05	S01 S02 S03 S04 S05 C07-static	監査	PLANNED	07-static-and-integration.md#s06	静的系の必要差分を統合して受入する
+S07	O02	H07 P08 D11 N08 S06	監査	PLANNED	07-static-and-integration.md#s07	追加経路のProject・GUI受入を照合する
+L01	L01	B02	調査	PLANNED	08-external.md#l01	専用tuner・RFQ・utilityをツール別に確定する
+L02	L02	B02 S05	条件付き仕様	PLANNED	08-external.md#l02	磁石最適化の必要範囲を確定する
+L03	L02	B02	条件付き仕様	PLANNED	08-external.md#l03	熱後処理の必要範囲を確定する
+L04	L01 L02	B03 L01 L02 L03	監査	PLANNED	08-external.md#l04	周辺機能の採用と受入を確定する
+L05	C00	B01	作業規則	PLANNED	08-external.md#l05	新たに確定した必須仕様をコミットへ展開する
+L06	V01	B01	調査	PLANNED	08-external.md#l06	実機参照の来歴と再現条件を揃える
+L07	V01	L06 N03	条件付き検証	PLANNED	08-external.md#l07	実機の入力と比較を作る
+V01	V02	B03	仕様	PLANNED	09-release.md#v01	統合受入の対象と必要証拠を固定する
+V02	V02	V01 S07 C08	検証	PLANNED	09-release.md#v02	配布と旧保存移行を検証する
+V03	V02	V02 D04 D11 N04 N08 H18 P10	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
+V04	V02	V02 D11	検証	PLANNED	09-release.md#v04	実業務手順を利用者視点で受入する
+V05	V02	V03 V04 L07 C08 S07	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
