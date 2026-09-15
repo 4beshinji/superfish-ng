@@ -5,7 +5,7 @@ B03	C00	B02	仕様	PLANNED	01-baseline.md#b03	必須範囲と不足仕様を確�
 B04	C00	B01	文書	PLANNED	01-baseline.md#b04	全体状態の更新手順を短い入口へ集約する
 H01	D02 P03 P04	B01	仕様	DONE	02-hphi.md#h01	Hφ調整と比較写像の専用契約を決める
 H02	P03 D02	H01	実装	DONE	02-hphi.md#h02	真空Hφの一様尺度比較を追加する
-H03	D02	H02	実装	PLANNED	02-hphi.md#h03	Hφ調整のstrict要求と試行Project生成を実装する
+H03	D02	H02	実装	DONE	02-hphi.md#h03	Hφ調整のstrict要求と試行Project生成を実装する
 H04	D02	H03	実装	PLANNED	02-hphi.md#h04	Hφの実FEM二分調整を実装する
 H05	D02 O02	H04	実装	PLANNED	02-hphi.md#h05	Hφ調整の所有保存とCLI再開を実装する
 H06	D02 O02	H05	実装	PLANNED	02-hphi.md#h06	Hφ調整workerの中止と再起動を接続する

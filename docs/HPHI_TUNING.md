@@ -1,7 +1,8 @@
 # Hφ周波数調整の専用契約
 
 作業カード [H01](development-plan/02-hphi.md#h01)（親D02/P03/P04）の成果物。
-本書は**仕様**であり、実装ではない。H01時点で`hphi_tuning.py`等は存在しない。
+H01で仕様を固定し、H03で`hphi_tuning.py`のstrict要求reader・試行生成を実装した。
+実FEM runner・保存・CLI以降は各カードの実装記録を参照する。
 後続H02〜H16は本書の名称・状態・保存契約を実装し、本書を実装済み範囲に合わせて更新する。
 
 ## 目的と範囲
@@ -223,3 +224,29 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。本書は文
 - H02以降の実装、v1の物理/保存/CLI/worker/GUI接続。
 - 同軸寸法（H08）、一般写像／曲線（H11〜H13）、材料（H14〜H16）の比較・回復。
 - 対象版C00.Vと旧tuner照合（[D02_PHYSICS_ROUTING.md](D02_PHYSICS_ROUTING.md)）。
+
+
+### H03 / H04共通の細分・比較空間の決定（2026-09-16）
+
+真空v1の最終細分は、採用した尺度を元Projectへ適用した後、各段で同軸Caseの
+`nr/nz`を2倍、明示メッシュの全辺を中点で二分し各三角形を4分割する。
+輪郭/穴/軸・要素次数・RF設定を保持する。これは新NGの数値方式の決定であり、旧tunerの方式の主張ではない。
+HphiStudyの相似変換とplanar_refinementの標準中点4分割を基礎とし、
+Hφ専用メッシュ型で全境界を再検証する。新規外部資料・依存は使用しない。
+
+H04のguard診断では、各実試行メッシュをさらに1段4分割したP2比較空間を用いる。
+探索/最終FEMには要求の`max_triangles/max_dofs`、比較にはcontrolsの
+`max_overlay_triangles/max_dofs`を適用し、メッシュ型の250000要素上限も守る。
+自由度予算は拘束前の全係数数（P1はV、P2はV+E、零モードを含む）を数える。
+各段のV'=V+E、E'=2E+3T、T'=4Tで、最終比較空間まで割当て前に検査する。
+交差分割の実予算超過はH04のMESH_LIMITで扱う。
+
+H03受入：同一値の独立生成/元要求不変、strict JSONの重複・未知項目・非有限値・
+bool数値・NumPy型・未対応変数/物理・guard/範囲の拒否、細分割当て前の予算拒否を確認。
+同軸/正半径穴付き/軸接続穴付きで面積s²・体積s³、独立三角形回転体積、
+正Jacobian、全輪郭保持、軸辺倍増を確認した。
+
+実行：`OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-uv-cache uv run --no-sync --python .venv/bin/python python -m unittest -v test_hphi_tuning test_hphi_study test_hphi_study_physics`
+→ 新3/既存11の14件PASS、11.429秒、終了0。
+既存Studyの実FEM/RF尺度則を再利用。seed TMへの影響なし、seed/full validateは未実行。
+H03完了。H04の実FEM二分実行、H05の所有保存/CLIはまだ未受入。
