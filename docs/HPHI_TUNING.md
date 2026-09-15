@@ -208,6 +208,16 @@ N/Aの量には尺度比較を行わない。
 専用`scripts/validate_hphi_tuning.py`（API/CLI/native/二尺度と失敗例）。
 H02は`test_hphi_tracking`等へ独立尺度検査を追加する。本書は文書のみでFEMを実行しない。
 
+## 実装記録
+
+- **H02**（`feat: 真空Hφの一様尺度比較を追加する`）：`hphi_field_grams`へ明示キーワード
+  `previous_scale`（既定1.0）を追加した。`previous_scale=1.0`は既存の同領域経路と全配列一致する。
+  1.0以外では前Projectの領域と全PEC穴を尺度倍して現領域とoverlayし、前E/Hへ`previous_scale**(-3/2)`を
+  適用して現領域の測度`2*pi*r dr dz`で積分する。周波数`f/scale`はここでは適用せず呼出側で評価する
+  （H04）。出力diagnosticに`previous_scale`/`previous_field_scale`を追加。`test_hphi_field_overlap`7件
+  （軸接続/正半径の二尺度実FEMで`f→f/2`と正規化overlap恒等、scale=1一致、トポロジー/尺度相違拒否、
+  不正尺度拒否）と`test_hphi_study_physics`のRF尺度則（Q0∝√s等）を確認した。同領域の既存版は維持。
+
 ## 残件
 
 - H02以降の実装、v1の物理/保存/CLI/worker/GUI接続。

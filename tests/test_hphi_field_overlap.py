@@ -17,6 +17,15 @@ def solution(axis,order=2,n=1,holes=1,opposite=False,energy=1.):
     return solve_axis_hphi(AxisHphiCase(mesh,element_order=order,modes=3,normalization_j=energy)) if axis else solve_hphi_mesh(HphiMeshCase(mesh,element_order=order,modes=3,normalization_j=energy,quadrature_order=12))
 
 
+def scaled(axis,scale,order=2,n=1,holes=1,opposite=False,energy=1.):
+    mesh=fixture(n,holes,axis,opposite);data={**mesh.to_dict()}
+    for key in ('outer_rz_m','points_rz_m'):
+        data[key]=(np.asarray(data[key])*scale).tolist()
+    data['holes_rz_m']=[(np.asarray(hole)*scale).tolist() for hole in data['holes_rz_m']]
+    mesh=type(mesh).from_dict(data)
+    return solve_axis_hphi(AxisHphiCase(mesh,element_order=order,modes=3,normalization_j=energy)) if axis else solve_hphi_mesh(HphiMeshCase(mesh,element_order=order,modes=3,normalization_j=energy,quadrature_order=12))
+
+
 class HphiFieldOverlapTests(unittest.TestCase):
     def test_self_energy_and_signed_normalization(self):
         for axis in (False,True):
@@ -48,6 +57,35 @@ class HphiFieldOverlapTests(unittest.TestCase):
             for family in ('electric','magnetic'):
                 aa,ab,bb=getattr(grams,family);normalized=ab/np.sqrt(np.diag(aa)[:,None]*np.diag(bb)[None,:])
                 np.testing.assert_allclose(abs(normalized),np.eye(3),atol=1e-9)
+
+    def test_uniform_scale_axis_and_radius_two_scale(self):
+        for axis in (False,True):
+            base=scaled(axis,1.);grown=scaled(axis,2.)
+            np.testing.assert_allclose(grown.frequencies_hz,base.frequencies_hz/2,rtol=1e-9,atol=0.)
+            grams=hphi_field_grams(base,grown,previous_scale=2.)
+            self.assertEqual(grams.diagnostic['previous_scale'],2.)
+            self.assertEqual(grams.diagnostic['previous_field_scale'],2.**-1.5)
+            for family in ('electric','magnetic'):
+                aa,ab,bb=getattr(grams,family)
+                normalized=ab/np.sqrt(np.diag(aa)[:,None]*np.diag(bb)[None,:])
+                np.testing.assert_allclose(abs(normalized),np.eye(3),atol=1e-9)
+
+    def test_previous_scale_one_matches_default_path(self):
+        for axis in (False,True):
+            a=solution(axis);b=solution(axis)
+            plain=hphi_field_grams(a,b);explicit=hphi_field_grams(a,b,previous_scale=1.)
+            for family in ('electric','magnetic'):
+                for left,right in zip(getattr(plain,family),getattr(explicit,family)):
+                    np.testing.assert_array_equal(left,right)
+
+    def test_scaled_geometry_and_topology_rejected(self):
+        a=solution(True)
+        with self.assertRaisesRegex(ValueError,'same exact vacuum'):
+            hphi_field_grams(a,scaled(True,2.,holes=0),previous_scale=2.)
+        with self.assertRaisesRegex(ValueError,'same exact vacuum'):
+            hphi_field_grams(a,scaled(True,2.),previous_scale=3.)
+        for bad in (0.,-1.,True,'2'):
+            with self.assertRaises(ValueError):hphi_field_grams(a,a,previous_scale=bad)
 
     def test_invalid_solution_geometry_and_budget_rejected(self):
         a=solution(True)

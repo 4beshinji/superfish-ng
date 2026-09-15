@@ -10,7 +10,7 @@ from .hphi_mesh import HphiMeshCase,HphiMeshSolution,hphi_mesh_matrices,restore_
 from .hphi_mesh_saved import _mesh_arrays as _mesh_arrays
 from .curved_hphi import CurvedHphiCase,CurvedHphiSolution
 from .material_hphi import MaterialHphiCase,MaterialHphiSolution
-from .config import integer
+from .config import integer,positive
 from .constants import EPS0,TAU
 from .fem import triangle_quadrature
 from .meridional_mesh import MeridionalMesh
@@ -56,29 +56,37 @@ def _verified_solution(solution):
     return restored
 
 
-def _declared_mesh(solution):
+def _scaled_mesh(mesh,scale):
+    data={**mesh.to_dict()}
+    for key in ('outer_rz_m','points_rz_m'):
+        data[key]=(np.asarray(data[key],dtype=float)*scale).tolist()
+    data['holes_rz_m']=[(np.asarray(hole,dtype=float)*scale).tolist() for hole in data['holes_rz_m']]
+    return type(mesh).from_dict(data)
+
+
+def _declared_mesh(solution,scale=1.0):
     _reject_unsupported_comparison(solution)
     case=solution.case
     if isinstance(case,(HphiMeshCase,AxisHphiCase)):
-        return case.mesh
-    a,b,length=case.inner_radius_m,case.outer_radius_m,case.length_m
+        return case.mesh if scale==1.0 else _scaled_mesh(case.mesh,scale)
+    a,b,length=case.inner_radius_m*scale,case.outer_radius_m*scale,case.length_m*scale
     return MeridionalMesh([[a,0.],[b,0.],[b,length],[a,length]],[],
-                          solution.space.mesh.points,solution.space.mesh.triangles)
+                          solution.space.mesh.points*scale,solution.space.mesh.triangles)
 
 
-def _field_grams(previous,current,overlay,order):
+def _field_grams(previous,current,overlay,order,previous_field_scale=1.0):
     na,nb=previous.case.modes,current.case.modes
     grams=[[np.zeros((na,na)),np.zeros((na,nb)),np.zeros((nb,nb))] for _ in range(2)]
     components=(('Er_quadrature_V_per_m','Ez_quadrature_V_per_m'),('Hphi_real_A_per_m',))
     # Every omitted cylindrical component vanishes in the verified m=0 Hphi family.
     for bary,weight in triangle_quadrature(order):
         samples=[]
-        for solution,cells,vertices in (
-                (previous,overlay.previous_cells,overlay.previous_vertex_barycentric),
-                (current,overlay.current_cells,overlay.current_vertex_barycentric)):
+        for solution,cells,vertices,factor in (
+                (previous,overlay.previous_cells,overlay.previous_vertex_barycentric,previous_field_scale),
+                (current,overlay.current_cells,overlay.current_vertex_barycentric,1.0)):
             parent_bary=np.einsum('i,tij->tj',bary,vertices)
             fields=[solution.fields_in_cells(cells,parent_bary,mode) for mode in range(solution.case.modes)]
-            samples.append([[np.column_stack([f[key] for f in fields]) for key in family] for family in components])
+            samples.append([[np.column_stack([f[key] for f in fields])*factor for key in family] for family in components])
         radius=np.einsum('i,ti->t',bary,overlay.vertices_rz_m[:,:,0])
         weights=(TAU*radius*weight*overlay.determinants)[:,None]
         for family,(aa,ab,bb) in enumerate(grams):
@@ -102,17 +110,27 @@ def _source_grams(solution):
     return electric,magnetic
 
 
-def hphi_field_grams(previous,current,*,max_candidate_tests=2000000,
+def hphi_field_grams(previous,current,*,previous_scale=1.0,max_candidate_tests=2000000,
                      max_overlay_triangles=250000,max_gram_modes=256):
     """Integrate original peak E and H separately with full 3D measure 2*pi*r dr dz.
 
     Both solutions are fully reconstructed and their lowest positive spectra
-    verified. All original elements must cover exactly the same vacuum outer
-    contour and PEC holes. Normalization, frequency and coefficient signs are
-    retained; no rank correspondence, discretization estimate or mode ID is
-    inferred. E units are V^2*m, H units A^2*m. Comparing acceleration paths or
-    wall conductivities is outside this volume-field operation.
+    verified. By default all original elements must cover exactly the same
+    vacuum outer contour and PEC holes. With an explicit positive
+    ``previous_scale`` the previous original domain and every PEC hole are
+    mapped by that factor before the overlay; the previous E/H samples are
+    multiplied by ``previous_scale**(-3/2)`` so that, at fixed stored energy,
+    the mapped previous self integrals equal the original ones and only the
+    common physical measure 2*pi*r dr dz on the current domain is integrated.
+    The two comparison units are kept separate: the mesh/volume mapping is
+    geometric, while the field factor follows the uniform-scale law. Frequency
+    scaling (f -> f/scale) is not applied here and is evaluated by the caller.
+    Normalization, frequency and coefficient signs are retained; no rank
+    correspondence, discretization estimate or mode ID is inferred.
+    Comparing acceleration paths or wall conductivities is outside this
+    volume-field operation.
     """
+    previous_scale=positive(previous_scale,'previous_scale')
     for name,value in (('max_candidate_tests',max_candidate_tests),
                        ('max_overlay_triangles',max_overlay_triangles),('max_gram_modes',max_gram_modes)):
         integer(value,name)
@@ -123,12 +141,13 @@ def hphi_field_grams(previous,current,*,max_candidate_tests=2000000,
         if solution.case.modes>max_gram_modes:
             raise ValueError('Hphi field comparison exceeds max_gram_modes')
     previous,current=map(_verified_solution,(previous,current))
-    overlay=meridional_overlay(_declared_mesh(previous),_declared_mesh(current),
+    overlay=meridional_overlay(_declared_mesh(previous,previous_scale),_declared_mesh(current),
         max_candidate_tests=max_candidate_tests,max_overlay_triangles=max_overlay_triangles)
+    previous_field_scale=previous_scale**-1.5
     regular=all(isinstance(s,AxisHphiSolution) for s in (previous,current))
     order=5 if regular else max(getattr(s.case,'quadrature_order',0) for s in (previous,current))+4
     orders=[order,order+2 if regular else order+4]
-    low,high=(_field_grams(previous,current,overlay,n) for n in orders)
+    low,high=(_field_grams(previous,current,overlay,n,previous_field_scale) for n in orders)
     differences=[_normalized_difference(a,b) for a,b in zip(low,high)]
     if max(differences)>1e-10:
         raise ValueError('Hphi field quadrature is unresolved; refine the mesh or increase the Case quadrature_order')
@@ -152,5 +171,6 @@ def hphi_field_grams(previous,current,*,max_candidate_tests=2000000,
         integration_orders=orders,normalized_quadrature_differences=differences,integration_tolerance=1e-10,
         maximum_source_gram_difference=max(reproduction),source_gram_tolerance=1e-8,
         minimum_normalized_joint_gram_eigenvalues=minimum_eigenvalues,overlay_triangles=len(overlay.determinants),
+        previous_scale=previous_scale,previous_field_scale=previous_field_scale,
         mode_tracking='not_performed',scope='original volume field inner products; no continuum error bound or mode identity')
     return HphiFieldGrams(tuple(high[0]),tuple(high[1]),diagnostic)
