@@ -79,7 +79,7 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### Hφ調整の所有保存とCLI再開を実装する
 
-- **親課題**：D02 / O02。**種別**：実装。初期状態：未着手。
+- **親課題**：D02 / O02。**種別**：実装。状態：完了。
 - **先行条件**：[H04](02-hphi.md#h04)
 - **コミット件名案**：`feat: Hφ調整の所有保存とCLI再開を実装する`
 - **既存の入口・影響先**：`src/superfish_ng/cli.py`、`src/superfish_ng/hphi_native.py`、`src/superfish_ng/hphi_tracking_history_saved.py`
@@ -93,6 +93,19 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ```
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
+
+#### H05受入記録（2026-09-16 JST）
+
+`hphi_tuning_saved.py`で要求・全試行のProject/native・hash・判断履歴を所有保存し、
+`tune-hphi`、`resume-tune-hphi`、`replay-tune-hphi`を接続した。PAUSEDの2試行を
+新規再開先へコピーして4試行のTUNEDまで完走し、元出力を移動した後も再開先を再生できた。
+再生はsolverを呼ばず、nativeのFEM/RF復元、ID追跡、親、順序、両ゲートを再計算する。
+要求・係数/native・試行順序・親の改変と不完全構成を拒否する。
+
+専用`test_hphi_tuning_saved`は5件でPASS（終了0）。H05開始候補の
+`test_hphi_tracking_history_saved`/`test_hphi_tracking_jobs`とH04依存テスト、専用
+`scripts/validate_hphi_tuning.py`の実行結果を本書と`HPHI_TUNING.md`へ追記する。
+workerの中止・再起動は次のH06へ送る。
 
 ## H06
 

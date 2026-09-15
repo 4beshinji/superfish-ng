@@ -2,8 +2,8 @@
 
 作業カード [H01](development-plan/02-hphi.md#h01)（親D02/P03/P04）の成果物。
 H01で仕様を固定し、H03で`hphi_tuning.py`のstrict要求reader・試行生成を実装した。
-H04で実FEM runnerと判断再構築を実装した。所有保存・CLI・workerはH05以降であり、
-本APIのメモリー上の結果を所有checkpointと呼ばない。
+H04で実FEM runnerと判断再構築を実装し、H05で所有保存・再生・再開CLIを接続した。
+workerとGUIはH06以降である。
 後続H02〜H16は本書の名称・状態・保存契約を実装し、本書を実装済み範囲に合わせて更新する。
 
 ## 目的と範囲
@@ -79,7 +79,9 @@ FEM実行前に拒否する。
 `assess_hphi_tune(request, solutions)`（全元FEMからの判断再構築）。返値`HphiTuneRun`は
 `report/projects/solutions`を持つ。初期試行もE/H自己比較とguard診断を通す。
 探索試行の比較親は常に初期試行、最終細分の比較親は採用候補であり、二分ブラケットの親と混同しない。
-保存runnerへの接続はH05で行う。既存runner（[hphi_native.py](../src/superfish_ng/hphi_native.py)、
+所有保存は`execute_hphi_tune(request, directory, *, max_new_trials=None, checkpoint=None)`、
+再生は`replay_hphi_tune(document)`、ファイル読込を含む検証は`read_hphi_tune(path)`で行う。
+既存runner（[hphi_native.py](../src/superfish_ng/hphi_native.py)、
 [hphi_jobs.py](../src/superfish_ng/hphi_jobs.py)）の専用FEM型をそのまま使う。
 
 - 場比較は既存の`hphi_field_grams`/`hphi_mass_coupling`/`project_hphi_coefficients`を使い、
@@ -124,6 +126,22 @@ FEM実行前に拒否する。
 checkpointは要求・全試行nativeの所有先・`trial_sources_sha256`・`trials`・`decision`・
 `status`・`can_resume`・`scope`を持つ。出力先は**新規作成のみ**、既存を上書きしない。
 
+H05の保存runnerは`hphi_tuning_saved.py`の
+`execute_hphi_tune`/`replay_hphi_tune`/`read_hphi_tune`である。出力は次の所有構成を持つ。
+
+```text
+request.json
+checkpoint-NNN.json
+trial-NNN/project.json
+trial-NNN/solution/{case.json,mesh.npz,fields.npz,results.json,manifest.json}
+```
+
+`trial_runs`はこの出力先直下の順序付き`trial-NNN`を指し、各
+`trial_sources_sha256`は`project.json`と5個のnativeファイルの相対パス別SHA-256である。
+native readerが再計算する周波数、場、全RF量を保存し、再生時に各Project、native manifest、
+ファイルhash、判断履歴を照合する。再開は過去のtrial一式を新規出力先へコピーしてから
+新しい試行を追加するため、再開先は元出力のファイルに依存しない。
+
 ## replay / resume の許容・禁止変更
 
 `replay_hphi_tune(...)`は所有した要求/全nativeから判断履歴を再構築し、保存時との一致を確認する。
@@ -135,7 +153,7 @@ checkpointは要求・全試行nativeの所有先・`trial_sources_sha256`・`tr
 
 ## CLI と終了コード
 
-H05で固定する。既存`tune`/`tune-planar`と同じ引数構成に合わせる。
+H05で固定した。既存`tune`/`tune-planar`と同じ引数構成に合わせる。
 
 ```sh
 python -m superfish_ng tune-hphi REQUEST.json --out out/hphi-tune-new --max-new-trials 2
@@ -204,6 +222,7 @@ N/Aの量には尺度比較を行わない。
 | `validate_hphi_tune(request)` | 専用形式/版・Project・変数/単位・範囲・目標/許容差・ID/guard・予算を検査 | `planar_tuning.validate_planar_tune`の構成 |
 | `trial_hphi_project(request, value, phase)` | 元Projectから候補生成（search/refinement） | `HphiStudy.projects()`の相似変換 |
 | `run_hphi_tune(...)` | 実FEM→比較→ID確認→周波数評価→二分判断 | `hphi_native.solve_hphi`、`hphi_field_overlap`、`tuning._decision` |
+| `execute_hphi_tune(...)` | 全試行のProject/native所有保存とPAUSED再開 | `hphi_tuning_saved.py`、`hphi_native.save_hphi_run` |
 | `replay_hphi_tune(...)` | 所有nativeから判断履歴を再構築 | `planar_tuning.replay_planar_tune` |
 | `hphi_tuning_jobs.py` | 所有/別プロセス/中止/保存地点/再開の管理 | `planar_tuning_jobs.py`、`hphi_jobs.py` |
 
@@ -212,9 +231,23 @@ N/Aの量には尺度比較を行わない。
 計画の候補に従う。新規`tests/test_hphi_tuning.py`（H03〜H05）、
 `tests/test_hphi_tuning_jobs.py`（H06）、`tests/test_gui_hphi_tuning.py`（H07）、
 専用`scripts/validate_hphi_tuning.py`（API/CLI/native/二尺度と失敗例）。
-H02は`test_hphi_tracking`等へ独立尺度検査を追加する。本書は文書のみでFEMを実行しない。
+H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用検証は実FEMと
+`scripts/validate_hphi_tuning.py`で行い、worker以降の検査は後続カードで行う。
 
 ## 実装記録
+
+- **H05**（`feat: Hφ調整の所有保存とCLI再開を実装する`）：
+  `hphi_tuning_saved.py`を追加し、H04の各完了試行を独立した`Project`と専用nativeの
+  所有ディレクトリへ保存した。再生はsolverを呼ばずにnativeのFEM/RF復元、試行Project、
+  尺度付きE/H追跡、個別ID、親、二分判断、目標/粗細ゲートを再計算し、保存hashと一致しない
+  要求・係数・順序・親・nativeを拒否する。PAUSED再開では履歴prefixを新規出力へコピーし、
+  外部の元出力を移動しても再開先を再生できる。`tune-hphi`、`resume-tune-hphi`、
+  `replay-tune-hphi`の終了コード（成功0、未達1、入力/例外2）をCLIへ追加した。
+  `test_hphi_tuning_saved` 5件（実FEMを含む、終了0）、H05指定の既存回帰/H04依存15件
+  （347.129秒、終了0）、専用validatorの9実FEM・全17チェック（終了0）で、CLIの実経路、
+  native改変/要求改変拒否、未確認終端、元出力移動後の再生を確認した。rawは
+  `out/hphi-tuning-h05-final-20260916-rerun3`に保存した。
+  新規外部資料・依存・旧SUPERFISH比較はない。次はH06のworker中止・再起動である。
 
 - **H02**（`feat: 真空Hφの一様尺度比較を追加する`）：`hphi_field_grams`へ明示キーワード
   `previous_scale`（既定1.0）を追加した。`previous_scale=1.0`は既存の同領域経路と全配列一致する。

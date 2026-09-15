@@ -1,5 +1,11 @@
 # 独立実装・情報来歴
 
+2026-09-16 JST：H05の所有保存・再生・CLI再開を実装した。新規外部資料、旧SUPERFISH資産、
+旧solver source/binary、リモートサービス、追加依存は使用していない。既存のH04
+`hphi_native`専用native reader/writer、Hφ場追跡、二分判定、Project形式を再利用し、
+実FEMのProject/native/RF全量を新規`trial-NNN`へコピーしてhash検証する。validatorの
+対象は合成同軸であり、KEK/LANL測定構造や旧実装との比較結果を主張しない。次はH06 workerである。
+
 2026-09-15 JST：[平面RF調整GUI](GUI_PLANAR_TUNING.md)を接続。
 新4/関連11unit、Chrome主実行10項目＋保存再生で補完3項目を確認。実中止/保存地点選択/別ジョブ再開、対象IDの実順位を表示。
 8保存完了FEM＋中止未保存1試行、取込2件。API/GUI等の8組80配列/全RF一致、比較119/GUI全133ファイル保持（重複あり）。

@@ -1,4 +1,4 @@
-2026-09-16 JST：H04の真空一様尺度・実FEM二分APIを限定受入。関連29件後に影響4件を再実行、専用4＋追加6実FEMがPASS。細分/比較親・座標表現の制限・失敗履歴は[HPHI_TUNING.md](HPHI_TUNING.md)。次はH05の所有保存/CLI。H01〜H04完了、90カード中5完了。
+2026-09-16 JST：H05のHφ調整所有保存・再生・新規出力への再開・CLIを受入。専用5件、H05指定の既存回帰/H04依存15件、専用validator 9実FEM・全17チェックがPASS。要求・全Project/native/RF・hash・判断履歴を保存し、solverなし再生、最終細分直前・未確認終端の再生、要求/係数/順序/親の改変拒否、元出力移動後の再生を確認した。詳細は[HPHI_TUNING.md](HPHI_TUNING.md)。次はH06のworker中止/再起動。H01〜H05完了、90カード中6完了。
 
 2026-09-16 JST：H03のstrict要求・独立試行生成を完了。細分と比較予算の決定・新3/既存11件PASSは[HPHI_TUNING.md](HPHI_TUNING.md)。次はH04、保存/CLIはH05。
 

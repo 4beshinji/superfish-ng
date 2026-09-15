@@ -1,8 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""H03/H04 API evidence: actual vacuum FEMs, TEM/Maxwell laws and refusals.
-
-This does not validate the later owned-checkpoint, CLI or worker layers.
-"""
+"""H03--H05 evidence: actual vacuum FEMs, owned checkpoints and refusals."""
 import argparse
 from copy import deepcopy
 import json
@@ -15,7 +12,13 @@ from superfish_ng.constants import C0
 from superfish_ng.hphi_native import save_hphi_run, hphi_result
 from superfish_ng.hphi_project import HphiProject
 from superfish_ng.hphi_tracking import HphiTrackingControls
-from superfish_ng.hphi_tuning import run_hphi_tune, assess_hphi_tune, validate_hphi_tune
+from superfish_ng.hphi_tuning import (
+    execute_hphi_tune,
+    read_hphi_tune,
+    run_hphi_tune,
+    assess_hphi_tune,
+    validate_hphi_tune,
+)
 
 
 def main():
@@ -86,10 +89,43 @@ def main():
     except ValueError as exc:
         checks['preflight_mesh_limit'] = 'exceeds' in str(exc)
         write('preflight_refusal.json', dict(request=q, reason=str(exc)))
+    owned_first = execute_hphi_tune(request, args.out/'owned-first', max_new_trials=2)
+    owned_pre_refinement = execute_hphi_tune(
+        request, args.out/'owned-pre-refinement', checkpoint=owned_first, max_new_trials=1
+    )
+    owned_final = execute_hphi_tune(request, args.out/'owned-rest', checkpoint=owned_pre_refinement)
+    unverified_request = deepcopy(request)
+    unverified_request['controls']['relative_cluster_gap'] = .9
+    owned_unverified = execute_hphi_tune(unverified_request, args.out/'owned-unverified')
+    checks['owned_pause_replay'] = (
+        owned_first['status'] == 'PAUSED'
+        and read_hphi_tune(args.out/'owned-first/checkpoint-002.json') == owned_first
+    )
+    checks['owned_resume_replay'] = (
+        owned_final['status'] == 'TUNED'
+        and read_hphi_tune(args.out/'owned-rest/checkpoint-004.json') == owned_final
+    )
+    checks['owned_pre_refinement_replay'] = (
+        owned_pre_refinement['status'] == 'PAUSED'
+        and read_hphi_tune(args.out/'owned-pre-refinement/checkpoint-003.json') == owned_pre_refinement
+    )
+    checks['owned_unverified_replay'] = (
+        owned_unverified['status'] == 'UNVERIFIED'
+        and not owned_unverified['can_resume']
+        and read_hphi_tune(args.out/'owned-unverified/checkpoint-001.json') == owned_unverified
+    )
+    moved = args.out/'owned-pre-refinement-moved'
+    (args.out/'owned-pre-refinement').rename(moved)
+    try:
+        checks['owned_prefix_survives_source_move'] = read_hphi_tune(
+            args.out/'owned-rest/checkpoint-004.json'
+        ) == owned_final
+    finally:
+        moved.rename(args.out/'owned-pre-refinement')
     report = dict(status='PASS' if all(checks.values()) else 'FAIL', checks=checks,
-        new_fem_solves=len(execution.solutions), analytic_frequency_relative_errors=errors,
+        new_fem_solves=len(execution.solutions) + len(owned_final['trials']) + len(owned_unverified['trials']), analytic_frequency_relative_errors=errors,
         rf_scale_relative_errors=rf_errors, field_scale_relative_errors=field_errors,
-        scope='H03/H04 in-memory API only; native files are evidence, not H05 owned tune checkpoints; synthetic coaxial TEM; no legacy or measured structure comparison')
+        scope='H03/H04 in-memory and H05 owned checkpoint/CLI API; synthetic coaxial TEM; no legacy or measured structure comparison')
     write('report.json', report)
     print(json.dumps(report, indent=2))
     return 0 if report['status'] == 'PASS' else 1

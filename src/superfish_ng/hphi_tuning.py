@@ -253,3 +253,21 @@ def run_hphi_tune(request, *, max_new_trials=None):
         trial, project = _assess_trial(request, trials, solutions, solution)
         trials.append(trial); projects.append(project); solutions.append(solution)
     return _run_result(request, trials, projects, solutions)
+
+
+def execute_hphi_tune(request, directory, *, max_new_trials=None, checkpoint=None):
+    """Execute the owned persistent Hphi tuning workflow."""
+    from .hphi_tuning_saved import execute_hphi_tune as _execute
+    return _execute(request, directory, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+
+def replay_hphi_tune(document, *, base_directory=None):
+    """Replay an owned persistent Hphi tuning checkpoint."""
+    from .hphi_tuning_saved import replay_hphi_tune as _replay
+    return _replay(document, base_directory=base_directory)
+
+
+def read_hphi_tune(path):
+    """Read and replay an owned persistent Hphi tuning checkpoint."""
+    from .hphi_tuning_saved import read_hphi_tune as _read
+    return _read(path)

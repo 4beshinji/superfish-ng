@@ -28,10 +28,11 @@ def main(argv=None):
         if command!='replay-rf-optimization':
             optimization.add_argument('--out',type=Path,required=True)
             optimization.add_argument('--max-new-trials',type=int)
-    for command in ('tune','resume-tune','replay-tune','tune-planar','resume-tune-planar','replay-tune-planar'):
+    for command in ('tune','resume-tune','replay-tune','tune-planar','resume-tune-planar','replay-tune-planar',
+                    'tune-hphi','resume-tune-hphi','replay-tune-hphi'):
         tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
         tuning.add_argument('document',type=Path)
-        if command not in ('replay-tune','replay-tune-planar'):
+        if command not in ('replay-tune','replay-tune-planar','replay-tune-hphi'):
             tuning.add_argument('--out',type=Path,required=True)
             tuning.add_argument('--max-new-trials',type=int)
     for command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
@@ -840,6 +841,17 @@ def main(argv=None):
                 if args.command=='resume-tune-planar':
                     result=execute_planar_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
             print(f"{result['status']}: {args.document if args.command=='replay-tune-planar' else args.out}")
+            return 0 if result['status'] in ('TUNED','PAUSED') else 1
+        elif args.command in ('tune-hphi','resume-tune-hphi','replay-tune-hphi'):
+            from .hphi_tuning import execute_hphi_tune,read_hphi_tune
+            from .project import parse_json
+            if args.command=='tune-hphi':
+                result=execute_hphi_tune(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_trials=args.max_new_trials)
+            else:
+                result=read_hphi_tune(args.document)
+                if args.command=='resume-tune-hphi':
+                    result=execute_hphi_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
+            print(f"{result['status']}: {args.document if args.command=='replay-tune-hphi' else args.out}")
             return 0 if result['status'] in ('TUNED','PAUSED') else 1
         elif args.command in ('tune','resume-tune','replay-tune'):
             from .tuning import execute_tune,read_tune
