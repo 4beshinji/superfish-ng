@@ -1,0 +1,63 @@
+{
+  "format": "superfish_ng_planar_tune",
+  "schema_version": 1,
+  "project": {
+    "format": "superfish_ng_planar_project",
+    "project_version": 1,
+    "case": {
+      "format": "superfish_ng_planar_case",
+      "schema_version": 1,
+      "name": "planar cutoff",
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "cartesian",
+        "polarization": "te",
+        "propagation_constant_per_m": 0,
+        "material": "vacuum",
+        "boundary": "pec"
+      },
+      "geometry": {
+        "type": "rectangle",
+        "width_m": 0.3,
+        "height_m": 0.2
+      },
+      "mesh": {
+        "nx": 6,
+        "ny": 6,
+        "element_order": 2
+      },
+      "modes": 3,
+      "rf": {
+        "stored_energy_j_per_m": 1.0,
+        "conductivity_s_per_m": 58000000.0
+      }
+    },
+    "display_length_unit": "mm"
+  },
+  "parameter": "/case/geometry/width_m",
+  "bounds": [
+    0.3,
+    0.34
+  ],
+  "target_hz": 468425715.625,
+  "frequency_tolerance_hz": 200000.0,
+  "parameter_tolerance": 1e-08,
+  "max_trials": 8,
+  "initial_ids": [
+    "x",
+    "y"
+  ],
+  "mode_id": "x",
+  "controls": {
+    "minimum_overlap": 0.9,
+    "minimum_assignment_margin": 0.1,
+    "relative_cluster_gap": 0.001,
+    "minimum_relative_singular_value": 1e-08,
+    "minimum_cluster_link": 0.7,
+    "max_overlay_triangles": 250000,
+    "max_refined_triangles": 250000
+  },
+  "refinement_levels": 1,
+  "max_triangles": 20000,
+  "mesh_frequency_tolerance_hz": 200000.0
+}

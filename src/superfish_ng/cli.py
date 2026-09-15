@@ -28,10 +28,10 @@ def main(argv=None):
         if command!='replay-rf-optimization':
             optimization.add_argument('--out',type=Path,required=True)
             optimization.add_argument('--max-new-trials',type=int)
-    for command in ('tune','resume-tune','replay-tune'):
+    for command in ('tune','resume-tune','replay-tune','tune-planar','resume-tune-planar','replay-tune-planar'):
         tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
         tuning.add_argument('document',type=Path)
-        if command!='replay-tune':
+        if command not in ('replay-tune','replay-tune-planar'):
             tuning.add_argument('--out',type=Path,required=True)
             tuning.add_argument('--max-new-trials',type=int)
     for command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
@@ -830,6 +830,17 @@ def main(argv=None):
                     result=execute_rf_optimization(result['request'],args.out,checkpoint=result,max_new_trials=args.max_new_trials)
             print(f"{result['status']}: {args.document if args.command=='replay-rf-optimization' else args.out}")
             return 0 if result['status'] in ('SEARCH_COMPLETE','PAUSED') else 1
+        elif args.command in ('tune-planar','resume-tune-planar','replay-tune-planar'):
+            from .planar_tuning import execute_planar_tune,read_planar_tune
+            from .project import parse_json
+            if args.command=='tune-planar':
+                result=execute_planar_tune(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_trials=args.max_new_trials)
+            else:
+                result=read_planar_tune(args.document)
+                if args.command=='resume-tune-planar':
+                    result=execute_planar_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
+            print(f"{result['status']}: {args.document if args.command=='replay-tune-planar' else args.out}")
+            return 0 if result['status'] in ('TUNED','PAUSED') else 1
         elif args.command in ('tune','resume-tune','replay-tune'):
             from .tuning import execute_tune,read_tune
             from .project import parse_json

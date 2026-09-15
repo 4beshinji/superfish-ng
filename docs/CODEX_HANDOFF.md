@@ -1,3 +1,8 @@
+2026-09-15 JST：[平面RFの周波数調整](PLANAR_TUNING.md)を専用API/CLIへ接続。
+新4/関連24unit PASS。専用12実FEMで二分探索・保存再開・解析周波数・独立尺度則を検証。
+4組40配列/全RF一致、108保存ファイル保持。零近傍の成分検査失敗は保持し、質量ノルム/ベクトル場の検査で補完。
+[物理別接続表](D02_PHYSICS_ROUTING.md)を更新。平面worker/GUI・Hphi調整・D03等は残り、親33=10/16/6/1、全goal ACTIVE。
+
 2026-09-15 JST：[TEの境界を保つ置換計画自動生成](TE_REMESH_GENERATION.md)を限定受入。
 新4/関連17unit、8対称条件の独立体積、実円弧6半領域FEMの尺度則・保存再生、GUI23項目PASS。
 2組16配列/全RF一致、52 nativeファイル保持。336製品SHA不変、外部要求0。全対象プロセス終端。
@@ -36,7 +41,9 @@ full validatorは361モジュール1826件PASS（3 skip）、HTTPの1件を別�
 専用折線壁9半領域FEMで独立/逐次/適応Studyを確認し、6組48配列と全RF一致、117ファイル保持。CLI履歴再生PASS。
 実曲線workflow追加検証・専用GUI・分割切替対称条件・他物理/D03等は残る。親33=10/16/6/1、全計画goal ACTIVE。
 
-次はD02の元要件と未接続物理を監査し、D03を含む残件の受入範囲を確定する。
+次は平面調整の専用worker/GUIを接続し、続いてHphiの周波数/ID/単位に対応する調整要求を実装する。
+D02_PHYSICS_ROUTING.mdに現在の物理別接続と未完事項を整理した。
+平面調整API/CLIはPLANAR_TUNING.mdとout/planar-tuning-20260915に記録。全handle終端、再開すべき計算はない。
 TE向け置換計画自動生成は接続・限定受入済み。out/te-remesh-generation-20260915に全証拠を保存。
 専用API/GUI/native照合は終了、GUIサーバーPID2812309も停止済み。再開すべき計算はない。
 分割切替のGUI・円弧追加記録はout/te-cap-partition-20260915とout/te-partition-gui-20260915/tune。
