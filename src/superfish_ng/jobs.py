@@ -108,6 +108,10 @@ def read_job(directory, verify=True):
         if is_planar_tune(directory, state, manifest):
             verify_planar_tune_job(directory, state, manifest)
             return state
+        from .hphi_tuning_jobs import is_hphi_tune, verify_hphi_tune_job
+        if is_hphi_tune(directory, state, manifest):
+            verify_hphi_tune_job(directory, state, manifest)
+            return state
         from .planar_study_jobs import is_planar_study, verify_planar_study
         if is_planar_study(directory, state, manifest):
             verify_planar_study(directory, state, manifest)
@@ -448,6 +452,11 @@ class JobManager:
         """Run Cartesian cutoff tuning with dedicated native field identities."""
         from .planar_tuning_jobs import start_planar_tune
         return start_planar_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+    def start_hphi_tune(self, request, *, max_new_trials=None, checkpoint=None):
+        """Run owned vacuum Hphi tuning in an isolated local worker."""
+        from .hphi_tuning_jobs import start_hphi_tune
+        return start_hphi_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
 
     def start_adaptive_refinement(self, request, *, max_new_levels=None, checkpoint=None):
         """Run adaptive FEM refinement in an isolated local worker."""

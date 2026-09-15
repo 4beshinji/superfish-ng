@@ -111,7 +111,7 @@ workerの中止・再起動は次のH06へ送る。
 
 ### Hφ調整workerの中止と再起動を接続する
 
-- **親課題**：D02 / O02。**種別**：実装。初期状態：未着手。
+- **親課題**：D02 / O02。**種別**：実装。状態：完了。
 - **先行条件**：[H05](02-hphi.md#h05)
 - **コミット件名案**：`feat: Hφ調整workerの中止と再起動を接続する`
 - **既存の入口・影響先**：`src/superfish_ng/jobs.py`、`src/superfish_ng/hphi_jobs.py`、`src/superfish_ng/planar_tuning_jobs.py`
@@ -125,6 +125,18 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ```
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
+
+#### H06受入記録（2026-09-16 JST）
+
+`hphi_tuning_jobs.py`を追加し、`JobManager.start_hphi_tune`と完了manifestの検証へ接続した。
+入力封印、worker claim、H05の所有trial/checkpoint、APIとworkerの要求・試行・判断・対象IDの
+一致、PAUSED checkpointからの新規出力への再開を検証する。実プロセスを中止しても完了済み
+checkpointを保持し、別のJobManager再作成後に再開できる。失敗時はcompletion manifestを公開しない。
+
+検証は`OPENBLAS_NUM_THREADS=1 UV_CACHE_DIR=/tmp/superfish-uv-cache uv run --no-sync --python .venv/bin/python python -m unittest -v tests.test_hphi_tuning_jobs`で4件PASS（43.784秒、終了0）。
+実workerのPAUSED→再開、実中止→checkpoint再開、入力前拒否、checkpoint保持・manifest非公開を確認した。
+H05の`read_hphi_tune`はworkerの`execution/`配置も解決するよう更新し、既存の所有保存/再生を保持する。
+専用validatorやseed/full validateはH06のworker接続だけでは再実行していない。
 
 ## H07
 

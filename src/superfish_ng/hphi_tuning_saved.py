@@ -218,7 +218,14 @@ def read_hphi_tune(path):
     """Read and fully replay a saved Hphi tune checkpoint."""
     path = Path(path)
     document = parse_json(path.read_text(encoding='utf-8'))
-    return replay_hphi_tune(document, base_directory=path.parent)
+    # H06 workers keep the public result/checkpoint envelope at the job root
+    # while owning trial directories below ``execution``.  H05 standalone
+    # output keeps both at the same level.  Select the owning directory before
+    # resolving absolute trial paths so both layouts replay identically.
+    base_directory = path.parent
+    if (base_directory / 'execution').is_dir():
+        base_directory = base_directory / 'execution'
+    return replay_hphi_tune(document, base_directory=base_directory)
 
 
 def _copy_trial(source, target, expected_hashes):

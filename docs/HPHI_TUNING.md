@@ -3,7 +3,7 @@
 作業カード [H01](development-plan/02-hphi.md#h01)（親D02/P03/P04）の成果物。
 H01で仕様を固定し、H03で`hphi_tuning.py`のstrict要求reader・試行生成を実装した。
 H04で実FEM runnerと判断再構築を実装し、H05で所有保存・再生・再開CLIを接続した。
-workerとGUIはH06以降である。
+workerはH06で接続済み、GUIはH07以降である。
 後続H02〜H16は本書の名称・状態・保存契約を実装し、本書を実装済み範囲に合わせて更新する。
 
 ## 目的と範囲
@@ -166,9 +166,11 @@ python -m superfish_ng replay-tune-hphi out/hphi-tune-rest/checkpoint-004.json
 
 ## worker と GUI
 
-- workerは[H06](development-plan/02-hphi.md#h06)で`hphi_tuning_jobs.py`をJobManagerへ登録する。
+- workerは[H06](development-plan/02-hphi.md#h06)で`hphi_tuning_jobs.py`をJobManagerへ登録した。
   `planar_tuning_jobs.py`の契約（kind、入力/結果ファイル名、要求所有、checkpoint選択、
-  別ジョブ再開、ロック解放、完了manifestの`numerical_validation`区別）に合わせる。
+  別ジョブ再開、ロック解放、完了manifestの`numerical_validation`区別）をHφの所有保存へ適用する。
+  workerの公開結果はjob直下、所有trial/checkpointは`execution/`直下に置き、実中止後も完了済み
+  checkpointを再利用できる。完了manifestは要求・全native・全checkpointを束縛し、失敗時は公開しない。
 - GUIは[H07](development-plan/02-hphi.md#h07)で`gui_hphi.py`/`web/hphi.js`/`hphi.html`へ
   要求編集/読込、開始/中止、保存地点選択、再開、両周波数ゲート、対象IDと実順位、対象元場を追加する。
   表示単位と保存SIを分ける。実ブラウザーで開始→中止→別ジョブ再開→元場表示を確認する。
@@ -249,6 +251,15 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用
   `out/hphi-tuning-h05-final-20260916-rerun3`に保存した。
   新規外部資料・依存・旧SUPERFISH比較はない。次はH06のworker中止・再起動である。
 
+- **H06**（`feat: Hφ調整workerの中止と再起動を接続する`）：`hphi_tuning_jobs.py`を追加し、
+  `JobManager.start_hphi_tune`、worker claim、入力hash、所有checkpoint、完了manifest、
+  別JobManagerからの検証へ接続した。H05のstandalone配置に加え、worker結果をjob直下、
+  所有trialを`execution/`へ置く配置をreaderが再生する。PAUSED checkpointを新規出力へ複製して
+  再開し、実プロセス中止後の完了checkpointを再利用できる。API/workerの試行、native hash、
+  判断、対象IDを照合し、失敗時はcompletion manifestを公開しない。
+  `tests.test_hphi_tuning_jobs` 4件（実workerの中止/再開を含む、43.784秒、終了0）がPASS。
+  新規外部資料・依存・旧SUPERFISH比較はない。次はH07のGUI接続である。
+
 - **H02**（`feat: 真空Hφの一様尺度比較を追加する`）：`hphi_field_grams`へ明示キーワード
   `previous_scale`（既定1.0）を追加した。`previous_scale=1.0`は既存の同領域経路と全配列一致する。
   1.0以外では前Projectの領域と全PEC穴を尺度倍して現領域とoverlayし、前E/Hへ`previous_scale**(-3/2)`を
@@ -259,7 +270,7 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用
 
 ## 残件
 
-- H02以降の実装、v1の物理/保存/CLI/worker/GUI接続。
+- H07以降のv1 GUI接続。
 - 同軸寸法（H08）、一般写像／曲線（H11〜H13）、材料（H14〜H16）の比較・回復。
 - 対象版C00.Vと旧tuner照合（[D02_PHYSICS_ROUTING.md](D02_PHYSICS_ROUTING.md)）。
 
