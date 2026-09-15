@@ -1,3 +1,8 @@
+2026-09-15 JST：[TEの境界を保つ置換計画自動生成](TE_REMESH_GENERATION.md)を限定受入。
+新4/関連17unit、8対称条件の独立体積、実円弧6半領域FEMの尺度則・保存再生、GUI23項目PASS。
+2組16配列/全RF一致、52 nativeファイル保持。336製品SHA不変、外部要求0。全対象プロセス終端。
+入口のTE一律拒否を既存検査へ接続し、計算本体・物理閾値は保持。D02元要件照合・他物理/D03等と全goalは継続、親33=10/16/6/1。
+
 2026-09-15 JST：[TEアフィン調整版4](TE_AFFINE_TUNING.md)のGUI/CLI・場/RF追加検証を限定受入。
 
 2026-09-15 JST：[TE分割切替のGUIと実円弧検証](TE_PARTITION_GUI_AND_CAP.md)を限定受入。
@@ -31,9 +36,9 @@ full validatorは361モジュール1826件PASS（3 skip）、HTTPの1件を別�
 専用折線壁9半領域FEMで独立/逐次/適応Studyを確認し、6組48配列と全RF一致、117ファイル保持。CLI履歴再生PASS。
 実曲線workflow追加検証・専用GUI・分割切替対称条件・他物理/D03等は残る。親33=10/16/6/1、全計画goal ACTIVE。
 
-次はTE向け置換計画自動生成を確認・接続し、D02の未接続物理と元要件の監査へ進む。
-版4/8の対称条件は接続済み。明示置換計画と元半領域の参照座標を保ち、全鏡映体積・保存再開のAPI/CLI検査はPASS。
-TE向け置換計画自動生成はまだ入口で拒否する。curved_remesh_generation.pyとtest_curved_remesh_generation.pyが対象。
+次はD02の元要件と未接続物理を監査し、D03を含む残件の受入範囲を確定する。
+TE向け置換計画自動生成は接続・限定受入済み。out/te-remesh-generation-20260915に全証拠を保存。
+専用API/GUI/native照合は終了、GUIサーバーPID2812309も停止済み。再開すべき計算はない。
 分割切替のGUI・円弧追加記録はout/te-cap-partition-20260915とout/te-partition-gui-20260915/tune。
 初回300000組は最終比較で予算超過し、700000組の別要求はTUNED・再生PASS。全handle終了済み、再開すべき計算はない。
 旧円弧候補の鏡映拒否は座標別丸めの変更で解消。元のjoin tolerance 1e-14 mを保持した実入力と失敗ログをoutに残した。

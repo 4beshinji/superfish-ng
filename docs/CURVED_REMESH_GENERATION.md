@@ -11,7 +11,9 @@
 [携帯可能な設定例](../examples/curved_remesh_generation/settings.json) と
 [元Project](../examples/curved_project_remesh/source-project.json) は合成した二つの半楕円で、測定構造ではない。
 APIは `curved_remesh_generation.generate_curved_remesh_plan(project, settings)`。
-直接native曲線P2・未組立/未反射・閉PEC/軸・m=0 TMを受理する。
+未組立native曲線P2を対象とし、TMは直接・未反射・閉PEC/軸を受理する。
+2026-09-15に[TEの直接/最大1対称面と鏡映](TE_REMESH_GENERATION.md)を追加した。
+TEでも元二次境界と各履歴段階の幾何を保持する。
 
 | 必須項目 | 意味 |
 |---|---|

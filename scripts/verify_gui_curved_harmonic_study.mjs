@@ -194,10 +194,13 @@ try {
   await writeFile(out+'/source-project.json',JSON.stringify(expected.project));
   const loadFile=async(selector,path)=>{const {root}=await call('DOM.getDocument',{},sessionId);const {nodeId}=await call('DOM.querySelector',{nodeId:root.nodeId,selector},sessionId);await call('DOM.setFileInputFiles',{nodeId,files:[resolve(path)]},sessionId);};
   const select=async(id,value)=>ev(`(()=>{const e=$(${JSON.stringify(id)});e.value=${JSON.stringify(value)};e.dispatchEvent(new Event('change',{bubbles:true}))})()`);
-  await loadFile('#open',out+'/source-project.json');await wait('curvedHistoryRows().filter(r=>r._splitPattern).length===2');
+  await ev('window.__importedProject=null;window.__importApplyProject=applyProject;applyProject=p=>{const result=__importApplyProject(p);window.__importedProject=p;return result}');
+  await loadFile('#open',out+'/source-project.json');await wait('!!window.__importedProject');await ev('applyProject=__importApplyProject');
   await select('study-kind',expected.kind);await wait('!$("study-harmonic").hidden && $("study-parameter").options.length===1');
-  await click('#study-harmonic-template');await wait('$("study-harmonic-coefficients").value.includes("/curves/1/semiaxes_m/1")');
-  await check('template uses current curve values and continuous numeric fields','(()=>{const d=JSON.parse($("study-harmonic-coefficients").value);return d["/curves/1/semiaxes_m/1"][0]===.08 && Object.values(d).every(c=>c.length===1) && !Object.keys(d).some(k=>k.endsWith("/branch"))})()');
+  const templatePath=Object.keys(expected.geometry_coefficients)[0];
+  const templateValue=templatePath.split('/').slice(1).reduce((value,key)=>value[key],expected.project.case.geometry);
+  await click('#study-harmonic-template');await wait(`$("study-harmonic-coefficients").value.includes(${JSON.stringify(templatePath)})`);
+  await check('template uses current curve values and continuous numeric fields',`(()=>{const d=JSON.parse($("study-harmonic-coefficients").value);return d[${JSON.stringify(templatePath)}][0]===${templateValue} && Object.values(d).every(c=>c.length===1) && !Object.keys(d).some(k=>k.endsWith("/branch"))})()`);
   await click('#save-study');await wait('!$("error").hidden && $("error").textContent.includes("nonconstant")');
   report.checks.push({operation:'constant template requires a varying term before a Study can be saved',passed:true});
   await fill('#study-harmonic-parameter',expected.parameter);await select('study-harmonic-unit',expected.parameter_unit);
@@ -243,7 +246,7 @@ try {
   report.checks.push({operation:`GUI creates the exact version-${expected.study_version} declaration and preserves frozen source mesh`,passed:true});
   await fill('#study-harmonic-parameter','changed');await fill('#study-values','7, 8');await select('study-harmonic-unit','m');await fill('#study-harmonic-angle',5);
   await loadFile('#open-study',out+'/downloads/study.json');
-  await wait('$("study-harmonic-parameter").value==="shape_change" && $("study-values").value==="0, 1" && $("study-harmonic-unit").value==="1"');
+  await wait(`$("study-harmonic-parameter").value===${JSON.stringify(expected.parameter)} && $("study-values").value===${JSON.stringify(expected.values.join(', '))} && $("study-harmonic-unit").value===${JSON.stringify(expected.parameter_unit)}`);
   if(!isDeepStrictEqual(await ev('studyDefinition()'),expected))throw Error('Reload changed harmonic laws or controls');
   report.checks.push({operation:'definition reload restores laws, units, RF coordinates, quality and history',passed:true});
   await fill('#study-harmonic-coefficients','{"/curves/1/semiaxes_m/1":[.08,.01],"/curves/1/semiaxes_m/1":[.08,.02]}'.replaceAll('[.08,.','[0.08,0.'));
@@ -268,19 +271,28 @@ try {
   await click('#start-study');await wait('!!window.__studyJob');const job=await ev('__studyJob'),selector=`#jobs .job[data-job="${job}"]`;
   await wait(`document.querySelector(${JSON.stringify(selector+' strong')})?.textContent.startsWith("計算完了")`,240000);
   await click(selector+' button');await wait(`activeStudy?.study.kind===${JSON.stringify(expected.kind)}`,240000);
-  await check('actual worker displays independent spectra without a convergence claim','activeStudy.points.length===2 && activeStudy.comparisons.length===0 && activeStudy.numerical_status==="UNVERIFIED" && $("study-report").textContent.includes("独立したスペクトル")');
+  await check('actual worker displays independent spectra without a convergence claim',`activeStudy.points.length===${expected.values.length} && activeStudy.comparisons.length===0 && activeStudy.numerical_status==="UNVERIFIED" && $("study-report").textContent.includes("独立したスペクトル")`);
   const result=await ev('activeStudy');await writeFile(out+'/study-result.json',JSON.stringify(result,null,2));
   if(!isDeepStrictEqual(result.study,expected))throw Error('Actual worker lost shape laws');
   if(args['--native-study']) {
     const reference=JSON.parse(await readFile(args['--native-study'],'utf8'));
     if(!isDeepStrictEqual(result.study,reference.study))throw Error('CLI and GUI input declarations differ');
-    for(let i=0;i<2;i++)for(const k of ['frequency_hz','r_over_q_accelerator_ohm','r_over_q_circuit_ohm','geometry_factor_ohm','transit_time_factor_abs'])if(Math.abs(result.points[i].modes[0][k]/reference.points[i].modes[0][k]-1)>1e-12)throw Error('CLI/GUI field quantity differs: '+k);
+    for(let i=0;i<expected.values.length;i++)for(const k of ['frequency_hz','r_over_q_accelerator_ohm','r_over_q_circuit_ohm','geometry_factor_ohm','transit_time_factor_abs']){
+      const actual=result.points[i].modes[0][k],baseline=reference.points[i].modes[0][k];
+      if(actual===null || baseline===null){if(actual!==baseline)throw Error('CLI/GUI applicability differs: '+k);}
+      else if(!Number.isFinite(actual) || !Number.isFinite(baseline) || (baseline===0 ? actual!==0 : Math.abs(actual/baseline-1)>1e-12))throw Error('CLI/GUI field quantity differs: '+k);
+    }
     report.checks.push({operation:'CLI and GUI native input and frequency/RF quantities agree',passed:true});
   }
   await ev('$("tracking-study-panel").open=true;$("tracking-study").value=__studyJob');
   await fill('#tracking-study-ids','["A"]');await fill('#tracking-study-controls','');await fill('#tracking-order',5);await fill('#tracking-overlap',.8);
   await click('#tracking-study-run');await wait('trackingResult?.document.document_type==="study_mode_tracking" && !trackingBusy',240000);
-  await check('completed Study tracking derives actual curved comparison meshes','(()=>{const d=trackingResult.document,c=d.history.steps[0].request.controls;return d.status==="PASS" && c.mapping==="piecewise_remesh" && c.comparison_meshes.every(m=>m.schema_version===2 && m.curved_refinement_steps.length===3) && !Object.hasOwn(d.request.step_controls[0],"comparison_meshes")})()');
+  const sourceMesh=expected.project.case.mesh;
+  await check('completed Study tracking derives actual curved comparison meshes',`(()=>{const d=trackingResult.document,c=d.history.steps[0].request.controls;return d.status==="PASS" && c.mapping==="piecewise_remesh" && c.comparison_meshes.every(m=>m.schema_version===2 && JSON.stringify(m.curved_refinement_steps??[])===JSON.stringify(${JSON.stringify(sourceMesh.curved_refinement_steps??[])}) && (m.curved_refinement_levels??0)===${sourceMesh.curved_refinement_levels??0}) && !Object.hasOwn(d.request.step_controls[0],"comparison_meshes")})()`);
+  if(expected.project.case.model?.polarization==='te'){
+    const sector=expected.project.case.geometry.edge_tags.some(t=>['electric_symmetry','magnetic_symmetry'].includes(t));
+    await check('generated TE Study tracks actual electric fields and retains source sector',`trackingResult.document.history.steps.every(s=>s.tracking.physical_mapping.field==='Ephi_V_per_m' && ${sector ? `s.tracking.physical_mapping.symmetry_sector.reflected===${!!expected.project.reflect_full}` : '!s.tracking.physical_mapping.symmetry_sector'})`);
+  }
   await click('#tracking-save');let tracking;
   for(let n=0;n<300;n++){try{tracking=JSON.parse(await readFile(out+'/downloads/study-mode-tracking.json','utf8'));break;}catch{}await sleep(100);}
   if(!isDeepStrictEqual(tracking,await ev('trackingResult.document')))throw Error('Tracking download changed');
@@ -307,9 +319,9 @@ try {
     await wait('!$("error").hidden && $("error").textContent.includes("入力が変わりました")');
     report.checks.push({operation:'in-flight normalization rejects a changed mesh schedule',passed:true});await ev('api=__baseApi');
   }
-  await select('study-kind','fixed_geometry_convergence');await wait('$("study-parameter").value==="additional_uniform_refinements"');
+  await select('study-kind','fixed_geometry_convergence');await wait(`$("study-parameter").value===${JSON.stringify(expected.project.case.mesh.curved_refinement_steps?.length ? 'additional_uniform_refinements' : '/case/mesh/curved_refinement_levels')}`);
   await check('old fixed-domain Study omits new shape fields','(async()=>{const d=await studyDefinition();return d.study_version===1 && !Object.hasOwn(d,"geometry_coefficients") && !Object.hasOwn(d,"minimum_corner_angle_deg")})()');
-  await loadFile('#open-study',out+'/downloads/study.json');await wait('!$("study-harmonic").hidden && $("study-harmonic-angle").value==="1" && $("study-values").value==="0, 1"');
+  await loadFile('#open-study',out+'/downloads/study.json');await wait(`!$("study-harmonic").hidden && $("study-harmonic-angle").value===${JSON.stringify(String(expected.minimum_corner_angle_deg))} && $("study-values").value===${JSON.stringify(expected.values.join(', '))}`);
   await check('shape law editor occupies available width','$("study-harmonic-coefficients").getBoundingClientRect().width>.9*$("study-harmonic").getBoundingClientRect().width');
   const rect=await ev('(()=>{const r=$("studies").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
   const shot=await call('Page.captureScreenshot',{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+'/shape-study.png',Buffer.from(shot.data,'base64'));

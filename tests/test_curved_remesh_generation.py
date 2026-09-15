@@ -87,8 +87,9 @@ class CurvedRemeshGenerationTests(unittest.TestCase):
             with self.subTest(bad=bad),self.assertRaises(ValueError):generate_curved_remesh_plan(source,bad)
         raw=source.case.to_dict();raw['model']['polarization']='te'
         from superfish_ng import Case
-        with self.assertRaisesRegex(ValueError,'TM'):
-            generate_curved_remesh_plan(replace(source,case=Case.from_dict(raw)),settings)
+        te=replace(source,case=Case.from_dict(raw))
+        generated=remesh_curved_project(te,generate_curved_remesh_plan(te,settings))
+        self.assertEqual(generated.case.model.polarization,'te')
 
     def test_fixed_boundary_incompatible_size_and_generation_history_budgets(self):
         from superfish_ng.curved_remesh_generation import generate_curved_remesh_plan

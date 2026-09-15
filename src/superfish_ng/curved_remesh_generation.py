@@ -122,9 +122,13 @@ def generate_curved_remesh_plan(project,settings):
     if not isinstance(project,Project):raise ValueError('curved remesh generation requires a Project')
     project=Project.from_dict(project.to_dict());case=project.case
     from .te import is_te
-    if (case.curved_contour is None or case.geometry_order!=2 or project.sections is not None or project.reflect_full
-            or is_te(case) or any(tag not in ('axis','pec') for tag in case.curved_contour.edge_tags)):
-        raise ValueError('curved remesh generation requires direct native P2 closed PEC/axis TM geometry')
+    if case.curved_contour is None or case.geometry_order!=2 or project.sections is not None:
+        raise ValueError('curved remesh generation requires unassembled native P2 geometry')
+    if is_te(case):
+        from .curved_same_domain_tracking import _te_end_conditions
+        _te_end_conditions([case,case])
+    elif project.reflect_full or any(tag not in ('axis','pec') for tag in case.curved_contour.edge_tags):
+        raise ValueError('TM curved remesh generation requires direct closed PEC/axis geometry')
     original=make_mesh(case) if project.mesh_data is None else mesh_from_dict(case,project.mesh_data)
     case_limit=case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000
     limit=settings['max_triangles']
