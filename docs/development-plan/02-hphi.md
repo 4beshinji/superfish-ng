@@ -192,7 +192,7 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### 直線一般写像を追跡と調整へ接続する
 
-- **親課題**：P03 / D02。**種別**：実装。初期状態：未着手。
+- **親課題**：P03 / D02。**種別**：実装。状態：完了。
 - **先行条件**：[H08](02-hphi.md#h08)
 - **コミット件名案**：`feat: 直線一般写像を追跡と調整へ接続する`
 - **既存の入口・影響先**：`src/superfish_ng/hphi_field_overlap.py`、`src/superfish_ng/hphi_tracking_history.py`、`src/superfish_ng/hphi_study.py`
@@ -206,6 +206,25 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ```
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
+
+#### H09受入記録（2026-09-18 JST）
+
+`hphi_geometry_mapping.mapped_pullback_factors`と`hphi_field_overlap.hphi_mapped_field_grams`で、
+宣言アフィン写像の厳密overlayと標本別Jacobian `(r'/r)*det(A)` の逆平方根による
+前場引き戻しを実装した。前後両自己グラムは元FEM自己積分へ再現し、一様尺度では
+H02経路と正規化overlapが一致する。`track_hphi_mapped_modes`を公開入口として追加し、
+版1`same_vacuum`契約は不変。調整要求へ`coaxial_dimensions`（m）と
+`general_piecewise_affine`（radial/axial倍率）を追加し、試行生成・写像比較・
+checkpoint scopeを接続した。CLI/worker/GUI transportは既存経路をそのまま通る。
+
+検査：`test_hphi_field_overlap test_hphi_geometry_mapping test_hphi_tracking`の23件PASS、
+66.326秒、終了0。`test_hphi_tuning` 10件PASS、119.685秒、終了0。
+`test_hphi_tuning_jobs` 4件（worker中止/再開含む）62.163秒、`test_gui_hphi_tuning` 2件
+54.775秒、`test_hphi_tracking_history` 4件、`test_gui_hphi_tracking` 2件もPASS。
+合成同軸TEMの`f=c/(2L)`へ`TUNED`、穴付き軸接続の単軸変形でID確認後のみ周波数評価、
+保存checkpointのreplayが要求・試行を完全再現することを確認した。正逆写像・番号置換・
+同物理形状の別分割も確認した。検証のrawは`out/`以下、詳細は
+[HPHI_TUNING.md](../HPHI_TUNING.md)。次はH10の個別ID回復。
 
 ## H10
 

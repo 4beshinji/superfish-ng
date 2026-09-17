@@ -28,7 +28,7 @@
 <details open><summary>調整要求JSONを編集</summary><textarea id="hphi-tune-document" rows="18" aria-label="Hφ調整要求JSON"></textarea><button id="hphi-tune-apply">JSONを適用</button><p id="hphi-tune-preview">専用調整要求を開いてください。</p></details>
 <label>今回の最大追加試行数（空欄=終端まで）<input id="hphi-tune-new-trials" type="number" min="1" step="1"></label>
 <button id="hphi-tune-start" class="primary" disabled>Hφ調整を開始</button><p id="hphi-tune-dirty"></p>
-<div id="hphi-tune-result" hidden><h3>選択したHφ調整</h3><p id="hphi-tune-selection"></p><p id="hphi-tune-status"></p><p id="hphi-tune-gates"></p><p>倍率は無次元、周波数と目標差は保存されたSI/Hzです。個別IDと実順位を別々に表示します。</p>
+<div id="hphi-tune-result" hidden><h3>選択したHφ調整</h3><p id="hphi-tune-selection"></p><p id="hphi-tune-status"></p><p id="hphi-tune-gates"></p><p>探索パラメータの単位は要求のmapping種別に従います（uniform_scale/軸倍率は無次元、同軸寸法はm）。周波数と目標差は保存されたSI/Hzです。個別IDと実順位を別々に表示します。</p>
 <button id="hphi-tune-checkpoint-save">表示中のcheckpointを保存</button><button id="hphi-tune-resume" disabled>選択した保存地点から再開</button><label class="file">checkpointを開いて再検証<input id="hphi-tune-checkpoint-open" type="file" accept=".json"></label><div id="hphi-tune-trials"></div></div>
 </section><section><h2>同形状メッシュ列の細分差診断</h2>
 </section><section><h2>同形状メッシュ列の細分差診断</h2>

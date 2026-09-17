@@ -1,5 +1,7 @@
 # 実装バックログ
 
+2026-09-18 JST：H09の直線一般写像を追跡・調整へ接続。`mapped_pullback_factors`と`hphi_mapped_field_grams`で宣言アフィン写像の厳密overlayと標本別Jacobian `(r'/r)*det(A)` の逆平方根引き戻しを実装し、前後自己グラムが元FEM積分へ再現（一様尺度はH02一致）。`track_hphi_mapped_modes`を追加、版1`same_vacuum`は不変。調整要求へ`coaxial_dimensions`（m）と`general_piecewise_affine`（radial/axial倍率）を追加し、試行生成・比較・checkpoint scope・replay/CLI/worker/GUIへ接続。比較23件66.326秒、調整10件119.685秒、worker4件62.163秒、GUI調整2件54.775秒、追跡履歴4件・GUI追跡2件PASS、終了0。同軸長さ探索は合成TEMの`f=c/(2L)`へTUNED、穴付き軸接続変形はID確認後のみ周波数評価、正逆写像・番号置換・別分割・保存replayを確認。次はH10の個別ID回復。H01〜H09完了、90カード中10完了。
+
 2026-09-18 JST：H08の同軸寸法・直線一般写像契約を追加。`hphi_geometry_mapping.py`の有理検査で反転/退化/軸移動を拒否し、写像後の前メッシュを既存の厳密同領域overlayで現メッシュと比較する。新7件・関連34件PASS（14.091秒、終了0）。同軸寸法の解析面積/体積と独立積分、一様尺度のH02一致、被覆/穴/軸の拒否を確認。次はH09の追跡/調整接続。H01〜H08完了、90カード中9完了。
 
 2026-09-16 JST：H05のHφ調整所有保存・再生・新規出力への再開と専用CLIを受入。専用5件（実FEMを含む）とH05指定の既存回帰/H04依存15件が終了0、専用validator 9実FEM・全17チェックがPASS。元Project/native/RF全量、要求・係数・順序・親の改変拒否、最終細分直前・未確認終端の再生、元出力移動後の再生を確認した。次はH06のworker中止/再起動。H01〜H05完了、90カード中6完了。

@@ -7,13 +7,14 @@ import unittest
 
 import numpy as np
 
-from superfish_ng.axis_hphi import AxisHphiCase
+from superfish_ng.axis_hphi import AxisHphiCase, solve_axis_hphi
 from superfish_ng.coaxial import CoaxialCase
 from superfish_ng.hphi_mesh import HphiMeshCase
 from superfish_ng.hphi_project import HphiProject
 from superfish_ng.hphi_tracking import HphiTrackingControls
-from superfish_ng.hphi_tuning import validate_hphi_tune, read_hphi_tune_request, trial_hphi_project
+from superfish_ng.hphi_tuning import validate_hphi_tune, read_hphi_tune_request, trial_hphi_project, tune_scope
 from superfish_ng.hphi_tuning import run_hphi_tune, assess_hphi_tune
+from superfish_ng.hphi_tuning_saved import execute_hphi_tune, read_hphi_tune
 from superfish_ng.constants import C0
 from test_hphi_mass_projection import declared
 
@@ -97,6 +98,40 @@ class HphiTuneRequestTests(unittest.TestCase):
                 if type(case) is AxisHphiCase:
                     self.assertEqual(len(b.axis_edges), 2*len(a.axis_edges))
 
+    def test_coaxial_dimension_and_affine_request_contracts(self):
+        coaxial = request()
+        coaxial.update(parameter='coaxial_dimensions', mapping={'kind': 'coaxial_dimensions', 'coordinate': 'length_m'},
+                       bounds=[.18, .36], target_hz=C0/(2*.27))
+        validate_hphi_tune(coaxial)
+        self.assertEqual(tune_scope(coaxial), 'vacuum_coaxial_dimensions')
+        coarse, fine = trial_hphi_project(coaxial, .36, 'search'), trial_hphi_project(coaxial, .36, 'refinement')
+        self.assertEqual((fine.case.nr, fine.case.nz), (2*coarse.case.nr, 2*coarse.case.nz))
+        self.assertAlmostEqual(coarse.case.length_m, .36)
+        self.assertAlmostEqual(fine.case.length_m, .36)
+        for change in ({'parameter': 'uniform_scale'},
+                       {'mapping': {'kind': 'coaxial_dimensions', 'coordinate': 'width_m'}},
+                       {'mapping': {'kind': 'coaxial_dimensions'}},
+                       {'mapping': {'kind': 'coaxial_dimensions', 'coordinate': 'length_m', 'extra': 1}}):
+            bad = copy.deepcopy(coaxial); bad.update(change)
+            with self.assertRaises(ValueError): validate_hphi_tune(bad)
+        mesh = declared(1, 1, False)
+        affine = request(HphiMeshCase(mesh, modes=3, quadrature_order=12))
+        affine.update(parameter='general_piecewise_affine',
+                      mapping={'kind': 'general_piecewise_affine', 'axis': 'axial'}, bounds=[1., 2.])
+        validate_hphi_tune(affine)
+        self.assertEqual(tune_scope(affine), 'vacuum_general_piecewise_affine')
+        trial = trial_hphi_project(affine, 2., 'search')
+        np.testing.assert_allclose(trial.case.mesh.points_rz_m[:, 1], 2*mesh.points_rz_m[:, 1])
+        np.testing.assert_array_equal(trial.case.mesh.points_rz_m[:, 0], mesh.points_rz_m[:, 0])
+        self.assertAlmostEqual(trial.case.mesh.volume_m3, 2*mesh.volume_m3)
+        for old, new in zip(mesh.holes_rz_m, trial.case.mesh.holes_rz_m):
+            np.testing.assert_allclose(new[:, 1], 2*old[:, 1]); np.testing.assert_array_equal(new[:, 0], old[:, 0])
+        for change in ({'parameter': 'uniform_scale'},
+                       {'mapping': {'kind': 'general_piecewise_affine', 'axis': 'diagonal'}},
+                       {'mapping': {'kind': 'general_piecewise_affine'}}):
+            bad = copy.deepcopy(affine); bad.update(change)
+            with self.assertRaises(ValueError): validate_hphi_tune(bad)
+
 
 class HphiTuneExecutionTests(unittest.TestCase):
     @classmethod
@@ -153,6 +188,50 @@ class HphiTuneExecutionTests(unittest.TestCase):
         result = assess_hphi_tune(q, self.execution.solutions[:1]).report
         self.assertEqual(result['status'], 'UNVERIFIED')
         self.assertIsNone(result['trials'][0]['frequency_hz'])
+
+    def test_coaxial_dimension_search_tuned_and_checkpoint_scope_replays(self):
+        q = request()
+        q.update(parameter='coaxial_dimensions', mapping={'kind': 'coaxial_dimensions', 'coordinate': 'length_m'},
+                 bounds=[.18, .36], target_hz=C0/(2*.27))
+        run = run_hphi_tune(q)
+        self.assertEqual(run.report['status'], 'TUNED')
+        self.assertEqual(run.report['scope'], 'vacuum_coaxial_dimensions')
+        self.assertEqual(run.report['parameter_unit'], 'm')
+        for trial in run.report['trials']:
+            if trial['frequency_hz'] is not None:
+                self.assertLess(abs(trial['frequency_hz']/(C0/(2*trial['value']))-1), 1e-3)
+            if trial['index'] > 0:
+                self.assertEqual(trial['tracking']['physical_mapping']['name'], 'declared_affine')
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)/'coaxial'
+            checkpoint = execute_hphi_tune(q, directory, max_new_trials=2)
+            self.assertEqual(checkpoint['scope'], 'vacuum_coaxial_dimensions')
+            self.assertEqual(checkpoint['status'], 'PAUSED')
+            replay = read_hphi_tune(directory/f"checkpoint-{len(checkpoint['trials']):03d}.json")
+            self.assertEqual(replay['request'], checkpoint['request'])
+            self.assertEqual(replay['trials'], checkpoint['trials'])
+
+    def test_affine_explicit_mesh_identity_gate_and_saved_request_replay(self):
+        mesh = declared(1, 1, True)
+        q = request(AxisHphiCase(mesh, modes=3))
+        q.update(parameter='general_piecewise_affine',
+                 mapping={'kind': 'general_piecewise_affine', 'axis': 'axial'}, bounds=[1., 2.])
+        initial = solve_axis_hphi(AxisHphiCase(mesh, modes=3))
+        grown = trial_hphi_project(q, 2., 'search')
+        current = solve_axis_hphi(grown.case)
+        q['target_hz'] = float((initial.frequencies_hz[0]+current.frequencies_hz[0])/2)
+        result = assess_hphi_tune(q, [initial, current]).report
+        self.assertIn(result['status'], ('PAUSED', 'TUNED', 'REFINEMENT_FAILED', 'UNBRACKETED'))
+        self.assertEqual(result['trials'][1]['status'], 'PASS')
+        self.assertIsNotNone(result['trials'][1]['frequency_hz'])
+        self.assertEqual(result['trials'][1]['tracking']['physical_mapping']['name'], 'declared_affine')
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)/'affine'
+            checkpoint = execute_hphi_tune(q, directory, max_new_trials=1)
+            self.assertEqual(checkpoint['scope'], 'vacuum_general_piecewise_affine')
+            replay = read_hphi_tune(directory/'checkpoint-001.json')
+            self.assertEqual(replay['request'], checkpoint['request'])
+            self.assertEqual(replay['trials'], checkpoint['trials'])
 
     def test_pause_unbracketed_and_iteration_parameter_limits(self):
         q = copy.deepcopy(self.q); q['target_hz'] *= 3

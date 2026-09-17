@@ -17,6 +17,7 @@ from .hphi_tuning import (
     _assess_trial,
     _tune_decision,
     trial_hphi_project,
+    tune_scope,
     validate_hphi_tune,
 )
 from .jobs import _implementation_hashes, _write_json
@@ -41,7 +42,6 @@ CHECKPOINT_KEYS = (
 )
 NATIVE_FILES = FILES | {'manifest.json'}
 TRIAL_FILES = {'project.json'} | {f'solution/{name}' for name in NATIVE_FILES}
-SCOPE = 'vacuum_uniform_scale'
 
 
 def _digest(path):
@@ -119,7 +119,7 @@ def _checkpoint(request, runs, sources, trials):
         decision=decision,
         status=decision['status'],
         can_resume=decision['status'] == 'PAUSED',
-        scope=SCOPE,
+        scope=tune_scope(request),
     )
 
 
@@ -169,8 +169,12 @@ def _validate_checkpoint_shape(document):
             or type(document['schema_version']) is not int
             or document['schema_version'] != 1):
         raise ValueError('expected superfish_ng_hphi_tune_checkpoint schema_version 1')
-    if document['scope'] != SCOPE:
-        raise ValueError('Hphi tune checkpoint scope must be vacuum_uniform_scale')
+    try:
+        expected_scope = tune_scope(document['request'])
+    except (KeyError, TypeError):
+        raise ValueError('Hphi tune checkpoint request must declare a supported mapping kind')
+    if document['scope'] != expected_scope:
+        raise ValueError('Hphi tune checkpoint scope must match its declared mapping kind')
     if type(document['trial_sources_sha256']) is not list:
         raise ValueError('Hphi tune trial_sources_sha256 must be a list')
     if type(document['trials']) is not list:

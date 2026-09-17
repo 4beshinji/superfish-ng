@@ -13,6 +13,7 @@ from .material_hphi import MaterialHphiCase,MaterialHphiSolution
 from .config import integer,positive
 from .constants import EPS0,TAU
 from .fem import triangle_quadrature
+from .hphi_geometry_mapping import HphiGeometryMapping,hphi_geometry_overlay,mapped_pullback_factors
 from .meridional_mesh import MeridionalMesh
 from .meridional_overlap import meridional_overlay
 
@@ -87,6 +88,41 @@ def _field_grams(previous,current,overlay,order,previous_field_scale=1.0):
             parent_bary=np.einsum('i,tij->tj',bary,vertices)
             fields=[solution.fields_in_cells(cells,parent_bary,mode) for mode in range(solution.case.modes)]
             samples.append([[np.column_stack([f[key] for f in fields])*factor for key in family] for family in components])
+        radius=np.einsum('i,ti->t',bary,overlay.vertices_rz_m[:,:,0])
+        weights=(TAU*radius*weight*overlay.determinants)[:,None]
+        for family,(aa,ab,bb) in enumerate(grams):
+            for a,b in zip(samples[0][family],samples[1][family]):
+                aa+=a.T@(weights*a);ab+=a.T@(weights*b);bb+=b.T@(weights*b)
+    return grams
+
+
+def _mapped_field_grams(previous,current,overlay,order,mapping):
+    """Integrate the Jacobian-pulled previous and the original current field.
+
+    The common triangles are the exact same-domain partition after applying
+    the declared map to the previous mesh. Previous samples are taken in the
+    original previous cells, current samples in the current cells, and the
+    previous peak field is multiplied by the local volume-Jacobian inverse
+    square root. With the full 3D measure ``2*pi*r dr dz`` this reproduces both
+    original self energies exactly and leaves the cross term in the common
+    current measure.
+    """
+    na,nb=previous.case.modes,current.case.modes
+    grams=[[np.zeros((na,na)),np.zeros((na,nb)),np.zeros((nb,nb))] for _ in range(2)]
+    components=(('Er_quadrature_V_per_m','Ez_quadrature_V_per_m'),('Hphi_real_A_per_m',))
+    declared=_declared_mesh(previous)
+    previous_triangles=declared.points_rz_m[declared.triangles[overlay.previous_cells]]
+    for bary,weight in triangle_quadrature(order):
+        previous_parent=np.einsum('i,tij->tj',bary,overlay.previous_vertex_barycentric)
+        current_parent=np.einsum('i,tij->tj',bary,overlay.current_vertex_barycentric)
+        previous_points=np.einsum('tj,tjr->tr',previous_parent,previous_triangles)
+        current_points=np.einsum('i,tir->tr',bary,overlay.vertices_rz_m)
+        factor=mapped_pullback_factors(mapping,previous_points,current_points)[:,None]
+        samples=[]
+        for solution,cells,parent,local_factor in ((previous,overlay.previous_cells,previous_parent,factor),
+                                                   (current,overlay.current_cells,current_parent,np.ones_like(factor))):
+            fields=[solution.fields_in_cells(cells,parent,mode) for mode in range(solution.case.modes)]
+            samples.append([[np.column_stack([f[key] for f in fields])*local_factor for key in family] for family in components])
         radius=np.einsum('i,ti->t',bary,overlay.vertices_rz_m[:,:,0])
         weights=(TAU*radius*weight*overlay.determinants)[:,None]
         for family,(aa,ab,bb) in enumerate(grams):
@@ -173,4 +209,64 @@ def hphi_field_grams(previous,current,*,previous_scale=1.0,max_candidate_tests=2
         minimum_normalized_joint_gram_eigenvalues=minimum_eigenvalues,overlay_triangles=len(overlay.determinants),
         previous_scale=previous_scale,previous_field_scale=previous_field_scale,
         mode_tracking='not_performed',scope='original volume field inner products; no continuum error bound or mode identity')
+    return HphiFieldGrams(tuple(high[0]),tuple(high[1]),diagnostic)
+
+
+def hphi_mapped_field_grams(previous,current,mapping,*,max_candidate_tests=2000000,
+                            max_overlay_triangles=250000,max_gram_modes=256):
+    """Integrate original E and H under an explicit previous-to-current affine map.
+
+    The previous exclusive mesh is mapped by the declaration and compared to
+    the current mesh with the exact same-domain overlay, so boundary and PEC
+    hole coverage, independent interior triangulation and boundary
+    subdivisions are checked without a nearest-point correspondence. The
+    previous peak field is pulled forward by ``(dV_current/dV_previous)**-1/2``
+    on the common partition, which keeps its self energy and reproduces both
+    original FEM energy inner products for any invertible orientation
+    preserving map. Frequency scaling is not applied here and is evaluated by
+    the caller, because a general anisotropic map has no single frequency law.
+    """
+    if not isinstance(mapping,HphiGeometryMapping):
+        raise ValueError('expected HphiGeometryMapping')
+    for name,value in (('max_candidate_tests',max_candidate_tests),
+                       ('max_overlay_triangles',max_overlay_triangles),('max_gram_modes',max_gram_modes)):
+        integer(value,name)
+    for solution in (previous,current):
+        _reject_unsupported_comparison(solution)
+        if not isinstance(solution,(CoaxialSolution,AxisHphiSolution)):
+            raise ValueError('Hphi mapped field comparison requires dedicated Hphi FEM solutions')
+        if solution.case.modes>max_gram_modes:
+            raise ValueError('Hphi mapped field comparison exceeds max_gram_modes')
+    previous,current=map(_verified_solution,(previous,current))
+    overlay=hphi_geometry_overlay(_declared_mesh(previous),_declared_mesh(current),mapping,
+        max_candidate_tests=max_candidate_tests,max_overlay_triangles=max_overlay_triangles)
+    regular=all(isinstance(s,AxisHphiSolution) for s in (previous,current))
+    order=5 if regular else max(getattr(s.case,'quadrature_order',0) for s in (previous,current))+4
+    orders=[order,order+2 if regular else order+4]
+    low,high=(_mapped_field_grams(previous,current,overlay,n,mapping) for n in orders)
+    differences=[_normalized_difference(a,b) for a,b in zip(low,high)]
+    if max(differences)>1e-10:
+        raise ValueError('Hphi mapped field quadrature is unresolved; refine the mesh or increase the Case quadrature_order')
+    source=[_source_grams(s) for s in (previous,current)];reproduction=[];minimum_eigenvalues=[]
+    for family,matrices in enumerate(high):
+        for matrix,expected in ((matrices[0],source[0][family]),(matrices[2],source[1][family])):
+            norm=np.sqrt(np.diag(expected))
+            reproduction.append(float(np.max(abs(matrix-expected)/norm[:,None]/norm[None,:])))
+        aa,ab,bb=matrices;joint=np.block([[aa,ab],[ab.T,bb]])
+        norm=np.sqrt(np.diag(joint));normalized=joint/norm[:,None]/norm[None,:]
+        values=np.linalg.eigvalsh((normalized+normalized.T)/2)
+        if values[0]<-1e-10*max(1.,values[-1]):
+            raise ValueError('Hphi mapped joint physical Gram matrix is not positive semidefinite')
+        minimum_eigenvalues.append(float(values[0]))
+    if not np.isfinite(reproduction).all() or max(reproduction)>1e-8:
+        raise ValueError('Hphi mapped field partition fails to reproduce original FEM energy inner products')
+    for matrices in high:
+        for matrix in matrices:matrix.setflags(write=False)
+    diagnostic=dict(measure='2*pi*r dr dz; full 3D vacuum excluding PEC holes',electric_units='V^2 m',magnetic_units='A^2 m',
+        phasor='peak exp(+i omega t); Hphi real, Er/Ez quadrature; field = real + i*quadrature',
+        integration_orders=orders,normalized_quadrature_differences=differences,integration_tolerance=1e-10,
+        maximum_source_gram_difference=max(reproduction),source_gram_tolerance=1e-8,
+        minimum_normalized_joint_gram_eigenvalues=minimum_eigenvalues,overlay_triangles=len(overlay.determinants),
+        previous_field_scale='(r_current/r_previous*det(A))**-1/2',mapping=mapping.to_dict(),
+        mode_tracking='not_performed',scope='declared affine mapped original volume field inner products; no continuum error bound or mode identity')
     return HphiFieldGrams(tuple(high[0]),tuple(high[1]),diagnostic)

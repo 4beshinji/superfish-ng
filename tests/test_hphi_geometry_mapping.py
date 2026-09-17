@@ -16,6 +16,7 @@ from superfish_ng.hphi_geometry_mapping import (
     map_axis_acceleration,
     map_axis_interval,
     map_mesh,
+    mapped_pullback_factors,
 )
 from superfish_ng.meridional_mesh import MeridionalMesh
 import test_axis_connected_mesh as geometry_tests
@@ -125,6 +126,29 @@ class HphiGeometryMappingTests(unittest.TestCase):
             map_axis_interval(shifted, mesh.axis_interval_m)
         with self.assertRaisesRegex(ValueError, 'axis'):
             map_axis_interval(HphiGeometryMapping(((1., .5), (0., 1.))), mesh.axis_interval_m)
+
+    def test_mapped_pullback_is_the_inverse_volume_jacobian_square_root(self):
+        points = np.array([[.02,.01],[.05,.07],[.03,.12]])
+        # Uniform scale s: (r'/r)*det(A) = s*s**2, factor s**-1.5.
+        uniform = HphiGeometryMapping(((2.,0.),(0.,2.)))
+        np.testing.assert_allclose(mapped_pullback_factors(uniform,points,2*points),2.**-1.5,rtol=1e-15)
+        # Diagonal a,d about a translated radial origin: (r'/r)*a*d per sample.
+        diagonal = HphiGeometryMapping(((1.5,0.),(0.,3.)),(.02,0.))
+        current = diagonal.transform_points(points)
+        expected = ((current[:,0]/points[:,0])*1.5*3.)**-0.5
+        np.testing.assert_allclose(mapped_pullback_factors(diagonal,points,current),expected,rtol=1e-14)
+        # The axis of an axis-fixing map keeps the exact constant radial ratio.
+        axis_map = HphiGeometryMapping(((2.,0.),(0.,1.5)))
+        axis_points = np.array([[0.,.0],[.03,.01]])
+        factors = mapped_pullback_factors(axis_map,axis_points,axis_map.transform_points(axis_points))
+        np.testing.assert_allclose(factors,(2.*2.*1.5)**-0.5,rtol=1e-15)
+        for bad in (HphiGeometryMapping(((1.,0.),(0.,1.)),(.01,0.)),):
+            with self.assertRaisesRegex(ValueError,'zero radius'):
+                mapped_pullback_factors(bad,axis_points,bad.transform_points(axis_points))
+        with self.assertRaises(ValueError):
+            mapped_pullback_factors(uniform,points,points[:2])
+        with self.assertRaises(ValueError):
+            mapped_pullback_factors(uniform.to_dict(),points,2*points)
 
     def test_strict_mapping_document_and_fields(self):
         mapping = HphiGeometryMapping(((1., 0.), (0., 2.)), (.001, .002))

@@ -5,6 +5,8 @@ H01で仕様を固定し、H03で`hphi_tuning.py`のstrict要求reader・試行�
 H04で実FEM runnerと判断再構築を実装し、H05で所有保存・再生・再開CLIを接続した。
 workerはH06、GUIはH07で接続済みである。
 H08で同軸寸法と直線一般形状の写像契約を`hphi_geometry_mapping.py`へ追加した。
+H09でその写像をE/H比較・追跡へ接続し、同軸寸法探索と単軸非一様変形を
+要求・replay・CLI/worker/GUIへ接続した。
 後続H02〜H16は本書の名称・状態・保存契約を実装し、本書を実装済み範囲に合わせて更新する。
 
 ## 目的と範囲
@@ -39,9 +41,9 @@ Hφの零モード処理・比較測度・加速量規約は既存の専用物�
 
 | 項目 | 契約 |
 |---|---|
-| `project` | 専用`HphiProject`（`CoaxialCase`/`HphiMeshCase`/`AxisHphiCase`。v1は真空に限定） |
-| `parameter` | `uniform_scale`（無次元）。v1の唯一の値。`stored_energy_j`/`conductivity_s_per_m`は**受理しない** |
-| `mapping` | `{"kind":"uniform_scale"}`。v1はこの一種のみ。`same_vacuum`は使わない（下記） |
+| `project` | 専用`HphiProject`（`CoaxialCase`/`HphiMeshCase`/`AxisHphiCase`。真空に限定） |
+| `parameter` | `uniform_scale`（無次元）、`coaxial_dimensions`（m）、`general_piecewise_affine`（無次元の軸倍率）。`stored_energy_j`/`conductivity_s_per_m`は**受理しない** |
+| `mapping` | `{"kind":"uniform_scale"}`、`{"kind":"coaxial_dimensions","coordinate":"inner_radius_m"\|"outer_radius_m"\|"length_m"}`、`{"kind":"general_piecewise_affine","axis":"radial"\|"axial"}`。`same_vacuum`は使わない（下記） |
 | `bounds` / `parameter_tolerance` | 正の増加2値、同じ変数単位での二分停止幅 |
 | `target_hz` / `frequency_tolerance_hz` | 目標周波数と正の許容差（Hz） |
 | `initial_ids` / `mode_id` | 初期の正周波数prefix帯域の一意IDと対象ID。計算モード数より少なくし上側guardを保持。`mode_id ∈ initial_ids` |
@@ -89,6 +91,27 @@ FEM実行前に拒否する。
   零モード・正則化は各空間の既存契約に従う。
 - 個別IDが全て確認できない試行は周波数を`null`とし、ブラケット更新に使わない。
 - 失敗解・未確認解を成功として保存しない。要求精度未達を`TUNED`にしない。
+
+## 宣言写像のE/H比較（H09）
+
+`hphi_field_overlap.hphi_mapped_field_grams(previous,current,mapping, ...)`は、
+宣言した向き保存アフィン写像`mapping`で前メッシュを写し、厳密同領域overlayで
+現メッシュと比較する。境界/穴の完全被覆、独立な内部三角形分割と境界分割、
+要素番号の置換を受理し、最近点対応は推測しない。前ピーク場は各標本の
+体積Jacobian `J=(r_current/r_previous)*det(A)` の逆平方根で引き戻す。
+m=0 Hφの測度`2*pi*r dr dz`では、この因子が前側と現側の自己エネルギーを
+元FEMの`_source_grams`へ厳密に再現し、一様尺度ではH02の`s**(-3/2)`へ一致する。
+異方的な`J`は標本ごとに異なるため、単一の周波数則を主張せず前周波数は
+元SIのまま比較する。`track_hphi_modes`の版1/`same_vacuum`公開契約は不変で、
+`track_hphi_mapped_modes`が宣言写像の公開入口である。
+
+調整の試行は常に元Projectから宣言写像で生成し、探索比較の親は初期試行に固定する
+（異なる中間試行を親にすると写像比の丸めが避けられない）。同軸寸法は
+`coaxial_dimension_mapping`、単軸アフィンは`radial`/`axial`のdiag写像を使う。
+二分の`value`は`coaxial_dimensions`では対象寸法の m、`general_piecewise_affine`では
+元形状に対する無次元の軸倍率である。初期試行は`bounds[0]`で生成されるため、
+厳密なbinary64相似が成立しない入力はH04と同じく未確認で停止する。
+ID確認前に周波数を評価せず、未確認試行はブラケットを更新しない。
 
 ## 状態遷移と停止理由
 
@@ -204,6 +227,9 @@ Hφ調整は**これらを拡張する前提**で設計する。
 
 元q/u係数の一致だけで元E/Hの一致を代用しない。尺度変換の係数/座標を新しいFEM解やRF量として保存しない。
 異方変形・同軸一寸法変更では上式を適用せず、H08以後の写像と独立参照を使う。
+H09の一般アフィン写像では、前ピーク場へ`(dV_current/dV_previous)**-1/2`を掛けた
+自己積分が元FEMの自己積分と一致することを独立不変量とする。相似写像以外では
+単一の周波数則が存在しないため、その周波数を尺度変換へ外挿しない。
 N/Aの量には尺度比較を行わない。
 
 ## 受入例（入力 → 期待状態）
@@ -240,6 +266,10 @@ N/Aの量には尺度比較を行わない。
 専用`scripts/validate_hphi_tuning.py`（API/CLI/native/二尺度と失敗例）。
 H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用検証は実FEMと
 `scripts/validate_hphi_tuning.py`で行い、worker以降の検査は後続カードで行う。
+H09は`test_hphi_geometry_mapping`（Jacobian引き戻し）、`test_hphi_field_overlap`
+（写像比較のH02一致・正逆・同軸再現）、`test_hphi_tracking`（宣言写像・正逆・
+別分割・幾何拒否）、`test_hphi_tuning`（要求契約・同軸長さTUNED・アフィンIDゲート・
+保存replay）へ追加し、既存のworker/GUI/履歴回帰を併せて選ぶ。
 
 ## 実装記録
 
@@ -289,6 +319,30 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用
   test_hphi_field_overlap`の34件PASS、14.091秒、終了0。場比較・追跡・調整への接続はH09。
   新規外部資料・依存・旧SUPERFISH比較はない。
 
+- **H09**（`feat: 直線一般写像を追跡と調整へ接続する`）：
+  `hphi_geometry_mapping.mapped_pullback_factors`が標本ごとの`(r_current/r_previous*det(A))**-1/2`
+  を返し、`hphi_field_overlap.hphi_mapped_field_grams`が宣言写像の厳密overlayで
+  前場を引き戻してE/Hグラムを積分する。前後両自己グラムは元FEMの`_source_grams`へ
+  再現し（最大1.0e-14〜1.9e-13）、一様尺度ではH02経路と正規化overlapが一致する。
+  `track_hphi_mapped_modes`を公開入口として追加し、版1`same_vacuum`契約は不変。
+  調整は`parameter`/`mapping.kind`に`coaxial_dimensions`（m単位の内外半径/長さ二分）と
+  `general_piecewise_affine`（radial/axialの無次元倍率）を追加し、試行は元Projectから
+  宣言写像で生成、比較親は初期試行へ固定、`_assess_trial`は写像比較、
+  checkpoint scopeは`vacuum_coaxial_dimensions`/`vacuum_general_piecewise_affine`を
+  動的に保存する。CLI/worker/GUI transportは既存の要求dict/`validate_hphi_tune`/
+  `execute_hphi_tune`/`read_hphi_tune`をそのまま通し、GUI表示の単位をmapping種別へ合わせた。
+  受入は`test_hphi_geometry_mapping` 8件、`test_hphi_field_overlap` 9件、
+  `test_hphi_tracking` 6件の計23件PASS（66.326秒、終了0）、`test_hphi_tuning` 10件PASS
+  （119.685秒、終了0）、`test_hphi_tuning_jobs` 4件PASS（62.163秒、終了0）、
+  `test_gui_hphi_tuning` 2件PASS（54.775秒、終了0）、`test_hphi_tracking_history` 4件と
+  `test_gui_hphi_tracking` 2件PASS（変更前回帰）。同軸長さ探索は合成同軸TEMの解析
+  `f=c/(2L)`へ到達して`TUNED`、穴付き軸接続の単軸非一様変形はID確認後のみ周波数を
+  評価し、  保存checkpointのreplayが要求・試行を完全再現する。正逆写像・番号置換・
+  同物理形状の別分割も確認した。H05の専用`scripts/validate_hphi_tuning.py`も
+  再実行し、既存9実FEM・全判定PASS（終了0、解析TEM相対誤差1.573e-5/1.009e-6、
+  RF/場尺度差最大4.758e-14）で一様尺度経路の非回帰を確認した。rawは
+  `out/hphi-tuning-h09-20260918`。曲線/材料の比較・回復は後続。
+
 - **H02**（`feat: 真空Hφの一様尺度比較を追加する`）：`hphi_field_grams`へ明示キーワード
   `previous_scale`（既定1.0）を追加した。`previous_scale=1.0`は既存の同領域経路と全配列一致する。
   1.0以外では前Projectの領域と全PEC穴を尺度倍して現領域とoverlayし、前E/Hへ`previous_scale**(-3/2)`を
@@ -299,7 +353,7 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用
 
 ## 残件
 
-- 写像契約（H08）を追跡・調整へ接続（H09）、曲線（H11〜H13）、材料（H14〜H16）の比較・回復。
+- 曲線（H11〜H13）、材料（H14〜H16）の比較・回復。
 - 対象版C00.Vと旧tuner照合（[D02_PHYSICS_ROUTING.md](D02_PHYSICS_ROUTING.md)）。
 
 

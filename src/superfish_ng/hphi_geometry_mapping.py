@@ -160,6 +160,45 @@ def map_mesh(mesh, mapping):
     return type(mesh).from_dict(data)
 
 
+def mapped_pullback_factors(mapping, previous_points, current_points):
+    """Per-sample ``(dV_current/dV_previous)**(-1/2)`` on the declared map.
+
+    The m=0 Hphi measure is ``2*pi*r dr dz``, so the local volume Jacobian of
+    ``current = A*previous + t`` is ``(r_current/r_previous)*det(A)``.
+    Multiplying a previous peak field by the inverse square root keeps the
+    mapped previous self energy equal to the original one for any invertible
+    orientation-preserving affine map, and reduces to the H02 uniform-scale
+    factor ``s**(-3/2)`` when ``A = s*I``. Axis-connected points at ``r=0``
+    use the exact constant radial ratio of an axis-fixing map; any other map
+    with a zero previous radius is refused rather than silently regularized.
+    """
+    if not isinstance(mapping, HphiGeometryMapping):
+        raise ValueError('expected HphiGeometryMapping')
+    a, b, c, d, tr, tz = mapping.effective_exact()
+    determinant = float(a*d-b*c)
+    previous = np.asarray(previous_points, dtype=float)
+    current = np.asarray(current_points, dtype=float)
+    if previous.ndim != 2 or previous.shape[1] != 2 or current.shape != previous.shape:
+        raise ValueError('mapped pullback requires matching [r_m, z_m] point arrays')
+    if not np.isfinite(previous).all() or not np.isfinite(current).all():
+        raise ValueError('mapped pullback points must be finite')
+    r_previous, r_current = previous[:, 0], current[:, 0]
+    if np.any(r_previous < 0) or np.any(r_current < 0):
+        raise ValueError('mapped pullback requires nonnegative radii')
+    axis_fixed = b == 0 and tr == 0
+    if np.any((r_previous == 0) | (r_current == 0)) and not axis_fixed:
+        raise ValueError('mapped pullback cannot resolve a zero radius unless the axis is fixed')
+    positive = r_previous > 0
+    if np.any(r_current[positive] <= 0):
+        raise ValueError('mapped pullback requires positive current radii off the axis')
+    ratio = np.full(len(previous), float(a))
+    ratio[positive] = r_current[positive]/r_previous[positive]
+    jacobian = ratio*determinant
+    if not np.isfinite(jacobian).all() or np.any(jacobian <= 0):
+        raise ValueError('mapped pullback Jacobian must be finite and positive')
+    return jacobian**-0.5
+
+
 def _check_axis_map(mapping):
     a, b, c, d, tr, tz = mapping.effective_exact()
     if b != 0 or tr != 0 or tz != 0:

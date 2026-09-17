@@ -8,7 +8,8 @@ from superfish_ng.axis_hphi import AxisHphiCase,solve_axis_hphi
 from superfish_ng.coaxial import CoaxialCase,solve_coaxial
 from superfish_ng.hphi_mesh import HphiMeshCase,solve_hphi_mesh
 from superfish_ng.meridional_mesh import MeridionalMesh
-from superfish_ng.hphi_field_overlap import hphi_field_grams
+from superfish_ng.hphi_field_overlap import hphi_field_grams,hphi_mapped_field_grams
+from superfish_ng.hphi_geometry_mapping import HphiGeometryMapping,coaxial_dimension_mapping
 from test_meridional_overlap import fixture
 
 
@@ -86,6 +87,38 @@ class HphiFieldOverlapTests(unittest.TestCase):
             hphi_field_grams(a,scaled(True,2.),previous_scale=3.)
         for bad in (0.,-1.,True,'2'):
             with self.assertRaises(ValueError):hphi_field_grams(a,a,previous_scale=bad)
+
+    def test_declared_affine_mapping_reduces_to_h02_and_reproduces_self_energy(self):
+        for axis in (False,True):
+            base,grown=scaled(axis,1.),scaled(axis,2.)
+            reference=hphi_field_grams(base,grown,previous_scale=2.)
+            mapped=hphi_mapped_field_grams(base,grown,HphiGeometryMapping(((2.,0.),(0.,2.))))
+            self.assertLess(mapped.diagnostic['maximum_source_gram_difference'],1e-8)
+            for family in ('electric','magnetic'):
+                aa,ab,bb=getattr(mapped,family);reference_family=getattr(reference,family)
+                normalized=ab/np.sqrt(np.diag(aa)[:,None]*np.diag(bb)[None,:])
+                expected=(reference_family[1]/np.sqrt(np.diag(reference_family[0])[:,None]*np.diag(reference_family[2])[None,:]))
+                np.testing.assert_allclose(normalized,expected,atol=1e-8)
+                self.assertLessEqual(np.max(abs(normalized)),1+1e-8)
+
+    def test_declared_mapping_forward_reverse_and_coaxial_reproduction(self):
+        previous=solve_coaxial(CoaxialCase(.025,.05,.18,nr=4,nz=8,modes=3,quadrature_order=12))
+        current=solve_coaxial(CoaxialCase(.03,.09,.30,nr=4,nz=8,modes=3,quadrature_order=12))
+        mapping=coaxial_dimension_mapping(.025,.05,.18,.03,.09,.30)
+        forward=hphi_mapped_field_grams(previous,current,mapping)
+        backward=hphi_mapped_field_grams(current,previous,HphiGeometryMapping.from_dict({**mapping.to_dict(),'inverse':True}))
+        for family in ('electric','magnetic'):
+            aa,ab,bb=getattr(forward,family);ba,ab_rev,bb_rev=getattr(backward,family)
+            forward_normalized=ab/np.sqrt(np.diag(aa)[:,None]*np.diag(bb)[None,:])
+            backward_normalized=ab_rev/np.sqrt(np.diag(ba)[:,None]*np.diag(bb_rev)[None,:])
+            np.testing.assert_allclose(forward_normalized,backward_normalized.T,atol=1e-8)
+            self.assertLess(forward.diagnostic['maximum_source_gram_difference'],1e-8)
+            self.assertLess(backward.diagnostic['maximum_source_gram_difference'],1e-8)
+        self.assertEqual(forward.diagnostic['mapping']['name'],'hphi_affine_rz')
+        for bad in (HphiGeometryMapping(((2.,0.),(0.,2.))),HphiGeometryMapping(((1.,0.),(0.,1.)))):
+            with self.assertRaises(ValueError):hphi_mapped_field_grams(previous,current,bad)
+        with self.assertRaises(ValueError):hphi_mapped_field_grams(previous,current,mapping.to_dict())
+        with self.assertRaises(ValueError):hphi_mapped_field_grams(previous,object(),mapping)
 
     def test_invalid_solution_geometry_and_budget_rejected(self):
         a=solution(True)

@@ -231,11 +231,12 @@ let currentHphiTune=null,hphiTuneInputVersion=0;
 function hphiTuneLimit(){const value=$('hphi-tune-new-trials').value.trim();return value?numeric('hphi-tune-new-trials'):null;}
 function hphiTuneRequestText(){const value=$('hphi-tune-document').value;if(!value.trim())throw Error('Hφ調整要求を開いてください');return value;}
 function hphiTuneUnit(request){return request.project?.display_length_unit||'m';}
+function hphiTuneVariable(request){const kind=request.mapping?.kind;if(kind==='coaxial_dimensions')return `${request.parameter}（${request.mapping.coordinate} [m]）`;if(kind==='general_piecewise_affine')return `${request.parameter}（${request.mapping.axis} 倍率・無次元）`;return `${request.parameter}（無次元）`;}
 function loadHphiTune(request){
  loadProject(request.project);$('hphi-tune-document').value=JSON.stringify(request,null,2);hphiTuneInputVersion++;
  const mesh=request.project.case.format==='superfish_ng_coaxial_case'?request.project.case.mesh:request.project.case.mesh||request.project.case.fem;
  const triangles=request.project.case.format==='superfish_ng_coaxial_case'?2*mesh.nr*mesh.nz:mesh.triangles.length;
- $('hphi-tune-preview').textContent=`uniform_scale / 範囲 ${JSON.stringify(request.bounds)}（無次元） / 目標 ${(request.target_hz/1e6).toPrecision(8)} MHz / 対象ID ${request.mode_id} / 保存座標 SI [m]・Project表示 ${hphiTuneUnit(request)} / ${triangles}三角形`;
+ $('hphi-tune-preview').textContent=`${hphiTuneVariable(request)} / 範囲 ${JSON.stringify(request.bounds)} / 目標 ${(request.target_hz/1e6).toPrecision(8)} MHz / 対象ID ${request.mode_id} / 保存座標 SI [m]・Project表示 ${hphiTuneUnit(request)} / ${triangles}三角形`;
  $('hphi-tune-start').disabled=false;$('hphi-tune-dirty').textContent='';
 }
 function hphiTuneFrequency(value){return value===null?'未評価':Number(value).toPrecision(10);}
@@ -249,7 +250,7 @@ function showHphiTune(data,label){
  else $('hphi-tune-gates').textContent=`停止理由: ${decision.reason||d.status}。未確認値を目標達成として扱いません。`;
  $('hphi-tune-status').textContent=`実行状態: ${label.includes('/')?label.split('/')[0]:'保存結果'} / 調整状態: ${d.status} / 対象ID: ${requestData.mode_id} / parameter unit: ${d.parameter_unit||'dimensionless'} / frequency unit: ${d.frequency_unit||'Hz'}`;
  $('hphi-tune-trials').replaceChildren();
- const table=document.createElement('table'),header=document.createElement('tr');for(const text of ['試行','段階','倍率','対象ID','実順位','周波数 [Hz]','目標との差 [Hz]','状態','元場']){const cell=document.createElement('th');cell.textContent=text;header.append(cell);}table.append(header);
+ const table=document.createElement('table'),header=document.createElement('tr');for(const text of ['試行','段階','パラメータ','対象ID','実順位','周波数 [Hz]','目標との差 [Hz]','状態','元場']){const cell=document.createElement('th');cell.textContent=text;header.append(cell);}table.append(header);
  for(const trial of d.trials){const row=document.createElement('tr'),rank=hphiTuneRank(trial,requestData.mode_id);for(const value of [trial.index+1,trial.phase==='refinement'?'最終細分':'探索',trial.value,requestData.mode_id,rank,hphiTuneFrequency(trial.frequency_hz),hphiTuneFrequency(trial.target_error_hz),trial.status]){const cell=document.createElement('td');cell.textContent=value;row.append(cell);}
   const cell=document.createElement('td'),button=document.createElement('button');button.textContent='対象モードの場を開く';button.disabled=rank==='未確認';button.dataset.hphiTuneTrial=trial.index+1;button.onclick=run(async()=>{const imported=await api('hphi-tune-trial',{document:data.serialized,index:trial.index+1});await refresh();await openResult(imported.id);$('mode').value=imported.mode;showQuantities();$('hphi-tune-status').textContent+=` / 試行 ${trial.index+1} の元場を表示中`;});cell.append(button);row.append(cell);table.append(row);
   const reason=hphiTuneReasons(trial);if(reason){const detail=document.createElement('tr'),message=document.createElement('td');message.colSpan=9;message.textContent=`試行 ${trial.index+1} の未確認理由: ${reason}`;detail.append(message);table.append(detail);}

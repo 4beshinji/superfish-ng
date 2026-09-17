@@ -4,8 +4,13 @@ from dataclasses import replace
 from pathlib import Path
 import numpy as np
 from superfish_ng.axis_hphi import AxisHphiCase,solve_axis_hphi
+from superfish_ng.coaxial import CoaxialCase,solve_coaxial
 from superfish_ng.hphi_mesh import HphiMeshCase,solve_hphi_mesh
-from superfish_ng.hphi_tracking import HphiTrackingRequest,HphiTrackingControls,track_hphi_modes
+from superfish_ng.hphi_field_overlap import _declared_mesh
+from superfish_ng.hphi_geometry_mapping import HphiGeometryMapping,coaxial_dimension_mapping,map_mesh
+from superfish_ng.hphi_tracking import HphiTrackingRequest,HphiTrackingControls,track_hphi_modes,track_hphi_mapped_modes
+from superfish_ng.hphi_tuning import _refine_mesh
+from test_meridional_overlap import fixture
 from test_hphi_mass_projection import declared
 
 
@@ -51,6 +56,44 @@ class HphiTrackingTests(unittest.TestCase):
         self.assertFalse(report['individual_ids_complete']);self.assertEqual(report['current_mode_ids'],[None,None])
         self.assertEqual(report['matches'][0]['kind'],'SUBSPACE');self.assertEqual(report['matches'][0]['previous_ids'],['a','b'])
         self.assertIsNone(report['matches'][0]['previous_phase_multiplier'])
+
+    @staticmethod
+    def mapping_request(previous,current,ids):
+        return HphiTrackingRequest(_refine_mesh(_declared_mesh(previous)),_refine_mesh(_declared_mesh(current)),
+            previous_mode_count=len(ids),current_mode_count=len(ids),previous_mode_ids=ids,
+            controls=HphiTrackingControls())
+
+    def test_declared_mapping_coaxial_growth_forward_reverse_and_identity_partition(self):
+        previous=solve_coaxial(CoaxialCase(.025,.05,.18,nr=4,nz=8,modes=3,quadrature_order=12))
+        current=solve_coaxial(CoaxialCase(.03,.09,.30,nr=4,nz=8,modes=3,quadrature_order=12))
+        mapping=coaxial_dimension_mapping(.025,.05,.18,.03,.09,.30)
+        forward=track_hphi_mapped_modes(previous,current,self.mapping_request(previous,current,['a','b']),mapping)
+        self.assertEqual(forward['status'],'PASS');self.assertTrue(forward['individual_ids_complete'])
+        self.assertEqual(forward['current_mode_ids'],['a','b'])
+        self.assertEqual(forward['physical_mapping']['name'],'declared_affine')
+        self.assertEqual(forward['physical_mapping']['mapping'],mapping.to_dict())
+        reverse=track_hphi_mapped_modes(current,previous,self.mapping_request(current,previous,['a','b']),
+            HphiGeometryMapping.from_dict({**mapping.to_dict(),'inverse':True}))
+        self.assertEqual(reverse['status'],'PASS');self.assertEqual(reverse['current_mode_ids'],['a','b'])
+        # The same physical shape with an independent interior mesh is an exact identity map.
+        a=solve_hphi_mesh(HphiMeshCase(declared(1,1,False),modes=3,quadrature_order=12))
+        b=solve_hphi_mesh(HphiMeshCase(declared(2,1,False,19),modes=3,quadrature_order=12))
+        identity=HphiGeometryMapping(((1.,0.),(0.,1.)))
+        same=track_hphi_mapped_modes(a,b,self.mapping_request(a,b,['a','b']),identity)
+        self.assertEqual(same['status'],'PASS');self.assertEqual(same['current_mode_ids'],['a','b'])
+
+    def test_declared_mapping_axis_stretch_and_geometry_refusal(self):
+        mesh=fixture(2,1,True,False)
+        previous=solve_axis_hphi(AxisHphiCase(mesh,modes=3))
+        mapping=HphiGeometryMapping(((1.,0.),(0.,1.5)))
+        current=solve_axis_hphi(AxisHphiCase(map_mesh(mesh,mapping),modes=3))
+        report=track_hphi_mapped_modes(previous,current,self.mapping_request(previous,current,['a','b']),mapping)
+        self.assertEqual(report['status'],'PASS');self.assertEqual(report['current_mode_ids'],['a','b'])
+        with self.assertRaises(ValueError):
+            track_hphi_mapped_modes(previous,current,self.mapping_request(previous,current,['a','b']),
+                HphiGeometryMapping(((2.,0.),(0.,2.))))
+        with self.assertRaises(ValueError):
+            track_hphi_mapped_modes(previous,current,self.mapping_request(previous,current,['a','b']),mapping.to_dict())
 
     def test_guard_and_assignment_failures_clear_current_ids(self):
         (a,b),q=pair()
