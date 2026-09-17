@@ -1,5 +1,7 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
+H08の同軸寸法/直線一般写像は`test_hphi_geometry_mapping`（写像の有理検査・解析面積/体積と独立積分・H02一致・穴/未被覆/反転/軸移動の拒否・軸区間/加速座標）を使う。直接利用先は`test_hphi_mesh`/`test_axis_hphi`/`test_hphi_study`、H02接続は`test_hphi_field_overlap`。H03/H04の調整実行範囲は[HPHI_TUNING.md](HPHI_TUNING.md)。H09以降の追跡・調整接続は後続カードの対象である。
+
 Hφ調整の要求/試行生成は`test_hphi_tuning.HphiTuneRequestTests`、実FEM二分は`HphiTuneExecutionTests`。比較核は`test_hphi_tracking`/`test_hphi_field_overlap`、独立TEM・場/RF尺度と停止理由、H05の所有保存/再生は`scripts/validate_hphi_tuning.py --out out/<new-name>`を使う。H03/H04の実行範囲・分割証拠は[HPHI_TUNING.md](HPHI_TUNING.md)。worker/GUIは後続カードの対象である。
 
 2026-09-15 JST：[平面RF調整GUI](GUI_PLANAR_TUNING.md)を接続。

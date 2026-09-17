@@ -167,7 +167,7 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### 同軸寸法と直線一般形状の写像契約を追加する
 
-- **親課題**：P03 / D02。**種別**：実装。初期状態：未着手。
+- **親課題**：P03 / D02。**種別**：実装。状態：完了。初期状態：未着手。
 - **先行条件**：[H07](02-hphi.md#h07)
 - **コミット件名案**：`feat: 同軸寸法と直線一般形状の写像契約を追加する`
 - **既存の入口・影響先**：`src/superfish_ng/hphi_study.py`、`src/superfish_ng/meridional_overlap.py`、`src/superfish_ng/hphi_tracking.py`
@@ -181,6 +181,12 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ```
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
+
+#### H08受入記録（2026-09-18 JST）
+
+`hphi_geometry_mapping.py`を追加し、同軸の内外半径/長さの非相似写像`coaxial_dimension_mapping`と、軸/穴を保持する明示的な向き保存アフィン写像`HphiGeometryMapping`を定義した。有理行列式で反転/退化を、軸接続ではr=0/軸区間を固定しない写像を拒否する。`map_mesh`は宣言をfloatで適用し、`hphi_geometry_overlay`は写像後の前メッシュと現メッシュを既存の厳密同領域`meridional_overlay`で比較する（最近点対応は推測しない）。
+
+`OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-uv-cache uv run --no-sync --python .venv/bin/python python -m unittest -v test_hphi_geometry_mapping test_hphi_mesh test_axis_hphi test_hphi_study test_hphi_field_overlap`は34件PASS、14.091秒、終了0。新規7件で、同軸寸法の解析面積`(b'-a')L'`・体積`π(b'²-a'²)L'`と元三角形からの独立積分の一致、一様尺度の構築メッシュがH02の`_scaled_mesh`と全配列一致、逆写像の往復、穴消失/未被覆/反転/軸移動の拒否、軸区間と加速座標の写像を確認した。詳細は[HPHI_TUNING.md](../HPHI_TUNING.md)。次はH09の追跡・調整接続。
 
 ## H09
 

@@ -1,5 +1,11 @@
 # 独立実装・情報来歴
 
+2026-09-18 JST：H08の同軸寸法・直線一般写像契約を実装した。新規外部資料、旧SUPERFISH資産、
+旧solver source/binary、リモートサービス、追加依存は使用していない。既存の`MeridionalMesh`/
+`AxisConnectedMesh`の厳密同領域overlay（`meridional_overlap`）、H02の`_scaled_mesh`、
+`AxisAccelerationPath`を再利用した。同軸寸法の解析式と元三角形の独立積分、一様尺度のH02一致で
+検証した合成同軸のみを対象とし、KEK/LANL測定構造や旧実装との比較結果を主張しない。次はH09。
+
 2026-09-16 JST：H05の所有保存・再生・CLI再開を実装した。新規外部資料、旧SUPERFISH資産、
 旧solver source/binary、リモートサービス、追加依存は使用していない。既存のH04
 `hphi_native`専用native reader/writer、Hφ場追跡、二分判定、Project形式を再利用し、

@@ -4,6 +4,7 @@
 H01で仕様を固定し、H03で`hphi_tuning.py`のstrict要求reader・試行生成を実装した。
 H04で実FEM runnerと判断再構築を実装し、H05で所有保存・再生・再開CLIを接続した。
 workerはH06、GUIはH07で接続済みである。
+H08で同軸寸法と直線一般形状の写像契約を`hphi_geometry_mapping.py`へ追加した。
 後続H02〜H16は本書の名称・状態・保存契約を実装し、本書を実装済み範囲に合わせて更新する。
 
 ## 目的と範囲
@@ -19,8 +20,8 @@ Hφの零モード処理・比較測度・加速量規約は既存の専用物�
 | scope | 形状 | 追加カード | 備考 |
 |---|---|---|---|
 | `vacuum_uniform_scale` | 真空（同軸/正半径/軸接続）の一様尺度 | H02〜H07 | 無次元`uniform_scale` |
-| `coaxial_dimensions` | 同軸の内外半径/長さ | H08,H09 | m単位、非相似 |
-| `general_piecewise_affine` | 軸/穴を保持する明示区分アフィン | H08,H09 | 自動対応は推測しない |
+| `coaxial_dimensions` | 同軸の内外半径/長さ | H08,H09 | m単位、非相似。写像契約はH08の`coaxial_dimension_mapping` |
+| `general_piecewise_affine` | 軸/穴を保持する明示区分アフィン | H08,H09 | `HphiGeometryMapping`。自動対応は推測しない |
 | `curved_meridional` | 曲線穴付き二次領域 | H11〜H13 | 採用候補の二次境界を最終細分で保つ |
 | `fixed_material` | 固定実数正値εr/μrの幾何変形 | H14〜H16 | 材料値変更は別要求 |
 
@@ -272,6 +273,22 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用
   1 skip）が終了0、JS構文と画面初期化も終了0。実ブラウザーのクリック列はloopback bind制約で
   未確認として残す。新規外部資料・依存・legacy比較はない。次はH08である。
 
+- **H08**（`feat: 同軸寸法と直線一般形状の写像契約を追加する`）：
+  新設`hphi_geometry_mapping.py`が、同軸の内外半径/長さの非相似写像
+  `coaxial_dimension_mapping`と、軸/穴を保持する明示的な向き保存アフィン写像
+  `HphiGeometryMapping`を定義する。写像は有理行列式で反転・退化を拒否し、軸接続では
+  r=0/軸区間を固定しない写像（半径方向のせん断・移動、軸方向シフト）を拒否する。
+  `map_mesh`は宣言写像をfloatで適用し、`hphi_geometry_overlay`は写像後の前メッシュと
+  現メッシュを既存の厳密同領域`meridional_overlay`で比較する。境界/穴の完全被覆を要求し、
+  最近点や丸めでの対応は推測しない。`map_axis_interval`/`map_axis_acceleration`は
+  β不変で軸区間と加速座標を写像する。受入は、同軸寸法の解析面積`(b'-a')L'`・
+  体積`π(b'²-a'²)L'`と元三角形からの独立積分の一致、一様尺度の構築メッシュがH02の
+  `_scaled_mesh`と全配列一致しoverlayも一致、逆写像の往復、穴消失/未被覆/反転/軸移動の
+  拒否を`test_hphi_geometry_mapping` 7件で確認した。検査は
+  `test_hphi_geometry_mapping test_hphi_mesh test_axis_hphi test_hphi_study
+  test_hphi_field_overlap`の34件PASS、14.091秒、終了0。場比較・追跡・調整への接続はH09。
+  新規外部資料・依存・旧SUPERFISH比較はない。
+
 - **H02**（`feat: 真空Hφの一様尺度比較を追加する`）：`hphi_field_grams`へ明示キーワード
   `previous_scale`（既定1.0）を追加した。`previous_scale=1.0`は既存の同領域経路と全配列一致する。
   1.0以外では前Projectの領域と全PEC穴を尺度倍して現領域とoverlayし、前E/Hへ`previous_scale**(-3/2)`を
@@ -282,7 +299,7 @@ H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用
 
 ## 残件
 
-- 同軸寸法（H08）、一般写像／曲線（H11〜H13）、材料（H14〜H16）の比較・回復。
+- 写像契約（H08）を追跡・調整へ接続（H09）、曲線（H11〜H13）、材料（H14〜H16）の比較・回復。
 - 対象版C00.Vと旧tuner照合（[D02_PHYSICS_ROUTING.md](D02_PHYSICS_ROUTING.md)）。
 
 
