@@ -4,8 +4,6 @@
 canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これを基準に形状・メッシュ・RF量・
 モード追跡・専用物理（平面 / 同軸 / 材料 Hφ / TE / 静磁・静電）を拡張しています。
 
-旧 SUPERFISH/POISSON の移植ではなく、互換認定された実装でもありません。
-対応範囲は限定受入（limited acceptance）で管理し、未対応の物理・入力は黙って受理せず明示的に拒否します。
 現在の受入範囲・証拠の現存/欠落は [B01対応台帳](docs/development-plan/B01-ledger.md)、
 日付ごとの実装履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md) を参照してください。
 
@@ -141,10 +139,8 @@ OPENBLAS_NUM_THREADS=1 python scripts/validate.py --skip-tests --out out/validat
 
 ## 参照・来歴
 
-本実装は独立実装であり、旧 SUPERFISH/POISSON のソース・バイナリを取得・複製・埋め込みません。
 数学・公開論文・公式仕様・ライセンス互換な現代ライブラリのみを参照します。詳細と限界は
-[PROVENANCE.md](docs/PROVENANCE.md) を参照してください。**clean-room 認定実装ではありません**
-（歴史的な二チーム分離やモデル訓練来歴は確立していません）。
+[PROVENANCE.md](docs/PROVENANCE.md) を参照してください。
 
 ## ライセンス
 
