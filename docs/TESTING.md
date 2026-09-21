@@ -1,3 +1,5 @@
+P02-d実操作は `scripts/verify_gui_planar_history_recovery.mjs` と `scripts/verify_gui_planar_tune_recovery.mjs`（新サーバーは `--resume-report`）。[全条件監査](PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)と[分割34項目の実Chrome証拠](PLANAR_RECOVERY_GUI.md)。
+
 P02-d履歴回復APIは `test_gui_planar_recovery.PlanarRecoveryGuiTests`、直接利用先は `test_planar_tracking_history_saved.PlanarHistorySavedTests.test_gui_history_extension_and_native_import`。版8フォーム保持は `scripts/verify_planar_tracking_form.mjs`。[再現・修正と検査範囲](PLANAR_RECOVERY_GUI.md)。
 
 P02-d調整フォームは `node scripts/verify_planar_tune_form.mjs`（隔離実行、実ブラウザーではない）。GUI APIは `test_gui_planar_tuning`。[分割証拠と残る操作受入](PLANAR_RECOVERY_GUI.md)。

@@ -43,11 +43,11 @@ H16-d	P04 D02 O02	H16-c	実装	DONE	02-hphi.md#h16-d	材料GUI操作と親受入
 H17	P04	B03 H16	条件付き仕様	IN_PROGRESS	02-hphi.md#h17	P04の損失モデルの必要範囲を確定する
 H18	P03 P04	H13 H16 H17 C07-hphi C07-material	監査	PLANNED	02-hphi.md#h18	P03/P04の要件受入を監査する
 P01	P02 D02	B01	実装	DONE	03-planar.md#p01	平面アフィン形状法則を調整要求へ追加する
-P02	P02 D02	P01	実装	IN_PROGRESS	03-planar.md#p02	平面の個別ID回復を履歴・調整へ追加する
+P02	P02 D02	P01	実装	DONE	03-planar.md#p02	平面の個別ID回復を履歴・調整へ追加する
 P02-a	P02 D02	P01	実装/検証	DONE	03-planar.md#p02-a	元平面場による明示ID回復核
 P02-b	P02 D02	P02-a	実装/検証	DONE	03-planar.md#p02-b	回復付き平面所有履歴とCLI/worker
 P02-c	P02 D02	P02-b	実装/検証	DONE	03-planar.md#p02-c	平面調整の回復・最終細分・再開
-P02-d	P02 D02	P02-c	実装/検証	IN_PROGRESS	03-planar.md#p02-d	回復操作GUIとP02条件別監査
+P02-d	P02 D02	P02-c	実装/検証	DONE	03-planar.md#p02-d	回復操作GUIとP02条件別監査
 P03	P02	P02	実装	PLANNED	03-planar.md#p03	平面非線形写像の契約と幾何検査を追加する
 P04	P02 D02	P03	実装	PLANNED	03-planar.md#p04	平面非線形比較と調整を接続する
 P05	P02	P03	仕様	PLANNED	03-planar.md#p05	平面曲線P2の幾何・弱形式を設計する

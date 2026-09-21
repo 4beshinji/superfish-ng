@@ -1,7 +1,7 @@
-# P02-d — 平面回復のGUI接続（進行中）
+# P02-d — 平面回復のGUI接続と操作受入
 
 2026-09-22、開始点 `7c84a4f`。調整フォームの版1固定を解消する第一段階。
-P02-d/親P02は未完。調整・履歴の操作を接続し、APIと隔離フォームで部分検証。実ブラウザーでの回復/延長・中止再開・サーバー再起動後表示は残る。
+以下の段階別記録を経て、実ブラウザー受入と[開発カードP02条件別監査](PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)まで完了。後続形状カードと全goalは継続。
 
 ## 調整フォーム
 
@@ -54,3 +54,31 @@ GUIではanchor番号と追跡フォームから要求を構成でき、完全JS
 
 新2件と関連1件はPython/API変更後の検査。最後の版8修正はJS/HTMLだけで、Pythonや数値経路は変更していない。
 全handleは終端回収済み。実HTTP/Chrome受入と全P02監査を次に行う。
+
+## 実Chrome：履歴回復・延長
+
+`scripts/verify_gui_planar_history_recovery.mjs` を新ローカルサーバーで実行。
+`out/p02-planar-history-browser-20260922/browser/report.json` の15項目PASS。
+6×6 P2 TE矩形の0.18→0.20→0.22 m実場から、通常の集合継承→anchor 0の明示回復→次の実比較→履歴延長を画面操作した。
+保存/読込した回復要求・回復付き履歴条件の完全一致、元trackingのnullと採用mode-2/mode-1の区別、
+回復後singleton集合による次比較、元場取込/描画、URL再読込も確認した。
+`native-import-audit.json` は最後の元native全5ファイルのbyte一致を確認した。
+実行中の製品実装hash不変・外部HTTP要求0。session 91632は終了0、Chrome/サーバー/管理器をclose済み。
+画面証拠 `browser/history-recovery.png` を確認した。これは同サーバー内のURL再読込であり、サーバー再起動の証拠とは区別する。
+調整回復/実取消し/新サーバー表示は別検査として継続する。
+
+## 実Chrome：調整回復・取消し・新サーバー
+
+`scripts/verify_gui_planar_tune_recovery.mjs --url LAUNCH_URL --out NEW --workspace WORKSPACE --request REQUEST_JSON` を実行した。
+`out/p02-planar-tune-browser-20260922/browser/report.json` は14項目PASS。
+P02-cと同じ高さ0.2 m、幅0.18→0.214 m、元ID y/xの版3要求を使用する。
+検索と実最終細分で回復PASS・採用x/y、元集合null、目標gateと粗細差gateを別表示。
+真の正方形未確認では周波数未評価、対象場ボタン/再開を無効にする。
+実workerをcheckpoint-001作成後に画面から中止し、検証した保存点から新jobへ再開した。
+
+最初のサーバー/managerを閉じ、新サーバーを同workspaceで起動した。
+同スクリプトに `--resume-report FIRST_REPORT` を追加した `restart/report.json` は5項目PASS。
+TUNED回復/最終細分再生、元場取込/描画、未確認の非採用と初期順位2の元場表示を確認した。
+`native-project-audit.json` はProjectとnative全6ファイルbyte一致、全試行祖先hash不変を確認した。
+両reportの実行中389製品hash不変・外部HTTP要求0。session 87997終了0、全サーバー/Chrome/managerをclose済み。
+今回の製品src変更はなく、直前のAPI/独立物理検査の適用範囲を維持する。

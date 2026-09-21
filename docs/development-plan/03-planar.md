@@ -29,6 +29,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P02
 
+2026-09-22受入：[全子条件の監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)。原カードP02をDONE。後続P03/P04と親互換課題は継続。
+
 ### 平面の個別ID回復を履歴・調整へ追加する
 
 - **親課題**：P02 / D02。**種別**：実装。初期状態：未着手。
@@ -78,6 +80,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - 受入：実矩形順位交換、正方形未確認、回復後の実最終細分、別job再開、worker取消し/再起動。独立遮断周波数と元E場、両gateと全U′/RF不変。
 
 ## P02-d
+
+2026-09-22受入：[実Chrome履歴15・調整14・新サーバー5項目](../PLANAR_RECOVERY_GUI.md)。API/CLIと同じ回復ID、元native/Project bytes一致を確認。
 
 ### 回復操作GUIとP02条件別監査
 

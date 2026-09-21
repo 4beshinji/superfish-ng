@@ -1,24 +1,18 @@
 # 現行の作業入口
 
-更新：2026-09-22、P02-d履歴回復接続中。直前の成果コミットは調整フォーム `26705f5`。
-原90カードと追加子カードを含む[全115カード](tasks.tsv)の計画は継続中。
-このページを現行の選択・引継ぎ先とし、各文書の日付付き追記は履歴として読む。
+更新：2026-09-22、開発カードP02と子a〜d受入。直前の製品コミットは `a14cf18`。
+原90カードと追加子カードを含む全115カードの計画は継続中。
+このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
 ## 次の着手
 
-**[P02-d：回復操作GUIとP02条件別監査](03-planar.md#p02-d)**。
-先行P02-cは[調整回復/最終細分/CLI/worker](../PLANAR_TUNING_RECOVERY.md)までDONE。親P02は未完。
-[調整フォームの版1/2/3保持](../PLANAR_RECOVERY_GUI.md)を接続し、隔離フォーム4例とGUI API新1件/既存4件PASS。
-履歴回復操作と版8写像保持を追加し、新API2件/関連1件と要求一致を確認。
-次は実GUIで履歴回復・調整回復・中止再開・再起動後の元場表示を検証する。
-
-| 辿る先 | 用途 |
-| --- | --- |
-| [planar_tracking_history_saved.py](../../src/superfish_ng/planar_tracking_history_saved.py) | 所有履歴の保存・worker・延長 |
-| [planar_identity_recovery.py](../../src/superfish_ng/planar_identity_recovery.py) | 回復要求・元比較・集合判定 |
-| [planar_tuning.py](../../src/superfish_ng/planar_tuning.py) | 版1/2/3調整要求と試行/回復/保存再生 |
-| [planar_tracking.py](../../src/superfish_ng/planar_tracking.py) | 版1〜8の有限部分空間/guard/個別ID |
-| [P01受入](../PLANAR_AFFINE_TUNING.md) / [TESTING](../TESTING.md) | 新しい形状法則、元場対応、直接利用先と検査証拠 |
+**[P03：平面非線形写像の契約と幾何検査](03-planar.md#p03)**。
+[P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)までDONE。
+次は明示比較分割の非アフィン写像について、全外周・領域被覆・正Jacobian・xy場変換を検査する。
+アフィン極限、面積/多項式積分、欠落/重複/反転の独立対照を置く。面積一致だけで領域一致としない。
+入口は `planar_tracking_exact_mapping.py`、`planar_tracking_overlap.py`、`planar_polygon.py`。
+新設候補 `planar_piecewise_mapping.py`。検査選択は[TESTING](../TESTING.md)とP03仕様を参照。
+親互換課題P02やD02全体を完了とは扱わない。
 
 H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROGRESS。
 2026-09-22のユーザー選択は「対象版の資料で必要性を確認してから決める」。
@@ -39,9 +33,10 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-P02-d session 3254（履歴回復GUI API）、80846（既存履歴GUI API）はともに終了0。ログは `out/p02-planar-history-gui-20260922/`。
-生存handleの引継ぎなし。製品srcの固定解除。
-P01/P02-aの検査handleは全て終端回収済み。実ブラウザー/検証サーバーはまだ起動していない。
+履歴Chrome session 91632と調整/新サーバーsession 87997は終了0。
+全Chrome/サーバー/managerをclose済み。製品src固定解除、生存handleの引継ぎなし。
+証拠は `out/p02-planar-history-browser-20260922/` と `out/p02-planar-tune-browser-20260922/`。
+各reportの389製品hashを現行ファイルと照合し不変。
 sandbox内のプロセス一覧はホスト全体の不存在証明に使わない。
 
 長時間処理を開始したら、この節にツールsession/cell ID、PID（取得できた場合）、
