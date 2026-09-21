@@ -1,3 +1,5 @@
+H16-a候補/最終細分は`test_material_hphi_tune_trials`。直接利用先は`test_material_hphi_refinement`と`test_material_hphi_shape_tuning`。[実FEM追跡と移送不変量](MATERIAL_HPHI_TUNE_TRIALS.md)。
+
 H16-a形状則は`test_material_hphi_shape_tuning`。直接利用先は`test_material_hphi_comparison`と`test_material_hphi.MaterialHphiTests.test_strict_physics_and_only_explicit_vacuum_axis_path`。[尺度/体積と加速区間](MATERIAL_HPHI_SHAPE.md)。
 
 H16-a細分は`test_material_hphi_refinement`、直接利用先は`test_material_hphi_fem`。[材料領域/K/M移送不変量](MATERIAL_HPHI_REFINEMENT.md)。

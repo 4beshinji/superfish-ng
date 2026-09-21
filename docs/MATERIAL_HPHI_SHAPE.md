@@ -1,6 +1,6 @@
 # 固定材料の元Project形状則
 
-2026-09-22。H16-aの形状則を実装。細分基盤は[材料細分](MATERIAL_HPHI_REFINEMENT.md)。試行生成・比較空間・調整runnerへの接続は残る。
+2026-09-22。H16-aの形状則を実装。細分基盤は[材料細分](MATERIAL_HPHI_REFINEMENT.md)。[試行生成・比較空間](MATERIAL_HPHI_TUNE_TRIALS.md)へ接続済み。調整runnerはH16-bに残る。
 
 `MaterialHphiShapeLaw`版1は`uniform_scale`または`general_piecewise_affine`、正の`reference_value`、明示変位（uniformではnull）、`acceleration_policy=transport_on_axis`を持つ。`apply(project,value)`は専用材料Caseの元Projectを複製し、毎回元座標から候補を生成する。前試行への変形累積を行わない。
 
