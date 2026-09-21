@@ -251,7 +251,27 @@ H07：再開時にコピーしたtrialの絶対パスを投入元パスと比較
 uv run --no-sync python -m unittest test_gui_hphi_tuning -v`：2件PASS、74.370秒。
 実workerで両地点の再生・元場取込・全native/RFのhashと判断履歴保持、別ジョブ差替えと
 改変拒否を確認した。ブラウザーのクリック列は未実行。数値核の変更はなくseed/fullは未実行。
-新規外部資料・依存・legacy資産は使用していない。H06の元出力依存は続けて修正する。
+新規外部資料・依存・legacy資産は使用していない。
+
+H06：投入時の元source検証と、保存後の所有コピーによる検証を分離した。
+`_input`は投入/worker開始時に元sourceを検査する。`_owned_input`は保存済み投入記録の
+深いコピーだけを`execution/trial-NNN`へ対応付け、通常の完全replayで要求・全native/RFのhash・
+判断履歴を再検証する。元パスは記録として保持し、保存した投入ファイルは書き換えない。
+完了worker検証とGUIの停止checkpoint検証がこの経路を共有する。コピーが欠落/改変した場合や
+リンクへ差し替えられた場合は拒否し、元sourceで代用しない。
+
+修正前の追加回帰は、元ジョブ移動後の管理器再作成で`Hphi tune trial must be a regular directory`
+を再現した。修正後の実行コマンド：
+
+```sh
+UV_CACHE_DIR=/tmp/superfish-review-uv-cache OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests uv run --no-sync python -m unittest test_hphi_tuning_jobs test_gui_hphi_tuning -v
+```
+
+6件PASS、185.788秒、終了0。元出力移動後の管理器再作成・GUI結果表示・継承/追加checkpoint、
+投入記録不変、hash/周波数/判断/パス/要求の改変、コピー改変/欠落/リンク差替え拒否を確認。
+既存の実worker中止/再開、失敗時checkpoint保持とmanifest非公開、別ジョブ差替え拒否もPASS。
+数値核・保存schemaは変更していないため、専用数値validator・seed/fullは未実行。
+ブラウザーのクリック列は未実行。新規外部資料・依存・legacy資産は使用していない。
 
 ## 実装記録
 

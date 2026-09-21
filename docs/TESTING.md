@@ -1,6 +1,12 @@
 # 変更範囲に応じた検証とテスト棚卸し
 
-Hφ調整の要求/試行生成は`test_hphi_tuning.HphiTuneRequestTests`、実FEM二分は`HphiTuneExecutionTests`。比較核は`test_hphi_tracking`/`test_hphi_field_overlap`、独立TEM・場/RF尺度と停止理由、H05の所有保存/再生は`scripts/validate_hphi_tuning.py --out out/<new-name>`を使う。H03/H04の実行範囲・分割証拠は[HPHI_TUNING.md](HPHI_TUNING.md)。worker/GUIは後続カードの対象である。
+Hφ調整の所有checkpoint/worker/GUI検証を変更する場合は
+`test_hphi_tuning_jobs test_gui_hphi_tuning`を選ぶ。実workerの中止・再開・管理器再作成、
+継承/追加checkpointの選択、元出力移動後の再生、native/RFのhash保持とコピー改変拒否を含む。
+保存形式・standalone再生も変更する場合は`test_hphi_tuning_saved`を追加する。
+実ブラウザーのクリック列はこれらのtransportテストとは別の証拠である。
+
+Hφ調整の要求/試行生成は`test_hphi_tuning.HphiTuneRequestTests`、実FEM二分は`HphiTuneExecutionTests`。比較核は`test_hphi_tracking`/`test_hphi_field_overlap`、独立TEM・場/RF尺度と停止理由、H05の所有保存/再生は`scripts/validate_hphi_tuning.py --out out/<new-name>`を使う。H03/H04の実行範囲・分割証拠は[HPHI_TUNING.md](HPHI_TUNING.md)。worker/GUIは上記の専用テストを使う。
 
 2026-09-15 JST：[平面RF調整GUI](GUI_PLANAR_TUNING.md)を接続。
 新4/関連11unit、Chrome主実行10項目＋保存再生で補完3項目を確認。実中止/保存地点選択/別ジョブ再開、対象IDの実順位を表示。

@@ -18,6 +18,7 @@ from .config import integer, keys
 from .hphi_tuning import validate_hphi_tune
 from .hphi_tuning_saved import (
     _snapshot_trial,
+    _validate_checkpoint_shape,
     execute_hphi_tune,
     read_hphi_tune,
     replay_hphi_tune,
@@ -48,6 +49,7 @@ def _checkpoint(value):
 
 
 def _input(data):
+    """Validate submission against its original sources before copying."""
     names = ("request", "max_new_trials", "checkpoint")
     keys(data, names, names, "Hphi tune job input")
     validate_hphi_tune(data["request"])
@@ -61,6 +63,36 @@ def _input(data):
         if _canonical(previous["request"]) != _canonical(data["request"]):
             raise ValueError("Hphi tune resume request differs from checkpoint")
     return data
+
+
+def _owned_input(data, execution):
+    """Replay submitted ancestry using this job's copies, without source I/O.
+
+    The original paths remain in the sealed input as provenance. Only a deep
+    copy is rebound; all checkpoint fields, native hashes and decisions still
+    undergo the ordinary replay checks. Use this only after trials are owned,
+    never to preflight a new submission or to repair missing copies.
+    """
+    names = ("request", "max_new_trials", "checkpoint")
+    keys(data, names, names, "Hphi tune job input")
+    owned = deepcopy(data)
+    previous = owned["checkpoint"]
+    if previous is not None:
+        _validate_checkpoint_shape(previous)
+        runs = previous["trial_runs"]
+        if type(runs) is not list or any(type(run) is not str or not run.strip() for run in runs):
+            raise ValueError("Hphi tune submitted trial paths must be a list of nonempty paths")
+        paths = [Path(run) for run in runs]
+        # Check the recorded path structure lexically: old directories may no
+        # longer exist or may have been replaced since the verified copy.
+        if (any(not path.is_absolute() or ".." in path.parts
+                or path.name != f"trial-{index + 1:03d}"
+                for index, path in enumerate(paths))
+                or len({path.parent for path in paths}) > 1):
+            raise ValueError("Hphi tune submitted trials require ordered absolute paths with one owner")
+        execution = Path(execution).resolve()
+        previous["trial_runs"] = [str(execution / path.name) for path in paths]
+    return _input(owned)
 
 
 def is_hphi_tune(directory, state, manifest):
@@ -175,7 +207,7 @@ def verify_hphi_tune_job(directory, state, manifest):
     if manifest["files"] != expected_files:
         raise ValueError("Hphi tune manifest must bind all request, checkpoint, and native files exactly")
 
-    data = _input(_load(directory / INPUT))
+    data = _owned_input(_load(directory / INPUT), directory / "execution")
     result = read_hphi_tune(directory / RESULT)
     if (
         _canonical(data["request"]) != _canonical(result["request"])

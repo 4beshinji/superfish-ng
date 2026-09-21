@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .config import integer, keys
 from .hphi_tuning import validate_hphi_tune
-from .hphi_tuning_jobs import _input
+from .hphi_tuning_jobs import _owned_input
 from .hphi_tuning_saved import _snapshot_trial, read_hphi_tune, replay_hphi_tune
 from .jobs import read_job
 from .project import parse_json
@@ -36,7 +36,7 @@ def _submitted_data(directory):
     if request_path.is_symlink() or not request_path.is_file():
         raise ValueError("Hphi tune submitted request must be a regular file")
     submitted = request_path.read_bytes()
-    data = _input(parse_json(submitted.decode("utf-8")))
+    data = _owned_input(parse_json(submitted.decode("utf-8")), directory / "execution")
     return request_path, submitted, data
 
 

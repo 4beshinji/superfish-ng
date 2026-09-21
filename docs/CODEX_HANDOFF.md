@@ -7106,3 +7106,10 @@ seed周波数差ゼロ、RF相対差最大6.67e-16。既存ベンチマークの
 
 
 継続作業：辺候補のBVH試作out/planar-edge-candidates-20260909は10042/86257終了0。候補集合の総当たり一致と主ツリー11unit、全メッシュ配列一致を確認。小規模の遅化も含む実測を保持し未採用。追加三角形59036のP1 TE n448は三ゲートPASSの途中出力あり、TM以降とreport終端はまだ確認していない。標準92838は824件PASSで終了0、最終seed照合と/tmp/finalize-planar-mesh-docs.pyも実行済み。既存workspace/.manager.lockのResourceWarningは再度出たため未解決の資源解放警告として保持。
+2026-09-21 JST：週次レビューのHφ調整2件を修正。GUI再開後の継承/追加checkpointは
+所有パスとnative/RFのhash・判断履歴で検証する。投入時と保存後の検証を分離し、元出力移動後も
+worker/GUIを所有コピーだけで再検証する。元投入記録は不変、コピー改変/欠落/リンクは拒否。
+`test_hphi_tuning_jobs test_gui_hphi_tuning`は6件PASS（185.788秒、終了0）。
+修正前の2経路の失敗も再現済み。実worker中止/再開を含み全プロセス終了。
+数値核/schema変更なし、数値validator・seed/full・実ブラウザークリック列は未実行。
+詳細と実行コマンドは[HPHI_TUNING.md](HPHI_TUNING.md#2026-09-21-レビュー修正)。
