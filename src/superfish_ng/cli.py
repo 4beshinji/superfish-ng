@@ -188,6 +188,16 @@ def main(argv=None):
     planar_history_extend.add_argument('--out',type=Path,required=True)
     planar_history_replay=sub.add_parser('replay-planar-history',help='recompute the full owned planar ancestry and identity chain')
     planar_history_replay.add_argument('run',type=Path)
+    material_hphi_history=sub.add_parser('execute-material-hphi-history',help='copy and fully replay an ordered hphi tracking history')
+    material_hphi_history.add_argument('request',type=Path)
+    material_hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
+    material_hphi_history.add_argument('--out',type=Path,required=True)
+    material_hphi_history_extend=sub.add_parser('extend-material-hphi-history',help='append a saved pair into a new owned hphi history')
+    material_hphi_history_extend.add_argument('history',type=Path)
+    material_hphi_history_extend.add_argument('next_pair',type=Path)
+    material_hphi_history_extend.add_argument('--out',type=Path,required=True)
+    material_hphi_history_replay=sub.add_parser('replay-material-hphi-history',help='recompute the full owned hphi ancestry and identity chain')
+    material_hphi_history_replay.add_argument('run',type=Path)
     curved_hphi_history=sub.add_parser('execute-curved-hphi-history',help='copy and fully replay an ordered hphi tracking history')
     curved_hphi_history.add_argument('request',type=Path)
     curved_hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
@@ -477,6 +487,16 @@ def main(argv=None):
                 result=extend_planar_history(args.history,args.next_pair,args.out)
             else:
                 result=read_planar_history(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-material-hphi-history','extend-material-hphi-history','replay-material-hphi-history'):
+            from .material_hphi_tracking_history import MaterialHphiTrackingHistoryRequest
+            from .material_hphi_tracking_history_saved import execute_material_hphi_history,extend_material_hphi_history,read_material_hphi_history
+            if args.command=='execute-material-hphi-history':
+                result=execute_material_hphi_history(args.steps,MaterialHphiTrackingHistoryRequest.load(args.request),args.out)
+            elif args.command=='extend-material-hphi-history':
+                result=extend_material_hphi_history(args.history,args.next_pair,args.out)
+            else:
+                result=read_material_hphi_history(args.run)
             print(json.dumps(result,indent=2,allow_nan=False));return 0
         if args.command in ('execute-curved-hphi-history','extend-curved-hphi-history','replay-curved-hphi-history'):
             from .curved_hphi_tracking_history import CurvedHphiTrackingHistoryRequest

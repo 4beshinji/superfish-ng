@@ -72,6 +72,10 @@ def read_job(directory, verify=True):
         if is_magnetic_report_job(directory, state, manifest):
             verify_magnetic_report_job(directory, state, manifest)
             return state
+        from .material_hphi_tracking_history_saved import is_material_hphi_history, verify_material_hphi_history
+        if is_material_hphi_history(directory, state, manifest):
+            verify_material_hphi_history(directory, state, manifest)
+            return state
         from .curved_hphi_tracking_history_saved import is_curved_hphi_history, verify_curved_hphi_history
         if is_curved_hphi_history(directory, state, manifest):
             verify_curved_hphi_history(directory, state, manifest)
@@ -468,6 +472,14 @@ class JobManager:
         """Run Cartesian cutoff tuning with dedicated native field identities."""
         from .planar_tuning_jobs import start_planar_tune
         return start_planar_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+    def start_material_hphi_history(self, paths, request):
+        from .material_hphi_tracking_history_saved import start_material_hphi_history
+        return start_material_hphi_history(self, paths, request)
+
+    def extend_material_hphi_history(self, history, next_pair):
+        from .material_hphi_tracking_history_saved import start_extended_material_hphi_history
+        return start_extended_material_hphi_history(self, history, next_pair)
 
     def start_curved_hphi_history(self, paths, request):
         from .curved_hphi_tracking_history_saved import start_curved_hphi_history

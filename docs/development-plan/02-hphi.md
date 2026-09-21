@@ -491,6 +491,8 @@ H16-c進行中（2026-09-22）：[材料調整の所有保存](../MATERIAL_HPHI_
 
 H16-c進行中（2026-09-22）：[材料二状態追跡の所有保存・worker・CLI](../MATERIAL_HPHI_TRACKING_JOBS.md)は新4件＋関連2件PASS、全handle/worker終端。実中止/管理器再起動、元全native不変、移動/再import、改変/kind拒否を確認。CLI参照ミスの再現/修正記録も保持。次は独立追跡履歴と調整CLI-worker・回復操作。親H16/全goalは継続。
 
+H16-c進行中（2026-09-22）：[材料の独立所有履歴と明示ID回復](../MATERIAL_HPHI_HISTORY.md)を接続。TEM場の独立確認、集合継承/guard、全祖先の移動/実worker延長/管理器再起動、CLI実行/再生を検査。新4件は分割PASS（履歴3件615.826秒、CLI1件74.797秒）、関連2件7.725秒PASS、全handle終端。次は材料調整CLI-workerと回復/実中止/再開操作。親H16/全goalは継続。
+
 #### H16-d
 
 **依存：H16-c**。GUIから材料調整/履歴/回復・最終細分・実中止/再開・元場を操作し、別Project/import後も全材料/領域/両R/Q/N/Aが保存/CLIと一致することを実ブラウザーで検査。親H16の全条件を監査してから受入する。
