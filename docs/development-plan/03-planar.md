@@ -23,6 +23,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
+- **進捗（2026-09-22）**：[多項式アフィン形状法則](../PLANAR_AFFINE_SHAPE.md)の基盤と独立3件を分割検証。調整要求/比較/保存への接続は未完、P01はIN_PROGRESS。
+
 ## P02
 
 ### 平面の個別ID回復を履歴・調整へ追加する
