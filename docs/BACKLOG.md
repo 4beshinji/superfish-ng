@@ -1,3 +1,5 @@
+H09-d着手：要求版2のworker/GUI実操作を検証中。画面説明の範囲・単位を修正。[途中証拠](HPHI_SHAPE_TUNING_GUI.md)。親H09はIN_PROGRESSを維持。
+
 2026-09-21 JST：H09-cの[要求版2・非一様直線Hφ調整](HPHI_SHAPE_TUNING.md)を接続。同軸3寸法/明示頂点変位、実二分、所有保存・CLI再開を確認。新7件の分割証拠と旧版18件（551.668秒）、穴付き変形の専用4実FEM validatorがPASS。元出力移動後の再生・全native/RF保持・改変拒否を確認し全プロセス終了0。次はH09-dの新写像worker/GUI操作受入。
 
 2026-09-21 JST：H09-bの[非一様直線Hφ比較・射影・追跡](HPHI_MAPPED_TRACKING.md)を接続。TEM/Bessel縮退、E/H別内積、q/u射影、正逆・guard・元RF保持を確認。新10件は分割証拠、既存31件（459.244秒）＋収束3件PASS、全プロセス終了0。H09親は継続し、次はH09-cのstrict形状要求・実調整・所有保存/CLI再開。
