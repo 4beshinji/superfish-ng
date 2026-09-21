@@ -21,6 +21,7 @@ ACTIONS = {
     'planar-study-result': ['id'], 'planar-study-point': ['id', 'index'],
     'planar-normalize-convergence': ['document'], 'planar-start-convergence': ['document'],
     'planar-convergence-result': ['id'], 'planar-convergence-point': ['id', 'index'],
+    'planar-normalize-recovery': ['request'], 'planar-recover-history': ['id', 'request'],
     'planar-normalize-history': ['document'],
     'planar-start-history': ['document', 'step_ids'],
     'planar-extend-history': ['id', 'next_id'],
@@ -44,7 +45,7 @@ def planar_response(manager, action, data, render_lock, plot_cache):
                   'planar-tune-result','planar-tune-checkpoints','planar-open-tune-checkpoint','planar-tune-trial'):
         from .gui_planar_tuning import planar_tuning_response
         return planar_tuning_response(manager,action,data),'application/json; charset=utf-8'
-    if action in ('planar-normalize-history','planar-start-history','planar-extend-history','planar-history-result','planar-history-source'):
+    if action in ('planar-normalize-recovery','planar-recover-history','planar-normalize-history','planar-start-history','planar-extend-history','planar-history-result','planar-history-source'):
         return planar_history_response(manager,action,data)
     if action in ('planar-normalize-tracking','planar-start-tracking','planar-tracking-result','planar-tracking-source'):
         return planar_tracking_response(manager,action,data)
@@ -198,6 +199,12 @@ def planar_history_response(manager, action, data):
     from .planar_tracking_history_saved import read_planar_history, history_snapshot
     keys(data,ACTIONS[action],ACTIONS[action],'planar tracking history request')
     media='application/json; charset=utf-8'
+    if action in ('planar-normalize-recovery','planar-recover-history'):
+        from .planar_identity_recovery import PlanarIdentityRecoveryRequest
+        raw=parse_json(data['request']) if isinstance(data['request'],str) else data['request']
+        request=PlanarIdentityRecoveryRequest.from_dict(raw)
+        if action=='planar-normalize-recovery':return request.to_dict(),media
+        return {'id':manager.recover_planar_history(manager.directory(data['id']),request)},media
     def pair_path(identifier):
         state=manager.status(identifier,verify=True)
         if state.get('status')!='complete' or state.get('kind')!='planar_tracking':

@@ -62,7 +62,8 @@
 <div id="convergence-result" hidden><h3>選択した細分診断</h3><p id="convergence-selection"></p><div id="convergence-checks"></div><div id="convergence-points"></div><button id="convergence-result-save">診断結果を保存</button></div>
 </section><section><h2>平面のモード追跡</h2>
 <p>元の電場を宣言した写像で比較します。各対象帯域の上に、少なくとも1モードを計算しておいてください。</p>
-<label>形状の対応<select id="tracking-mapping"><option value="normalized_rectangle">矩形：単位正方形へ写す</option><option value="polygon_uniform_scale">明示多角形：原点まわりの一様尺度</option><option value="polygon_similarity">明示多角形：尺度・回転・平行移動</option><option value="polygon_same_domain">同じ多角形：異なるメッシュ</option><option value="polygon_similarity_remesh">明示多角形：相似変換＋異なる内部メッシュ</option><option value="polygon_exact_affine_remesh">明示多角形：厳密アフィン変換＋境界・内部の独立メッシュ</option><option value="polygon_affine_remesh">明示多角形：可逆アフィン変換＋異なる内部メッシュ</option></select></label>
+<label>形状の対応<select id="tracking-mapping"><option value="normalized_rectangle">矩形：単位正方形へ写す</option><option value="polygon_uniform_scale">明示多角形：原点まわりの一様尺度</option><option value="polygon_similarity">明示多角形：尺度・回転・平行移動</option><option value="polygon_same_domain">同じ多角形：異なるメッシュ</option><option value="polygon_similarity_remesh">明示多角形：相似変換＋異なる内部メッシュ</option><option value="polygon_exact_affine_remesh">明示多角形：厳密アフィン変換＋境界・内部の独立メッシュ</option><option value="polynomial_affine_xy_reference">元Projectと多項式アフィン形状法則</option><option value="polygon_affine_remesh">明示多角形：可逆アフィン変換＋異なる内部メッシュ</option></select></label>
+<div id="tracking-polynomial-options" hidden><label>元形状・法則・両試行値・細分段数の写像JSON<textarea id="tracking-polynomial-mapping" rows="10">null</textarea></label><p>保存された両メッシュを元Projectから再生成して照合します。次の比較では両試行値と細分段数を指定し直してください。</p></div>
 <div id="tracking-remesh-options" hidden><p id="tracking-remesh-note">同じ多角形の元要素どうしを比較します。節点番号や分割は異なって構いません。形状の変更は受け付けません。</p><label>候補探索の比較回数上限<input id="tracking-candidate-tests" type="number" min="1" step="1" value="2000000"></label></div>
 <div id="tracking-polygon-options" hidden><p id="tracking-origin-note">次の座標 = 尺度 × 前の座標。平行移動・回転・形状変更は対応していません。三角形の番号と宣言した四分割関係が一致する保存場を選びます。</p>
 <div id="tracking-similarity-options" hidden><p id="tracking-similarity-note">宣言変換 F(x) = 尺度 × R(角度) x + 平行移動。通常は次の座標 = F(前の座標)、逆向きでは前の座標 = F(次の座標)です。可逆アフィン変換は別の対応で指定します。</p>
@@ -87,9 +88,14 @@
 <label>履歴にする追跡結果のID（順序付きJSON配列）<textarea id="history-step-ids" rows="3">[]</textarea></label>
 <button id="history-select-tracking">選択した追跡結果を指定</button>
 <label>履歴の最大段階数<input id="history-budget" type="number" min="1" step="1" value="100"></label>
+<label>各段階の明示回復（未指定は空配列）<textarea id="history-recoveries" rows="4">[]</textarea></label>
 <button id="history-start">履歴を作成</button><button id="history-save">履歴条件を保存</button><label class="file">履歴条件を開く<input id="history-open" type="file" accept=".json"></label>
-<p>履歴条件には段階数と上限を保存します。追跡結果のIDはこのワークスペースで指定します。</p>
+<p>履歴条件には段階数・上限・明示回復を保存します。追跡結果のIDはこのワークスペースで指定します。</p>
 <div id="history-result" hidden><h3>選択した追跡履歴</h3><p id="history-selection"></p><p id="history-notes"></p><div id="history-steps"></div><pre id="history-identities"></pre>
+<details><summary>過去の元場から個別IDを回復する</summary><p>anchorは履歴の保存点番号（初期0）。解決済みの元場から最後の場への完全な比較要求を指定します。元の集合判定と候補の対応を検証し、新しい履歴として保存します。</p>
+<label>回復元の保存点番号<input id="history-recovery-anchor" type="number" min="0" step="1" value="0"></label><button id="history-recovery-from-tracking">追跡フォームから回復条件を作る</button>
+<label>回復要求JSON<textarea id="history-recovery-request" rows="10">null</textarea></label>
+<button id="history-recovery-save">回復条件を保存</button><label class="file">回復条件を開く<input id="history-recovery-open" type="file" accept=".json"></label><button id="history-recover">個別IDの回復を実行</button></details>
 <label>次に追加する追跡結果<select id="history-next"></select></label><button id="history-extend">次の段階を追加</button>
 <button id="history-result-save">履歴結果を保存</button><button id="history-source">最後の保存場を取り込む</button><button id="history-use-groups">次の追跡へID集合を引き継ぐ</button>
 <p>追加時には全段階を含む新しい履歴を作成します。PASSは各宣言写像での離散的な対応であり、連続した物理経路の同一性や誤差限界を保証しません。</p></div>

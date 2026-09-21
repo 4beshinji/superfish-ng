@@ -1,3 +1,5 @@
+P02-d履歴回復APIは `test_gui_planar_recovery.PlanarRecoveryGuiTests`、直接利用先は `test_planar_tracking_history_saved.PlanarHistorySavedTests.test_gui_history_extension_and_native_import`。版8フォーム保持は `scripts/verify_planar_tracking_form.mjs`。[再現・修正と検査範囲](PLANAR_RECOVERY_GUI.md)。
+
 P02-d調整フォームは `node scripts/verify_planar_tune_form.mjs`（隔離実行、実ブラウザーではない）。GUI APIは `test_gui_planar_tuning`。[分割証拠と残る操作受入](PLANAR_RECOVERY_GUI.md)。
 
 P02-c調整回復は `test_planar_tuning_recovery test_planar_tuning_recovery_jobs`。直接利用先は `test_planar_tuning test_planar_affine_shape_mapping test_planar_tuning_jobs`。[条件別受入と19件の分割検査](PLANAR_TUNING_RECOVERY.md)。
