@@ -1,6 +1,6 @@
 # 固定材料候補・最終細分・比較空間
 
-2026-09-22。H16-aを受入。[元Project形状則](MATERIAL_HPHI_SHAPE.md)と[材料細分](MATERIAL_HPHI_REFINEMENT.md)を候補生成・追跡要求へ接続した。目標周波数探索・ID回復・所有保存・CLI/worker/GUIはH16-b以降へ残す。
+2026-09-22。H16-aを受入。[元Project形状則](MATERIAL_HPHI_SHAPE.md)と[材料細分](MATERIAL_HPHI_REFINEMENT.md)を候補生成・追跡要求へ接続した。[目標周波数探索・ID回復](MATERIAL_HPHI_TUNING.md)も接続済み。所有保存・CLI/worker/GUIはH16-c/dへ残す。
 
 `build_material_hphi_tune_trial(project, law, value, ...)`は専用材料Projectと形状則を受け取り、毎回元Projectからsearchまたはrefinement候補を作る。refinementは明示1〜8段の全セル4分割で、元材料・領域・界面を保持する。出力`MaterialHphiTuneTrial`には実候補Project、元Project、未細分候補partition、各細分セルのroot_cells、合成P1/P2移送、診断を保持する。
 

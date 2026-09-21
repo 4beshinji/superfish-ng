@@ -27,6 +27,8 @@
 
 2026-09-22追記：H13-eと親H13を[全条件監査](../CURVED_HPHI_ACCEPTANCE.md)まで受入。大きいcheckpointのHTTP不備を実Chromeで再現・修正し、穴付き中止/再開/新サーバー元場復元、調整/履歴の明示回復を分割検証。全handle終端。次はH15-a、全goalは未完了。
 
+H16-b受入（2026-09-22）：[材料実調整・明示ID回復](../MATERIAL_HPHI_TUNING.md)。二層uniform/異率伸長の独立解析目標、実最終細分、非真空一様材料の実TEM回復/真縮退拒否、初回guardと別粗細gateを確認。新8件は分割PASS、全handle終端。粗いn=4の区間重なりによる未確認を保持し、n=6は190.411秒PASS。次はH16-cの所有保存/履歴/CLI-worker。親H16/全goalは継続。
+
 H16-a受入（2026-09-22）：[材料候補・最終細分・比較空間](../MATERIAL_HPHI_TUNE_TRIALS.md)を接続。二段材料K/M移送、検索→実最終細分、穴付き軸の非一様変形/全加速座標、実E/H個別IDを検証。新4件＋関連6件は分割PASS、全handle終端。次はH16-bの実調整runnerと明示ID回復。親H16/全goalは継続。
 
 H16-a進行中（2026-09-22）：[材料領域を保つ直線細分](../MATERIAL_HPHI_REFINEMENT.md)を実装。領域体積/全界面、P1/P2材料K/M移送、多項式/定数、予算を検査。次は固定材料形状則と試行比較。H16をa〜dへ分割し、原90カードを維持、TSVは111行。親H16/全goalは未完了。

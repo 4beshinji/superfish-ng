@@ -1,3 +1,7 @@
+H16-b受入（2026-09-22）：[材料実調整・明示ID回復](MATERIAL_HPHI_TUNING.md)。二層uniform/異率伸長の独立解析目標、実最終細分、非真空一様材料の実TEM回復/真縮退拒否、初回guardと別粗細gateを確認。新8件は分割PASS、全handle終端。粗いn=4の区間重なりによる未確認を保持し、n=6は190.411秒PASS。次はH16-cの所有保存/履歴/CLI-worker。親H16/全goalは継続。
+
+H16-b進行中（2026-09-22）：[材料実FEM調整runner](MATERIAL_HPHI_TUNING.md)を接続。二層uniform/異率伸長の独立解析目標が実最終細分までTUNED、新5件PASS。真の縮退拒否もPASS。成功回復の粗いn=4対照は有限区間重なりで未確認、許容値を維持してn=6へ細分検証中。親H16/全goalは継続。
+
 H16-a受入（2026-09-22）：[材料候補・最終細分・比較空間](MATERIAL_HPHI_TUNE_TRIALS.md)を接続。二段材料K/M移送、検索→実最終細分、穴付き軸の非一様変形/全加速座標、実E/H個別IDを検証。新4件＋関連6件は分割PASS、全handle終端。次はH16-bの実調整runnerと明示ID回復。親H16/全goalは継続。
 
 H16-a進行中（2026-09-22）：[固定材料形状則](MATERIAL_HPHI_SHAPE.md)を実装。元Projectからuniform_scale/明示区分アフィンを生成し、全材料領域/界面と全加速座標を保持・再検査。実FEM尺度則と界面変形/真空軸拒否を検証。次は形状＋細分の試行生成/比較空間。親H16/全goalは継続。
