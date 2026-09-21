@@ -1,3 +1,5 @@
+H10-a完了（2026-09-21）：[明示個別ID回復核](HPHI_IDENTITY_RECOVERY.md)を追加。独立同軸TEM/Bessel根の順位交換・解析q場・縮退部分空間、継承/anchor guard、集合外/集合境界、元場不変を確認。新8件の分割証拠＋既存履歴1件PASS、全handle終了。核は履歴の過去snapshotとの結び付けをまだ証明しない。次はH10-bの所有回復eventと成功IDのみの後続継承。親H10/全goalは未完了。
+
 H09完了（2026-09-21）：[worker/GUI受入と条件別監査](HPHI_SHAPE_TUNING_GUI.md)。両形状の実中止/所有再開・管理器再起動、元サーバー正常終了後の新サーバー/新ブラウザー復元、全native/RF byte一致、現行src hash一致がPASS。全handle終端。検証器失敗と補完再生は分割証拠として保持。次はH10。
 
 H09-d進行中（2026-09-21）：[worker/GUI操作受入](HPHI_SHAPE_TUNING_GUI.md)。版2の単位・対応範囲の画面説明を補修し、両形状の実中止/所有再開/管理器再起動validatorとChromeクリック検証器を追加。同軸workerと同軸保存結果の新ブラウザー表示はPASS。穴付きの両検証は進行中で、サーバー再起動後ブラウザー復元・H09統合監査は残る。出力を確認せず再実行しない。

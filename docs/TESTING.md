@@ -1,3 +1,5 @@
+H10-aは`test_hphi_identity_recovery`の新8件（4+3+1の分割実行）と既存`test_hphi_tracking_history.HphiTrackingHistoryTests.test_native_spectrum_and_identity_continuity`1件がPASS。[検証記録](HPHI_IDENTITY_RECOVERY.md)。独立解析f/q/縮退部分空間、正しい順位交換と停止対照を分離。H10-b/cの保存・操作受入は含まない。
+
 H09-d受入：両形状worker専用validator、再起動後Chrome各1、追加穴付き逆/同形状別分割1件（19.113秒）、実HTTP1件（0.616秒）がPASS。[分割証拠・失敗履歴・条件別監査](HPHI_SHAPE_TUNING_GUI.md)。src/FEM不変部分のH09-a/b/c成功証拠を再利用。全suite/seed未実施。
 
 H09-d進行中：`scripts/validate_hphi_shape_tuning_jobs.py`と`scripts/verify_gui_hphi_shape_tuning.mjs`で要求版2のworker/GUIを検査する。[現在の証拠と未完了](HPHI_SHAPE_TUNING_GUI.md)。同軸の分割証拠を両形状の全受入とは扱わない。

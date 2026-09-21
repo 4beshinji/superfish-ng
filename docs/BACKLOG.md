@@ -1,3 +1,5 @@
+H10-aの回復核を受入。[仕様と証拠](HPHI_IDENTITY_RECOVERY.md)。H10はa数値核/b所有履歴/c検索・最終細分調整に分割し、元の受入条件を維持。次はH10-b。
+
 H09-a〜dと親H09を完了。[受入監査](HPHI_SHAPE_TUNING_GUI.md)。次のbounded issueはH10：過去の個別場anchorと継承ID集合による専用履歴回復。未確認部分空間の迂回は認めない。
 
 H09-d着手：要求版2のworker/GUI実操作を検証中。画面説明の範囲・単位を修正。[途中証拠](HPHI_SHAPE_TUNING_GUI.md)。親H09はIN_PROGRESSを維持。
