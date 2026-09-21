@@ -1,3 +1,5 @@
+B03仕様整理受入（2026-09-22）：[必須範囲と不足仕様](development-plan/B03-required-scope.md)。原32要件を維持し、限定例の入力/期待量/単位/比較法と不足仕様を対応付けた。TM旧集約欠落、TE集約hash一致を記録。数値再実行なし、C00.V/追加採否は未確認。次はB04→H17、全goal継続、稼働handleなし。
+
 B02調査受入（2026-09-22）：[対象版・入力資料再監査](development-plan/B02-reference-audit.md)。K01〜K32の版/節または未確認理由を固定、現存7件のhash・版表示一致、R25欠落。旧ソース/バイナリ内部読取・新旧実行なし。C00.VはUNVERIFIED、次はB03。全goal継続、稼働handleなし。
 
 H16-c進行中（2026-09-22）：[材料二状態追跡の所有保存・worker・CLI](MATERIAL_HPHI_TRACKING_JOBS.md)は新4件＋関連2件PASS、全handle/worker終端。実中止/管理器再起動、元全native不変、移動/再import、改変/kind拒否を確認。CLI参照ミスの再現/修正記録も保持。次は独立追跡履歴と調整CLI-worker・回復操作。親H16/全goalは継続。
