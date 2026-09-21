@@ -1,3 +1,5 @@
+H16-c所有保存は`test_material_hphi_tuning_saved`、直接利用先は`test_material_hphi_saved`。[元native不変・移動後再生・失敗prefix](MATERIAL_HPHI_TUNING_SAVED.md)。
+
 H16-bは`test_material_hphi_tuning`、`test_material_hphi_tuning_nonuniform`、`test_material_hphi_tuning_recovery`。[独立解析目標、guard、回復と粗細gate](MATERIAL_HPHI_TUNING.md)。
 
 H16-a候補/最終細分は`test_material_hphi_tune_trials`。直接利用先は`test_material_hphi_refinement`と`test_material_hphi_shape_tuning`。[実FEM追跡と移送不変量](MATERIAL_HPHI_TUNE_TRIALS.md)。

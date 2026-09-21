@@ -1,3 +1,5 @@
+2026-09-22 H16-c：[材料調整の所有保存](MATERIAL_HPHI_TUNING_SAVED.md)。自作snapshot/path/prefix複製の構造に専用材料native再検証と実調整再評価を接続。新外部資料・依存・legacy参照なし。
+
 2026-09-22 H16-b：[材料実調整/ID回復](MATERIAL_HPHI_TUNING.md)。自作探索/集合判定に専用材料FEMを接続。二層接続式は既存弱形式から独立導出し検査側だけで求根。新外部資料・依存・legacy参照なし。
 
 2026-09-22 H16-a：[材料候補/比較空間](MATERIAL_HPHI_TUNE_TRIALS.md)。自作形状則・材料細分・材料E/H追跡を接続し、別々の実FEMとK/M移送で確認。新外部資料・依存・legacy参照なし。

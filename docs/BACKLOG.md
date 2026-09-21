@@ -1,3 +1,7 @@
+H16-c進行中（2026-09-22）：[材料調整の所有保存](MATERIAL_HPHI_TUNING_SAVED.md)は新5件123.786秒＋材料native関連4件10.185秒PASS、全handle終端。移動後の物理再生/新規出力への再開、元全native不変、失敗prefixと改変/path拒否を確認。次は独立追跡履歴とCLI-worker、回復/実中止/再起動の操作検査。親H16/全goalは継続。
+
+H16-c進行中（2026-09-22）：[材料調整の所有保存/物理再生/新規出力への再開](MATERIAL_HPHI_TUNING_SAVED.md)を接続。全元Project/native、相対path、prefix保持と厳密再検証を検査中。独立追跡履歴、CLI-worker、実中止/再起動、回復操作は残る。親H16/全goalは継続。
+
 H16-b受入（2026-09-22）：[材料実調整・明示ID回復](MATERIAL_HPHI_TUNING.md)。二層uniform/異率伸長の独立解析目標、実最終細分、非真空一様材料の実TEM回復/真縮退拒否、初回guardと別粗細gateを確認。新8件は分割PASS、全handle終端。粗いn=4の区間重なりによる未確認を保持し、n=6は190.411秒PASS。次はH16-cの所有保存/履歴/CLI-worker。親H16/全goalは継続。
 
 H16-b進行中（2026-09-22）：[材料実FEM調整runner](MATERIAL_HPHI_TUNING.md)を接続。二層uniform/異率伸長の独立解析目標が実最終細分までTUNED、新5件PASS。真の縮退拒否もPASS。成功回復の粗いn=4対照は有限区間重なりで未確認、許容値を維持してn=6へ細分検証中。親H16/全goalは継続。
