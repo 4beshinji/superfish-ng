@@ -1,5 +1,7 @@
 # C00: 互換基準と受入台帳
 
+2026-09-22：[B02再監査](development-plan/B02-reference-audit.md)で全32行の版付き根拠/未確認理由を更新。入力・設定・出力7件はhash一致、R25は欠落。調査完了はC00.V受入ではない。
+
 2026-09-14追補：[旧曲線入力の版別参照](C00_CONIC_INPUT_RESEARCH.md)と
 [c00_conic_input_reference_audit.json](c00_conic_input_reference_audit.json)を追加。
 元台帳の入力/設定/出力7ファイルは全hashと版表示が一致、R25抽出テキストは現在欠けている。

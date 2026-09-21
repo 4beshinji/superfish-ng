@@ -1,3 +1,5 @@
+B02調査受入（2026-09-22）：[対象版・入力資料再監査](development-plan/B02-reference-audit.md)。K01〜K32の版/節または未確認理由を固定、現存7件のhash・版表示一致、R25欠落。旧ソース/バイナリ内部読取・新旧実行なし。C00.VはUNVERIFIED、次はB03。全goal継続、稼働handleなし。
+
 H16-c進行中（2026-09-22）：[材料二状態追跡の所有保存・worker・CLI](MATERIAL_HPHI_TRACKING_JOBS.md)は新4件＋関連2件PASS、全handle/worker終端。実中止/管理器再起動、元全native不変、移動/再import、改変/kind拒否を確認。CLI参照ミスの再現/修正記録も保持。次は独立追跡履歴と調整CLI-worker・回復操作。親H16/全goalは継続。
 
 H16-c進行中（2026-09-22）：[材料E/H比較の所有保存・worker・CLI](MATERIAL_HPHI_TRACKING_JOBS.md)を接続。元Project/native全bytes、移動後再生、再import、実worker中止/再起動、改変/kind拒否の新3件PASS。CLIの要求クラス参照ミスを再現・修正し再検査中。独立履歴と調整CLI-worker/回復操作は残る。親H16/全goalは継続。
