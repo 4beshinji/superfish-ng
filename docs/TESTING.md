@@ -1,3 +1,7 @@
+H13-d曲線追跡/履歴CLIは`test_curved_hphi_history_cli`。旧CLI互換は`test_hphi_mapped_tracking_saved.HphiMappedTrackingSavedTests.test_saved_cli_replay_owns_native_after_source_move`。[仕様・検証記録](CURVED_HPHI_HISTORY.md)。
+
+H13-d曲線履歴・回復は`test_curved_hphi_tracking_history`。関連は`test_hphi_tracking_history`と`test_hphi_recovered_history.HphiRecoveredHistoryTests.test_strict_placements_and_failed_recovery_forbid_extension`。[検証記録](CURVED_HPHI_HISTORY.md)。
+
 H13-d曲線追跡の所有pairは`test_curved_hphi_tracking_jobs`。直接利用先は`test_hphi_tracking_jobs test_hphi_jobs`。[検証記録](CURVED_HPHI_TRACKING_SAVED.md)。
 
 H13-d曲線調整workerは`test_curved_hphi_tuning_jobs`。共通dispatchの直接利用先は`test_jobs`、旧直線`test_hphi_tuning_jobs`の不正入力/実中止・再開ケース。[検証記録](CURVED_HPHI_TUNING_WORKER.md)。

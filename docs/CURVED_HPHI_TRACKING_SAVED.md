@@ -1,6 +1,6 @@
 # 元曲線Hφ追跡pairの所有保存とworker
 
-2026-09-22。H13-dの独立追跡履歴に必要なpair段階。`execute_curved_hphi_tracking`/`read_curved_hphi_tracking`と`JobManager.start_curved_hphi_tracking`を追加。順序付き履歴、過去anchor回復、CLI/GUI操作は後続で、H13-d/親H13/全goalは未完了。
+2026-09-22。H13-dの独立追跡履歴に必要なpair段階。`execute_curved_hphi_tracking`/`read_curved_hphi_tracking`と`JobManager.start_curved_hphi_tracking`を追加。[順序付き履歴・過去anchor回復・CLI](CURVED_HPHI_HISTORY.md)は後続段階で検証済み。GUI操作は残り、H13-d/親H13/全goalは未完了。
 
 ## 保存契約
 

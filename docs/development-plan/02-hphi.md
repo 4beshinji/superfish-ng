@@ -377,6 +377,8 @@ H13-c受入（2026-09-22）：[曲線調整・anchor回復・条件別監査](..
 
 2026-09-22：[独立曲線追跡pairの所有保存・worker](../CURVED_HPHI_TRACKING_SAVED.md)を接続。順序付き履歴/anchor回復/CLI・GUIは残る。
 
+2026-09-22：[所有曲線履歴と過去anchor回復](../CURVED_HPHI_HISTORY.md)を検証済み。順序付きnative/ID継承、worker延長、追跡/履歴CLIを接続。GUIと調整回復の所有操作受入は残す。
+
 #### H13-e
 
 **依存：d**。実GUIから曲線追跡/調整/回復、停止・再開・元場表示を操作し、APIとの全native/RF一致を検査。全handle終端と親H13の元条件別監査を実施する。

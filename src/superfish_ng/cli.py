@@ -145,6 +145,11 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    curved_hphi_tracking=sub.add_parser('execute-curved-hphi-tracking',help='compare original Hphi E/H subspaces with explicit same-vacuum or geometry-mapping requests')
+    curved_hphi_tracking.add_argument('previous',type=Path);curved_hphi_tracking.add_argument('current',type=Path)
+    curved_hphi_tracking.add_argument('request',type=Path);curved_hphi_tracking.add_argument('--out',type=Path,required=True)
+    curved_hphi_tracking_replay=sub.add_parser('replay-curved-hphi-tracking',help='fully replay both owned Hphi spectra and their subspace correspondence')
+    curved_hphi_tracking_replay.add_argument('run',type=Path)
     hphi_tracking=sub.add_parser('execute-hphi-tracking',help='compare original Hphi E/H subspaces with explicit same-vacuum or geometry-mapping requests')
     hphi_tracking.add_argument('previous',type=Path);hphi_tracking.add_argument('current',type=Path)
     hphi_tracking.add_argument('request',type=Path);hphi_tracking.add_argument('--out',type=Path,required=True)
@@ -178,6 +183,16 @@ def main(argv=None):
     planar_history_extend.add_argument('--out',type=Path,required=True)
     planar_history_replay=sub.add_parser('replay-planar-history',help='recompute the full owned planar ancestry and identity chain')
     planar_history_replay.add_argument('run',type=Path)
+    curved_hphi_history=sub.add_parser('execute-curved-hphi-history',help='copy and fully replay an ordered hphi tracking history')
+    curved_hphi_history.add_argument('request',type=Path)
+    curved_hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
+    curved_hphi_history.add_argument('--out',type=Path,required=True)
+    curved_hphi_history_extend=sub.add_parser('extend-curved-hphi-history',help='append a saved pair into a new owned hphi history')
+    curved_hphi_history_extend.add_argument('history',type=Path)
+    curved_hphi_history_extend.add_argument('next_pair',type=Path)
+    curved_hphi_history_extend.add_argument('--out',type=Path,required=True)
+    curved_hphi_history_replay=sub.add_parser('replay-curved-hphi-history',help='recompute the full owned hphi ancestry and identity chain')
+    curved_hphi_history_replay.add_argument('run',type=Path)
     hphi_history=sub.add_parser('execute-hphi-history',help='copy and fully replay an ordered hphi tracking history')
     hphi_history.add_argument('request',type=Path)
     hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
@@ -458,6 +473,22 @@ def main(argv=None):
             else:
                 result=read_planar_history(args.run)
             print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-curved-hphi-history','extend-curved-hphi-history','replay-curved-hphi-history'):
+            from .curved_hphi_tracking_history import CurvedHphiTrackingHistoryRequest
+            from .curved_hphi_tracking_history_saved import execute_curved_hphi_history,extend_curved_hphi_history,read_curved_hphi_history
+            if args.command=='execute-curved-hphi-history':
+                result=execute_curved_hphi_history(args.steps,CurvedHphiTrackingHistoryRequest.load(args.request),args.out)
+            elif args.command=='extend-curved-hphi-history':
+                result=extend_curved_hphi_history(args.history,args.next_pair,args.out)
+            else:
+                result=read_curved_hphi_history(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-curved-hphi-tracking','replay-curved-hphi-tracking'):
+            from .curved_hphi_tracking import CurvedHphiTrackingRequest
+            from .curved_hphi_tracking_jobs import execute_curved_hphi_tracking,read_curved_hphi_tracking
+            result=(execute_curved_hphi_tracking(args.previous,args.current,CurvedHphiTrackingRequest.load(args.request),args.out)
+                    if args.command=='execute-curved-hphi-tracking' else read_curved_hphi_tracking(args.run))
+            print(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False));return 0
         if args.command in ('execute-hphi-history','extend-hphi-history','replay-hphi-history'):
             from .hphi_tracking_history import HphiTrackingHistoryRequest
             from .hphi_tracking_history_saved import execute_hphi_history,extend_hphi_history,read_hphi_history
