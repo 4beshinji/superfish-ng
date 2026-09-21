@@ -1,3 +1,5 @@
+H13-d worker接続済み（2026-09-22）：[曲線調整worker](CURVED_HPHI_TUNING_WORKER.md)を追加。起動/所有完了検証、実中止・新job再開、管理器再起動、全出力移動/改変拒否の新5＋関連9件を分割検証。初期prefix削除の不備を再現・修正し、影響2件PASS。全handle終了。独立追跡履歴・回復の所有操作・GUIは残る。全goalは継続。
+
 H13-d CLI接続済み（2026-09-22）：`tune-curved-hphi`/`resume-tune-curved-hphi`/`replay-tune-curved-hphi`を追加。[所有保存とCLI契約](CURVED_HPHI_TUNING_SAVED.md)。実FEM尺度則、全RF保持、移動後再生、未確認停止、旧直線CLI互換の新3＋既存1件PASS。全handle終了0。独立追跡履歴・worker・GUIは未完了。
 
 H13-d進行中（2026-09-22）：[曲線調整の所有保存・再生](CURVED_HPHI_TUNING_SAVED.md)を実装。専用Python APIで全元Project/nativeを所有し、物理再生と新出力への再開、移動後再生を接続。新5件と関連6件PASS（分割証拠）。追加8件200.791秒、handle終了0。独立追跡履歴・CLI/worker・中止/管理器再起動・GUIは残る。H13-d/親H13/全goalは未完了。

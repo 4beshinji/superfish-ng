@@ -371,7 +371,7 @@ H13-c受入（2026-09-22）：[曲線調整・anchor回復・条件別監査](..
 
 #### H13-d
 
-2026-09-22進行中：[所有調整のPython APIとCLI](../CURVED_HPHI_TUNING_SAVED.md)を検証済み。独立追跡履歴/workerを含むカード全体は未完了。
+2026-09-22進行中：[所有調整のPython APIとCLI](../CURVED_HPHI_TUNING_SAVED.md)を検証済み。[worker起動・実中止再開・管理器再起動](../CURVED_HPHI_TUNING_WORKER.md)も検証済み。独立追跡履歴・回復操作の所有受入を含むカード全体は未完了。
 
 **依存：c**。全元native/Projectと履歴を所有して保存・CLI/workerへ接続。中止/再開/管理器再起動、改変拒否、元出力移動後の再生、旧保存要求の互換性を検証する。
 

@@ -1,3 +1,5 @@
+H13-d曲線調整workerは`test_curved_hphi_tuning_jobs`。共通dispatchの直接利用先は`test_jobs`、旧直線`test_hphi_tuning_jobs`の不正入力/実中止・再開ケース。[検証記録](CURVED_HPHI_TUNING_WORKER.md)。
+
 H13-d曲線調整CLIは`test_curved_hphi_tuning_cli`。旧互換の直接利用先は`test_hphi_tuning_saved.HphiTuneSavedTests.test_cli_tune_resume_and_replay_names_and_exit_codes`。[保存/CLI検証記録](CURVED_HPHI_TUNING_SAVED.md)。
 
 H13-d所有調整の第一段階は`test_curved_hphi_tuning_saved`。関連は`test_hphi_tuning_saved`の所有再生/改変拒否と`test_curved_hphi_saved`。[検証範囲・記録](CURVED_HPHI_TUNING_SAVED.md)。
