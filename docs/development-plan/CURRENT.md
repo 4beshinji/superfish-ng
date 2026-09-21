@@ -1,22 +1,24 @@
 # 現行の作業入口
 
-更新：2026-09-22、B04。直前の成果コミットはB03 `1b7ef1d`。
+更新：2026-09-22、H17調査。直前の成果コミットはB04 `8f89966`。
 原90カードと追加子カードを含む[全111カード](tasks.tsv)の計画は継続中。
 このページを現行の選択・引継ぎ先とし、各文書の日付付き追記は履歴として読む。
 
 ## 次の着手
 
-**[H17：P04損失モデルの必要範囲](02-hphi.md#h17)**。
-先行B03とH16はDONE。壁損失・摂動体積損失・複素固有値の必要性を分け、
-未確認仕様を推測実装せず、確定した追加要件だけL05の手順で起票する。
+**[P01：平面アフィン形状法則を調整要求へ追加](03-planar.md#p01)**。
+先行B01はDONE。元xy Projectから有限多項式の行列法則で全試行を生成し、
+面積行列式・回転/せん断/尺度・全区間退化拒否と固定U′を検証する。
 
 | 辿る先 | 用途 |
 | --- | --- |
-| [B03の分類](B03-required-scope.md) / [B02の版調査](B02-reference-audit.md) | 既存必須範囲、対象版の証拠不足、追加損失の未決事項 |
-| [材料RF契約](../MATERIAL_HPHI_RF_PLAN.md) / [実装と検証](../MATERIAL_HPHI_RF.md) | 実数無損失媒質・非磁性金属壁の摂動損失、未対応モデル |
-| [material_hphi_rf.py](../../src/superfish_ng/material_hphi_rf.py) | `material_hphi_quantities` と領域積分の現行実装 |
-| [TESTING](../TESTING.md) / [共通検証規則](README.md#検証と完了報告) | 変更影響に応じた検査選択。H17の仕様文書だけならFEM再実行不要 |
-| [L05](08-external.md#l05) | 必須と確定したモデルの仕様・入力・計算・保存・操作・独立検証カード化 |
+| [planar_tuning.py](../../src/superfish_ng/planar_tuning.py) | 既存調整要求と試行 |
+| [planar_tracking_exact_affine.py](../../src/superfish_ng/planar_tracking_exact_affine.py) | 既存アフィン比較契約 |
+| [planar_study.py](../../src/superfish_ng/planar_study.py) | Projectからの候補生成 |
+| [TESTING](../TESTING.md) / [共通検証規則](README.md#検証と完了報告) | test_planar_tuning / test_planar_tracking_exact_affine / test_planar_studyから影響先を選ぶ |
+
+H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROGRESS。
+追加損失を必須にするか質問中。無回答で採否を確定せず、独立したP01を進める。
 
 ## 受入証拠と依存待ち
 
