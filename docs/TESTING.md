@@ -1,3 +1,5 @@
+H13-cの曲線調整実行/回復は`test_curved_hphi_tuning test_curved_hphi_tuning_recovery`。[独立TEM/曲線FEM目標、未確認停止、目標/粗細差別判定と検証記録](CURVED_HPHI_TUNING.md)。関連は旧HphiTuneRequestTests、旧回復の形状/予算検査、新候補の構築前予算検査。
+
 H13-cの探索/最終/比較候補は`test_curved_hphi_tune_trials`。関連は`test_curved_hphi_shape_tuning test_curved_hphi_refinement`。[二段元chart・質量保存・実曲線穴付き追跡](CURVED_HPHI_TUNE_TRIALS.md)。
 
 H13-cの元曲線Project形状変数は`test_curved_hphi_shape_tuning`。関連は`test_hphi_geometry_mapping test_curved_meridional_geometry`。[全P2尺度則・二次shear・加速座標・軸丸め](CURVED_HPHI_SHAPE.md)。
