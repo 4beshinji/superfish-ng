@@ -37,7 +37,13 @@ def _electric_grams(previous, current, overlay, quadrature_order, *, current_to_
             fields = [solution.fields_in_cells(cells, parent_bary, i) for i in range(solution.case.modes)]
             samples.append([np.column_stack([f[key] for f in fields]) for key in components])
         if current_to_previous_rotation is not None and len(components)==2:
-            samples[1] = list(np.einsum('ij,jnm->inm', current_to_previous_rotation, np.asarray(samples[1])))
+            rotation = np.asarray(current_to_previous_rotation)
+            if rotation.shape == (2, 2):
+                samples[1] = list(np.einsum('ij,jnm->inm', rotation, np.asarray(samples[1])))
+            elif rotation.shape == (len(overlay.previous_cells), 2, 2):
+                samples[1] = list(np.einsum('nij,jnm->inm', rotation, np.asarray(samples[1])))
+            else:
+                raise ValueError('planar field transport requires a 2x2 matrix or one per comparison triangle')
         weights = (weight*overlay.reference_determinants)[:, None]
         for a, b in zip(*samples):
             aa += a.T @ (weights*a)

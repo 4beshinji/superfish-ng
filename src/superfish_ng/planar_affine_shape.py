@@ -20,6 +20,27 @@ from .planar_polygon import PlanarPolygonCase
 from .planar_mesh import PlanarMesh
 
 
+def explicit_planar_project(project):
+    """Retain the existing rectangular grid numbering in an explicit polygon."""
+    if type(project) is not PlanarProject:
+        raise ValueError('expected PlanarProject')
+    if type(project.case) is PlanarPolygonCase:
+        return PlanarProject.from_dict(project.to_dict())
+    case = project.case
+    x, y = np.meshgrid(np.linspace(0, case.width_m, case.nx+1),
+                       np.linspace(0, case.height_m, case.ny+1))
+    points = np.column_stack((x.ravel(), y.ravel()))
+    cells = []
+    for j in range(case.ny):
+        for i in range(case.nx):
+            a = j*(case.nx+1)+i; b = a+case.nx+1
+            cells.extend(((a, a+1, b+1), (a, b+1, b)))
+    mesh = PlanarMesh.create([[0, 0], [case.width_m, 0], [case.width_m, case.height_m],
+                             [0, case.height_m]], points, cells)
+    return replace(project, case=PlanarPolygonCase(mesh, case.polarization, case.element_order,
+        case.modes, case.normalization_j_per_m, case.conductivity_s_per_m, case.name))
+
+
 def _finite(value, name):
     try:
         valid = type(value) in (int, float) and math.isfinite(value)
@@ -104,6 +125,13 @@ class PlanarAffineShapeLaw:
                  'translation_coefficient_unit', 'linear_xy_coefficients',
                  'translation_xy_m_coefficients', 'bounds')
         keys(data, names, names, 'planar affine shape law')
+        matrix = data['linear_xy_coefficients']
+        translation = data['translation_xy_m_coefficients']
+        if (type(matrix) is not list or any(type(row) is not list or any(type(p) is not list for p in row)
+                                            for row in matrix)
+                or type(translation) is not list or any(type(p) is not list for p in translation)
+                or type(data['bounds']) is not list):
+            raise ValueError('planar affine shape JSON coefficients and bounds must be arrays')
         for key, value in [('kind', 'polynomial_affine_xy'), ('parameter_unit', 'dimensionless'),
                            ('coefficient_order', 'ascending'), ('linear_coefficient_unit', 'dimensionless'),
                            ('translation_coefficient_unit', 'm')]:

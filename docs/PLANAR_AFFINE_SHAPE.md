@@ -1,5 +1,7 @@
 # P01 — 平面調整用の多項式アフィン形状法則
 
+2026-09-22追補：[調整要求・場比較・保存再生とP01条件別受入](PLANAR_AFFINE_TUNING.md)まで接続済み。以下は基盤実装時の記録。
+
 2026-09-22。P01の第一段階として
 [PlanarAffineShapeLaw](../src/superfish_ng/planar_affine_shape.py)を実装。
 **調整要求/runner・追跡・所有保存への接続は未完了で、P01はIN_PROGRESS**。

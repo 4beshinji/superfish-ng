@@ -1,3 +1,5 @@
+P01調整/比較接続は `test_planar_affine_shape_mapping`。直接利用先は `test_planar_tuning test_planar_tracking test_planar_tracking_exact_affine test_planar_tracking_affine_remesh`。[条件別受入と分割ログ](PLANAR_AFFINE_TUNING.md)。
+
 P01形状法則の第一段階は `test_planar_affine_shape`。[分割検査と残るrunner/場比較](PLANAR_AFFINE_SHAPE.md)。既存調整への接続はまだ行っていない。
 
 H16-d最終操作は`scripts/verify_gui_material_hphi_tune_recovery.mjs`、`verify_gui_material_hphi_tune_cancel.mjs`（再起動は`--replay-only`）、`verify_gui_material_hphi_rejections.mjs`。[実行記録](MATERIAL_HPHI_GUI.md)と[条件別受入](MATERIAL_HPHI_TUNING_ACCEPTANCE.md)。H16-c以降の実装差分はGUI5ファイルのみで、既存数値検証を再利用する。

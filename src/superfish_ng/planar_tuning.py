@@ -14,6 +14,8 @@ from .project import parse_json
 from .planar_project import PlanarProject
 from .planar_polygon import PlanarPolygonCase
 from .planar_study import PlanarStudy
+from .planar_affine_shape import PlanarAffineShapeLaw, explicit_planar_project
+from .planar_affine_shape_mapping import PlanarAffineShapeMapping
 from .planar_refinement import refine_planar_mesh
 from .planar_tracking import PlanarTrackingControls, PlanarTrackingRequest, track_planar_modes
 from .planar_tracking_polygon import PolygonScaleMapping
@@ -29,18 +31,30 @@ def validate_planar_tune(request):
              'target_hz', 'frequency_tolerance_hz', 'parameter_tolerance',
              'max_trials', 'initial_ids', 'mode_id', 'controls',
              'refinement_levels', 'max_triangles', 'mesh_frequency_tolerance_hz')
+    version = request.get('schema_version') if type(request) is dict else None
+    if type(version) is int and version == 2:
+        names = (*names, 'shape_law')
     keys(request, names, names, 'planar tune')
     if (request['format'] != 'superfish_ng_planar_tune' or
-            type(request['schema_version']) is not int or request['schema_version'] != 1):
-        raise ValueError('expected superfish_ng_planar_tune schema_version 1')
+            type(request['schema_version']) is not int or request['schema_version'] not in (1, 2)):
+        raise ValueError('expected superfish_ng_planar_tune schema_version 1 or 2')
     project = PlanarProject.from_dict(request['project'])
-    if request['parameter'] not in ('uniform_scale', '/case/geometry/width_m', '/case/geometry/height_m'):
+    if version == 2:
+        law = PlanarAffineShapeLaw.from_dict(request['shape_law'])
+        if request['parameter'] != 'deformation':
+            raise ValueError('planar tune v2 parameter must be dimensionless deformation')
+        if list(law.bounds) != request['bounds']:
+            raise ValueError('planar tune bounds must equal the shape law interval')
+    elif request['parameter'] not in ('uniform_scale', '/case/geometry/width_m', '/case/geometry/height_m'):
         raise ValueError('planar tune parameter must be uniform_scale or rectangle width/height in metres')
     bounds = request['bounds']
     if type(bounds) is not list or len(bounds) != 2:
         raise ValueError('planar tune bounds require two increasing positive values')
     for value in bounds:
-        positive(value, 'planar tune bound')
+        if version == 2:
+            law.exact_transform(value)
+        else:
+            positive(value, 'planar tune bound')
     if not bounds[0] < bounds[1]:
         raise ValueError('planar tune bounds must increase')
     for name in ('target_hz', 'frequency_tolerance_hz', 'parameter_tolerance', 'mesh_frequency_tolerance_hz'):
@@ -67,7 +81,10 @@ def trial_planar_project(request, value, phase):
     if phase not in ('search', 'refinement'):
         raise ValueError('planar tune phase must be search or refinement')
     project = PlanarProject.from_dict(request['project'])
-    project = PlanarStudy(project, request['parameter'], [value, value]).projects()[0]
+    if request['schema_version'] == 2:
+        project = PlanarAffineShapeLaw.from_dict(request['shape_law']).project(explicit_planar_project(project), value)
+    else:
+        project = PlanarStudy(project, request['parameter'], [value, value]).projects()[0]
     case = project.case
     polygon = isinstance(case, PlanarPolygonCase)
     count = len(case.mesh.triangles) if polygon else 2 * case.nx * case.ny
@@ -123,7 +140,12 @@ def _assemble(request, runs):
         else:
             parent = trial['parent_index']
             mapping = 'normalized_rectangle'
-            if isinstance(project.case, PlanarPolygonCase):
+            if request['schema_version'] == 2:
+                mapping = PlanarAffineShapeMapping(explicit_planar_project(project),
+                    PlanarAffineShapeLaw.from_dict(request['shape_law']), trials[parent]['value'], trial['value'],
+                    previous_refinements=request['refinement_levels'] if trials[parent]['phase']=='refinement' else 0,
+                    current_refinements=request['refinement_levels'] if trial['phase']=='refinement' else 0)
+            elif isinstance(project.case, PlanarPolygonCase):
                 mapping = PolygonScaleMapping(trial['value']/trials[parent]['value'],
                     current_refinements=request['refinement_levels'] if trial['phase']=='refinement' else 0)
             tracking = track_planar_modes(solutions[parent], solution, PlanarTrackingRequest(

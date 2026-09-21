@@ -25,6 +25,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 - **進捗（2026-09-22）**：[多項式アフィン形状法則](../PLANAR_AFFINE_SHAPE.md)の基盤と独立3件を分割検証。調整要求/比較/保存への接続は未完、P01はIN_PROGRESS。
 
+- **受入（2026-09-22）**：[平面アフィン調整・版8比較・保存再生](../PLANAR_AFFINE_TUNING.md)。条件別検査・関連29件と別元場/strict検査を分割PASS。P01 DONE、次はP02。
+
 ## P02
 
 ### 平面の個別ID回復を履歴・調整へ追加する
