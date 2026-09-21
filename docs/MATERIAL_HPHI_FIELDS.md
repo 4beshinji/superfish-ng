@@ -1,6 +1,6 @@
 # 材料重み付き元E/H内積
 
-2026-09-22。H15-bの元場比較を実装・検査済み。scalar質量射影はまだ未実装であり、H15-b/親H15を完了扱いしない。[固定材料契約](MATERIAL_HPHI_TRACKING.md)と[全領域/界面比較](MATERIAL_HPHI_COMPARISON.md)に従う。
+2026-09-22。H15-bの元場比較を実装・検査済み。[scalar質量射影](MATERIAL_HPHI_PROJECTION.md)も受入済みでH15-b DONE、有限スペクトル/ID追跡はH15-cへ残す。[固定材料契約](MATERIAL_HPHI_TRACKING.md)と[全領域/界面比較](MATERIAL_HPHI_COMPARISON.md)に従う。
 
 `material_hphi_field_grams(previous, current, comparison, ...)`は専用`MaterialHphiSolution`二つと完全な`MaterialHphiComparison`を受け取る。前後のpartitionは元nativeの宣言と完全一致が必要。元の材料K/M、係数、正の低順位スペクトル、全空間/界面配列を再検証してから、元セル指定で片側E/Hを評価する。元場を真空Caseへ付け替えず、材料平均や界面平均を行わない。
 
@@ -26,4 +26,4 @@ crossは前後の元材料・体積密度の平方根積を使用する。固定
 
 関連は`test_material_hphi_comparison`7件と、`test_material_hphi.MaterialHphiTests.test_uniform_material_frequency_fields_energy_and_metal_wall_scaling`。後者は独立のE/2・H/3・B×3と壁金属/RF規約を保持する。
 
-既存の自作材料弱形式・元片側場評価・正確な界面overlayを再利用し、物理重みの自己/cross Gramを追加した。新規外部資料・依存・legacy参照なし。FEM組立/固有解/元RF/seed TMを変更していないため、当該独立積分と直接利用先に限定して検査した。全suite・有限比較スペクトル・ID追跡の受入を主張しない。次はmu_r重み付きq/u質量射影。
+既存の自作材料弱形式・元片側場評価・正確な界面overlayを再利用し、物理重みの自己/cross Gramを追加した。新規外部資料・依存・legacy参照なし。FEM組立/固有解/元RF/seed TMを変更していないため、当該独立積分と直接利用先に限定して検査した。全suite・有限比較スペクトル・ID追跡の受入を主張しない。質量射影の受入は上記専用文書を参照。

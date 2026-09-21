@@ -27,6 +27,8 @@
 
 2026-09-22追記：H13-eと親H13を[全条件監査](../CURVED_HPHI_ACCEPTANCE.md)まで受入。大きいcheckpointのHTTP不備を実Chromeで再現・修正し、穴付き中止/再開/新サーバー元場復元、調整/履歴の明示回復を分割検証。全handle終端。次はH15-a、全goalは未完了。
 
+H15-b受入（2026-09-22）：[材料元E/H比較](../MATERIAL_HPHI_FIELDS.md)と[mu_r質量射影](../MATERIAL_HPHI_PROJECTION.md)を実装。独立積分/材料別質量/射影保存と損失/正逆写像/真空極限/元RF不変を検証。射影新6件＋関連場5件は分割証拠でPASS、全handle終端。次はH15-cの材料有限スペクトルとID追跡。親H15/全goalは未完了。
+
 2026-09-22追記：H15-aの[固定材料領域/全界面比較](../MATERIAL_HPHI_COMPARISON.md)を受入。独立積分と全片側セル対応、微小界面ずれ拒否を検査。次はH15-b、親H15/全goalは継続。
 
 ## 文書構成

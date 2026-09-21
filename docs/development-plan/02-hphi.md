@@ -436,7 +436,7 @@ H15-a受入（2026-09-22）：[全材料領域/界面の比較分割](../MATERIA
 
 **依存：H15-a**。材料元片側E/Hのepsilon0 epsilon_r / mu0 mu_rエネルギーGramと、q/uのmu_r質量射影を追加する。元セル指定の場評価と元K/Mを使用し、平均材料補正・真空経路への置換をしない。別Gauss/Vandermonde積分、一様材料の場振幅則、固定材料尺度のs^(-3/2)、P1/P2正半径/軸の真空極限、射影質量保存/損失とGram正定性を検査する。元全RF・規格化・係数を保持する。
 
-H15-b進行中（2026-09-22）：[材料重み付き元E/H内積](../MATERIAL_HPHI_FIELDS.md)を接続。独立Gauss/Vandermonde、真空極限、一様材料/尺度/位相/元RFの新5＋関連8件PASS、全handle終端。scalar射影は未実装で次に接続する。
+H15-b受入（2026-09-22）：[材料元E/H比較](../MATERIAL_HPHI_FIELDS.md)と[mu_r質量射影](../MATERIAL_HPHI_PROJECTION.md)を実装。独立積分/材料別質量/射影保存と損失/正逆写像/真空極限/元RF不変を検証。射影新6件＋関連場5件は分割証拠でPASS、全handle終端。次はH15-cの材料有限スペクトルとID追跡。親H15/全goalは未完了。
 
 #### H15-c
 

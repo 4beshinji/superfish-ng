@@ -1,3 +1,5 @@
+H15-b受入（2026-09-22）：[材料元E/H比較](MATERIAL_HPHI_FIELDS.md)と[mu_r質量射影](MATERIAL_HPHI_PROJECTION.md)を実装。独立積分/材料別質量/射影保存と損失/正逆写像/真空極限/元RF不変を検証。射影新6件＋関連場5件は分割証拠でPASS、全handle終端。次はH15-cの材料有限スペクトルとID追跡。親H15/全goalは未完了。
+
 H15-b進行中（2026-09-22）：[材料重み付き元E/H比較](MATERIAL_HPHI_FIELDS.md)を実装。独立Gauss/Vandermonde、非一様cross密度、真空極限/一様材料/正逆尺度/位相/元RF不変の新5＋関連8件PASS、全handle終端。次はmu_r重み付きq/u質量射影（hphi_mass_projection.pyの既存構造を参照、真空行列への置換は不可）。H15-b/親H15/全goalは未完了。
 
 H15-a受入（2026-09-22）：[固定材料領域と全界面の比較分割](MATERIAL_HPHI_COMPARISON.md)。明示ID全単射/固定係数、全元セルと界面両側セルを保持。独立面積/体積/界面長、非一様正逆写像、番号/ID改名、1 ULPずれ拒否の新7件＋関連10件PASS、変更1件追加検査PASS、全handle終端。次はH15-bの材料重み付き元E/Hとscalar射影。親H15/全goalは未完了。

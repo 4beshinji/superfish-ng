@@ -1,3 +1,5 @@
+H15-b材料scalar射影は`test_material_hphi_mass_projection`。直接利用先は`test_material_hphi_field_overlap`。[独立積分・質量保存/損失・尺度則](MATERIAL_HPHI_PROJECTION.md)。
+
 H15-b材料元場比較は`test_material_hphi_field_overlap`。関連は`test_material_hphi_comparison`と`test_material_hphi.MaterialHphiTests.test_uniform_material_frequency_fields_energy_and_metal_wall_scaling`。[独立積分・真空極限・元RF検査](MATERIAL_HPHI_FIELDS.md)。
 
 H15-a材料領域/全界面比較は`test_material_hphi_comparison`。直接利用先は`test_rf_materials test_hphi_geometry_mapping test_meridional_overlap`。[独立積分・写像・誤対応拒否の記録](MATERIAL_HPHI_COMPARISON.md)。
