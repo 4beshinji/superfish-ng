@@ -19,6 +19,8 @@
 
 2026-09-22追記：H13-a〜c受入済み。H13-dの[所有調整API](../CURVED_HPHI_TUNING_SAVED.md)第一段階を実装・検証。独立追跡履歴とCLI/worker、中止/管理器再起動、H13-e GUI監査は残る。H13-d/親H13/全goalは未完了。
 
+2026-09-22追記：H13-dの[全元native所有・CLI/worker・回復操作](../CURVED_HPHI_TUNING_RECOVERY_SAVED.md)を受入。次はH13-e実GUI/親監査。H08依存のH14仕様も待機中に[固定材料界面比較契約](../MATERIAL_HPHI_TRACKING.md)として受入済み。原計画90カードと全goalを維持し、親H13/材料実装H15以降は未完了。
+
 ## 文書構成
 
 | 文書 | カード | 内容 |

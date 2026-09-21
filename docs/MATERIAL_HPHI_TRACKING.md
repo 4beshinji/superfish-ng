@@ -57,7 +57,7 @@ scalar質量は正半径で`∫ mu_r q v/r dr dz`、軸接続で`∫ mu_r r³ u 
 |---|---|
 | 一様材料 | 同一形状/Uでf比=`1/sqrt(epsilon_r mu_r)`、E比=`1/sqrt(epsilon_r)`、H比=`1/sqrt(mu_r)`、B比=`sqrt(mu_r)`を真空との独立solveで照合。既存テストのepsilon=4, mu=9ならf/6、E/2、H/3、B×3。これは個別物理対照であり、係数変更を本追跡要求へ許可しない |
 | 固定材料の全空間尺度s | f比1/s、同じUでE/H/Bの振幅比s^(-3/2)、体積比s³、正逆のエネルギーGram/対応を検査。元波形・RF・norm metadataを保持 |
-| 二層界面 | `scripts/material_hphi_reference.py`の独立分離解（epsilon=1/4、mu=1、長さ比2:1、k0=3nπ/(4L)）を使用。元片側のHφ、接線E、法線Dの連続条件と、非連続が許される成分/片側微分を区別。f・領域エネルギー・E/H体積L2・全PEC壁RFを別判定し、解析TEM帯域のradial guard下界も保持 |
+| 二層界面 | `scripts/material_hphi_reference.py`の独立分離解（epsilon_rは1と4、mu_r=1、長さ比2:1、k0=3nπ/(4L)）を使用。元片側のHφ、接線E、法線Dの連続条件と、非連続が許される成分/片側微分を区別。f・領域エネルギー・E/H体積L2・全PEC壁RFを別判定し、解析TEM帯域のradial guard下界も保持 |
 | 独立材料積分 | 別Gauss/Vandermondeのセル/領域別積分で自己/cross Gramとmu重み付きscalar質量を照合。製造多項式は積分/界面評価用であり共振器のFEM解の代用品にしない |
 | 真空極限 | 全係数1の材料専用Caseで、既存真空正半径/軸P1/P2とのf・元E/H・射影/Gram・追跡ID・RFを照合。真空経路へ入力を付け替える実装は不可 |
 | 独立再メッシュと番号 | 同じ界面を持つ別FEM分割、正逆写像、セル/節点・材料/領域列挙順・明示ID改名で対応を確認。配列順位をIDとして使用しない |

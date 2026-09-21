@@ -1,3 +1,5 @@
+H13-d調整回復の所有操作受入は`test_curved_hphi_tuning_recovery_saved`。CLI検索、worker最終細分、再起動/元出力移動、全native/RFと穴付きProjectを検査。[実行と条件別監査](CURVED_HPHI_TUNING_RECOVERY_SAVED.md)。
+
 H13-d曲線追跡/履歴CLIは`test_curved_hphi_history_cli`。旧CLI互換は`test_hphi_mapped_tracking_saved.HphiMappedTrackingSavedTests.test_saved_cli_replay_owns_native_after_source_move`。[仕様・検証記録](CURVED_HPHI_HISTORY.md)。
 
 H13-d曲線履歴・回復は`test_curved_hphi_tracking_history`。関連は`test_hphi_tracking_history`と`test_hphi_recovered_history.HphiRecoveredHistoryTests.test_strict_placements_and_failed_recovery_forbid_extension`。[検証記録](CURVED_HPHI_HISTORY.md)。

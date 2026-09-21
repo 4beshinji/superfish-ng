@@ -1,6 +1,6 @@
 # 曲線Hφ調整workerと所有完了検証
 
-2026-09-22。H13-d継続。`JobManager.start_curved_hphi_tune`から別プロセスで専用調整を実行する。独立追跡履歴と回復eventの操作受入、GUIは後続であり、H13-d/親H13/全goalは未完了。
+2026-09-22。H13-d継続。`JobManager.start_curved_hphi_tune`から別プロセスで専用調整を実行する。[独立追跡履歴](CURVED_HPHI_HISTORY.md)と[調整回復の所有操作/H13-d監査](CURVED_HPHI_TUNING_RECOVERY_SAVED.md)も後続段階で受入済み。GUI/親H13/全goalは未完了。
 
 ## 契約
 
@@ -19,7 +19,7 @@
 - `move-regression.log`：全job移動とmanifest/再hash済み偽prefix拒否、旧直線worker2件、共通`test_jobs`7件、計10件PASS、76.650秒、終了0。
 - `prefix-before.log`：初期checkpointを削除してmanifestも更新すると拒否できない不備を再現。1件FAIL、53.358秒、終了1。曲線実行が必ず公開する開始prefixから最終までの連続性を検査するよう修正。`prefix-after.log`で全job移動/再hash改変/欠落拒否と実中止/新job再開の2件PASS、153.526秒、終了0。修正範囲の新規/再開検証を再実行し、数値・旧dispatchが不変の先行証拠は再利用した。全handle終端。新5件＋関連9件の分割証拠を保持する。
 
-科学数値は変更せず、[所有API/CLIの元係数・全RF・Maxwell尺度則](CURVED_HPHI_TUNING_SAVED.md)を維持する。共通jobsへの変更は専用起動/検証dispatch追加だけで、seed/FEM/full-suiteを実施したとは主張しない。曲線穴付き調整や実曲線ID回復をworkerで所有する操作受入は別途必要。
+科学数値は変更せず、[所有API/CLIの元係数・全RF・Maxwell尺度則](CURVED_HPHI_TUNING_SAVED.md)を維持する。共通jobsへの変更は専用起動/検証dispatch追加だけで、seed/FEM/full-suiteを実施したとは主張しない。曲線穴付きProject所有と実曲線ID回復のworker操作は[追加受入](CURVED_HPHI_TUNING_RECOVERY_SAVED.md)で確認した。
 
 ## 来歴
 

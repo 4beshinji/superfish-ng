@@ -371,13 +371,15 @@ H13-c受入（2026-09-22）：[曲線調整・anchor回復・条件別監査](..
 
 #### H13-d
 
-2026-09-22進行中：[所有調整のPython APIとCLI](../CURVED_HPHI_TUNING_SAVED.md)を検証済み。[worker起動・実中止再開・管理器再起動](../CURVED_HPHI_TUNING_WORKER.md)も検証済み。独立追跡履歴・回復操作の所有受入を含むカード全体は未完了。
+2026-09-22進行中：[所有調整のPython APIとCLI](../CURVED_HPHI_TUNING_SAVED.md)を検証済み。[worker起動・実中止再開・管理器再起動](../CURVED_HPHI_TUNING_WORKER.md)も検証済み。独立追跡履歴・回復操作も以下の最終監査で受入済み。
 
 **依存：c**。全元native/Projectと履歴を所有して保存・CLI/workerへ接続。中止/再開/管理器再起動、改変拒否、元出力移動後の再生、旧保存要求の互換性を検証する。
 
-2026-09-22：[独立曲線追跡pairの所有保存・worker](../CURVED_HPHI_TRACKING_SAVED.md)を接続。順序付き履歴/anchor回復/CLI・GUIは残る。
+2026-09-22：[独立曲線追跡pairの所有保存・worker](../CURVED_HPHI_TRACKING_SAVED.md)を接続。順序付き履歴/anchor回復/CLIは後述の段階で受入済み。GUIはH13-e。
 
-2026-09-22：[所有曲線履歴と過去anchor回復](../CURVED_HPHI_HISTORY.md)を検証済み。順序付きnative/ID継承、worker延長、追跡/履歴CLIを接続。GUIと調整回復の所有操作受入は残す。
+2026-09-22：[所有曲線履歴と過去anchor回復](../CURVED_HPHI_HISTORY.md)を検証済み。順序付きnative/ID継承、worker延長、追跡/履歴CLIを接続。GUIはH13-e。調整回復の所有操作は下記の最終監査で受入済み。
+
+H13-d受入（2026-09-22）：[全条件監査と調整回復の所有操作](../CURVED_HPHI_TUNING_RECOVERY_SAVED.md)。追加2件と全既存所有/CLI/worker/履歴証拠を照合、全handle終端。H13-e/親H13/全goalは未完了。
 
 #### H13-e
 
