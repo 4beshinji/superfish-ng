@@ -20,6 +20,7 @@ from .hphi_native import solve_hphi
 from .hphi_tracking import HphiTrackingRequest, _track_hphi_modes
 from .mode_tracking import tracked_frequency_hz
 from .tuning import _decision
+from .hphi_shape_tuning import validate_shape_law, shape_project, shape_comparison_mapping, tune_scope, tune_parameter_unit
 
 
 def _json_types(value):
@@ -74,8 +75,9 @@ def _refine_mesh(mesh):
                       np.vstack((points, points[edges].mean(axis=1))), local[:, split].reshape(-1, 3))
 
 
-def _trial(project, value, phase, levels):
-    project = HphiStudy(project, 'uniform_scale', [value, value]).projects()[0]
+def _trial(project, value, phase, levels, request=None):
+    project = (shape_project(project, request, value) if request is not None and request['schema_version'] == 2
+               else HphiStudy(project, 'uniform_scale', [value, value]).projects()[0])
     case = project.case
     for _ in range(levels if phase == 'refinement' else 0):
         case = (replace(case, nr=2*case.nr, nz=2*case.nz) if type(case) is CoaxialCase
@@ -91,16 +93,19 @@ def validate_hphi_tune(request):
              'initial_ids', 'mode_id', 'controls', 'refinement_levels', 'max_triangles',
              'max_dofs', 'mesh_frequency_tolerance_hz')
     keys(request, names, names, 'Hphi tune')
-    if request['format'] != 'superfish_ng_hphi_tune' or type(request['schema_version']) is not int or request['schema_version'] != 1:
-        raise ValueError('expected superfish_ng_hphi_tune schema_version 1')
+    if request['format'] != 'superfish_ng_hphi_tune' or type(request['schema_version']) is not int or request['schema_version'] not in (1, 2):
+        raise ValueError('expected superfish_ng_hphi_tune schema_version 1 or 2')
     project = HphiProject.from_dict(request['project'])
     if type(project.case) not in (CoaxialCase, HphiMeshCase, AxisHphiCase):
         raise ValueError('Hphi tune v1 requires straight vacuum coaxial, positive-radius or regular-axis physics')
-    if request['parameter'] != 'uniform_scale':
-        raise ValueError('Hphi tune v1 parameter must be dimensionless uniform_scale; energy/conductivity are not shape variables')
-    keys(request['mapping'], ['kind'], ['kind'], 'Hphi tune mapping')
-    if request['mapping']['kind'] != 'uniform_scale':
-        raise ValueError('Hphi tune v1 mapping.kind must be uniform_scale')
+    if request['schema_version'] == 1:
+        if request['parameter'] != 'uniform_scale':
+            raise ValueError('Hphi tune v1 parameter must be dimensionless uniform_scale; energy/conductivity are not shape variables')
+        keys(request['mapping'], ['kind'], ['kind'], 'Hphi tune mapping')
+        if request['mapping']['kind'] != 'uniform_scale':
+            raise ValueError('Hphi tune v1 mapping.kind must be uniform_scale')
+    else:
+        validate_shape_law(request, project)
     bounds = request['bounds']
     if type(bounds) is not list or len(bounds) != 2:
         raise ValueError('Hphi tune bounds require two increasing positive values')
@@ -128,7 +133,7 @@ def validate_hphi_tune(request):
         raise ValueError('Hphi tune spectrum exceeds max_gram_modes')
     _budget(request, project.case)
     for value in bounds:
-        _trial(project, value, 'search', 0)
+        _trial(project, value, 'search', 0, request)
     return project
 
 
@@ -147,7 +152,7 @@ def trial_hphi_project(request, value, phase):
         raise ValueError('Hphi tune trial value is outside bounds')
     if phase not in ('search', 'refinement'):
         raise ValueError('Hphi tune phase must be search or refinement')
-    return _trial(project, value, phase, request['refinement_levels'])
+    return _trial(project, value, phase, request['refinement_levels'], request)
 
 
 @dataclass(frozen=True)
@@ -184,13 +189,20 @@ def _assess_trial(request, trials, solutions, solution):
     parent = trial['parent_index']
     previous = solution if index == 0 else solutions[parent]
     ids = request['initial_ids'] if index == 0 else trials[parent]['current_mode_ids']
-    scale = 1. if index == 0 else trial['value']/trials[parent]['value']
+    scale = 1. if index == 0 or request['schema_version'] == 2 else trial['value']/trials[parent]['value']
     controls = HphiTrackingControls.from_dict(request['controls'])
     try:
         comparison = HphiTrackingRequest(_refine_mesh(_declared_mesh(previous)),
             _refine_mesh(_declared_mesh(solution)), previous_mode_count=len(ids),
             current_mode_count=len(ids), previous_mode_ids=ids, controls=controls)
-        tracking = _track_hphi_modes(previous, solution, comparison, previous_scale=scale)
+        if request['schema_version'] == 1:
+            tracking = _track_hphi_modes(previous, solution, comparison, previous_scale=scale)
+        else:
+            old_value = trial['value'] if index == 0 else trials[parent]['value']
+            mapping = shape_comparison_mapping(request,
+                trial_hphi_project(request, old_value, 'search'),
+                trial_hphi_project(request, trial['value'], 'search'))
+            tracking = _track_hphi_modes(previous, solution, comparison, geometry_mapping=mapping)
         passed = tracking['status'] == 'PASS' and tracking['individual_ids_complete']
         status = ('INITIAL' if index == 0 else 'PASS') if passed else 'UNVERIFIED'
         frequency = tracked_frequency_hz(tracking, request['mode_id']) if passed else None
@@ -198,12 +210,16 @@ def _assess_trial(request, trials, solutions, solution):
         # Comparison refusal is evidence of no identity, never a frequency match.
         reason = str(exc)
         mesh_limit = reason in ('input meshes exceed max_overlay_triangles',
-            'meridional intersections exceed max_overlay_triangles', 'Hphi mass coupling exceeds max_dofs')
+            'meridional intersections exceed max_overlay_triangles', 'Hphi mass coupling exceeds max_dofs',
+            'mapped Hphi input meshes exceed max_overlay_triangles',
+            'mapped Hphi intermediate partition exceeds max_overlay_triangles',
+            'mapped Hphi final partition exceeds max_overlay_triangles')
         status = 'MESH_LIMIT' if mesh_limit else 'UNVERIFIED'
         frequency = None
         tracking = dict(status=status, individual_ids_complete=False,
             current_mode_ids=[None]*len(ids), verification_reasons=[reason],
-            mapping=dict(kind='uniform_scale', previous_scale=scale))
+            mapping=(dict(kind='uniform_scale', previous_scale=scale) if request['schema_version'] == 1
+                     else dict(kind=request['mapping']['kind'])))
     return dict(index=index, **trial, status=status, current_mode_ids=tracking['current_mode_ids'],
         frequency_hz=frequency, target_error_hz=None if frequency is None else frequency-request['target_hz'],
         tracking=tracking), expected
@@ -214,7 +230,7 @@ def _run_result(request, trials, projects, solutions):
     report = dict(format='superfish_ng_hphi_tune_result', schema_version=1,
         request=deepcopy(request), trials=deepcopy(trials), decision=decision,
         status=decision['status'], can_resume=decision['status'] == 'PAUSED',
-        scope='vacuum_uniform_scale', parameter_unit='dimensionless', frequency_unit='Hz',
+        scope=tune_scope(request), parameter_unit=tune_parameter_unit(request), frequency_unit='Hz',
         interpretation='original Hphi FEM and individually confirmed E/H identities; separate target and two-mesh frequency gates; no RF convergence or continuum error certificate')
     return HphiTuneRun(report, tuple(projects), tuple(solutions))
 

@@ -1,3 +1,5 @@
+H09-cの要求版2は`test_hphi_shape_tuning test_hphi_shape_tuning_saved`。同軸3寸法の実二分、strict頂点変位・軸座標・境界折曲げ、実CLI保存再開を検査する。専用`scripts/validate_hphi_shape_tuning.py --out out/<new-name>`は穴付き非一様変形の独立TEM場/周波数と所有保存を検査する。利用先は`test_hphi_tuning test_hphi_tuning_saved test_hphi_tuning_jobs test_gui_hphi_tuning`。
+
 H09-bの非一様Hφ比較は`test_hphi_mapped_fields test_hphi_mapped_tracking`。独立TEM/Bessel縮退、E/H別Gram、q/u射影、正逆比較、H02一致、guard/ID集合を検査する。利用先回帰は`test_hphi_field_overlap test_hphi_mass_projection test_hphi_spectral_resolution test_hphi_tracking test_hphi_tracking_history test_hphi_tuning test_gui_hphi_tracking`、直接利用先の`test_hphi_convergence`。新写像の所有保存/CLI/GUIはH09-c/dの別受入。
 
 H09-aの非一様直線Hφ交差分割は`test_hphi_mapped_overlap`で全親被覆・独立矩形モーメント・正逆写像・番号置換・予算拒否を検査する。幾何依存は`test_hphi_geometry_mapping test_meridional_overlap`。場/追跡接続はH09-bの別証拠。

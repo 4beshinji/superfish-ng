@@ -11,6 +11,7 @@ from pathlib import Path
 import shutil
 
 from .config import integer, keys
+from .hphi_shape_tuning import tune_scope
 from . import hphi_native
 from .hphi_project import HphiProject
 from .hphi_tuning import (
@@ -119,7 +120,7 @@ def _checkpoint(request, runs, sources, trials):
         decision=decision,
         status=decision['status'],
         can_resume=decision['status'] == 'PAUSED',
-        scope=SCOPE,
+        scope=tune_scope(request),
     )
 
 
@@ -169,8 +170,9 @@ def _validate_checkpoint_shape(document):
             or type(document['schema_version']) is not int
             or document['schema_version'] != 1):
         raise ValueError('expected superfish_ng_hphi_tune_checkpoint schema_version 1')
-    if document['scope'] != SCOPE:
-        raise ValueError('Hphi tune checkpoint scope must be vacuum_uniform_scale')
+    validate_hphi_tune(document['request'])
+    if document['scope'] != tune_scope(document['request']):
+        raise ValueError('Hphi tune checkpoint scope must match the declared shape law')
     if type(document['trial_sources_sha256']) is not list:
         raise ValueError('Hphi tune trial_sources_sha256 must be a list')
     if type(document['trials']) is not list:
