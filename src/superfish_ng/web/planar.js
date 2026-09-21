@@ -176,13 +176,21 @@ document.addEventListener('input',()=>{tuneInputVersion++;});
 const tuneFields={target_hz:'tune-target',frequency_tolerance_hz:'tune-frequency-tolerance',mesh_frequency_tolerance_hz:'tune-mesh-tolerance',parameter_tolerance:'tune-parameter-tolerance',max_trials:'tune-max-trials',refinement_levels:'tune-refinements',max_triangles:'tune-max-triangles'};
 function tuneRequestText(){
  const value={format:'superfish_ng_planar_tune',schema_version:1,project:documentFromForm(),parameter:$('tune-parameter').value,mode_id:$('tune-mode-id').value};
+ const recovery=$('tune-recovery-selection').value;
+ value.schema_version=recovery!=='none'?3:value.parameter==='deformation'?2:1;
  for(const [key,id] of Object.entries(tuneFields))value[key]=numeric(id);
  const fields=Object.entries(value).map(([key,data])=>JSON.stringify(key)+':'+JSON.stringify(data));
  for(const [key,id] of [['bounds','tune-bounds'],['initial_ids','tune-ids'],['controls','tune-controls']])fields.push(JSON.stringify(key)+':'+$(id).value);
+ if(value.parameter==='deformation')fields.push('"shape_law":'+$('tune-shape-law').value);
+ if(recovery!=='none'){const anchor=recovery==='fixed_trial'?',"anchor_trial_index":'+JSON.stringify(numeric('tune-recovery-anchor')):'';fields.push('"identity_recovery":{"anchor_selection":'+JSON.stringify(recovery)+',"controls":'+$('tune-recovery-controls').value+anchor+'}');}
  return '{'+fields.join(',')+'}';
 }
 function tuneLimit(){return $('tune-new-trials').value.trim()?numeric('tune-new-trials'):null;}
 function loadTune(value){
+ $('tune-shape-law').value=JSON.stringify(value.shape_law??null,null,2);
+ $('tune-recovery-selection').value=value.identity_recovery?.anchor_selection??'none';
+ $('tune-recovery-anchor').value=value.identity_recovery?.anchor_trial_index??0;
+ $('tune-recovery-controls').value=JSON.stringify(value.identity_recovery?.controls??value.controls,null,2);
  loadProject(value.project);$('tune-parameter').value=value.parameter;$('tune-mode-id').value=value.mode_id;
  for(const [key,id] of Object.entries(tuneFields))$(id).value=value[key];
  $('tune-bounds').value=JSON.stringify(value.bounds);$('tune-ids').value=JSON.stringify(value.initial_ids);$('tune-controls').value=JSON.stringify(value.controls,null,2);tuneInputVersion++;
@@ -197,6 +205,7 @@ function showTune(data,label){
  const cell=document.createElement('td'),button=document.createElement('button');button.textContent='対象モードの場を開く';button.disabled=!rank;button.dataset.tuneTrial=trial.index+1;
  button.onclick=run(async()=>{const imported=await api('planar-tune-trial',{document:data.serialized,index:trial.index+1});await refresh();await openResult(imported.id);$('mode').value=imported.mode;showQuantities();});cell.append(button);row.append(cell);table.append(row);}
  $('tune-trials').append(table);
+ $('tune-identities').textContent=JSON.stringify(d.trials.map(trial=>({trial_index:trial.index,phase:trial.phase,inherited_mode_ids:trial.tracking?.current_mode_ids??null,adopted_mode_ids:trial.current_mode_ids,frequency_hz:trial.frequency_hz,initial_tracking:trial.initial_tracking??null,identity_recovery:trial.identity_recovery??null})),null,2);
 }
 async function openTune(id){showTune(await api('planar-tune-result',{id}),id);}
 $('tune-start').onclick=run(async()=>{const data=await api('planar-start-tune',{request:tuneRequestText(),max_new_trials:tuneLimit()});$('dirty').textContent=`調整投入済み: ${data.id}`;await refresh();});

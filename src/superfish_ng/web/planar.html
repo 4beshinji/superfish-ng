@@ -21,8 +21,8 @@
 </section><section><h2>保存結果の取込</h2><label>ローカルnativeまたはジョブのディレクトリ<input id="import-path" type="text"></label><button id="import">保存結果を取り込む</button><p>保存係数と元メッシュを保持して検証します。新たな計算は「計算を開始」で行います。</p></section></div>
 <div><section id="tune-panel"><h2>周波数を調整する</h2>
 <p>現在のProjectの寸法を変え、電場で同じモードを追いながら目標周波数を探します。目標の許容差と最終細分の周波数差を別々に判定します。</p>
-<label>変更する寸法<select id="tune-parameter"><option value="/case/geometry/width_m">矩形の幅 [m]</option><option value="/case/geometry/height_m">矩形の高さ [m]</option><option value="uniform_scale">元断面の原点からの一様倍率 [無次元]</option></select></label>
-<label>探索範囲（上記単位、正の2値）<input id="tune-bounds" value="[0.30, 0.34]"></label>
+<label>変更する寸法<select id="tune-parameter"><option value="/case/geometry/width_m">矩形の幅 [m]</option><option value="/case/geometry/height_m">矩形の高さ [m]</option><option value="uniform_scale">元断面の原点からの一様倍率 [無次元]</option><option value="deformation">多項式アフィン変形 [無次元]</option></select></label>
+<label>探索範囲（上記単位、増加する2値。寸法/倍率は正）<input id="tune-bounds" value="[0.30, 0.34]"></label>
 <label>目標周波数 [Hz]<input id="tune-target" type="number" step="any" value="468425715.625"></label>
 <label>目標の許容差 [Hz]<input id="tune-frequency-tolerance" type="number" step="any" value="200000"></label>
 <label>最終細分で許容する周波数差 [Hz]<input id="tune-mesh-tolerance" type="number" step="any" value="200000"></label>
@@ -34,12 +34,16 @@
 <label>追うID<input id="tune-mode-id" value="x"></label>
 <p>IDは正周波数の先頭から指定します。帯域外との混同を検出するため、計算モード数をID数より1以上多くしてください。縮退などで個別IDが確認できない場合は調整を停止します。</p>
 <details><summary>場の追跡条件</summary><textarea id="tune-controls" rows="7">{"minimum_overlap":0.9,"minimum_assignment_margin":0.1,"relative_cluster_gap":0.001,"minimum_relative_singular_value":1e-8,"minimum_cluster_link":0.7,"max_overlay_triangles":250000,"max_refined_triangles":250000}</textarea></details>
+<details><summary>多項式アフィン形状法則</summary><p>変形を選んだ場合に使う法則JSON。行列係数は無次元、平行移動係数はm。探索範囲を法則のboundsと一致させてください。</p><textarea id="tune-shape-law" rows="8">null</textarea></details>
+<label>個別IDの回復<select id="tune-recovery-selection"><option value="none">追加回復なし</option><option value="fixed_trial">指定した過去試行と比較</option><option value="latest_resolved_trial">最後に個別IDが解決した試行と比較</option></select></label>
+<label>固定の回復元試行番号（初期は0）<input id="tune-recovery-anchor" type="number" min="0" step="1" value="0"></label>
+<details><summary>回復元との場の比較条件</summary><p>集合の対応が確認できたときだけ、過去の元場と比較します。真の縮退やguard未確認では周波数を採用しません。</p><textarea id="tune-recovery-controls" rows="7">{"minimum_overlap":0.9,"minimum_assignment_margin":0.1,"relative_cluster_gap":0.001,"minimum_relative_singular_value":1e-8,"minimum_cluster_link":0.7,"max_overlay_triangles":250000,"max_refined_triangles":250000}</textarea></details>
 <label>今回追加する試行数（空欄で停止条件まで）<input id="tune-new-trials" type="number" min="1" step="1" value="2"></label>
 <button id="tune-start">調整を開始</button><button id="tune-save">調整条件を保存</button><label class="file">調整条件を開く<input id="tune-open" type="file" accept=".json"></label>
 <label class="file">途中保存を開いて再検証<input id="tune-checkpoint-open" type="file" accept=".json"></label>
 <div id="tune-result" hidden><h3>選択した調整結果</h3><p id="tune-selection"></p><p id="tune-decision"></p>
 <p>最終粗細差は離散化の診断です。真の物理誤差上界や変形途中の連続したモード同一性を保証するものではありません。単位長エネルギーはJ/m、加速R/Qは非該当です。</p>
-<div id="tune-trials"></div><button id="tune-checkpoint-save">選択した保存地点を保存</button><button id="tune-resume">選択した保存地点から再開</button>
+<div id="tune-trials"></div><details><summary>試行ごとの元比較と回復判定</summary><pre id="tune-identities"></pre></details><button id="tune-checkpoint-save">選択した保存地点を保存</button><button id="tune-resume">選択した保存地点から再開</button>
 <p>再開では保存地点の調整条件を使用し、「今回追加する試行数」だけを新たに指定します。中止した計算の保存地点は計算履歴から選択できます。</p></div>
 </section><section><h2>独立パラメータ掃引</h2>
 <p>現在のProjectから全点を検証して計算します。同じ順位は同一モードを意味しません。モード追跡・収束判定は行いません。</p>
