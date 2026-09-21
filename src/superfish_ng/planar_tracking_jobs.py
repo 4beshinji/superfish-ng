@@ -139,13 +139,15 @@ def _prepare(previous, current, request, directory):
     from .planar_tracking_similarity_remesh import PolygonSimilarityRemeshMapping, polygon_similarity_remesh_overlay
     from .planar_tracking_affine_remesh import PolygonAffineRemeshMapping, polygon_affine_remesh_overlay
     from .planar_tracking_exact_mapping import PolygonExactAffineRemeshMapping, polygon_exact_affine_remesh_overlay
+    from .planar_affine_shape_mapping import PlanarAffineShapeMapping, affine_shape_overlay
+    shape = isinstance(request.mapping, PlanarAffineShapeMapping)
     exact_affine = isinstance(request.mapping, PolygonExactAffineRemeshMapping)
     remesh = isinstance(request.mapping, PolygonRemeshMapping)
     similarity = isinstance(request.mapping, PolygonSimilarityMapping)
     composed = isinstance(request.mapping, PolygonSimilarityRemeshMapping)
     affine = isinstance(request.mapping, PolygonAffineRemeshMapping)
     polygon = isinstance(request.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping,
-                                           PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping))
+                                           PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping))
     required = PlanarPolygonCase if polygon else PlanarCase
     if not all(isinstance(case, required) for case in cases) or cases[0].polarization != cases[1].polarization:
         raise ValueError('planar tracking source Case types and TE/TM polarization must match the declared mapping')
@@ -154,7 +156,10 @@ def _prepare(previous, current, request, directory):
         refined_count = 4*len(case.mesh.triangles) if polygon else 8*case.nx*case.ny
         if refined_count > request.controls.max_refined_triangles:
             raise ValueError('spectral-resolution refinement exceeds max_refined_triangles')
-    if polygon:
+    if shape:
+        affine_shape_overlay(cases[0].mesh, cases[1].mesh, request.mapping,
+                             max_overlay_triangles=request.controls.max_overlay_triangles)
+    elif polygon:
         (polygon_exact_affine_remesh_overlay if exact_affine else polygon_affine_remesh_overlay if affine else polygon_similarity_remesh_overlay if composed else polygon_remesh_overlay if remesh else polygon_similarity_overlay if similarity else polygon_scale_overlay)(cases[0].mesh, cases[1].mesh, request.mapping,
                               max_overlay_triangles=request.controls.max_overlay_triangles)
     else:

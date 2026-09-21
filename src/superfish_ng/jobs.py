@@ -447,6 +447,11 @@ class JobManager:
         from .planar_tracking_history_saved import start_planar_history
         return start_planar_history(self, paths, request)
 
+    def recover_planar_history(self, history, request):
+        """Reidentify an owned planar history into a new local worker job."""
+        from .planar_tracking_history_saved import start_recovered_planar_history
+        return start_recovered_planar_history(self, history, request)
+
     def start_planar_tracking(self, previous, current, request):
         """Track two verified planar native spectra in a dedicated worker."""
         from .planar_tracking_jobs import start_planar_tracking

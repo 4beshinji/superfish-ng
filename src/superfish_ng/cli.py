@@ -189,6 +189,10 @@ def main(argv=None):
     planar_history_extend.add_argument('--out',type=Path,required=True)
     planar_history_replay=sub.add_parser('replay-planar-history',help='recompute the full owned planar ancestry and identity chain')
     planar_history_replay.add_argument('run',type=Path)
+    planar_history_recover=sub.add_parser('recover-planar-history',help='reidentify an unresolved planar ID set from an earlier owned snapshot into a new history')
+    planar_history_recover.add_argument('history',type=Path)
+    planar_history_recover.add_argument('request',type=Path)
+    planar_history_recover.add_argument('--out',type=Path,required=True)
     material_hphi_history=sub.add_parser('execute-material-hphi-history',help='copy and fully replay an ordered hphi tracking history')
     material_hphi_history.add_argument('request',type=Path)
     material_hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
@@ -479,13 +483,19 @@ def main(argv=None):
             project.save(args.out)
             sys.stdout.write(project.dumps())
             return 0
-        if args.command in ('execute-planar-history','extend-planar-history','replay-planar-history'):
+        if args.command in ('execute-planar-history','extend-planar-history','replay-planar-history','recover-planar-history'):
             from .planar_tracking_history import PlanarTrackingHistoryRequest
             from .planar_tracking_history_saved import execute_planar_history,extend_planar_history,read_planar_history
             if args.command=='execute-planar-history':
                 result=execute_planar_history(args.steps,PlanarTrackingHistoryRequest.load(args.request),args.out)
             elif args.command=='extend-planar-history':
                 result=extend_planar_history(args.history,args.next_pair,args.out)
+            elif args.command=='recover-planar-history':
+                from .planar_identity_recovery import PlanarIdentityRecoveryRequest
+                from .planar_tracking_history_saved import recover_planar_history
+                from .project import parse_json
+                result=recover_planar_history(args.history,
+                    PlanarIdentityRecoveryRequest.from_dict(parse_json(args.request.read_text(encoding='utf-8'))),args.out)
             else:
                 result=read_planar_history(args.run)
             print(json.dumps(result,indent=2,allow_nan=False));return 0

@@ -175,7 +175,7 @@ def start_extended_planar_history(manager, history, next_pair):
         history=Path(history);before=history_snapshot(history);previous=read_planar_history(history)
         if not previous['can_extend']:raise ValueError(previous['stop_reason'])
         old=PlanarTrackingHistoryRequest.from_dict(previous['request'])
-        request=PlanarTrackingHistoryRequest(old.step_count+1,old.max_steps)
+        request=PlanarTrackingHistoryRequest(old.step_count+1,old.max_steps,old.identity_recoveries)
         if before!=history_snapshot(history):raise ValueError('source planar history changed before extension')
         identifier=time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:10]
         directory=manager.directory(identifier)
@@ -204,7 +204,7 @@ def extend_planar_history(history, next_pair, directory):
     history=Path(history);before=history_snapshot(history);previous=read_planar_history(history)
     if not previous['can_extend']:raise ValueError(previous['stop_reason'])
     old_request=PlanarTrackingHistoryRequest.from_dict(previous['request'])
-    request=PlanarTrackingHistoryRequest(old_request.step_count+1,old_request.max_steps)
+    request=PlanarTrackingHistoryRequest(old_request.step_count+1,old_request.max_steps,old_request.identity_recoveries)
     if before!=history_snapshot(history):raise ValueError('source planar history changed before extension')
     target=Path(directory)
     result=execute_planar_history([*_paths(history,old_request),Path(next_pair)],request,target)
@@ -213,6 +213,48 @@ def extend_planar_history(history, next_pair, directory):
     except Exception as error:
         _state(target,'failed',kind=KIND,error=str(error));raise
     return result
+
+
+def _recovery_request(history, recovery):
+    from .planar_identity_recovery import PlanarIdentityRecoveryRequest
+    if type(recovery) is not PlanarIdentityRecoveryRequest:
+        raise ValueError('expected PlanarIdentityRecoveryRequest')
+    previous=read_planar_history(history)
+    if previous['status']!='PASS' or previous['individual_ids_complete']:
+        raise ValueError('planar history recovery requires verified unresolved individual ID sets')
+    old=PlanarTrackingHistoryRequest.from_dict(previous['request'])
+    request=PlanarTrackingHistoryRequest(old.step_count,old.max_steps,
+        (*old.identity_recoveries,dict(after_step_index=old.step_count-1,request=recovery.to_dict())))
+    return _paths(Path(history),old),request
+
+
+def recover_planar_history(history, recovery, directory):
+    """Create a new owned history, preserving the original unresolved evidence."""
+    history=Path(history);before=history_snapshot(history)
+    paths,request=_recovery_request(history,recovery)
+    if before!=history_snapshot(history):raise ValueError('planar ancestry changed before recovery')
+    target=Path(directory)
+    result=execute_planar_history(paths,request,target)
+    try:
+        if before!=history_snapshot(history):raise ValueError('planar ancestry changed during recovery')
+    except Exception as error:
+        _state(target,'failed',kind=KIND,error=str(error));raise
+    return result
+
+
+def start_recovered_planar_history(manager, history, recovery):
+    with manager.lock:
+        if manager.closed:raise ValueError('job manager is closed')
+        history=Path(history);before=history_snapshot(history)
+        paths,request=_recovery_request(history,recovery)
+        if before!=history_snapshot(history):raise ValueError('planar ancestry changed before recovery')
+        identifier=time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:10]
+        directory=manager.directory(identifier);_prepare(paths,request,directory)
+        try:
+            if before!=history_snapshot(history):raise ValueError('planar ancestry changed while preparing recovery')
+        except Exception as error:
+            _state(directory,'failed',kind=KIND,error=str(error));raise
+        return _spawn_history(manager,identifier,directory)
 
 
 if __name__=='__main__':

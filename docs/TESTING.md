@@ -1,3 +1,5 @@
+P02-bの所有履歴/回復CLI/workerは `test_planar_recovered_history`。[分割実行結果](PLANAR_RECOVERED_HISTORY.md)。直接利用先は `test_planar_tracking_history` と旧所有履歴のCLI・実worker中止/再起動テスト。
+
 P02-a回復核は `test_planar_identity_recovery`。[独立矩形/縮退/場・guardと分割検査](PLANAR_IDENTITY_RECOVERY.md)。所有履歴/調整/GUI接続は子b〜dで別検証する。
 
 P01調整/比較接続は `test_planar_affine_shape_mapping`。直接利用先は `test_planar_tuning test_planar_tracking test_planar_tracking_exact_affine test_planar_tracking_affine_remesh`。[条件別受入と分割ログ](PLANAR_AFFINE_TUNING.md)。

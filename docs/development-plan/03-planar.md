@@ -65,6 +65,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - 各隣接nativeの全hashと回復後ID継承、明示anchorが過去の解決済みsnapshotであることを再検証する。従来履歴版を保持する。
 - 受入：実矩形→正方形→矩形→延長、保存移動/再生、誤anchor/置換ID/改変拒否、CLI/workerで元全native不変。未確認回復後に延長しない。
 
+- 受入記録：[回復付き所有履歴](../PLANAR_RECOVERED_HISTORY.md)。API/CLI/worker・移動再生・回復後継承・改変拒否、版8保存入口補完を新3＋新2/既存7の分割検査で確認。
+
 ## P02-c
 
 ### 平面調整の回復・最終細分・再開
