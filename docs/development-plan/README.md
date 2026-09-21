@@ -17,6 +17,8 @@
 
 2026-09-21追記：H13を細分a/追跡核b/調整回復c/所有CLI-worker d/実GUI監査eに分割し、TSVは104行（原計画90カードを維持）。[H13-a](../CURVED_HPHI_REFINEMENT.md)は受入済み、次はH13-b。親H13は全子工程の受入まで未完了。
 
+2026-09-22追記：H13-a〜c受入済み。H13-dの[所有調整API](../CURVED_HPHI_TUNING_SAVED.md)第一段階を実装・検証。独立追跡履歴とCLI/worker、中止/管理器再起動、H13-e GUI監査は残る。H13-d/親H13/全goalは未完了。
+
 ## 文書構成
 
 | 文書 | カード | 内容 |
