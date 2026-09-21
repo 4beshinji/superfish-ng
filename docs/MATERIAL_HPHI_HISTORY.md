@@ -1,5 +1,7 @@
 # 材料Hphiの所有追跡履歴と明示ID回復
 
+最新進捗：[独立所有履歴](MATERIAL_HPHI_HISTORY.md)と[材料調整CLI/worker](MATERIAL_HPHI_TUNING_OPERATIONS.md)の基本操作検査まで成功。回復/最終細分の所有操作統合とGUIは残る。以下の初期段階の記録は当時の検査範囲を示す。
+
 2026-09-22、H16-c。`MaterialHphiTrackingHistoryRequest`は順序付きの材料追跡pair、最大step数、任意の過去snapshot回復指定を宣言する。隣接pairの元native五ファイルが全bytes一致し、前段のIDまたはID集合を後段がそのまま継承することを要求する。各pairを材料E/H・有限スペクトルから再計算する。
 
 `MaterialHphiIdentityRecoveryRequest`は過去の個別IDが確認済みのsnapshotと完全な材料比較要求を指定する。継承比較がPASSの未解決ID集合である場合だけ回復を試みる。履歴所有側でanchorの位置、元native hash、宣言IDを照合し、独立したanchor比較が継承集合を保つ場合だけ個別IDを採用する。元pairの未解決結果と回復eventを両方保持する。guard未確認や真の未解決集合を順位で埋めない。

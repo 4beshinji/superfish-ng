@@ -116,6 +116,10 @@ def read_job(directory, verify=True):
         if is_planar_tune(directory, state, manifest):
             verify_planar_tune_job(directory, state, manifest)
             return state
+        from .material_hphi_tuning_jobs import is_material_hphi_tune, verify_material_hphi_tune_job
+        if is_material_hphi_tune(directory, state, manifest):
+            verify_material_hphi_tune_job(directory, state, manifest)
+            return state
         from .curved_hphi_tuning_jobs import is_curved_hphi_tune, verify_curved_hphi_tune_job
         if is_curved_hphi_tune(directory, state, manifest):
             verify_curved_hphi_tune_job(directory, state, manifest)
@@ -498,6 +502,11 @@ class JobManager:
         """Own and compare full-quadratic curved Hphi native spectra."""
         from .curved_hphi_tracking_jobs import start_curved_hphi_tracking
         return start_curved_hphi_tracking(self, previous, current, request)
+
+    def start_material_hphi_tune(self, request, *, max_new_trials=None, checkpoint=None):
+        """Run an owned fixed-material straight Hphi tuning worker."""
+        from .material_hphi_tuning_jobs import start_material_hphi_tune
+        return start_material_hphi_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
 
     def start_curved_hphi_tune(self, request, *, max_new_trials=None, checkpoint=None):
         """Run an owned full-quadratic curved Hphi tuning worker."""

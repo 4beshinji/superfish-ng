@@ -1,3 +1,5 @@
+2026-09-22 H16-c：[材料調整CLI/worker](MATERIAL_HPHI_TUNING_OPERATIONS.md)。既存自作所有プロセス構造を材料専用runner/保存へ接続。元要求を不変とし、所有prefixで全判断とnativeを再生する。新外部資料・依存・legacy参照なし。
+
 2026-09-22 H16-c：[材料履歴と明示ID回復](MATERIAL_HPHI_HISTORY.md)。既存自作履歴の全祖先所有/再生構造を専用材料E/H比較へ接続。独立TEM場で順位交換を確認する。新外部資料・依存・legacy参照なし。
 
 2026-09-22 H16-c：[材料二状態比較の所有ジョブ](MATERIAL_HPHI_TRACKING_JOBS.md)。既存自作コピー/hash/worker構造に材料宣言/全領域・界面preflightと物理再生を接続。新外部資料・依存・legacy参照なし。

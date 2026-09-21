@@ -1,3 +1,5 @@
+H16-c材料調整操作は`test_material_hphi_tuning_cli test_material_hphi_tuning_jobs`。隣接CLIは`test_hphi_tuning_saved.HphiTuneSavedTests.test_cli_tune_resume_and_replay_names_and_exit_codes`。[尺度則・移動・実中止/再開・再起動・prefix検証](MATERIAL_HPHI_TUNING_OPERATIONS.md)。
+
 H16-c材料履歴は`test_material_hphi_tracking_history`。独立TEM場、ID集合/anchor/guard、所有延長worker、管理器再起動、CLIを検査。隣接は既存`test_hphi_jobs`のCLI/native型/単位とkind改変拒否の2件。[履歴仕様・検査範囲](MATERIAL_HPHI_HISTORY.md)。
 
 H16-c二状態比較は`test_material_hphi_tracking_jobs`。隣接ルーティングは`test_hphi_jobs.HphiJobTests.test_actual_cli_binds_both_native_types_and_units`と`test_kind_downgrade_and_rehashed_mismatches_rejected`。[保存/worker/CLI検査](MATERIAL_HPHI_TRACKING_JOBS.md)。

@@ -1,5 +1,7 @@
 # 材料E/H比較の所有保存・worker・CLI
 
+最新進捗：[独立所有履歴](MATERIAL_HPHI_HISTORY.md)と[材料調整CLI/worker](MATERIAL_HPHI_TUNING_OPERATIONS.md)の基本操作検査まで成功。回復/最終細分の所有操作統合とGUIは残る。以下の初期段階の記録は当時の検査範囲を示す。
+
 2026-09-22。H16-cの二状態比較を所有保存と操作へ接続した。独立追跡履歴、調整worker/CLI、回復を含む履歴・調整操作とGUIは残る。
 
 `execute_material_hphi_tracking(previous,current,request,directory)`は専用材料nativeまたは検証済みHphiジョブ二つと、完全な`MaterialHphiTrackingRequest`を受け取る。各元Project/nativeを検証してから、未使用出力のprevious/currentに自己完結したimport済みジョブとしてコピーする。元の表示単位を含むProject bytes、native bytes、コピー元descriptorを保持する。

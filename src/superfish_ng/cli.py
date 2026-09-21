@@ -30,10 +30,11 @@ def main(argv=None):
             optimization.add_argument('--max-new-trials',type=int)
     for command in ('tune','resume-tune','replay-tune','tune-planar','resume-tune-planar','replay-tune-planar',
                     'tune-hphi','resume-tune-hphi','replay-tune-hphi',
-                    'tune-curved-hphi','resume-tune-curved-hphi','replay-tune-curved-hphi'):
+                    'tune-curved-hphi','resume-tune-curved-hphi','replay-tune-curved-hphi',
+                    'tune-material-hphi','resume-tune-material-hphi','replay-tune-material-hphi'):
         tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
         tuning.add_argument('document',type=Path)
-        if command not in ('replay-tune','replay-tune-planar','replay-tune-hphi','replay-tune-curved-hphi'):
+        if command not in ('replay-tune','replay-tune-planar','replay-tune-hphi','replay-tune-curved-hphi','replay-tune-material-hphi'):
             tuning.add_argument('--out',type=Path,required=True)
             tuning.add_argument('--max-new-trials',type=int)
     for command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
@@ -904,6 +905,17 @@ def main(argv=None):
                 if args.command=='resume-tune-planar':
                     result=execute_planar_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
             print(f"{result['status']}: {args.document if args.command=='replay-tune-planar' else args.out}")
+            return 0 if result['status'] in ('TUNED','PAUSED') else 1
+        elif args.command in ('tune-material-hphi','resume-tune-material-hphi','replay-tune-material-hphi'):
+            from .material_hphi_tuning_saved import execute_material_hphi_tune,read_material_hphi_tune
+            from .project import parse_json
+            if args.command=='tune-material-hphi':
+                result=execute_material_hphi_tune(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_trials=args.max_new_trials)
+            else:
+                result=read_material_hphi_tune(args.document)
+                if args.command=='resume-tune-material-hphi':
+                    result=execute_material_hphi_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
+            print(f"{result['status']}: {args.document if args.command=='replay-tune-material-hphi' else args.out}")
             return 0 if result['status'] in ('TUNED','PAUSED') else 1
         elif args.command in ('tune-curved-hphi','resume-tune-curved-hphi','replay-tune-curved-hphi'):
             from .curved_hphi_tuning_saved import execute_curved_hphi_tune,read_curved_hphi_tune

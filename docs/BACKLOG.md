@@ -1,3 +1,5 @@
+H16-c進行中（2026-09-22）：[材料調整CLI・専用worker](MATERIAL_HPHI_TUNING_OPERATIONS.md)の新8件307.737秒＋関連1件70.743秒PASS、全handle/worker終端。実FEM尺度則、移動後再生、実中止/新規再開・管理器再起動、全prefix/元nativeと改変拒否を確認。次はID回復と実最終細分を伴う所有操作の統合監査。H16-d GUIと親H16/全goalは継続。
+
 H16-c進行中（2026-09-22）：[材料の独立所有履歴と明示ID回復](MATERIAL_HPHI_HISTORY.md)を接続。TEM場の独立確認、集合継承/guard、全祖先の移動/実worker延長/管理器再起動、CLI実行/再生を検査。新4件は分割PASS（履歴3件615.826秒、CLI1件74.797秒）、関連2件7.725秒PASS、全handle終端。次は材料調整CLI-workerと回復/実中止/再開操作。親H16/全goalは継続。
 
 H16-c進行中（2026-09-22）：[材料二状態追跡の所有保存・worker・CLI](MATERIAL_HPHI_TRACKING_JOBS.md)は新4件＋関連2件PASS、全handle/worker終端。実中止/管理器再起動、元全native不変、移動/再import、改変/kind拒否を確認。CLI参照ミスの再現/修正記録も保持。次は独立追跡履歴と調整CLI-worker・回復操作。親H16/全goalは継続。
