@@ -1,3 +1,5 @@
+H11の曲線比較領域は`test_curved_hphi_comparison`。関連は`test_curved_meridional_geometry test_hphi_geometry_mapping test_curved_hphi_fem test_curved_comparison_overlay`。新6件＋既存20件PASS。[独立積分・範囲・時間](CURVED_HPHI_COMPARISON.md)。場比較や調整workflowの証拠とは区別する。
+
 H10-cと親H10を完了（2026-09-21）。[調整回復・条件別監査](HPHI_TUNING_IDENTITY_RECOVERY.md)。検索/最終細分の比較親と過去anchorを分離し、成功個別IDだけを評価へ使用。新7unit＋既存25unitとChrome4項目PASS、全350実装/24所有ファイル不変、全handle/サーバー終了0。次はH11の曲線Hφ比較領域。全goalは継続。
 
 H10-cの検索/最終細分回復は`test_hphi_tuning_identity_recovery`、所有CLI/worker再生は`test_hphi_tuning_identity_recovery_saved`。直接利用先は`test_hphi_tuning test_hphi_shape_tuning test_hphi_tuning_saved test_hphi_shape_tuning_saved test_hphi_tuning_jobs test_gui_hphi_tuning`。実ブラウザーは`scripts/verify_gui_hphi_tune_recovery.mjs`。[独立対照・実行記録](HPHI_TUNING_IDENTITY_RECOVERY.md)。

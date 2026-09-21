@@ -291,6 +291,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
+H11受入（2026-09-21）：[曲線Hφ比較領域と条件別監査](../CURVED_HPHI_COMPARISON.md)。全P2幾何、独立native制限、非nested有理数共通分割、穴/軸役割、独立各成分面積/体積、中点反例と予算未確認を確認。新6/既存20件PASS、全handle終了0。次はH12。
+
 ## H12
 
 ### 曲線Hφの場比較と細分診断を実装する

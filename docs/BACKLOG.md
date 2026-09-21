@@ -1,3 +1,7 @@
+H11完了（2026-09-21）。[曲線Hφの比較領域](CURVED_HPHI_COMPARISON.md)を受入。全二次参照領域と厳密native制限、非nested共通分割、全穴/軸役割を検証。新6件（4+2分割）＋既存20件PASS、全handle終了0。次はH12の元E/H比較と細分診断。全goalは継続。
+
+H11進行中（2026-09-21）。[曲線Hφ比較領域](CURVED_HPHI_COMPARISON.md)を追加。完全P2参照領域、全native制限、非nested共通分割、全穴/軸役割を検証。新6件は4+2分割でPASS、既存回帰は実行中。場比較はH12、親の受入範囲は拡張しない。
+
 H10-cと親H10を完了（2026-09-21）。[調整回復・条件別監査](HPHI_TUNING_IDENTITY_RECOVERY.md)。検索/最終細分の比較親と過去anchorを分離し、成功個別IDだけを評価へ使用。新7unit＋既存25unitとChrome4項目PASS、全350実装/24所有ファイル不変、全handle/サーバー終了0。次はH11の曲線Hφ比較領域。全goalは継続。
 
 H10-c進行中。検索試行/最終細分の比較親とanchorを分離する明示要求版3を追加。受入条件は独立TEM場/周波数、真の縮退・guard・集合外停止、所有保存/操作と元RF保持。[仕様と途中証拠](HPHI_TUNING_IDENTITY_RECOVERY.md)。
