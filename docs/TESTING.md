@@ -1,3 +1,5 @@
+H13-cの元曲線Project形状変数は`test_curved_hphi_shape_tuning`。関連は`test_hphi_geometry_mapping test_curved_meridional_geometry`。[全P2尺度則・二次shear・加速座標・軸丸め](CURVED_HPHI_SHAPE.md)。
+
 H13-bの曲線追跡は`test_curved_hphi_tracking test_curved_hphi_tracking_crossing`。関連は`test_hphi_tracking test_curved_hphi_spectral_resolution`。[実曲線順位交換/解析縮退/guard/元native証拠](CURVED_HPHI_TRACKING.md)。
 
 H13-bの曲線有限スペクトル診断は`test_curved_hphi_spectral_resolution`。関連は`test_hphi_spectral_resolution test_curved_hphi_mass_projection`。[独立密行列/尺度不変量と記録](CURVED_HPHI_SPECTRA.md)。
