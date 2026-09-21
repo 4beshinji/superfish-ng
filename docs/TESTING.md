@@ -1,3 +1,5 @@
+H16-d最終操作は`scripts/verify_gui_material_hphi_tune_recovery.mjs`、`verify_gui_material_hphi_tune_cancel.mjs`（再起動は`--replay-only`）、`verify_gui_material_hphi_rejections.mjs`。[実行記録](MATERIAL_HPHI_GUI.md)と[条件別受入](MATERIAL_HPHI_TUNING_ACCEPTANCE.md)。H16-c以降の実装差分はGUI5ファイルのみで、既存数値検証を再利用する。
+
 H16-d追跡GUIは`test_gui_material_hphi_tracking`、直接利用先は`test_gui_hphi_tracking test_gui_hphi_history_request`と`test_hphi_tracking_history_saved.HphiHistorySavedTests.test_gui_ordered_history_extension_and_each_original_side`。実Chromeは`scripts/verify_gui_material_hphi_tracking.mjs`。[検査記録](MATERIAL_HPHI_GUI.md)。
 
 H16-d調整GUIは`test_gui_material_hphi_tuning`、直接利用先は`test_gui_hphi_tuning`。実Chromeは`scripts/verify_gui_material_hphi_tuning.mjs`。[検査結果と範囲](MATERIAL_HPHI_GUI.md)。

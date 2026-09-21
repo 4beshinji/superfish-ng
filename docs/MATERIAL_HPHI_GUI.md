@@ -1,6 +1,6 @@
 # 材料Hphi調整・追跡GUI
 
-2026-09-22、H16-d進行中。材料調整と追跡/所有履歴の基本GUI、明示履歴回復と延長まで接続・検証した。調整の回復/最終細分表示、実中止/サーバー再起動、軸加速RFの実ブラウザー監査と親H16の統合受入は残る。
+2026-09-22、H16-d受入済み。材料調整と追跡/所有履歴、明示履歴回復と延長、調整の回復/最終細分表示、実中止/サーバー再起動、軸加速RFまで実ブラウザーで検証した。[親H16の条件別監査](MATERIAL_HPHI_TUNING_ACCEPTANCE.md)も受入済み。以下の段階別記録は各検査の範囲を区別する。
 
 要求またはcheckpointの専用formatと、選択ジョブのkindにより材料専用GUI処理へ振り分ける。完全な材料Project、shape_law、材料/領域/全界面、各予算、回復規則をJSONのまま保持し、専用パーサーで検査する。元の要求や所有checkpointを旧形式へ変換しない。
 
@@ -27,7 +27,7 @@
 
 新`test_gui_material_hphi_tracking`は材料pairの開始/再生、元Project/native取込、元ソース移動後の所有場による再比較、所有履歴作成と段階ごとの元場取込、誤要求/side拒否を検査する。`out/h16-material-tracking-gui-20260922/before.log`で旧要求パーサーへの誤配送を再現した。直接利用先は旧`test_gui_hphi_tracking`と、既存履歴要求/GUI延長・元場取込の2件。
 
-`verify_gui_material_hphi_tracking.mjs`は実Chromeで材料保存場選択、全要求保持、実pair worker、E/Hと有限区間、材料履歴worker、元Project/native/RF取込と場描画を検査する。rawは`out/h16-material-tracking-gui-20260922/`。新材料2件＋旧追跡GUI2件は123.631秒PASS/終了0。実Chrome4項目PASS/終了0、全385実装hashと元12ファイル不変、外部要求0。ブラウザーとローカルサーバー終端。既存履歴要求/延長の関連2件も141.020秒PASS/終了0。ここまでの全handle終端。この基本検査と、後節の明示回復を含む材料履歴の実延長検査は別の証拠である。中止/新サーバー再起動と親H16の統合監査は残る。
+`verify_gui_material_hphi_tracking.mjs`は実Chromeで材料保存場選択、全要求保持、実pair worker、E/Hと有限区間、材料履歴worker、元Project/native/RF取込と場描画を検査する。rawは`out/h16-material-tracking-gui-20260922/`。新材料2件＋旧追跡GUI2件は123.631秒PASS/終了0。実Chrome4項目PASS/終了0、全385実装hashと元12ファイル不変、外部要求0。ブラウザーとローカルサーバー終端。既存履歴要求/延長の関連2件も141.020秒PASS/終了0。ここまでの全handle終端。この基本検査と、後節の明示回復を含む材料履歴の実延長検査は別の証拠である。中止/新サーバー再起動と親H16監査は後節・別文書に分離して実施した。
 
 新外部資料・依存・legacy参照なし。材料FEM/追跡核・数値許容値は変更していない。保存/GUI経路を検査し、全suite/seedは今回実行しない。
 
@@ -46,3 +46,17 @@ scripts/prepare_gui_material_hphi_recovery.py --out out/h16-material-history-rec
 ```
 
 各Chrome検証器の`node --check`も成功。実クリックはローカル専用サーバーのlaunch URLを渡し、`--out`に未使用のbrowserディレクトリ、`--request`に各rawディレクトリの要求JSONを指定した。回復履歴検証器には`--workspace`として準備済み所有pairのworkspaceも指定した。
+
+
+## 調整回復・最終細分と中止/サーバー再起動の監査
+
+`verify_gui_material_hphi_tune_recovery.mjs`はH16-cで実際にTUNEDとなった4試行を所有コピーしたworkspaceで開く。最初のサーバーはHTTP 200を確認して正常終了し、二つ目のサーバーと新Chromeで全判断を再生する。検索/最終細分の未解決ID集合と回復後ID、比較親とanchorの別表示、完全要求の保存、同じcheckpoint二度再読込、回復対象の元順位・native/RF・場描画を検査する。最初のHTTP確認を最初のサーバーでの全物理再生とは呼ばない。
+
+`verify_gui_material_hphi_tune_cancel.mjs`は真空軸区間と非真空材料・穴を持つ実Caseを開始し、最初のcheckpoint保存後にChromeの中止ボタンを押す。完成した保存地点の再読込、別workerへの1試行再開、両R/Qと元場取込を検査する。そのサーバーを正常終了してから新サーバーと新Chromeで同じ再開結果を開き直す。目標はH16-cで保存した実第一周波数/1.0625、周波数許容1 Hz、max_trials=60とし、中止前に簡単に終端する要求を使わない。
+
+rawは`out/h16-material-recovery-gui-20260922/`と`out/h16-material-axis-cancel-gui-20260922/`。回復GUIは4項目PASS、中止/再開は5項目PASS、新サーバー再生は2項目PASS、すべて終了0。回復の元24ファイルと全385実装hashは不変。軸ケースも全385実装hash不変、全検査の外部要求0。ブラウザーの全RF一致とは別に、各取込先Project/native六ファイルのbyte一致と両サーバー寿命をaudit.jsonで確認した。製品実装は検査中固定し、元H16-cの所有データを変更していない。全handle/worker/サーバー終端。
+
+
+`verify_gui_material_hphi_rejections.mjs`は非真空を横切る加速区間と未対応loss_tangentをGUIの正規化・開始ボタンで拒否し、job非作成と有効要求への復元を確認する。初回は製品が期待どおり拒否したが、検証器の共通waitが期待エラーも異常扱いして終了1となった（`out/h16-material-gui-rejections-20260922/`）。待機処理を修正し、復元時は非同期正規化の完了も待つようにした。未使用workspaceでの再検査は`out/h16-material-gui-rejections-fixed-20260922/browser/report.json`、5項目PASS/終了0、全385実装hash不変・外部要求0・サーバー終端。製品側の拒否規則や許容値は変更していない。
+
+今回の検証器3本は`node --check`もPASS。共通の`--url`（ローカルlaunch URL）、`--out`（未使用ディレクトリ）、`--request`（保存した要求JSON）で実行する。中止検証には`--workspace`、新サーバー再生には同検証器の`--replay-only`へ保存したresumed.jsonを渡す。回復検証はコピーした完了jobを`tune`クエリで開く。第一サーバーのHTTP確認と正常終了、第二サーバーでの実Chrome/元native監査はaudit.jsonに記録した。

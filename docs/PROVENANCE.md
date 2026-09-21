@@ -1,3 +1,5 @@
+2026-09-22 H16受入：[材料調整・保存・GUI全条件監査](MATERIAL_HPHI_TUNING_ACCEPTANCE.md)。既存自作の独立物理/所有検証を維持し、実Chromeで回復・中止/再起動・軸RF・不正物理拒否を追加確認。製品数値核・依存・参照制限に変更なし。
+
 2026-09-22 H16-d：[材料追跡/所有履歴GUI](MATERIAL_HPHI_GUI.md)。既存自作の明示format/kind振分けと表示に材料専用要求/全祖先再生を接続。新外部資料・依存・legacy参照なし。
 
 2026-09-22 H16-d：[材料調整GUI](MATERIAL_HPHI_GUI.md)。既存自作GUI輸送・Chrome検証器を材料専用要求/所有workerへ接続。新外部資料・依存・legacy参照なし。
