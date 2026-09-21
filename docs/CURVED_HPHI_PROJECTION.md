@@ -33,3 +33,5 @@ P1/P2、実有限係数、列数、DOF、共通分割数、pair数、求積点�
 実行は`OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-uv-cache uv run --no-sync --python .venv/bin/python python -m unittest -v <modules>`。関連は`test_hphi_mass_projection test_curved_hphi_field_overlap test_curved_hphi_refinement`。seed TM/既存FEMは変更していないため全suite・seed検証は対象外。Hosted CI/GUI受入を主張しない。
 
 既存の基底、共通分割、元FEM行列と独立合成shearを使用した。新外部資料・依存・legacy参照なし。次は曲線の明示細分比較空間での有限スペクトル診断を実装し、E/H追跡へ接続する。
+
+2026-09-21追記：[有限比較スペクトル](CURVED_HPHI_SPECTRA.md)を追加・段階検証した。E/H部分空間追跡以降は引き続き未完了。

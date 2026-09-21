@@ -1,3 +1,5 @@
+H13-bの曲線有限スペクトル診断は`test_curved_hphi_spectral_resolution`。関連は`test_hphi_spectral_resolution test_curved_hphi_mass_projection`。[独立密行列/尺度不変量と記録](CURVED_HPHI_SPECTRA.md)。
+
 H13-bの曲線scalar射影は`test_curved_hphi_mass_projection`。関連は`test_hphi_mass_projection test_curved_hphi_field_overlap test_curved_hphi_refinement`。[不変量・実行記録と未実装範囲](CURVED_HPHI_PROJECTION.md)。
 
 H13-aの同二次領域細分/丸め契約は`test_curved_hphi_refinement`。関連は`test_curved_hphi_comparison test_curved_hphi_field_overlap test_curved_meridional_geometry test_curved_hphi_fem`と、`test_curved_hphi_convergence`のstrict要求・実三水準/guardケース。[不変量・実行記録](CURVED_HPHI_REFINEMENT.md)。
