@@ -63,6 +63,21 @@ class HphiMappedTrackingTests(unittest.TestCase):
         self.assertEqual(grouped['current_mode_ids'],[None,None])
         self.assertEqual(grouped['matches'][0]['previous_ids'],['a','b'])
         self.assertEqual([hphi_mesh_quantities(b,i) for i in range(3)],before)
+        inverse = track_mapped_hphi_modes(b,a,
+            replace(q,previous_comparison_mesh=q.current_comparison_mesh,
+                    current_comparison_mesh=q.previous_comparison_mesh),mapping.inverse())
+        self.assertEqual(inverse['status'],'PASS',inverse['verification_reasons'])
+        self.assertEqual(inverse['current_mode_ids'],['mode-1','mode-2'])
+        # Same physical cavity, independent diagonals, boundary segmentation
+        # and vertex/cell numbering: identity must survive representation.
+        same = solve_hphi_mesh(HphiMeshCase(renumber(fixture(2,opposite=True)),
+                                           modes=3,quadrature_order=12))
+        identical_geometry = HphiGeometryMapping(control,control)
+        equivalent = track_mapped_hphi_modes(a,same,
+            HphiTrackingRequest(_refine_mesh(a.case.mesh),_refine_mesh(same.case.mesh)),
+            identical_geometry)
+        self.assertEqual(equivalent['status'],'PASS',equivalent['verification_reasons'])
+        self.assertEqual(equivalent['current_mode_ids'],['mode-1','mode-2'])
 
     def test_axis_connected_nonuniform_map_tracks_original_regular_fields(self):
         control = fixture(1,axis=True)
