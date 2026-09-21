@@ -1,3 +1,5 @@
+H12-bと親H12を完了（2026-09-21）。[固定二次領域の三水準診断・条件別監査](CURVED_HPHI_CONVERGENCE.md)。f/直接E/H/全境界RF/軸電圧を別判定し、guard不足・近縮退を未確認に保持。新5件の分割証拠＋関連19件PASS、全handle終端。粗い解析TEMの未達とテストdeepcopy失敗も記録。次はH13の曲線履歴・調整と保存/操作接続。全goalは継続。
+
 H12-a完了（2026-09-21）。[曲線Hφの元E/H場比較](CURVED_HPHI_FIELDS.md)を受入。完全二次共通分割・元native正スペクトル/q/u再検証、独立既知場/二尺度/直線極限/保存不変を確認。格納batch変更後の新6件＋関連20件PASS、全handle終了0。次はH12-bのguard/順位と三水準f・場・RF診断。親H12/全goalは未完了。
 
 H11完了（2026-09-21）。[曲線Hφの比較領域](CURVED_HPHI_COMPARISON.md)を受入。全二次参照領域と厳密native制限、非nested共通分割、全穴/軸役割を検証。新6件（4+2分割）＋既存20件PASS、全handle終了0。次はH12の元E/H比較と細分診断。全goalは継続。

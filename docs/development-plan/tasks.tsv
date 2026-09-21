@@ -21,9 +21,9 @@ H10-a	P03 P04 D02	H09	実装	DONE	02-hphi.md#h10-a	Hφ個別ID回復核と独立
 H10-b	P03 P04 D02	H10-a	実装	DONE	02-hphi.md#h10-b	専用履歴の所有回復eventと後続継承を接続する
 H10-c	P03 P04 D02	H10-b	実装	DONE	02-hphi.md#h10-c	検索試行・最終細分のID回復を調整へ接続する
 H11	P03	H08	実装	DONE	02-hphi.md#h11	曲線Hφの比較領域を構成する
-H12	P03	H11 H12-b	実装	IN_PROGRESS	02-hphi.md#h12	曲線Hφの場比較と細分診断を実装する
+H12	P03	H11 H12-b	実装	DONE	02-hphi.md#h12	曲線Hφの場比較と細分診断を実装する
 H12-a	P03	H11	実装	DONE	02-hphi.md#h12-a	曲線Hφ元E/Hの体積比較核を検証する
-H12-b	P03	H12-a	実装	PLANNED	02-hphi.md#h12-b	曲線Hφ三水準のf・場・RF診断を接続する
+H12-b	P03	H12-a	実装	DONE	02-hphi.md#h12-b	曲線Hφ三水準のf・場・RF診断を接続する
 H13	P03 D02 O02	H10 H12	実装	PLANNED	02-hphi.md#h13	曲線Hφの履歴と調整を保存・操作へ接続する
 H14	P04 D02	H08	仕様	PLANNED	02-hphi.md#h14	材料界面を保つ比較契約を定義する
 H15	P04	H14	実装	PLANNED	02-hphi.md#h15	材料Hφの領域比較とID追跡を実装する

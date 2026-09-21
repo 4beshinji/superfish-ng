@@ -48,7 +48,7 @@ def _project_mesh(project):
     if isinstance(case,MaterialHphiCase):
         raise ValueError("material Hphi convergence is unsupported; material partitions need a separate comparison contract")
     if isinstance(case,CurvedHphiCase):
-        raise ValueError('curved Hphi convergence is not implemented; solve and inspect each explicit Project independently')
+        raise ValueError('curved Hphi requires CurvedHphiConvergence with complete quadratic reference geometry and native charts; straight convergence cannot consume curved geometry')
     return _declared_mesh(SimpleNamespace(case=case,space=_space(case))) if isinstance(case,CoaxialCase) else case.mesh
 
 

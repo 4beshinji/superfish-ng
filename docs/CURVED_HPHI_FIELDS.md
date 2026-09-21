@@ -1,5 +1,7 @@
 # 曲線Hφの元E/H場比較（H12-a、受入済み）
 
+[H12-bの三水準診断と親H12監査](CURVED_HPHI_CONVERGENCE.md)も受入済み。
+
 `curved_hphi_field_grams`は[H11の完全二次比較領域](CURVED_HPHI_COMPARISON.md)を使い、各nativeの元E/Hを元要素内で評価する。電場と磁場を混ぜず、それぞれprevious self、cross、current selfのGramを返す。調整や追跡ID、三水準の受入判定はここでは行わない。
 
 ## 検証と体積移送
