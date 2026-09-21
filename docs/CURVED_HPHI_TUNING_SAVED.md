@@ -1,6 +1,6 @@
 # 曲線Hφ調整の所有保存・再生
 
-2026-09-22。H13-dの第一段階。専用Python APIを追加し、CLI/workerと独立追跡履歴の所有保存は後続段階に残す。H13-d、親H13、全計画は未完了。
+2026-09-22。H13-dの第一段階。専用Python APIとCLIを追加し、workerと独立追跡履歴の所有保存は後続段階に残す。H13-d、親H13、全計画は未完了。
 
 ## 契約と受入対象
 
@@ -26,3 +26,17 @@ fixtureは小さい合成二次shearの正半径同軸領域で、実測構造�
 ## 来歴
 
 既存自作の曲線元native検証、追跡/調整、直線版所有ファイル検査を接続した。追加外部資料・依存・legacy参照なし。solver、場係数、RF規約、物理許容差は変更しない。
+
+## CLI接続（H13-d継続）
+
+曲線専用の厳密要求formatを使う。既存`tune-hphi`の直線要求は変更しない。
+
+```sh
+uv run --no-sync python -m superfish_ng tune-curved-hphi request.json --out out/new-curved --max-new-trials 1
+uv run --no-sync python -m superfish_ng replay-tune-curved-hphi out/new-curved/checkpoint-001.json
+uv run --no-sync python -m superfish_ng resume-tune-curved-hphi out/new-curved/checkpoint-001.json --out out/new-resumed --max-new-trials 1
+```
+
+出力は毎回未使用のpathを指定する。`--max-new-trials`は今回の新試行数で、途中PAUSEDをエラーとは扱わない。TUNED/PAUSEDは終了0、UNVERIFIED/REFINEMENT_FAILED等の物理未達は1、不正要求/改変/終端結果の再開は2。未確認IDの周波数は評価値として使わない。
+
+CLI証拠は`out/h13-curved-tune-cli-20260922/`。`before.log`はコマンド未登録を再現し終了1。`test_curved_hphi_tuning_cli`の不正要求・実solve/resume/portable replayと既存直線CLIケースの計3件は`after.log`でPASS（202.989秒、終了0）。曲線未確認停止の追加1件は`guard.log`でPASS（31.198秒、終了0）。新3件と既存1件の分割証拠で、全handle終端を確認した。実solveでは全P2一様拡大に対するMaxwell周波数逆比例を独立照合し、コピーの全RFも一致させる。APIの数値・保存処理には変更を加えない。このCLI検査はworker中止/管理器再起動やGUI検証を代替しない。

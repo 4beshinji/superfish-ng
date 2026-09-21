@@ -1,3 +1,5 @@
+H13-d曲線調整CLIは`test_curved_hphi_tuning_cli`。旧互換の直接利用先は`test_hphi_tuning_saved.HphiTuneSavedTests.test_cli_tune_resume_and_replay_names_and_exit_codes`。[保存/CLI検証記録](CURVED_HPHI_TUNING_SAVED.md)。
+
 H13-d所有調整の第一段階は`test_curved_hphi_tuning_saved`。関連は`test_hphi_tuning_saved`の所有再生/改変拒否と`test_curved_hphi_saved`。[検証範囲・記録](CURVED_HPHI_TUNING_SAVED.md)。
 
 H13-cの曲線調整実行/回復は`test_curved_hphi_tuning test_curved_hphi_tuning_recovery`。[独立TEM/曲線FEM目標、未確認停止、目標/粗細差別判定と検証記録](CURVED_HPHI_TUNING.md)。関連は旧HphiTuneRequestTests、旧回復の形状/予算検査、新候補の構築前予算検査。
