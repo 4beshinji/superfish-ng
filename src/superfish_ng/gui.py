@@ -20,6 +20,28 @@ from .project import Project, load_document, parse_json
 
 ASSETS = Path(__file__).with_name("web")
 
+# Full owned tuning checkpoints include per-trial comparison geometry and
+# diagnostics. Keep the larger envelope limited to their three consumers.
+_REQUEST_BYTES = 4 * 1024 * 1024
+_CHECKPOINT_REQUEST_BYTES = 64 * 1024 * 1024
+_CHECKPOINT_ACTIONS = frozenset(("hphi-replay-tune", "hphi-resume-tune", "hphi-tune-trial"))
+
+
+def read_api_request(stream, content_length):
+    """Read a bounded authenticated API envelope, preserving strict JSON parsing."""
+    size = int(content_length)
+    if not 0 < size <= _CHECKPOINT_REQUEST_BYTES:
+        raise ValueError("request must be between 1 byte and 64 MiB")
+    raw = stream.read(size)
+    if len(raw) != size:
+        raise ValueError("request body is shorter than Content-Length")
+    data = parse_json(raw)
+    if not isinstance(data, dict):
+        raise ValueError("request must be an object")
+    if size > _REQUEST_BYTES and (not isinstance(data.get("action"), str) or data["action"] not in _CHECKPOINT_ACTIONS):
+        raise ValueError("request exceeds 4 MiB; only Hphi checkpoint replay, resume and trial import allow up to 64 MiB")
+    return data
+
 
 def preview_document(project):
     """Preserve a closed contour distinctly from an open radius profile."""
@@ -139,12 +161,7 @@ def create_server(workspace, port=0):
             if self.path != "/api":
                 return self.reply({"error": "not found"}, 404)
             try:
-                size = int(self.headers.get("Content-Length", "0"))
-                if not 0 < size <= 4 * 1024 * 1024:
-                    raise ValueError("request must be between 1 byte and 4 MiB")
-                data = parse_json(self.rfile.read(size))
-                if not isinstance(data, dict):
-                    raise ValueError("request must be an object")
+                data = read_api_request(self.rfile, self.headers.get("Content-Length", "0"))
                 action = data.get("action")
                 allowed = {
                     "assess-rf-peaks": ["id", "mode"],

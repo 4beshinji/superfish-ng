@@ -1,3 +1,23 @@
+H13-e/親H13受入（2026-09-22）：[全条件監査](CURVED_HPHI_ACCEPTANCE.md)。穴付き実中止/再開・元場6+6ファイル一致、回復調整Chrome4項目/元24ファイル不変/現行368hash一致、回復履歴Chrome5項目/49所有ファイル不変を確認。4 MiB HTTP不備を再現・修正し新2件＋実HTTP1件PASS、失敗と修正後再検査を分割証拠で保持。全handle/検証サーバー終端、src固定を解除。次はH15-a（H14 DONE、H15-a〜cの分割は99ce82a）。原90カード/全goalは未完了。
+
+最新補足：穴付き再検査browser51741は2項目PASS/終了0、server60664/PID2351235も終了0。native-audit.jsonで元Project/native6ファイルと取消prefix→再開prefix6ファイルbyte一致、穴1個、現行368hash一致。現在の生存は回復調整browser59154/server41749/PID2333060のみ（browser-2.logで回復2表示PASS、同一ファイル再読込/元場待ち）。src固定継続。H15の実装分割だけを99ce82aで独立コミット済み（原90カード維持、107行、全H15子PLANNED）。H13-eの未コミット差分はまだ受入待ち。
+
+最新：回復履歴browser37766は5項目PASS/終了0、server19380も終了0。製品src固定を解除し、/tmp/patch-gui-request-size.pyを適用済み。新read_api_requestの2件と実HTTP認証/厳密操作1件PASS、全handle終了0。現在は修正後srcを固定し、回復調整browser59154/server41749（out/h13-curved-recovery-gui-20260922/browser-2.log）と穴付きbrowser51741/server60664（out/h13-curved-hole-cancel-gui-20260922/browser-2.log）を実行中。同じハンドルを観測すること。前のfailed browser50005/74528と旧サーバーは全終端、再起動しない。
+
+回復調整browser-2は旧browser/downloadsの実10 MB checkpointを入力し、HTTP失敗を再検査。穴付きbrowser-2は旧browser/resumed.jsonを--replay-onlyで入力し、保存済み実中止/再開からの元場表示を再検査。両成功後はreportを読んでnative/Project bytes照合、サーバー正常終了、docs更新・coherent commit・親H13監査へ。回復履歴のpost-http-fix-audit.jsonは所有全ファイル不変、旧成功時からsrc差分がgui.pyだけと確認。まだ未コミット。
+
+更新：H13-eで実不具合を確認。回復調整/穴付き再開のcheckpointが4 MiB HTTP上限を超え、再読込/試行元場取込に失敗（実Chrome #errorで確認、各transport-failure.json）。browser50005/74528は確認済み失敗のためTERMし終了143、server69566/4084はSIGINT終了0。旧記述の生存状態は無効。現在は回復履歴browser37766とserver19380/PID1670802だけが生存、DOM error空、延長worker20260922-024045-94bd570e0f complete、GUIの全祖先再検証待ち。srcはまだ7bc7f00で固定。
+
+修正案は`/tmp/patch-gui-request-size.py`に保存（未適用）。履歴browser終端後に実行するとgui.pyへread_api_requestを追加し、hphi-replay-tune/hphi-resume-tune/hphi-tune-trialだけ64 MiB、それ以外4 MiB、上限超過をread前拒否/厳密JSON/短い本文拒否を実装する。新tests/test_gui_request_size.pyはred確認済み。適用後は新2件とtest_gui_hphi.HphiGuiTests.test_real_http_assets_authentication_and_strict_actions等の直接HTTP契約を確認し、失敗した大きい保存地点の実Chrome操作を再検査する。保存された実FEM出力の再生を利用し、src変更前後のhash証拠を混同しない。新検証器3本のwaitは# error表示で即失敗するよう修正済み（実行中履歴は旧ロード済みコードで継続）。
+
+H13-e操作検査を継続中（2026-09-22）。製品srcは7bc7f00で固定し、変更しないこと。同軸状曲線の実中止/保存選択/同一ファイル再読込/別job再開/元場表示はChrome5項目PASS、browser handle89798終了0。`out/h13-curved-cancel-gui-20260922/native-audit.json`で元Project/native6ファイルbyte一致・現行368実装hash一致。穴付き同操作、回復調整、回復履歴は以下の同じhandleを観測し、観測timeoutだけで再実行しない。
+
+- 回復調整browser handle50005、生存。`out/h13-curved-recovery-gui-20260922/browser.log`で検索/最終細分ID回復と比較親/anchor表示の2項目PASS。最初のHTTP200サーバーhandle56409は終了0、再起動後サーバーhandle69566/PID1422519が稼働。ブラウザーは同一checkpoint2回再生→試行4元場を検証中。src固定。
+- 穴付き中止browser handle74528、生存。`out/h13-curved-hole-cancel-gui-20260922/browser.log`で実中止と第1保存地点再検証までPASS。共有サーバーhandle4084/PID1454577、workspaceは`out/h13-curved-cancel-gui-20260922/workspace`。穴付きjobは中止20260922-022931-94bf069e37、再開20260922-023444-adff099638。終了後、同軸ケースと同じくbrowser/resumed.jsonの試行2とreport.imported_jobの元Project/native6ファイルをbyte照合する。
+- 曲線回復履歴fixture準備handle48379は終了0、独立TEM状の場の質量重なり>0.999。browser handle37766、生存、server handle19380/PID1670802、`out/h13-curved-history-recovery-gui-20260922/`。GUIから明示anchor回復1段を作成中（job20260922-023356-4167c7dfc3）、続いてcontinue pairへ延長、全要求保存/旧版切替/再読込を検査する。
+
+未コミットの専用検証器4本と[親H13監査表](CURVED_HPHI_ACCEPTANCE.md)、[GUI記録](CURVED_HPHI_GUI.md)あり。各実行の終端・report・元場hashを確認後、検証用サーバーを個別にSIGINTで終了し、記録/コミット/親監査へ進む。H13-e/親H13/全goalは未完了。新src変更・数値許容変更・全suite/seed再実行は行っていない。
+
 H13-e曲線追跡・履歴GUIを接続（2026-09-22）：[実装と操作証拠](CURVED_HPHI_GUI.md)。新2件＋既存4件を分割検証、Chrome4項目PASS。全368実装/12元ファイル不変、全handle/サーバー終了0。元Project/native/RFの保持と曲線E/H・有限比較表示を確認。明示回復の実GUI、実中止/再開、サーバー再起動後の復元、親H13監査が残る。全goalは継続。
 
 H13-e進行中（2026-09-22）：[曲線調整GUIの第一段階](CURVED_HPHI_GUI.md)。専用worker/初期を含む保存地点/別job再開/元Project表示単位保持を接続。新GUI2件、元Project取込1件、既存8+2件の分割証拠を記録。Chrome実クリック5項目PASS、全実装/native不変、全handle/サーバー終了0。実中止・サーバー再起動後表示と追跡/履歴/回復GUI・親監査は残る。全goalは継続。

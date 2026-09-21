@@ -1,3 +1,5 @@
+H13-e/親H13受入（2026-09-22）：[全条件監査](CURVED_HPHI_ACCEPTANCE.md)。穴付き実中止/再開・元場6+6ファイル一致、回復調整Chrome4項目/元24ファイル不変/現行368hash一致、回復履歴Chrome5項目/49所有ファイル不変を確認。4 MiB HTTP不備を再現・修正し新2件＋実HTTP1件PASS、失敗と修正後再検査を分割証拠で保持。全handle/検証サーバー終端、src固定を解除。次はH15-a（H14 DONE、H15-a〜cの分割は99ce82a）。原90カード/全goalは未完了。
+
 H13-e曲線追跡・履歴GUIを接続（2026-09-22）：[実装と操作証拠](CURVED_HPHI_GUI.md)。新2件＋既存4件を分割検証、Chrome4項目PASS。全368実装/12元ファイル不変、全handle/サーバー終了0。元Project/native/RFの保持と曲線E/H・有限比較表示を確認。明示回復の実GUI、実中止/再開、サーバー再起動後の復元、親H13監査が残る。全goalは継続。
 
 H13-e進行中（2026-09-22）：[曲線調整GUIの第一段階](CURVED_HPHI_GUI.md)。専用worker/初期を含む保存地点/別job再開/元Project表示単位保持を接続。新GUI2件、元Project取込1件、既存8+2件の分割証拠を記録。Chrome実クリック5項目PASS、全実装/native不変、全handle/サーバー終了0。実中止・サーバー再起動後表示と追跡/履歴/回復GUI・親監査は残る。全goalは継続。
