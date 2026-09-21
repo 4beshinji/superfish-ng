@@ -21,6 +21,8 @@
 
 2026-09-22追記：H13-dの[全元native所有・CLI/worker・回復操作](../CURVED_HPHI_TUNING_RECOVERY_SAVED.md)を受入。次はH13-e実GUI/親監査。H08依存のH14仕様も待機中に[固定材料界面比較契約](../MATERIAL_HPHI_TRACKING.md)として受入済み。原計画90カードと全goalを維持し、親H13/材料実装H15以降は未完了。
 
+2026-09-22追記：H13-eの[曲線調整GUI第一段階](../CURVED_HPHI_GUI.md)を接続。API/worker分割検査とChrome5項目を確認。実中止/サーバー再起動後表示、曲線追跡/履歴/回復の実GUIと親監査は残り、H13-e/親H13/全goalは未完了。
+
 ## 文書構成
 
 | 文書 | カード | 内容 |

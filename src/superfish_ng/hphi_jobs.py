@@ -175,7 +175,7 @@ def start_hphi(manager,project):
         return identifier
 
 
-def import_hphi_result(manager,source):
+def import_hphi_result(manager,source,*,project=None):
     from .jobs import _state,read_job,_digest
     started=time.monotonic();source=Path(source)
     if source.is_symlink():raise ValueError('hphi import source must not be a symbolic link')
@@ -185,10 +185,16 @@ def import_hphi_result(manager,source):
         snapshot=(lambda:_job_hashes(source)) if managed else (lambda:_native_hashes(source))
         before=snapshot();solution=read_hphi_run(solution_dir)
         if managed:
+            if project is not None:raise ValueError('managed Hphi import already owns its Project; an override is forbidden')
             state=read_job(source)
             if state.get('status')!='complete' or state.get('kind')!=KIND:raise ValueError('source is not a complete hphi job')
             project=HphiProject.load(source/'project.json')
-        else:project=HphiProject(solution.case)
+        elif project is None:project=HphiProject(solution.case)
+        else:
+            if type(project) is not HphiProject:raise ValueError('native Hphi import requires an explicit HphiProject object')
+            project=HphiProject.from_dict(project.to_dict())
+            if project.case.to_dict()!=solution.case.to_dict():
+                raise ValueError('native Hphi import Project must preserve the complete original Case')
         if snapshot()!=before:raise ValueError('hphi import source changed during verification')
         identifier=time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:10];directory=manager.directory(identifier)
         _prepare(project,directory);project_hash=_digest(directory/'project.json')

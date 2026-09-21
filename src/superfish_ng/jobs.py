@@ -401,10 +401,10 @@ class JobManager:
         from .hphi_jobs import start_hphi
         return start_hphi(self,project)
 
-    def import_hphi_result(self, source):
+    def import_hphi_result(self, source, *, project=None):
         """Import verified coaxial or Hphi mesh native bytes without changing geometry."""
         from .hphi_jobs import import_hphi_result
-        return import_hphi_result(self,source)
+        return import_hphi_result(self,source,project=project)
 
     def start_planar(self, project):
         """Execute a dedicated Cartesian cutoff Project in a local worker."""

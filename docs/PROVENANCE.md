@@ -1,3 +1,5 @@
+2026-09-22 H13-e：[曲線調整GUI](CURVED_HPHI_GUI.md)。独自の専用worker/所有保存再生へGUIを接続し、元Case完全一致を条件に表示Projectを保持。新規外部資料・依存・legacy参照なし。
+
 H13-d調整回復の所有操作受入（2026-09-22）：H13-cの実曲線FEM目標/移送TEM対照を所有CLI/workerへ通す。数値実装・許容値は不変。新外部資料・依存・legacy参照なし。
 
 H13-d曲線履歴/回復（2026-09-22）：既存のnative履歴継承・集合整合・所有copy/workerを元曲線E/H追跡へ適用。合成shearと移送TEM状場を独立物理対照とする。新外部資料・依存・legacy参照、solver/許容差変更なし。

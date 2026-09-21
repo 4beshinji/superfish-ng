@@ -1,3 +1,5 @@
+H13-e進行中（2026-09-22）：[曲線調整GUIの第一段階](CURVED_HPHI_GUI.md)。専用worker/初期を含む保存地点/別job再開/元Project表示単位保持を接続。新GUI2件、元Project取込1件、既存8+2件の分割証拠を記録。Chrome実クリック5項目PASS、全実装/native不変、全handle/サーバー終了0。実中止・サーバー再起動後表示と追跡/履歴/回復GUI・親監査は残る。全goalは継続。
+
 H13-d受入（2026-09-22）：[調整回復の所有操作と条件別監査](CURVED_HPHI_TUNING_RECOVERY_SAVED.md)。追加2件1448.786秒PASS/終了0、両accepted.json、367実装hashと所有30/12ファイル一致を確認。回復調整4試行TUNEDと穴付き1試行PAUSEDを区別し、元場/全RF/移動後再生/再起動/改変拒否を受入。全handle終端。次はH13-eの実GUI/API一致・親監査。H14仕様はa6b7a7eで独立受入済み。親H13/全goalは未完了。
 
 H13-d曲線履歴・回復を接続（2026-09-22）：[所有曲線履歴とanchor回復](CURVED_HPHI_HISTORY.md)。隣接native/ID集合継承、所有過去anchor照合、worker延長・元pair移動・管理器再起動・未確認停止の新3件＋関連5件PASS、全handle終了0。履歴/追跡CLI新2件＋旧互換1件もPASS、全handle終了0。次は曲線調整回復の所有操作受入とH13-d監査、続いてH13-e GUI。全goalは継続。
