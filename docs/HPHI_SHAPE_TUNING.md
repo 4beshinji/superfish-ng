@@ -3,7 +3,7 @@
 2026-09-21。Hφ調整要求版2に同軸寸法と明示頂点変位を追加する。
 既存[版1](HPHI_TUNING.md)の一様尺度、二分判断、二つの周波数ゲート、元native保存は維持する。
 場比較は[H09-b](HPHI_MAPPED_TRACKING.md)、幾何の全親被覆は[H09-a](HPHI_MAPPED_OVERLAP.md)。
-新写像での実worker中止/GUIクリック列の受入はH09-dで行う。
+新写像での実worker中止/GUIクリック列・再起動後復元は[H09-d](HPHI_SHAPE_TUNING_GUI.md)で受入済み。
 
 ## 要求版2
 

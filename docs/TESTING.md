@@ -1,3 +1,5 @@
+H09-d受入：両形状worker専用validator、再起動後Chrome各1、追加穴付き逆/同形状別分割1件（19.113秒）、実HTTP1件（0.616秒）がPASS。[分割証拠・失敗履歴・条件別監査](HPHI_SHAPE_TUNING_GUI.md)。src/FEM不変部分のH09-a/b/c成功証拠を再利用。全suite/seed未実施。
+
 H09-d進行中：`scripts/validate_hphi_shape_tuning_jobs.py`と`scripts/verify_gui_hphi_shape_tuning.mjs`で要求版2のworker/GUIを検査する。[現在の証拠と未完了](HPHI_SHAPE_TUNING_GUI.md)。同軸の分割証拠を両形状の全受入とは扱わない。
 
 H09-cの要求版2は`test_hphi_shape_tuning test_hphi_shape_tuning_saved`。同軸3寸法の実二分、strict頂点変位・軸座標・境界折曲げ、実CLI保存再開を検査する。専用`scripts/validate_hphi_shape_tuning.py --out out/<new-name>`は穴付き非一様変形の独立TEM場/周波数と所有保存を検査する。利用先は`test_hphi_tuning test_hphi_tuning_saved test_hphi_tuning_jobs test_gui_hphi_tuning`。

@@ -1,3 +1,5 @@
+H09-a〜dと親H09を完了。[受入監査](HPHI_SHAPE_TUNING_GUI.md)。次のbounded issueはH10：過去の個別場anchorと継承ID集合による専用履歴回復。未確認部分空間の迂回は認めない。
+
 H09-d着手：要求版2のworker/GUI実操作を検証中。画面説明の範囲・単位を修正。[途中証拠](HPHI_SHAPE_TUNING_GUI.md)。親H09はIN_PROGRESSを維持。
 
 2026-09-21 JST：H09-cの[要求版2・非一様直線Hφ調整](HPHI_SHAPE_TUNING.md)を接続。同軸3寸法/明示頂点変位、実二分、所有保存・CLI再開を確認。新7件の分割証拠と旧版18件（551.668秒）、穴付き変形の専用4実FEM validatorがPASS。元出力移動後の再生・全native/RF保持・改変拒否を確認し全プロセス終了0。次はH09-dの新写像worker/GUI操作受入。

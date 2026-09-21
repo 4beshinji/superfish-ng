@@ -11,11 +11,11 @@ H05	D02 O02	H04	実装	DONE	02-hphi.md#h05	Hφ調整の所有保存とCLI再開�
 H06	D02 O02	H05	実装	DONE	02-hphi.md#h06	Hφ調整workerの中止と再起動を接続する
 H07	D02 O02	H06	実装	DONE	02-hphi.md#h07	Hφ調整GUIを接続する
 H08	P03 D02	H07	実装	DONE	02-hphi.md#h08	同軸寸法と直線一般形状の写像契約を追加する
-H09	P03 D02	H08 H09-d	実装	IN_PROGRESS	02-hphi.md#h09	直線一般写像を追跡と調整へ接続する
+H09	P03 D02	H08 H09-d	実装	DONE	02-hphi.md#h09	直線一般写像を追跡と調整へ接続する
 H09-a	P03 D02	H08	実装	DONE	02-hphi.md#h09-a	明示写像と独立FEM分割を厳密に交差させる
 H09-b	P03 D02	H09-a	実装	DONE	02-hphi.md#h09-b	非一様写像の場移送と質量射影を追跡へ接続する
 H09-c	P03 D02	H09-b	実装	DONE	02-hphi.md#h09-c	非一様形状調整と所有保存・CLIを接続する
-H09-d	P03 D02	H09-c	実装	IN_PROGRESS	02-hphi.md#h09-d	非一様形状調整worker・GUIとH09統合監査
+H09-d	P03 D02	H09-c	実装	DONE	02-hphi.md#h09-d	非一様形状調整worker・GUIとH09統合監査
 H10	P03 P04 D02	H09	実装	PLANNED	02-hphi.md#h10	Hφの個別ID回復を専用履歴へ追加する
 H11	P03	H08	実装	PLANNED	02-hphi.md#h11	曲線Hφの比較領域を構成する
 H12	P03	H11	実装	PLANNED	02-hphi.md#h12	曲線Hφの場比較と細分診断を実装する
