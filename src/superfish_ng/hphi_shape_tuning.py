@@ -13,7 +13,7 @@ DIMENSIONS = ('inner_radius_m', 'outer_radius_m', 'length_m')
 
 
 def tune_scope(request):
-    return 'vacuum_uniform_scale' if request['schema_version'] == 1 else request['mapping']['kind']
+    return 'vacuum_uniform_scale' if request['mapping']['kind'] == 'uniform_scale' else request['mapping']['kind']
 
 
 def tune_parameter_unit(request):

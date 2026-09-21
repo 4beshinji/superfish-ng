@@ -1,3 +1,7 @@
+H10-cと親H10を完了（2026-09-21）。[調整回復・条件別監査](HPHI_TUNING_IDENTITY_RECOVERY.md)。検索/最終細分の比較親と過去anchorを分離し、成功個別IDだけを評価へ使用。新7unit＋既存25unitとChrome4項目PASS、全350実装/24所有ファイル不変、全handle/サーバー終了0。次はH11の曲線Hφ比較領域。全goalは継続。
+
+H10-c進行中（2026-09-21）：[調整回復版3](HPHI_TUNING_IDENTITY_RECOVERY.md)を追加。独立物理と停止条件の新6件は3+2+1分割で終了0。所有CLI/worker検査と既存回帰は実行中（out/h10-tune-recovery-20260921）。src固定を維持し、終了後に実ブラウザー受入・親H10監査を行う。H10-c/親H10/全goalは未完了。
+
 H10-b完了（2026-09-21）：[所有回復履歴](HPHI_RECOVERED_HISTORY.md)を受入。写像pair要求版2、履歴版2の過去owned anchor/ID順検証、成功回復だけの後続継承、CLI/worker所有再生・延長を接続。新6unit＋既存25unitの分割証拠、Chrome4項目PASS、全handle/サーバー終端。数値後の差はGUI3pathだけで、349実装と48所有ファイルを最終照合。次はH10-c（検索試行/最終細分の調整回復）。親H10/全goalは未完了。
 
 H10-b進行中（2026-09-21）：[所有回復履歴](HPHI_RECOVERED_HISTORY.md)を実装。写像pair要求版2の新2件と調整利用先2件はPASS。新履歴3件・専用回帰は実行中（out/h10-history-20260921）。実行中はsrcを変更しない。GUI履歴フォームが回復eventを落とすredを再現済みで、数値handle終了後に修正・操作検証が必要。H10-b/親H10は未完了、作業差分はまだ未コミット。

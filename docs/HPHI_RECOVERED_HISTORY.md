@@ -1,6 +1,6 @@
 # 所有Hφ履歴の個別ID回復（H10-b、受入済み）
 
-[回復核](HPHI_IDENTITY_RECOVERY.md)のanchorを、専用履歴に所有された過去のnative snapshotへ結び付ける。原場・元Project・全対応requestを所有し、回復後だけ個別IDを後続へ継承する。親H10の調整接続（H10-c）は未実装。
+[回復核](HPHI_IDENTITY_RECOVERY.md)のanchorを、専用履歴に所有された過去のnative snapshotへ結び付ける。原場・元Project・全対応requestを所有し、回復後だけ個別IDを後続へ継承する。[調整接続（H10-c）と親H10監査](HPHI_TUNING_IDENTITY_RECOVERY.md)も受入済み。
 
 ## 写像を持つ保存pair
 
@@ -50,4 +50,4 @@
 
 `out/h10-history-browser-20260921/acceptance.json`は最終PASS。所有48ファイルが不変で、数値検証後の変更がGUIの3ファイルだけであること、ブラウザー開始時の全349実装hashが現行と一致することを確認した。全検証handleとGUIサーバーは終了済み。新6unit（写像保存2・所有履歴3・フォーム1）と既存25unit（専用回帰23・調整利用先2）の分割証拠であり、全suite/seed/Hosted CIの証拠にはしない。
 
-H10-bの保存・CLI/worker・GUI要求保持は受入済み。H10-cの検索試行/最終細分への調整回復接続は未完了で、親H10を完了扱いしない。
+H10-bの保存・CLI/worker・GUI要求保持は受入済み。H10-cの検索試行/最終細分への調整回復接続も、その専用文書の証拠で受入済み。

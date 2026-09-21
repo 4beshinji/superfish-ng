@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Strict vacuum Hphi uniform-scale tuning requests and independent trials."""
+"""Strict vacuum Hphi tuning, independent trials and explicit ID recovery."""
 from copy import deepcopy
 from dataclasses import dataclass, replace
 import math
@@ -76,7 +76,7 @@ def _refine_mesh(mesh):
 
 
 def _trial(project, value, phase, levels, request=None):
-    project = (shape_project(project, request, value) if request is not None and request['schema_version'] == 2
+    project = (shape_project(project, request, value) if request is not None and request['mapping']['kind'] != 'uniform_scale'
                else HphiStudy(project, 'uniform_scale', [value, value]).projects()[0])
     case = project.case
     for _ in range(levels if phase == 'refinement' else 0):
@@ -92,9 +92,21 @@ def validate_hphi_tune(request):
              'target_hz', 'frequency_tolerance_hz', 'parameter_tolerance', 'max_trials',
              'initial_ids', 'mode_id', 'controls', 'refinement_levels', 'max_triangles',
              'max_dofs', 'mesh_frequency_tolerance_hz')
+    if isinstance(request,dict) and request.get('schema_version')==3:
+        names+=('identity_recovery',)
     keys(request, names, names, 'Hphi tune')
-    if request['format'] != 'superfish_ng_hphi_tune' or type(request['schema_version']) is not int or request['schema_version'] not in (1, 2):
-        raise ValueError('expected superfish_ng_hphi_tune schema_version 1 or 2')
+    if request['format'] != 'superfish_ng_hphi_tune' or type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3):
+        raise ValueError('expected superfish_ng_hphi_tune schema_version 1, 2 or 3')
+    if request['schema_version']==3:
+        from .hphi_tuning_identity_recovery import validate_recovery_policy
+        base=dict(request);base.pop('identity_recovery')
+        base['schema_version']=(1 if isinstance(base['mapping'],dict) and base['mapping'].get('kind')=='uniform_scale' else 2)
+        project=validate_hphi_tune(base)
+        controls=validate_recovery_policy(request)
+        if project.case.modes>controls.max_gram_modes:
+            raise ValueError('Hphi recovery spectrum exceeds max_gram_modes')
+        _budget(dict(base,controls=controls.to_dict()),project.case)
+        return project
     project = HphiProject.from_dict(request['project'])
     if type(project.case) not in (CoaxialCase, HphiMeshCase, AxisHphiCase):
         raise ValueError('Hphi tune v1 requires straight vacuum coaxial, positive-radius or regular-axis physics')
@@ -189,13 +201,14 @@ def _assess_trial(request, trials, solutions, solution):
     parent = trial['parent_index']
     previous = solution if index == 0 else solutions[parent]
     ids = request['initial_ids'] if index == 0 else trials[parent]['current_mode_ids']
-    scale = 1. if index == 0 or request['schema_version'] == 2 else trial['value']/trials[parent]['value']
+    scale = 1. if index == 0 or request['mapping']['kind'] != 'uniform_scale' else trial['value']/trials[parent]['value']
     controls = HphiTrackingControls.from_dict(request['controls'])
+    recovery=None
     try:
         comparison = HphiTrackingRequest(_refine_mesh(_declared_mesh(previous)),
             _refine_mesh(_declared_mesh(solution)), previous_mode_count=len(ids),
             current_mode_count=len(ids), previous_mode_ids=ids, controls=controls)
-        if request['schema_version'] == 1:
+        if request['mapping']['kind'] == 'uniform_scale':
             tracking = _track_hphi_modes(previous, solution, comparison, previous_scale=scale)
         else:
             old_value = trial['value'] if index == 0 else trials[parent]['value']
@@ -203,9 +216,18 @@ def _assess_trial(request, trials, solutions, solution):
                 trial_hphi_project(request, old_value, 'search'),
                 trial_hphi_project(request, trial['value'], 'search'))
             tracking = _track_hphi_modes(previous, solution, comparison, geometry_mapping=mapping)
-        passed = tracking['status'] == 'PASS' and tracking['individual_ids_complete']
+        evaluation=tracking
+        effective_ids=tracking['current_mode_ids']
+        if (request['schema_version']==3 and tracking['status']=='PASS'
+                and not tracking['individual_ids_complete']):
+            from .hphi_tuning_identity_recovery import recover_tune_trial
+            recovery=recover_tune_trial(request,trials,solutions,solution,trial,tracking)
+            if recovery['status']=='PASS':
+                evaluation=recovery['comparison']
+                effective_ids=recovery['assessment']['current_mode_ids']
+        passed = evaluation['status'] == 'PASS' and evaluation['individual_ids_complete']
         status = ('INITIAL' if index == 0 else 'PASS') if passed else 'UNVERIFIED'
-        frequency = tracked_frequency_hz(tracking, request['mode_id']) if passed else None
+        frequency = tracked_frequency_hz(evaluation, request['mode_id']) if passed else None
     except ValueError as exc:
         # Comparison refusal is evidence of no identity, never a frequency match.
         reason = str(exc)
@@ -218,11 +240,14 @@ def _assess_trial(request, trials, solutions, solution):
         frequency = None
         tracking = dict(status=status, individual_ids_complete=False,
             current_mode_ids=[None]*len(ids), verification_reasons=[reason],
-            mapping=(dict(kind='uniform_scale', previous_scale=scale) if request['schema_version'] == 1
+            mapping=(dict(kind='uniform_scale', previous_scale=scale) if request['mapping']['kind'] == 'uniform_scale'
                      else dict(kind=request['mapping']['kind'])))
-    return dict(index=index, **trial, status=status, current_mode_ids=tracking['current_mode_ids'],
+        effective_ids=tracking['current_mode_ids']
+    result=dict(index=index, **trial, status=status, current_mode_ids=effective_ids,
         frequency_hz=frequency, target_error_hz=None if frequency is None else frequency-request['target_hz'],
-        tracking=tracking), expected
+        tracking=tracking)
+    if request['schema_version']==3:result['identity_recovery']=recovery
+    return result, expected
 
 
 def _run_result(request, trials, projects, solutions):

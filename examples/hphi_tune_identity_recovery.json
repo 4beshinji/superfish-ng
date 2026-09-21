@@ -1,0 +1,89 @@
+{
+  "format": "superfish_ng_hphi_tune",
+  "schema_version": 3,
+  "project": {
+    "format": "superfish_ng_hphi_project",
+    "project_version": 1,
+    "case": {
+      "format": "superfish_ng_coaxial_case",
+      "schema_version": 1,
+      "name": "closed vacuum coaxial resonator",
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "axisymmetric",
+        "azimuthal_index": 0,
+        "field_family": "Hphi",
+        "material": "vacuum",
+        "boundary": "closed_pec"
+      },
+      "geometry": {
+        "type": "coaxial_cylinder",
+        "inner_radius_m": 0.0625,
+        "outer_radius_m": 0.125,
+        "length_m": 0.06287146874446618
+      },
+      "mesh": {
+        "nr": 8,
+        "nz": 8,
+        "element_order": 2,
+        "quadrature_order": 12
+      },
+      "modes": 3,
+      "rf": {
+        "stored_energy_j": 1.0,
+        "conductivity_s_per_m": 58000000.0
+      }
+    },
+    "display_length_unit": "mm"
+  },
+  "parameter": "length_m",
+  "mapping": {
+    "kind": "coaxial_dimensions"
+  },
+  "bounds": [
+    0.05029717499557295,
+    0.07418833311847009
+  ],
+  "target_hz": 2408251872.3814473,
+  "frequency_tolerance_hz": 1000000.0,
+  "parameter_tolerance": 1e-06,
+  "max_trials": 20,
+  "initial_ids": [
+    "radial",
+    "TEM"
+  ],
+  "mode_id": "TEM",
+  "controls": {
+    "minimum_overlap": 0.9,
+    "minimum_assignment_margin": 0.1,
+    "relative_cluster_gap": 0.04,
+    "minimum_relative_singular_value": 1e-08,
+    "minimum_cluster_link": 0.7,
+    "maximum_relative_projection_error": 0.01,
+    "quadrature_order": 12,
+    "max_candidate_tests": 2000000,
+    "max_overlay_triangles": 250000,
+    "max_dofs": 250000,
+    "max_gram_modes": 256
+  },
+  "refinement_levels": 1,
+  "max_triangles": 10000,
+  "max_dofs": 10000,
+  "mesh_frequency_tolerance_hz": 1000000.0,
+  "identity_recovery": {
+    "anchor_selection": "latest_resolved_trial",
+    "controls": {
+      "minimum_overlap": 0.9,
+      "minimum_assignment_margin": 0.1,
+      "relative_cluster_gap": 0.001,
+      "minimum_relative_singular_value": 1e-08,
+      "minimum_cluster_link": 0.7,
+      "maximum_relative_projection_error": 0.01,
+      "quadrature_order": 12,
+      "max_candidate_tests": 2000000,
+      "max_overlay_triangles": 250000,
+      "max_dofs": 250000,
+      "max_gram_modes": 256
+    }
+  }
+}

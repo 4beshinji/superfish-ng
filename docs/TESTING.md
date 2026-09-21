@@ -1,3 +1,7 @@
+H10-cと親H10を完了（2026-09-21）。[調整回復・条件別監査](HPHI_TUNING_IDENTITY_RECOVERY.md)。検索/最終細分の比較親と過去anchorを分離し、成功個別IDだけを評価へ使用。新7unit＋既存25unitとChrome4項目PASS、全350実装/24所有ファイル不変、全handle/サーバー終了0。次はH11の曲線Hφ比較領域。全goalは継続。
+
+H10-cの検索/最終細分回復は`test_hphi_tuning_identity_recovery`、所有CLI/worker再生は`test_hphi_tuning_identity_recovery_saved`。直接利用先は`test_hphi_tuning test_hphi_shape_tuning test_hphi_tuning_saved test_hphi_shape_tuning_saved test_hphi_tuning_jobs test_gui_hphi_tuning`。実ブラウザーは`scripts/verify_gui_hphi_tune_recovery.mjs`。[独立対照・実行記録](HPHI_TUNING_IDENTITY_RECOVERY.md)。
+
 H10-bは`test_hphi_mapped_tracking_saved`2件、`test_hphi_recovered_history`3件、`test_gui_hphi_history_request`1件と、既存の専用回帰23＋調整利用先2件がPASS。実Chrome4項目もPASS。[検証範囲・時間・失敗履歴](HPHI_RECOVERED_HISTORY.md)。GUI要求保持変更後はフォームと実ブラウザーを検査し、数値実装hashの不変部分の成功証拠を再利用した。
 
 H10-aは`test_hphi_identity_recovery`の新8件（4+3+1の分割実行）と既存`test_hphi_tracking_history.HphiTrackingHistoryTests.test_native_spectrum_and_identity_continuity`1件がPASS。[検証記録](HPHI_IDENTITY_RECOVERY.md)。独立解析f/q/縮退部分空間、正しい順位交換と停止対照を分離。H10-b/cの保存・操作受入は含まない。

@@ -1,3 +1,7 @@
+H10-cと親H10を完了（2026-09-21）。[調整回復・条件別監査](HPHI_TUNING_IDENTITY_RECOVERY.md)。検索/最終細分の比較親と過去anchorを分離し、成功個別IDだけを評価へ使用。新7unit＋既存25unitとChrome4項目PASS、全350実装/24所有ファイル不変、全handle/サーバー終了0。次はH11の曲線Hφ比較領域。全goalは継続。
+
+H10-c進行中。検索試行/最終細分の比較親とanchorを分離する明示要求版3を追加。受入条件は独立TEM場/周波数、真の縮退・guard・集合外停止、所有保存/操作と元RF保持。[仕様と途中証拠](HPHI_TUNING_IDENTITY_RECOVERY.md)。
+
 H10-b完了。[所有履歴の明示回復・保存と操作受入](HPHI_RECOVERED_HISTORY.md)。次はH10-c：検索/最終細分とanchorを分離し、成功した個別IDのみ調整評価へ接続する。
 
 H10-aの回復核を受入。[仕様と証拠](HPHI_IDENTITY_RECOVERY.md)。H10はa数値核/b所有履歴/c検索・最終細分調整に分割し、元の受入条件を維持。次はH10-b。
