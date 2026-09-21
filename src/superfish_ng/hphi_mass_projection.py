@@ -8,6 +8,8 @@ from .axis_connected_mesh import AxisConnectedMesh
 from .axis_connected_fem import axis_connected_matrices
 from .meridional_mesh import MeridionalMesh
 from .meridional_overlap import meridional_overlay
+from .hphi_mapped_overlap import mapped_hphi_overlay, HphiMappedOverlay
+from .hphi_field_transport import mapped_transport_factors
 from .hphi_mesh import HphiMeshCase, hphi_mesh_matrices
 from .config import integer
 from .fem import triangle_quadrature
@@ -51,6 +53,8 @@ def _integrate(spaces, overlay, orders, integration_order, regular):
     for bary, weight in triangle_quadrature(integration_order):
         values = [_basis(np.einsum('i,tij->tj', bary, vertices), order) for vertices, order in zip(
             (overlay.previous_vertex_barycentric, overlay.current_vertex_barycentric), orders)]
+        if isinstance(overlay, HphiMappedOverlay):
+            values[0] = values[0]*mapped_transport_factors(overlay, bary, regular=regular)[1][:, None]
         r = np.einsum('i,ti->t', bary, overlay.vertices_rz_m[:, :, 0])
         measure = overlay.determinants*weight*(r**3 if regular else 1/r)
         for block, (i, j) in zip(blocks, pairs):
@@ -73,7 +77,7 @@ def _difference(a, b, left, right):
 
 
 def _coupling(previous, current, previous_order, current_order, quadrature_order,
-              max_candidate_tests, max_overlay_triangles, max_dofs):
+              max_candidate_tests, max_overlay_triangles, max_dofs, geometry_mapping=None):
     for name, value in (('previous_order', previous_order), ('current_order', current_order),
             ('quadrature_order', quadrature_order), ('max_candidate_tests', max_candidate_tests),
             ('max_overlay_triangles', max_overlay_triangles), ('max_dofs', max_dofs)):
@@ -90,14 +94,15 @@ def _coupling(previous, current, previous_order, current_order, quadrature_order
             count += len(np.unique(np.sort(mesh.triangles[:, [[0, 1], [1, 2], [2, 0]]].reshape(-1, 2), axis=1), axis=0))
         if count > max_dofs:
             raise ValueError('Hphi mass coupling exceeds max_dofs')
-    overlay = meridional_overlay(previous, current, max_candidate_tests=max_candidate_tests,
-        max_overlay_triangles=max_overlay_triangles)
+    options = dict(max_candidate_tests=max_candidate_tests, max_overlay_triangles=max_overlay_triangles)
+    overlay = (meridional_overlay(previous, current, **options) if geometry_mapping is None
+               else mapped_hphi_overlay(previous, current, geometry_mapping, **options))
     regular = type(previous) is AxisConnectedMesh
     spaces, masses = zip(*(_space(mesh, order, quadrature_order) for mesh, order in zip((previous, current), orders)))
     norms = [np.sqrt(mass.diagonal()) for mass in masses]
     if any(not np.isfinite(n).all() or np.any(n <= 0) for n in norms):
         raise ValueError('Hphi scalar mass norms must be finite positive')
-    integration_orders = [5, 7] if regular else [quadrature_order+4, quadrature_order+8]
+    integration_orders = [5, 7] if regular and geometry_mapping is None else [quadrature_order+4, quadrature_order+8]
     low, high = [_integrate(spaces, overlay, orders, n, regular) for n in integration_orders]
     differences = [_difference(a, b, norms[i], norms[j]) for a, b, (i, j) in zip(low, high, ((0, 0), (0, 1), (1, 1)))]
     reproduction = [_difference(a, b, n, n) for a, b, n in zip((high[0], high[2]), masses, norms)]
@@ -114,19 +119,24 @@ def _coupling(previous, current, previous_order, current_order, quadrature_order
         normalized_source_mass_differences=reproduction, source_mass_tolerance=1e-8,
         overlay_triangles=len(overlay.determinants), previous_dofs=len(norms[0]), current_dofs=len(norms[1]),
         scope='original scalar-space inner products only; no eigenmode, frequency or mode identity')
+    if geometry_mapping is not None:
+        diagnostic.update(mapping='explicit_piecewise_affine',
+            transport='unitary cylindrical-component L2 transport; scalar factor derived from H=r*u or H=q/r')
     return HphiMassCoupling(*spaces, masses[0], high[1], masses[1], diagnostic), overlay
 
 
 def hphi_mass_coupling(previous, current, *, previous_order=2, current_order=2, quadrature_order=12,
-                       max_candidate_tests=2000000, max_overlay_triangles=250000, max_dofs=250000):
+                       max_candidate_tests=2000000, max_overlay_triangles=250000, max_dofs=250000, geometry_mapping=None):
     """Assemble C[i,j]=<previous basis i,current basis j> on exact common vacuum.
 
     The scalar unknown is u on an axis-connected mesh, q on a positive-radius
     mesh. Axis DOFs and the q constant field remain in their complete spaces.
-    The two P1/P2 meshes need not be nested. No physical boundary is moved.
+    The two P1/P2 meshes need not be nested. Optional geometry_mapping uses
+    density-normalized Hphi transport between declared physical domains;
+    otherwise no physical boundary is moved.
     """
     return _coupling(previous, current, previous_order, current_order, quadrature_order,
-        max_candidate_tests, max_overlay_triangles, max_dofs)[0]
+        max_candidate_tests, max_overlay_triangles, max_dofs, geometry_mapping)[0]
 
 
 def _direct_errors(coupling, overlay, coefficients, projected, orders, integration_order, regular):
@@ -140,12 +150,14 @@ def _direct_errors(coupling, overlay, coefficients, projected, orders, integrati
             fields.append(np.einsum('ti,tim->tm', basis, values[space.cell_dofs[cells]]))
         r = np.einsum('i,ti->t', bary, overlay.vertices_rz_m[:, :, 0])
         measure = overlay.determinants*weight*(r**3 if regular else 1/r)
+        if isinstance(overlay, HphiMappedOverlay):
+            fields[0] = fields[0]*mapped_transport_factors(overlay, bary, regular=regular)[1][:, None]
         error += np.sum(measure[:, None]*(fields[0]-fields[1])**2, axis=0)
     return error
 
 
 def project_hphi_coefficients(previous, current, coefficients, *, previous_order=2, current_order=2,
-        quadrature_order=12, max_candidate_tests=2000000, max_overlay_triangles=250000, max_dofs=250000):
+        quadrature_order=12, max_candidate_tests=2000000, max_overlay_triangles=250000, max_dofs=250000, geometry_mapping=None):
     """Return the scalar L2 projection and directly integrated loss for each column.
 
     This operation fully rebuilds its declared spaces and coupling. Projected
@@ -156,7 +168,7 @@ def project_hphi_coefficients(previous, current, coefficients, *, previous_order
         raise ValueError('Hphi projection coefficients require a finite real matrix with nonempty columns')
     coefficients = np.array(raw, dtype=float, copy=True)
     coupling, overlay = _coupling(previous, current, previous_order, current_order, quadrature_order,
-        max_candidate_tests, max_overlay_triangles, max_dofs)
+        max_candidate_tests, max_overlay_triangles, max_dofs, geometry_mapping)
     if coefficients.shape[0] != coupling.previous_mass.shape[0]:
         raise ValueError('Hphi projection coefficient rows differ from the declared original scalar space')
     mass = coupling.current_mass

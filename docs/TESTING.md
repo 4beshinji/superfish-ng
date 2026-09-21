@@ -1,3 +1,5 @@
+H09-bの非一様Hφ比較は`test_hphi_mapped_fields test_hphi_mapped_tracking`。独立TEM/Bessel縮退、E/H別Gram、q/u射影、正逆比較、H02一致、guard/ID集合を検査する。利用先回帰は`test_hphi_field_overlap test_hphi_mass_projection test_hphi_spectral_resolution test_hphi_tracking test_hphi_tracking_history test_hphi_tuning test_gui_hphi_tracking`、直接利用先の`test_hphi_convergence`。新写像の所有保存/CLI/GUIはH09-c/dの別受入。
+
 H09-aの非一様直線Hφ交差分割は`test_hphi_mapped_overlap`で全親被覆・独立矩形モーメント・正逆写像・番号置換・予算拒否を検査する。幾何依存は`test_hphi_geometry_mapping test_meridional_overlap`。場/追跡接続はH09-bの別証拠。
 
 H08の直線Hφ幾何対応は`test_hphi_geometry_mapping`で独立面積/体積・逆対応・境界/軸/穴の拒否を検査する。基盤変更時は`test_axis_connected_mesh test_hphi_mesh test_axis_hphi test_hphi_study`を追加する。場/追跡の対応はH09の別検証。

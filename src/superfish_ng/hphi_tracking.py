@@ -10,6 +10,7 @@ from .axis_connected_mesh import AxisConnectedMesh
 from .meridional_mesh import MeridionalMesh
 from .hphi_field_overlap import _verified_solution,hphi_field_grams
 from .hphi_spectral_resolution import hphi_spectral_resolution
+from .hphi_geometry_mapping import HphiGeometryMapping
 from .mode_tracking import _control,_identity_groups,track_sampled_mode_subspaces
 from .planar_tracking_fields import electric_gram_features
 
@@ -136,13 +137,32 @@ def track_hphi_modes(previous,current,request):
     return _track_hphi_modes(previous,current,request)
 
 
-def _track_hphi_modes(previous,current,request,*,previous_scale=None):
+def track_mapped_hphi_modes(previous,current,request,mapping):
+    """Track with explicit unitary component comparison under a geometry map.
+
+    The finite spectral diagnostics stay in each original physical domain.
+    No nonuniform frequency scaling is inferred. The version-1 same-vacuum
+    request supplies bands, IDs, controls and each original comparison mesh;
+    the returned declaration replaces its mapping with the complete geometry.
+    """
+    if type(mapping) is not HphiGeometryMapping:
+        raise ValueError('expected HphiGeometryMapping')
+    return _track_hphi_modes(previous,current,request,geometry_mapping=mapping)
+
+
+def _track_hphi_modes(previous,current,request,*,previous_scale=None,geometry_mapping=None):
     """Shared Hphi assessment; the tune caller explicitly supplies its scale.
 
     Spectral resolution is computed in each original SI domain. Only the
     previous frequencies passed to correspondence use the current length scale.
     The public version-1 reader and same-vacuum entry point remain unchanged.
     """
+    if geometry_mapping is not None:
+        if previous_scale is not None:
+            raise ValueError('supply geometry_mapping or previous_scale, never both')
+        if type(geometry_mapping) is not HphiGeometryMapping:
+            raise ValueError('expected HphiGeometryMapping')
+        geometry_mapping=HphiGeometryMapping.from_dict(geometry_mapping.to_dict())
     scaled = previous_scale is not None
     scale = positive(previous_scale, 'previous_scale') if scaled else 1.
     if not isinstance(request,HphiTrackingRequest):raise ValueError('expected HphiTrackingRequest')
@@ -154,7 +174,7 @@ def _track_hphi_modes(previous,current,request,*,previous_scale=None):
     if any(count>=solution.case.modes for count,solution in zip(counts,solutions)):
         raise ValueError('each tracked positive prefix requires at least one computed upper guard mode')
     grams=hphi_field_grams(previous,current,max_candidate_tests=controls.max_candidate_tests,
-        max_overlay_triangles=controls.max_overlay_triangles,max_gram_modes=controls.max_gram_modes,previous_scale=scale)
+        max_overlay_triangles=controls.max_overlay_triangles,max_gram_modes=controls.max_gram_modes,previous_scale=scale,geometry_mapping=geometry_mapping)
     resolutions=[hphi_spectral_resolution(solution,mesh,comparison_order=order,quadrature_order=controls.quadrature_order,
         maximum_relative_projection_error=controls.maximum_relative_projection_error,max_candidate_tests=controls.max_candidate_tests,
         max_overlay_triangles=controls.max_overlay_triangles,max_dofs=controls.max_dofs)
@@ -166,7 +186,8 @@ def _track_hphi_modes(previous,current,request,*,previous_scale=None):
     for name,family in (('electric',grams.electric),('magnetic',grams.magnetic)):
         features=electric_gram_features(family[0][:na,:na],family[1][:na,:nb],family[2][:nb,:nb])
         reports.append(track_sampled_mode_subspaces(*features,np.ones(len(features[0])),previous.frequencies_hz[:na]/scale,current.frequencies_hz[:nb],None,
-            comparison_description=(f'all original peak {name} components with declared uniform-scale pull-forward; current 2*pi*r dr dz' if scaled
+            comparison_description=(f'original peak {name} in fixed cylindrical components with unitary L2 transport; current 2*pi*r dr dz' if geometry_mapping is not None
+                                    else f'all original peak {name} components with declared uniform-scale pull-forward; current 2*pi*r dr dz' if scaled
                                     else f'all original peak {name} components on exactly the same vacuum; 2*pi*r dr dz'),
             minimum_overlap=controls.minimum_overlap,minimum_assignment_margin=max(controls.minimum_assignment_margin,numerical_margin),
             relative_cluster_gap=controls.relative_cluster_gap,minimum_relative_singular_value=controls.minimum_relative_singular_value,
@@ -209,4 +230,13 @@ def _track_hphi_modes(previous,current,request,*,previous_scale=None):
         electric['physical_mapping']['name']='uniform_scale'
         electric['physical_mapping']['previous_frequency_scale']=1/scale
         electric['physical_mapping']['previous_original_frequencies_hz']=previous.frequencies_hz.tolist()
+    if geometry_mapping is not None:
+        declaration=request.to_dict()
+        declaration.pop('tracking_version')
+        declaration.update(format='superfish_ng_hphi_mapped_comparison',comparison_version=1,
+            mapping=geometry_mapping.to_dict(),transport='unitary_fixed_cylindrical_components')
+        electric.update(format='superfish_ng_hphi_mapped_tracking_result',request=declaration,
+            scope='explicit nonuniform geometry comparison of original E/H; unitary fixed components; original-domain finite spectral diagnostics; no continuous-path identity or continuum error bound')
+        electric['physical_mapping'].update(name='piecewise_affine',previous_frequency_scale=1.,
+            previous_original_frequencies_hz=previous.frequencies_hz.tolist())
     return electric

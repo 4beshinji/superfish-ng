@@ -15,6 +15,8 @@ from .constants import EPS0,TAU
 from .fem import triangle_quadrature
 from .meridional_mesh import MeridionalMesh
 from .meridional_overlap import meridional_overlay
+from .hphi_mapped_overlap import mapped_hphi_overlay, HphiMappedOverlay
+from .hphi_field_transport import mapped_transport_factors
 
 
 @dataclass(frozen=True)
@@ -81,8 +83,10 @@ def _field_grams(previous,current,overlay,order,previous_field_scale=1.0):
     # Every omitted cylindrical component vanishes in the verified m=0 Hphi family.
     for bary,weight in triangle_quadrature(order):
         samples=[]
+        factor = (mapped_transport_factors(overlay, bary)[0][:, None]
+                  if isinstance(overlay, HphiMappedOverlay) else previous_field_scale)
         for solution,cells,vertices,factor in (
-                (previous,overlay.previous_cells,overlay.previous_vertex_barycentric,previous_field_scale),
+                (previous,overlay.previous_cells,overlay.previous_vertex_barycentric,factor),
                 (current,overlay.current_cells,overlay.current_vertex_barycentric,1.0)):
             parent_bary=np.einsum('i,tij->tj',bary,vertices)
             fields=[solution.fields_in_cells(cells,parent_bary,mode) for mode in range(solution.case.modes)]
@@ -111,7 +115,7 @@ def _source_grams(solution):
 
 
 def hphi_field_grams(previous,current,*,previous_scale=1.0,max_candidate_tests=2000000,
-                     max_overlay_triangles=250000,max_gram_modes=256):
+                     max_overlay_triangles=250000,max_gram_modes=256,geometry_mapping=None):
     """Integrate original peak E and H separately with full 3D measure 2*pi*r dr dz.
 
     Both solutions are fully reconstructed and their lowest positive spectra
@@ -127,10 +131,16 @@ def hphi_field_grams(previous,current,*,previous_scale=1.0,max_candidate_tests=2
     scaling (f -> f/scale) is not applied here and is evaluated by the caller.
     Normalization, frequency and coefficient signs are retained; no rank
     correspondence, discretization estimate or mode ID is inferred.
+    Alternatively geometry_mapping declares a piecewise affine correspondence.
+    That path uses density-normalized fixed cylindrical components, preserving
+    each source Gram under the actual current volume measure. It does not rotate
+    or covariantly transform E, predict a Maxwell solution, or rescale frequency.
     Comparing acceleration paths or wall conductivities is outside this
     volume-field operation.
     """
     previous_scale=positive(previous_scale,'previous_scale')
+    if geometry_mapping is not None and previous_scale != 1.:
+        raise ValueError('supply geometry_mapping or previous_scale, never both')
     for name,value in (('max_candidate_tests',max_candidate_tests),
                        ('max_overlay_triangles',max_overlay_triangles),('max_gram_modes',max_gram_modes)):
         integer(value,name)
@@ -141,12 +151,16 @@ def hphi_field_grams(previous,current,*,previous_scale=1.0,max_candidate_tests=2
         if solution.case.modes>max_gram_modes:
             raise ValueError('Hphi field comparison exceeds max_gram_modes')
     previous,current=map(_verified_solution,(previous,current))
-    overlay=meridional_overlay(_declared_mesh(previous,previous_scale),_declared_mesh(current),
-        max_candidate_tests=max_candidate_tests,max_overlay_triangles=max_overlay_triangles)
+    options=dict(max_candidate_tests=max_candidate_tests,max_overlay_triangles=max_overlay_triangles)
+    overlay=(meridional_overlay(_declared_mesh(previous,previous_scale),_declared_mesh(current),**options)
+             if geometry_mapping is None else
+             mapped_hphi_overlay(_declared_mesh(previous),_declared_mesh(current),geometry_mapping,**options))
     previous_field_scale=previous_scale**-1.5
     regular=all(isinstance(s,AxisHphiSolution) for s in (previous,current))
     order=5 if regular else max(getattr(s.case,'quadrature_order',0) for s in (previous,current))+4
-    orders=[order,order+2 if regular else order+4]
+    if geometry_mapping is not None:
+        order=max(16,order)
+    orders=[order,order+2 if regular and geometry_mapping is None else order+4]
     low,high=(_field_grams(previous,current,overlay,n,previous_field_scale) for n in orders)
     differences=[_normalized_difference(a,b) for a,b in zip(low,high)]
     if max(differences)>1e-10:
@@ -173,4 +187,8 @@ def hphi_field_grams(previous,current,*,previous_scale=1.0,max_candidate_tests=2
         minimum_normalized_joint_gram_eigenvalues=minimum_eigenvalues,overlay_triangles=len(overlay.determinants),
         previous_scale=previous_scale,previous_field_scale=previous_field_scale,
         mode_tracking='not_performed',scope='original volume field inner products; no continuum error bound or mode identity')
+    if geometry_mapping is not None:
+        diagnostic.update(mapping='explicit_piecewise_affine',
+            transport='fixed cylindrical components times sqrt(r_previous/(r_current*det_J)); unitary L2 comparison, not a Maxwell transform',
+            previous_scale=None,previous_field_scale=None)
     return HphiFieldGrams(tuple(high[0]),tuple(high[1]),diagnostic)

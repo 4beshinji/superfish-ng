@@ -5,6 +5,7 @@ import numpy as np
 from .axis_connected_mesh import AxisConnectedMesh
 from .coaxial import CoaxialCase, _numeric_coordinates
 from .meridional_mesh import MeridionalMesh
+from .config import keys
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,27 @@ class HphiGeometryMapping:
             vertices = mesh.points_rz_m[mesh.triangles]
             edges.append(np.stack((vertices[:, 1]-vertices[:, 0], vertices[:, 2]-vertices[:, 0]), axis=-1))
         return np.linalg.solve(edges[0].transpose(0, 2, 1), edges[1].transpose(0, 2, 1)).transpose(0, 2, 1)
+
+    def to_dict(self):
+        return dict(format='superfish_ng_hphi_geometry_mapping', schema_version=1,
+                    kind='piecewise_affine', previous=self.previous.to_dict(), current=self.current.to_dict())
+
+    @classmethod
+    def from_dict(cls, data):
+        names = ['format', 'schema_version', 'kind', 'previous', 'current']
+        keys(data, names, names, 'Hphi geometry mapping')
+        if (data['format'] != 'superfish_ng_hphi_geometry_mapping'
+                or type(data['schema_version']) is not int or data['schema_version'] != 1
+                or data['kind'] != 'piecewise_affine'):
+            raise ValueError('expected Hphi geometry mapping schema 1 with explicit piecewise_affine correspondence')
+        meshes = []
+        for name in ('previous', 'current'):
+            raw = data[name]
+            if not isinstance(raw, dict):
+                raise ValueError('Hphi geometry mapping requires complete mesh objects')
+            mesh_type = AxisConnectedMesh if raw.get('format') == 'superfish_ng_axis_connected_mesh' else MeridionalMesh
+            meshes.append(mesh_type.from_dict(raw))
+        return cls(*meshes)
 
     def inverse(self):
         return HphiGeometryMapping(self.current, self.previous)
