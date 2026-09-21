@@ -2,7 +2,7 @@ task_id	parent_ids	depends_on	kind	status	document	title
 B01	C00		監査	DONE	01-baseline.md#b01	残要件と証拠を一行ずつ固定する
 B02	C00	B01	調査	DONE	01-baseline.md#b02	対象版の機能と入力資料を確認する
 B03	C00	B02	仕様	DONE	01-baseline.md#b03	必須範囲と不足仕様を確定する
-B04	C00	B01	文書	PLANNED	01-baseline.md#b04	全体状態の更新手順を短い入口へ集約する
+B04	C00	B01	文書	DONE	01-baseline.md#b04	全体状態の更新手順を短い入口へ集約する
 H01	D02 P03 P04	B01	仕様	DONE	02-hphi.md#h01	Hφ調整と比較写像の専用契約を決める
 H02	P03 D02	H01	実装	DONE	02-hphi.md#h02	真空Hφの一様尺度比較を追加する
 H03	D02	H02	実装	DONE	02-hphi.md#h03	Hφ調整のstrict要求と試行Project生成を実装する
