@@ -1,3 +1,5 @@
+H16-d調整GUIは`test_gui_material_hphi_tuning`、直接利用先は`test_gui_hphi_tuning`。実Chromeは`scripts/verify_gui_material_hphi_tuning.mjs`。[検査結果と範囲](MATERIAL_HPHI_GUI.md)。
+
 H16-c所有回復・最終細分は`test_material_hphi_tuning_recovery_saved`。実CLI検索からworker細分、元移動・管理器再起動、解析TEM/全native/回復改変拒否、真空軸両R/Q・材料/穴Project再importを確認。[操作検証](MATERIAL_HPHI_OWNED_RECOVERY.md)と[H16-c条件別監査](MATERIAL_HPHI_OPERATION_ACCEPTANCE.md)。
 
 H16-c材料調整操作は`test_material_hphi_tuning_cli test_material_hphi_tuning_jobs`。隣接CLIは`test_hphi_tuning_saved.HphiTuneSavedTests.test_cli_tune_resume_and_replay_names_and_exit_codes`。[尺度則・移動・実中止/再開・再起動・prefix検証](MATERIAL_HPHI_TUNING_OPERATIONS.md)。

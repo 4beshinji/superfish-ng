@@ -23,7 +23,7 @@
 <button id="study-start">掃引を開始</button><button id="study-save">Studyを保存</button><label class="file">Studyを開く<input id="study-open" type="file" accept=".json"></label>
 <div id="study-result" hidden><h3>選択した掃引</h3><p id="study-selection"></p><p>独立スペクトル：追跡未実施・精度未検証。各点の「結果を取り込む」で元メッシュと保存係数を持つ結果を開きます。</p><button id="study-result-save">掃引結果を保存</button><div id="study-points"></div></div>
 </section><section id="hphi-tuning"><h2>Hφ周波数調整</h2>
-<p>真空の一様尺度・同軸寸法・明示した頂点変位を変数にした専用調整です。曲線要求では全頂点と二次中点の形状則を保持します。保存座標は常にSIの(r,z) [m]です。対象IDを確認できない試行は周波数評価と調整に使いません。</p>
+<p>真空または固定した無損失材料の形状を調整します。材料要求は一様尺度と明示した直線写像に対応し、材料係数と領域の対応を保ちます。同軸寸法の調整は真空用です。曲線要求では全頂点と二次中点の形状則を保持します。保存座標は常にSIの(r,z) [m]です。対象IDを確認できない試行は周波数評価と調整に使いません。</p>
 <label class="file">調整要求を開く<input id="hphi-tune-open" type="file" accept=".json"></label><button id="hphi-tune-save-request">調整要求を保存</button>
 <details open><summary>調整要求JSONを編集</summary><textarea id="hphi-tune-document" rows="18" aria-label="Hφ調整要求JSON"></textarea><button id="hphi-tune-apply">JSONを適用</button><p id="hphi-tune-preview">専用調整要求を開いてください。</p></details>
 <label>今回の最大追加試行数（空欄=終端まで）<input id="hphi-tune-new-trials" type="number" min="1" step="1"></label>

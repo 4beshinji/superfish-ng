@@ -6,10 +6,11 @@ import re
 from pathlib import Path
 
 from .config import integer, keys
-from .hphi_tuning import validate_hphi_tune
-from .hphi_tuning_jobs import _owned_input
-from .hphi_tuning_saved import _snapshot_trial, read_hphi_tune, replay_hphi_tune
+from .material_hphi_tuning import validate_material_hphi_tune
+from .material_hphi_tuning_jobs import _owned_input,verify_material_hphi_tune_job,_load
+from .material_hphi_tuning_saved import _snapshot_trial, read_material_hphi_tune, replay_material_hphi_tune
 from .jobs import read_job
+from .hphi_project import HphiProject
 from .project import parse_json
 from .saved_mode_tracking import _canonical
 
@@ -18,7 +19,7 @@ def _checkpoint_directory(manager, identifier):
     """Return a stopped Hphi tune job and its owned execution directory."""
     directory = manager.directory(identifier)
     state = manager.status(identifier, verify=False)
-    if state.get("kind") != "hphi_tune" or state.get("status") not in (
+    if state.get("kind") != "material_hphi_tune" or state.get("status") not in (
         "complete",
         "cancelled",
         "interrupted",
@@ -32,7 +33,7 @@ def _checkpoint_directory(manager, identifier):
 
 
 def _submitted_data(directory):
-    request_path = directory / "hphi-tune-request.json"
+    request_path = directory / "material-hphi-tune-request.json"
     if request_path.is_symlink() or not request_path.is_file():
         raise ValueError("Hphi tune submitted request must be a regular file")
     submitted = request_path.read_bytes()
@@ -42,7 +43,7 @@ def _submitted_data(directory):
 
 def _saved_checkpoint(manager, identifier, index):
     """Replay one checkpoint and bind it to the selected worker job."""
-    integer(index, "checkpoint index")
+    integer(index, "checkpoint index", minimum=0)
     directory, execution = _checkpoint_directory(manager, identifier)
     path = execution / f"checkpoint-{index:03d}.json"
     if path.is_symlink() or not path.is_file():
@@ -52,7 +53,7 @@ def _saved_checkpoint(manager, identifier, index):
     state = manager.status(identifier, verify=False)
     submitted_hash = hashlib.sha256(submitted).hexdigest()
     if state.get("input_sha256") is not None and state["input_sha256"] != {
-        "hphi-tune-request.json": submitted_hash
+        "material-hphi-tune-request.json": submitted_hash
     }:
         raise ValueError("Hphi tune submitted input changed before checkpoint verification")
 
@@ -65,7 +66,7 @@ def _saved_checkpoint(manager, identifier, index):
             if isinstance(raw_run, str) and Path(raw_run).is_absolute():
                 if str(Path(raw_run).resolve()) != expected:
                     raise ValueError("checkpoint trial belongs to another Hphi tune job")
-    result = read_hphi_tune(path)
+    result = read_material_hphi_tune(path)
     if _canonical(data["request"]) != _canonical(result["request"]):
         raise ValueError("checkpoint request differs from selected Hphi tune job")
     previous = data["checkpoint"]
@@ -103,7 +104,7 @@ def _checkpoint_indices(manager, identifier):
     return sorted(set(indices))
 
 
-def hphi_tuning_response(manager, action, data):
+def material_hphi_tuning_response(manager, action, data):
     """Serve strict Hphi tuning actions used by the browser and API clients."""
     fields = {
         "hphi-normalize-tune": (("request",), ("request",)),
@@ -120,33 +121,15 @@ def hphi_tuning_response(manager, action, data):
     allowed, required = fields[action]
     keys(data, allowed, required, "GUI Hphi tuning")
 
-    declaration = data.get("request", data.get("document"))
-    if isinstance(declaration, str):
-        declaration = parse_json(declaration)
-    material = (isinstance(declaration, dict) and declaration.get("format") in (
-        "superfish_ng_material_hphi_tune", "superfish_ng_material_hphi_tune_checkpoint"))
-    if "id" in data:
-        material = manager.status(data["id"], verify=False).get("kind") == "material_hphi_tune"
-    if material:
-        from .gui_material_hphi_tuning import material_hphi_tuning_response
-        return material_hphi_tuning_response(manager, action, data)
-    curved = (isinstance(declaration, dict) and declaration.get("format") in (
-        "superfish_ng_curved_hphi_tune", "superfish_ng_curved_hphi_tune_checkpoint"))
-    if "id" in data:
-        curved = manager.status(data["id"], verify=False).get("kind") == "curved_hphi_tune"
-    if curved:
-        from .gui_curved_hphi_tuning import curved_hphi_tuning_response
-        return curved_hphi_tuning_response(manager, action, data)
-
     if action in ("hphi-normalize-tune", "hphi-start-tune"):
         request = data["request"]
         if isinstance(request, str):
             request = parse_json(request)
-        validate_hphi_tune(request)
+        validate_material_hphi_tune(request)
         if action == "hphi-normalize-tune":
             return parse_json(_canonical(request))
         return {
-            "id": manager.start_hphi_tune(
+            "id": manager.start_material_hphi_tune(
                 request, max_new_trials=data.get("max_new_trials")
             )
         }
@@ -158,20 +141,20 @@ def hphi_tuning_response(manager, action, data):
         result = _saved_checkpoint(manager, data["id"], data["index"])
     elif action == "hphi-tune-result":
         directory = manager.directory(data["id"])
-        state = read_job(directory)
-        if state.get("status") != "complete" or state.get("kind") != "hphi_tune":
+        state = read_job(directory,verify=False)
+        if state.get("status") != "complete" or state.get("kind") != "material_hphi_tune":
             raise ValueError(
                 "select a completed Hphi tune job; partial checkpoints can be opened separately"
             )
-        result = read_hphi_tune(directory / "hphi-tune-results.json")
+        result = verify_material_hphi_tune_job(directory,state,_load(directory / "manifest.json"))
     else:
         document = data["document"]
         if isinstance(document, str):
             document = parse_json(document)
-        result = replay_hphi_tune(document)
+        result = replay_material_hphi_tune(document)
         if action == "hphi-resume-tune":
             return {
-                "id": manager.start_hphi_tune(
+                "id": manager.start_material_hphi_tune(
                     result["request"],
                     checkpoint=result,
                     max_new_trials=data.get("max_new_trials"),
@@ -192,10 +175,8 @@ def hphi_tuning_response(manager, action, data):
             before = _snapshot_trial(path)
             if before != result["trial_sources_sha256"][index]:
                 raise ValueError("Hphi tune trial changed before import")
-            # Hphi's native import API takes an unmanaged ``solution``
-            # directory.  The surrounding trial Project remains the source of
-            # the exact geometry/identity checks above.
-            identifier = manager.import_hphi_result(path / "solution")
+            # Preserve the verified original Project, including display units.
+            identifier = manager.import_hphi_result(path / "solution",project=HphiProject.load(path / "project.json"))
             if before != _snapshot_trial(path):
                 raise ValueError("Hphi tune trial changed during import")
             return {"id": identifier, "mode": ids.index(target) + 1}

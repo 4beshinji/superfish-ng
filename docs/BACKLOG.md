@@ -1,3 +1,5 @@
+H16-d進行中（2026-09-22）：[材料調整GUI](MATERIAL_HPHI_GUI.md)の要求保持・開始/再開・所有保存地点・元場取込を接続。新2件＋旧GUI2件107.967秒PASS、実Chrome5項目PASS、検査時元12ファイル/385実装hash不変・外部要求0、全handle終端。説明HTMLの後続修正と検査時hashを区別して記録。次は材料追跡/履歴GUI、実中止/再起動と回復操作。親H16/全goalは継続。
+
 H16-c受入（2026-09-22）：[所有保存・履歴・CLI/worker条件別監査](MATERIAL_HPHI_OPERATION_ACCEPTANCE.md)。最後の実CLI回復検索→worker最終細分・元移動/管理器再起動と、真空軸/材料/穴ProjectのRF・再importを新2件601.458秒PASSで確認。解析TEM、元18ファイルのbyteコピー、全24ファイル不変、両R/Q/N/A・非真空区間/未対応損失拒否まで成立。全handle終端。次はH16-dのGUI操作と親H16監査。原90カードと全goalは継続。
 
 H16-c進行中（2026-09-22）：[材料調整CLI・専用worker](MATERIAL_HPHI_TUNING_OPERATIONS.md)の新8件307.737秒＋関連1件70.743秒PASS、全handle/worker終端。実FEM尺度則、移動後再生、実中止/新規再開・管理器再起動、全prefix/元nativeと改変拒否を確認。次はID回復と実最終細分を伴う所有操作の統合監査。H16-d GUIと親H16/全goalは継続。
