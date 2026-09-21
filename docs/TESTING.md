@@ -1,3 +1,5 @@
+H16-a形状則は`test_material_hphi_shape_tuning`。直接利用先は`test_material_hphi_comparison`と`test_material_hphi.MaterialHphiTests.test_strict_physics_and_only_explicit_vacuum_axis_path`。[尺度/体積と加速区間](MATERIAL_HPHI_SHAPE.md)。
+
 H16-a細分は`test_material_hphi_refinement`、直接利用先は`test_material_hphi_fem`。[材料領域/K/M移送不変量](MATERIAL_HPHI_REFINEMENT.md)。
 
 H15統合は`test_material_hphi_tracking_integration`と`test_material_hphi_tracking_crossing`。独立物理は`scripts/validate_material_hphi_rf.py`。[分割検査・全条件監査](MATERIAL_HPHI_ACCEPTANCE.md)。

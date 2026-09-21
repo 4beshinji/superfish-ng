@@ -1,3 +1,5 @@
+2026-09-22 H16-a：[固定材料形状則](MATERIAL_HPHI_SHAPE.md)。既存自作直線写像/境界cycle/材料比較を再利用し、元Projectからの候補生成と真空軸再検査を追加。新外部資料・依存・legacy参照なし。
+
 2026-09-22 H16-a：[材料直線細分](MATERIAL_HPHI_REFINEMENT.md)。既存自作4分割/P1P2基底に材料所有と参照セル移送を追加。全領域/界面比較で被覆を確認。新規外部資料・依存・legacy参照なし。
 
 2026-09-22 H15：[固定材料比較/追跡受入](MATERIAL_HPHI_ACCEPTANCE.md)。既存独立Bessel/TEM・二層解と専用validatorを用いて実順位交換、縮退、再メッシュ/非一様写像、真空極限と元物理を監査。新規外部資料・依存・legacy参照なし。

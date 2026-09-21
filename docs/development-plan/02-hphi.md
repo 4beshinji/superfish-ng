@@ -475,7 +475,7 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 **依存：H15**。元Projectから独立に候補を作る固定材料形状則、領域/全界面を保つ細分、全加速座標の移送と真空区間再検査、元領域ごとの比較空間を実装する。材料K/M移送不変量、領域体積、多項式、uniform/nonuniform/穴/軸、予算拒否を検査。
 
-進行中：[材料細分基盤](../MATERIAL_HPHI_REFINEMENT.md)を実装。形状則と試行比較は残る。
+進行中：[材料細分基盤](../MATERIAL_HPHI_REFINEMENT.md)と[固定材料形状則](../MATERIAL_HPHI_SHAPE.md)を実装。試行生成と比較空間への接続は残る。
 
 #### H16-b
 
