@@ -1,3 +1,5 @@
+H15-c/親H15受入（2026-09-22）：[全条件監査](MATERIAL_HPHI_ACCEPTANCE.md)。独立再メッシュ/非一様正逆、P1/P2真空追跡極限、実材料順位交換/縮退、E/H/B尺度・片側界面を確認。新5件＋関連1件は分割PASS、専用validator32例96モードPASS、全handle終端。次はH16の材料調整/保存/CLI-worker/GUI。原計画と全goalは継続。
+
 H15-c進行中（2026-09-22）：[固定材料E/HのID追跡](MATERIAL_HPHI_ID_TRACKING.md)を接続。二層尺度/位相、guard未確認、継承集合、元宣言の厳密照合を検査。親H15の独立再メッシュ・真空追跡極限・実縮退/順位交換・非一様写像等の条件別監査は残る。全goalは継続。
 
 H15-c進行中（2026-09-22）：[材料有限スペクトル診断](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)を実装。元材料K/M・静的q核・全界面を保持し、独立比較固有値/二層TEM/尺度則を検査。ID追跡と親H15の統合監査は未実装、全goalは継続。

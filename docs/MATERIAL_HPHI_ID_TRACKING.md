@@ -1,6 +1,6 @@
 # 固定材料E/Hによる個別ID・部分空間追跡
 
-2026-09-22。H15-cの専用Python追跡APIを実装。H15全条件の統合監査は継続中。仕様は[固定材料契約](MATERIAL_HPHI_TRACKING.md)、数値基盤は[元E/H](MATERIAL_HPHI_FIELDS.md)、[質量射影](MATERIAL_HPHI_PROJECTION.md)、[有限スペクトル](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)。
+2026-09-22。H15-cの専用Python追跡APIを実装。[H15全条件の統合監査](MATERIAL_HPHI_ACCEPTANCE.md)を受入済み。仕様は[固定材料契約](MATERIAL_HPHI_TRACKING.md)、数値基盤は[元E/H](MATERIAL_HPHI_FIELDS.md)、[質量射影](MATERIAL_HPHI_PROJECTION.md)、[有限スペクトル](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)。
 
 `MaterialHphiTrackingRequest`版1は元二領域間の`comparison`、各元側から細分比較空間への`previous_resolution`/`current_resolution`という三つの完全な材料比較宣言を持つ。有限スペクトル用の二宣言はsame_domainのみ。各宣言の元partitionを実固有解と厳密照合する。全材料/領域のID全単射、固定epsilon_r/mu_r、全穴・界面の条件を引き継ぐ。
 
@@ -21,6 +21,6 @@
 - 要求の厳密保存読込・上書き拒否、元partition不一致、改変係数、未計算guard、求積予算不足を拒否。
 - 正半径/穴付き軸で節点・セル逆番号、材料/領域列挙逆順と明示ID改名を施し、正逆追跡・cross転置・元native全ファイルbytes・全RFの不変を検査。
 
-親H15を完了とする前に、追跡の独立再メッシュ、P1/P2真空極限、実縮退/順位交換、非一様写像、既存の片側界面物理・二層専用validatorとの条件別証拠を監査する。現時点の個別成功をこれら全部の受入と読み替えない。
+追加の統合監査では、追跡の独立再メッシュ、P1/P2真空極限、実縮退/順位交換、非一様写像、既存の片側界面物理・二層専用validatorとの条件別証拠を監査した。追加結果は上記全条件監査を参照し、この文書の初期4件だけの成功と混同しない。
 
 既存自作のE/H二重判定・部分空間対応・guard群の構造を再利用し、材料専用のGram/有限K/M診断を接続した。新外部資料・依存・legacy参照なし。共有solverやseed TMの変更はなく、当該新検査と直接利用先を対象とし、全suite受入は主張しない。

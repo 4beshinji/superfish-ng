@@ -1,6 +1,6 @@
 # 材料有限比較スペクトル診断
 
-2026-09-22。H15-cの有限スペクトル部分を実装。[ID追跡API](MATERIAL_HPHI_ID_TRACKING.md)も接続済みで、親H15の統合受入は未完了。
+2026-09-22。H15-cの有限スペクトル部分を実装。[ID追跡API](MATERIAL_HPHI_ID_TRACKING.md)も接続済みで、[親H15の統合受入](MATERIAL_HPHI_ACCEPTANCE.md)も完了。
 
 `material_hphi_spectral_resolution(solution, comparison, ...)`は専用材料固有解と、元partitionから比較partitionへの完全な`same_domain`材料比較宣言を要求する。元の全低順位正スペクトル・係数・空間を再検証する。比較側は同じ材料領域/全界面を保ち、元以上の次数、より多い三角形、小さい最大辺を持つ必要がある。幾何変形はこの診断に渡さず、各側の元物理領域で診断する。
 

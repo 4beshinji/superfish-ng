@@ -1,3 +1,5 @@
+H15統合は`test_material_hphi_tracking_integration`と`test_material_hphi_tracking_crossing`。独立物理は`scripts/validate_material_hphi_rf.py`。[分割検査・全条件監査](MATERIAL_HPHI_ACCEPTANCE.md)。
+
 H15-c材料ID追跡は`test_material_hphi_tracking`。直接利用先は`test_material_hphi_spectral_resolution`。[検査と残る統合監査](MATERIAL_HPHI_ID_TRACKING.md)。
 
 H15-c有限診断は`test_material_hphi_spectral_resolution`。直接利用先は`test_material_hphi_mass_projection`、物理対照は`test_material_hphi.MaterialHphiTests.test_layered_resonance_refines_frequency_field_and_wall_separately`。[検査範囲](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)。

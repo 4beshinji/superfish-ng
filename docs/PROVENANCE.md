@@ -1,3 +1,5 @@
+2026-09-22 H15：[固定材料比較/追跡受入](MATERIAL_HPHI_ACCEPTANCE.md)。既存独立Bessel/TEM・二層解と専用validatorを用いて実順位交換、縮退、再メッシュ/非一様写像、真空極限と元物理を監査。新規外部資料・依存・legacy参照なし。
+
 2026-09-22 H15-c：[固定材料E/HのID追跡](MATERIAL_HPHI_ID_TRACKING.md)。自作部分空間/guard判定へ専用材料GramとK/M診断を接続。元場・材料係数を変更せず、外部資料・依存・legacy参照を追加しない。
 
 2026-09-22 H15-c：[材料有限スペクトル診断](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)。既存自作shifted-inverse診断を専用材料K/Mへ接続し、dense固有基底と既存二層分離解で照合。新外部資料・依存・legacy参照なし。
