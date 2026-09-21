@@ -1,5 +1,7 @@
 # 材料E/H比較の所有保存・worker・CLI
 
+H16-cの最新受入：[所有操作の条件別監査](MATERIAL_HPHI_OPERATION_ACCEPTANCE.md)。回復/最終細分を含む操作検証まで成功。H16-d GUIと親H16は未完了。以下の段階別記録は当時の範囲を示す。
+
 最新進捗：[独立所有履歴](MATERIAL_HPHI_HISTORY.md)と[材料調整CLI/worker](MATERIAL_HPHI_TUNING_OPERATIONS.md)の基本操作検査まで成功。回復/最終細分の所有操作統合とGUIは残る。以下の初期段階の記録は当時の検査範囲を示す。
 
 2026-09-22。H16-cの二状態比較を所有保存と操作へ接続した。独立追跡履歴、調整worker/CLI、回復を含む履歴・調整操作とGUIは残る。

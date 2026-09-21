@@ -1,5 +1,7 @@
 # 材料Hphiの所有追跡履歴と明示ID回復
 
+H16-cの最新受入：[所有操作の条件別監査](MATERIAL_HPHI_OPERATION_ACCEPTANCE.md)。回復/最終細分を含む操作検証まで成功。H16-d GUIと親H16は未完了。以下の段階別記録は当時の範囲を示す。
+
 最新進捗：[独立所有履歴](MATERIAL_HPHI_HISTORY.md)と[材料調整CLI/worker](MATERIAL_HPHI_TUNING_OPERATIONS.md)の基本操作検査まで成功。回復/最終細分の所有操作統合とGUIは残る。以下の初期段階の記録は当時の検査範囲を示す。
 
 2026-09-22、H16-c。`MaterialHphiTrackingHistoryRequest`は順序付きの材料追跡pair、最大step数、任意の過去snapshot回復指定を宣言する。隣接pairの元native五ファイルが全bytes一致し、前段のIDまたはID集合を後段がそのまま継承することを要求する。各pairを材料E/H・有限スペクトルから再計算する。

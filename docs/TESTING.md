@@ -1,3 +1,5 @@
+H16-c所有回復・最終細分は`test_material_hphi_tuning_recovery_saved`。実CLI検索からworker細分、元移動・管理器再起動、解析TEM/全native/回復改変拒否、真空軸両R/Q・材料/穴Project再importを確認。[操作検証](MATERIAL_HPHI_OWNED_RECOVERY.md)と[H16-c条件別監査](MATERIAL_HPHI_OPERATION_ACCEPTANCE.md)。
+
 H16-c材料調整操作は`test_material_hphi_tuning_cli test_material_hphi_tuning_jobs`。隣接CLIは`test_hphi_tuning_saved.HphiTuneSavedTests.test_cli_tune_resume_and_replay_names_and_exit_codes`。[尺度則・移動・実中止/再開・再起動・prefix検証](MATERIAL_HPHI_TUNING_OPERATIONS.md)。
 
 H16-c材料履歴は`test_material_hphi_tracking_history`。独立TEM場、ID集合/anchor/guard、所有延長worker、管理器再起動、CLIを検査。隣接は既存`test_hphi_jobs`のCLI/native型/単位とkind改変拒否の2件。[履歴仕様・検査範囲](MATERIAL_HPHI_HISTORY.md)。
