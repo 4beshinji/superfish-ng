@@ -1,3 +1,5 @@
+H09-aの非一様直線Hφ交差分割は`test_hphi_mapped_overlap`で全親被覆・独立矩形モーメント・正逆写像・番号置換・予算拒否を検査する。幾何依存は`test_hphi_geometry_mapping test_meridional_overlap`。場/追跡接続はH09-bの別証拠。
+
 H08の直線Hφ幾何対応は`test_hphi_geometry_mapping`で独立面積/体積・逆対応・境界/軸/穴の拒否を検査する。基盤変更時は`test_axis_connected_mesh test_hphi_mesh test_axis_hphi test_hphi_study`を追加する。場/追跡の対応はH09の別検証。
 
 # 変更範囲に応じた検証とテスト棚卸し
