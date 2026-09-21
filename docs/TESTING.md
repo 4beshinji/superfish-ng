@@ -1,3 +1,5 @@
+H08の直線Hφ幾何対応は`test_hphi_geometry_mapping`で独立面積/体積・逆対応・境界/軸/穴の拒否を検査する。基盤変更時は`test_axis_connected_mesh test_hphi_mesh test_axis_hphi test_hphi_study`を追加する。場/追跡の対応はH09の別検証。
+
 # 変更範囲に応じた検証とテスト棚卸し
 
 Hφ調整の所有checkpoint/worker/GUI検証を変更する場合は

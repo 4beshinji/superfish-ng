@@ -30,7 +30,7 @@
 
 ## 根拠と適用順
 
-1. 現在のユーザー指示と[AGENTS.md](../../AGENTS.md)。本依頼は全残件の計画作成であり、実装/外部公開の実行依頼ではない。
+1. 現在のユーザー指示と[AGENTS.md](../../AGENTS.md)。2026-09-21にユーザーが全計画の実装・検証を自走するgoalを指定した。外部公開の依頼は含まない。
 2. [物理仕様](../PHYSICS.md)、[来歴](../PROVENANCE.md)、[現行引継ぎ](../CODEX_HANDOFF.md)。
 3. [親課題の要件](../COMPATIBILITY_PLAN.md)、[対応表](../COMPATIBILITY_MATRIX.md)、[バックログ](../BACKLOG.md)、[実装状況](../IMPLEMENTATION_STATUS.md)。
 4. 最新の専用受入文書とソース。古い日付付きの「未接続」「次は」より、同要件の新しい受入証拠を優先する。

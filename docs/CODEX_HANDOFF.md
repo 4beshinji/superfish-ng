@@ -1,3 +1,5 @@
+2026-09-21 JST：H08の[直線Hφ幾何対応](HPHI_GEOMETRY_MAPPING.md)を実装。明示区分アフィンと同軸寸法の全境界/穴/軸・正Jacobianを検証し、独立面積/回転体積・H02一様尺度一致を確認した。新4/既存22unit、計26件PASS（22.178秒、終了0）。追加資料/依存/legacy参照なし。場比較・調整への接続は次のH09。
+
 2026-09-16 JST：H05のHφ調整所有保存・再生・新規出力への再開・CLIを受入。専用5件、H05指定の既存回帰/H04依存15件、専用validator 9実FEM・全17チェックがPASS。要求・全Project/native/RF・hash・判断履歴を保存し、solverなし再生、最終細分直前・未確認終端の再生、要求/係数/順序/親の改変拒否、元出力移動後の再生を確認した。詳細は[HPHI_TUNING.md](HPHI_TUNING.md)。次はH06のworker中止/再起動。H01〜H05完了、90カード中6完了。
 2026-09-16 JST：H07のHφ調整GUIを接続。専用transport、実worker開始/中止後checkpointのreplay・別ジョブ再開、対象ID/実順位/元native場取込、二つの周波数ゲートとSI表示を追加した。`test_gui_hphi test_gui_hphi_tracking test_gui_hphi_tuning` 8件中7件PASS・既存HTTP 1件skip、終了0。JS構文とChromium headless画面初期化はPASS、loopback bind制約のため実クリック列は未確認。次はH08の同軸寸法/直線一般写像。
 
