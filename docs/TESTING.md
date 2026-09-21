@@ -1,3 +1,5 @@
+H13-e曲線追跡/履歴GUIは`test_gui_curved_hphi_tracking`。直接利用先は`test_gui_hphi_tracking`、`test_gui_hphi_history_request`、`test_hphi_tracking_history_saved.HphiHistorySavedTests.test_gui_ordered_history_extension_and_each_original_side`。[接続範囲と検査](CURVED_HPHI_GUI.md)。
+
 H13-e曲線調整GUIは`test_gui_curved_hphi_tuning`、元Project取込は`test_hphi_project_import`。直接利用先は`test_hphi_jobs test_gui_hphi_tuning`。[対象検査・ブラウザー範囲](CURVED_HPHI_GUI.md)。
 
 H13-d調整回復の所有操作受入は`test_curved_hphi_tuning_recovery_saved`。CLI検索、worker最終細分、再起動/元出力移動、全native/RFと穴付きProjectを検査。[実行と条件別監査](CURVED_HPHI_TUNING_RECOVERY_SAVED.md)。

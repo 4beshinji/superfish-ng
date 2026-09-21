@@ -22,3 +22,13 @@ H13-e進行中。曲線追跡・履歴・明示回復の実GUI操作と親H13の
 実ブラウザー用`verify_gui_curved_hphi_tuning.mjs`を追加。Chromeの実クリック5項目PASS、終了0（`browser-2/report.json`）。曲線要求の全保持、開始/PAUSED表示、同一保存ファイル2回読込、新job再開、対象実順位と元Project表示単位、全native結果/RF一致、元場描画を確認。全368実装hashと元12ファイルは不変、外部要求0。検証用サーバーも終了0。初回ブラウザー検証は検証器内でID取得用関数にCSS selectorを渡したため停止し、その要素指定を修正して未使用workspaceで再検証した（`browser/report.json`も保持）。実中止、サーバー再起動後の表示、追跡/履歴/回復GUIと親H13監査はまだ未完了。
 
 新規外部資料・依存・legacy参照はない。GUI輸送の所有検証と表示単位保持の変更であり、FEM/seed TM変更はないため全suite/seed validatorは実行していない。独立物理の根拠はH13-a〜dの曲線比較・調整受入に分離する。
+
+## 曲線追跡・履歴のGUI接続
+
+追跡要求のformat、履歴要求のformat、保存jobのkindに応じて、曲線専用パーサー・worker・所有再生へ振り分ける。曲線要求の全比較形状/元セルchart/予算はフォームで落とさず保持する。履歴は同じ種類の完了pairだけを受け付け、所有prefixから延長する。各段階の要求と元の前後Project/nativeを表示・取込できる。直線要求/履歴との混用は専用検証で拒否する。
+
+画面の保存場選択とjob一覧に曲線追跡/履歴を追加した。材料場はこの真空追跡の候補には含めない。比較形状の三角形数は元二次geometryのbase_meshから表示する。完全な二次幾何は要求JSONに保持する。
+
+対象検査は`test_gui_curved_hphi_tracking`新2件、直接利用先`test_gui_hphi_tracking`、`test_gui_hphi_history_request`と`test_hphi_tracking_history_saved.HphiHistorySavedTests.test_gui_ordered_history_extension_and_each_original_side`。曲線要求を旧パーサーが拒否する失敗を先に確認した（`out/h13-curved-tracking-gui-20260922/before.log`）。新曲線2件＋既存直線2件は191.725秒PASS、終了0（`after.log`）。Chrome実クリック4項目もPASS、終了0（`browser/report.json`）。全368実装hashと履歴が所有する12元ファイルは不変、外部要求0、検証用サーバー終了0。既存履歴フォーム/延長の2件も321.939秒PASS、終了0（`history-compatibility.log`）。全handle終端。
+
+実ブラウザー検証器は`scripts/verify_gui_curved_hphi_tracking.mjs`。曲線保存場2件の選択、完全要求の保持、実pair workerの開始、E/H・有限比較スペクトル表示、曲線履歴worker、履歴の元Project/native/RF取込・描画を検査する。回復eventと実中止/再起動の操作受入は別途残る。

@@ -140,9 +140,23 @@ def hphi_study_response(manager, action, data):
     return payload,media
 
 
+def _curved_gui_operation(manager, data, *, kind, request_format):
+    """Select a dedicated parser from the owned job or explicit request format."""
+    if 'id' in data:
+        return manager.status(data['id'], verify=False).get('kind') == kind
+    raw=data.get('document')
+    if isinstance(raw,str):raw=parse_json(raw)
+    return isinstance(raw,dict) and raw.get('format') == request_format
+
+
 def hphi_tracking_response(manager,action,data):
     from .hphi_tracking import HphiTrackingRequest
     from .hphi_tracking_jobs import read_hphi_tracking,_snapshot
+    start=manager.start_hphi_tracking
+    if _curved_gui_operation(manager,data,kind='curved_hphi_tracking',request_format='superfish_ng_curved_hphi_tracking_request'):
+        from .curved_hphi_tracking import CurvedHphiTrackingRequest as HphiTrackingRequest
+        from .curved_hphi_tracking_jobs import read_curved_hphi_tracking as read_hphi_tracking,_snapshot
+        start=manager.start_curved_hphi_tracking
     keys(data,ACTIONS[action],ACTIONS[action],'Hphi tracking request');media='application/json; charset=utf-8'
     request=None
     if 'document' in data:
@@ -150,7 +164,7 @@ def hphi_tracking_response(manager,action,data):
         request=HphiTrackingRequest.from_dict(raw)
     if action=='hphi-normalize-tracking':return request.to_dict(),media
     if action=='hphi-start-tracking':
-        return {'id':manager.start_hphi_tracking(manager.directory(data['previous_id']),manager.directory(data['current_id']),request)},media
+        return {'id':start(manager.directory(data['previous_id']),manager.directory(data['current_id']),request)},media
     directory=manager.directory(data['id']);before=_snapshot(directory);result=read_hphi_tracking(directory)
     if action=='hphi-tracking-result':
         payload=dict(request=result['request'],result=result,state=manager.status(data['id'],verify=True),
@@ -162,7 +176,7 @@ def hphi_tracking_response(manager,action,data):
         payload={'id':manager.import_hphi_result(directory/data['side'])}
     else:
         if before!=_snapshot(directory):raise ValueError('Hphi tracking changed before repeat execution')
-        payload={'id':manager.start_hphi_tracking(directory/'previous',directory/'current',request)}
+        payload={'id':start(directory/'previous',directory/'current',request)}
     if before!=_snapshot(directory):raise ValueError('Hphi tracking changed during GUI response')
     return payload,media
 
@@ -193,11 +207,18 @@ def hphi_convergence_response(manager,action,data):
 def hphi_history_response(manager, action, data):
     from .hphi_tracking_history import HphiTrackingHistoryRequest
     from .hphi_tracking_history_saved import read_hphi_history, history_snapshot
+    from .hphi_tracking import HphiTrackingRequest
+    start=manager.start_hphi_history;extend=manager.extend_hphi_history;pair_kind='hphi_tracking'
+    if _curved_gui_operation(manager,data,kind='curved_hphi_tracking_history',request_format='superfish_ng_curved_hphi_tracking_history_request'):
+        from .curved_hphi_tracking_history import CurvedHphiTrackingHistoryRequest as HphiTrackingHistoryRequest
+        from .curved_hphi_tracking_history_saved import read_curved_hphi_history as read_hphi_history, history_snapshot
+        from .curved_hphi_tracking import CurvedHphiTrackingRequest as HphiTrackingRequest
+        start=manager.start_curved_hphi_history;extend=manager.extend_curved_hphi_history;pair_kind='curved_hphi_tracking'
     keys(data,ACTIONS[action],ACTIONS[action],'hphi tracking history request')
     media='application/json; charset=utf-8'
     def pair_path(identifier):
         state=manager.status(identifier,verify=True)
-        if state.get('status')!='complete' or state.get('kind')!='hphi_tracking':
+        if state.get('status')!='complete' or state.get('kind')!=pair_kind:
             raise ValueError('select a complete verified hphi tracking pair')
         return manager.directory(identifier)
     if action in ('hphi-normalize-history','hphi-start-history'):
@@ -207,14 +228,13 @@ def hphi_history_response(manager, action, data):
         identifiers=data['step_ids']
         if type(identifiers) is not list or len(identifiers)!=request.step_count:
             raise ValueError('step_ids must contain exactly step_count tracking pair IDs')
-        return {'id':manager.start_hphi_history([pair_path(identifier) for identifier in identifiers],request)},media
+        return {'id':start([pair_path(identifier) for identifier in identifiers],request)},media
     directory=manager.directory(data['id'])
     if action=='hphi-extend-history':
-        return {'id':manager.extend_hphi_history(directory,pair_path(data['next_id']))},media
+        return {'id':extend(directory,pair_path(data['next_id']))},media
     before=history_snapshot(directory);result=read_hphi_history(directory)
     if action=='hphi-history-result':
         payload=dict(request=result['request'],result=result,state=manager.status(data['id'],verify=True),sources=parse_json((directory/'sources.json').read_text()))
-        from .hphi_tracking import HphiTrackingRequest
         payload['step_requests']=[HphiTrackingRequest.load(directory/f'step-{index:04d}'/'tracking.json').to_dict() for index in range(result['request']['step_count'])]
     else:
         if before!=history_snapshot(directory):raise ValueError('hphi history changed before source import')

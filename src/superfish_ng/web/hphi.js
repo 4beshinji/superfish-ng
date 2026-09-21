@@ -63,14 +63,14 @@ async function openResult(id){
  history.replaceState(null,'',`/hphi.html?job=${encodeURIComponent(id)}`);
 }
 async function refresh(){
- const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study','hphi_convergence','hphi_tracking','hphi_tracking_history','hphi_tune','curved_hphi_tune'].includes(job.kind)),signature=JSON.stringify(jobs);
+ const jobs=(await api('jobs')).filter(job=>['hphi_solve','hphi_study','hphi_convergence','hphi_tracking','hphi_tracking_history','hphi_tune','curved_hphi_tune','curved_hphi_tracking','curved_hphi_tracking_history'].includes(job.kind)),signature=JSON.stringify(jobs);
  trackingCandidates(jobs);historyCandidates(jobs);if($('jobs').dataset.signature===signature)return;$('jobs').dataset.signature=signature;$('jobs').replaceChildren();
  if(!jobs.length)$('jobs').textContent='Hφの計算はまだありません。';
  for(const job of jobs){const row=document.createElement('div');row.className='job';row.dataset.job=job.id;
- const label=document.createElement('strong');label.textContent=`${job.status}${['hphi_tune','curved_hphi_tune'].includes(job.kind)?' / 周波数調整':job.kind==='hphi_study'?' / 独立掃引':job.kind==='hphi_convergence'?' / 細分差診断':job.kind==='hphi_tracking_history'?' / 追跡履歴':job.kind==='hphi_tracking'?' / 部分空間対応':''} / ${job.id}`;row.append(label);
+ const label=document.createElement('strong');label.textContent=`${job.status}${['hphi_tune','curved_hphi_tune'].includes(job.kind)?' / 周波数調整':job.kind==='hphi_study'?' / 独立掃引':job.kind==='hphi_convergence'?' / 細分差診断':['hphi_tracking_history','curved_hphi_tracking_history'].includes(job.kind)?' / 追跡履歴':['hphi_tracking','curved_hphi_tracking'].includes(job.kind)?' / 部分空間対応':''} / ${job.id}`;row.append(label);
  const details=document.createElement('small');details.textContent=job.error||job.stage||'';row.append(details);
  const button=document.createElement('button'),active=['queued','running'].includes(job.status);button.textContent=active?'中止':'結果を開く';button.disabled=!active&&job.status!=='complete';
- button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(['hphi_tune','curved_hphi_tune'].includes(job.kind))await openHphiTune(job.id);else if(job.kind==='hphi_study')await openStudy(job.id);else if(job.kind==='hphi_convergence')await openConvergence(job.id);else if(job.kind==='hphi_tracking_history')await openHphiHistory(job.id);else if(job.kind==='hphi_tracking')await openTracking(job.id);else await openResult(job.id);});row.append(button);
+ button.onclick=run(async()=>{if(active){await api('cancel',{id:job.id});await refresh();}else if(['hphi_tune','curved_hphi_tune'].includes(job.kind))await openHphiTune(job.id);else if(job.kind==='hphi_study')await openStudy(job.id);else if(job.kind==='hphi_convergence')await openConvergence(job.id);else if(['hphi_tracking_history','curved_hphi_tracking_history'].includes(job.kind))await openHphiHistory(job.id);else if(['hphi_tracking','curved_hphi_tracking'].includes(job.kind))await openTracking(job.id);else await openResult(job.id);});row.append(button);
  if(['hphi_tune','curved_hphi_tune'].includes(job.kind)&&!active){const checkpoints=document.createElement('button');checkpoints.textContent='保存地点を選ぶ';checkpoints.dataset.hphiTuneCheckpoints=job.id;checkpoints.onclick=run(async()=>{const data=await api('hphi-tune-checkpoints',{id:job.id});let list=row.querySelector('.hphi-tune-checkpoints');if(!list){list=document.createElement('div');list.className='hphi-tune-checkpoints';row.append(list);}list.replaceChildren();if(!data.indices.length)list.textContent='完了した保存地点はありません。';for(const index of data.indices){const open=document.createElement('button');open.textContent=`試行 ${index} までを再検証`;open.dataset.hphiTuneCheckpoint=index;open.onclick=run(async()=>showHphiTune(await api('hphi-open-tune-checkpoint',{id:job.id,index}),`${job.id} / 試行 ${index}`));list.append(open);}});row.append(checkpoints);}
  $('jobs').append(row);}
 }
@@ -141,7 +141,7 @@ let trackingRequest=null,currentTracking=null;
 const trackingControlLabels={minimum_overlap:'E/Hの最小主内積',minimum_assignment_margin:'他候補への割当余裕',relative_cluster_gap:'周波数を群にする相対間隔',minimum_relative_singular_value:'基底の最小相対特異値',minimum_cluster_link:'群の結合候補の内積',maximum_relative_projection_error:'比較空間への最大射影誤差',quadrature_order:'比較空間の積分次数',max_candidate_tests:'共通領域の探索予算',max_overlay_triangles:'共通三角形の上限',max_dofs:'各比較空間の自由度上限',max_gram_modes:'内積を計算するモード数の上限'};
 for(const [key,title] of Object.entries(trackingControlLabels)){const label=document.createElement('label');label.textContent=title;const input=document.createElement('input');input.type='number';input.step=key.startsWith('max_')||key==='quadrature_order'?'1':'any';input.id='tracking-'+key;input.disabled=true;input.oninput=()=>{$('tracking-dirty').textContent='未保存の追跡条件';};label.append(input);$('tracking-controls').append(label);}
 function trackingCandidates(jobs){
- const candidates=jobs.filter(j=>j.kind==='hphi_solve'&&j.status==='complete'&&!['superfish_ng_curved_hphi_case','superfish_ng_material_hphi_case'].includes(j.case_format)),signature=JSON.stringify(candidates.map(j=>j.id));
+ const candidates=jobs.filter(j=>j.kind==='hphi_solve'&&j.status==='complete'&&j.case_format!=='superfish_ng_material_hphi_case'),signature=JSON.stringify(candidates.map(j=>j.id));
  for(const name of ['tracking-previous','tracking-current']){const select=$(name);if(select.dataset.signature===signature)continue;const selected=select.value;select.dataset.signature=signature;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='保存結果を選択';select.append(empty);for(const job of candidates){const option=document.createElement('option');option.value=job.id;option.textContent=`${job.id} / ${job.modes}モード`;select.append(option);}if(candidates.some(j=>j.id===selected))select.value=selected;}
 }
 function loadTracking(q){
@@ -149,7 +149,7 @@ function loadTracking(q){
  $('tracking-previous-count').value=q.previous_mode_count;$('tracking-current-count').value=q.current_mode_count;$('tracking-ids').value=JSON.stringify(q.previous_mode_ids);$('tracking-groups').value=JSON.stringify(q.previous_identity_groups);
  for(const id of ['tracking-previous-count','tracking-current-count','tracking-ids','tracking-groups'])$(id).disabled=false;
  for(const key of Object.keys(trackingControlLabels)){const input=$('tracking-'+key);input.value=q.controls[key];input.disabled=false;}
- const a=q.previous_comparison_mesh,b=q.current_comparison_mesh;
+ const a=q.previous_comparison_geometry?.base_mesh||q.previous_comparison_mesh,b=q.current_comparison_geometry?.base_mesh||q.current_comparison_mesh;
  $('tracking-preview').textContent=`比較空間：前 P${q.previous_comparison_order} ${a.triangles.length}三角形 / 現在 P${q.current_comparison_order} ${b.triangles.length}三角形。両方ともSI座標・全穴を保持。`;
  $('tracking-save').disabled=false;$('tracking-start').disabled=false;$('tracking-dirty').textContent='';
 }
@@ -199,7 +199,7 @@ for(const id of ['tracking-previous-count','tracking-current-count','tracking-id
 
 let currentHphiHistory=null,historyPairJobs=[],hphiHistoryRequest=null;
 function historyCandidates(jobs){
- historyPairJobs=jobs.filter(j=>j.kind==='hphi_tracking'&&j.status==='complete');const signature=JSON.stringify(historyPairJobs.map(j=>j.id));
+ historyPairJobs=jobs.filter(j=>['hphi_tracking','curved_hphi_tracking'].includes(j.kind)&&j.status==='complete');const signature=JSON.stringify(historyPairJobs.map(j=>j.id));
  for(const name of ['history-pair','history-next']){const select=$(name);if(select.dataset.signature===signature)continue;const selected=select.value;select.dataset.signature=signature;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='保存した部分空間対応を選択';select.append(empty);for(const job of historyPairJobs){const option=document.createElement('option');option.value=job.id;option.textContent=job.id;select.append(option);}if(historyPairJobs.some(j=>j.id===selected))select.value=selected;}
 }
 function historyFromForm(){const q=hphiHistoryRequest?structuredClone(hphiHistoryRequest):{format:'superfish_ng_hphi_tracking_history_request',history_version:1};q.step_count=numeric('history-count');q.max_steps=numeric('history-max');return q;}
