@@ -1,3 +1,5 @@
+H15-c材料ID追跡は`test_material_hphi_tracking`。直接利用先は`test_material_hphi_spectral_resolution`。[検査と残る統合監査](MATERIAL_HPHI_ID_TRACKING.md)。
+
 H15-c有限診断は`test_material_hphi_spectral_resolution`。直接利用先は`test_material_hphi_mass_projection`、物理対照は`test_material_hphi.MaterialHphiTests.test_layered_resonance_refines_frequency_field_and_wall_separately`。[検査範囲](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)。
 
 H15-b材料scalar射影は`test_material_hphi_mass_projection`。直接利用先は`test_material_hphi_field_overlap`。[独立積分・質量保存/損失・尺度則](MATERIAL_HPHI_PROJECTION.md)。

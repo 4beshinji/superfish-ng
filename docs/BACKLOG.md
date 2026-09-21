@@ -1,3 +1,5 @@
+H15-c進行中（2026-09-22）：[固定材料E/HのID追跡](MATERIAL_HPHI_ID_TRACKING.md)を接続。二層尺度/位相、guard未確認、継承集合、元宣言の厳密照合を検査。親H15の独立再メッシュ・真空追跡極限・実縮退/順位交換・非一様写像等の条件別監査は残る。全goalは継続。
+
 H15-c進行中（2026-09-22）：[材料有限スペクトル診断](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)を実装。元材料K/M・静的q核・全界面を保持し、独立比較固有値/二層TEM/尺度則を検査。ID追跡と親H15の統合監査は未実装、全goalは継続。
 
 H15-b受入（2026-09-22）：[材料元E/H比較](MATERIAL_HPHI_FIELDS.md)と[mu_r質量射影](MATERIAL_HPHI_PROJECTION.md)を実装。独立積分/材料別質量/射影保存と損失/正逆写像/真空極限/元RF不変を検証。射影新6件＋関連場5件は分割証拠でPASS、全handle終端。次はH15-cの材料有限スペクトルとID追跡。親H15/全goalは未完了。
