@@ -112,6 +112,10 @@ def read_job(directory, verify=True):
         if is_curved_hphi_tune(directory, state, manifest):
             verify_curved_hphi_tune_job(directory, state, manifest)
             return state
+        from .curved_hphi_tracking_jobs import is_curved_hphi_tracking, verify_curved_hphi_tracking
+        if is_curved_hphi_tracking(directory, state, manifest):
+            verify_curved_hphi_tracking(directory, state, manifest)
+            return state
         from .hphi_tuning_jobs import is_hphi_tune, verify_hphi_tune_job
         if is_hphi_tune(directory, state, manifest):
             verify_hphi_tune_job(directory, state, manifest)
@@ -456,6 +460,11 @@ class JobManager:
         """Run Cartesian cutoff tuning with dedicated native field identities."""
         from .planar_tuning_jobs import start_planar_tune
         return start_planar_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+    def start_curved_hphi_tracking(self, previous, current, request):
+        """Own and compare full-quadratic curved Hphi native spectra."""
+        from .curved_hphi_tracking_jobs import start_curved_hphi_tracking
+        return start_curved_hphi_tracking(self, previous, current, request)
 
     def start_curved_hphi_tune(self, request, *, max_new_trials=None, checkpoint=None):
         """Run an owned full-quadratic curved Hphi tuning worker."""

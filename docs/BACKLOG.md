@@ -1,3 +1,5 @@
+H13-d独立曲線追跡の所有pairを接続（2026-09-22）。[所有保存・worker契約](CURVED_HPHI_TRACKING_SAVED.md)。全Project/nativeコピーと元E/H再計算、移動後再生、worker中止/再起動、改変・予算拒否の新3＋関連11件PASS。サンプル予算/直線native拒否の追加検査1件もPASS、全handle終了0。順序付き履歴・過去anchor回復・CLI/GUIは残る。全goalは継続。
+
 H13-d worker接続済み（2026-09-22）：[曲線調整worker](CURVED_HPHI_TUNING_WORKER.md)を追加。起動/所有完了検証、実中止・新job再開、管理器再起動、全出力移動/改変拒否の新5＋関連9件を分割検証。初期prefix削除の不備を再現・修正し、影響2件PASS。全handle終了。独立追跡履歴・回復の所有操作・GUIは残る。全goalは継続。
 
 H13-d CLI接続済み（2026-09-22）：`tune-curved-hphi`/`resume-tune-curved-hphi`/`replay-tune-curved-hphi`を追加。[所有保存とCLI契約](CURVED_HPHI_TUNING_SAVED.md)。実FEM尺度則、全RF保持、移動後再生、未確認停止、旧直線CLI互換の新3＋既存1件PASS。全handle終了0。独立追跡履歴・worker・GUIは未完了。
