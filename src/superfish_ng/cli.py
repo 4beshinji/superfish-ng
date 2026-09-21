@@ -144,7 +144,7 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
-    hphi_tracking=sub.add_parser('execute-hphi-tracking',help='compare original Hphi E/H subspaces on the same vacuum with explicit comparison meshes')
+    hphi_tracking=sub.add_parser('execute-hphi-tracking',help='compare original Hphi E/H subspaces with explicit same-vacuum or geometry-mapping requests')
     hphi_tracking.add_argument('previous',type=Path);hphi_tracking.add_argument('current',type=Path)
     hphi_tracking.add_argument('request',type=Path);hphi_tracking.add_argument('--out',type=Path,required=True)
     hphi_tracking_replay=sub.add_parser('replay-hphi-tracking',help='fully replay both owned Hphi spectra and their subspace correspondence')

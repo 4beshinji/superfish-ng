@@ -60,8 +60,13 @@ class HphiTrackingRequest:
     previous_comparison_order: int=2
     current_comparison_order: int=2
     controls: HphiTrackingControls=field(default_factory=HphiTrackingControls)
+    geometry_mapping: object=None
 
     def __post_init__(self):
+        if self.geometry_mapping is not None:
+            if type(self.geometry_mapping) is not HphiGeometryMapping:
+                raise ValueError('geometry_mapping must be an explicit HphiGeometryMapping')
+            object.__setattr__(self,'geometry_mapping',HphiGeometryMapping.from_dict(self.geometry_mapping.to_dict()))
         for name in ('previous_mode_count','current_mode_count','previous_comparison_order','current_comparison_order'):
             integer(getattr(self,name),name)
         if self.previous_comparison_order not in (1,2) or self.current_comparison_order not in (1,2):
@@ -82,21 +87,37 @@ class HphiTrackingRequest:
             object.__setattr__(self,'previous_mode_ids',tuple(ids))
 
     def to_dict(self):
-        return dict(format='superfish_ng_hphi_tracking_request',tracking_version=1,mapping='same_vacuum',
+        data=dict(format='superfish_ng_hphi_tracking_request',tracking_version=1,mapping='same_vacuum',
             previous_comparison_mesh=self.previous_comparison_mesh.to_dict(),current_comparison_mesh=self.current_comparison_mesh.to_dict(),
             previous_mode_count=self.previous_mode_count,current_mode_count=self.current_mode_count,
             previous_mode_ids=None if self.previous_mode_ids is None else list(self.previous_mode_ids),
             previous_identity_groups=json.loads(json.dumps(self.previous_identity_groups)),
             previous_comparison_order=self.previous_comparison_order,current_comparison_order=self.current_comparison_order,controls=self.controls.to_dict())
+        if self.geometry_mapping is not None:
+            data.update(tracking_version=2,mapping=self.geometry_mapping.to_dict(),transport='unitary_fixed_cylindrical_components')
+        return data
 
     @classmethod
     def from_dict(cls,data):
-        names=['format','tracking_version','mapping',*cls.__dataclass_fields__];keys(data,names,names,'Hphi tracking request')
-        if data['format']!='superfish_ng_hphi_tracking_request' or type(data['tracking_version']) is not int or data['tracking_version']!=1 or data['mapping']!='same_vacuum':
-            raise ValueError('expected Hphi tracking_version 1 with explicit same_vacuum mapping')
+        if not isinstance(data,dict):raise ValueError('Hphi tracking request must be an object')
+        version=data.get('tracking_version')
+        if type(version) is not int or version not in (1,2):
+            raise ValueError('expected Hphi tracking_version 1 or 2')
+        fields=[name for name in cls.__dataclass_fields__ if name!='geometry_mapping']
+        names=['format','tracking_version','mapping',*fields]+(['transport'] if version==2 else [])
+        keys(data,names,names,'Hphi tracking request')
+        if data['format']!='superfish_ng_hphi_tracking_request':
+            raise ValueError('expected superfish_ng_hphi_tracking_request')
+        mapping=None
+        if version==1:
+            if data['mapping']!='same_vacuum':raise ValueError('tracking_version 1 requires same_vacuum mapping')
+        else:
+            if data['transport']!='unitary_fixed_cylindrical_components':
+                raise ValueError('tracking_version 2 requires unitary_fixed_cylindrical_components transport')
+            mapping=HphiGeometryMapping.from_dict(data['mapping'])
         if data['previous_mode_ids'] is not None and type(data['previous_mode_ids']) is not list:
             raise ValueError('previous_mode_ids must be a JSON list or null')
-        return cls(**{name:(_mesh(data[name]) if name.endswith('_mesh') else HphiTrackingControls.from_dict(data[name]) if name=='controls' else data[name]) for name in cls.__dataclass_fields__})
+        return cls(**{name:(_mesh(data[name]) if name.endswith('_mesh') else HphiTrackingControls.from_dict(data[name]) if name=='controls' else data[name]) for name in fields},geometry_mapping=mapping)
 
     @classmethod
     def load(cls,path):return cls.from_dict(parse_json(Path(path).read_text(encoding='utf-8')))
@@ -157,6 +178,12 @@ def _track_hphi_modes(previous,current,request,*,previous_scale=None,geometry_ma
     previous frequencies passed to correspondence use the current length scale.
     The public version-1 reader and same-vacuum entry point remain unchanged.
     """
+    if not isinstance(request,HphiTrackingRequest):raise ValueError('expected HphiTrackingRequest')
+    request=HphiTrackingRequest.from_dict(request.to_dict())
+    if request.geometry_mapping is not None:
+        if geometry_mapping is not None or previous_scale is not None:
+            raise ValueError('declare geometry transport once, in the request or in the explicit argument')
+        geometry_mapping=request.geometry_mapping
     if geometry_mapping is not None:
         if previous_scale is not None:
             raise ValueError('supply geometry_mapping or previous_scale, never both')
@@ -165,8 +192,7 @@ def _track_hphi_modes(previous,current,request,*,previous_scale=None,geometry_ma
         geometry_mapping=HphiGeometryMapping.from_dict(geometry_mapping.to_dict())
     scaled = previous_scale is not None
     scale = positive(previous_scale, 'previous_scale') if scaled else 1.
-    if not isinstance(request,HphiTrackingRequest):raise ValueError('expected HphiTrackingRequest')
-    request=HphiTrackingRequest.from_dict(request.to_dict());controls=request.controls
+    controls=request.controls
     if any(not hasattr(s,'case') or s.case.modes>controls.max_gram_modes for s in (previous,current)):
         raise ValueError('Hphi tracking requires dedicated FEM spectra within max_gram_modes')
     previous,current=map(_verified_solution,(previous,current));solutions=previous,current

@@ -175,7 +175,7 @@ def start_extended_hphi_history(manager, history, next_pair):
         history=Path(history);before=history_snapshot(history);previous=read_hphi_history(history)
         if not previous['can_extend']:raise ValueError(previous['stop_reason'])
         old=HphiTrackingHistoryRequest.from_dict(previous['request'])
-        request=HphiTrackingHistoryRequest(old.step_count+1,old.max_steps)
+        request=HphiTrackingHistoryRequest(old.step_count+1,old.max_steps,old.recoveries)
         if before!=history_snapshot(history):raise ValueError('source hphi history changed before extension')
         identifier=time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:10]
         directory=manager.directory(identifier)
@@ -204,7 +204,7 @@ def extend_hphi_history(history, next_pair, directory):
     history=Path(history);before=history_snapshot(history);previous=read_hphi_history(history)
     if not previous['can_extend']:raise ValueError(previous['stop_reason'])
     old_request=HphiTrackingHistoryRequest.from_dict(previous['request'])
-    request=HphiTrackingHistoryRequest(old_request.step_count+1,old_request.max_steps)
+    request=HphiTrackingHistoryRequest(old_request.step_count+1,old_request.max_steps,old_request.recoveries)
     if before!=history_snapshot(history):raise ValueError('source hphi history changed before extension')
     target=Path(directory)
     result=execute_hphi_history([*_paths(history,old_request),Path(next_pair)],request,target)

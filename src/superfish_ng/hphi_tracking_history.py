@@ -12,25 +12,49 @@ from .hphi_tracking_jobs import _snapshot, read_hphi_tracking
 class HphiTrackingHistoryRequest:
     step_count: int
     max_steps: int = 100
+    recoveries: object = None
 
     def __post_init__(self):
         integer(self.step_count, 'history step_count')
         integer(self.max_steps, 'history max_steps')
         if self.step_count > self.max_steps:
             raise ValueError('hphi history step_count exceeds max_steps')
+        if self.recoveries is not None:
+            from .hphi_identity_recovery import HphiIdentityRecoveryRequest
+            if type(self.recoveries) is not list or not self.recoveries:
+                raise ValueError('recovered Hphi history requires nonempty recovery placements')
+            normalized=[];last=-1
+            for placement in self.recoveries:
+                keys(placement,['after_step_index','request'],['after_step_index','request'],'Hphi recovery placement')
+                index=integer(placement['after_step_index'],'after_step_index',0)
+                if not last<index<self.step_count:
+                    raise ValueError('recovery placements must be increasing distinct indices within the history')
+                recovery=HphiIdentityRecoveryRequest.from_dict(placement['request'])
+                if recovery.anchor_snapshot_index>=index+1:
+                    raise ValueError('recovery anchor must precede its current history snapshot')
+                normalized.append(dict(after_step_index=index,request=recovery.to_dict()));last=index
+            object.__setattr__(self,'recoveries',normalized)
 
     def to_dict(self):
-        return dict(format='superfish_ng_hphi_tracking_history_request', history_version=1,
-                    step_count=self.step_count, max_steps=self.max_steps)
+        data=dict(format='superfish_ng_hphi_tracking_history_request', history_version=1,
+                  step_count=self.step_count, max_steps=self.max_steps)
+        if self.recoveries is not None:
+            data.update(history_version=2,recoveries=json.loads(json.dumps(self.recoveries)))
+        return data
 
     @classmethod
     def from_dict(cls, data):
-        names=['format','history_version','step_count','max_steps']
+        if not isinstance(data,dict):raise ValueError('Hphi history request must be an object')
+        version=data.get('history_version')
+        if type(version) is not int or version not in (1,2):
+            raise ValueError('expected Hphi history_version 1 or 2')
+        names=['format','history_version','step_count','max_steps']+(['recoveries'] if version==2 else [])
         keys(data,names,names,'hphi tracking history request')
-        if (data['format']!='superfish_ng_hphi_tracking_history_request'
-                or type(data['history_version']) is not int or data['history_version']!=1):
-            raise ValueError('expected superfish_ng_hphi_tracking_history_request history_version 1')
-        return cls(data['step_count'],data['max_steps'])
+        if data['format']!='superfish_ng_hphi_tracking_history_request':
+            raise ValueError('expected superfish_ng_hphi_tracking_history_request')
+        if version==2 and data['recoveries'] is None:
+            raise ValueError('history_version 2 requires explicit recovery placements')
+        return cls(data['step_count'],data['max_steps'],data.get('recoveries'))
 
     @classmethod
     def load(cls, path):
@@ -62,7 +86,7 @@ def _native_part(snapshot, side):
     return native
 
 
-def _verify_link(previous, current, previous_snapshot, current_snapshot):
+def _verify_link(previous, current, previous_snapshot, current_snapshot, previous_groups=None):
     if previous['status']!='PASS':
         raise ValueError('hphi history cannot continue after an UNVERIFIED correspondence')
     if _native_part(previous_snapshot,'current')!=_native_part(current_snapshot,'previous'):
@@ -74,7 +98,7 @@ def _verify_link(previous, current, previous_snapshot, current_snapshot):
         if (not previous['individual_ids_complete']
                 or request['previous_mode_ids']!=previous['current_mode_ids']):
             raise ValueError('hphi history individual IDs differ or replace an unresolved ID set')
-    elif _canonical_groups(request['previous_identity_groups'])!=_current_groups(previous):
+    elif _canonical_groups(request['previous_identity_groups'])!=(previous_groups if previous_groups is not None else _current_groups(previous)):
         raise ValueError('hphi history ID group continuity differs between adjacent steps')
 
 
@@ -91,6 +115,9 @@ def verify_hphi_history_steps(paths, request):
     if type(paths) not in (list,tuple) or len(paths)!=request.step_count:
         raise ValueError('hphi history requires exactly step_count saved tracking directories')
     directories=[Path(path) for path in paths]
+    if request.recoveries is not None:
+        from .hphi_recovered_history import verify_recovered_hphi_history_steps
+        return verify_recovered_hphi_history_steps(directories,request)
     # The full snapshots include both native copies and every pair document.
     before=[_snapshot(path) for path in directories]
     verified=[]

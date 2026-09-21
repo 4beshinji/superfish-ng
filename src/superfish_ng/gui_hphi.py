@@ -214,6 +214,8 @@ def hphi_history_response(manager, action, data):
     before=history_snapshot(directory);result=read_hphi_history(directory)
     if action=='hphi-history-result':
         payload=dict(request=result['request'],result=result,state=manager.status(data['id'],verify=True),sources=parse_json((directory/'sources.json').read_text()))
+        from .hphi_tracking import HphiTrackingRequest
+        payload['step_requests']=[HphiTrackingRequest.load(directory/f'step-{index:04d}'/'tracking.json').to_dict() for index in range(result['request']['step_count'])]
     else:
         if before!=history_snapshot(directory):raise ValueError('hphi history changed before source import')
         index=data['index'];side=data['side']

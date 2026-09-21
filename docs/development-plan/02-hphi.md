@@ -264,6 +264,8 @@ H10-a受入（2026-09-21）：[明示回復核](../HPHI_IDENTITY_RECOVERY.md)。
 
 **依存：a**。専用履歴へ明示回復eventを追加し、過去snapshot/現在snapshotの所有nativeと継承集合を結び付ける。全再生・改変拒否・成功IDのみの後続継承、CLI/workerの所有保存を検査する。
 
+H10-b受入（2026-09-21）：[所有回復履歴](../HPHI_RECOVERED_HISTORY.md)。明示写像pair保存、過去owned native/ID順への結合、成功回復だけの後続継承、CLI再生・worker延長を検査。GUI要求欠落のredを補修。新6unit＋既存25unitとChrome4項目PASS、349実装/48所有ファイルの最終照合済み。次はH10-c。
+
 #### H10-c
 
 **依存：b**。調整の検索試行/最終細分とanchor indexを区別して回復を接続する。ID確認前の周波数未評価、失敗停止、保存再開/操作経路と元RF保持を検査し、親H10を統合監査する。

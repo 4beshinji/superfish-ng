@@ -1,3 +1,5 @@
+H10-bは`test_hphi_mapped_tracking_saved`2件、`test_hphi_recovered_history`3件、`test_gui_hphi_history_request`1件と、既存の専用回帰23＋調整利用先2件がPASS。実Chrome4項目もPASS。[検証範囲・時間・失敗履歴](HPHI_RECOVERED_HISTORY.md)。GUI要求保持変更後はフォームと実ブラウザーを検査し、数値実装hashの不変部分の成功証拠を再利用した。
+
 H10-aは`test_hphi_identity_recovery`の新8件（4+3+1の分割実行）と既存`test_hphi_tracking_history.HphiTrackingHistoryTests.test_native_spectrum_and_identity_continuity`1件がPASS。[検証記録](HPHI_IDENTITY_RECOVERY.md)。独立解析f/q/縮退部分空間、正しい順位交換と停止対照を分離。H10-b/cの保存・操作受入は含まない。
 
 H09-d受入：両形状worker専用validator、再起動後Chrome各1、追加穴付き逆/同形状別分割1件（19.113秒）、実HTTP1件（0.616秒）がPASS。[分割証拠・失敗履歴・条件別監査](HPHI_SHAPE_TUNING_GUI.md)。src/FEM不変部分のH09-a/b/c成功証拠を再利用。全suite/seed未実施。

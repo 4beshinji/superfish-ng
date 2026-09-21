@@ -24,6 +24,8 @@ class HphiIdentityRecoveryRequest:
         if not isinstance(self.comparison, HphiTrackingRequest):
             raise ValueError('Hphi recovery requires an explicit anchor comparison request')
         comparison = HphiTrackingRequest.from_dict(self.comparison.to_dict())
+        if comparison.geometry_mapping is not None:
+            raise ValueError('declare recovery geometry only in the outer recovery mapping')
         if comparison.previous_mode_ids is None:
             raise ValueError('Hphi recovery anchor must declare resolved individual IDs, not an ID set')
         object.__setattr__(self, 'comparison', comparison)

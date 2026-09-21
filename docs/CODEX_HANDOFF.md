@@ -1,3 +1,7 @@
+H10-b完了（2026-09-21）：[所有回復履歴](HPHI_RECOVERED_HISTORY.md)を受入。写像pair要求版2、履歴版2の過去owned anchor/ID順検証、成功回復だけの後続継承、CLI/worker所有再生・延長を接続。新6unit＋既存25unitの分割証拠、Chrome4項目PASS、全handle/サーバー終端。数値後の差はGUI3pathだけで、349実装と48所有ファイルを最終照合。次はH10-c（検索試行/最終細分の調整回復）。親H10/全goalは未完了。
+
+H10-b進行中（2026-09-21）：[所有回復履歴](HPHI_RECOVERED_HISTORY.md)を実装。写像pair要求版2の新2件と調整利用先2件はPASS。新履歴3件・専用回帰は実行中（out/h10-history-20260921）。実行中はsrcを変更しない。GUI履歴フォームが回復eventを落とすredを再現済みで、数値handle終了後に修正・操作検証が必要。H10-b/親H10は未完了、作業差分はまだ未コミット。
+
 H10-a完了（2026-09-21）：[明示個別ID回復核](HPHI_IDENTITY_RECOVERY.md)を追加。独立同軸TEM/Bessel根の順位交換・解析q場・縮退部分空間、継承/anchor guard、集合外/集合境界、元場不変を確認。新8件の分割証拠＋既存履歴1件PASS、全handle終了。核は履歴の過去snapshotとの結び付けをまだ証明しない。次はH10-bの所有回復eventと成功IDのみの後続継承。親H10/全goalは未完了。
 
 H09完了（2026-09-21）：[worker/GUI受入と条件別監査](HPHI_SHAPE_TUNING_GUI.md)。両形状の実中止/所有再開・管理器再起動、元サーバー正常終了後の新サーバー/新ブラウザー復元、全native/RF byte一致、現行src hash一致がPASS。全handle終端。検証器失敗と補完再生は分割証拠として保持。次はH10。

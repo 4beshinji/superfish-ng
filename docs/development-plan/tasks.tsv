@@ -18,7 +18,7 @@ H09-c	P03 D02	H09-b	実装	DONE	02-hphi.md#h09-c	非一様形状調整と所有�
 H09-d	P03 D02	H09-c	実装	DONE	02-hphi.md#h09-d	非一様形状調整worker・GUIとH09統合監査
 H10	P03 P04 D02	H09 H10-c	実装	IN_PROGRESS	02-hphi.md#h10	Hφの個別ID回復を専用履歴へ追加する
 H10-a	P03 P04 D02	H09	実装	DONE	02-hphi.md#h10-a	Hφ個別ID回復核と独立順位交換を検査する
-H10-b	P03 P04 D02	H10-a	実装	PLANNED	02-hphi.md#h10-b	専用履歴の所有回復eventと後続継承を接続する
+H10-b	P03 P04 D02	H10-a	実装	DONE	02-hphi.md#h10-b	専用履歴の所有回復eventと後続継承を接続する
 H10-c	P03 P04 D02	H10-b	実装	PLANNED	02-hphi.md#h10-c	検索試行・最終細分のID回復を調整へ接続する
 H11	P03	H08	実装	PLANNED	02-hphi.md#h11	曲線Hφの比較領域を構成する
 H12	P03	H11	実装	PLANNED	02-hphi.md#h12	曲線Hφの場比較と細分診断を実装する
