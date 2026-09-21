@@ -15,6 +15,8 @@
 
 2026-09-21追記：H11受入済み。H12を元場比較a/三水準診断bに分割し、TSVは99行（原計画90カードを維持）。[H12-a](../CURVED_HPHI_FIELDS.md)と[H12-b/親H12の監査](../CURVED_HPHI_CONVERGENCE.md)を受入済み、次はH13。全goalは未完了。
 
+2026-09-21追記：H13を細分a/追跡核b/調整回復c/所有CLI-worker d/実GUI監査eに分割し、TSVは104行（原計画90カードを維持）。[H13-a](../CURVED_HPHI_REFINEMENT.md)は受入済み、次はH13-b。親H13は全子工程の受入まで未完了。
+
 ## 文書構成
 
 | 文書 | カード | 内容 |

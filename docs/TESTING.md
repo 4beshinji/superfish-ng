@@ -1,3 +1,5 @@
+H13-aの同二次領域細分/丸め契約は`test_curved_hphi_refinement`。関連は`test_curved_hphi_comparison test_curved_hphi_field_overlap test_curved_meridional_geometry test_curved_hphi_fem`と、`test_curved_hphi_convergence`のstrict要求・実三水準/guardケース。[不変量・実行記録](CURVED_HPHI_REFINEMENT.md)。
+
 H12-bは`test_curved_hphi_convergence`。固定P2/strict要求、三水準f/場/RFの別判定、解析TEM f/q/Q、guard/近縮退停止、保存native不変、P1軸位相を検査する。関連は`test_curved_hphi_saved test_curved_hphi_field_overlap test_hphi_convergence test_curved_hphi_comparison`。[新5件・関連19件と失敗を含む実行記録](CURVED_HPHI_CONVERGENCE.md)。
 
 H12-aの元曲線E/H比較は`test_curved_hphi_field_overlap`。関連は`test_curved_hphi_saved test_hphi_field_overlap test_hphi_convergence test_curved_hphi_comparison`。新6/関連20件PASS。[独立積分・実FEM・保存不変の記録](CURVED_HPHI_FIELDS.md)。guard/三水準診断はH12-bの別検査。

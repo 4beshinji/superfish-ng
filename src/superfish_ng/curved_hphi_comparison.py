@@ -27,6 +27,12 @@ def _encode(value):
     return [value.numerator,value.denominator]
 
 
+def _upper_float(value):
+    """Outward-round a nonnegative rational bound, including subnormal values."""
+    rounded=float(value)
+    return float(np.nextafter(rounded,np.inf)) if F(rounded)<value else rounded
+
+
 def _vertices(vertices):
     return [[_encode(x),_encode(y)] for x,y in vertices]
 
@@ -41,8 +47,11 @@ class CurvedHphiComparisonDomain:
     previous: CurvedMeridionalGeometry
     current: CurvedMeridionalGeometry
     mapping: str
+    restriction_policy: str='exact'
 
     def __post_init__(self):
+        if self.restriction_policy not in ('exact','binary64_roundoff'):
+            raise ValueError('native restriction policy must be exact or binary64_roundoff')
         if self.mapping not in ('same_vacuum','declared_quadratic'):
             raise ValueError('curved Hphi mapping must be same_vacuum or declared_quadratic')
         domains=[]
@@ -61,20 +70,27 @@ class CurvedHphiComparisonDomain:
         object.__setattr__(self,'previous',a);object.__setattr__(self,'current',b)
 
     def to_dict(self):
-        return dict(format='superfish_ng_curved_hphi_comparison_domain',schema_version=1,
+        data=dict(format='superfish_ng_curved_hphi_comparison_domain',schema_version=1,
                     mapping=self.mapping,previous=self.previous.to_dict(),current=self.current.to_dict())
+        if self.restriction_policy!='exact':
+            data.update(schema_version=2,native_restriction=self.restriction_policy)
+        return data
 
     @classmethod
     def from_dict(cls,data):
-        names=('format','schema_version','mapping','previous','current')
+        version=data.get('schema_version') if isinstance(data,dict) else None
+        names=('format','schema_version','mapping','previous','current')+(('native_restriction',) if version==2 else ())
         keys(data,names,names,'curved Hphi comparison domain')
         if (data['format']!='superfish_ng_curved_hphi_comparison_domain'
-                or type(data['schema_version']) is not int or data['schema_version']!=1):
-            raise ValueError('expected curved Hphi comparison domain schema_version 1')
-        return cls(*(CurvedMeridionalGeometry.from_dict(data[name]) for name in ('previous','current')),data['mapping'])
+                or type(version) is not int or version not in (1,2)):
+            raise ValueError('expected curved Hphi comparison domain schema_version 1 or 2')
+        if version==2 and data['native_restriction']!='binary64_roundoff':
+            raise ValueError('domain version 2 requires explicit binary64_roundoff native restriction')
+        return cls(*(CurvedMeridionalGeometry.from_dict(data[name]) for name in ('previous','current')),data['mapping'],
+                   'exact' if version==1 else data['native_restriction'])
 
     def inverse(self):
-        return type(self)(self.current,self.previous,self.mapping)
+        return type(self)(self.current,self.previous,self.mapping,self.restriction_policy)
 
 
 def _fraction(raw):
@@ -84,7 +100,7 @@ def _fraction(raw):
     return F(*raw)
 
 
-def _partition(reference,native,declarations,max_pair_tests,max_triangles):
+def _partition(reference,native,declarations,max_pair_tests,max_triangles,restriction_policy='exact'):
     if type(native) is not CurvedMeridionalGeometry:
         raise ValueError('native geometry must be CurvedMeridionalGeometry')
     native=CurvedMeridionalGeometry.from_dict(native.to_dict())
@@ -98,7 +114,7 @@ def _partition(reference,native,declarations,max_pair_tests,max_triangles):
         declarations=[dict(base_cell=i,reference_vertices=_vertices(UNIT)) for i in range(len(native.cell_nodes))]
     if type(declarations) is not list or len(declarations)!=len(native.cell_nodes):
         raise ValueError('one explicit reference chart per native cell is required')
-    groups=defaultdict(list);charts=[]
+    groups=defaultdict(list);charts=[];error_bounds=[]
     polynomials=[tuple(_polynomial(reference.points_rz_m[nodes,i]) for i in (0,1)) for nodes in reference.cell_nodes]
     for cell,(nodes,raw) in enumerate(zip(native.cell_nodes,declarations)):
         keys(raw,('base_cell','reference_vertices'),('base_cell','reference_vertices'),'curved Hphi native chart')
@@ -111,11 +127,27 @@ def _partition(reference,native,declarations,max_pair_tests,max_triangles):
         if any(x<0 or y<0 or x+y>1 for x,y in vertices) or _cross(*vertices)<=0:
             raise ValueError('native chart requires a positive triangle inside its reference cell')
         samples=vertices+tuple(tuple((vertices[i][k]+vertices[j][k])/2 for k in (0,1)) for i,j in ((0,1),(1,2),(2,0)))
+        errors=[];reference_points=reference.points_rz_m[reference.cell_nodes[owner]]
+        coordinate_scale=[max(F(abs(float(v))) for v in reference_points[:,axis]) for axis in (0,1)]
         for point,node in zip(samples,nodes):
+            error=[]
             for axis,p in enumerate(polynomials[owner]):
                 expected=sum((v*point[0]**a*point[1]**b for (a,b),v in p.items()),F(0))
-                if expected!=F(float(native.points_rz_m[node,axis])):
+                difference=F(float(native.points_rz_m[node,axis]))-expected
+                if restriction_policy=='exact' and difference:
                     raise ValueError(f'native cell {cell} is not the exact declared quadratic restriction (including midpoints)')
+                if restriction_policy=='binary64_roundoff' and abs(difference)>8*F(1,2**52)*coordinate_scale[axis]:
+                    raise ValueError(f'native cell {cell} differs from its quadratic restriction beyond binary64 roundoff')
+                error.append(difference)
+            errors.append(error)
+        # Convex-hull bound of the vector-valued quadratic error polynomial.
+        controls=errors[:3]+[[2*errors[3+k][axis]-(errors[i][axis]+errors[j][axis])/2 for axis in (0,1)]
+                            for k,(i,j) in enumerate(((0,1),(1,2),(2,0))) ]
+        bound=[max(abs(row[axis]) for row in controls) for axis in (0,1)]
+        extent=max(max(F(float(v)) for v in native.points_rz_m[nodes,axis])-min(F(float(v)) for v in native.points_rz_m[nodes,axis]) for axis in (0,1))
+        if max(bound)>512*F(1,2**52)*extent:
+            raise ValueError('native quadratic restriction roundoff is unresolved relative to the cell size')
+        error_bounds.append([_upper_float(v) for v in bound])
         charts.append((owner,vertices));groups[owner].append((cell,vertices))
     pairs=sum(len(rows)*(len(rows)-1)//2 for rows in groups.values())
     if pairs>max_pair_tests:
@@ -140,7 +172,7 @@ def _partition(reference,native,declarations,max_pair_tests,max_triangles):
                 key=tuple(sorted(map(int,reference.cell_nodes[owner,[i,j]])))
                 if boundary.get(key)==(int(component),str(tag)):break
         else:raise ValueError('native boundary does not preserve every declared reference component and axis role')
-    return native,charts,groups,pairs
+    return native,charts,groups,pairs,error_bounds
 
 
 @dataclass(frozen=True)
@@ -176,7 +208,7 @@ def build_curved_hphi_comparison(previous,current,domain,*,previous_cells=None,c
     integer(max_pair_tests,'max_pair_tests');integer(max_triangles,'max_triangles')
     if type(domain) is not CurvedHphiComparisonDomain:raise ValueError('explicit curved Hphi comparison domain required')
     domain=CurvedHphiComparisonDomain.from_dict(domain.to_dict())
-    prepared=[_partition(ref,native,cells,max_pair_tests,max_triangles)
+    prepared=[_partition(ref,native,cells,max_pair_tests,max_triangles,domain.restriction_policy)
               for ref,native,cells in zip((domain.previous,domain.current),(previous,current),(previous_cells,current_cells))]
     groups=[p[2] for p in prepared]
     cross_pairs=sum(len(rows)*len(groups[1][owner]) for owner,rows in groups[0].items())
@@ -198,7 +230,7 @@ def build_curved_hphi_comparison(previous,current,domain,*,previous_cells=None,c
                         raise CurvedHphiComparisonBudgetExceeded('curved Hphi common intersections exceed max_triangles')
                     triangles.append((owner,vertices,old,new,(a,b)))
                     covered[0][old]+=area;covered[1][new]+=area;areas[owner]+=area
-    for side,(_,charts,_,_) in enumerate(prepared):
+    for side,(_,charts,_,_,_) in enumerate(prepared):
         if any(covered[side][i]!=_area(vertices) for i,(_,vertices) in enumerate(charts)):
             raise ValueError('common partition does not exactly cover every native cell')
     if any(areas[i]!=F(1,2) for i in range(len(domain.previous.cell_nodes))):
@@ -211,6 +243,12 @@ def build_curved_hphi_comparison(previous,current,domain,*,previous_cells=None,c
         native_cell_reference_coverage=[[_encode(covered[s][i]) for i in range(len(p[1]))] for s,p in enumerate(prepared)],
         area_m2=[g.area_m2 for g in (domain.previous,domain.current)],
         volume_m3=[g.volume_m3 for g in (domain.previous,domain.current)],
+        native_restriction_policy=domain.restriction_policy,
+        exact_native_restrictions=not any(value for p in prepared for row in p[4] for value in row),
+        native_coordinate_error_bounds_m=[p[4] for p in prepared],
+        maximum_native_coordinate_error_bound_m=max(value for p in prepared for row in p[4] for value in row),
+        roundoff_coordinate_epsilon_factor=8 if domain.restriction_policy!='exact' else 0,
+        maximum_roundoff_cell_extent_epsilon_factor=512,
         triangles=[dict(base_cell=o,reference_vertices=_vertices(v),previous_cell=a,current_cell=b) for o,v,a,b,_ in triangles],
-        scope='complete declared quadratic reference domains and exact native restrictions; not field identity, quadrature accuracy or a discretization error bound')
+        scope='complete declared quadratic reference domains and rational chart coverage; native coefficient equality or explicitly bounded binary64 roundoff; not field identity, quadrature accuracy or a discretization error bound')
     return CurvedHphiComparison(domain,tuple(p[0] for p in prepared),tuple(triangles),report)
