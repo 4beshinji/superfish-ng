@@ -489,6 +489,8 @@ H16-b受入（2026-09-22）：[材料実調整・明示ID回復](../MATERIAL_HPH
 
 H16-c進行中（2026-09-22）：[材料調整の所有保存](../MATERIAL_HPHI_TUNING_SAVED.md)は新5件123.786秒＋材料native関連4件10.185秒PASS、全handle終端。移動後の物理再生/新規出力への再開、元全native不変、失敗prefixと改変/path拒否を確認。次は独立追跡履歴とCLI-worker、回復/実中止/再起動の操作検査。親H16/全goalは継続。
 
+H16-c進行中（2026-09-22）：[材料二状態追跡の所有保存・worker・CLI](../MATERIAL_HPHI_TRACKING_JOBS.md)は新4件＋関連2件PASS、全handle/worker終端。実中止/管理器再起動、元全native不変、移動/再import、改変/kind拒否を確認。CLI参照ミスの再現/修正記録も保持。次は独立追跡履歴と調整CLI-worker・回復操作。親H16/全goalは継続。
+
 #### H16-d
 
 **依存：H16-c**。GUIから材料調整/履歴/回復・最終細分・実中止/再開・元場を操作し、別Project/import後も全材料/領域/両R/Q/N/Aが保存/CLIと一致することを実ブラウザーで検査。親H16の全条件を監査してから受入する。

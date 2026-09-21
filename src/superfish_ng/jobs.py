@@ -116,6 +116,10 @@ def read_job(directory, verify=True):
         if is_curved_hphi_tune(directory, state, manifest):
             verify_curved_hphi_tune_job(directory, state, manifest)
             return state
+        from .material_hphi_tracking_jobs import is_material_hphi_tracking, verify_material_hphi_tracking
+        if is_material_hphi_tracking(directory, state, manifest):
+            verify_material_hphi_tracking(directory, state, manifest)
+            return state
         from .curved_hphi_tracking_jobs import is_curved_hphi_tracking, verify_curved_hphi_tracking
         if is_curved_hphi_tracking(directory, state, manifest):
             verify_curved_hphi_tracking(directory, state, manifest)
@@ -472,6 +476,11 @@ class JobManager:
     def extend_curved_hphi_history(self, history, next_pair):
         from .curved_hphi_tracking_history_saved import start_extended_curved_hphi_history
         return start_extended_curved_hphi_history(self, history, next_pair)
+
+    def start_material_hphi_tracking(self, previous, current, request):
+        """Own and compare fixed-material straight Hphi native spectra."""
+        from .material_hphi_tracking_jobs import start_material_hphi_tracking
+        return start_material_hphi_tracking(self, previous, current, request)
 
     def start_curved_hphi_tracking(self, previous, current, request):
         """Own and compare full-quadratic curved Hphi native spectra."""

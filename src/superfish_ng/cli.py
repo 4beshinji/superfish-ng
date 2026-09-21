@@ -145,6 +145,11 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
+    material_hphi_tracking=sub.add_parser('execute-material-hphi-tracking',help='compare original Hphi E/H subspaces with explicit fixed-material or geometry-mapping requests')
+    material_hphi_tracking.add_argument('previous',type=Path);material_hphi_tracking.add_argument('current',type=Path)
+    material_hphi_tracking.add_argument('request',type=Path);material_hphi_tracking.add_argument('--out',type=Path,required=True)
+    material_hphi_tracking_replay=sub.add_parser('replay-material-hphi-tracking',help='fully replay both owned Hphi spectra and their subspace correspondence')
+    material_hphi_tracking_replay.add_argument('run',type=Path)
     curved_hphi_tracking=sub.add_parser('execute-curved-hphi-tracking',help='compare original Hphi E/H subspaces with explicit same-vacuum or geometry-mapping requests')
     curved_hphi_tracking.add_argument('previous',type=Path);curved_hphi_tracking.add_argument('current',type=Path)
     curved_hphi_tracking.add_argument('request',type=Path);curved_hphi_tracking.add_argument('--out',type=Path,required=True)
@@ -483,6 +488,12 @@ def main(argv=None):
             else:
                 result=read_curved_hphi_history(args.run)
             print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-material-hphi-tracking','replay-material-hphi-tracking'):
+            from .material_hphi_tracking import MaterialHphiTrackingRequest
+            from .material_hphi_tracking_jobs import execute_material_hphi_tracking,read_material_hphi_tracking
+            result=(execute_material_hphi_tracking(args.previous,args.current,MaterialHphiTrackingRequest.load(args.request),args.out)
+                    if args.command=='execute-material-hphi-tracking' else read_material_hphi_tracking(args.run))
+            print(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False));return 0
         if args.command in ('execute-curved-hphi-tracking','replay-curved-hphi-tracking'):
             from .curved_hphi_tracking import CurvedHphiTrackingRequest
             from .curved_hphi_tracking_jobs import execute_curved_hphi_tracking,read_curved_hphi_tracking
