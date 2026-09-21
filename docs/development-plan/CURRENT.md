@@ -1,17 +1,19 @@
 # 現行の作業入口
 
-更新：2026-09-22、P01受入。直前の基盤コミットは `8222ed8`。
-原90カードと追加子カードを含む[全111カード](tasks.tsv)の計画は継続中。
+更新：2026-09-22、P02-a受入。直前の成果コミットはP01 `5aa0ebe`。
+原90カードと追加子カードを含む[全115カード](tasks.tsv)の計画は継続中。
 このページを現行の選択・引継ぎ先とし、各文書の日付付き追記は履歴として読む。
 
 ## 次の着手
 
-**[P02：平面の個別ID回復を履歴・調整へ追加](03-planar.md#p02)**。
-先行P01は[条件別受入](../PLANAR_AFFINE_TUNING.md)までDONE。
+**[P02-b：回復付き平面所有履歴とCLI/worker](03-planar.md#p02-b)**。
+先行P02-aは[独立場による回復核](../PLANAR_IDENTITY_RECOVERY.md)までDONE。親P02は未完。
 平面専用の元ID/回復参照を保存し、履歴・調整の再開と最終細分へ接続する。
 
 | 辿る先 | 用途 |
 | --- | --- |
+| [planar_tracking_history_saved.py](../../src/superfish_ng/planar_tracking_history_saved.py) | 所有履歴の保存・worker・延長 |
+| [planar_identity_recovery.py](../../src/superfish_ng/planar_identity_recovery.py) | 回復要求・元比較・集合判定 |
 | [planar_tuning.py](../../src/superfish_ng/planar_tuning.py) | 版1/2の既存調整要求と試行/保存再生 |
 | [planar_tracking.py](../../src/superfish_ng/planar_tracking.py) | 版1〜8の有限部分空間/guard/個別ID |
 | [P01受入](../PLANAR_AFFINE_TUNING.md) / [TESTING](../TESTING.md) | 新しい形状法則、元場対応、直接利用先と検査証拠 |
@@ -35,7 +37,7 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 ## 実行中処理とソース固定
 
 この更新時に引き継ぐ生存ツールhandle・worker・検証サーバーはない。
-H16操作検証の全handle終端記録は上記受入文書にある。B02〜B04は文書調査で新規常駐処理を起動していない。
+P01/P02-aの検査handleは全て終端回収済み。現時点で新規常駐処理はない。
 製品srcの検証待ち固定は解除済み。sandbox内のプロセス一覧はホスト全体の不存在証明に使わない。
 
 長時間処理を開始したら、この節にツールsession/cell ID、PID（取得できた場合）、

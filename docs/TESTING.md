@@ -1,3 +1,5 @@
+P02-a回復核は `test_planar_identity_recovery`。[独立矩形/縮退/場・guardと分割検査](PLANAR_IDENTITY_RECOVERY.md)。所有履歴/調整/GUI接続は子b〜dで別検証する。
+
 P01調整/比較接続は `test_planar_affine_shape_mapping`。直接利用先は `test_planar_tuning test_planar_tracking test_planar_tracking_exact_affine test_planar_tracking_affine_remesh`。[条件別受入と分割ログ](PLANAR_AFFINE_TUNING.md)。
 
 P01形状法則の第一段階は `test_planar_affine_shape`。[分割検査と残るrunner/場比較](PLANAR_AFFINE_SHAPE.md)。既存調整への接続はまだ行っていない。

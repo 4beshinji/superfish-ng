@@ -46,6 +46,41 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
+## P02-a
+
+### 元平面場による明示ID回復核
+
+- 親カードP02、先行P01。`planar_identity_recovery.py`にanchor位置と完全なPlanarTrackingRequestを持つstrict回復要求を追加する。
+- 継承比較とanchor比較を元FEMから再計算し、全継承ID集合との一致を確認する。未確認では回復周波数null、候補・継承集合を別保存する。
+- 独立対照：TE矩形のcos場/解析遮断周波数、正方形の真縮退、.18→.20→.22 mの順位交換、guard未確認と集合越境拒否。元場/周波数不変、要求往復。
+- 受入は専用APIまで。所有履歴のanchor位置実体への束縛はP02-bで必須。
+
+- 受入記録：[P02-aの明示ID回復核](../PLANAR_IDENTITY_RECOVERY.md)。実矩形/正方形、独立周波数/場、guard/集合拒否と後続継承を分割4件PASS。
+
+## P02-b
+
+### 回復付き平面所有履歴とCLI/worker
+
+- 親カードP02、先行P02-a。`planar_tracking_history.py`と`planar_tracking_history_saved.py`に回復位置/完全要求/元anchor所有コピーを追加する。
+- 各隣接nativeの全hashと回復後ID継承、明示anchorが過去の解決済みsnapshotであることを再検証する。従来履歴版を保持する。
+- 受入：実矩形→正方形→矩形→延長、保存移動/再生、誤anchor/置換ID/改変拒否、CLI/workerで元全native不変。未確認回復後に延長しない。
+
+## P02-c
+
+### 平面調整の回復・最終細分・再開
+
+- 親カードP02、先行P02-b。`planar_tuning.py`と`planar_tuning_jobs.py`に完全比較/過去anchor方針を持つ新版要求を接続し、版1/2を保持する。
+- 検索と最終細分の両方で継承集合と個別回復を検証する。失敗は周波数nullで停止し、過去checkpointを保持する。
+- 受入：実矩形順位交換、正方形未確認、回復後の実最終細分、別job再開、worker取消し/再起動。独立遮断周波数と元E場、両gateと全U′/RF不変。
+
+## P02-d
+
+### 回復操作GUIとP02条件別監査
+
+- 親カードP02、先行P02-c。`gui_planar_tuning.py`と平面履歴GUIへ回復要求・候補/採用ID・anchor・null周波数の区別を接続する。
+- 実ブラウザーで履歴回復→延長、調整回復→最終細分、中止/再開、サーバー再起動後の元場表示を確認する。API/CLI/GUIで同じ順位/ID、元native/Project全bytesを照合する。
+- 全P02条件と子a〜cの証拠を監査してから親P02をDONEにする。部分APIだけで親を閉じない。
+
 ## P03
 
 ### 平面非線形写像の契約と幾何検査を追加する
