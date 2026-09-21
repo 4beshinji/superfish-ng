@@ -1,3 +1,5 @@
+P02-c調整回復は `test_planar_tuning_recovery test_planar_tuning_recovery_jobs`。直接利用先は `test_planar_tuning test_planar_affine_shape_mapping test_planar_tuning_jobs`。[条件別受入と19件の分割検査](PLANAR_TUNING_RECOVERY.md)。
+
 P02-bの所有履歴/回復CLI/workerは `test_planar_recovered_history`。[分割実行結果](PLANAR_RECOVERED_HISTORY.md)。直接利用先は `test_planar_tracking_history` と旧所有履歴のCLI・実worker中止/再起動テスト。
 
 P02-a回復核は `test_planar_identity_recovery`。[独立矩形/縮退/場・guardと分割検査](PLANAR_IDENTITY_RECOVERY.md)。所有履歴/調整/GUI接続は子b〜dで別検証する。

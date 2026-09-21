@@ -24,6 +24,7 @@ from .jobs import _implementation_hashes
 from .mode_tracking import tracked_frequency_hz
 from .saved_mode_tracking import _canonical
 from .tuning import _decision
+from .planar_tuning_recovery import validate_planar_recovery_policy, recover_planar_tune_trial
 
 
 def validate_planar_tune(request):
@@ -32,14 +33,17 @@ def validate_planar_tune(request):
              'max_trials', 'initial_ids', 'mode_id', 'controls',
              'refinement_levels', 'max_triangles', 'mesh_frequency_tolerance_hz')
     version = request.get('schema_version') if type(request) is dict else None
-    if type(version) is int and version == 2:
+    if type(version) is int and (version == 2 or version == 3 and request.get('parameter') == 'deformation'):
         names = (*names, 'shape_law')
+    if type(version) is int and version == 3:
+        names = (*names, 'identity_recovery')
     keys(request, names, names, 'planar tune')
     if (request['format'] != 'superfish_ng_planar_tune' or
-            type(request['schema_version']) is not int or request['schema_version'] not in (1, 2)):
-        raise ValueError('expected superfish_ng_planar_tune schema_version 1 or 2')
+            type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3)):
+        raise ValueError('expected superfish_ng_planar_tune schema_version 1, 2 or 3')
     project = PlanarProject.from_dict(request['project'])
-    if version == 2:
+    polynomial = version == 2 or version == 3 and request['parameter'] == 'deformation'
+    if polynomial:
         law = PlanarAffineShapeLaw.from_dict(request['shape_law'])
         if request['parameter'] != 'deformation':
             raise ValueError('planar tune v2 parameter must be dimensionless deformation')
@@ -51,7 +55,7 @@ def validate_planar_tune(request):
     if type(bounds) is not list or len(bounds) != 2:
         raise ValueError('planar tune bounds require two increasing positive values')
     for value in bounds:
-        if version == 2:
+        if polynomial:
             law.exact_transform(value)
         else:
             positive(value, 'planar tune bound')
@@ -71,6 +75,8 @@ def validate_planar_tune(request):
     if type(request['mode_id']) is not str or request['mode_id'] not in ids:
         raise ValueError('mode_id must occur in initial_ids')
     PlanarTrackingControls.from_dict(request['controls'])
+    if version == 3:
+        validate_planar_recovery_policy(request)
     for value in bounds:
         trial_planar_project(request, value, 'refinement')
     return project
@@ -81,7 +87,7 @@ def trial_planar_project(request, value, phase):
     if phase not in ('search', 'refinement'):
         raise ValueError('planar tune phase must be search or refinement')
     project = PlanarProject.from_dict(request['project'])
-    if request['schema_version'] == 2:
+    if request['schema_version'] in (2, 3) and request['parameter'] == 'deformation':
         project = PlanarAffineShapeLaw.from_dict(request['shape_law']).project(explicit_planar_project(project), value)
     else:
         project = PlanarStudy(project, request['parameter'], [value, value]).projects()[0]
@@ -99,6 +105,19 @@ def trial_planar_project(request, value, phase):
         case = (replace(case, mesh=refine_planar_mesh(case.mesh, max_triangles=request['max_triangles']))
                 if polygon else replace(case, nx=2*case.nx, ny=2*case.ny))
     return replace(project, case=case)
+
+
+def planar_tune_mapping(request, previous, current):
+    """Derive a complete comparison from original geometry and both trial phases."""
+    project = PlanarProject.from_dict(request['project'])
+    levels = [request['refinement_levels'] if trial['phase']=='refinement' else 0
+              for trial in (previous, current)]
+    if request['schema_version'] in (2, 3) and request['parameter'] == 'deformation':
+        return PlanarAffineShapeMapping(explicit_planar_project(project),
+            PlanarAffineShapeLaw.from_dict(request['shape_law']), previous['value'], current['value'], *levels)
+    if isinstance(project.case, PlanarPolygonCase):
+        return PolygonScaleMapping(current['value']/previous['value'], *levels)
+    return 'normalized_rectangle'
 
 
 def _native(directory, expected):
@@ -132,32 +151,39 @@ def _assemble(request, runs):
         native_project = trial_planar_project(request, trial['value'], trial['phase'])
         solution, hashes = _native(run, native_project)
         solutions.append(solution); sources.append(hashes)
-        tracking = None
+        tracking = None; initial_tracking = None; recovery = None
         if index == 0:
             ids = list(request['initial_ids'])
             frequency = float(solution.frequencies_hz[ids.index(request['mode_id'])])
             status = 'INITIAL'
+            if request['schema_version'] == 3:
+                initial_tracking = track_planar_modes(solution, solution, PlanarTrackingRequest(
+                    len(ids), len(ids), ids, mapping=planar_tune_mapping(request, trial, trial), controls=controls))
+                if initial_tracking['status'] != 'PASS' or not initial_tracking['individual_ids_complete']:
+                    status = 'UNVERIFIED'; frequency = None; ids = initial_tracking['current_mode_ids']
         else:
             parent = trial['parent_index']
-            mapping = 'normalized_rectangle'
-            if request['schema_version'] == 2:
-                mapping = PlanarAffineShapeMapping(explicit_planar_project(project),
-                    PlanarAffineShapeLaw.from_dict(request['shape_law']), trials[parent]['value'], trial['value'],
-                    previous_refinements=request['refinement_levels'] if trials[parent]['phase']=='refinement' else 0,
-                    current_refinements=request['refinement_levels'] if trial['phase']=='refinement' else 0)
-            elif isinstance(project.case, PlanarPolygonCase):
-                mapping = PolygonScaleMapping(trial['value']/trials[parent]['value'],
-                    current_refinements=request['refinement_levels'] if trial['phase']=='refinement' else 0)
-            tracking = track_planar_modes(solutions[parent], solution, PlanarTrackingRequest(
+            mapping = planar_tune_mapping(request, trials[parent], trial)
+            comparison_request = PlanarTrackingRequest(
                 len(request['initial_ids']), len(request['initial_ids']),
-                trials[parent]['current_mode_ids'], mapping=mapping, controls=controls))
+                trials[parent]['current_mode_ids'], mapping=mapping, controls=controls)
+            tracking = track_planar_modes(solutions[parent], solution, comparison_request)
             ids = tracking['current_mode_ids']
             passed = tracking['status']=='PASS' and tracking['individual_ids_complete']
             status = 'PASS' if passed else 'UNVERIFIED'
             frequency = tracked_frequency_hz(tracking, request['mode_id']) if passed else None
+            if request['schema_version'] == 3 and tracking['status'] == 'PASS' and not passed:
+                recovery = recover_planar_tune_trial(request, trials, solutions, solution, trial, comparison_request)
+                if recovery['status'] == 'PASS':
+                    recovered = recovery['recovery']
+                    ids = recovered['assessment']['current_mode_ids']
+                    frequency = recovered['recovered_frequencies_hz'][request['mode_id']]
+                    status = 'PASS'
         trials.append(dict(index=index, **trial, status=status, current_mode_ids=ids,
             frequency_hz=frequency, target_error_hz=None if frequency is None else frequency-request['target_hz'],
             tracking=tracking))
+        if request['schema_version'] == 3:
+            trials[-1].update(initial_tracking=initial_tracking, identity_recovery=recovery)
     if sources != [_job_hashes(Path(run)) for run in runs]:
         raise ValueError('planar tune sources changed during complete replay')
     decision = _decision(request, trials)

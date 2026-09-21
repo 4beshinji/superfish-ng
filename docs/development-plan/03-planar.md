@@ -69,6 +69,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P02-c
 
+2026-09-22受入：[調整回復・保存・実操作の条件別証拠](../PLANAR_TUNING_RECOVERY.md)。新5件と関連14件が分割PASS。親P02/GUIは未完。
+
 ### 平面調整の回復・最終細分・再開
 
 - 親カードP02、先行P02-b。`planar_tuning.py`と`planar_tuning_jobs.py`に完全比較/過去anchor方針を持つ新版要求を接続し、版1/2を保持する。
