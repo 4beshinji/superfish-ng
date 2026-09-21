@@ -240,6 +240,19 @@ N/Aの量には尺度比較を行わない。
 H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用検証は実FEMと
 `scripts/validate_hphi_tuning.py`で行い、worker以降の検査は後続カードで行う。
 
+## 2026-09-21 レビュー修正
+
+H07：再開時にコピーしたtrialの絶対パスを投入元パスと比較していたため、GUIの
+保存地点選択が失敗していた。継承prefixはnative/RFを含む全ファイルhashと判断履歴で
+照合し、全trialパスは再開先ジョブへの所属を検査する。コピー直後のcheckpointも選択できる。
+追加回帰では修正前に継承地点/追加地点の2エラーを再現した。
+
+`UV_CACHE_DIR=/tmp/superfish-review-uv-cache OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests
+uv run --no-sync python -m unittest test_gui_hphi_tuning -v`：2件PASS、74.370秒。
+実workerで両地点の再生・元場取込・全native/RFのhashと判断履歴保持、別ジョブ差替えと
+改変拒否を確認した。ブラウザーのクリック列は未実行。数値核の変更はなくseed/fullは未実行。
+新規外部資料・依存・legacy資産は使用していない。H06の元出力依存は続けて修正する。
+
 ## 実装記録
 
 - **H05**（`feat: Hφ調整の所有保存とCLI再開を実装する`）：

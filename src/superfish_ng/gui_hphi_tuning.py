@@ -70,14 +70,16 @@ def _saved_checkpoint(manager, identifier, index):
         raise ValueError("checkpoint request differs from selected Hphi tune job")
     previous = data["checkpoint"]
     offset = 0 if previous is None else len(previous["trial_runs"])
-    if len(result["trial_runs"]) != index or index <= offset:
+    if len(result["trial_runs"]) != index or index < offset:
         raise ValueError("checkpoint trial count differs from selected Hphi tune job")
+    # Resume copies the inherited trials into this job. Their contents and
+    # decisions must agree, while every path must name the new owned copy.
     if previous is not None and any(
         _canonical(result[key][:offset]) != _canonical(previous[key])
-        for key in ("trial_runs", "trial_sources_sha256", "trials")
+        for key in ("trial_sources_sha256", "trials")
     ):
         raise ValueError("checkpoint ancestry differs from selected Hphi tune job")
-    for trial_index in range(offset, index):
+    for trial_index in range(index):
         expected = str((execution / f"trial-{trial_index + 1:03d}").resolve())
         if result["trial_runs"][trial_index] != expected:
             raise ValueError("checkpoint trial belongs to another Hphi tune job")

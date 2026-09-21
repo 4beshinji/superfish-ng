@@ -68,6 +68,18 @@ class HphiTuningGuiTests(unittest.TestCase):
         self.assertEqual(
             self.call("hphi-replay-tune", document=final["serialized"]), final
         )
+        indices = self.call("hphi-tune-checkpoints", id=resumed)["indices"]
+        self.assertEqual(indices, [1, 2])
+        for index in indices:
+            with self.subTest(checkpoint=index):
+                opened = self.call("hphi-open-tune-checkpoint", id=resumed, index=index)
+                for key in ("trial_runs", "trial_sources_sha256", "trials"):
+                    self.assertEqual(opened["document"][key], final["document"][key][:index])
+        self.assertNotEqual(
+            checkpoint["document"]["trial_runs"], final["document"]["trial_runs"][:1]
+        )
+        for key in ("trial_sources_sha256", "trials"):
+            self.assertEqual(checkpoint["document"][key], final["document"][key][:1])
 
     def test_strict_transport_and_foreign_checkpoint_rejection(self):
         with self.assertRaises(ValueError):

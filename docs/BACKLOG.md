@@ -1,5 +1,10 @@
 # 実装バックログ
 
+2026-09-21 JST：レビュー指摘のH07保存地点選択、H06所有コピー検証を順次修正する。
+受入条件は、再開後の継承/追加checkpoint選択、元出力移動後のworker/GUI再生、
+全native・RFのhash/判断履歴保持、別ジョブ差替え・コピー改変の拒否。
+数値核の変更は含めない。検証記録は[HPHI_TUNING.md](HPHI_TUNING.md)に追記する。
+
 2026-09-16 JST：H05のHφ調整所有保存・再生・新規出力への再開と専用CLIを受入。専用5件（実FEMを含む）とH05指定の既存回帰/H04依存15件が終了0、専用validator 9実FEM・全17チェックがPASS。元Project/native/RF全量、要求・係数・順序・親の改変拒否、最終細分直前・未確認終端の再生、元出力移動後の再生を確認した。次はH06のworker中止/再起動。H01〜H05完了、90カード中6完了。
 
 2026-09-16 JST：H06のHφ調整workerをJobManagerへ接続。実workerのPAUSED再開・実中止後のcheckpoint再利用・管理器再作成・入力前拒否・失敗時manifest非公開を、`tests.test_hphi_tuning_jobs` 4件（43.784秒、終了0）で確認した。workerの要求/全native/判断/対象IDはH05の所有保存と照合する。次はH07のHφ調整GUI。H01〜H06完了、90カード中7完了。
