@@ -1,3 +1,5 @@
+2026-09-22 H16-a：[材料直線細分](MATERIAL_HPHI_REFINEMENT.md)。既存自作4分割/P1P2基底に材料所有と参照セル移送を追加。全領域/界面比較で被覆を確認。新規外部資料・依存・legacy参照なし。
+
 2026-09-22 H15：[固定材料比較/追跡受入](MATERIAL_HPHI_ACCEPTANCE.md)。既存独立Bessel/TEM・二層解と専用validatorを用いて実順位交換、縮退、再メッシュ/非一様写像、真空極限と元物理を監査。新規外部資料・依存・legacy参照なし。
 
 2026-09-22 H15-c：[固定材料E/HのID追跡](MATERIAL_HPHI_ID_TRACKING.md)。自作部分空間/guard判定へ専用材料GramとK/M診断を接続。元場・材料係数を変更せず、外部資料・依存・legacy参照を追加しない。

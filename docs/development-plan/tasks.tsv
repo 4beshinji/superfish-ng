@@ -35,7 +35,11 @@ H15	P04	H14 H15-c	実装	DONE	02-hphi.md#h15	材料Hφの領域比較とID追跡
 H15-a	P04	H14	実装	DONE	02-hphi.md#h15-a	材料領域と全界面を保つ比較分割を実装する
 H15-b	P04	H15-a	実装	DONE	02-hphi.md#h15-b	材料重み付き元場比較とscalar射影を実装する
 H15-c	P04	H15-b	実装	DONE	02-hphi.md#h15-c	材料有限スペクトルとID追跡を接続して親受入を監査する
-H16	P04 D02 O02	H10 H15	実装	PLANNED	02-hphi.md#h16	材料Hφ調整と保存・GUIを接続する
+H16	P04 D02 O02	H10 H15 H16-d	実装	IN_PROGRESS	02-hphi.md#h16	材料Hφ調整と保存・GUIを接続する
+H16-a	P04 D02 O02	H15	実装	IN_PROGRESS	02-hphi.md#h16-a	材料形状則・領域細分と試行比較を接続する
+H16-b	P04 D02 O02	H16-a H10	実装	PLANNED	02-hphi.md#h16-b	材料調整runnerと明示ID回復を接続する
+H16-c	P04 D02 O02	H16-b	実装	PLANNED	02-hphi.md#h16-c	材料調整・履歴の所有保存とCLI/workerを接続する
+H16-d	P04 D02 O02	H16-c	実装	PLANNED	02-hphi.md#h16-d	材料GUI操作と親受入を検証する
 H17	P04	B03 H16	条件付き仕様	PLANNED	02-hphi.md#h17	P04の損失モデルの必要範囲を確定する
 H18	P03 P04	H13 H16 H17 C07-hphi C07-material	監査	PLANNED	02-hphi.md#h18	P03/P04の要件受入を監査する
 P01	P02 D02	B01	実装	PLANNED	03-planar.md#p01	平面アフィン形状法則を調整要求へ追加する

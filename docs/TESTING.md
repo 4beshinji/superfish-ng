@@ -1,3 +1,5 @@
+H16-a細分は`test_material_hphi_refinement`、直接利用先は`test_material_hphi_fem`。[材料領域/K/M移送不変量](MATERIAL_HPHI_REFINEMENT.md)。
+
 H15統合は`test_material_hphi_tracking_integration`と`test_material_hphi_tracking_crossing`。独立物理は`scripts/validate_material_hphi_rf.py`。[分割検査・全条件監査](MATERIAL_HPHI_ACCEPTANCE.md)。
 
 H15-c材料ID追跡は`test_material_hphi_tracking`。直接利用先は`test_material_hphi_spectral_resolution`。[検査と残る統合監査](MATERIAL_HPHI_ID_TRACKING.md)。
