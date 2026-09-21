@@ -1,3 +1,5 @@
+2026-09-22 H15-c：[材料有限スペクトル診断](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)。既存自作shifted-inverse診断を専用材料K/Mへ接続し、dense固有基底と既存二層分離解で照合。新外部資料・依存・legacy参照なし。
+
 2026-09-22 H15-b：[材料質量結合と射影](MATERIAL_HPHI_PROJECTION.md)。既存自作scalar射影構造に元材料行列/密度を接続。独立Gauss/Vandermondeと解析材料別質量で検証。新規外部資料・依存・legacy参照なし。
 
 2026-09-22 H15-b：[材料元E/Hの物理重み付き内積](MATERIAL_HPHI_FIELDS.md)。既存自作材料FEM/元片側場と全界面overlayを使い、epsilon0 epsilon_r/mu0 mu_r自己/cross Gramを実装。独立Gauss/Vandermondeと非一様密度の製造積分で検証し、公開APIは試験integrandを拒否。新規外部資料・依存・legacy参照なし。

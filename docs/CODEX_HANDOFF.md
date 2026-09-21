@@ -1,3 +1,5 @@
+H15-c進行中（2026-09-22）：[材料有限スペクトル診断](MATERIAL_HPHI_SPECTRAL_RESOLUTION.md)を実装。元材料K/M・静的q核・全界面を保持し、独立比較固有値/二層TEM/尺度則を検査。ID追跡と親H15の統合監査は未実装、全goalは継続。
+
 H15-b受入（2026-09-22）：[材料元E/H比較](MATERIAL_HPHI_FIELDS.md)と[mu_r質量射影](MATERIAL_HPHI_PROJECTION.md)を実装。独立積分/材料別質量/射影保存と損失/正逆写像/真空極限/元RF不変を検証。射影新6件＋関連場5件は分割証拠でPASS、全handle終端。次はH15-cの材料有限スペクトルとID追跡。親H15/全goalは未完了。
 
 H15-b進行中（2026-09-22）：[材料重み付き元E/H比較](MATERIAL_HPHI_FIELDS.md)を実装。独立Gauss/Vandermonde、非一様cross密度、真空極限/一様材料/正逆尺度/位相/元RF不変の新5＋関連8件PASS、全handle終端。次はmu_r重み付きq/u質量射影（hphi_mass_projection.pyの既存構造を参照、真空行列への置換は不可）。H15-b/親H15/全goalは未完了。
