@@ -26,7 +26,7 @@ H12-a	P03	H11	実装	DONE	02-hphi.md#h12-a	曲線Hφ元E/Hの体積比較核を�
 H12-b	P03	H12-a	実装	DONE	02-hphi.md#h12-b	曲線Hφ三水準のf・場・RF診断を接続する
 H13	P03 D02 O02	H10 H12 H13-e	実装	IN_PROGRESS	02-hphi.md#h13	曲線Hφの履歴と調整を保存・操作へ接続する
 H13-a	P03 D02 O02	H12	実装	DONE	02-hphi.md#h13-a	曲線Hφの同二次領域細分と丸め検証を実装する
-H13-b	P03 D02 O02	H13-a	実装	IN_PROGRESS	02-hphi.md#h13-b	曲線Hφの質量射影・有限スペクトル・追跡核を接続する
+H13-b	P03 D02 O02	H13-a	実装	DONE	02-hphi.md#h13-b	曲線Hφの質量射影・有限スペクトル・追跡核を接続する
 H13-c	P03 D02 O02	H13-b H10	実装	PLANNED	02-hphi.md#h13-c	曲線Hφの形状調整と明示ID回復を接続する
 H13-d	P03 D02 O02	H13-c	実装	PLANNED	02-hphi.md#h13-d	曲線Hφ履歴・調整の所有保存とCLI/workerを接続する
 H13-e	P03 D02 O02	H13-d	実装	PLANNED	02-hphi.md#h13-e	曲線HφのGUI操作と親受入を検証する

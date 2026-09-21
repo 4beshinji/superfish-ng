@@ -1,3 +1,5 @@
+H13-bの曲線追跡は`test_curved_hphi_tracking test_curved_hphi_tracking_crossing`。関連は`test_hphi_tracking test_curved_hphi_spectral_resolution`。[実曲線順位交換/解析縮退/guard/元native証拠](CURVED_HPHI_TRACKING.md)。
+
 H13-bの曲線有限スペクトル診断は`test_curved_hphi_spectral_resolution`。関連は`test_hphi_spectral_resolution test_curved_hphi_mass_projection`。[独立密行列/尺度不変量と記録](CURVED_HPHI_SPECTRA.md)。
 
 H13-bの曲線scalar射影は`test_curved_hphi_mass_projection`。関連は`test_hphi_mass_projection test_curved_hphi_field_overlap test_curved_hphi_refinement`。[不変量・実行記録と未実装範囲](CURVED_HPHI_PROJECTION.md)。

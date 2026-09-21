@@ -1,3 +1,5 @@
+H13-b完了（2026-09-21）：[曲線E/H追跡と条件別監査](CURVED_HPHI_TRACKING.md)。scalar射影・各元領域の有限スペクトル・E/H部分空間を接続し、実曲線順位交換、解析縮退ID集合、guard停止、位相、native番号/chartを確認。新7件（分割実行）＋関連8件PASS、全handle終端0。次はH13-cの曲線形状調整・加速座標・同P2最終細分・明示ID回復。親H13/全goalは未完了。
+
 H13-b進行中（2026-09-21）：[曲線有限比較スペクトル](CURVED_HPHI_SPECTRA.md)を追加。明示same-vacuumのより細かいP1/P2空間で、元scalar場の射影とshifted-inverse残差を診断する。新3件＋追加直線極限1件＋関連8件PASS、全検査handle終了0。q静的零空間を保持し、順位/連続誤差/IDは主張しない。次はE/H部分空間追跡とguard接続。H13-b/親H13/全goalは未完了。
 
 H13-b進行中（2026-09-21）：[曲線q/u質量射影](CURVED_HPHI_PROJECTION.md)を追加。独立モーメント・細分保存・粗視化損失・二尺度/非一様shear・P1/P2直線極限の新5件PASS。有限比較スペクトルとE/H部分空間追跡は未実装で、H13-b/親H13/全goalは未完了。次は比較空間での有限スペクトル診断。
