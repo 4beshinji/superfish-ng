@@ -140,7 +140,7 @@ def hphi_study_response(manager, action, data):
     return payload,media
 
 
-def _curved_gui_operation(manager, data, *, kind, request_format):
+def _dedicated_gui_operation(manager, data, *, kind, request_format):
     """Select a dedicated parser from the owned job or explicit request format."""
     if 'id' in data:
         return manager.status(data['id'], verify=False).get('kind') == kind
@@ -153,7 +153,11 @@ def hphi_tracking_response(manager,action,data):
     from .hphi_tracking import HphiTrackingRequest
     from .hphi_tracking_jobs import read_hphi_tracking,_snapshot
     start=manager.start_hphi_tracking
-    if _curved_gui_operation(manager,data,kind='curved_hphi_tracking',request_format='superfish_ng_curved_hphi_tracking_request'):
+    if _dedicated_gui_operation(manager,data,kind='material_hphi_tracking',request_format='superfish_ng_material_hphi_tracking_request'):
+        from .material_hphi_tracking import MaterialHphiTrackingRequest as HphiTrackingRequest
+        from .material_hphi_tracking_jobs import read_material_hphi_tracking as read_hphi_tracking,_snapshot
+        start=manager.start_material_hphi_tracking
+    if _dedicated_gui_operation(manager,data,kind='curved_hphi_tracking',request_format='superfish_ng_curved_hphi_tracking_request'):
         from .curved_hphi_tracking import CurvedHphiTrackingRequest as HphiTrackingRequest
         from .curved_hphi_tracking_jobs import read_curved_hphi_tracking as read_hphi_tracking,_snapshot
         start=manager.start_curved_hphi_tracking
@@ -209,7 +213,12 @@ def hphi_history_response(manager, action, data):
     from .hphi_tracking_history_saved import read_hphi_history, history_snapshot
     from .hphi_tracking import HphiTrackingRequest
     start=manager.start_hphi_history;extend=manager.extend_hphi_history;pair_kind='hphi_tracking'
-    if _curved_gui_operation(manager,data,kind='curved_hphi_tracking_history',request_format='superfish_ng_curved_hphi_tracking_history_request'):
+    if _dedicated_gui_operation(manager,data,kind='material_hphi_tracking_history',request_format='superfish_ng_material_hphi_tracking_history_request'):
+        from .material_hphi_tracking_history import MaterialHphiTrackingHistoryRequest as HphiTrackingHistoryRequest
+        from .material_hphi_tracking_history_saved import read_material_hphi_history as read_hphi_history, history_snapshot
+        from .material_hphi_tracking import MaterialHphiTrackingRequest as HphiTrackingRequest
+        start=manager.start_material_hphi_history;extend=manager.extend_material_hphi_history;pair_kind='material_hphi_tracking'
+    if _dedicated_gui_operation(manager,data,kind='curved_hphi_tracking_history',request_format='superfish_ng_curved_hphi_tracking_history_request'):
         from .curved_hphi_tracking_history import CurvedHphiTrackingHistoryRequest as HphiTrackingHistoryRequest
         from .curved_hphi_tracking_history_saved import read_curved_hphi_history as read_hphi_history, history_snapshot
         from .curved_hphi_tracking import CurvedHphiTrackingRequest as HphiTrackingRequest
