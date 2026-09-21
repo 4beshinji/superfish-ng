@@ -31,7 +31,7 @@ def _reject_unsupported_comparison(solution):
     if isinstance(solution,MaterialHphiSolution) or isinstance(getattr(solution,"case",None),MaterialHphiCase):
         raise ValueError("material Hphi comparison/tracking is unsupported; material interfaces require a separate verified correspondence")
     if isinstance(solution,CurvedHphiSolution) or isinstance(getattr(solution,"case",None),CurvedHphiCase):
-        raise ValueError("curved Hphi field comparison and tracking are not implemented; inspect the original fields independently")
+        raise ValueError("curved Hphi requires curved_hphi_field_grams with complete quadratic correspondence; straight Hphi comparison/tracking cannot consume curved geometry")
 
 
 def _verified_solution(solution):

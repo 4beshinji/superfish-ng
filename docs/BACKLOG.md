@@ -1,3 +1,5 @@
+H12-a完了（2026-09-21）。[曲線Hφの元E/H場比較](CURVED_HPHI_FIELDS.md)を受入。完全二次共通分割・元native正スペクトル/q/u再検証、独立既知場/二尺度/直線極限/保存不変を確認。格納batch変更後の新6件＋関連20件PASS、全handle終了0。次はH12-bのguard/順位と三水準f・場・RF診断。親H12/全goalは未完了。
+
 H11完了（2026-09-21）。[曲線Hφの比較領域](CURVED_HPHI_COMPARISON.md)を受入。全二次参照領域と厳密native制限、非nested共通分割、全穴/軸役割を検証。新6件（4+2分割）＋既存20件PASS、全handle終了0。次はH12の元E/H比較と細分診断。全goalは継続。
 
 H11進行中（2026-09-21）。[曲線Hφ比較領域](CURVED_HPHI_COMPARISON.md)を追加。完全P2参照領域、全native制限、非nested共通分割、全穴/軸役割を検証。新6件は4+2分割でPASS、既存回帰は実行中。場比較はH12、親の受入範囲は拡張しない。
