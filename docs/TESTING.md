@@ -1,3 +1,5 @@
+H15-a材料領域/全界面比較は`test_material_hphi_comparison`。直接利用先は`test_rf_materials test_hphi_geometry_mapping test_meridional_overlap`。[独立積分・写像・誤対応拒否の記録](MATERIAL_HPHI_COMPARISON.md)。
+
 H13-e大きい保存地点のHTTP転送は`test_gui_request_size`。直接HTTP契約は`test_gui_hphi.HphiGuiTests.test_real_http_assets_authentication_and_strict_actions`（実bind許可下でskipなしを確認）。[実ブラウザーの失敗・修正・分割再検査](CURVED_HPHI_GUI.md)。
 
 H13-e曲線追跡/履歴GUIは`test_gui_curved_hphi_tracking`。直接利用先は`test_gui_hphi_tracking`、`test_gui_hphi_history_request`、`test_hphi_tracking_history_saved.HphiHistorySavedTests.test_gui_ordered_history_extension_and_each_original_side`。[接続範囲と検査](CURVED_HPHI_GUI.md)。

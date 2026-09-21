@@ -1,3 +1,5 @@
+H15-a受入（2026-09-22）：[固定材料領域と全界面の比較分割](MATERIAL_HPHI_COMPARISON.md)。明示ID全単射/固定係数、全元セルと界面両側セルを保持。独立面積/体積/界面長、非一様正逆写像、番号/ID改名、1 ULPずれ拒否の新7件＋関連10件PASS、変更1件追加検査PASS、全handle終端。次はH15-bの材料重み付き元E/Hとscalar射影。親H15/全goalは未完了。
+
 H13-e/親H13受入（2026-09-22）：[全条件監査](CURVED_HPHI_ACCEPTANCE.md)。穴付き実中止/再開・元場6+6ファイル一致、回復調整Chrome4項目/元24ファイル不変/現行368hash一致、回復履歴Chrome5項目/49所有ファイル不変を確認。4 MiB HTTP不備を再現・修正し新2件＋実HTTP1件PASS、失敗と修正後再検査を分割証拠で保持。全handle/検証サーバー終端、src固定を解除。次はH15-a（H14 DONE、H15-a〜cの分割は99ce82a）。原90カード/全goalは未完了。
 
 最新補足：穴付き再検査browser51741は2項目PASS/終了0、server60664/PID2351235も終了0。native-audit.jsonで元Project/native6ファイルと取消prefix→再開prefix6ファイルbyte一致、穴1個、現行368hash一致。現在の生存は回復調整browser59154/server41749/PID2333060のみ（browser-2.logで回復2表示PASS、同一ファイル再読込/元場待ち）。src固定継続。H15の実装分割だけを99ce82aで独立コミット済み（原90カード維持、107行、全H15子PLANNED）。H13-eの未コミット差分はまだ受入待ち。

@@ -1,3 +1,5 @@
+2026-09-22 H15-a：[材料領域/界面比較](MATERIAL_HPHI_COMPARISON.md)。既存自作RFMaterialPartition/有理数直線overlayを再利用し、正確な界面clipと全区間被覆/両側元セル対応を追加。独立矩形積分と非一様尺度で検証。新規外部資料・依存・legacy参照なし。
+
 2026-09-22 H13-e/親H13：[操作受入とHTTP不備の修正](CURVED_HPHI_GUI.md)、[全条件監査](CURVED_HPHI_ACCEPTANCE.md)。実10 MB/4.5 MB checkpointが既存4 MiBで拒否されることを再現し、Hphi保存地点3操作だけ64 MiBへ拡張、他操作4 MiBと厳密JSON/認証を維持。実FEM結果/元場は不変。新規外部資料・依存・legacy参照なし。
 
 2026-09-22 H13-e：[曲線追跡・履歴GUI](CURVED_HPHI_GUI.md)。独自の曲線パーサー/所有workerへ接続し、全比較形状/セル対応を要求フォームに保持。既存E/H・有限スペクトルの判定を表示。新規資料・依存・legacy参照なし。
