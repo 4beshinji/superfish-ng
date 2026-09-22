@@ -94,6 +94,10 @@ Project/Studyの幾何再生成で版を下げず、GUIの読込・編集でもm
 
 ## 現在の責務
 
+以下はseedを中心とする主要経路の表。2026-09-22時点の専用物理・保存/worker・CLI/GUIを含む
+横断的な現状と依存の所見は[既存実装レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)、
+責務分離の案は[リファクタリング計画](REFACTORING_PLAN.md)を参照する。計画の構成はまだ未実装。
+
 | モジュール | 責務 | 依存先 |
 |---|---|---|
 | config.py | strict case v1/v2/v3、単位/幾何/対称境界制約、canonical入力 | 標準ライブラリ、model.py（v3） |

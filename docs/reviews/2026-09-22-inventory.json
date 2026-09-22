@@ -1,0 +1,352 @@
+{
+  "baseline_commit": "a191b4e089da48808ab330b169fa4ad9ea3472bb",
+  "method": "Tracked UTF-8 files only. Physical lines include blanks/comments. AST counts are declarations, not executed unittest cases. Imports include function-local imports; SCC is not an import-time failure claim. No dynamic import resolution.",
+  "groups": {
+    "src/.py": {
+      "files": 375,
+      "lines": 52481
+    },
+    "src/.js": {
+      "files": 7,
+      "lines": 4117
+    },
+    "tests/.py": {
+      "files": 433,
+      "lines": 42180
+    },
+    "scripts/.py": {
+      "files": 261,
+      "lines": 26990
+    },
+    "scripts/.mjs": {
+      "files": 65,
+      "lines": 17206
+    },
+    "docs/.md": {
+      "files": 473,
+      "lines": 50444
+    }
+  },
+  "test_method_declarations": 2099,
+  "source_ast_parse_count": 375,
+  "source_python_files_over_1000_lines": 1,
+  "internal_import_edges": 2347,
+  "private_import_occurrences": 763,
+  "private_import_source_count": 222,
+  "tracked_source_sha256": "24197e742d2b96de375f39a72ad1b157e8916726e25ea970fdeedbeeb50a2f80",
+  "review_date": "2026-09-22",
+  "test_modules": 433,
+  "validator_scripts": 209,
+  "test_helper_import_occurrences": 380,
+  "test_modules_with_test_or_script_imports": 222,
+  "largest_source_files": [
+    {
+      "path": "src/superfish_ng/web/app.js",
+      "lines": 3053
+    },
+    {
+      "path": "src/superfish_ng/cli.py",
+      "lines": 1244
+    },
+    {
+      "path": "src/superfish_ng/web/index.html",
+      "lines": 855
+    },
+    {
+      "path": "src/superfish_ng/jobs.py",
+      "lines": 737
+    },
+    {
+      "path": "src/superfish_ng/gui.py",
+      "lines": 580
+    },
+    {
+      "path": "src/superfish_ng/studies.py",
+      "lines": 529
+    },
+    {
+      "path": "src/superfish_ng/capability_inventory.py",
+      "lines": 485
+    },
+    {
+      "path": "src/superfish_ng/saved.py",
+      "lines": 473
+    },
+    {
+      "path": "src/superfish_ng/config.py",
+      "lines": 415
+    },
+    {
+      "path": "src/superfish_ng/offset_degeneracies.py",
+      "lines": 395
+    }
+  ],
+  "largest_functions": [
+    {
+      "path": "src/superfish_ng/cli.py",
+      "name": "main",
+      "line": 15,
+      "lines": 1230
+    },
+    {
+      "path": "src/superfish_ng/gui.py",
+      "name": "create_server",
+      "line": 86,
+      "lines": 477
+    },
+    {
+      "path": "src/superfish_ng/gui.py",
+      "name": "do_POST",
+      "line": 151,
+      "lines": 391
+    },
+    {
+      "path": "src/superfish_ng/jobs.py",
+      "name": "read_job",
+      "line": 54,
+      "lines": 165
+    },
+    {
+      "path": "src/superfish_ng/saved.py",
+      "name": "read_solution",
+      "line": 16,
+      "lines": 162
+    },
+    {
+      "path": "src/superfish_ng/studies.py",
+      "name": "compare_refinement",
+      "line": 255,
+      "lines": 156
+    }
+  ],
+  "largest_import_fan_in": [
+    [
+      "config",
+      253
+    ],
+    [
+      "project",
+      130
+    ],
+    [
+      "constants",
+      80
+    ],
+    [
+      "jobs",
+      56
+    ],
+    [
+      "fem",
+      55
+    ],
+    [
+      "mesh",
+      54
+    ],
+    [
+      "saved_mode_tracking",
+      46
+    ],
+    [
+      "te",
+      42
+    ]
+  ],
+  "largest_import_fan_out": [
+    [
+      "cli",
+      116
+    ],
+    [
+      "jobs",
+      37
+    ],
+    [
+      "gui",
+      27
+    ],
+    [
+      "curved_adaptive_refinement",
+      23
+    ],
+    [
+      "gui_hphi",
+      23
+    ]
+  ],
+  "strongly_connected_component_sizes": [
+    281,
+    5,
+    2
+  ],
+  "exact_function_body_duplicates": [
+    [
+      {
+        "path": "src/superfish_ng/curved_hphi_tracking_history.py",
+        "name": "_verify_link",
+        "line": 89,
+        "lines": 14
+      },
+      {
+        "path": "src/superfish_ng/hphi_tracking_history.py",
+        "name": "_verify_link",
+        "line": 89,
+        "lines": 14
+      },
+      {
+        "path": "src/superfish_ng/material_hphi_tracking_history.py",
+        "name": "_verify_link",
+        "line": 89,
+        "lines": 14
+      }
+    ],
+    [
+      {
+        "path": "src/superfish_ng/curved_hphi_tracking_jobs.py",
+        "name": "_input_hashes",
+        "line": 29,
+        "lines": 12
+      },
+      {
+        "path": "src/superfish_ng/hphi_tracking_jobs.py",
+        "name": "_input_hashes",
+        "line": 30,
+        "lines": 12
+      },
+      {
+        "path": "src/superfish_ng/material_hphi_tracking_jobs.py",
+        "name": "_input_hashes",
+        "line": 29,
+        "lines": 12
+      }
+    ],
+    [
+      {
+        "path": "src/superfish_ng/curved_hphi_tracking_jobs.py",
+        "name": "_source",
+        "line": 50,
+        "lines": 16
+      },
+      {
+        "path": "src/superfish_ng/hphi_tracking_jobs.py",
+        "name": "_source",
+        "line": 51,
+        "lines": 16
+      },
+      {
+        "path": "src/superfish_ng/material_hphi_tracking_jobs.py",
+        "name": "_source",
+        "line": 50,
+        "lines": 16
+      }
+    ],
+    [
+      {
+        "path": "src/superfish_ng/curved_hphi_tuning_jobs.py",
+        "name": "_snapshot",
+        "line": 112,
+        "lines": 22
+      },
+      {
+        "path": "src/superfish_ng/hphi_tuning_jobs.py",
+        "name": "_snapshot",
+        "line": 106,
+        "lines": 22
+      },
+      {
+        "path": "src/superfish_ng/material_hphi_tuning_jobs.py",
+        "name": "_snapshot",
+        "line": 112,
+        "lines": 22
+      }
+    ],
+    [
+      {
+        "path": "src/superfish_ng/curved_hphi_tuning_jobs.py",
+        "name": "_check_manifest_shape",
+        "line": 136,
+        "lines": 25
+      },
+      {
+        "path": "src/superfish_ng/hphi_tuning_jobs.py",
+        "name": "_check_manifest_shape",
+        "line": 130,
+        "lines": 25
+      },
+      {
+        "path": "src/superfish_ng/material_hphi_tuning_jobs.py",
+        "name": "_check_manifest_shape",
+        "line": 136,
+        "lines": 25
+      }
+    ],
+    [
+      {
+        "path": "src/superfish_ng/gui_curved_hphi_tuning.py",
+        "name": "_checkpoint_indices",
+        "line": 92,
+        "lines": 13
+      },
+      {
+        "path": "src/superfish_ng/gui_hphi_tuning.py",
+        "name": "_checkpoint_indices",
+        "line": 91,
+        "lines": 13
+      },
+      {
+        "path": "src/superfish_ng/gui_material_hphi_tuning.py",
+        "name": "_checkpoint_indices",
+        "line": 92,
+        "lines": 13
+      }
+    ],
+    [
+      {
+        "path": "src/superfish_ng/off_axis_magnetostatic.py",
+        "name": "_validate_off_axis_boundaries",
+        "line": 19,
+        "lines": 19
+      },
+      {
+        "path": "src/superfish_ng/off_axis_recoil.py",
+        "name": "_validate_off_axis_boundaries",
+        "line": 19,
+        "lines": 19
+      }
+    ],
+    [
+      {
+        "path": "src/superfish_ng/planar_magnetostatic.py",
+        "name": "_validate_planar_boundaries",
+        "line": 17,
+        "lines": 19
+      },
+      {
+        "path": "src/superfish_ng/planar_recoil.py",
+        "name": "_validate_planar_boundaries",
+        "line": 17,
+        "lines": 19
+      }
+    ]
+  ],
+  "environment": {
+    "python": "3.12.3",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "runner": "uv run --offline --no-project --python 3.12 python",
+    "uv_cache_dir": "/tmp/superfish-review-uv-cache"
+  },
+  "reproduction": {
+    "test": "test_gui_hphi.HphiGuiTests.test_real_http_assets_authentication_and_strict_actions",
+    "condition": "unittest.mock.patch makes importlib.util.find_spec(\"matplotlib\") return None",
+    "tests_run": 1,
+    "errors": 1,
+    "failures": 0,
+    "skips": 0,
+    "error": "ValueError: GUI plotting requires the plot extra: python -m pip install -e '.[plot]'",
+    "fem_run": false,
+    "http_bind_attempted": false,
+    "hosted_ci_observed": false
+  }
+}
