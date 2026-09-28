@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Headless integration test; Node 22 + an existing Chrome, no npm dependencies.
-import { spawn } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, writeFile, access, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { launchBrowser } from './browser-session.mjs';
+import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
 import { resolve, join, dirname, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -22,14 +21,15 @@ const out = resolve(options['--out']);
 await access(html);
 await mkdir(dirname(out), { recursive: true });
 await mkdir(out); // Never overwrite a prior test.
-const profile = await mkdtemp(join(tmpdir(), 'superfish-browser-'));
 const executable = options['--chrome'] || '/usr/bin/google-chrome';
-const browser = spawn(executable, ['--headless', '--remote-debugging-port=0', '--remote-debugging-address=127.0.0.1',
-  `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-background-networking',
-  '--disable-component-update', '--disable-sync', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
+const { profile, browser, dispose } = await launchBrowser({ executable, args: [
+  '--headless', '--remote-debugging-port=0', '--remote-debugging-address=127.0.0.1',
+  '--no-first-run', '--no-default-browser-check', '--disable-background-networking',
+  '--disable-component-update', '--disable-sync', 'about:blank',
+] });
 let browserError, stderr = '', ws, sequence = 0;
 browser.on('error', error => { browserError = error; });
-browser.stderr.on('data', data => { stderr += data; });
+browser.stderr.on('data', data => { stderr = (stderr + data).slice(-65536); });
 const pending = new Map();
 const report = { html, executable, mode: 'headless integration test; isolated temporary profile; no existing desktop session',
   scenario, node: process.version, selections: [], passed: false };
@@ -132,17 +132,11 @@ try {
   process.exitCode = 1;
   console.error(report.error);
 } finally {
-  await writeFile(join(out, 'verification.json'), JSON.stringify(report, null, 2) + '\n');
-  await writeFile(join(out, 'chrome.log'), stderr);
-  if (ws?.readyState === WebSocket.OPEN) {
-    try { await call('Browser.close'); } catch {}
-    ws.close();
+  try {
+    await writeFile(join(out, 'verification.json'), JSON.stringify(report, null, 2) + '\n');
+    await writeFile(join(out, 'chrome.log'), stderr);
+  } finally {
+    for (const entry of pending.values()) clearTimeout(entry.timer);
+    try { ws?.close(); } finally { await dispose(); }
   }
-  if (browser.exitCode === null) {
-    browser.kill('SIGTERM');
-    for (let i = 0; i < 100 && browser.exitCode === null; i++) await pause(50);
-    if (browser.exitCode === null) browser.kill('SIGKILL');
-  }
-  for (const entry of pending.values()) clearTimeout(entry.timer);
-  await rm(profile, { recursive: true, force: true }); // Only this test's mkdtemp profile.
 }
