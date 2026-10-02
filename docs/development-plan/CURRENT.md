@@ -1,7 +1,7 @@
 # 現行の作業入口
 
-更新：2026-10-02、開発カードP03受入（着手基準 `27cd919`）。
-原90カードと追加子カードを含む全115カードの計画は継続中。
+更新：2026-10-02、開発カードP04-a受入（着手基準 `eb1f4f3`）。
+原90カードと追加子カードを含む全118カードの計画は継続中。P04をa〜cへ分割。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
 ## 横断レビューと計画（2026-09-22）
@@ -14,11 +14,12 @@
 
 ## 次の着手
 
-**[P04：平面非線形比較と調整を接続する](03-planar.md#p04)**。
+**[P04-b：区分形状法則と実調整・保存再開](03-planar.md#p04-b)**。
 [P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)と
 [P03の区分写像/幾何契約](../PLANAR_PIECEWISE_MAPPING.md)までDONE。
-次は各側の独立overlayから写像を介した共同比較分割を作り、元TE/TM場の比較と
-形状法則・履歴・再開・調整へ接続する。全試行を実FEMで計算し、未確認群は評価しない。
+[P04-aの共同比較・追跡・所有再生](../PLANAR_PIECEWISE_TRACKING.md)もDONE。
+次は元Projectからの区分形状法則を、実調整/最終細分・履歴・再開へ接続する。
+全試行を実FEMで計算し、未確認群は評価しない。GUIと親監査はP04-c。
 P03は連続区分アフィンによる全域非アフィン変形に限定する。滑らかな非線形/曲線写像は未対応。
 入口は `planar_piecewise_mapping.py`、`planar_tracking_fields.py`、`planar_tracking.py`、`planar_tuning.py`。
 検査選択は[TESTING](../TESTING.md)とP04仕様を参照。
@@ -46,6 +47,10 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+2026-10-02：P04-aのsession39306は終了1（54PASS/誤メソッド名1収集ERROR）。
+正しいstrict1件と独立元場/RF2件は別実行で終了0。分割57件PASS、391製品ファイル不変、
+全worker/handle終端、src固定解除。証拠 `out/p04a-planar-piecewise-20261002/`、詳細は専用文書。
 
 履歴Chrome session 91632と調整/新サーバーsession 87997は終了0。
 全Chrome/サーバー/managerをclose済み。製品src固定解除、生存handleの引継ぎなし。

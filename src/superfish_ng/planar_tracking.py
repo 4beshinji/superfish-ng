@@ -18,6 +18,8 @@ from .planar_tracking_similarity_remesh import PolygonSimilarityRemeshMapping, p
 from .planar_tracking_affine_remesh import PolygonAffineRemeshMapping, polygon_affine_remesh_overlay
 from .planar_tracking_exact_mapping import PolygonExactAffineRemeshMapping, polygon_exact_affine_remesh_overlay
 from .planar_affine_shape_mapping import PlanarAffineShapeMapping, affine_shape_overlay
+from .planar_piecewise_mapping import PlanarPiecewiseMapping
+from .planar_piecewise_overlap import planar_piecewise_overlay
 
 
 @dataclass(frozen=True)
@@ -62,8 +64,8 @@ class PlanarTrackingRequest:
     def __post_init__(self):
         integer(self.previous_mode_count, 'previous_mode_count')
         integer(self.current_mode_count, 'current_mode_count')
-        if not isinstance(self.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping, PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping)) and self.mapping != 'normalized_rectangle':
-            raise ValueError('planar tracking requires normalized_rectangle or a declared polygon mapping (scale, similarity, remesh, affine, exact affine, or polynomial affine shape)')
+        if not isinstance(self.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping, PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping, PlanarPiecewiseMapping)) and self.mapping != 'normalized_rectangle':
+            raise ValueError('planar tracking requires normalized_rectangle or a declared polygon mapping (scale, similarity, remesh, affine, exact affine, polynomial affine shape, or piecewise affine)')
         if not isinstance(self.controls, PlanarTrackingControls):
             raise ValueError('expected PlanarTrackingControls')
         ids, groups = self.previous_mode_ids, self.previous_identity_groups
@@ -78,8 +80,8 @@ class PlanarTrackingRequest:
             object.__setattr__(self, 'previous_mode_ids', tuple(ids))
 
     def to_dict(self):
-        return dict(format='superfish_ng_planar_tracking_request', tracking_version=8 if isinstance(self.mapping, PlanarAffineShapeMapping) else 7 if isinstance(self.mapping, PolygonExactAffineRemeshMapping) else 6 if isinstance(self.mapping, PolygonAffineRemeshMapping) else 5 if isinstance(self.mapping, PolygonSimilarityRemeshMapping) else 4 if isinstance(self.mapping, PolygonRemeshMapping) else 3 if isinstance(self.mapping, PolygonSimilarityMapping) else 2 if isinstance(self.mapping, PolygonScaleMapping) else 1,
-                    mapping=self.mapping.to_dict() if isinstance(self.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping, PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping)) else self.mapping, previous_mode_count=self.previous_mode_count,
+        return dict(format='superfish_ng_planar_tracking_request', tracking_version=9 if isinstance(self.mapping, PlanarPiecewiseMapping) else 8 if isinstance(self.mapping, PlanarAffineShapeMapping) else 7 if isinstance(self.mapping, PolygonExactAffineRemeshMapping) else 6 if isinstance(self.mapping, PolygonAffineRemeshMapping) else 5 if isinstance(self.mapping, PolygonSimilarityRemeshMapping) else 4 if isinstance(self.mapping, PolygonRemeshMapping) else 3 if isinstance(self.mapping, PolygonSimilarityMapping) else 2 if isinstance(self.mapping, PolygonScaleMapping) else 1,
+                    mapping=self.mapping.to_dict() if isinstance(self.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping, PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping, PlanarPiecewiseMapping)) else self.mapping, previous_mode_count=self.previous_mode_count,
                     current_mode_count=self.current_mode_count,
                     previous_mode_ids=list(self.previous_mode_ids) if self.previous_mode_ids is not None else None,
                     previous_identity_groups=json.loads(json.dumps(self.previous_identity_groups)),
@@ -91,9 +93,10 @@ class PlanarTrackingRequest:
                  'previous_mode_ids', 'previous_identity_groups', 'controls']
         keys(data, names, names, 'planar tracking request')
         if (data['format'] != 'superfish_ng_planar_tracking_request'
-                or type(data['tracking_version']) is not int or data['tracking_version'] not in (1, 2, 3, 4, 5, 6, 7, 8)):
-            raise ValueError('expected superfish_ng_planar_tracking_request tracking_version 1, 2, 3, 4, 5, 6, 7 or 8')
-        mapping = (PlanarAffineShapeMapping.from_dict(data['mapping']) if data['tracking_version']==8
+                or type(data['tracking_version']) is not int or data['tracking_version'] not in (1, 2, 3, 4, 5, 6, 7, 8, 9)):
+            raise ValueError('expected superfish_ng_planar_tracking_request tracking_version 1 through 9')
+        mapping = (PlanarPiecewiseMapping.from_dict(data['mapping']) if data['tracking_version']==9
+                   else PlanarAffineShapeMapping.from_dict(data['mapping']) if data['tracking_version']==8
                    else PolygonExactAffineRemeshMapping.from_dict(data['mapping']) if data['tracking_version']==7
                    else PolygonAffineRemeshMapping.from_dict(data['mapping']) if data['tracking_version']==6
                    else PolygonSimilarityRemeshMapping.from_dict(data['mapping']) if data['tracking_version']==5
@@ -149,8 +152,9 @@ def track_planar_modes(previous, current, request):
     affine = isinstance(request.mapping, PolygonAffineRemeshMapping)
     exact_affine = isinstance(request.mapping, PolygonExactAffineRemeshMapping)
     shape = isinstance(request.mapping, PlanarAffineShapeMapping)
+    piecewise = isinstance(request.mapping, PlanarPiecewiseMapping)
     polygon = isinstance(request.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping,
-                                           PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping))
+                                           PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping, PlanarPiecewiseMapping))
     if polygon:
         from .planar import PlanarSolution
         from .planar_polygon import PlanarPolygonCase
@@ -167,7 +171,11 @@ def track_planar_modes(previous, current, request):
     if any(count >= solution.case.modes for count, solution in zip(counts, (previous, current))):
         raise ValueError('each tracked positive prefix band requires at least one computed upper guard mode')
     controls = request.controls
-    if shape:
+    if piecewise:
+        joint = planar_piecewise_overlay(previous.case.mesh, current.case.mesh, request.mapping,
+                                         max_overlay_triangles=controls.max_overlay_triangles)
+        overlay, shape_transport = joint.overlay, joint.current_to_previous_linear
+    elif shape:
         overlay, shape_transport = affine_shape_overlay(previous.case.mesh, current.case.mesh, request.mapping,
                                                         max_overlay_triangles=controls.max_overlay_triangles)
     elif polygon:
@@ -176,7 +184,7 @@ def track_planar_modes(previous, current, request):
     else:
         overlay = rectangle_tracking_overlay((previous.case.nx, previous.case.ny), (current.case.nx, current.case.ny),
                                              max_overlay_triangles=controls.max_overlay_triangles)
-    rotation = (shape_transport if shape else request.mapping.current_to_previous_linear if affine or exact_affine
+    rotation = (shape_transport if shape or piecewise else request.mapping.current_to_previous_linear if affine or exact_affine
                 else request.mapping.current_to_previous_rotation if similarity or composed else None)
     grams = _electric_grams(previous, current, overlay, 3, current_to_previous_rotation=rotation)
     higher = _electric_grams(previous, current, overlay, 5, current_to_previous_rotation=rotation)
@@ -184,7 +192,7 @@ def track_planar_modes(previous, current, request):
     discrepancies = [float(np.max(abs(a-b)/left[:, None]/right[None, :]))
                      for a, b, left, right in zip(grams, higher,
                         (a_norm, a_norm, b_norm), (a_norm, b_norm, b_norm))]
-    resolutions = [(similarity_spectral_resolution if similarity or remesh or composed or affine or exact_affine or shape else polygon_spectral_resolution if polygon else rectangle_spectral_resolution)(s, max_refined_triangles=controls.max_refined_triangles)
+    resolutions = [(similarity_spectral_resolution if similarity or remesh or composed or affine or exact_affine or shape or piecewise else polygon_spectral_resolution if polygon else rectangle_spectral_resolution)(s, max_refined_triangles=controls.max_refined_triangles)
                    for s in (previous, current)]
     groups = [resolution_frequency_groups(s.frequencies_hz, r, controls.relative_cluster_gap)
               for s, r in zip((previous, current), resolutions)]
@@ -212,7 +220,7 @@ def track_planar_modes(previous, current, request):
                                               if match['dimension'] == 1 else None)
     if reasons:
         result.update(status='UNVERIFIED', individual_ids_complete=False, current_mode_ids=[None]*nb)
-    result.update(format='superfish_ng_planar_tracking_result', result_version=8 if shape else 7 if exact_affine else 6 if affine else 5 if composed else 4 if remesh else 3 if similarity else 2 if polygon else 1, request=request.to_dict(),
+    result.update(format='superfish_ng_planar_tracking_result', result_version=9 if piecewise else 8 if shape else 7 if exact_affine else 6 if affine else 5 if composed else 4 if remesh else 3 if similarity else 2 if polygon else 1, request=request.to_dict(),
                   verification_reasons=reasons, spectral_resolution=resolutions,
                   spectral_resolution_groups=groups, guard_overlap=edge_unresolved,
                   physical_mapping=dict(name='polynomial_affine_xy_reference' if shape else 'polygon_exact_affine_remesh' if exact_affine else 'polygon_affine_remesh' if affine else 'polygon_similarity_remesh' if composed else 'polygon_same_domain' if remesh else 'polygon_similarity' if similarity else 'polygon_uniform_scale' if polygon else request.mapping, physics='cartesian_cutoff_rf', polarization=previous.case.polarization,
@@ -222,7 +230,7 @@ def track_planar_modes(previous, current, request):
                       minimum_numerical_assignment_margin=numerical_margin_floor,
                       electric_gram_previous=grams[0].tolist(), electric_gram_cross=grams[1].tolist(), electric_gram_current=grams[2].tolist()),
                   scope='numerical electric-field subspace correspondence on a declared rectangle map; finite-enrichment resolution diagnostic only; no continuum error bound, surface-peak guarantee or continuous-path mode identity')
-    if polygon and not remesh and not composed and not affine and not exact_affine and not shape:
+    if polygon and not remesh and not composed and not affine and not exact_affine and not shape and not piecewise:
         result['physical_mapping'].update(declaration=request.mapping.to_dict(), reference_measure='previous physical xy area in m^2',
                                          coordinate_roundoff_relative_tolerance=16*np.finfo(float).eps,
                                          coordinate_roundoff_scale='minimum of coordinate magnitude and shortest incident mesh edge; exact alternate scale/refinement construction also accepted')
@@ -271,4 +279,12 @@ def track_planar_modes(previous, current, request):
             partition_verification='both original trial meshes regenerated exactly; common dyadic reference partition retains original cell indices and barycentric coordinates',
             coordinate_evaluation='rounded actual trial meshes retained; piecewise affine correspondence, no fitted global affine map')
         result['scope']='numerical electric-field subspace correspondence between polynomial-affine trials on a shared original reference partition; J/m normalization; finite-enrichment diagnostic only; no continuum-error or continuous-path certificate'
+    if piecewise:
+        result['comparison_description'] = 'original physical peak E through a continuous piecewise affine map; cell adjugate transport and previous physical xy area'
+        result['physical_mapping'].update(name='planar_piecewise_affine', declaration=request.mapping.to_dict(),
+            reference_measure='previous physical xy area in m^2',
+            current_to_previous_linear_by_triangle=rotation.tolist(), mapping_cells=joint.mapping_cells.tolist(),
+            partition_verification='rational joint intersections exactly cover every native and comparison cell on both domains',
+            coordinate_evaluation='binary64 inputs denote exact rationals; both original field polynomials retained')
+        result['scope']='numerical electric-field subspace correspondence through a declared continuous piecewise affine map; J/m normalization; no general eigenvalue deformation law, continuum error bound, surface-peak guarantee or continuous-path identity'
     return result
