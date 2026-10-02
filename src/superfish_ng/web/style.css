@@ -325,3 +325,11 @@ input[aria-invalid="true"] {
 #image { display: block; max-width: 100%; height: auto; }
 #image[hidden] { display: none; }
 #document, #points { display: block; width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid #b8cbe0; border-radius: 4px; }
+
+/* Long explicit planar charts retain full declarations without widening rows. */
+.planar-history-steps table { table-layout: fixed; }
+.planar-history-steps th:nth-child(1) { width: 7%; }
+.planar-history-steps th:nth-child(2) { width: 10%; }
+.planar-history-steps th:nth-child(4) { width: 12%; }
+.planar-history-steps td { vertical-align: top; overflow-wrap: anywhere; }
+.planar-history-declaration { max-height: 20rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }

@@ -1,3 +1,5 @@
+P04-c-bは `test_gui_planar_piecewise_tracking` と旧GUI回復/所有履歴の直接利用先。全版1〜10フォームは `verify_planar_tracking_form.mjs`、実操作は `verify_gui_planar_piecewise_tracking.mjs`、独立API全照合は `validate_planar_piecewise_tracking_gui.py`。[分割10 Python/Chrome9・7・5・3/70配列、失敗と表示修正](PLANAR_PIECEWISE_TRACKING_GUI.md)。[親P04監査](PLANAR_PIECEWISE_ACCEPTANCE.md)は全validateではない。
+
 P04-c-a実操作は `verify_gui_planar_piecewise_tuning.mjs`、旧版対照は `verify_gui_planar_affine_tuning.mjs`。新サーバーは `--resume-report`。独立API/全元場照合は `validate_planar_piecewise_gui.py`。[20実Chrome項目と50配列の分割証拠/失敗記録](PLANAR_PIECEWISE_TUNING_GUI.md)。単独追跡/履歴はP04-c-b。
 
 P04-c第一段階は `test_gui_planar_piecewise_tuning test_gui_planar_tuning`。新所有地点/全元場取込/元移動後再開と旧GUIの6件PASS。`node --check src/superfish_ng/web/planar.js`もPASS。[仕様・修正前失敗・実ブラウザー等の残条件](PLANAR_PIECEWISE_TUNING_GUI.md)。P04-c/親P04は受入途中。

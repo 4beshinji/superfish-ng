@@ -115,6 +115,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P04
 
+2026-10-02受入：[元条件別監査](../PLANAR_PIECEWISE_ACCEPTANCE.md)。P04-a/b/c全子の元場/実調整/所有保存/GUIを確認。滑らかな曲線は後続P05〜P09、原互換親P02/D02は未完了。
+
 ### 平面非線形比較と調整を接続する
 
 - **親課題**：P02 / D02。**種別**：実装。初期状態：未着手。
@@ -158,6 +160,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P04-c
 
+2026-10-02受入：子aの調整GUI/API全50配列、子bの追跡/履歴GUI/API全70配列、新サーバー・最終表示と資源回収を確認。[親監査](../PLANAR_PIECEWISE_ACCEPTANCE.md)。
+
 後続の前提はP04-bの全子工程受入。2026-10-02に調整操作aと単独追跡/履歴・親監査bへ分割。元P04の全条件は維持する。
 
 ### 区分調整GUIと操作・P04全条件監査
@@ -177,6 +181,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - 証拠は[区分調整GUI](../PLANAR_PIECEWISE_TUNING_GUI.md)。単独追跡/履歴と親監査は子b。
 
 ## P04-c-b
+
+2026-10-02受入：[版9/10比較・所有履歴GUI](../PLANAR_PIECEWISE_TRACKING_GUI.md)。全版フォーム、Python10、Chromeの分割9/7/5/3項目、独立API3pair/全70配列を確認。検証器の初回失敗と表示修正を区別。全handle終端、数値ソース不変。
 
 ### 新版比較・追跡履歴GUIとP04全条件監査
 

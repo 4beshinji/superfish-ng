@@ -1,7 +1,7 @@
 # 現行の作業入口
 
-更新：2026-10-02、P04-b-c/親P04-b受入、P04-cのGUI接続/受入検査中（製品基準 `c81782d`）。
-原90カードと追加子カードを含む全123カードの計画は継続中。P04をa〜c、P04-bを形状a/所有保存b/worker監査cへ分割。
+更新：2026-10-02、P04-c-a/bと親P04-c/P04を条件別監査受入。
+原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
 ## 横断レビューと計画（2026-09-22）
@@ -14,18 +14,14 @@
 
 ## 次の着手
 
-**[P04-c-b：新版比較・追跡履歴GUIとP04全条件監査](03-planar.md#p04-c-b)**。
-[P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)、
-[P03の区分写像](../PLANAR_PIECEWISE_MAPPING.md)、
-[P04-aの比較/追跡](../PLANAR_PIECEWISE_TRACKING.md)までDONE。
-P04-bの[形状法則](../PLANAR_PIECEWISE_SHAPE.md)、[実調整/所有保存](../PLANAR_PIECEWISE_TUNING_SAVED.md)、
-[投入時所有worker・停止再開と親監査](../PLANAR_PIECEWISE_TUNING_WORKER.md)もDONE。
-調整GUIの接続と実操作はP04-c-aとして独立API全元場照合までDONE。
-単独比較/追跡フォームは版1〜8のみを保持し、版9/10の宣言を失う不足がある。
-P04-c-bで明示区分写像/元区分法則の要求編集・所有pair/履歴・次段引継ぎへ接続し、
-原P04と全子条件を監査する。旧調整/旧追跡の操作も保持する。
-P03/P04の現在の形状は連続区分アフィンまで。滑らかな非線形/曲線写像は後続P05〜P09。
-親互換課題P02やD02全体を完了とは扱わない。
+**[P05：平面曲線P2の幾何・弱形式を設計する](03-planar.md#p05)**。先行P03はDONE。
+[P04の全条件監査](../PLANAR_PIECEWISE_ACCEPTANCE.md)で元TE/TM区分写像、有限多項式形状法則、
+実調整/所有保存/停止再開、調整GUI/独立API、単独追跡/所有履歴GUIまでDONE。
+[P04-c-bの操作・表示と全照合](../PLANAR_PIECEWISE_TRACKING_GUI.md)も受入。
+次は独立したxy二次境界/面積求積/TE Neumann零空間/TM Dirichlet/元場/壁損失/保存版の仕様を定める。
+円形cutoff解析f/場/G、二尺度/両偏波、滑らかな非円形/特異角を個別gateとし、
+一般材料/伝搬定数/穴を黙って追加しない。文書のみではFEM/全suiteを再実行しない。
+原互換親P02/D02とH17/H18、後続P05〜P09は未完了。
 
 P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 範囲・初回テスト入力エラー・解析不変量・コマンドは上記専用文書に記録。
@@ -33,7 +29,7 @@ P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 
 H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROGRESS。
 2026-09-22のユーザー選択は「対象版の資料で必要性を確認してから決める」。
-追加損失の採否は資料確認まで未確定とし、独立したP02を進める。
+追加損失の採否は資料確認まで未確定。H17に依存しないP05を進める。
 
 ## 受入証拠と依存待ち
 
@@ -49,6 +45,16 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+P04-c-b：全handle終端、395製品hash固定解除。Python/session7780は10件160.560秒PASS/終了0。
+独立API/session95901は3pair PASS/終了0、全照合/session12034は3pair全判断/所有履歴、70配列・全RF/最終Project一致/終了0。
+browser2/session58021は9項目PASS後の回復宣言誤りで終了1、保存済みpair/履歴を継続したbrowser4/session19976は7項目PASS/終了0。
+新サーバー復元/session67927は5項目PASS/終了0、最終CSS限定/session73174は3項目PASS/終了0。
+表示修正後の差分はweb HTML/JS/CSSのみ、数値ソース不変。全reportは外部要求0、各実行内の製品hash不変。
+server12853はSIGINT終端130、server86426はSIGINT正常終了0。所有browser slotは空。生存handleなし。
+証拠 `out/p04cb-planar-tracking-gui-20261002/`、[失敗・分割操作・表示と最終受入](../PLANAR_PIECEWISE_TRACKING_GUI.md)。
+修正前form/session51699の宣言喪失、prepare/session6542のfixture順位0、browser初回23379/3回目79214の検証器入力不備を保持。
+原P04/全子監査を受入し次はP05。全goalと原互換親P02/D02は継続。
 
 P04-c-a：製品 `c81782d`、395ファイルを固定した実操作。
 新版browser4/session1506は11項目PASS/終了0、旧アフィンbrowser/session53127は5項目PASS/終了0。
@@ -66,7 +72,7 @@ browser3/84849は応答前の次入力による正しいstale拒否で終了1、
 証拠 `out/p04c-planar-browser-20261002/`、[操作/全元場照合](../PLANAR_PIECEWISE_TUNING_GUI.md)。
 新GUI1/旧GUI5のPython操作はsession93859、160.930秒PASS/終了0。
 修正前地点選択はsession11909、6.316秒ERROR/終了1。証拠 `out/p04c-planar-gui-20261002/`。
-単独追跡/履歴の版9/10保持と親P04監査が残るためP04-c/親P04はIN_PROGRESS。
+上記P04-c-bで単独追跡/履歴と親P04監査も受入。
 
 2026-10-02：P04-b-cのsession19594は603.667秒、17件中16PASS/同じ中止テスト2ERROR、終了1。
 移動済み中止jobの旧pathをテストprocess辞書から除く修正後、session11536は1件40.054秒PASS、終了0。
