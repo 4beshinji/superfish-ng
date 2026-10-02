@@ -147,6 +147,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P04-b
 
+受入：2026-10-02、[子a/b/cの条件別監査](../PLANAR_PIECEWISE_TUNING_WORKER.md#p04-b監査と来歴)。形状/実調整/所有保存/workerの全条件を受入。GUIと親P04は子c（P04-c）で継続。
+
 ### 区分形状法則と実調整・保存再開
 
 - 親P04、先行P04-a。元Projectの明示比較分割と頂点の有限多項式変位法則を保存し、全試行を元形状から生成する。閉区間の正Jacobianを検査し、非局所接触/丸め不正は各試行FEM前に拒否する。
@@ -188,6 +190,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - 独立対照：非一様伸長と独立細分、解析相似目標、true縮退/guard拒否、実最終細分、未確認/失敗prefix、CLI所有再生、元出力移動後の再開。
 
 ## P04-b-c
+
+受入：2026-10-02、[所有workerと親P04-b監査](../PLANAR_PIECEWISE_TUNING_WORKER.md)。新5/旧直接消費先12の分割17種類PASS、395製品hash不変、全handle終端。元移動・実中止/保存地点・別job・管理器再生成・実最終回復/解析cutoff・未確認null・改変拒否を確認。初回のテスト後処理2ERRORと1件再確認を保持。次はP04-c。
 
 ### 区分調整workerの所有中止・再開とP04-b監査
 

@@ -1,3 +1,5 @@
+P04-b-c所有workerは `test_planar_piecewise_tuning_jobs`。直接消費先は `test_planar_tuning_jobs test_planar_tuning_recovery_jobs test_gui_planar_tuning`。投入前後の元移動、実中止/保存地点/別job、管理器再作成、解析TE10/最終回復、未確認nullとqueued/再hash改変拒否を分割17種類PASS。[条件別監査と初回後処理失敗](PLANAR_PIECEWISE_TUNING_WORKER.md)。新版GUIはP04-cで別受入。
+
 P04-b-b実区分調整/所有保存は `test_planar_piecewise_tuning`。非アフィンTE/TMの独立cutoff/mesh、実回復/guard、可搬CLI・全prefixコピー/失敗再開、再hash改変を検査。直接利用先は `test_planar_tuning test_planar_tuning_recovery test_planar_tuning_jobs test_planar_tuning_recovery_jobs`。[条件別検証と分割実行記録](PLANAR_PIECEWISE_TUNING_SAVED.md)。新版worker所有操作はP04-b-c、GUIはP04-cで別受入。
 
 P02-d実操作は `scripts/verify_gui_planar_history_recovery.mjs` と `scripts/verify_gui_planar_tune_recovery.mjs`（新サーバーは `--resume-report`）。[全条件監査](PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)と[分割34項目の実Chrome証拠](PLANAR_RECOVERY_GUI.md)。

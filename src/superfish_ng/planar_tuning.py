@@ -212,11 +212,16 @@ def replay_planar_tune(document, *, base_directory=None):
     return expected
 
 
-def read_planar_tune(path):
+def read_planar_tune(path, *, base_directory=None):
     document = parse_json(Path(path).read_text(encoding='utf-8'))
     if type(document) is dict and type(document.get('schema_version')) is int and document['schema_version'] == 2:
         from .planar_tuning_saved import read_owned_planar_tune
-        return read_owned_planar_tune(path)
+        # Worker summaries live above their explicit execution owner; ordinary
+        # standalone checkpoints live alongside their trials.
+        owner = base_directory
+        if owner is None and Path(path).name == 'planar-tune-results.json':
+            owner = Path(path).parent/'execution'
+        return read_owned_planar_tune(path, base_directory=owner)
     return replay_planar_tune(document)
 
 

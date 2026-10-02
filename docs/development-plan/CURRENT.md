@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-02、開発カードP04-b-a受入、P04-b-b受入、次はP04-b-c（基準 `afd6fdd`）。
+更新：2026-10-02、P04-b-c/親P04-b受入、次はP04-c（worker変更基準 `3377030`）。
 原90カードと追加子カードを含む全121カードの計画は継続中。P04をa〜c、P04-bを形状a/所有保存b/worker監査cへ分割。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -14,20 +14,20 @@
 
 ## 次の着手
 
-**[P04-b-c：区分調整workerの所有中止・再開とP04-b監査](03-planar.md#p04-b-c)**。
-[P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)と
-[P03の区分写像/幾何契約](../PLANAR_PIECEWISE_MAPPING.md)までDONE。
-[P04-aの共同比較・追跡・所有再生](../PLANAR_PIECEWISE_TRACKING.md)もDONE。
-[P04-b-aの元形状法則・参照比較・新版要求](../PLANAR_PIECEWISE_SHAPE.md)までDONE。
-[P04-b-bの実調整・所有保存/移動後再生・CLI再開](../PLANAR_PIECEWISE_TUNING_SAVED.md)までDONE。
-次はqueued入力の全先行trialを所有し、新版worker中止/別job再開・管理器再起動を確認する。
-`planar_tuning_jobs.py` は旧入力/結果/ancestry集合の前提を持つため、新版所有checkpointへ接続する。
-具体的にはqueued prefixコピーと入力hash、相対resultのexecution owner指定、
-コピーで変わるtrial pathと不変なProject/native/判断の区別、request/prefix checkpointの集合照合を扱う。
-全試行を実FEMで計算し、未確認群は評価しない。GUIと親監査はP04-c。
-P03は連続区分アフィンによる全域非アフィン変形に限定する。滑らかな非線形/曲線写像は未対応。
-入口は `planar_piecewise_mapping.py`、`planar_tracking_fields.py`、`planar_tracking.py`、`planar_tuning.py`。
-検査選択は[TESTING](../TESTING.md)とP04仕様を参照。
+**[P04-c：区分調整GUIと操作・P04全条件監査](03-planar.md#p04-c)**。
+[P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)、
+[P03の区分写像](../PLANAR_PIECEWISE_MAPPING.md)、
+[P04-aの比較/追跡](../PLANAR_PIECEWISE_TRACKING.md)までDONE。
+P04-bの[形状法則](../PLANAR_PIECEWISE_SHAPE.md)、[実調整/所有保存](../PLANAR_PIECEWISE_TUNING_SAVED.md)、
+[投入時所有worker・停止再開と親監査](../PLANAR_PIECEWISE_TUNING_WORKER.md)もDONE。
+次はGUIの要求4編集/読込、比較/回復、保存地点選択/別job再開、元場表示を接続する。
+`web/planar.js`は法則JSONのkindがpolynomial_piecewise_xyでも版2/3を生成するため、
+新版の選択/保持を追加する。`gui_planar_tuning.py`は旧input_sha256集合、旧絶対checkpoint、
+旧native hash集合の前提がある。新`read_planar_tune_job_checkpoint`と所有snapshotを使用し、
+コピー前のpath来歴と所有native/判断の保持を区別する。
+成功/未確認、中止/再開、新サーバー保存再生を実ブラウザーで確認し、APIとの全native/
+Project/要求/判断/RF一致と旧アフィン操作を確認する。全条件監査後に開発親P04を受け入れる。
+P03/P04の現在の形状は連続区分アフィンまで。滑らかな非線形/曲線写像は後続P05〜P09。
 親互換課題P02やD02全体を完了とは扱わない。
 
 P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
@@ -52,6 +52,12 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+2026-10-02：P04-b-cのsession19594は603.667秒、17件中16PASS/同じ中止テスト2ERROR、終了1。
+移動済み中止jobの旧pathをテストprocess辞書から除く修正後、session11536は1件40.054秒PASS、終了0。
+分割17種類（新5/旧直接利用12）PASS、395製品hash不変。全handle/worker終端、src固定解除。
+元移動・実中止/再開・管理器再作成・最終回復・未確認null・改変拒否を確認し、親P04-bを監査受入。
+証拠 `out/p04bc-planar-worker-20261002/`、[条件別監査](../PLANAR_PIECEWISE_TUNING_WORKER.md)。
 
 2026-10-02：P04-b-bは初回session30100終了1（新7件、2PASS/3FAIL/2ERROR、85.712秒）。
 格子改善後session99948終了1（選択21件、20PASS/CLI期限1ERROR、846.030秒）。

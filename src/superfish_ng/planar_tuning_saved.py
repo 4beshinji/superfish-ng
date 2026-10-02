@@ -124,7 +124,7 @@ def replay_owned_planar_tune(document, *, base_directory=None):
     return expected
 
 
-def read_owned_planar_tune(path):
+def read_owned_planar_tune(path, *, base_directory=None):
     path = Path(path)
     if path.is_symlink() or not path.is_file():
         raise ValueError('owned planar tune checkpoint must be a regular file')
@@ -134,7 +134,7 @@ def read_owned_planar_tune(path):
     runs = document['trial_runs']
     if type(runs) is not list or runs != [f'trial-{i+1:03d}' for i in range(len(runs))]:
         raise ValueError('saved owned planar tune paths must be ordered relative trial names')
-    result = replay_owned_planar_tune(document, base_directory=path.parent)
+    result = replay_owned_planar_tune(document, base_directory=path.parent if base_directory is None else base_directory)
     if before != _digest(path):
         raise ValueError('owned planar tune checkpoint changed during replay')
     return result
