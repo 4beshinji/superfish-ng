@@ -199,7 +199,10 @@ def _assemble(request, runs):
         scope='Cartesian cutoff FEM with physical electric-field identities, computed upper guard modes and a separate final frequency-difference gate; J/m normalization; no accelerating R/Q, continuum-error or global-root certificate')
 
 
-def replay_planar_tune(document):
+def replay_planar_tune(document, *, base_directory=None):
+    if type(document) is dict and type(document.get('schema_version')) is int and document['schema_version'] == 2:
+        from .planar_tuning_saved import replay_owned_planar_tune
+        return replay_owned_planar_tune(document, base_directory=base_directory)
     names = ('format', 'schema_version', 'request', 'trial_runs', 'trial_sources_sha256',
              'trials', 'decision', 'status', 'can_resume', 'scope')
     keys(document, names, names, 'planar tune checkpoint')
@@ -210,11 +213,18 @@ def replay_planar_tune(document):
 
 
 def read_planar_tune(path):
-    return replay_planar_tune(parse_json(Path(path).read_text(encoding='utf-8')))
+    document = parse_json(Path(path).read_text(encoding='utf-8'))
+    if type(document) is dict and type(document.get('schema_version')) is int and document['schema_version'] == 2:
+        from .planar_tuning_saved import read_owned_planar_tune
+        return read_owned_planar_tune(path)
+    return replay_planar_tune(document)
 
 
 def execute_planar_tune(request, directory, *, max_new_trials=None, checkpoint=None):
     """Save each verified trial; resumption always writes a new directory."""
+    if type(request) is dict and type(request.get('schema_version')) is int and request['schema_version'] == 4:
+        from .planar_tuning_saved import execute_owned_planar_tune
+        return execute_owned_planar_tune(request, directory, max_new_trials=max_new_trials, checkpoint=checkpoint)
     request = deepcopy(request)
     validate_planar_tune(request)
     request = parse_json(_canonical(request))

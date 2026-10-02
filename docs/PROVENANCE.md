@@ -4235,3 +4235,7 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 ## 元区分形状と共通参照比較 — 2026-10-02
 
 [P04-b-a受入](PLANAR_PIECEWISE_SHAPE.md)。既存mesh・元場比較・アフィン参照細分・有理多項式/Sturm基盤を再利用し、元頂点の多項式変位と全セル区間Jacobian検査を独立実装した。局所正値だけで全域交差を保証しない反例と、実相似TE/TM場・RF対照を分離した。新外部資料/依存/legacyソース・実行物の参照なし。新版の実調整/所有保存/worker/GUIは後続受入。
+
+## 区分形状の実調整と全試行所有保存 — 2026-10-02
+
+[P04-b-b記録](PLANAR_PIECEWISE_TUNING_SAVED.md)。既存Hphiの所有checkpoint設計を専用planar job/nativeへ適合させ、全元Project/native/完了来歴をbyte単位でコピーする。物理判断は既存の元場追跡/回復/独立native検証を再利用し、TE10/TM11の独立解析cutoff、独立mesh、相似RF則と改変拒否で確認する。新外部資料/依存/legacyソース・実行物の参照なし。新worker所有操作とGUIは別カード。

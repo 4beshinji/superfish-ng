@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-02、開発カードP04-b-a受入、次はP04-b-b（基準 `3cb8f50`）。
+更新：2026-10-02、開発カードP04-b-a受入、P04-b-b受入、次はP04-b-c（基準 `afd6fdd`）。
 原90カードと追加子カードを含む全121カードの計画は継続中。P04をa〜c、P04-bを形状a/所有保存b/worker監査cへ分割。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -14,13 +14,16 @@
 
 ## 次の着手
 
-**[P04-b-b：実区分調整と可搬な全試行所有保存・再開](03-planar.md#p04-b-b)**。
+**[P04-b-c：区分調整workerの所有中止・再開とP04-b監査](03-planar.md#p04-b-c)**。
 [P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)と
 [P03の区分写像/幾何契約](../PLANAR_PIECEWISE_MAPPING.md)までDONE。
 [P04-aの共同比較・追跡・所有再生](../PLANAR_PIECEWISE_TRACKING.md)もDONE。
 [P04-b-aの元形状法則・参照比較・新版要求](../PLANAR_PIECEWISE_SHAPE.md)までDONE。
-次は新版要求の実調整全工程と、全試行を所有する可搬保存/再生・別所有先への再開を確認する。
-既存planar調整は絶対trial job参照のままで、祖先/元出力の移動後再開は未受入。
+[P04-b-bの実調整・所有保存/移動後再生・CLI再開](../PLANAR_PIECEWISE_TUNING_SAVED.md)までDONE。
+次はqueued入力の全先行trialを所有し、新版worker中止/別job再開・管理器再起動を確認する。
+`planar_tuning_jobs.py` は旧入力/結果/ancestry集合の前提を持つため、新版所有checkpointへ接続する。
+具体的にはqueued prefixコピーと入力hash、相対resultのexecution owner指定、
+コピーで変わるtrial pathと不変なProject/native/判断の区別、request/prefix checkpointの集合照合を扱う。
 全試行を実FEMで計算し、未確認群は評価しない。GUIと親監査はP04-c。
 P03は連続区分アフィンによる全域非アフィン変形に限定する。滑らかな非線形/曲線写像は未対応。
 入口は `planar_piecewise_mapping.py`、`planar_tracking_fields.py`、`planar_tracking.py`、`planar_tuning.py`。
@@ -49,6 +52,13 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+2026-10-02：P04-b-bは初回session30100終了1（新7件、2PASS/3FAIL/2ERROR、85.712秒）。
+格子改善後session99948終了1（選択21件、20PASS/CLI期限1ERROR、846.030秒）。
+旧版1〜3の14件全PASS。CLI300秒期限の再確認session65480は256.734秒PASS（終了0）。
+独立TMはsession12993終了1（8/16gridでiteration limit）後、12/24gridのsession11671が
+192.929秒PASS（終了0）。分割22件成功、全数値許容差を保持。395製品hash不変、
+全handle終端、src固定解除。証拠 `out/p04bb-planar-owned-20261002/` と[専用記録](../PLANAR_PIECEWISE_TUNING_SAVED.md)。
 
 2026-10-02：P04-b-aは初回session36755終了1（28PASS/1FAIL、146.388秒）。
 再生成/幾何検査の順序修正後、session64698の影響17件は45.567秒PASS（終了0）、

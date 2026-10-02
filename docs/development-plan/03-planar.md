@@ -179,6 +179,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P04-b-b
 
+受入：2026-10-02、[実区分調整と所有保存](../PLANAR_PIECEWISE_TUNING_SAVED.md)。非アフィンTE/TM解析/独立mesh、相似RF、実回復/guard/null、全prefix所有コピー・移動後CLI再開/再生、失敗prefix・再hash改変拒否を確認。分割22件PASS（新8/旧14）。初回粗格子/工場丸め・CLI60秒期限の失敗を保持し、数値許容差は維持。395製品hash不変、全handle終端。新版worker接続と親監査は子c。
+
 ### 実区分調整と可搬な全試行所有保存・再開
 
 - 親P04-b、先行P04-b-a。実非アフィンFEM調整と相似解析対照、初回guard/個別ID・回復/未確認null、検索/最終gate別判定を確認する。
