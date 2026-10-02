@@ -1,4 +1,6 @@
-P07核は `test_planar_curved_solver test_planar_curved_refinement`、旧平面の signed Maxwell / per-length energy-wall-scale 2件。[分割12種類と円解析/失敗・追加細分](PLANAR_CURVED_SOLVER.md)。専用 `validate_planar_curved_rf.py` は固定二次円の二尺度/両偏波f/E/H/Gだけで、P07全体は未受入。元12解を保持する `--extend-from` で未達TMだけL3へ追加し14解を保持。後続は最終FEM差/独立mesh/増次数/幾何系列/楕円/角を検証する。
+P07最終二水準は `test_planar_curved_convergence_reference` の既知P2制限・共通群回転・E/H別周波数則・振幅差・改変拒否。`scripts/validate_planar_curved_convergence.py` は元raw全hashと製品hashを照合して保持解を物理再構築し、親chart再生成/全元E/H/全RFを別判定する。[限定範囲と失敗・追加細分](PLANAR_CURVED_CONVERGENCE.md)。独立A/Bmesh/増次数/幾何系列/楕円/角は別gate。
+
+P07核は `test_planar_curved_solver test_planar_curved_refinement`、旧平面の signed Maxwell / per-length energy-wall-scale 2件。[分割12種類と円解析/失敗・追加細分](PLANAR_CURVED_SOLVER.md)。専用 `validate_planar_curved_rf.py` は固定二次円の二尺度/両偏波f/E/H/Gだけで、P07全体は未受入。元12解を保持する `--extend-from` で未達TMだけL3へ追加し14解を保持。最終FEM差は上の別検証器で扱う。
 
 P06は `test_planar_curved`、共有数学の既存 `test_curved_fem` と `test_planar_polygon` のスペクトル/strict入口2件。[14種類と追加拒否の限定実行](PLANAR_CURVED_FEM.md)。専用 `scripts/validate_planar_curved_fem.py` は二尺度四ring円6Domainの幾何/面積形式・TE核/TM正値に限定し、P07のf/E/H/G受入を代用しない。出力は未使用--outを指定する。
 

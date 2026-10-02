@@ -270,7 +270,9 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 2026-10-02進行：[実solve/元12場/曲線壁RF・厳密点所属と同Domain細分](../PLANAR_CURVED_SOLVER.md)。
 新10/旧物理2種類を分割確認。固定二次円二尺度・両偏波の元12解を保持し、TMだけ追加2細分で
-解析f/E/H/Gの全対象群がPASS。最終FEM差/独立内部mesh/増次数/幾何近似系列/楕円・再入角は未確認。
+解析f/E/H/Gの全対象群がPASS。その後の[最終二水準比較](../PLANAR_CURVED_CONVERGENCE.md)は新5unitを確認し、
+未達TE/TMを追加4FEMして計18元解を保持。TE L2→L3/TM L3→L4で二尺度のf/E/H/全RF差PASS。
+独立内部mesh/増次数/幾何近似系列/楕円・再入角は未確認。
 P07はIN_PROGRESS、P08/native/GUIと原互換親は未完。
 
 ### 平面曲線の実解と元場・RFを実装する

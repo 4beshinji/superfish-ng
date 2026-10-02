@@ -110,15 +110,19 @@ raw `fem-fields.npz` とCase/checksは検証器内部の出力であり、P08の
 
 ## P07を閉じる前に残る条件
 
+保持解の最終二水準は[専用比較検証](PLANAR_CURVED_CONVERGENCE.md)で二尺度/両偏波を限定受入。
+元Domain親chart/同scalar回転の元E/Hと全元RFを比較し、未達TE/TMだけ追加4FEM、合計18解を保持した。
+TE L2→L3、TM L3→L4で全対象群PASS、401製品不変。解析対照とメッシュ差を別に判断する。
+
 | 条件 | 現在の証拠 |
 | --- | --- |
 | 実solver/元12場/片側実壁RF、strict/再構築 | unitと円解析の上記範囲で確認 |
 | 円二尺度/両偏波、固定Domain三水準以上の解析f/E/H/G | 上記TE L2/TM L3の完全対象群 PASS。細分不足のFAILも保持 |
 | 真形状へのN=16/32/64幾何近似と十分細かい各FEM | P06は幾何だけ。曲線RFの新系列は未確認 |
-| 固定Domain最終二水準のE/H/全RF、独立A/B固有場 | 制限/転送unitのみ。実固有場の別比較gateは未確認 |
+| 固定Domain最終二水準のE/H/全RF、独立A/B固有場 | [円二尺度/両偏波の最終二水準PASS](PLANAR_CURVED_CONVERGENCE.md)。独立A/B固有場は未確認 |
 | 最後二求積次数のf/全RF≤1e−8 | unit内の独立積分は確認。三次数の全正帯RFは未確認 |
 | 滑らかな楕円と再入角、二尺度・全f/E/H/RF差 | 基礎unit/幾何・尺度は確認。専用収束gateは未確認 |
 | P08/P09 | native/Project/CLI-worker/Study/GUIと比較/調整は未接続 |
 
-次は保持した円解の最終FEM差/増次数/独立mesh対照と、楕円・角の専用系列を検証する。
+次は保持した円解の独立mesh対照/増次数と、真形状への幾何系列・楕円/角の専用系列を検証する。
 全残条件の証拠を監査してからP07をDONEにする。

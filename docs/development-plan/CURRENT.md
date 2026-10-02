@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-02、P06平面曲線領域と面積FEMを独立検証・受入。
+更新：2026-10-02、P07固定円の最終二水準f/E/H/全RF差を限定受入。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -17,8 +17,9 @@
 **[P07：平面曲線の実解と元場・RFを実装する](03-planar.md#p07)**。IN_PROGRESS、先行P06はDONE。
 [P07進行記録](../PLANAR_CURVED_SOLVER.md)で専用実solve/元12場/実側壁RF、strict点所属と元Domain細分を実装。
 新10/旧物理2種類を分割確認。二尺度・両偏波の固定二次円の元12解を保持し、
-TMだけL3へ追加2FEMで解析f/E/H/G全対象群を確認した。粗いG未達はFAILとして保持、許容値不変。
-次は保持解の最終二水準E/H/全RF差、独立A/B内部mesh、増求積次数、N16/32/64幾何と各FEM、
+TMだけL3へ追加2FEMで解析f/E/H/G全対象群を確認した。続く[最終二水準比較](../PLANAR_CURVED_CONVERGENCE.md)で
+TEのE差/TMのRF差未達を保持し、追加4FEMでTE L2→L3/TM L3→L4の二尺度f/E/H/全RF差を確認。
+保持元解は計18、401製品不変、許容値不変。次は独立A/B内部mesh、増求積次数、N16/32/64幾何と各FEM、
 滑らかな楕円/再入角の二尺度・固定FEM差を[P05 gate](../PLANAR_CURVED_RF.md)で別々に検証する。
 円の解析PASSだけでP07を閉じない。[P06受入](../PLANAR_CURVED_FEM.md)は継続利用、元398製品は不変。
 既存dispatcher/CLI/native/Project/worker/GUIはP08、曲線比較/調整はP09で未接続。
@@ -47,7 +48,18 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-P07：全handle終端、401製品hash固定解除。旧398全ファイル不変、新3製品ファイルのみ。
+P07最終二水準：全handle終端、401製品/比較器固定解除。
+新5unit/session79738は1.828秒PASS/終了0。初回/session8261はnp.bool_ JSON保存で終了1、新FEM0。
+保存型だけboolへ修正し、JSON往復追加の限定1unitは0.521秒PASS/終了0。失敗log/出力を保持。
+専用/session72321は1086.911秒PASS/終了0。元14解raw全hash不変、最終8解を物理再構築。
+TE01 L1→L2のE差1.031212%/TM L2→L3のP′差0.851679%の未達を保持し、元境界を保った追加4FEM。
+TE L2→L3/TM L3→L4の二尺度f/E/H/全RF差PASS、計18元解保持、追加fineの解析対照もPASS。
+最大P′差0.221120%、親chart座標上限9.039e−15、独立場energy差2.513e−13、401製品不変。
+証拠 `out/p07-planar-curved-convergence-20261002/`、[限定受入と残gate](../PLANAR_CURVED_CONVERGENCE.md)。
+次は同初期Domain独立A/B内部meshの全場/全RF、増次数/幾何系列/楕円・角も残る。
+P07 IN_PROGRESS/全goal ACTIVE、生存handleなし。
+
+P07初回解析対照（履歴）：全handle終端、401製品hash固定解除。旧398全ファイル不変、新3製品ファイルのみ。
 新solver7/同Domain細分3 unit/session19390は10件2.343秒PASS/終了0。旧直線物理2件は初回成功を保持、計12種類。
 初回/session18384は8PASS/1FAIL、1.036秒/終了1。ほぼ零TE Exの単独相対値比較を、同係数場と全E/H normへ分離。
 限定/session4352は1件1.007秒PASS/終了0。その後の全モードAPI追加で新10件を確認した。失敗log保持。

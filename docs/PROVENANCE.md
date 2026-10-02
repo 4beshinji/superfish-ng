@@ -4259,3 +4259,10 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 ## 曲線Cartesianの実解・元phasor場・実側壁RF — 2026-10-02
 
 [P07進行記録](PLANAR_CURVED_SOLVER.md)。専用area FEMと元P2写像にCartesian一般スペクトル/代数検査を適用し、実12場/片側曲線壁積分/単位長RFを実装。点所属は二次edge有理ray sign、細分は有理親評価・共有edge closure・Bernstein丸め上限として独立記述。R39/R40の円Bessel参照とP05の独立phasor/側壁G導出を継続利用し、本文/コード/旧資産の追加参照や新依存なし。解析値を製品solveへ使わない。未達TM Gは失敗記録を保持して同Domain細分で改善し、許容値を維持した。新3製品ファイル/旧398不変。円の限定解析gate成功をP07全条件/native/GUIの完了へ拡張しない。
+
+2026-10-02 P07固定円の最終二水準：[元E/H・全RFの別比較](PLANAR_CURVED_CONVERGENCE.md)。
+前回の元raw hash/製品hashに結び付けた物理再構築を再利用し、親chartを元Domainから再生成して、
+単一scalar群回転と実vector差の直接積分を独立記述した。既知P2制限・線形二重群回転・規定周波数/振幅差を対照にし、
+これらのmanufactured場を全域固有場と呼ばない。保持TMのRF差/TE01のE差の未達を記録し、
+元二次境界と物理許容値を保った追加細分を行う。製品src/共有core/seed・依存の追加変更はない。
+新外部資料/legacy資産参照なし、独立A/B/増次数/真形状系列/楕円・角の残gateは別検証。
