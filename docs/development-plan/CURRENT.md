@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-02、P04-b-c/親P04-b受入、次はP04-c（worker変更基準 `3377030`）。
+更新：2026-10-02、P04-b-c/親P04-b受入、P04-cのGUI接続/受入検査中（基準 `9946fb5`）。
 原90カードと追加子カードを含む全121カードの計画は継続中。P04をa〜c、P04-bを形状a/所有保存b/worker監査cへ分割。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -52,6 +52,13 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+P04-c第一段階：[GUI輸送/要求フォーム/所有地点](../PLANAR_PIECEWISE_TUNING_GUI.md)を接続。
+修正前新版checkpoint選択は1件6.316秒ERROR（session11909、終了1）。
+修正後の新GUI1/旧GUI5件はsession93859、160.930秒PASS、終了0。
+395製品hash不変、全worker/session終端、src固定解除。
+証拠 `out/p04c-planar-gui-20261002/`。実ブラウザー新版/旧版・新サーバー再生、
+API全元場照合と親P04監査が残る。P04-c/親P04はIN_PROGRESSを維持。
 
 2026-10-02：P04-b-cのsession19594は603.667秒、17件中16PASS/同じ中止テスト2ERROR、終了1。
 移動済み中止jobの旧pathをテストprocess辞書から除く修正後、session11536は1件40.054秒PASS、終了0。

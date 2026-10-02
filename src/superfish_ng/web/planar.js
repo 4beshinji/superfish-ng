@@ -183,7 +183,9 @@ const tuneFields={target_hz:'tune-target',frequency_tolerance_hz:'tune-frequency
 function tuneRequestText(){
  const value={format:'superfish_ng_planar_tune',schema_version:1,project:documentFromForm(),parameter:$('tune-parameter').value,mode_id:$('tune-mode-id').value};
  const recovery=$('tune-recovery-selection').value;
- value.schema_version=recovery!=='none'?3:value.parameter==='deformation'?2:1;
+ const piecewise=value.parameter==='deformation'&&$('tune-shape-kind').value==='piecewise';
+ if(piecewise&&recovery==='none')throw Error('区分変形では個別IDの回復方法を指定してください。');
+ value.schema_version=piecewise?4:recovery!=='none'?3:value.parameter==='deformation'?2:1;
  for(const [key,id] of Object.entries(tuneFields))value[key]=numeric(id);
  const fields=Object.entries(value).map(([key,data])=>JSON.stringify(key)+':'+JSON.stringify(data));
  for(const [key,id] of [['bounds','tune-bounds'],['initial_ids','tune-ids'],['controls','tune-controls']])fields.push(JSON.stringify(key)+':'+$(id).value);
@@ -193,6 +195,7 @@ function tuneRequestText(){
 }
 function tuneLimit(){return $('tune-new-trials').value.trim()?numeric('tune-new-trials'):null;}
 function loadTune(value){
+ $('tune-shape-kind').value=value.schema_version===4?'piecewise':'affine';
  $('tune-shape-law').value=JSON.stringify(value.shape_law??null,null,2);
  $('tune-recovery-selection').value=value.identity_recovery?.anchor_selection??'none';
  $('tune-recovery-anchor').value=value.identity_recovery?.anchor_trial_index??0;

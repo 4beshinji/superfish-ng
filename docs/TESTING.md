@@ -1,3 +1,5 @@
+P04-c第一段階は `test_gui_planar_piecewise_tuning test_gui_planar_tuning`。新所有地点/全元場取込/元移動後再開と旧GUIの6件PASS。`node --check src/superfish_ng/web/planar.js`もPASS。[仕様・修正前失敗・実ブラウザー等の残条件](PLANAR_PIECEWISE_TUNING_GUI.md)。P04-c/親P04は受入途中。
+
 P04-b-c所有workerは `test_planar_piecewise_tuning_jobs`。直接消費先は `test_planar_tuning_jobs test_planar_tuning_recovery_jobs test_gui_planar_tuning`。投入前後の元移動、実中止/保存地点/別job、管理器再作成、解析TE10/最終回復、未確認nullとqueued/再hash改変拒否を分割17種類PASS。[条件別監査と初回後処理失敗](PLANAR_PIECEWISE_TUNING_WORKER.md)。新版GUIはP04-cで別受入。
 
 P04-b-b実区分調整/所有保存は `test_planar_piecewise_tuning`。非アフィンTE/TMの独立cutoff/mesh、実回復/guard、可搬CLI・全prefixコピー/失敗再開、再hash改変を検査。直接利用先は `test_planar_tuning test_planar_tuning_recovery test_planar_tuning_jobs test_planar_tuning_recovery_jobs`。[条件別検証と分割実行記録](PLANAR_PIECEWISE_TUNING_SAVED.md)。新版worker所有操作はP04-b-c、GUIはP04-cで別受入。

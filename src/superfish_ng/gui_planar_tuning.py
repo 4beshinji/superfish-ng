@@ -21,13 +21,17 @@ def _checkpoint_directory(manager,identifier):
 
 
 def _saved_checkpoint(manager,identifier,index):
-    integer(index,'checkpoint index')
+    integer(index,'checkpoint index',minimum=0)
     directory,execution=_checkpoint_directory(manager,identifier)
     path=execution/f'checkpoint-{index:03d}.json'
     if path.is_symlink():raise ValueError('tuning checkpoint must not be a symlink')
     request_path=directory/'planar-tune-request.json'
     if request_path.is_symlink():raise ValueError('tuning job request must not be a symlink')
     original=path.read_bytes();submitted=request_path.read_bytes()
+    envelope=parse_json(submitted.decode('utf-8'))
+    if envelope.get('request',{}).get('schema_version')==4:
+        from .planar_tuning_jobs import read_planar_tune_job_checkpoint
+        return read_planar_tune_job_checkpoint(directory,index)
     state=manager.status(identifier,verify=False)
     # Completed jobs retain their submitted envelope hash. Cancellation and
     # interruption in the shared manager retain only the stopped status; those
@@ -92,11 +96,13 @@ def planar_tuning_response(manager,action,data):
             trial=result['trials'][index];ids=trial['current_mode_ids'];target=result['request']['mode_id']
             if target not in ids:raise ValueError('this trial has no individually confirmed target mode')
             from .planar_jobs import _job_hashes
+            from .planar_tuning_saved import _snapshot_trial
             from pathlib import Path
-            path=Path(result['trial_runs'][index]);before=_job_hashes(path)
+            snapshot=_snapshot_trial if result['schema_version']==2 else _job_hashes
+            path=Path(result['trial_runs'][index]);before=snapshot(path)
             if before!=result['trial_sources_sha256'][index]:raise ValueError('planar tune trial changed before import')
             identifier=manager.import_planar_result(path)
-            if before!=_job_hashes(path):raise ValueError('planar tune trial changed during import')
+            if before!=snapshot(path):raise ValueError('planar tune trial changed during import')
             return dict(id=identifier,mode=ids.index(target)+1)
         if action=='planar-resume-tune':
             return dict(id=manager.start_planar_tune(result['request'],checkpoint=result,max_new_trials=data.get('max_new_trials')))

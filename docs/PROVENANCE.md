@@ -1,3 +1,5 @@
+2026-10-02 P04-c第一段階：[平面区分調整GUI](PLANAR_PIECEWISE_TUNING_GUI.md)。既存自作フォームと所有checkpoint選択/全trial snapshotを接続。新1/旧5のPython操作PASS、実ブラウザー/親監査は未実施。FEM/物理許容差不変、新外部資料/依存/legacy参照なし。
+
 2026-10-02 P04-b-c：[平面区分調整の投入時所有worker](PLANAR_PIECEWISE_TUNING_WORKER.md)。既存自作の全trialコピー/hash/物理再生へqueued所有入力と相対結果保存を接続。元移動・実中止/再開・管理器再作成・実最終回復/解析TE10・改変拒否を分割17種類PASS。FEM/追跡許容差・旧版数値を維持、新外部資料/依存/legacy参照なし。GUI/親P04はP04-c。
 
 2026-10-02 P04-a：[平面区分写像の元場比較・追跡・所有再生](PLANAR_PIECEWISE_TRACKING.md)。既存自作の有理数clip/BVH・元場Gram・有限スペクトル・所有保存を接続。解析scalar/curl積分、実相似/非アフィン細分、元RF、実workerを分割57件PASS。主実行の収集ERRORとG粗メッシュ未達も保持。新外部資料・依存・legacy参照なし。形状調整/GUIはP04-b/c。
