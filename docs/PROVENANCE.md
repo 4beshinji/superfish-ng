@@ -1,3 +1,5 @@
+2026-10-02 開発カードP03：[平面区分写像と領域検査](PLANAR_PIECEWISE_MAPPING.md)。既存自作のPlanarMesh/厳密アフィンoverlayを再利用し、連続区分アフィン宣言・有理数Jacobian/xy移送と独立解析積分を追加。新7＋既存25件PASS。新外部資料・依存・legacy参照なし。元FEM場の共同比較・追跡/調整接続は後続P04。
+
 2026-09-29 DEV-BROWSER-01：[GUI検証資源管理](BROWSER_RESOURCES.md)。Node標準APIの自作管理プロセスを既存63検証器へ接続。Node公式child_process/fs資料を参照し、実Chromeと偽ブラウザーで回収を確認。新依存・legacy参照・製品数値変更なし。
 
 2026-09-22 H16受入：[材料調整・保存・GUI全条件監査](MATERIAL_HPHI_TUNING_ACCEPTANCE.md)。既存自作の独立物理/所有検証を維持し、実Chromeで回復・中止/再起動・軸RF・不正物理拒否を追加確認。製品数値核・依存・参照制限に変更なし。

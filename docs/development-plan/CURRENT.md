@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-09-22、開発カードP02と子a〜d受入。直前の製品コミットは `a14cf18`。
+更新：2026-10-02、開発カードP03受入（着手基準 `27cd919`）。
 原90カードと追加子カードを含む全115カードの計画は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -14,13 +14,19 @@
 
 ## 次の着手
 
-**[P03：平面非線形写像の契約と幾何検査](03-planar.md#p03)**。
-[P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)までDONE。
-次は明示比較分割の非アフィン写像について、全外周・領域被覆・正Jacobian・xy場変換を検査する。
-アフィン極限、面積/多項式積分、欠落/重複/反転の独立対照を置く。面積一致だけで領域一致としない。
-入口は `planar_tracking_exact_mapping.py`、`planar_tracking_overlap.py`、`planar_polygon.py`。
-新設候補 `planar_piecewise_mapping.py`。検査選択は[TESTING](../TESTING.md)とP03仕様を参照。
+**[P04：平面非線形比較と調整を接続する](03-planar.md#p04)**。
+[P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)と
+[P03の区分写像/幾何契約](../PLANAR_PIECEWISE_MAPPING.md)までDONE。
+次は各側の独立overlayから写像を介した共同比較分割を作り、元TE/TM場の比較と
+形状法則・履歴・再開・調整へ接続する。全試行を実FEMで計算し、未確認群は評価しない。
+P03は連続区分アフィンによる全域非アフィン変形に限定する。滑らかな非線形/曲線写像は未対応。
+入口は `planar_piecewise_mapping.py`、`planar_tracking_fields.py`、`planar_tracking.py`、`planar_tuning.py`。
+検査選択は[TESTING](../TESTING.md)とP04仕様を参照。
 親互換課題P02やD02全体を完了とは扱わない。
+
+P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
+範囲・初回テスト入力エラー・解析不変量・コマンドは上記専用文書に記録。
+全validate/seed/GUIの再実行はしていない。実行handle94126は終了0、生存処理の引継ぎなし。
 
 H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROGRESS。
 2026-09-22のユーザー選択は「対象版の資料で必要性を確認してから決める」。

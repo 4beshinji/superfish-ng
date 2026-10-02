@@ -91,6 +91,11 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P03
 
+2026-10-02受入：[明示区分写像・全領域検査](../PLANAR_PIECEWISE_MAPPING.md)。
+新7件＋既存25件、計32件PASS。連続区分アフィンによる全域非アフィン変形を対象とし、
+解析面積/多項式積分・curl変換・独立native被覆・不正分割拒否を確認。P03 DONE、次はP04。
+滑らかな非線形/曲線写像と場比較/調整の接続は今回の受入に含めない。
+
 ### 平面非線形写像の契約と幾何検査を追加する
 
 - **親課題**：P02。**種別**：実装。初期状態：未着手。
