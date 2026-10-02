@@ -14,15 +14,15 @@
 
 ## 次の着手
 
-**[P07：平面曲線の実解と元場・RFを実装する](03-planar.md#p07)**。先行P06はDONE。
-[P06受入](../PLANAR_CURVED_FEM.md)で専用xy二次Domain/全Jacobian/閉外周・全edge、
-軸重みのない面積K/M、TE定数核/TM Dirichlet/正値、strict専用Case版3を確認した。
-新9/既存5の14件、追加shared/Jacobian拒否を限定確認、四ring円二尺度三水準のgeometry/form validator PASS。
-独立行列スペクトル12系は核/正値の判定であり、曲線RF modeの受入ではない。
-次は元二次写像上の実solve/全12場成分/側壁RFと、[P05固定gate](../PLANAR_CURVED_RF.md)に従う
-円二尺度・両偏波の三水準f/全E,H/G、増求積次数、固定Domain/楕円/再入角の独立収束検証。
+**[P07：平面曲線の実解と元場・RFを実装する](03-planar.md#p07)**。IN_PROGRESS、先行P06はDONE。
+[P07進行記録](../PLANAR_CURVED_SOLVER.md)で専用実solve/元12場/実側壁RF、strict点所属と元Domain細分を実装。
+新10/旧物理2種類を分割確認。二尺度・両偏波の固定二次円の元12解を保持し、
+TMだけL3へ追加2FEMで解析f/E/H/G全対象群を確認した。粗いG未達はFAILとして保持、許容値不変。
+次は保持解の最終二水準E/H/全RF差、独立A/B内部mesh、増求積次数、N16/32/64幾何と各FEM、
+滑らかな楕円/再入角の二尺度・固定FEM差を[P05 gate](../PLANAR_CURVED_RF.md)で別々に検証する。
+円の解析PASSだけでP07を閉じない。[P06受入](../PLANAR_CURVED_FEM.md)は継続利用、元398製品は不変。
 既存dispatcher/CLI/native/Project/worker/GUIはP08、曲線比較/調整はP09で未接続。
-既存P04全子とP05/P06はDONE、原互換親P02/D02とH17/H18、後続P07〜P09は未完了。
+既存P04全子とP05/P06はDONE、原互換親P02/D02とH17/H18、P07〜P09は未完了。
 
 P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 範囲・初回テスト入力エラー・解析不変量・コマンドは上記専用文書に記録。
@@ -46,6 +46,18 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+P07：全handle終端、401製品hash固定解除。旧398全ファイル不変、新3製品ファイルのみ。
+新solver7/同Domain細分3 unit/session19390は10件2.343秒PASS/終了0。旧直線物理2件は初回成功を保持、計12種類。
+初回/session18384は8PASS/1FAIL、1.036秒/終了1。ほぼ零TE Exの単独相対値比較を、同係数場と全E/H normへ分離。
+限定/session4352は1件1.007秒PASS/終了0。その後の全モードAPI追加で新10件を確認した。失敗log保持。
+円三水準/session81249は12FEM、68.327秒/終了1。TE全target L2 PASS、TMはf/E/H PASS/G最大1.13743%で未達。
+401hash不変と元12解を保持し、circle-extended/session65520でTM二尺度だけL3へ延長。
+追加2FEM、保持14解、111.818秒PASS/終了0。TE L2とTM L3で解析f/E/H/G全対象群PASS、TM G最大0.295791%。
+各実行内の401hash不変、独立field energy差最大1.081e−13、元398不変。
+延長後の検証器indent/import整理はASTのみ、新FEM/製品変更なし。全handle終端、src固定解除。
+証拠 `out/p07-planar-curved-rf-20261002/`、[限定成功と残る全gate](../PLANAR_CURVED_SOLVER.md)。
+次は上記P07残条件の独立検証、P07 IN_PROGRESS/全goal ACTIVE。生存handleなし。
 
 P06：全handle終端、398製品hash固定解除。先行unit/session56921は新9/既存5、14件2.317秒PASS/終了0。
 shared拒否追加/session95476は1件0.024秒PASS/終了0、全Jacobian拒否追加/session31040は1件0.006秒PASS/終了0。

@@ -4255,3 +4255,7 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 ## 専用Cartesian二次領域と面積形式 — 2026-10-02
 
 [P06受入](PLANAR_CURVED_FEM.md)。既存自作の局所P2基底/参照Gauss則だけを数値数学として共有し、xy Domain、Fractionによる全detJ最小/厳密Green、全edge総予算検査と面積K/Mを独立実装した。既存r/r³ assemblerを別物理へ流用すると定数核/面積massに不一致を生むことを着手時に記録。解析patch/実円・楕円の幾何、旧Cartesian直線極限、独立行列スペクトルを対照にし、製品を解析式で置き換えない。新3製品ファイル、旧395不変。追加外部資料/依存/legacy参照なし。元場・壁RFと保存/操作の受入は後続P07〜P09。
+
+## 曲線Cartesianの実解・元phasor場・実側壁RF — 2026-10-02
+
+[P07進行記録](PLANAR_CURVED_SOLVER.md)。専用area FEMと元P2写像にCartesian一般スペクトル/代数検査を適用し、実12場/片側曲線壁積分/単位長RFを実装。点所属は二次edge有理ray sign、細分は有理親評価・共有edge closure・Bernstein丸め上限として独立記述。R39/R40の円Bessel参照とP05の独立phasor/側壁G導出を継続利用し、本文/コード/旧資産の追加参照や新依存なし。解析値を製品solveへ使わない。未達TM Gは失敗記録を保持して同Domain細分で改善し、許容値を維持した。新3製品ファイル/旧398不変。円の限定解析gate成功をP07全条件/native/GUIの完了へ拡張しない。
