@@ -16,6 +16,8 @@ from .planar_polygon import PlanarPolygonCase
 from .planar_study import PlanarStudy
 from .planar_affine_shape import PlanarAffineShapeLaw, explicit_planar_project
 from .planar_affine_shape_mapping import PlanarAffineShapeMapping
+from .planar_piecewise_shape import PlanarPiecewiseShapeLaw
+from .planar_piecewise_shape_mapping import PlanarPiecewiseShapeMapping
 from .planar_refinement import refine_planar_mesh
 from .planar_tracking import PlanarTrackingControls, PlanarTrackingRequest, track_planar_modes
 from .planar_tracking_polygon import PolygonScaleMapping
@@ -33,20 +35,20 @@ def validate_planar_tune(request):
              'max_trials', 'initial_ids', 'mode_id', 'controls',
              'refinement_levels', 'max_triangles', 'mesh_frequency_tolerance_hz')
     version = request.get('schema_version') if type(request) is dict else None
-    if type(version) is int and (version == 2 or version == 3 and request.get('parameter') == 'deformation'):
+    if type(version) is int and (version in (2, 4) or version == 3 and request.get('parameter') == 'deformation'):
         names = (*names, 'shape_law')
-    if type(version) is int and version == 3:
+    if type(version) is int and version in (3, 4):
         names = (*names, 'identity_recovery')
     keys(request, names, names, 'planar tune')
     if (request['format'] != 'superfish_ng_planar_tune' or
-            type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3)):
-        raise ValueError('expected superfish_ng_planar_tune schema_version 1, 2 or 3')
+            type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4)):
+        raise ValueError('expected superfish_ng_planar_tune schema_version 1, 2, 3 or 4')
     project = PlanarProject.from_dict(request['project'])
-    polynomial = version == 2 or version == 3 and request['parameter'] == 'deformation'
+    polynomial = version in (2, 4) or version == 3 and request['parameter'] == 'deformation'
     if polynomial:
-        law = PlanarAffineShapeLaw.from_dict(request['shape_law'])
+        law = (PlanarPiecewiseShapeLaw if version == 4 else PlanarAffineShapeLaw).from_dict(request['shape_law'])
         if request['parameter'] != 'deformation':
-            raise ValueError('planar tune v2 parameter must be dimensionless deformation')
+            raise ValueError('planar shape tune parameter must be dimensionless deformation')
         if list(law.bounds) != request['bounds']:
             raise ValueError('planar tune bounds must equal the shape law interval')
     elif request['parameter'] not in ('uniform_scale', '/case/geometry/width_m', '/case/geometry/height_m'):
@@ -56,7 +58,7 @@ def validate_planar_tune(request):
         raise ValueError('planar tune bounds require two increasing positive values')
     for value in bounds:
         if polynomial:
-            law.exact_transform(value)
+            (law.exact_points if version == 4 else law.exact_transform)(value)
         else:
             positive(value, 'planar tune bound')
     if not bounds[0] < bounds[1]:
@@ -75,7 +77,7 @@ def validate_planar_tune(request):
     if type(request['mode_id']) is not str or request['mode_id'] not in ids:
         raise ValueError('mode_id must occur in initial_ids')
     PlanarTrackingControls.from_dict(request['controls'])
-    if version == 3:
+    if version in (3, 4):
         validate_planar_recovery_policy(request)
     for value in bounds:
         trial_planar_project(request, value, 'refinement')
@@ -87,8 +89,9 @@ def trial_planar_project(request, value, phase):
     if phase not in ('search', 'refinement'):
         raise ValueError('planar tune phase must be search or refinement')
     project = PlanarProject.from_dict(request['project'])
-    if request['schema_version'] in (2, 3) and request['parameter'] == 'deformation':
-        project = PlanarAffineShapeLaw.from_dict(request['shape_law']).project(explicit_planar_project(project), value)
+    if request['schema_version'] in (2, 3, 4) and request['parameter'] == 'deformation':
+        law_type = PlanarPiecewiseShapeLaw if request['schema_version'] == 4 else PlanarAffineShapeLaw
+        project = law_type.from_dict(request['shape_law']).project(explicit_planar_project(project), value)
     else:
         project = PlanarStudy(project, request['parameter'], [value, value]).projects()[0]
     case = project.case
@@ -112,9 +115,12 @@ def planar_tune_mapping(request, previous, current):
     project = PlanarProject.from_dict(request['project'])
     levels = [request['refinement_levels'] if trial['phase']=='refinement' else 0
               for trial in (previous, current)]
-    if request['schema_version'] in (2, 3) and request['parameter'] == 'deformation':
-        return PlanarAffineShapeMapping(explicit_planar_project(project),
-            PlanarAffineShapeLaw.from_dict(request['shape_law']), previous['value'], current['value'], *levels)
+    if request['schema_version'] in (2, 3, 4) and request['parameter'] == 'deformation':
+        piecewise = request['schema_version'] == 4
+        mapping_type = PlanarPiecewiseShapeMapping if piecewise else PlanarAffineShapeMapping
+        law_type = PlanarPiecewiseShapeLaw if piecewise else PlanarAffineShapeLaw
+        return mapping_type(explicit_planar_project(project),
+            law_type.from_dict(request['shape_law']), previous['value'], current['value'], *levels)
     if isinstance(project.case, PlanarPolygonCase):
         return PolygonScaleMapping(current['value']/previous['value'], *levels)
     return 'normalized_rectangle'
@@ -156,7 +162,7 @@ def _assemble(request, runs):
             ids = list(request['initial_ids'])
             frequency = float(solution.frequencies_hz[ids.index(request['mode_id'])])
             status = 'INITIAL'
-            if request['schema_version'] == 3:
+            if request['schema_version'] in (3, 4):
                 initial_tracking = track_planar_modes(solution, solution, PlanarTrackingRequest(
                     len(ids), len(ids), ids, mapping=planar_tune_mapping(request, trial, trial), controls=controls))
                 if initial_tracking['status'] != 'PASS' or not initial_tracking['individual_ids_complete']:
@@ -172,7 +178,7 @@ def _assemble(request, runs):
             passed = tracking['status']=='PASS' and tracking['individual_ids_complete']
             status = 'PASS' if passed else 'UNVERIFIED'
             frequency = tracked_frequency_hz(tracking, request['mode_id']) if passed else None
-            if request['schema_version'] == 3 and tracking['status'] == 'PASS' and not passed:
+            if request['schema_version'] in (3, 4) and tracking['status'] == 'PASS' and not passed:
                 recovery = recover_planar_tune_trial(request, trials, solutions, solution, trial, comparison_request)
                 if recovery['status'] == 'PASS':
                     recovered = recovery['recovery']
@@ -182,7 +188,7 @@ def _assemble(request, runs):
         trials.append(dict(index=index, **trial, status=status, current_mode_ids=ids,
             frequency_hz=frequency, target_error_hz=None if frequency is None else frequency-request['target_hz'],
             tracking=tracking))
-        if request['schema_version'] == 3:
+        if request['schema_version'] in (3, 4):
             trials[-1].update(initial_tracking=initial_tracking, identity_recovery=recovery)
     if sources != [_job_hashes(Path(run)) for run in runs]:
         raise ValueError('planar tune sources changed during complete replay')

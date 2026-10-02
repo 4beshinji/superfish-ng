@@ -142,15 +142,17 @@ def _prepare(previous, current, request, directory):
     from .planar_affine_shape_mapping import PlanarAffineShapeMapping, affine_shape_overlay
     from .planar_piecewise_mapping import PlanarPiecewiseMapping
     from .planar_piecewise_overlap import planar_piecewise_overlay
+    from .planar_piecewise_shape_mapping import PlanarPiecewiseShapeMapping, piecewise_shape_overlay
+    piecewise_shape = isinstance(request.mapping, PlanarPiecewiseShapeMapping)
     piecewise = isinstance(request.mapping, PlanarPiecewiseMapping)
-    shape = isinstance(request.mapping, PlanarAffineShapeMapping)
+    shape = isinstance(request.mapping, (PlanarAffineShapeMapping, PlanarPiecewiseShapeMapping))
     exact_affine = isinstance(request.mapping, PolygonExactAffineRemeshMapping)
     remesh = isinstance(request.mapping, PolygonRemeshMapping)
     similarity = isinstance(request.mapping, PolygonSimilarityMapping)
     composed = isinstance(request.mapping, PolygonSimilarityRemeshMapping)
     affine = isinstance(request.mapping, PolygonAffineRemeshMapping)
     polygon = isinstance(request.mapping, (PolygonScaleMapping, PolygonSimilarityMapping, PolygonRemeshMapping,
-                                           PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping, PlanarPiecewiseMapping))
+                                           PolygonSimilarityRemeshMapping, PolygonAffineRemeshMapping, PolygonExactAffineRemeshMapping, PlanarAffineShapeMapping, PlanarPiecewiseMapping, PlanarPiecewiseShapeMapping))
     required = PlanarPolygonCase if polygon else PlanarCase
     if not all(isinstance(case, required) for case in cases) or cases[0].polarization != cases[1].polarization:
         raise ValueError('planar tracking source Case types and TE/TM polarization must match the declared mapping')
@@ -163,7 +165,7 @@ def _prepare(previous, current, request, directory):
         planar_piecewise_overlay(cases[0].mesh, cases[1].mesh, request.mapping,
                                  max_overlay_triangles=request.controls.max_overlay_triangles)
     elif shape:
-        affine_shape_overlay(cases[0].mesh, cases[1].mesh, request.mapping,
+        (piecewise_shape_overlay if piecewise_shape else affine_shape_overlay)(cases[0].mesh, cases[1].mesh, request.mapping,
                              max_overlay_triangles=request.controls.max_overlay_triangles)
     elif polygon:
         (polygon_exact_affine_remesh_overlay if exact_affine else polygon_affine_remesh_overlay if affine else polygon_similarity_remesh_overlay if composed else polygon_remesh_overlay if remesh else polygon_similarity_overlay if similarity else polygon_scale_overlay)(cases[0].mesh, cases[1].mesh, request.mapping,

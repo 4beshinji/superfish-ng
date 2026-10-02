@@ -1,7 +1,7 @@
 # 現行の作業入口
 
-更新：2026-10-02、開発カードP04-a受入（着手基準 `eb1f4f3`）。
-原90カードと追加子カードを含む全118カードの計画は継続中。P04をa〜cへ分割。
+更新：2026-10-02、開発カードP04-b-a受入、次はP04-b-b（基準 `3cb8f50`）。
+原90カードと追加子カードを含む全121カードの計画は継続中。P04をa〜c、P04-bを形状a/所有保存b/worker監査cへ分割。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
 ## 横断レビューと計画（2026-09-22）
@@ -14,11 +14,13 @@
 
 ## 次の着手
 
-**[P04-b：区分形状法則と実調整・保存再開](03-planar.md#p04-b)**。
+**[P04-b-b：実区分調整と可搬な全試行所有保存・再開](03-planar.md#p04-b-b)**。
 [P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)と
 [P03の区分写像/幾何契約](../PLANAR_PIECEWISE_MAPPING.md)までDONE。
 [P04-aの共同比較・追跡・所有再生](../PLANAR_PIECEWISE_TRACKING.md)もDONE。
-次は元Projectからの区分形状法則を、実調整/最終細分・履歴・再開へ接続する。
+[P04-b-aの元形状法則・参照比較・新版要求](../PLANAR_PIECEWISE_SHAPE.md)までDONE。
+次は新版要求の実調整全工程と、全試行を所有する可搬保存/再生・別所有先への再開を確認する。
+既存planar調整は絶対trial job参照のままで、祖先/元出力の移動後再開は未受入。
 全試行を実FEMで計算し、未確認群は評価しない。GUIと親監査はP04-c。
 P03は連続区分アフィンによる全域非アフィン変形に限定する。滑らかな非線形/曲線写像は未対応。
 入口は `planar_piecewise_mapping.py`、`planar_tracking_fields.py`、`planar_tracking.py`、`planar_tuning.py`。
@@ -47,6 +49,11 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+2026-10-02：P04-b-aは初回session36755終了1（28PASS/1FAIL、146.388秒）。
+再生成/幾何検査の順序修正後、session64698の影響17件は45.567秒PASS（終了0）、
+非影響の初回12件成功を保持する。各実行の394製品hash不変、全handle終端、src固定解除。
+証拠 `out/p04ba-planar-shape-20261002/` と[専用文書](../PLANAR_PIECEWISE_SHAPE.md)。
 
 2026-10-02：P04-aのsession39306は終了1（54PASS/誤メソッド名1収集ERROR）。
 正しいstrict1件と独立元場/RF2件は別実行で終了0。分割57件PASS、391製品ファイル不変、
