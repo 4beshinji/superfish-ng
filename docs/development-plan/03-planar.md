@@ -244,6 +244,11 @@ strict版3と保存/後続操作契約を定め、独立解析16組とpatch/JSON
 
 ## P06
 
+2026-10-02受入：[専用xy曲線Domain/面積P2 FEMと独立不変量](../PLANAR_CURVED_FEM.md)。
+全Jacobian/閉外周・全edge/strict版3/面積K,M、二尺度patch/楕円/直線矩形・L字、TE核/TM正値を確認。
+新9/既存5の14件と追加拒否の限定検査、四ring円6形状の専用validatorをPASS。
+元395製品不変、実solve/元場/RF/native/操作は後続。P06 DONE、次はP07。
+
 ### 平面曲線幾何とP2空間を実装する
 
 - **親課題**：P02。**種別**：実装。初期状態：未着手。

@@ -1,3 +1,5 @@
+P06は `test_planar_curved`、共有数学の既存 `test_curved_fem` と `test_planar_polygon` のスペクトル/strict入口2件。[14種類と追加拒否の限定実行](PLANAR_CURVED_FEM.md)。専用 `scripts/validate_planar_curved_fem.py` は二尺度四ring円6Domainの幾何/面積形式・TE核/TM正値に限定し、P07のf/E/H/G受入を代用しない。出力は未使用--outを指定する。
+
 P05は文書仕様の監査のみ。[曲線平面RF契約](PLANAR_CURVED_RF.md)の解析16組と二尺度patch/JSON/依存/製品hashを確認し、FEM/unittest/seed/全validateは未実行。P06〜P09の実装受入を代用しない。後続は専用曲線geometry/FEMの独立検査を追加する。
 
 P04-c-bは `test_gui_planar_piecewise_tracking` と旧GUI回復/所有履歴の直接利用先。全版1〜10フォームは `verify_planar_tracking_form.mjs`、実操作は `verify_gui_planar_piecewise_tracking.mjs`、独立API全照合は `validate_planar_piecewise_tracking_gui.py`。[分割10 Python/Chrome9・7・5・3/70配列、失敗と表示修正](PLANAR_PIECEWISE_TRACKING_GUI.md)。[親P04監査](PLANAR_PIECEWISE_ACCEPTANCE.md)は全validateではない。

@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-02、P05平面曲線仕様を監査受入。
+更新：2026-10-02、P06平面曲線領域と面積FEMを独立検証・受入。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -14,14 +14,15 @@
 
 ## 次の着手
 
-**[P06：平面曲線幾何とP2空間を実装する](03-planar.md#p06)**。先行P05はDONE。
-[P05仕様](../PLANAR_CURVED_RF.md)でxy二次Domain/全Jacobian/閉外周、軸重みのない面積K/M、
-TE Neumann核/TM Dirichlet、元12成分・側壁RF、strict Case/native版3と後続操作を固定した。
-円形TE/TM解析f/E/H/G・二尺度・楕円/再入角と、幾何近似/固定Domain FEM/独立内部meshのgateを分離。
-解析16組/二尺度patchの数式確認は製品FEMの受入ではない。
-次は専用planar_curved.py/planar_curved_fem.pyと独立geometry/面積FEM検査を追加し、
-面積/実境界長、線形patch、直線K/M、全Jacobian/閉外周、TE核/TM正値を確認する。
-既存P04全子はDONE、原互換親P02/D02とH17/H18、後続P06〜P09は未完了。
+**[P07：平面曲線の実解と元場・RFを実装する](03-planar.md#p07)**。先行P06はDONE。
+[P06受入](../PLANAR_CURVED_FEM.md)で専用xy二次Domain/全Jacobian/閉外周・全edge、
+軸重みのない面積K/M、TE定数核/TM Dirichlet/正値、strict専用Case版3を確認した。
+新9/既存5の14件、追加shared/Jacobian拒否を限定確認、四ring円二尺度三水準のgeometry/form validator PASS。
+独立行列スペクトル12系は核/正値の判定であり、曲線RF modeの受入ではない。
+次は元二次写像上の実solve/全12場成分/側壁RFと、[P05固定gate](../PLANAR_CURVED_RF.md)に従う
+円二尺度・両偏波の三水準f/全E,H/G、増求積次数、固定Domain/楕円/再入角の独立収束検証。
+既存dispatcher/CLI/native/Project/worker/GUIはP08、曲線比較/調整はP09で未接続。
+既存P04全子とP05/P06はDONE、原互換親P02/D02とH17/H18、後続P07〜P09は未完了。
 
 P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 範囲・初回テスト入力エラー・解析不変量・コマンドは上記専用文書に記録。
@@ -29,7 +30,7 @@ P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 
 H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROGRESS。
 2026-09-22のユーザー選択は「対象版の資料で必要性を確認してから決める」。
-追加損失の採否は資料確認まで未確定。H17に依存しないP06を進める。
+追加損失の採否は資料確認まで未確定。H17に依存しないP07を進める。
 
 ## 受入証拠と依存待ち
 
@@ -45,6 +46,15 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+P06：全handle終端、398製品hash固定解除。先行unit/session56921は新9/既存5、14件2.317秒PASS/終了0。
+shared拒否追加/session95476は1件0.024秒PASS/終了0、全Jacobian拒否追加/session31040は1件0.006秒PASS/終了0。
+専用geometry/form validator/session15905は四ring円6Domain/12行列スペクトル、16.202秒PASS/終了0。
+mass面積差最大3.331e−16、定数核相対norm最大2.612e−16、N64の面積/周長/距離は1e−4幾何gate以内。
+実行前後398製品hash不変、元395製品も不変。新3製品ファイルのみ、shared core/seedに差分なし、seed/full validate未実行。
+初回/session28014は8PASS/1FAIL、0.783秒/終了1、重複cell fixtureの未使用node先行拒否を修正し失敗log保持。
+証拠 `out/p06-planar-curved-fem-20261002/`、[条件別受入と来歴](../PLANAR_CURVED_FEM.md)。
+次はP07、全goal ACTIVE。生存handleなし。
 
 P05：解析reference/session96355終了0、新FEM0。Bessel norm/エネルギー/壁G最大6.662e−16、
 等分配8.882e−16、符号curl3.995e−10、二尺度則PASS。
