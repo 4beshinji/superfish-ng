@@ -1,3 +1,5 @@
+P04-c-a実操作は `verify_gui_planar_piecewise_tuning.mjs`、旧版対照は `verify_gui_planar_affine_tuning.mjs`。新サーバーは `--resume-report`。独立API/全元場照合は `validate_planar_piecewise_gui.py`。[20実Chrome項目と50配列の分割証拠/失敗記録](PLANAR_PIECEWISE_TUNING_GUI.md)。単独追跡/履歴はP04-c-b。
+
 P04-c第一段階は `test_gui_planar_piecewise_tuning test_gui_planar_tuning`。新所有地点/全元場取込/元移動後再開と旧GUIの6件PASS。`node --check src/superfish_ng/web/planar.js`もPASS。[仕様・修正前失敗・実ブラウザー等の残条件](PLANAR_PIECEWISE_TUNING_GUI.md)。P04-c/親P04は受入途中。
 
 P04-b-c所有workerは `test_planar_piecewise_tuning_jobs`。直接消費先は `test_planar_tuning_jobs test_planar_tuning_recovery_jobs test_gui_planar_tuning`。投入前後の元移動、実中止/保存地点/別job、管理器再作成、解析TE10/最終回復、未確認nullとqueued/再hash改変拒否を分割17種類PASS。[条件別監査と初回後処理失敗](PLANAR_PIECEWISE_TUNING_WORKER.md)。新版GUIはP04-cで別受入。

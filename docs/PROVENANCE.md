@@ -4243,3 +4243,5 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 ## 区分形状の実調整と全試行所有保存 — 2026-10-02
 
 [P04-b-b記録](PLANAR_PIECEWISE_TUNING_SAVED.md)。既存Hphiの所有checkpoint設計を専用planar job/nativeへ適合させ、全元Project/native/完了来歴をbyte単位でコピーする。物理判断は既存の元場追跡/回復/独立native検証を再利用し、TE10/TM11の独立解析cutoff、独立mesh、相似RF則と改変拒否で確認する。新外部資料/依存/legacyソース・実行物の参照なし。新worker所有操作とGUIは別カード。
+
+2026-10-02 P04-c-a：[区分調整GUIの実操作受入](PLANAR_PIECEWISE_TUNING_GUI.md)。既存自作検証器/共通browser lifecycleを再利用し、Chrome20項目と独立API4試行の全50配列/Project/要求/判断/RF一致を確認。395製品hash不変、FEM/許容差不変。新外部資料/依存/legacy参照なし。単独追跡/履歴と親監査は後続子b。

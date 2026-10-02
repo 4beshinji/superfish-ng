@@ -1,7 +1,7 @@
 # 現行の作業入口
 
-更新：2026-10-02、P04-b-c/親P04-b受入、P04-cのGUI接続/受入検査中（基準 `9946fb5`）。
-原90カードと追加子カードを含む全121カードの計画は継続中。P04をa〜c、P04-bを形状a/所有保存b/worker監査cへ分割。
+更新：2026-10-02、P04-b-c/親P04-b受入、P04-cのGUI接続/受入検査中（製品基準 `c81782d`）。
+原90カードと追加子カードを含む全123カードの計画は継続中。P04をa〜c、P04-bを形状a/所有保存b/worker監査cへ分割。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
 ## 横断レビューと計画（2026-09-22）
@@ -14,19 +14,16 @@
 
 ## 次の着手
 
-**[P04-c：区分調整GUIと操作・P04全条件監査](03-planar.md#p04-c)**。
+**[P04-c-b：新版比較・追跡履歴GUIとP04全条件監査](03-planar.md#p04-c-b)**。
 [P02条件別監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)、
 [P03の区分写像](../PLANAR_PIECEWISE_MAPPING.md)、
 [P04-aの比較/追跡](../PLANAR_PIECEWISE_TRACKING.md)までDONE。
 P04-bの[形状法則](../PLANAR_PIECEWISE_SHAPE.md)、[実調整/所有保存](../PLANAR_PIECEWISE_TUNING_SAVED.md)、
 [投入時所有worker・停止再開と親監査](../PLANAR_PIECEWISE_TUNING_WORKER.md)もDONE。
-次はGUIの要求4編集/読込、比較/回復、保存地点選択/別job再開、元場表示を接続する。
-`web/planar.js`は法則JSONのkindがpolynomial_piecewise_xyでも版2/3を生成するため、
-新版の選択/保持を追加する。`gui_planar_tuning.py`は旧input_sha256集合、旧絶対checkpoint、
-旧native hash集合の前提がある。新`read_planar_tune_job_checkpoint`と所有snapshotを使用し、
-コピー前のpath来歴と所有native/判断の保持を区別する。
-成功/未確認、中止/再開、新サーバー保存再生を実ブラウザーで確認し、APIとの全native/
-Project/要求/判断/RF一致と旧アフィン操作を確認する。全条件監査後に開発親P04を受け入れる。
+調整GUIの接続と実操作はP04-c-aとして独立API全元場照合までDONE。
+単独比較/追跡フォームは版1〜8のみを保持し、版9/10の宣言を失う不足がある。
+P04-c-bで明示区分写像/元区分法則の要求編集・所有pair/履歴・次段引継ぎへ接続し、
+原P04と全子条件を監査する。旧調整/旧追跡の操作も保持する。
 P03/P04の現在の形状は連続区分アフィンまで。滑らかな非線形/曲線写像は後続P05〜P09。
 親互換課題P02やD02全体を完了とは扱わない。
 
@@ -53,12 +50,23 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-P04-c第一段階：[GUI輸送/要求フォーム/所有地点](../PLANAR_PIECEWISE_TUNING_GUI.md)を接続。
-修正前新版checkpoint選択は1件6.316秒ERROR（session11909、終了1）。
-修正後の新GUI1/旧GUI5件はsession93859、160.930秒PASS、終了0。
-395製品hash不変、全worker/session終端、src固定解除。
-証拠 `out/p04c-planar-gui-20261002/`。実ブラウザー新版/旧版・新サーバー再生、
-API全元場照合と親P04監査が残る。P04-c/親P04はIN_PROGRESSを維持。
+P04-c-a：製品 `c81782d`、395ファイルを固定した実操作。
+新版browser4/session1506は11項目PASS/終了0、旧アフィンbrowser/session53127は5項目PASS/終了0。
+新サーバーbrowser/session25370は復元4項目PASS/終了0。全reportで外部要求0、製品hash不変。
+独立API session83901はTUNED4試行、61.034秒/終了0（api-success/）。
+全native照合session33079は終了0、4試行+取込の50配列、Project/要求/全判断/RF一致。
+解析TE10相対差1.0703275159507086e-6。全製品hash不変を確認しsrc固定解除。初回audit/session42718はGUI runtime exportへowned-disk readerを誤用して終了1。
+監査器だけをruntime replayへ修正し、同じ既存結果を照合してPASS。新FEMは実行しない。
+server90303/76968はともにSIGINT正常終了0、全ブラウザー回収済み、所有slotディレクトリなし。
+新版/旧版/復元の場画像を目視し、単位J/mとRF N/A、対象順位、全三場を確認した。
+最初のsandbox内loopback bindはEPERM/終了2であり、昇格したローカルサーバーを使用。
+browser初回99585は起動待ちReferenceError、browser2/7873は旧error誤判定、
+browser3/84849は応答前の次入力による正しいstale拒否で終了1、各回収済み。
+検証器だけを応答counterで同期しbrowser4成功。各失敗report/logを保持する。
+証拠 `out/p04c-planar-browser-20261002/`、[操作/全元場照合](../PLANAR_PIECEWISE_TUNING_GUI.md)。
+新GUI1/旧GUI5のPython操作はsession93859、160.930秒PASS/終了0。
+修正前地点選択はsession11909、6.316秒ERROR/終了1。証拠 `out/p04c-planar-gui-20261002/`。
+単独追跡/履歴の版9/10保持と親P04監査が残るためP04-c/親P04はIN_PROGRESS。
 
 2026-10-02：P04-b-cのsession19594は603.667秒、17件中16PASS/同じ中止テスト2ERROR、終了1。
 移動済み中止jobの旧pathをテストprocess辞書から除く修正後、session11536は1件40.054秒PASS、終了0。
