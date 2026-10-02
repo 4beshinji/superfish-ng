@@ -204,6 +204,20 @@ m=0の正のJ1零点とp≥1を使い、零点0をTE共振へ含めない。製�
 内外PECの零点条件・軸方向分離・場規格化は独立導出。根検索と場比較は検証器だけに置き、FEMへ解析値を注入しない。
 資料やライブラリーの実装コードは転載していない。
 
+**R39. NIST Digital Library of Mathematical Functions, §§10.7, 10.21, 10.22.**
+[原点極限](https://dlmf.nist.gov/10.7)、[正根と導関数根](https://dlmf.nist.gov/10.21)、
+[積分式10.22.5](https://dlmf.nist.gov/10.22.E5)
+— 2026-10-02閲覧。P05の円形Cartesian cutoffの独立解析対照に、正根/原点極限/Bessel二乗積分を参照。
+TEのJ′0の零点0を正モードに含めず、本仕様のsは正根だけの序数とした。
+単位長規格化と側壁GはMaxwell/面積・境界積分から独立導出し、数値積分で照合した。
+本文・図・コードの転載なし。解析式をFEM solverの代用にしない。
+
+**R40. Richard Fitzpatrick, Waveguides (2014).**
+[著者の大学公開講義](https://farside.ph.utexas.edu/teaching/jk1/Electromagnetism/node117.html)
+— 2026-10-02閲覧。式1354–1356の伝搬定数/横断固有値/cutoffの区別、側壁の単位長損失を確認。
+講義の負時間phasorとは区別し、本PJのpeak exp(+iωt)、βz=0のCartesian場とRFを独立に導出。
+本文・図・コードの転載なし。伝搬・有限長端板を平面cutoffへ追加していない。
+
 ## 参照の推奨順序
 
 RFの規約はR1→R2、軸対称の数値解析はR4→R5、既存OSSとの役割比較はR3→R6、

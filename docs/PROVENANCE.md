@@ -4247,3 +4247,7 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 2026-10-02 P04-c-a：[区分調整GUIの実操作受入](PLANAR_PIECEWISE_TUNING_GUI.md)。既存自作検証器/共通browser lifecycleを再利用し、Chrome20項目と独立API4試行の全50配列/Project/要求/判断/RF一致を確認。395製品hash不変、FEM/許容差不変。新外部資料/依存/legacy参照なし。単独追跡/履歴と親監査は後続子b。
 
 2026-10-02 P04-c-b/開発P04：[新版平面追跡・所有履歴GUI](PLANAR_PIECEWISE_TRACKING_GUI.md)と[親条件別監査](PLANAR_PIECEWISE_ACCEPTANCE.md)。既存自作フォーム/strict parser/所有reader/browser lifecycleを再利用し、全版往復/Python10/分割実Chrome/独立API3pairと70配列を確認。表示だけの修正を物理再検証と区別し、数値ソース不変。新外部資料/依存/legacy参照なし。後続平面曲線と原互換親は未完了。
+
+## 平面曲線P2の仕様と解析基準 — 2026-10-02
+
+[P05仕様](PLANAR_CURVED_RF.md)。既存自作の座標中立P2/面積求積を設計参照し、Cartesian専用K/M・元場・側壁RFとstrict版3を定めた。NISTのBessel零点/原点極限/積分（R39）と大学公開Waveguides講義のcutoff区別（R40）を数式だけ参照し、peak +時間phasorの場、単位長エネルギー/側壁G、二尺度則は独立導出・数値積分照合した。本文/図/コード/旧資産の転載や新依存はない。395製品ファイル不変、FEM未実行。P06〜P09の製品受入は未完了。

@@ -1,3 +1,5 @@
+P05は文書仕様の監査のみ。[曲線平面RF契約](PLANAR_CURVED_RF.md)の解析16組と二尺度patch/JSON/依存/製品hashを確認し、FEM/unittest/seed/全validateは未実行。P06〜P09の実装受入を代用しない。後続は専用曲線geometry/FEMの独立検査を追加する。
+
 P04-c-bは `test_gui_planar_piecewise_tracking` と旧GUI回復/所有履歴の直接利用先。全版1〜10フォームは `verify_planar_tracking_form.mjs`、実操作は `verify_gui_planar_piecewise_tracking.mjs`、独立API全照合は `validate_planar_piecewise_tracking_gui.py`。[分割10 Python/Chrome9・7・5・3/70配列、失敗と表示修正](PLANAR_PIECEWISE_TRACKING_GUI.md)。[親P04監査](PLANAR_PIECEWISE_ACCEPTANCE.md)は全validateではない。
 
 P04-c-a実操作は `verify_gui_planar_piecewise_tuning.mjs`、旧版対照は `verify_gui_planar_affine_tuning.mjs`。新サーバーは `--resume-report`。独立API/全元場照合は `validate_planar_piecewise_gui.py`。[20実Chrome項目と50配列の分割証拠/失敗記録](PLANAR_PIECEWISE_TUNING_GUI.md)。単独追跡/履歴はP04-c-b。

@@ -225,6 +225,11 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P05
 
+2026-10-02受入：[平面曲線P2仕様と条件別gate](../PLANAR_CURVED_RF.md)。
+円二尺度/両偏波の解析f/E/H/G、楕円/再入角、固定Domainと幾何近似の別細分、
+strict版3と保存/後続操作契約を定め、独立解析16組とpatch/JSON/依存/395製品hashを監査。
+文書受入であり、曲線製品FEM/保存/GUIは未実装。P05 DONE、次はP06。
+
 ### 平面曲線P2の幾何・弱形式を設計する
 
 - **親課題**：P02。**種別**：仕様。初期状態：未着手。

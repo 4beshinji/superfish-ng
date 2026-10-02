@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-02、P04-c-a/bと親P04-c/P04を条件別監査受入。
+更新：2026-10-02、P05平面曲線仕様を監査受入。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -14,14 +14,14 @@
 
 ## 次の着手
 
-**[P05：平面曲線P2の幾何・弱形式を設計する](03-planar.md#p05)**。先行P03はDONE。
-[P04の全条件監査](../PLANAR_PIECEWISE_ACCEPTANCE.md)で元TE/TM区分写像、有限多項式形状法則、
-実調整/所有保存/停止再開、調整GUI/独立API、単独追跡/所有履歴GUIまでDONE。
-[P04-c-bの操作・表示と全照合](../PLANAR_PIECEWISE_TRACKING_GUI.md)も受入。
-次は独立したxy二次境界/面積求積/TE Neumann零空間/TM Dirichlet/元場/壁損失/保存版の仕様を定める。
-円形cutoff解析f/場/G、二尺度/両偏波、滑らかな非円形/特異角を個別gateとし、
-一般材料/伝搬定数/穴を黙って追加しない。文書のみではFEM/全suiteを再実行しない。
-原互換親P02/D02とH17/H18、後続P05〜P09は未完了。
+**[P06：平面曲線幾何とP2空間を実装する](03-planar.md#p06)**。先行P05はDONE。
+[P05仕様](../PLANAR_CURVED_RF.md)でxy二次Domain/全Jacobian/閉外周、軸重みのない面積K/M、
+TE Neumann核/TM Dirichlet、元12成分・側壁RF、strict Case/native版3と後続操作を固定した。
+円形TE/TM解析f/E/H/G・二尺度・楕円/再入角と、幾何近似/固定Domain FEM/独立内部meshのgateを分離。
+解析16組/二尺度patchの数式確認は製品FEMの受入ではない。
+次は専用planar_curved.py/planar_curved_fem.pyと独立geometry/面積FEM検査を追加し、
+面積/実境界長、線形patch、直線K/M、全Jacobian/閉外周、TE核/TM正値を確認する。
+既存P04全子はDONE、原互換親P02/D02とH17/H18、後続P06〜P09は未完了。
 
 P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 範囲・初回テスト入力エラー・解析不変量・コマンドは上記専用文書に記録。
@@ -29,7 +29,7 @@ P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 
 H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROGRESS。
 2026-09-22のユーザー選択は「対象版の資料で必要性を確認してから決める」。
-追加損失の採否は資料確認まで未確定。H17に依存しないP05を進める。
+追加損失の採否は資料確認まで未確定。H17に依存しないP06を進める。
 
 ## 受入証拠と依存待ち
 
@@ -45,6 +45,14 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+P05：解析reference/session96355終了0、新FEM0。Bessel norm/エネルギー/壁G最大6.662e−16、
+等分配8.882e−16、符号curl3.995e−10、二尺度則PASS。
+仕様auditは全123カード/依存/節ID/JSON例/入口links20件/二尺度patch・Green積分を確認、2.647秒/終了0。
+初回の小見出し未認識は監査器のみ修正し、失敗logを保持。数式照合を再実行しない。
+395製品hashは前後不変、文書だけでunittest/seed/全validateは未実行、生存handleなし。
+証拠 `out/p05-planar-curved-spec-20261002/`、[仕様受入と後続の責任](../PLANAR_CURVED_RF.md)。
+次はP06、全goal ACTIVE。
 
 P04-c-b：全handle終端、395製品hash固定解除。Python/session7780は10件160.560秒PASS/終了0。
 独立API/session95901は3pair PASS/終了0、全照合/session12034は3pair全判断/所有履歴、70配列・全RF/最終Project一致/終了0。

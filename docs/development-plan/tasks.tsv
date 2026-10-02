@@ -58,7 +58,7 @@ P04-b-c	P02 D02 O02	P04-b-b	実装/検証	DONE	03-planar.md#p04-b-c	区分調整
 P04-c	P02 D02 O02	P04-b P04-c-b	実装/検証	DONE	03-planar.md#p04-c	区分調整GUIと操作・P04全条件監査
 P04-c-a	P02 D02 O02	P04-b	実装/検証	DONE	03-planar.md#p04-c-a	区分調整GUIの実操作と独立API全元場照合
 P04-c-b	P02 D02 O02	P04-c-a	実装/検証	DONE	03-planar.md#p04-c-b	新版比較・追跡履歴GUIとP04全条件監査
-P05	P02	P03	仕様	PLANNED	03-planar.md#p05	平面曲線P2の幾何・弱形式を設計する
+P05	P02	P03	仕様	DONE	03-planar.md#p05	平面曲線P2の幾何・弱形式を設計する
 P06	P02	P05	実装	PLANNED	03-planar.md#p06	平面曲線幾何とP2空間を実装する
 P07	P02	P06	実装	PLANNED	03-planar.md#p07	平面曲線の実解と元場・RFを実装する
 P08	P02 O02	P07	実装	PLANNED	03-planar.md#p08	平面曲線native・Project・GUIを接続する
