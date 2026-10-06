@@ -144,6 +144,13 @@ main/BVH/boundaryの生存源を変更せず、全P07と統合は未受入。
 B4→B5全RF差最大1.767055e−3、A4対B5最大1.213063e−4、前後401製品/使用10validator不変。
 全15artifact snapshot/別terminal auditを保存する。楕円TM尺度1と全P07は未受入。
 
+
+円独立38783のTM半径0.01 B5は81920cellの全Case/係数・周波数/chart/patternsが保存済み、gateは未保存。
+元APIはcellごとに全point vectorをmaskし、order8全域5242880点では一mode当たり429496729600要素を走査する。
+読取証拠 `out/p07-planar-exact-reference-20261007/original-circle-field-scan-audit.json`。
+次のbounded改善は、pointを一回だけowner別に整理し全元出力をbitwise保持すること。
+現handleは生存/源固定を継続し、timeoutによるrestartや保存済みB5の再FEMをしない。
+
 ### 先行実行の履歴
 
 2026-10-07 P07：専用比較器 `scripts/planar_curved_mesh_reference.py` と
