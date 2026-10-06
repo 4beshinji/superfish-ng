@@ -430,3 +430,8 @@ source保全自体に新FEM/unit/物理再構築はない。P07と全123カー�
 canonical閉壁浮動差≤1e−12/独立積分≤1e−8/全signed公共場/実TM PEC zeroを検査する。
 cache branch401製品/使用10validatorを78620/54876/89737の実終端まで固定する。
 main38783とboundary37232/67404も固定継続。全P07/source統合は未受入、全goal ACTIVE。
+
+
+[原P07/P05の条件別監査（作業中）](../PLANAR_CURVED_ACCEPTANCE.md)を追加。
+全条件と局所証拠・残る実終端/source bridge/統合を対応付け、未確認を完了扱いしない。
+P07 IN_PROGRESS、P08/P09と全123カードgoalは継続する。文書監査追加によるFEM/unitの再実行はない。
