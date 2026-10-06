@@ -394,3 +394,16 @@ boundary branch401製品/使用10validatorをhandle37232/67404の終端まで固
 元円独立全尺度、円TM N64二尺度92778/3796、角TM境界B二尺度37232/67404、grouping実測42739は継続中。
 P07全条件監査・source統合は未完了、P08/P09と全123カードgoal ACTIVEを維持する。
 BVH branch401/使用12codeは残る円N64二handle終端まで固定する。
+
+
+## 楕円TMの有限幾何系列監査（2026-10-07）
+
+楕円TM二尺度のN16/32/64を限定監査36705で受入、4.167秒/終了0。
+元source版をmain旧401、geometry一変更のBVH401、geometry/refinement二変更のboundary401へ明示分離し、
+全accepted artifact snapshot/前後source/元validatorを照合した。各完全6モードと三対象群のf/E/H/全8RF差、
+完全guard gap、U′=1・peak +iωt・J/m/W/m、両R/Qと加速量の理由付きnull、独立energy/壁を数値で検査する。
+各元Domainのareaとfine RF areaも照合した。真面積/周長/境界距離は元N16/32/64を小規模再生成して別検査し、
+三誤差が単調減少しN64で各1e−4以下を確認した。異なる幾何Domain間の場差は計算していない。
+六証拠Directory/計115artifactを保持、新FEM/unit/物理再構築0。
+出力 `out/p07-planar-curved-geometry-20261007/ellipse-tm-geometry-series-audit/`、全7audit artifact snapshot/終端も保存。
+先行TE四系列とは別のTM楕円二系列受入。残る円TM N64/角TM/元円独立全尺度/source統合/P07全条件を維持する。
