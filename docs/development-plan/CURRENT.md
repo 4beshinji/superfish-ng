@@ -30,7 +30,9 @@ Project/dispatcher/CLI-worker/Study/GUIと実中止/再起動/旧版再生はP08
 上記APIと実ブラウザー・全条件監査を別に受入し、限定unitだけで完了へ数えていない。
 P09の[元二次写像・完全比較分割](../PLANAR_CURVED_COMPARISON.md)は新7＋関連12、19件2.151秒PASS。
 全mid・全被覆・全PEC・累積予算と独立面積/一次moment/正逆を確認し、元403製品不変。
-P09はIN_PROGRESS。次の有界変更は元E/Hの自己/交差Gramと独立energy対照。不変量を先に再現し、
+P09の[元E/H自己・交差Gram](../PLANAR_CURVED_FIELD_COMPARISON.md)も新8＋関連10を分割受入。
+strided解の導出診断末尾bitを修正し、微小residualでも未解決energyを拒否、元404製品不変。
+P09はIN_PROGRESS。次の有界変更は元場内積＋別スペクトルguardの追跡核。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
