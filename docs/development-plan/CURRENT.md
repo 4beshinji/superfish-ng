@@ -56,7 +56,7 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 処理 | 生存handle / 出力（全てout/以下） |
 | --- | --- |
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
-| N64 TM L4分離継続 | 92778 / 3796 / 86568 / 16110、p07-planar-geometry-bvh-20261007/{circle,ellipse}-tm-s{1,2}-N64-L4-continuation |
+| 円N64 TM L4分離継続 | 92778 / 3796、p07-planar-geometry-bvh-20261007/circle-tm-s{1,2}-N64-L4-continuation |
 | 角TM二尺度の境界B追加 | 37232 / 67404、p07-planar-boundary-refinement-20261007/corner-tm-s{1,2}-boundary |
 | 元場groupingの保存実解再構築・測定 | 42739、p07-planar-exact-reference-20261007/field-grouping-physical-replay |
 
@@ -340,3 +340,18 @@ boundary branch401製品/使用10validatorをhandle37232/67404の終端まで固
 現行源固定はmainの38783のみ、BVHのN64四件、boundaryの角TM二件、cacheの42739。
 終端99269/43214/50414/27391は上表から外した。先行する過去記録中の「生存」はその時点の記述である。
 mainは文書のみ変更、全401製品hash不変。P07/全goalは未完了であり、全123カード範囲を維持する。
+
+
+## 楕円TM N64両尺度のL4終端受入（2026-10-07）
+
+分離継続86568/16110は終了0、3918.479/3921.632秒PASS。元L0〜L3四保存解と予算切れ終端を保持した。
+保存L3の全元chart/native/K/M/係数・周波数・RFを再構築し、未実行L4だけ各一新実FEM。
+各114688cellのL4で、対象L3→L4最大f差8.281288e−8、E差7.256088e−6、H差4.070364e−4、
+全RF差1.435390e−3。真面積/周長/境界距離、全band、独立energy・壁も原gateでPASS。
+最終元map丸め尺度1/2は9.256923e−14/5.064288e−14、512ε以下。
+400旧製品不変・geometry一変更、前後401分離製品/使用12code/元各25artifact不変。
+各全13artifact snapshotと観測終端auditを同親に保持。限定監査は新FEM/unit/物理再構築0。
+楕円TMのN16/32/64二尺度の条件別実証拠が揃った。TEの先行四系列受入と分けて記録する。
+元円独立全尺度、円TM N64二尺度92778/3796、角TM境界B二尺度37232/67404、grouping実測42739は継続中。
+P07全条件監査・source統合は未完了、P08/P09と全123カードgoal ACTIVEを維持する。
+BVH branch401/使用12codeは残る円N64二handle終端まで固定する。
