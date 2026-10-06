@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07独立A/B内部mesh・増求積次数の検証を継続。
+更新：2026-10-07、P07幾何系列・独立mesh・非円形の追加細分/復旧を継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -47,6 +47,32 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+現行checkpoint：[幾何系列・終端失敗・保存解復旧](../PLANAR_CURVED_GEOMETRY_SERIES.md)。
+新15unitを四回に分割PASS。N32は円/楕円TEの二尺度、N64は尺度1を受入、計18新FEM/401製品hash不変。
+各全21artifactの六例snapshotを保持。N64尺度2/TMと全P07は未受入。
+以下の古い日付付き段落は当時の状態であり、現在の生存handleはこの表を優先する。
+
+| 処理 | 生存handle / 出力（全てout/以下） |
+| --- | --- |
+| 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
+| 角TE尺度1追加L5 | 53536 / p07-planar-curved-geometry-20261007/corner-te-s1-L5 |
+| 楕円TM尺度2の終端143復旧 | 70467 / 同親ellipse-tm-s2-recovery |
+| 円TE尺度2 N64 | 99240 / 同親circle-te-s2-N64 |
+| 楕円TE尺度2 N64 | 35751 / 同親ellipse-te-s2-N64 |
+| 円TM尺度1 N32 / N64 | 1671 / 25663、同親circle-tm-s1-N32 / N64 |
+| 楕円TM尺度1 N32 / N64 | 99546 / 5330、同親ellipse-tm-s1-N32 / N64 |
+
+終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
+楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
+楕円TM尺度2/92077は終了143、原因未確定。元五保存解を別復旧先で物理再検証する。
+角TM尺度1追加/15560は幾何検査1億回予算切れで終了1、新FEM0。元失敗rawも保持する。
+旧38783の検証器5本、現行幾何10本/追加細分9本/復旧10本と全401製品を固定し、
+最後の利用handle終端まで変更しない。上のhandleはwrite_stdinで終端確認し、timeoutで再起動しない。
+N16の元成功を全hash/物理再構築して再利用、残TM尺度2のN32/N64も順次検証する。
+P07 IN_PROGRESS、全123カードgoal ACTIVE。製品未変更の限定検証なので全validate/seed/GUIは再実行していない。
+
+### 先行実行の履歴
 
 2026-10-07 P07：専用比較器 `scripts/planar_curved_mesh_reference.py` と
 `scripts/validate_planar_curved_independent.py` を追加。元Domainから全chartを再生成し、
