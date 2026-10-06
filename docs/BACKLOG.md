@@ -1,5 +1,7 @@
 現行の作業順・依存待ち・受入証拠・実行中処理は[現行入口](development-plan/CURRENT.md)を参照する。以下の追記は履歴であり、古い「次は」「生存中」を現在の指示/状態として扱わない。
 
+2026-10-07 P09進行：[元二次写像の完全比較分割](PLANAR_CURVED_COMPARISON.md)。非nested参照被覆・全PEC/全mid制限・明示丸め/累積予算を実装。独立面積/一次moment/正逆対応、新7＋関連12の19件2.151秒PASS。元403製品不変、新比較1モジュールのみ。元E/H比較・identity/実調整/最終細分・所有再開/GUIは継続し、P09はIN_PROGRESS、全123カードgoal未完了。
+
 2026-10-07 P07 DONE：[全原条件と主統合の受入](PLANAR_CURVED_ACCEPTANCE.md)。元円独立4caseも実終端0、
 元数値gate/全raw/source archiveとP07受入時の最終401kernelを照合。P08もDONE。
 [専用曲線native](PLANAR_CURVED_NATIVE.md)の新7件＋旧版直接利用5件PASS。

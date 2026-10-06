@@ -1,3 +1,5 @@
+P09幾何leafは `test_planar_curved_comparison`。関連 `test_planar_tracking_overlap test_planar_tracking_exact_affine`、新7＋旧12、19件2.151秒PASS。[独立式・反例・予算・範囲](PLANAR_CURVED_COMPARISON.md)。元場/追跡/調整/GUIの受入とは区別する。
+
 楕円TMの終端した一様L5元写像丸め失敗からのB追加二分は `test_planar_curved_ellipse_bisection` / `extend_planar_curved_ellipse_bisection.py`。完全元prefix・実終端・追加新FEM0・両artifact集合/元検証器hashを必須とし、512ε/全物理gateを維持する。[新2件と実検証中](PLANAR_CURVED_GEOMETRY_SERIES.md)。
 
 2026-10-07 P07全条件受入：[最終source/元条件監査](PLANAR_CURVED_ACCEPTANCE.md)。元円独立38783は終了0、
