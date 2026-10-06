@@ -268,6 +268,11 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P07
 
+2026-10-07最終受入：[全原条件と主source/元artifact監査](../PLANAR_CURVED_ACCEPTANCE.md)。
+元円独立38783の全四caseも実終端0となり、五source bridge/三補足を受入、限定kernelを主sourceへ統合した。
+元401源/15validatorを別保全、最終401は受入版と完全一致、元主源から四変更/397不変。
+P07 DONE、次はP08。以下の日付付き段落は当時の状態。全123カードgoal/原互換親は継続する。
+
 2026-10-02進行：[実solve/元12場/曲線壁RF・厳密点所属と同Domain細分](../PLANAR_CURVED_SOLVER.md)。
 新10/旧物理2種類を分割確認。固定二次円二尺度・両偏波の元12解を保持し、TMだけ追加2細分で
 解析f/E/H/Gの全対象群がPASS。その後の[最終二水準比較](../PLANAR_CURVED_CONVERGENCE.md)は新5unitを確認し、

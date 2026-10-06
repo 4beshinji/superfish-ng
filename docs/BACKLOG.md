@@ -1,5 +1,9 @@
 現行の作業順・依存待ち・受入証拠・実行中処理は[現行入口](development-plan/CURRENT.md)を参照する。以下の追記は履歴であり、古い「次は」「生存中」を現在の指示/状態として扱わない。
 
+2026-10-07 P07 DONE：[全原条件と主統合の受入](PLANAR_CURVED_ACCEPTANCE.md)。元円独立4caseも実終端0、
+元数値gate/全raw/source archiveと最終401kernelを照合。次はP08 native/Project/CLI-worker/Study/GUI。
+専用P07 rawを製品nativeと扱わず、P09と全123カード/原互換要件を継続する。生存数値handleなし。
+
 B03仕様整理受入（2026-09-22）：[必須範囲と不足仕様](development-plan/B03-required-scope.md)。原32要件を維持し、限定例の入力/期待量/単位/比較法と不足仕様を対応付けた。TM旧集約欠落、TE集約hash一致を記録。数値再実行なし、C00.V/追加採否は未確認。次はB04→H17、全goal継続、稼働handleなし。
 
 B02調査受入（2026-09-22）：[対象版・入力資料再監査](development-plan/B02-reference-audit.md)。K01〜K32の版/節または未確認理由を固定、現存7件のhash・版表示一致、R25欠落。旧ソース/バイナリ内部読取・新旧実行なし。C00.VはUNVERIFIED、次はB03。全goal継続、稼働handleなし。

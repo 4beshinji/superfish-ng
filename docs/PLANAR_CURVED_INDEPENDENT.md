@@ -73,3 +73,15 @@ seed/full validate/hosted CIは未実行。既存自作P2/Gauss/細分と有理�
 `planar_curved_vector_reference.py` は実native座標/係数/周波数をそのまま使う検証専用のvector化候補。新3unitは0.018秒PASS、両偏波の元API全12成分、既知physical linear scalarの符号、strict参照点/番号を確認。150回×400点の単一translated patch実測は元API1.126864秒/候補0.106693秒（10.56倍）、vector norm差1.889e−16。実行中のmesh検証器には接続せず、現在のhash固定を維持する。将来の採用には比較器を通した実元場/全RF一致も別確認する。
 
 求積最後二組の最大f差1.077e−14、全RF差2.309e−14、K norm差1.022e−15、M norm差1.261e−15。独立面積/壁積分と元RF差は最大2.198e−14。環境はuvの既存`.venv`、Python3.12.3/NumPy2.5.2/SciPy1.18.1、BLAS1thread。新依存導入なし。
+
+## 元円独立A/Bの実終端受入（2026-10-07）
+
+38783は17267.586秒PASS/終了0。r=.01/.02の両偏波、TE A3/B4とTM A4/B5の全四caseで
+最後二水準・独立A/B・円解析f/E/H/G・独立20次energy/実壁を原gateで受入した。
+対象群last-two RF最大0.001762616/A対B0.000134548、独立積分差最大1.338e−12。
+全12実B解と粗いFAILを保持し、全66artifact/元401製品/使用5validator/元A全raw不変を終端後にも照合した。
+snapshot/観測終端auditは `mesh-accepted-artifact-hashes.json` / `mesh-observed-termination.json`。
+元sourceと15validatorを別保全してから主sourceへ受入kernelを統合した。旧validatorの二本はstrict版へ変更したため、
+旧検証の元hashは `out/p07-planar-exact-reference-20261007/before-main-integration/validators/` で明示解決する。
+新FEMや元成功の再実行はなく、[全P07受入](PLANAR_CURVED_ACCEPTANCE.md)で他の全原条件と別々に照合した。
+専用P07 rawは製品nativeではない。P08/P09/全goalは継続する。

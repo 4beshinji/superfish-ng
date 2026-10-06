@@ -116,3 +116,12 @@ cacheと主由来統合候補の全401製品hashも完全一致し、元主sourc
 V2は初めから全mode壁traceと配列bytesを検査するため、三先行例に使った補足checkerを再実行しない。
 必要な非円形五例のsource bridgeが揃い、cache source固定を解除した。主38783は生存固定。
 これは主branch統合/P07全受入ではない。円半径.02 TMの実終端と主統合/全条件監査を継続する。
+
+## 最終主sourceへの統合（2026-10-07）
+
+元円38783は終了0、全四caseの元66artifact/401源/5validatorと元A全rawの照合・保全を終えた。
+旧401source/15validatorの元hashを再確認して受入候補fe25aadを主branchへ統合した。
+主401は五物理bridge/三補足のkernelと完全一致、元主源からgeometry/location/refinement/solver四変更/397不変。
+四validator/七testも既受入版と完全一致し、同じ成功のFEM/unitを繰り返していない。
+旧mainの二validatorと旧V1 bridgeの全codeは元hashのarchiveへ明示解決し、元証拠を維持する。
+[全18条件監査](PLANAR_CURVED_ACCEPTANCE.md)でP07 DONE。P08/P09/全goalは継続、全数値handle終端/固定解除。

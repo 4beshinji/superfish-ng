@@ -3,6 +3,10 @@
 2026-10-07。P07実検証中の読取調査。P08は未着手であり、この計画は製品の接続・受入証拠ではない。
 先行条件は[P07全条件監査](PLANAR_CURVED_ACCEPTANCE.md)。主source/実検証checkoutの固定を維持する。
 
+同日追記：P07全条件を受入れ主sourceをfe25aadで統合した。全数値handle終端、固定解除。
+P08の先行条件が成立したため、下記の版付きnative保存・全配列/RF再構築から実装する。
+この読取計画自体をP08実装/受入へ数えない。
+
 ## 現行コードで必要な変更
 
 専用`PlanarCurvedCase`は既に`superfish_ng_planar_case` schema_version 3を厳密に読込み、

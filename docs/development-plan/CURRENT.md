@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07幾何系列・独立mesh・非円形の追加細分/復旧を継続。
+更新：2026-10-07、P07全条件受入・主統合完了、次はP08 native/操作経路。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -14,16 +14,14 @@
 
 ## 次の着手
 
-**[P07：平面曲線の実解と元場・RFを実装する](03-planar.md#p07)**。IN_PROGRESS、先行P06はDONE。
-[P07進行記録](../PLANAR_CURVED_SOLVER.md)で専用実solve/元12場/実側壁RF、strict点所属と元Domain細分を実装。
-新10/旧物理2種類を分割確認。二尺度・両偏波の固定二次円の元12解を保持し、
-TMだけL3へ追加2FEMで解析f/E/H/G全対象群を確認した。続く[最終二水準比較](../PLANAR_CURVED_CONVERGENCE.md)で
-TEのE差/TMのRF差未達を保持し、追加4FEMでTE L2→L3/TM L3→L4の二尺度f/E/H/全RF差を確認。
-保持元解は計18、401製品不変、許容値不変。[独立A/B内部mesh・増求積次数](../PLANAR_CURVED_INDEPENDENT.md)を検証中。続いてN16/32/64幾何と各FEM、
-滑らかな楕円/再入角の二尺度・固定FEM差を[P05 gate](../PLANAR_CURVED_RF.md)で別々に検証する。
-円の解析PASSだけでP07を閉じない。[P06受入](../PLANAR_CURVED_FEM.md)は継続利用、元398製品は不変。
-既存dispatcher/CLI/native/Project/worker/GUIはP08、曲線比較/調整はP09で未接続。
-既存P04全子とP05/P06はDONE、原互換親P02/D02とH17/H18、P07〜P09は未完了。
+**[P08：平面曲線native・Project・GUIを接続する](03-planar.md#p08)**。先行P07はDONE。
+[P07全条件監査](../PLANAR_CURVED_ACCEPTANCE.md)で二尺度円絶対/固定最終差/独立A/B、求積、
+八幾何系列、楕円・再入角両偏波、共変則、五source bridge/三補足と主source統合を受入した。
+元失敗・全raw/source/archiveを保持し、最終主401は受入kernelと完全一致、元主源から四変更/397不変。
+次の有界変更は[P08準備](../PLANAR_CURVED_INTEGRATION_PLAN.md)に従う版付きnativeの全配列/RF再構築・改変拒否。
+続くProject/dispatcher/CLI-worker/Study/GUIと実中止/再起動/旧版再生までがP08の必須範囲。
+P09の比較/追跡/調整・所有再開も残る。P04/P05/P06/P07はDONE、原互換親P02/D02とH17/H18、
+P08/P09と原要件を含む全123カードgoalは未完了。
 
 P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 範囲・初回テスト入力エラー・解析不変量・コマンドは上記専用文書に記録。
@@ -48,14 +46,14 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-現行checkpoint：[幾何系列・終端失敗・保存解復旧](../PLANAR_CURVED_GEOMETRY_SERIES.md)。
-新15unitを四回に分割PASS、混合細分の後続3unitも別PASS。円/楕円TEのN32/N64二尺度、八例計24新FEM/401製品hash不変。
-各全21artifactの八例snapshotを保持。TMと全P07は未受入。
+現行checkpoint：[P07全条件受入](../PLANAR_CURVED_ACCEPTANCE.md)。全数値handle実終端、現行source固定なし。
+元円38783は終了0、全四case/12B解/全66artifact/元401源/5validatorの照合・保全後に主統合した。
+旧source/validatorは元hashでarchiveへ明示解決し、元成功/失敗の条件を保持する。
 以下の古い日付付き段落は当時の状態であり、現在の生存handleはこの表を優先する。
 
 | 処理 | 生存handle / 出力（全てout/以下） |
 | --- | --- |
-| 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
+| 実行中の数値処理 | なし。旧handle38783/16323/8632等は全実終端済み |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -521,3 +519,16 @@ RF相対丸め差最大0/2.221e−16、独立20次energy/実壁差最大1.284e�
 cacheと統合候補の全401hashも一致。cache branchの数値handleは全終了しsource固定を解除した。
 必要な非円形五source bridgeと三補足は受入済み。主源38783の実終端、主統合とP07全条件監査が残る。
 元円独立半径.02 TMを継続し、P07 IN_PROGRESS、P08/P09と全123カードgoalを維持する。
+
+## P07全条件受入と主source統合（2026-10-07）
+
+元38783は終了0/17267.586秒。円二尺度両偏波のTE B4/TM B5全四caseが原gateでPASS。
+12実B解の粗いFAILも保持し、全66artifact/元401製品/使用5validatorと元A全raw不変を終端後に照合した。
+元401source/15validatorのarchiveを再確認し、受入候補fe25aadを主branchへfast-forward統合した。
+最終主401は既物理受入kernelと完全一致、元主源から専用四製品だけ変更/397不変、11validator/testも受入版と完全一致。
+`out/p07-planar-exact-reference-20261007/final-p07-acceptance.json` は全18原条件、元数値gateの12集約、
+円/五物理bridge/三補足の九実終端と全raw snapshot、元codeの現存/履歴archive、成功unit logsを照合した。
+集約件数13の初回誤記AssertionError logを保持し、実12集約と八非円形全組へ修正。製品/数値gateは変更していない。
+既存成功と同一sourceの証拠を再利用し、新FEM/物理再構築/unit/full/seed/GUIは全0。
+共有P2基底/seed TM経路・依存は未変更。P07をDONEとし、P08 native/操作経路へ進む。
+全数値handle終端、source固定解除。P08/P09と全原互換条件/全123カードgoalは継続する。

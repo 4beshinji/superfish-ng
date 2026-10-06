@@ -1,5 +1,13 @@
 楕円TMの終端した一様L5元写像丸め失敗からのB追加二分は `test_planar_curved_ellipse_bisection` / `extend_planar_curved_ellipse_bisection.py`。完全元prefix・実終端・追加新FEM0・両artifact集合/元検証器hashを必須とし、512ε/全物理gateを維持する。[新2件と実検証中](PLANAR_CURVED_GEOMETRY_SERIES.md)。
 
+2026-10-07 P07全条件受入：[最終source/元条件監査](PLANAR_CURVED_ACCEPTANCE.md)。元円独立38783は終了0、
+全四case/12B解/66artifact/元401製品/5validatorを終端後に照合・保全してから主sourceへ受入kernelを統合した。
+五物理bridge/三byte・全帯trace補足、元数値gateの12集約と全18条件、旧code archive/成功unit logを照合。
+主401は受入版と完全一致、四変更/397不変、取り込んだ四validator/七testも受入版と完全一致。
+既存成功を再利用し、新FEM/物理再構築/unit/full/seed/GUIは全0。旧源へ依存する元円終端auditを新主source上で再実行しない。
+元code hashは `before-main-integration/validators/` と旧V1 bridgeのarchiveへ明示解決する。
+次の有界検査はP08の版付きnative、全元配列/RF保持・再hashした改変拒否と旧版1/2 native再生。
+
 TEのN16/32/64集約はignored `out/p07-planar-curved-geometry-20261007/audit-te-geometry-series-rf-schema.py`。先行元場/FEM証拠を全hash/source/数値gate付きで再利用し、新FEM/unitは0。[四系列の限定監査・二回の入力/schema修正](PLANAR_CURVED_GEOMETRY_SERIES.md)。幾何探索改善の新4/関連19unitは別branch `p07-geometry-bvh` の記録を参照し、main受入へ混同しない。
 
 再入角TMの一様L5が幾何予算を使い切った後の混合細分は `test_planar_curved_mixed_refinement` / `extend_planar_curved_mixed_refinement.py`。元P2領域・1e8予算・物理gateを維持し、uniform専用比較器を使わず一般共通parent上でE/H/全RFを別判定する。[実測理由・新3unit・実検証中](PLANAR_CURVED_GEOMETRY_SERIES.md)。
