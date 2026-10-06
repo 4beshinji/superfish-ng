@@ -157,3 +157,38 @@ mainの15検証handleが401製品を固定しているため、branch `p07-geome
 元corner TM A L4の全場/周波数/全RFを物理再構築して確認し、同じ1e8予算で全98304cellのL5 Domainを検査中。
 変更した分離製品はgeometry一ファイルだけ、mainの全401製品は不変。
 現在mainへ未統合であり、L5のf/E/H/RF受入を先取りしない。最後の利用handle終端までmainのsource固定を維持する。
+
+## 楕円TM B系列の最終一様細分の丸め未達と追加二分（2026-10-07）
+
+尺度1の追加handle49794は1739.032秒/終了1を観測した。
+元A L3/A L4/B L4の物理再構築とA再受入後、B一様L5の最終元親chartで
+`cumulative original-map roundoff exceeds local resolution` が生じた。
+規定上限512ε/局所extentを維持してUNVERIFIEDとし、追加新FEMは0、progressは空。
+元失敗出力を変更せず、別の `ellipse-tm-s1-L5-termination.json` に終端観測を保存した。
+
+`scripts/extend_planar_curved_ellipse_bisection.py` は、この終端観測・累積丸め失敗・新FEM0と
+完全元A L1〜L4/B L3〜L4の失敗prefix・製品401/元8検証器/失敗側9検証器hashを必須とする。
+元A L3/A L4/B L4を物理再構築し、accepted Aの実f/E/H/RF差を再確認した後、
+B L4を二分した `B-bisection-uniform3-bisection` を新実FEMで解く。
+元P2 boundaryを再投影せず、同じ512ε上限と1e8検査予算、原f/E/H/全RF許容差を維持する。
+一般共通parent比較でB二水準差と独立A/B差を別判定し、同一native meshは独立受入を拒否する。
+これは一様L5の成功を装う代替ラベルではなく、明示的に異なる細分履歴である。
+
+新 `test_planar_curved_ellipse_bisection` 2件は3.101秒PASS/終了0（handle61068）。
+完了prefix/終端/全artifactの読取不変と、timeout/成功/別case/完了FEMの繰返し/不完全hash拒否を確認する。
+比較積分/元場不変量の既成功 `test_planar_curved_mixed_refinement` を unchanged integration の証拠として利用する。
+新driverは実検証handle72293、出力 `ellipse-tm-s1-extra-bisection/` と同名log。
+製品401と使用10検証器を終端まで固定する。現時点では検証中、楕円TMやP07を受入とはしない。
+
+```sh
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -m unittest -v test_planar_curved_ellipse_bisection
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/extend_planar_curved_ellipse_bisection.py --from-evidence out/<completed-failed-ellipse-TM> --uniform-failure out/<terminal-zero-FEM-uniform-map-failure> --terminal-audit out/<observed-terminal.json> --out out/<new-unused-name>
+```
+
+分離BVH実検査27869は、元corner TM A L4の24576cell/37120edgeを物理再構築し、
+全係数/周波数のbitwise一致と全RF/metadataの完全一致を確認した。
+独立面積energy/全vector壁積分の差最大6.968e−12もPASS。
+geometryは1848997 box検査/予算1e8、全detJ/GreenもPASS。
+これはA4のRF収束未達を改善する数値補正ではなく、元の値を保存する証拠である。
+新L5 Domain検査へ進行したが、f/E/H/RFや全P07受入は未達のまま。
+新外部資料・依存・legacy参照なし、shared radial/seed形式を変更しない。

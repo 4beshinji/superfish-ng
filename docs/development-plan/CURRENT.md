@@ -60,7 +60,7 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 楕円TM尺度2の終端143復旧 | 70467 / 同親ellipse-tm-s2-recovery |
 | 円TM尺度1 N32 / N64 | 1671 / 25663、同親circle-tm-s1-N32 / N64 |
 | 楕円TM尺度1 N32 / N64 | 99546 / 5330、同親ellipse-tm-s1-N32 / N64 |
-| 楕円TM尺度1追加L5 / 角TE尺度2追加L5 | 49794 / 35422、同親ellipse-tm-s1-L5 / corner-te-s2-L5 |
+| 楕円TM尺度1追加二分 / 角TE尺度2追加L5 | 72293 / 35422、同親ellipse-tm-s1-extra-bisection / corner-te-s2-L5 |
 | 角TM二尺度の混合細分 | 50414 / 27391、同親corner-tm-s1-mixed / corner-tm-s2-mixed |
 | 円TM尺度2 N32 / N64 | 23517 / 66415、同親circle-tm-s2-N32 / N64 |
 | 楕円TM尺度2 N32 / N64 | 65048 / 19527、同親ellipse-tm-s2-N32 / N64 |
@@ -73,6 +73,8 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 最後の利用handle終端まで変更しない。上のhandleはwrite_stdinで終端確認し、timeoutで再起動しない。
 N16の元成功を全hash/物理再構築して再利用。TMのN32/N64は全八組を実行中。
 TE尺度2N64のhandle99240/35751は終了0を観測。新混合細分validatorの使用10本も終端まで固定する。
+楕円TM尺度1追加49794は1739.032秒/終了1、B L5元親chartの累積丸め上限未達、新FEM0。
+元失敗を保持し、新2unitは3.101秒PASS。別B追加二分72293を実行中、製品401/使用10検証器固定。
 TEのN16/32/64は四系列（円/楕円二尺度）で限定監査PASS、handle25430終了0/13.845秒。
 N16の先行物理証拠を全hash/source/数値gate付きで再利用し、新FEM/unit/物理再構築0。
 11証拠Directory/239ファイルを保持する。初回二監査の引数/schema参照エラーと終端auditも保持。
@@ -80,7 +82,8 @@ N16の先行物理証拠を全hash/source/数値gate付きで再利用し、新F
 main源固定中の独立作業：branch `p07-geometry-bvh` / `a1def65`、worktree `/tmp/superfish-ng-p07-geometry-bvh`。
 geometry一製品ファイルだけを閉AABB候補探索へ変更、新4/直接利用先19unitは5.964秒PASS。
 main製品401は不変、未統合。別実検査handle27869、出力 `out/p07-planar-geometry-bvh-20261007/`。
-元A4場/全RF再構築と、予算1e8を維持した実L5 geometryを検査中、同branch専用文書へ記録した。
+元A4の全係数/周波数bitwise/全RF metadata一致と独立energy/壁≤6.968e−12を確認。
+同じ1e8予算の実L5 geometryへ進行中。L5のf/E/H/RF成功とは扱わない。
 P07 IN_PROGRESS、全123カードgoal ACTIVE。seed/full validate/GUIを実行したとは扱わない。
 
 ### 先行実行の履歴
