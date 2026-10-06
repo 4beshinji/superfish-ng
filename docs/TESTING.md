@@ -1,3 +1,5 @@
+P07独立A/B内部mesh・増求積は `test_planar_curved_mesh_reference` と直接利用する `test_planar_curved_convergence_reference`。専用 `scripts/validate_planar_curved_independent.py` は二尺度・両偏波の完全元Domain/元場/全RF、物理再構築/全artifact hash、独立面積/法線除去壁積分を検査する。[受入範囲・未達・実行記録](PLANAR_CURVED_INDEPENDENT.md)。楕円/角入力の独立幾何・局所可積分性は `test_planar_curved_shape_reference`。検証専用vector化候補は `test_planar_curved_vector_reference` で元12成分API/符号付き既知場を照合するが、実行中validatorには未接続。
+
 P07最終二水準は `test_planar_curved_convergence_reference` の既知P2制限・共通群回転・E/H別周波数則・振幅差・改変拒否。`scripts/validate_planar_curved_convergence.py` は元raw全hashと製品hashを照合して保持解を物理再構築し、親chart再生成/全元E/H/全RFを別判定する。[限定範囲と失敗・追加細分](PLANAR_CURVED_CONVERGENCE.md)。独立A/Bmesh/増次数/幾何系列/楕円/角は別gate。
 
 P07核は `test_planar_curved_solver test_planar_curved_refinement`、旧平面の signed Maxwell / per-length energy-wall-scale 2件。[分割12種類と円解析/失敗・追加細分](PLANAR_CURVED_SOLVER.md)。専用 `validate_planar_curved_rf.py` は固定二次円の二尺度/両偏波f/E/H/Gだけで、P07全体は未受入。元12解を保持する `--extend-from` で未達TMだけL3へ追加し14解を保持。最終FEM差は上の別検証器で扱う。

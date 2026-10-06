@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-02、P07固定円の最終二水準f/E/H/全RF差を限定受入。
+更新：2026-10-07、P07独立A/B内部mesh・増求積次数の検証を継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -19,7 +19,7 @@
 新10/旧物理2種類を分割確認。二尺度・両偏波の固定二次円の元12解を保持し、
 TMだけL3へ追加2FEMで解析f/E/H/G全対象群を確認した。続く[最終二水準比較](../PLANAR_CURVED_CONVERGENCE.md)で
 TEのE差/TMのRF差未達を保持し、追加4FEMでTE L2→L3/TM L3→L4の二尺度f/E/H/全RF差を確認。
-保持元解は計18、401製品不変、許容値不変。次は独立A/B内部mesh、増求積次数、N16/32/64幾何と各FEM、
+保持元解は計18、401製品不変、許容値不変。[独立A/B内部mesh・増求積次数](../PLANAR_CURVED_INDEPENDENT.md)を検証中。続いてN16/32/64幾何と各FEM、
 滑らかな楕円/再入角の二尺度・固定FEM差を[P05 gate](../PLANAR_CURVED_RF.md)で別々に検証する。
 円の解析PASSだけでP07を閉じない。[P06受入](../PLANAR_CURVED_FEM.md)は継続利用、元398製品は不変。
 既存dispatcher/CLI/native/Project/worker/GUIはP08、曲線比較/調整はP09で未接続。
@@ -47,6 +47,24 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 原要件の全件対応は[計画](README.md)、[B01台帳](B01-ledger.md)と最新の専用受入文書を参照する。
 
 ## 実行中処理とソース固定
+
+2026-10-07 P07：専用比較器 `scripts/planar_curved_mesh_reference.py` と
+`scripts/validate_planar_curved_independent.py` を追加。元Domainから全chartを再生成し、
+有理数の共通参照分割で元E/Hを直接比較する。新6/既存5unitは28.116秒PASS。
+独立壁積分の最初の実行は検証器のJacobian key誤参照で終了1（新FEM1、保持済み）。
+keyだけ修正し独立面積/全vector壁検査を1unit追加、session9777へ実行中。
+求積系列の修正後session76545、出力 `out/p07-planar-curved-independent-20261007/quadrature-final/`、
+logは同親の `quadrature-final.log`。二尺度・両偏波のarea8/12/16、wall12/16/20を別々に解く。
+製品401ファイルと検証器5本をhash固定。終了まで製品/使用検証器を変更しない。
+追加1unit/session9777は1.475秒PASS/終了0。求積/session76545は42.155秒PASS/終了0、
+12元解と最後4解の物理再構築を保存、401製品hash不変。
+独立mesh/session38783が実行中。出力は同親 `mesh/`、logは `mesh.log`。
+元Aは前回最終二水準の全hash/物理再構築で確認し、Bの初期未達と実細分を別保存する。
+TE半径0.01のB L2→L3はTE01 E差1.027957%で未達、A L3対B L3/解析対照はPASS。
+許容差を維持しB L4を追加中。楕円/角入力の新4unitは4.734秒PASS、
+vector化候補の新3unitは0.018秒PASS/単一patch10.56倍実測、使用validatorへ未接続。
+[仕様・分割検査・失敗履歴](../PLANAR_CURVED_INDEPENDENT.md)。
+sessionを `write_stdin` で観測し、timeoutを理由に再起動しない。P07/全goalは未完了。
 
 P07最終二水準：全handle終端、401製品/比較器固定解除。
 新5unit/session79738は1.828秒PASS/終了0。初回/session8261はnp.bool_ JSON保存で終了1、新FEM0。
