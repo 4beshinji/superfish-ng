@@ -34,7 +34,7 @@ Python 3.12.3 / NumPy 2.5.2 / SciPy 1.18.1、uvの既存環境で実行。
 raw/logは `out/p07-planar-curved-geometry-20261007/`。
 製品401ファイル・seed/shared core/依存不変の検証専用追加なので、全validate/seed/GUIは実行していない。
 
-## 終端を確認した幾何/FEM受入
+## 終端を確認した八例の幾何/FEM受入
 
 各ケースL0/L1/L2の新3実FEM、L1→L2で全ゲートPASS、製品401hash不変。
 円は解析絶対gate、楕円は完全band gateもPASS。
@@ -57,6 +57,10 @@ N64で1.9348e−7 / 9.6694e−8 / 1.8137e−7。楕円は独立周長求積と�
 `accepted-eight-artifact-hashes.json`。八例計24新FEM。
 N16の先行受入は再solveせず物理再構築/全hash付きで系列へ統合する予定。
 TMはこの八例の受入に含めない。
+
+`checkpoint-audit-final.json` は八例168artifact、製品401、各受入検証器のhash、
+文書のローカルリンクを読取監査した。15生存handleの製品/使用検証器hashも現行と一致する。
+これは新しいFEM solveやunit再実行ではなく、上記の成功証拠と実行中ソース固定の監査である。
 
 ## 非円形の未達を保持した追加細分と復旧
 
