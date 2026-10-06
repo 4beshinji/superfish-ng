@@ -1,3 +1,5 @@
+TEのN16/32/64集約はignored `out/p07-planar-curved-geometry-20261007/audit-te-geometry-series-rf-schema.py`。先行元場/FEM証拠を全hash/source/数値gate付きで再利用し、新FEM/unitは0。[四系列の限定監査・二回の入力/schema修正](PLANAR_CURVED_GEOMETRY_SERIES.md)。幾何探索改善の新4/関連19unitは別branch `p07-geometry-bvh` の記録を参照し、main受入へ混同しない。
+
 再入角TMの一様L5が幾何予算を使い切った後の混合細分は `test_planar_curved_mixed_refinement` / `extend_planar_curved_mixed_refinement.py`。元P2領域・1e8予算・物理gateを維持し、uniform専用比較器を使わず一般共通parent上でE/H/全RFを別判定する。[実測理由・新3unit・実検証中](PLANAR_CURVED_GEOMETRY_SERIES.md)。
 
 P07幾何系列/円のセル逐次解析参照は `test_planar_curved_circle_reference test_planar_curved_geometry_series_reference`。終端失敗の追加細分/終端中断prefix復旧は `test_planar_curved_shape_extension test_planar_curved_shape_recovery`。専用 `validate_planar_curved_geometry_series.py` は真幾何と固定Domainの実FEM差を別判定する。全元解・chart/hashを維持する `extend_planar_curved_shapes.py` / `recover_planar_curved_shapes.py` は完了解を再solveしない。[新15件の分割検査・八例受入・未達と実行入口](PLANAR_CURVED_GEOMETRY_SERIES.md)。

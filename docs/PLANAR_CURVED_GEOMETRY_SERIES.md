@@ -62,6 +62,28 @@ TMはこの八例の受入に含めない。
 文書のローカルリンクを読取監査した。15生存handleの製品/使用検証器hashも現行と一致する。
 これは新しいFEM solveやunit再実行ではなく、上記の成功証拠と実行中ソース固定の監査である。
 
+## TEの三N・二尺度系列の監査（2026-10-07）
+
+終端handle25430は13.845秒PASS/終了0。
+`out/p07-planar-curved-geometry-20261007/te-geometry-series-audit-rf-schema/` に
+円/楕円×二尺度の四系列、各N16/32/64を集約した。
+N16の元円物理再構築監査/数値raw全hashと、元楕円TE二尺度の完了report/全8検証器/製品hashを確認し、
+新N32/64は既存八例168artifact snapshot/10検証器/製品hashに照合した。
+11証拠Directory/239ファイルの完全snapshotを保持し、原thresholdで数値判定を再監査した。
+全対象/guardの完全群、f/E/H/全RF別差、独立energy/壁、peak U′=1 J/mとaccelerating nullを確認した。
+元初期Domainの真幾何を別計算し、細かい元RFの面積と1e−12以内で一致することも確認した。
+
+四系列ともN16の固定FEMはL2→L3、N32/N64はL1→L2で受入済み。
+真形状の面積/周長/距離上限は各系列でN16>N32>N64、最終≤1e−4。
+N16の誤差は4.9318e−5 / 2.4477e−5 / 4.6152e−5、N64の値は上表と同じ。
+この有限FEM証拠集約で新FEM0/unit再実行0、新しい元場の物理再構築0。
+既成功した元場比較をhash/source付きで利用したもので、連続誤差上界やTM/全P07受入ではない。
+
+初回監査handle50608は楕円scaleのkeyword-only引数を位置指定して終了1。
+次のhandle10976は一般比較のfine側保存名 `second_RF` とuniform比較の `fine_RF` の違いで終了1。
+両失敗driver/log/終端auditを保持し、入力/保存schemaの参照だけを修正した。
+原FEM/物理許容値/製品401は不変。修正後は一つの明確なfine側schemaだけを認め、数値RFを独立に監査する。
+
 ## 非円形の未達を保持した追加細分と復旧
 
 `extend_planar_curved_shapes.py` は終端した失敗reportだけを入力とし、元rawを変更せず、
@@ -120,3 +142,18 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv
 増求積・独立共変性の既成功は再利用し、今回の部分受入を全P07へ拡張しない。
 P08 native/CLI/Project/worker/GUI、P09比較/調整と原計画の他カードは継続する。
 新外部資料/依存/legacy参照なし。R39/R40と既存独立数学を検証参照に使用し、製品固有値を置換しない。
+
+## 幾何予算切れに対する分離作業ツリー（未統合）
+
+mainの15検証handleが401製品を固定しているため、branch `p07-geometry-bvh` / commit `a1def65` を
+`/tmp/superfish-ng-p07-geometry-bvh` に作成した。Cartesian全辺検査の候補探索だけを閉AABB二分木へ変更。
+全閉箱/全辺対の被覆、接触/未解像gap、同じ総予算を保ち、全detJ/Green/元写像やFEM/RF式は不変。
+独立に分離する三乗間隔水平1024辺の旧実装は32768予算で終了1、新探索は同予算以内PASS。
+新4＋直接利用先19、計23unitは5.964秒PASS。旧/新の2048辺比較は2096128/7423回、2.337/0.121秒。
+これは探索だけの実測で、FEM全体の速度比ではない。
+
+条件/失敗/実測の全記録は同branch `docs/PLANAR_CURVED_EDGE_SEARCH.md`。
+実検査handle27869、main側の新出力 `out/p07-planar-geometry-bvh-20261007/`。
+元corner TM A L4の全場/周波数/全RFを物理再構築して確認し、同じ1e8予算で全98304cellのL5 Domainを検査中。
+変更した分離製品はgeometry一ファイルだけ、mainの全401製品は不変。
+現在mainへ未統合であり、L5のf/E/H/RF受入を先取りしない。最後の利用handle終端までmainのsource固定を維持する。

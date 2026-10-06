@@ -73,7 +73,15 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 最後の利用handle終端まで変更しない。上のhandleはwrite_stdinで終端確認し、timeoutで再起動しない。
 N16の元成功を全hash/物理再構築して再利用。TMのN32/N64は全八組を実行中。
 TE尺度2N64のhandle99240/35751は終了0を観測。新混合細分validatorの使用10本も終端まで固定する。
-P07 IN_PROGRESS、全123カードgoal ACTIVE。製品未変更の限定検証なので全validate/seed/GUIは再実行していない。
+TEのN16/32/64は四系列（円/楕円二尺度）で限定監査PASS、handle25430終了0/13.845秒。
+N16の先行物理証拠を全hash/source/数値gate付きで再利用し、新FEM/unit/物理再構築0。
+11証拠Directory/239ファイルを保持する。初回二監査の引数/schema参照エラーと終端auditも保持。
+
+main源固定中の独立作業：branch `p07-geometry-bvh` / `a1def65`、worktree `/tmp/superfish-ng-p07-geometry-bvh`。
+geometry一製品ファイルだけを閉AABB候補探索へ変更、新4/直接利用先19unitは5.964秒PASS。
+main製品401は不変、未統合。別実検査handle27869、出力 `out/p07-planar-geometry-bvh-20261007/`。
+元A4場/全RF再構築と、予算1e8を維持した実L5 geometryを検査中、同branch専用文書へ記録した。
+P07 IN_PROGRESS、全123カードgoal ACTIVE。seed/full validate/GUIを実行したとは扱わない。
 
 ### 先行実行の履歴
 
