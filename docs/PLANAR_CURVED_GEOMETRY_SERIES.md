@@ -241,3 +241,55 @@ B4→B5とA3対B5の元E/H/全RFを再比較し、新FEM0のまま完了判断�
 出力同親 `corner-te-s2-saved-B5-recovery/`、log `recover-corner-te-s2.log`。
 新codeとbranch401製品を終端まで固定、現時点では実検証中でP07/全goalは未完了。
 新外部資料・依存・legacy参照なし。これらの追加証拠監査のために既成功unit/全validateを繰り返さない。
+
+
+## N32 TM全四例・角TE尺度1の終端受入（2026-10-07）
+
+以下はwrite_stdinで終了0を観測した元source固定の実検証であり、追加監査のための再FEMはしない。
+
+| ケース / handle | 秒 / 新実FEM | 最終対象群 f差 / E差 / H差 / 全RF差 |
+| --- | --- | --- |
+| circle TM s1 N32 / 1671 | 3138.791 / 5 | 7.731108e−8 / 7.080504e−6 / 3.932834e−4 / 1.634852e−3 |
+| circle TM s2 N32 / 23517 | 3239.403 / 5 | 同じ精度範囲 |
+| ellipse TM s2 N32 / 65048 | 2625.031 / 5 | 1.006226e−7 / 7.806907e−6 / 4.486728e−4 / 1.579029e−3 |
+| corner TE s1 A3/B5 / 53536 | 3811.488 / 1追加 | B4→B5: 1.101088e−5 / 4.222931e−3 / 1.208029e−4 / 3.629551e−5 |
+
+各N32はL3→L4で真幾何/固定FEM差/完全band/独立energy・壁積分がPASS。
+円二尺度の解析G最大差5.447048e−4、他の解析f/E/H対象全群もPASS。
+楕円TM尺度1N32の既成功と合わせ、TM N32四例が受入。N64/全P07をこの証拠から受入とはしない。
+角TE尺度1は独立A3対B5もf差4.469167e−6、E差3.003093e−3、H差5.478315e−5、全RF差3.721749e−6でPASS。
+元六FEMは読取保持、追加一実B5のみ。独立energy/壁差最大7.148e−12、元親丸め1.875377e−14。
+
+監査driver `audit-new-terminal-acceptance.py` / handle31961は終了0。
+全401製品、全使用9/10validator、terminal/progress/checks、対象/guard分割、f/E/H/全八RFの実数値、
+U′=1 J/m・peak規約・四加速量nullと全元artifact一致を照合した。
+新FEM0、unit再実行0、新物理再構築0。成功した元固定source実検証を再利用する限定監査である。
+出力 `accepted-new-terminal-audit.json` / `accepted-new-terminal-artifacts.json` は四例の105全ファイルを保持する。
+uv cache未指定の読取集計はread-only cache作成で終了2だった。既定の `/tmp/superfish-ng-uv-cache` を指定し、
+この補助集計だけを実施した。既成功solver/検証器を再実行していない。
+
+## N64 TMの未実行L4を分離branchで継続（2026-10-07）
+
+円TM尺度2/66415も2501.715秒/終了1、L0〜L3の四実FEM保存後、L4 Domainの1e8予算切れ。
+これでN64 TM四例の元失敗は全て終端確認済み。元raw/progress/logを保持し別termination auditへ結び付けた。
+楕円TM尺度1の追加B二分/72293は1642.629秒/終了1、累積元親map丸めが512εを超え、新FEM0。
+一様L5の同種失敗と共に保持する。探索改善だけで丸め失敗を解消したとは扱わない。
+
+新 `out/p07-planar-geometry-bvh-20261007/continue-N64-TM.py` は、
+観測済み終端1/幾何予算失敗/完全L0〜L3 prefix/未保存L4を必須とする。
+旧全401hashと変更後400旧製品不変・geometry一ファイル変更、元10validatorの完全一致、
+分離geometry実L5受入reportを確認し、保存L3を全元親chart/nativeから物理再構築する。
+全係数/周波数bitwise保持と全RF/metadataの元fine_RFとの完全一致、独立energy/壁積分が必須。
+同じN64元Domainを再生成し、1e8予算/512εを保つL4だけを一回の新実FEMで解く。
+L3→L4元E/H/全RF、完全guard、円解析全対象群または楕円完全band、独立積分を別判定する。
+
+構文検査はPASS、数値受入は新実runで判定する。
+円s1/s2 handle92778/3796、楕円s1/s2 handle86568/16110、出力同親
+`<shape>-tm-s<scale>-N64-L4-continuation/` と同名log。現時点では四例とも物理再構築中。
+既存34914/43214と共にbranch401/使用validator/driverを固定する。mainは残る旧四handleまで401を固定する。
+この追加は元完了解の再solve・予算緩和・失敗raw上書きではない。
+新外部資料・依存・legacy参照なし、seed/full validate/GUI/hosted CI未実行、全goal ACTIVE。
+
+```sh
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-geometry-bvh/src:/tmp/superfish-ng-p07-geometry-bvh/scripts UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -u out/p07-planar-geometry-bvh-20261007/continue-N64-TM.py --shape circle --scale 1
+```

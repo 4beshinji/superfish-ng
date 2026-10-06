@@ -56,13 +56,8 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 処理 | 生存handle / 出力（全てout/以下） |
 | --- | --- |
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
-| 角TE尺度1追加L5 | 53536 / p07-planar-curved-geometry-20261007/corner-te-s1-L5 |
-| 楕円TM尺度2の終端143復旧 | 70467 / 同親ellipse-tm-s2-recovery |
-| 円TM尺度1 N32 | 1671 / 同親circle-tm-s1-N32 |
-| 楕円TM尺度1追加二分 | 72293 / 同親ellipse-tm-s1-extra-bisection |
+| 楕円TM尺度2の終端143復旧 | 70467 / p07-planar-curved-geometry-20261007/ellipse-tm-s2-recovery |
 | 角TM二尺度の混合細分 | 50414 / 27391、同親corner-tm-s1-mixed / corner-tm-s2-mixed |
-| 円TM尺度2 N32 / N64 | 23517 / 66415、同親circle-tm-s2-N32 / N64 |
-| 楕円TM尺度2 N32 | 65048 / 同親ellipse-tm-s2-N32 |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -70,10 +65,10 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 角TM尺度1追加/15560は幾何検査1億回予算切れで終了1、新FEM0。元失敗rawも保持する。
 旧38783の検証器5本、現行幾何10本/追加細分9本/復旧10本と全401製品を固定し、
 最後の利用handle終端まで変更しない。上のhandleはwrite_stdinで終端確認し、timeoutで再起動しない。
-N16の元成功を全hash/物理再構築して再利用。TMのN32/N64は全八組を実行中。
+N16の元成功を全hash/物理再構築して再利用。TM N32は全四例PASS、N64は元四例の幾何予算終端を保持して分離branchで未実行L4を継続。
 TE尺度2N64のhandle99240/35751は終了0を観測。新混合細分validatorの使用10本も終端まで固定する。
 楕円TM尺度1追加49794は1739.032秒/終了1、B L5元親chartの累積丸め上限未達、新FEM0。
-元失敗を保持し、新2unitは3.101秒PASS。別B追加二分72293を実行中、製品401/使用10検証器固定。
+元失敗を保持し、新2unitは3.101秒PASS。別B追加二分72293も終了1/1642.629秒、同じ累積元map丸め上限未達、新FEM0。全原失敗を保持し、許容値を緩和しない。
 TEのN16/32/64は四系列（円/楕円二尺度）で限定監査PASS、handle25430終了0/13.845秒。
 N16の先行物理証拠を全hash/source/数値gate付きで再利用し、新FEM/unit/物理再構築0。
 11証拠Directory/239ファイルを保持する。初回二監査の引数/schema参照エラーと終端auditも保持。
@@ -93,6 +88,20 @@ N64 TMの25663/5330/19527は1e8 geometry予算切れで終了1、各L0〜L3保�
 楕円TM尺度1N32/99546は2457.414秒PASS、L3→L4全gate、新FEM5、401製品不変/全31artifact保持。
 N64 TM/残P07は未受入。元完了解の再solveを避け、次の許容差不変の細分へ繋ぐ。
 P07 IN_PROGRESS、全123カードgoal ACTIVE。seed/full validate/GUIを実行したとは扱わない。
+
+
+2026-10-07追加checkpoint：角TE尺度1の53536は終了0/3811.488秒、新実FEM1でA3/B5受入。
+円TM尺度1/2のN32（1671/23517）と楕円TM尺度2N32/65048は終了0、各L0〜L4の5実FEM。
+既成功楕円TM尺度1N32を合わせTM N32全四例がPASS。全401製品/使用validator不変。
+別限定監査31961は終了0、新FEM/unit/物理再構築0、四例105全artifactと数値gate/規約を保持。
+N64円TM尺度2/66415も終了1/2501.715秒、L0〜L3保存、L4幾何予算1e8切れ。
+分離driver `out/p07-planar-geometry-bvh-20261007/continue-N64-TM.py` を構文検査後に開始。
+円s1/s2は92778/3796、楕円s1/s2は86568/16110、出力同親 `<shape>-tm-s<scale>-N64-L4-continuation/`。
+全元10validator/source/hash/実終端と400旧製品不変/geometry一変更を照合し、
+保存L3の全元chart/native/係数・周波数bitwise/全RF完全一致/独立積分を物理再検証する。
+元完了FEMを繰り返さず、未実行L4のみ新実solve。1e8予算/512ε/全物理gateは不変。
+branch401/共用11validator/新driverを34914/43214/上の四handleの終端まで固定する。
+main401も残る旧四handleの終端まで固定。P07/全goal ACTIVE、N64実受入は未確認。
 
 ### 先行実行の履歴
 
