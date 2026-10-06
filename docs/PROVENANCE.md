@@ -4284,3 +4284,5 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 既存自作polygon BVHの分割方針を設計参照し、閉箱/全無順序辺対/総予算を独立記述。新外部資料・依存・legacy参照なし。
 
 2026-10-07 楕円TM：一様B L5の元親写像累積丸めが512εを超えた終端失敗を保持し、B L4からの別二分履歴を明示した。全元解・全hash・実終端を検査し、製品/物理許容値/丸め上限を維持する。新2unitは3.101秒PASS、実FEMは別検証中。分離BVH変更後の元corner TM A4は全係数/周波数/全RFとmetadataが完全一致、独立energy/壁もPASS。新外部資料・依存・legacy参照なし。[記録](PLANAR_CURVED_GEOMETRY_SERIES.md)。
+
+2026-10-07 分離閉AABB：実98304cell L5の全geometryは7452020回/同予算1e8でPASS、元親map相対丸め1.875377e−14、解析面積/周長もPASS。新FEM0。実物理検査34914は元A4全artifactと既完了geometry証拠/400旧製品不変・一geometry変更を照合し、未実施uniform A5を一回だけ新FEMで検証中。旧源401不変と変更後source遷移を混同しない。新外部資料/依存/legacy参照なし。

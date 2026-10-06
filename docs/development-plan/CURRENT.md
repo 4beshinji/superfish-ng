@@ -83,7 +83,11 @@ main源固定中の独立作業：branch `p07-geometry-bvh` / `a1def65`、worktr
 geometry一製品ファイルだけを閉AABB候補探索へ変更、新4/直接利用先19unitは5.964秒PASS。
 main製品401は不変、未統合。別実検査handle27869、出力 `out/p07-planar-geometry-bvh-20261007/`。
 元A4の全係数/周波数bitwise/全RF metadata一致と独立energy/壁≤6.968e−12を確認。
-同じ1e8予算の実L5 geometryへ進行中。L5のf/E/H/RF成功とは扱わない。
+分離実測27869は終了0、実L5の98304cell/147968edge・7452020box検査/同じ1e8予算でPASS。
+元親map丸め1.875377e−14、解析面積/周長もPASS。新FEM0。
+次の実uniform A5 TMをhandle34914へ開始、出力同親corner-tm-s1-uniform-A5 / solve-corner-A5.log。
+400旧製品不変/geometry一ファイル変更、全prepared/元A4 artifactを照合して新実FEM一回を検証する。
+main401は不変、branch401/使用検証器は34914終端まで固定。L5のf/E/H/RF成功とは扱わない。
 P07 IN_PROGRESS、全123カードgoal ACTIVE。seed/full validate/GUIを実行したとは扱わない。
 
 ### 先行実行の履歴

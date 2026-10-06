@@ -192,3 +192,20 @@ geometryは1848997 box検査/予算1e8、全detJ/GreenもPASS。
 これはA4のRF収束未達を改善する数値補正ではなく、元の値を保存する証拠である。
 新L5 Domain検査へ進行したが、f/E/H/RFや全P07受入は未達のまま。
 新外部資料・依存・legacy参照なし、shared radial/seed形式を変更しない。
+
+## 分離geometry変更の実L5受入と次の物理検証（2026-10-07）
+
+実検査27869は終了0/PASS。L5の98304cell/197633node/147968edgeで全geometry検査を確認。
+総box検査7452020回/同じ1e8予算、全Green/正detJと面積3e−4 m²/周長0.08 mはPASS。
+最終元親map丸め上限1.875377e−14、規定512εを維持する。
+生成全体456.170秒。旧L5は予算切れで未完了なので、両L5の全体速度比は算出しない。
+元A4全係数/周波数/全RF一致と合わせて幾何探索のbounded四条件を確認した。
+branch `p07-geometry-bvh` の実装はmainへ未統合、main401製品も不変。
+
+新実FEM検査34914を開始、driver `out/p07-planar-geometry-bvh-20261007/solve-corner-A5.py`、
+出力同親 `corner-tm-s1-uniform-A5/`、logは `solve-corner-A5.log`。
+完了geometry全artifactと元A4全artifact、400旧製品不変/geometry一ファイル変更を照合し、
+前回FEM前に失敗したuniform A5だけを新実solveする。
+元A4の物理再構築/実uniform親制限/元f/E/H/全RF/完全band/独立積分を別検査する。
+この検査中はbranchの401製品・使用検証器を固定する。
+実FEMの終端は未確認、独立B/尺度2/P07全体をこのgeometry成功から受入とはしない。
