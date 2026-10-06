@@ -474,3 +474,16 @@ solver state/代数診断を作らず、行列/スペクトル/独立energy・�
 旧bridge validator10コードは元hashで別保全し、TM mode0だった古いprobeの範囲を上書きしない。
 cache branchの数値利用handleは全終了しsource固定を解除した。main38783とboundary37232/67404は生存固定。
 角TM二尺度と円独立半径.02 TMの全gate、統合予定sourceへの残bridge/主統合/P07全条件監査を継続する。
+
+
+## 主branch由来の限定統合候補（2026-10-07）
+
+主sourceの生存38783を保持した別worktree `/tmp/superfish-ng-p07-final-integration`、branch `p07-final-integration` を作成。
+主HEAD 02ae90aから、検証済みsourceの四製品、strict二validator、bridge二validator、対応七testだけを取り込んだ。
+全401製品hashは既物理受入kernelと完全一致、旧主sourceから四変更/397不変を照合。
+取り込んだ四validator/七testの全hashもcache branch検証済み版と完全一致する。
+同じsourceの成功を再利用し、新unit/FEM/物理再構築0、`git diff --check` PASS。
+歴史的失敗延長scriptの版を一括変更していない。source/archive/旧数値証拠を保全し主源を固定する。
+照合はignored `out/p07-planar-exact-reference-20261007/final-integration-candidate-hashes.json`。
+この候補の作成は主branchへの統合やP07完了ではない。元円独立半径.02 TMと角TM二尺度、残source bridge、
+主source統合/全条件監査を実終端後に完了する。P08/P09と全123カードgoalを維持する。
