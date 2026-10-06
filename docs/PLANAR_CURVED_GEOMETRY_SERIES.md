@@ -331,3 +331,19 @@ strict閉参照の不備を別cache branchで実装修正し、[正確なFractio
 新4/旧直接利用24の28種類を分割成功。元数値gateは不変、旧probe二つの閉壁表現だけを整合した。
 保存済みTE/TMの実物理再構築74571、新FEM0、旧397製品不変・四変更/全metadata保持を明示する。
 実行中のbranch401/使用7codeを固定。mainは未統合、全P07受入は未達のまま。
+
+
+## 楕円TM尺度2とstrict参照所属の終端受入（2026-10-07）
+
+復旧70467は6484.605秒PASS/終了0。元終了143/原因未確定の五保存解とrawを保持した。
+元五解を全chart/native/係数から物理再構築し、未保存だったB4/B5だけ二実FEMを追加。
+A4/B5を受入、B4→B5対象全RF差最大1.767055e−3、独立A4対B5最大1.213063e−4、
+f/E/H/完全guard/独立energy・壁も原gateでPASS。前後401製品/使用10validatorと元23artifact不変。
+別terminal auditと全15artifact snapshotを保存し、完了FEMを再solveしない。
+楕円TM尺度1・角TM・円独立mesh・N64・P07全体は別条件として継続する。
+
+strict参照修正の保存TE/TM物理再構築74571は230.797秒PASS/終了0、新FEM0。
+元係数/周波数bitwiseと全RF metadata完全一致。正しい閉壁parameter化によるRF数値差は
+TE0、TM最大2.221e−16。独立energy/壁最大1.037e−13、前後401branch製品/使用7code/元artifact不変。
+別terminal audit/全7artifact snapshotを保持し、bounded strict条件を受入した。
+branch単独のsource固定を解除するがmain/BVH/boundary生存源は変更しない。mainへ未統合、全P07/goalは未完了。

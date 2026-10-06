@@ -56,7 +56,6 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 処理 | 生存handle / 出力（全てout/以下） |
 | --- | --- |
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
-| 楕円TM尺度2の終端143復旧 | 70467 / p07-planar-curved-geometry-20261007/ellipse-tm-s2-recovery |
 | 角TM二尺度の混合細分 | 50414 / 27391、同親corner-tm-s1-mixed / corner-tm-s2-mixed |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
@@ -101,7 +100,7 @@ N64円TM尺度2/66415も終了1/2501.715秒、L0〜L3保存、L4幾何予算1e8�
 保存L3の全元chart/native/係数・周波数bitwise/全RF完全一致/独立積分を物理再検証する。
 元完了FEMを繰り返さず、未実行L4のみ新実solve。1e8予算/512ε/全物理gateは不変。
 branch401/共用11validator/新driverを34914/43214/上の四handleの終端まで固定する。
-main401も残る旧四handleの終端まで固定。P07/全goal ACTIVE、N64実受入は未確認。
+main401も残る旧三handle38783/50414/27391の終端まで固定。P07/全goal ACTIVE、N64実受入は未確認。
 
 
 独立追加branch `p07-boundary-refinement`、worktree `/tmp/superfish-ng-p07-boundary-refinement`。
@@ -135,7 +134,15 @@ source固定が解けたcache branchでgeometry/元場/validator/locatorの厳�
 新物理再構築74571、出力 `out/p07-planar-exact-reference-20261007/physical-replay/` と `replay.log`。
 旧397製品不変・geometry/location/refinement/solver四変更を明示し、TE L3/TM A4の全係数/周波数bitwise、
 全RF metadata完全一致と閉壁parameterの丸め差≤1e−12/独立積分≤1e−8を検証する。
-branch401/使用7codeを終端まで再固定。main/BVH/boundary源を変更せず、全P07と統合は未受入。
+74571は終了0/230.797秒PASS、新FEM0。全係数/周波数bitwise・全metadata完全一致、RF差TE0/TM最大2.221e−16。
+branch401/使用7code/元artifact不変、独立積分最大1.037e−13。branch単独source固定を解除する。
+main/BVH/boundaryの生存源を変更せず、全P07と統合は未受入。
+
+
+楕円TM尺度2の復旧70467は6484.605秒PASS/終了0。元143/原因未確定・五保存解を保持し、
+元五解を物理再構築後、未保存のB4/B5だけ二実FEMを追加、A4/B5全gate受入。
+B4→B5全RF差最大1.767055e−3、A4対B5最大1.213063e−4、前後401製品/使用10validator不変。
+全15artifact snapshot/別terminal auditを保存する。楕円TM尺度1と全P07は未受入。
 
 ### 先行実行の履歴
 

@@ -58,8 +58,10 @@ parameter移動はε/2以内。所有cell/ref、実壁点・tangent/法線・ds�
 これを従来RF値のbitwise一致とは呼ばない。全値・最大差・規約・独立energy/壁を別保存する。
 これは保存解の物理再検証であり、新FEM0、元解/Caseを再solveしない。
 
-出力同親 `physical-replay/`、log `replay.log`。現在は実行中であり、成功を先取りしない。
-branch401製品/使用7コードを終端まで固定する。他checkoutの生存源固定も維持する。
+出力同親 `physical-replay/`、log `replay.log`。74571は230.797秒PASS/終了0、新FEM0。
+元係数/周波数bitwise、全metadata完全一致。TE RF数値差0、TM最大2.221e−16、独立積分最大1.037e−13。
+前後401製品/使用7code/全元artifact不変。全7artifact snapshotと別terminal auditを保持する。
+このbounded strict条件を受入し、branch単独source固定を解除する。他checkoutの生存源固定は維持する。
 mainへ統合後のP07全条件監査/P08/P09は別に残る。
 
 ```sh
