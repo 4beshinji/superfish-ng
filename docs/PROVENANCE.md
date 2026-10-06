@@ -4296,3 +4296,8 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 [geometry/終端](PLANAR_CURVED_GEOMETRY_SERIES.md)、[boundary](PLANAR_CURVED_BOUNDARY_REFINEMENT.md)、
 [point grouping](PLANAR_CURVED_FIELD_GROUPING.md)に範囲と検査を記録（各branchの対象文書を参照）。
 新外部資料、依存、legacyソース/バイナリ参照、実solveの解析置換、物理許容値変更はない。
+
+
+2026-10-07 P07 [統合予定sourceの物理bridge](PLANAR_CURVED_SOURCE_BRIDGE.md)を追加。
+全accepted raw/sourceの既存snapshotと元係数を保持し、元native/K/M/最低帯から再構築する。
+新固有解・補正・依存・外部資料・legacy参照はない。新sourceに対する物理再構築と元離散化gateを区別する。

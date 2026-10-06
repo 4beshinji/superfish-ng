@@ -57,6 +57,7 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | --- | --- |
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
 | 角TM二尺度の境界B追加 | 37232 / 67404、p07-planar-boundary-refinement-20261007/corner-tm-s{1,2}-boundary |
+| 統合予定sourceの楕円TM/角TE三例物理bridge | 78620 / 54876 / 89737、p07-planar-exact-reference-20261007/source-bridge-{ellipse-tm-s1-boundary,corner-te-s1-B5,corner-te-s2-B5} |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -422,3 +423,10 @@ strict/cache/groupingの統合予定を四製品・二strict validator・六test
 main源を変える前提は38783の実終端。現在は半径.01 TE/TMと半径.02 TEがPASS、最後の半径.02 TMを継続する。
 角TM境界B37232/67404も元Aの物理再構築を終えBを再構築中。両branchのsource固定を維持する。
 source保全自体に新FEM/unit/物理再構築はない。P07と全123カードgoalはACTIVE/未完了。
+
+
+[元accepted解と新strict/cache/grouping sourceの物理bridge](../PLANAR_CURVED_SOURCE_BRIDGE.md)を開始。
+新validator3unitは0.007秒PASS。新FEM0で三例の全元chart/native/K/M/最低帯・係数bitwise・全RF metadataと
+canonical閉壁浮動差≤1e−12/独立積分≤1e−8/全signed公共場/実TM PEC zeroを検査する。
+cache branch401製品/使用10validatorを78620/54876/89737の実終端まで固定する。
+main38783とboundary37232/67404も固定継続。全P07/source統合は未受入、全goal ACTIVE。
