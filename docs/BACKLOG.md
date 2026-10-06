@@ -1,5 +1,7 @@
 現行の作業順・依存待ち・受入証拠・実行中処理は[現行入口](development-plan/CURRENT.md)を参照する。以下の追記は履歴であり、古い「次は」「生存中」を現在の指示/状態として扱わない。
 
+2026-10-07 P09進行：[元二次写像の検索/最終試行生成](PLANAR_CURVED_TUNING_TRIALS.md)。有理chartを元セルへ合成し、累積512ε/全mid/PEC・全最終予算を検査。二段独立閉式・実TE/TM元E/H energy/全RF、後段改変拒否、新4＋関連11の15件10.289秒PASS。元409製品不変。次はstrict実FEM調整/二gate/replay、その後所有anchor/保存/再開/GUI。全123カードgoal継続。
+
 2026-10-07 P09進行：[元全二次節点のproper affine形状法則](PLANAR_CURVED_SHAPE_LAW.md)。全closed interval det/全mid/PEC・元から一回丸め生成、非一様面積と円TE/TM実FEMのf/energy/G/Q尺度則、新4＋関連4の8件1.249秒PASS。元408製品不変。実調整/最終細分・所有anchor/保存/再開・GUIは継続し全123カードgoal未完。
 
 2026-10-07 P09進行：[専用個別ID回復核](PLANAR_CURVED_IDENTITY_RECOVERY.md)。継承PASS/個別未確定に限り過去元E/Hを再比較し、全ID集合整合まで回復fはnull。実楕円→円→楕円の反射parity/rank交換と後続継承、全元byte/RF、新4＋関連6の10件26.658秒PASS。元407製品不変。所有過去anchor束縛・実調整/再開/GUIと全123カードgoalは継続。

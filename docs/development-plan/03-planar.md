@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **試行生成leaf（2026-10-07）**：[検索/最終細分と元chart](../PLANAR_CURVED_TUNING_TRIALS.md)。新4＋関連11の15件PASS、元409製品不変。次は実FEM調整/二gate/replay、所有再開/GUI。
+
 - **形状生成leaf（2026-10-07）**：[元全二次節点のproper affine則](../PLANAR_CURVED_SHAPE_LAW.md)。新4＋関連4の8件PASS、元408製品不変。実調整/最終細分・所有再開/GUIは継続。
 
 - **個別回復leaf（2026-10-07）**：[完全元場による過去anchor回復核](../PLANAR_CURVED_IDENTITY_RECOVERY.md)。新4＋関連6の10件PASS、元407製品不変。所有snapshotへのanchor束縛と調整/再開/GUIは継続。

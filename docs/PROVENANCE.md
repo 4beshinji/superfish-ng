@@ -4329,3 +4329,5 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 2026-10-07 P09 [個別ID回復核](PLANAR_CURVED_IDENTITY_RECOVERY.md)：自作中立ID集合評価を再利用し、元曲線xy E/Hの継承/過去anchor比較を再計算。実反射偶奇・rank交換/回復と後続、全元byte/RF、真縮退/guard/集合/予算停止、新4＋関連6PASS。元407製品不変、新外部資料/依存/legacy参照なし。所有anchor束縛と実調整/再開/GUIは継続。
 
 2026-10-07 P09 [全二次節点shape law](PLANAR_CURVED_SHAPE_LAW.md)：自作の中立Fraction多項式/全closed interval det root検査を共有し、専用曲線Projectから全midを一回丸め生成。非一様面積・実円TE/TMのf/energy/subspace/G/Q尺度、strict/退化/丸め反例、新4＋関連4PASS。元408製品不変、新外部資料/依存/legacy参照なし。任意曲線変位law/実調整/所有操作の受入ではない。
+
+2026-10-07 P09 [元chart付き試行生成](PLANAR_CURVED_TUNING_TRIALS.md)：自作全P2 shape law/制限/有理chart/完全比較を共有し、元referenceへの累積全係数/PEC検証を追加。独立二次閉式/実TE-TM energy/全RF、全予算preflight/後段改変拒否、新4＋関連11PASS。元409製品不変、新外部資料/依存/legacy参照なし。実検索controller/両gate/所有操作は未受入。

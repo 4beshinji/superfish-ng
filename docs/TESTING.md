@@ -1,3 +1,5 @@
+P09試行生成は `test_planar_curved_tuning_trials`、関連 `test_planar_curved_shape test_planar_curved_comparison`。新4＋関連11の15件10.289秒PASS。[元全六節点の独立閉式・累積chart/改変・予算・実元E/H](PLANAR_CURVED_TUNING_TRIALS.md)。実調整/所有保存/GUI受入は後続。
+
 P09形状生成は `test_planar_curved_shape`、関連 `test_planar_affine_shape` と版3Project直接消費1件。新4＋関連4の8件1.249秒PASS。[全mid/PEC・閉区間反例・実円尺度・範囲](PLANAR_CURVED_SHAPE_LAW.md)。実調整/所有再開/GUI受入は後続。
 
 P09専用回復は `test_planar_curved_identity_recovery`。関連 `test_planar_identity_recovery test_mode_identity_recovery.IdentityRecoveryInvariantTests`。新4＋関連6、10件26.658秒PASS。[実反射parity/rank交換と回復・null停止・範囲](PLANAR_CURVED_IDENTITY_RECOVERY.md)。所有過去anchorの束縛/再開/GUI受入は後続。
