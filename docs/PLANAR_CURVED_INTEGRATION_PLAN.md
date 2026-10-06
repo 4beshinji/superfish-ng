@@ -7,6 +7,10 @@
 P08の先行条件が成立したため、下記の版付きnative保存・全配列/RF再構築から実装する。
 この読取計画自体をP08実装/受入へ数えない。
 
+現在の実装：P08 IN_PROGRESS。[版3専用native](PLANAR_CURVED_NATIVE.md)を先に実装し、
+新7件＋旧版直接利用5件は1.684秒PASS。元数値kernelは変更していない。
+共通Case/Project/dispatch、CLI-worker/Study/GUIと実操作受入は下記の順で継続する。
+
 ## 現行コードで必要な変更
 
 専用`PlanarCurvedCase`は既に`superfish_ng_planar_case` schema_version 3を厳密に読込み、

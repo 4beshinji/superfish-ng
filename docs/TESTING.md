@@ -6,7 +6,9 @@
 主401は受入版と完全一致、四変更/397不変、取り込んだ四validator/七testも受入版と完全一致。
 既存成功を再利用し、新FEM/物理再構築/unit/full/seed/GUIは全0。旧源へ依存する元円終端auditを新主source上で再実行しない。
 元code hashは `before-main-integration/validators/` と旧V1 bridgeのarchiveへ明示解決する。
-次の有界検査はP08の版付きnative、全元配列/RF保持・再hashした改変拒否と旧版1/2 native再生。
+P08版3専用nativeは `test_planar_curved_saved`。新7件＋旧版1/2直接利用5件、計12件1.684秒PASS。
+全元配列/12場/全RF保持・再hash改変拒否、最低正帯/PEC/正規化と途中変更を検査。
+[反例・コマンド・範囲](PLANAR_CURVED_NATIVE.md)。続く共通Case/Project/CLI-worker/Study/GUIは別途必須。
 
 TEのN16/32/64集約はignored `out/p07-planar-curved-geometry-20261007/audit-te-geometry-series-rf-schema.py`。先行元場/FEM証拠を全hash/source/数値gate付きで再利用し、新FEM/unitは0。[四系列の限定監査・二回の入力/schema修正](PLANAR_CURVED_GEOMETRY_SERIES.md)。幾何探索改善の新4/関連19unitは別branch `p07-geometry-bvh` の記録を参照し、main受入へ混同しない。
 

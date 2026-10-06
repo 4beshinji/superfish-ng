@@ -3,7 +3,9 @@
 2026-10-07 P07受入：[全原条件と最終source/元artifact監査](PLANAR_CURVED_ACCEPTANCE.md)。元円38783も終了0、
 二尺度/両偏波の全gate、五source bridge/三補足、主統合fe25aadを受入。元401源/15validator/全raw/FAILを保全し、
 最終401は受入kernelと完全一致、元主源から四変更/397不変。全数値handle終端、source固定なし。
-次はP08の版付きnative/Project/CLI-worker/Study/GUIと旧版再生。P09/原互換要件/全123カードgoalは継続する。
+P08の[版3専用native](PLANAR_CURVED_NATIVE.md)を実装、新7件＋旧版直接利用5件1.684秒PASS。
+次は共通Case/Project/dispatch・CLI-worker/Study/GUIと実中止/再起動。P08はIN_PROGRESS。
+P09/原互換要件/全123カードgoalは継続する。
 
 2026-09-29 DEV-BROWSER-01完了：[GUI検証のブラウザー資源管理](BROWSER_RESOURCES.md)。63本の起動/停止を共通化し、並列2・30分・一時512 MiB監視、例外/親SIGKILLの回収を実装。対象15件・実GUI7項目・静的ギャラリーPASS、所有slot/プロセス残存0、検証サーバー終了0。製品src変更なし。開発計画の物理カードとは独立した利用者指定の基盤修正。
 

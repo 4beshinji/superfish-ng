@@ -4301,3 +4301,8 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 2026-10-07 P07 [統合予定sourceの物理bridge](PLANAR_CURVED_SOURCE_BRIDGE.md)を追加。
 全accepted raw/sourceの既存snapshotと元係数を保持し、元native/K/M/最低帯から再構築する。
 新固有解・補正・依存・外部資料・legacy参照はない。新sourceに対する物理再構築と元離散化gateを区別する。
+
+2026-10-07 P08 [曲線native](PLANAR_CURVED_NATIVE.md)：既存自作五ファイルIO/厳密parserと
+専用曲線物理再構築を利用し、版3の全二次配列・元係数bytes・全RF/理由付きnullを保存再生する。
+ハッシュに加えて最低正帯/正規化/PEC/TE核を検査する独自実装。元P07数学kernel・共有P2・seedは未変更。
+新7件＋旧版直接利用5件PASS、新外部資料・依存・legacy参照なし。操作経路の接続/受入は続くP08範囲。

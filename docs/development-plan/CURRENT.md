@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07全条件受入・主統合完了、次はP08 native/操作経路。
+更新：2026-10-07、P07全条件受入・主統合完了、P08専用nativeを実装し操作経路へ継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -18,7 +18,9 @@
 [P07全条件監査](../PLANAR_CURVED_ACCEPTANCE.md)で二尺度円絶対/固定最終差/独立A/B、求積、
 八幾何系列、楕円・再入角両偏波、共変則、五source bridge/三補足と主source統合を受入した。
 元失敗・全raw/source/archiveを保持し、最終主401は受入kernelと完全一致、元主源から四変更/397不変。
-次の有界変更は[P08準備](../PLANAR_CURVED_INTEGRATION_PLAN.md)に従う版付きnativeの全配列/RF再構築・改変拒否。
+最初の有界変更として[版3専用native](../PLANAR_CURVED_NATIVE.md)の全配列/RF再構築・改変拒否を実装。
+新7件＋旧版1/2直接利用5件は終了0/1.684秒PASS。曲線/共有P2/seedの数値源は変更していない。
+次は[P08接続計画](../PLANAR_CURVED_INTEGRATION_PLAN.md)の共通Case/Project/solver dispatchとCLI元点probe。
 続くProject/dispatcher/CLI-worker/Study/GUIと実中止/再起動/旧版再生までがP08の必須範囲。
 P09の比較/追跡/調整・所有再開も残る。P04/P05/P06/P07はDONE、原互換親P02/D02とH17/H18、
 P08/P09と原要件を含む全123カードgoalは未完了。
