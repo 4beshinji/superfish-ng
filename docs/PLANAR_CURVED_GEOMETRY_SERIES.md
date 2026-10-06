@@ -407,3 +407,31 @@ BVH branch401/使用12codeは残る円N64二handle終端まで固定する。
 六証拠Directory/計115artifactを保持、新FEM/unit/物理再構築0。
 出力 `out/p07-planar-curved-geometry-20261007/ellipse-tm-geometry-series-audit/`、全7audit artifact snapshot/終端も保存。
 先行TE四系列とは別のTM楕円二系列受入。残る円TM N64/角TM/元円独立全尺度/source統合/P07全条件を維持する。
+
+
+## 円TM N64の二尺度L4終端（2026-10-07）
+
+92778/3796は4279.750/4256.249秒PASS/終了0。元L0〜L3四保存解と1e8幾何予算切れ終端を保持し、
+元L3の全chart/native/係数・周波数・RFを物理再構築した後、未実行L4だけ各一新実FEMを追加した。
+対象L3→L4のf差最大6.739720e−8、E差6.676226e−6、H差3.672057e−4、全RF差1.492751e−3。
+完全Bessel f/E/H/G、真幾何、独立energy/実壁、512ε元map上限もPASS。
+最終元map丸め両尺度2.545328e−14。前後401branch/使用12code/元各25artifact不変、
+400旧製品不変・geometry一変更。各全13artifact snapshotと実終端auditを保持する。
+N64 TM四例は全てL4受入、BVH branchの数値handleは全終了しsource固定を解除する。
+円/楕円、両偏波、二尺度のN16/32/64各FEM証拠が揃った。有限系列の監査を受入してからP07条件へ数える。
+角TM境界B二尺度と元円独立半径.02/source統合を維持する。全P07/goalは未完了。
+
+
+## 円TM有限系列・全幾何系列の条件別監査（2026-10-07）
+
+円TM二尺度のN16/32/64限定監査86826は2.114秒PASS/終了0。
+元18円解の物理audit/全raw/hash/元validatorと、新N32/N64の全accepted snapshot・前後sourceを照合した。
+完全6モード（対象群[1,2]とguard群[2,1]）のlast-two f/E/H/全8RF、独立Bessel絶対f/E/H/G、
+独立energy・壁、全正RFとU′/phasor/SI/null理由、元Domain areaとfine RF areaを数値検査する。
+N16/32/64の真面積/周長/境界距離は元Domain小規模再生成で別判断し、三誤差の単調減少と最終各1e−4以下を確認。
+五Directory/計109artifactを保持、新FEM/unit/物理再構築0。全7audit artifact snapshot/観測終端も保存。
+main旧401とgeometry一変更のBVH401を明示区別する。異なる幾何Domain間の場差は比較していない。
+
+先行TE四系列/239artifact監査、TM楕円二系列/115artifact監査と本円TM二系列を合わせ、
+円/楕円・両偏波・両尺度の有限N16/32/64八系列にそれぞれ元P05 gateの証拠がある。
+この受入は全P07ではない。角TM二尺度、元円独立A/B半径.02、source統合と全条件照合を継続する。

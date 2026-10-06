@@ -275,6 +275,12 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 独立内部mesh/増次数/幾何近似系列/楕円・再入角は未確認。
 P07はIN_PROGRESS、P08/native/GUIと原互換親は未完。
 
+2026-10-07追記：[有限N16/32/64の八幾何系列と元FEMの条件別監査](../PLANAR_CURVED_GEOMETRY_SERIES.md)は受入。
+円/楕円の両偏波・二尺度で、真幾何と固定FEM f/E/H/全RFを別判定する。
+楕円と角TEの固定A/B二尺度も受入。角TM二尺度・元円独立A/B半径.02・source統合は継続中。
+[strict閉参照](../PLANAR_CURVED_EXACT_REFERENCE.md)と[元場point grouping](../PLANAR_CURVED_FIELD_GROUPING.md)は分離branchで限定受入。
+P07はIN_PROGRESS、P08/P09と全原要件・全goalは未完了。過去の日付付き段落は当時の記録である。
+
 ### 平面曲線の実解と元場・RFを実装する
 
 - **親課題**：P02。**種別**：実装。初期状態：未着手。

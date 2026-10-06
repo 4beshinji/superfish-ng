@@ -41,7 +41,7 @@ solver一ファイルに `_cell_point_groups` を追加。ownerが非減少な�
 独立energy/実壁≤1e−8を必須とする。元strict実装からsolver一変更/旧400製品不変を明示する。
 旧Python solverの全source hashを照合し、実係数1024owner/65536点の元scalar/全mode APIを
 順序付き/random入力で測定して全返却配列bitwise一致を検証する。測定速度を全FEM速度と呼ばない。
-branch全401製品/使用8codeと保存済みB5全artifactを実終端まで固定する。現時点で実測の受入は未確認。
+branch全401製品/使用8codeと保存済みB5全artifactを実終端まで固定する。実測は以下の終端追記で受入した。倍率の適用範囲を限定する。
 
 ```sh
 OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-reference-basis-cache/src:/tmp/superfish-ng-p07-reference-basis-cache/tests UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -m unittest test_planar_curved_field_grouping test_planar_curved_solver test_planar_curved_exact_reference
@@ -49,3 +49,18 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-reference-basis-cache/sr
 
 新外部資料・依存・legacy参照はない。既存自作P2元演算を比較referenceとして再利用する。
 P07 IN_PROGRESS、全123カードgoal ACTIVE。元円全尺度/全N64/角TM、統合、P08/P09を継続する。
+
+
+## 実保存B5の終端・測定範囲（2026-10-07）
+
+42739は502.301秒PASS/終了0、新FEM0。元円TM半径.01 B5の81920cell・全元chart/native/K/M/最低帯を再構築した。
+全係数/周波数bitwise、全RF metadata完全一致、閉壁parameter丸めによるRF差最大2.221e−16、
+独立energy/壁最大8.276e−13を確認した。前後401branch製品/使用8code/元完了B5全artifact不変。
+各1024owner/65536点の元scalar/全mode APIで、順序付き/randomとも全返却配列bitwise一致。
+実測旧/新は順序付きscalar 0.2070/0.1910秒（1.084倍）、全mode 0.2410/0.2021秒（1.192倍）。
+random scalar 1.0987/1.7597秒（0.624倍）、全mode 1.1443/1.0942秒（1.046倍）。
+この単回・並行実行下のrandom scalar測定は低速化を示しており、全入力の速度改善や全FEMの倍率を主張しない。
+受入は全点反復走査の除去、owner内演算と出力のbitwise保存、独立物理gateに限定する。
+順序付きは線形、任意順序はstable sortでgroupingする。全81920owner/5242880点のAPI実測はしていない。
+全6artifact snapshotと観測終端auditを保持。cache branch単独のsource固定を解除する。
+mainの38783とboundaryの37232/67404の生存源は変更しない。source統合/P07全条件は未受入。

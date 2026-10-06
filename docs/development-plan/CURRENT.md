@@ -56,9 +56,7 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 処理 | 生存handle / 出力（全てout/以下） |
 | --- | --- |
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
-| 円N64 TM L4分離継続 | 92778 / 3796、p07-planar-geometry-bvh-20261007/circle-tm-s{1,2}-N64-L4-continuation |
 | 角TM二尺度の境界B追加 | 37232 / 67404、p07-planar-boundary-refinement-20261007/corner-tm-s{1,2}-boundary |
-| 元場groupingの保存実解再構築・測定 | 42739、p07-planar-exact-reference-20261007/field-grouping-physical-replay |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -368,3 +366,46 @@ BVH branch401/使用12codeは残る円N64二handle終端まで固定する。
 六証拠Directory/計115artifactを保持、新FEM/unit/物理再構築0。
 出力 `out/p07-planar-curved-geometry-20261007/ellipse-tm-geometry-series-audit/`、全7audit artifact snapshot/終端も保存。
 先行TE四系列とは別のTM楕円二系列受入。残る円TM N64/角TM/元円独立全尺度/source統合/P07全条件を維持する。
+
+
+## 円TM N64の二尺度L4終端（2026-10-07）
+
+92778/3796は4279.750/4256.249秒PASS/終了0。元L0〜L3四保存解と1e8幾何予算切れ終端を保持し、
+元L3の全chart/native/係数・周波数・RFを物理再構築した後、未実行L4だけ各一新実FEMを追加した。
+対象L3→L4のf差最大6.739720e−8、E差6.676226e−6、H差3.672057e−4、全RF差1.492751e−3。
+完全Bessel f/E/H/G、真幾何、独立energy/実壁、512ε元map上限もPASS。
+最終元map丸め両尺度2.545328e−14。前後401branch/使用12code/元各25artifact不変、
+400旧製品不変・geometry一変更。各全13artifact snapshotと実終端auditを保持する。
+N64 TM四例は全てL4受入、BVH branchの数値handleは全終了しsource固定を解除する。
+円/楕円、両偏波、二尺度のN16/32/64各FEM証拠が揃った。有限系列の監査を受入してからP07条件へ数える。
+角TM境界B二尺度と元円独立半径.02/source統合を維持する。全P07/goalは未完了。
+
+
+## 実保存B5の終端・測定範囲（2026-10-07）
+
+42739は502.301秒PASS/終了0、新FEM0。元円TM半径.01 B5の81920cell・全元chart/native/K/M/最低帯を再構築した。
+全係数/周波数bitwise、全RF metadata完全一致、閉壁parameter丸めによるRF差最大2.221e−16、
+独立energy/壁最大8.276e−13を確認した。前後401branch製品/使用8code/元完了B5全artifact不変。
+各1024owner/65536点の元scalar/全mode APIで、順序付き/randomとも全返却配列bitwise一致。
+実測旧/新は順序付きscalar 0.2070/0.1910秒（1.084倍）、全mode 0.2410/0.2021秒（1.192倍）。
+random scalar 1.0987/1.7597秒（0.624倍）、全mode 1.1443/1.0942秒（1.046倍）。
+この単回・並行実行下のrandom scalar測定は低速化を示しており、全入力の速度改善や全FEMの倍率を主張しない。
+受入は全点反復走査の除去、owner内演算と出力のbitwise保存、独立物理gateに限定する。
+順序付きは線形、任意順序はstable sortでgroupingする。全81920owner/5242880点のAPI実測はしていない。
+全6artifact snapshotと観測終端auditを保持。cache branch単独のsource固定を解除する。
+mainの38783とboundaryの37232/67404の生存源は変更しない。source統合/P07全条件は未受入。
+
+
+## 円TM有限系列・全幾何系列の条件別監査（2026-10-07）
+
+円TM二尺度のN16/32/64限定監査86826は2.114秒PASS/終了0。
+元18円解の物理audit/全raw/hash/元validatorと、新N32/N64の全accepted snapshot・前後sourceを照合した。
+完全6モード（対象群[1,2]とguard群[2,1]）のlast-two f/E/H/全8RF、独立Bessel絶対f/E/H/G、
+独立energy・壁、全正RFとU′/phasor/SI/null理由、元Domain areaとfine RF areaを数値検査する。
+N16/32/64の真面積/周長/境界距離は元Domain小規模再生成で別判断し、三誤差の単調減少と最終各1e−4以下を確認。
+五Directory/計109artifactを保持、新FEM/unit/物理再構築0。全7audit artifact snapshot/観測終端も保存。
+main旧401とgeometry一変更のBVH401を明示区別する。異なる幾何Domain間の場差は比較していない。
+
+先行TE四系列/239artifact監査、TM楕円二系列/115artifact監査と本円TM二系列を合わせ、
+円/楕円・両偏波・両尺度の有限N16/32/64八系列にそれぞれ元P05 gateの証拠がある。
+この受入は全P07ではない。角TM二尺度、元円独立A/B半径.02、source統合と全条件照合を継続する。
