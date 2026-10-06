@@ -81,3 +81,9 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-reference-basis-cache/sr
 自作P2表/Cartesian mapperのみを再利用。新外部資料・依存・legacy参照なし。
 canonical TM/軸対称の共通基底やr形式は変更せず、参照表の再利用はCartesian曲線module内に限定する。
 seed/full validate/GUI/hosted CIは未実行。現行の全123カードscopeとP08/P09の残要件を保持する。
+
+
+後続の[厳密閉参照判定](PLANAR_CURVED_EXACT_REFERENCE.md)は別source変更。
+一ULP外点の拒否/壁所有点の整合を分割28種類で確認し、保存TE/TMの実物理再構築74571を検証中。
+30e604cの全RF bitwise保存証拠と、閉壁parameterの浮動丸め差/全metadata保持を分けて記録する。
+mainは未統合であり、全P07受入は先取りしない。

@@ -127,6 +127,16 @@ cache単独source固定を解除し、次はstrict参照所属を是正する。
 壁参照/元場/locatorの厳密閉所属を整合し、内部boundary表現と実壁RFを別検証する。
 全goal/P07 ACTIVE、P08/P09と全原要件を維持。
 
+
+strict参照修正：[独立反例・閉壁整合](../PLANAR_CURVED_EXACT_REFERENCE.md)。
+source固定が解けたcache branchでgeometry/元場/validator/locatorの厳密閉所属を実装した。
+新4/旧直接利用24の28種類は分割成功。初回25PASS/閉壁probe二ERRORを保持し、その二件だけ0.217秒PASS、
+実TM PEC壁Ez=0の追加一件は0.101秒PASS。許容値は不変、他25成功を繰り返さない。
+新物理再構築74571、出力 `out/p07-planar-exact-reference-20261007/physical-replay/` と `replay.log`。
+旧397製品不変・geometry/location/refinement/solver四変更を明示し、TE L3/TM A4の全係数/周波数bitwise、
+全RF metadata完全一致と閉壁parameterの丸め差≤1e−12/独立積分≤1e−8を検証する。
+branch401/使用7codeを終端まで再固定。main/BVH/boundary源を変更せず、全P07と統合は未受入。
+
 ### 先行実行の履歴
 
 2026-10-07 P07：専用比較器 `scripts/planar_curved_mesh_reference.py` と

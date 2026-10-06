@@ -325,3 +325,9 @@ E差1.662977e−5、H差1.598729e−3、全RF差3.813018e−3。
 全7artifact snapshotと終端auditを保持。性能条件と旧399製品不変・geometry/refinement二変更を別記する。
 cache branch単独のsource固定を解除し、次のP07修正は既存のstrict参照所属。
 この完了を元一ULP外参照受理の解消や全P07完了とはしない。他三checkoutの生存源は変更しない。
+
+
+strict閉参照の不備を別cache branchで実装修正し、[正確なFraction反例/閉壁/全元API/実TM PEC zero](PLANAR_CURVED_EXACT_REFERENCE.md)を確認した。
+新4/旧直接利用24の28種類を分割成功。元数値gateは不変、旧probe二つの閉壁表現だけを整合した。
+保存済みTE/TMの実物理再構築74571、新FEM0、旧397製品不変・四変更/全metadata保持を明示する。
+実行中のbranch401/使用7codeを固定。mainは未統合、全P07受入は未達のまま。
