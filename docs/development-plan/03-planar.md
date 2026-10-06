@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **実調整leaf（2026-10-07）**：[元E/H/二gate/完全native replay](../PLANAR_CURVED_TUNING.md)。新8種類＋関連11を分割受入。円TM絶対f、非円形TEの実rank/反射parity・検索/最終anchor回復、null/失敗保全を確認。元410製品/全123カード不変。所有prefix/移動・履歴・CLI-worker/実GUIは継続。
+
 - **試行生成leaf（2026-10-07）**：[検索/最終細分と元chart](../PLANAR_CURVED_TUNING_TRIALS.md)。新4＋関連11の15件PASS、元409製品不変。次は実FEM調整/二gate/replay、所有再開/GUI。
 
 - **形状生成leaf（2026-10-07）**：[元全二次節点のproper affine則](../PLANAR_CURVED_SHAPE_LAW.md)。新4＋関連4の8件PASS、元408製品不変。実調整/最終細分・所有再開/GUIは継続。

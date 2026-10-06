@@ -1,3 +1,5 @@
+P09実調整APIは `test_planar_curved_tuning` の新8種類。関連 `test_planar_tuning test_planar_tuning_recovery test_planar_curved_tuning_trials` 11種類を分割受入。円TM/TE実rank交換・独立dense/反射parity・両gate・元native完全再生・null停止/失敗保全、parser修正と元FAIL保全は[専用記録](PLANAR_CURVED_TUNING.md)。全suite一括成功とは扱わず、所有移動/履歴/CLI-worker/GUIは後続。
+
 P09試行生成は `test_planar_curved_tuning_trials`、関連 `test_planar_curved_shape test_planar_curved_comparison`。新4＋関連11の15件10.289秒PASS。[元全六節点の独立閉式・累積chart/改変・予算・実元E/H](PLANAR_CURVED_TUNING_TRIALS.md)。実調整/所有保存/GUI受入は後続。
 
 P09形状生成は `test_planar_curved_shape`、関連 `test_planar_affine_shape` と版3Project直接消費1件。新4＋関連4の8件1.249秒PASS。[全mid/PEC・閉区間反例・実円尺度・範囲](PLANAR_CURVED_SHAPE_LAW.md)。実調整/所有再開/GUI受入は後続。

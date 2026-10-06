@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07/P08全条件受入済み、P09の比較/元場/guard/追跡/回復核leafを受入、実調整・所有再開を継続。
+更新：2026-10-07、P07/P08全条件受入済み、P09の実調整/二gate/完全再生APIまで受入、所有再開/操作を継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -42,7 +42,12 @@ TE/TM dense spectrum・二尺度/回転・全予算preflightを確認し、元40
 proper affineの全区間det・全mid/PEC・実円f/energy/G/Q尺度、元408製品不変。
 [検索/最終trial生成](../PLANAR_CURVED_TUNING_TRIALS.md)も新4＋関連11、15件10.289秒PASS。
 元全六節点の独立式・累積元chart/512ε/全PEC・全予算preflight・実元E/H energy/全RF、元409製品不変。
-P09はIN_PROGRESS、次は専用strict実FEM調整/二周波数gate/完全native replay・過去anchor回復。不変量を先に再現し、
+[実FEM調整・二gate・完全native再生](../PLANAR_CURVED_TUNING.md)も新8種類＋関連11を分割受入。
+円TMの解析絶対差/二gate、非円形TEの独立dense spectrum/反射parity付き実rank交換・検索/最終anchor回復、
+真doublet/上位guard/予算停止とnull周波数、先行全byte保全・異試行/保存改変拒否を確認した。
+絶対係数差の検査誤り・不正checkpoint入力拒否を修正し元FAIL/rawを保持。
+元410製品と全123カード台帳/依存/文書anchorは不変、全handle実終端。
+P09はIN_PROGRESS、次は所有prefixコピー/移動・独立追跡履歴・CLI-worker/取消し/再起動・実GUIと全条件監査。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
@@ -69,7 +74,8 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-現行checkpoint：[P07全条件受入](../PLANAR_CURVED_ACCEPTANCE.md)。全数値handle実終端、現行source固定なし。
+現行checkpoint：[P09実調整APIの限定受入](../PLANAR_CURVED_TUNING.md)。61861/15076/22872/89290/75862/60455/81561/73075は全実終端。現行source固定なし。
+[P07全条件受入](../PLANAR_CURVED_ACCEPTANCE.md)の元証拠も保持する。
 元円38783は終了0、全四case/12B解/全66artifact/元401源/5validatorの照合・保全後に主統合した。
 旧source/validatorは元hashでarchiveへ明示解決し、元成功/失敗の条件を保持する。
 以下の古い日付付き段落は当時の状態であり、現在の生存handleはこの表を優先する。
