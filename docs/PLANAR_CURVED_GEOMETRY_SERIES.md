@@ -209,3 +209,35 @@ branch `p07-geometry-bvh` の実装はmainへ未統合、main401製品も不変�
 元A4の物理再構築/実uniform親制限/元f/E/H/全RF/完全band/独立積分を別検査する。
 この検査中はbranchの401製品・使用検証器を固定する。
 実FEMの終端は未確認、独立B/尺度2/P07全体をこのgeometry成功から受入とはしない。
+
+## 追加終端：TM幾何系列と保存済み再入角TE（2026-10-07）
+
+楕円TM尺度1 N32/handle99546は2457.414秒PASS/終了0、L0〜L4の5新実FEM、
+L3→L4でf差最大1.006227e−7、E差7.806907e−6、H差4.486728e−4、全RF差1.579029e−3。
+完全band/真幾何もPASS、独立energy/壁差最大8.014e−13、元親map丸め上限8.471751e−14。
+原許容差/512εを維持した。製品401/使用10検証器hash不変、31全artifactのsnapshotは
+`accepted-ellipse-tm-s1-N32-artifacts.json`。他TM/N16-N64全系列をこの一例から受入とはしない。
+
+| 元N64 TMケース | 終端handle / 秒 / 終了 | 保存済み |
+| --- | --- | --- |
+| circle s1 | 25663 / 2379.295 / 1 | L0〜L3の4実FEM、L4 Domain前の1e8予算切れ |
+| ellipse s1 | 5330 / 2219.239 / 1 | 同じ4実FEM、L4の1e8予算切れ |
+| ellipse s2 | 19527 / 2365.696 / 1 | 同じ4実FEM、L4の1e8予算切れ |
+
+三失敗のraw/logを保持し、別の `<label>-termination.json` にwrite_stdinの終端観測を保存した。
+予算の緩和や失敗ケースの削除はしない。分離閉AABB改善の実L5証拠は幾何探索の対応根拠だが、
+N64のf/E/H/RFを受入とはしない。これらの完了解を再solveせず後続へ再利用する。
+
+corner TE尺度2追加handle35422は終了143、原因未確定。
+元A3再受入後にB5のcase/全係数・周波数/全親chart/patternsは保存済みで、report/最終gateは未保存だった。
+元失敗フォルダを変更せず、別終端audit `corner-te-s2-L5-termination.json` を保持した。
+新 `out/p07-planar-geometry-bvh-20261007/recover-corner-te-s2.py` / handle43214は、
+元6実FEMと中断前に保存された追加1実FEMを全hash/source/実終端に結び付け、
+A3/B4/B5を物理再構築する。旧A3/B4の全RFは元値と完全一致を必須とし、
+元係数/周波数はbitwise保持、完全guard/独立energy/壁/元親chartを検査する。
+B4→B5とA3対B5の元E/H/全RFを再比較し、新FEM0のまま完了判断を行う。
+
+400旧製品不変/geometry一ファイル変更の検証済みsource遷移を明示する。
+出力同親 `corner-te-s2-saved-B5-recovery/`、log `recover-corner-te-s2.log`。
+新codeとbranch401製品を終端まで固定、現時点では実検証中でP07/全goalは未完了。
+新外部資料・依存・legacy参照なし。これらの追加証拠監査のために既成功unit/全validateを繰り返さない。

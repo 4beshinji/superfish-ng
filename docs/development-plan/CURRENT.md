@@ -58,12 +58,11 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
 | 角TE尺度1追加L5 | 53536 / p07-planar-curved-geometry-20261007/corner-te-s1-L5 |
 | 楕円TM尺度2の終端143復旧 | 70467 / 同親ellipse-tm-s2-recovery |
-| 円TM尺度1 N32 / N64 | 1671 / 25663、同親circle-tm-s1-N32 / N64 |
-| 楕円TM尺度1 N32 / N64 | 99546 / 5330、同親ellipse-tm-s1-N32 / N64 |
-| 楕円TM尺度1追加二分 / 角TE尺度2追加L5 | 72293 / 35422、同親ellipse-tm-s1-extra-bisection / corner-te-s2-L5 |
+| 円TM尺度1 N32 | 1671 / 同親circle-tm-s1-N32 |
+| 楕円TM尺度1追加二分 | 72293 / 同親ellipse-tm-s1-extra-bisection |
 | 角TM二尺度の混合細分 | 50414 / 27391、同親corner-tm-s1-mixed / corner-tm-s2-mixed |
 | 円TM尺度2 N32 / N64 | 23517 / 66415、同親circle-tm-s2-N32 / N64 |
-| 楕円TM尺度2 N32 / N64 | 65048 / 19527、同親ellipse-tm-s2-N32 / N64 |
+| 楕円TM尺度2 N32 | 65048 / 同親ellipse-tm-s2-N32 |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -88,6 +87,11 @@ main製品401は不変、未統合。別実検査handle27869、出力 `out/p07-p
 次の実uniform A5 TMをhandle34914へ開始、出力同親corner-tm-s1-uniform-A5 / solve-corner-A5.log。
 400旧製品不変/geometry一ファイル変更、全prepared/元A4 artifactを照合して新実FEM一回を検証する。
 main401は不変、branch401/使用検証器は34914終端まで固定。L5のf/E/H/RF成功とは扱わない。
+分離保存B5復旧43214も開始、出力同親corner-te-s2-saved-B5-recovery / recover-corner-te-s2.log。
+旧35422は終了143、cause不明、B5全rawが保存済みなので再FEMせず物理再構築/比較だけで復旧する。
+N64 TMの25663/5330/19527は1e8 geometry予算切れで終了1、各L0〜L3保存済み。別終端audit保持。
+楕円TM尺度1N32/99546は2457.414秒PASS、L3→L4全gate、新FEM5、401製品不変/全31artifact保持。
+N64 TM/残P07は未受入。元完了解の再solveを避け、次の許容差不変の細分へ繋ぐ。
 P07 IN_PROGRESS、全123カードgoal ACTIVE。seed/full validate/GUIを実行したとは扱わない。
 
 ### 先行実行の履歴
