@@ -57,7 +57,7 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | --- | --- |
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
 | 角TM二尺度の境界B追加 | 37232 / 67404、p07-planar-boundary-refinement-20261007/corner-tm-s{1,2}-boundary |
-| 統合予定sourceの楕円TM/角TE三例物理bridge | 78620 / 54876 / 89737、p07-planar-exact-reference-20261007/source-bridge-{ellipse-tm-s1-boundary,corner-te-s1-B5,corner-te-s2-B5} |
+| 物理受入済み角TE二尺度のbyte/trace補足 | 54225 / 85631、p07-planar-exact-reference-20261007/source-bridge-corner-te-s{1,2}-B5-fields |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -435,3 +435,30 @@ main38783とboundary37232/67404も固定継続。全P07/source統合は未受入
 [原P07/P05の条件別監査（作業中）](../PLANAR_CURVED_ACCEPTANCE.md)を追加。
 全条件と局所証拠・残る実終端/source bridge/統合を対応付け、未確認を完了扱いしない。
 P07 IN_PROGRESS、P08/P09と全123カードgoalは継続する。文書監査追加によるFEM/unitの再実行はない。
+
+
+## 三実bridge終端とTM全帯trace補強（2026-10-07）
+
+78620/54876/89737は終了0、157.838/551.566/555.269秒PASS、新FEM0。
+楕円TM境界Bと角TE二尺度B5の全元chart/native/K/M/最低帯を新kernelで再構築し、
+元係数/周波数の一致・全RF metadata完全一致を確認。RF浮動差最大3.331e−16、
+独立energy/壁最大1.288e−11、signed公共場/literal差最大1.343e−16。
+前後401製品/使用10validator/全元accepted rawは不変、各全8artifact snapshotと実終端auditを保存。
+三旧validatorの全10コードは `source-bridge-validator-before-all-mode-PEC/` に元hash付きで保全した。
+旧bridge内の明示TM壁probeはmode0だけだった。共通 `_restore` は元から全modeの拘束係数≠0を拒否しており、
+旧受入eig状態の全帯PEC拘束は保持されるが、独立trace probeの範囲を全帯へ補強する。
+
+実TM3帯でmode0を保持しmode1の壁係数だけを変更する独立反例は、旧probeが未拒否でFAIL/0.031秒。
+この孤立trace検査用tamperは有効固有対ではない。原logを保持する。
+旧三実handleの終端・コード保全後に、32Gauss実壁の公共 `all_fields_at_reference` で全正mode Ez=0を検査へ変更。
+同じ一件だけ0.025秒PASS。新bridge unitは先行3＋新1の計4種類を分割確認、他成功を繰り返さない。
+元配列保存にはdtypeとtobytes比較も追加し、signed zeroを含むbitwise条件を明示した。
+製品401/物理演算/許容値は未変更。独立trace checkerのcoverage補強であり、全RFや再構築の代用ではない。
+
+別 `check_planar_curved_bridge_fields.py` は既に物理受入したbridgeの全source/archive/rawを照合し、
+同じnative geometryと元係数上の公共field methodだけで全signed E/H・全mode PEC・配列bytesを追加検査する。
+solver state/代数診断を作らず、行列/スペクトル/独立energy・壁積分を再実行しない。
+楕円TM補足76506は27.817秒PASS/終了0、新FEM/物理再構築0。全6modeの各実壁32Gauss Ez=0を確認した。
+角TE二尺度の補足54225/85631は実検証中。branch401/使用4validatorを両実終端まで固定する。
+出力は各元bridge名に `-fields` を付けた同親folder/log。
+新源への角TM二尺度bridgeと主source統合は残条件であり、全P07/全goalは未完了。

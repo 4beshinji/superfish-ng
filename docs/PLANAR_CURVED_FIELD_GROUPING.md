@@ -64,3 +64,8 @@ random scalar 1.0987/1.7597秒（0.624倍）、全mode 1.1443/1.0942秒（1.046�
 順序付きは線形、任意順序はstable sortでgroupingする。全81920owner/5242880点のAPI実測はしていない。
 全6artifact snapshotと観測終端auditを保持。cache branch単独のsource固定を解除する。
 mainの38783とboundaryの37232/67404の生存源は変更しない。source統合/P07全条件は未受入。
+
+
+2026-10-07 byte条件を追加確認：数値array_equalだけではsigned zeroの符号差を区別できないため、
+新3grouping unitをdtype/tobytes比較で補強し、その三件だけ0.491秒PASS。
+旧11成功と実B5の物理gateは再実行せず、元演算のbitwise条件の検査を強化した。製品sourceは不変。

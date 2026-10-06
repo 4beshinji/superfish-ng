@@ -735,3 +735,9 @@ CIのYAMLとトリガーをローカルで確認し、Hosted CIと全unittestは
 実patchの元RFでcomplete schema/guard/phase/SI/次数/null理由とsigned元場を検査する。
 [コマンド・三実解再構築の範囲](PLANAR_CURVED_SOURCE_BRIDGE.md)。新FEM0、全401製品不変。
 既存成功unit/full/seed/GUIを再実行していない。
+
+
+2026-10-07 source bridge孤立PEC traceの後mode反例1件：旧0.031秒FAIL、全mode probeへ補強後0.025秒PASS。
+先行3と計4種類を分割成功。共通restorerは元から全帯強PECを厳密拒否する。
+field groupingの新3件をsigned-zero byte比較へ補強し、0.491秒PASS。他成功/FEMを繰り返さない。
+範囲・旧validator保全・trace-only補足は[専用文書](PLANAR_CURVED_SOURCE_BRIDGE.md)を参照。

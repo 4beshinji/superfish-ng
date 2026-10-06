@@ -44,7 +44,34 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-reference-basis-cache/sr
 
 各同名logを保持、新FEM0。branch全401製品/使用10validatorを上の三実終端まで固定する。
 完了FEMを再solveせず、残る角TM二尺度の実受入後にも同じbridge条件を適用する。
-現時点で三例の実bridge成功は未確認。timeoutを終端・再起動の根拠にしない。
+三例の実bridgeは下記終端追記で受入した。timeoutを終端・再起動の根拠にしない。
 
 既存自作P2/元chart/native/Maxwellの数学を再利用する。新外部資料・依存・legacy参照はない。
 主sourceの401製品/15validatorは統合前の独立modern source snapshotに別保全済み。
+
+
+## 三実bridge終端とTM全帯trace補強（2026-10-07）
+
+78620/54876/89737は終了0、157.838/551.566/555.269秒PASS、新FEM0。
+楕円TM境界Bと角TE二尺度B5の全元chart/native/K/M/最低帯を新kernelで再構築し、
+元係数/周波数の一致・全RF metadata完全一致を確認。RF浮動差最大3.331e−16、
+独立energy/壁最大1.288e−11、signed公共場/literal差最大1.343e−16。
+前後401製品/使用10validator/全元accepted rawは不変、各全8artifact snapshotと実終端auditを保存。
+三旧validatorの全10コードは `source-bridge-validator-before-all-mode-PEC/` に元hash付きで保全した。
+旧bridge内の明示TM壁probeはmode0だけだった。共通 `_restore` は元から全modeの拘束係数≠0を拒否しており、
+旧受入eig状態の全帯PEC拘束は保持されるが、独立trace probeの範囲を全帯へ補強する。
+
+実TM3帯でmode0を保持しmode1の壁係数だけを変更する独立反例は、旧probeが未拒否でFAIL/0.031秒。
+この孤立trace検査用tamperは有効固有対ではない。原logを保持する。
+旧三実handleの終端・コード保全後に、32Gauss実壁の公共 `all_fields_at_reference` で全正mode Ez=0を検査へ変更。
+同じ一件だけ0.025秒PASS。新bridge unitは先行3＋新1の計4種類を分割確認、他成功を繰り返さない。
+元配列保存にはdtypeとtobytes比較も追加し、signed zeroを含むbitwise条件を明示した。
+製品401/物理演算/許容値は未変更。独立trace checkerのcoverage補強であり、全RFや再構築の代用ではない。
+
+別 `check_planar_curved_bridge_fields.py` は既に物理受入したbridgeの全source/archive/rawを照合し、
+同じnative geometryと元係数上の公共field methodだけで全signed E/H・全mode PEC・配列bytesを追加検査する。
+solver state/代数診断を作らず、行列/スペクトル/独立energy・壁積分を再実行しない。
+楕円TM補足76506は27.817秒PASS/終了0、新FEM/物理再構築0。全6modeの各実壁32Gauss Ez=0を確認した。
+角TE二尺度の補足54225/85631は実検証中。branch401/使用4validatorを両実終端まで固定する。
+出力は各元bridge名に `-fields` を付けた同親folder/log。
+新源への角TM二尺度bridgeと主source統合は残条件であり、全P07/全goalは未完了。
