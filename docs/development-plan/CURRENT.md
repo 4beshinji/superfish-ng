@@ -409,3 +409,16 @@ main旧401とgeometry一変更のBVH401を明示区別する。異なる幾何Do
 先行TE四系列/239artifact監査、TM楕円二系列/115artifact監査と本円TM二系列を合わせ、
 円/楕円・両偏波・両尺度の有限N16/32/64八系列にそれぞれ元P05 gateの証拠がある。
 この受入は全P07ではない。角TM二尺度、元円独立A/B半径.02、source統合と全条件照合を継続する。
+
+
+## 統合前の元modern source保全（2026-10-07）
+
+mainの全401独立modern製品と15数値validatorを、ignored
+`out/p07-planar-exact-reference-20261007/before-main-integration/` に新規保存し全元hashを照合した。
+sourceは正しい `modern-independent-source/superfish_ng/` package構造で保持する。
+保存対象は本実装の自作源のみ、legacyコード/バイナリ/ユーザー所有assetsは含まない。
+strict/cache/groupingの統合予定を四製品・二strict validator・六test fileへ限定したinventoryを保存。
+歴史的な失敗延長scriptの変更を一括取り込まず、元raw/hash/source版と新kernelの物理bridgeを明示する。
+main源を変える前提は38783の実終端。現在は半径.01 TE/TMと半径.02 TEがPASS、最後の半径.02 TMを継続する。
+角TM境界B37232/67404も元Aの物理再構築を終えBを再構築中。両branchのsource固定を維持する。
+source保全自体に新FEM/unit/物理再構築はない。P07と全123カードgoalはACTIVE/未完了。
