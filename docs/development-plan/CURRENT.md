@@ -49,8 +49,8 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 ## 実行中処理とソース固定
 
 現行checkpoint：[幾何系列・終端失敗・保存解復旧](../PLANAR_CURVED_GEOMETRY_SERIES.md)。
-新15unitを四回に分割PASS。N32は円/楕円TEの二尺度、N64は尺度1を受入、計18新FEM/401製品hash不変。
-各全21artifactの六例snapshotを保持。N64尺度2/TMと全P07は未受入。
+新15unitを四回に分割PASS、混合細分の後続3unitも別PASS。円/楕円TEのN32/N64二尺度、八例計24新FEM/401製品hash不変。
+各全21artifactの八例snapshotを保持。TMと全P07は未受入。
 以下の古い日付付き段落は当時の状態であり、現在の生存handleはこの表を優先する。
 
 | 処理 | 生存handle / 出力（全てout/以下） |
@@ -58,10 +58,12 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
 | 角TE尺度1追加L5 | 53536 / p07-planar-curved-geometry-20261007/corner-te-s1-L5 |
 | 楕円TM尺度2の終端143復旧 | 70467 / 同親ellipse-tm-s2-recovery |
-| 円TE尺度2 N64 | 99240 / 同親circle-te-s2-N64 |
-| 楕円TE尺度2 N64 | 35751 / 同親ellipse-te-s2-N64 |
 | 円TM尺度1 N32 / N64 | 1671 / 25663、同親circle-tm-s1-N32 / N64 |
 | 楕円TM尺度1 N32 / N64 | 99546 / 5330、同親ellipse-tm-s1-N32 / N64 |
+| 楕円TM尺度1追加L5 / 角TE尺度2追加L5 | 49794 / 35422、同親ellipse-tm-s1-L5 / corner-te-s2-L5 |
+| 角TM二尺度の混合細分 | 50414 / 27391、同親corner-tm-s1-mixed / corner-tm-s2-mixed |
+| 円TM尺度2 N32 / N64 | 23517 / 66415、同親circle-tm-s2-N32 / N64 |
+| 楕円TM尺度2 N32 / N64 | 65048 / 19527、同親ellipse-tm-s2-N32 / N64 |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -69,7 +71,8 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 角TM尺度1追加/15560は幾何検査1億回予算切れで終了1、新FEM0。元失敗rawも保持する。
 旧38783の検証器5本、現行幾何10本/追加細分9本/復旧10本と全401製品を固定し、
 最後の利用handle終端まで変更しない。上のhandleはwrite_stdinで終端確認し、timeoutで再起動しない。
-N16の元成功を全hash/物理再構築して再利用、残TM尺度2のN32/N64も順次検証する。
+N16の元成功を全hash/物理再構築して再利用。TMのN32/N64は全八組を実行中。
+TE尺度2N64のhandle99240/35751は終了0を観測。新混合細分validatorの使用10本も終端まで固定する。
 P07 IN_PROGRESS、全123カードgoal ACTIVE。製品未変更の限定検証なので全validate/seed/GUIは再実行していない。
 
 ### 先行実行の履歴

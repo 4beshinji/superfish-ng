@@ -30,7 +30,7 @@ Python 3.12.3 / NumPy 2.5.2 / SciPy 1.18.1、uvの既存環境で実行。
 | `test_planar_curved_shape_extension` | 4 / 1.721秒 / 0 | 実保存解の物理再構築、全chart/RF/bytes不変、再hashした偽固有値とchart改変拒否 |
 | `test_planar_curved_shape_recovery` | 4 / 0.515秒 / 0 | 終端観測必須、timeout/成功/別出力拒否、連続かつ順序付きprefix、全元artifact/製品/検証器hash |
 
-新15件は上記四回の分割結果。先行検査を再実行して数を増やさない。
+新15件は上記四回の分割結果。後続mixed経路の新3件は1.115秒/終了0で別確認した。先行検査を再実行して数を増やさない。
 raw/logは `out/p07-planar-curved-geometry-20261007/`。
 製品401ファイル・seed/shared core/依存不変の検証専用追加なので、全validate/seed/GUIは実行していない。
 
@@ -45,15 +45,18 @@ raw/logは `out/p07-planar-curved-geometry-20261007/`。
 | circle TE s1 N32 | 155.690 / 0 | 2.1121e−5 | 0.006515 | 0.0004438 | 8.742e−5 |
 | circle TE s1 N64 | 431.778 / 0 | 1.6084e−5 | 0.005687 | 0.0004142 | 7.284e−5 |
 | circle TE s2 N32 | 198.150 / 0 | 2.1121e−5 | 0.006515 | 0.0004438 | 8.742e−5 |
+| circle TE s2 N64 | 273.594 / 0 | 1.6084e−5 | 0.005687 | 0.0004142 | 7.284e−5 |
 | ellipse TE s1 N32 | 125.726 / 0 | 1.8103e−5 | 0.006024 | 0.0002712 | 6.218e−5 |
 | ellipse TE s1 N64 | 353.458 / 0 | 1.2282e−5 | 0.004962 | 0.0002309 | 4.160e−5 |
 | ellipse TE s2 N32 | 157.514 / 0 | 1.8103e−5 | 0.006024 | 0.0002712 | 6.218e−5 |
+| ellipse TE s2 N64 | 226.226 / 0 | 1.2282e−5 | 0.004962 | 0.0002309 | 4.160e−5 |
 
 真幾何の相対面積/周長/距離上限はN32で3.0931e−6 / 1.5436e−6 / 2.8984e−6、
 N64で1.9348e−7 / 9.6694e−8 / 1.8137e−7。楕円は独立周長求積と保守的アフィン距離上限を用いる。
-各21ファイル、計126の完全snapshotは `accepted-six-artifact-hashes.json`。
+当初六例126ファイルのsnapshotを保持し、追加二例を含む八例168ファイルは
+`accepted-eight-artifact-hashes.json`。八例計24新FEM。
 N16の先行受入は再solveせず物理再構築/全hash付きで系列へ統合する予定。
-未終端N64尺度2/TMをこの六例の受入に含めない。
+TMはこの八例の受入に含めない。
 
 ## 非円形の未達を保持した追加細分と復旧
 
@@ -84,11 +87,28 @@ N16の先行受入は再solveせず物理再構築/全hash付きで系列へ統�
 存在しない次のBだけを実solveする。timeoutを理由に処理を再起動しない。
 部分出力が存在する未記録trialも拒否する。復旧handle70467の出力は `ellipse-tm-s2-recovery/`。
 
+## 再入角TMの混合細分（検証中）
+
+一様L5の幾何予算切れを実測したため、`extend_planar_curved_mixed_refinement.py` を別追加。
+元A L1〜L4の完全失敗prefixと、完了新FEM0の予算切れ証拠だけを受け付ける。
+元A L4を二分して `A-uniform4-bisection` を生成し、一般共通parent比較器でA L4との差を評価する。
+uniform専用比較器を混合細分へ流用しない。元二次境界/予算上限1e8/全物理gateを保持する。
+Aが通った場合だけ、別初期二分割Bのuniform3/4を実solveし、Bの二水準差とA/B差を別判定する。
+両native Domainが同じ場合は独立mesh受入を拒否する。
+
+新 `test_planar_curved_mixed_refinement` 3件は1.115秒PASS/終了0。
+異なる順序の細分meshで既知線形scalarから元E/H・全RFの不変量を確認し、
+不完全prefix/異なる物理/既に新FEMがある失敗の再実行を拒否する。
+製品401ファイル不変、独立解析場は比較器対照だけで、実FEM固有値を置換しない。
+尺度1/2の実検証handle50414/27391、出力 `corner-tm-s1-mixed/` / `corner-tm-s2-mixed/`。
+これはまだ物理受入ではない。失敗時も許容値を維持してrawを保持する。
+
 ## 実行入口と残件
 
 ```sh
 OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/validate_planar_curved_geometry_series.py --shape circle --polarization te --scale 1 --angular-segments 32 --out out/<new-unused-name>
 OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/extend_planar_curved_shapes.py --from-evidence out/<terminal-failed-shape> --out out/<new-unused-name>
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/extend_planar_curved_mixed_refinement.py --from-evidence out/<failed-corner-TM-A4> --budget-failure out/<zero-FEM-geometry-budget-failure> --out out/<new-unused-name>
 OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/recover_planar_curved_shapes.py --from-evidence out/<terminal-interrupted-prefix> --terminal-audit out/<observed-terminal-audit.json> --shape ellipse --polarization tm --scale 2 --out out/<new-unused-name>
 ```
 
