@@ -154,6 +154,8 @@ class PlanarCurvedSolverTests(unittest.TestCase):
             for edge,(owner,local) in enumerate(zip(d.boundary_cells,d.boundary_local_edges)):
                 p,q,mid=d.points_xy_m[d.boundary_nodes[edge]]
                 def integrand(t):
+                    # Represent the owner reference edge exactly in binary64.
+                    t=1-(1-t)
                     ref=[t,0.] if local==0 else [1-t,t] if local==1 else [0.,1-t]
                     fields=solution.fields_at_reference([owner],[ref])
                     derivative=(4*t-1)*(q-p)+(4-8*t)*(mid-p)

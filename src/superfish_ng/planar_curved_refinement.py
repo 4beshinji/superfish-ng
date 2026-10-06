@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Conforming restrictions of the original xy quadratic maps.
 
-Uniform red refinement and opposite-edge bisection with shared-edge closure.
+Uniform red refinement, opposite-edge bisection and boundary-cell red refinement
+with shared-edge closure.
 All coordinates come from exact rational parent evaluation, never a circle or
 ellipse projection. Binary64 restriction differences are bounded explicitly.
 """
@@ -59,12 +60,18 @@ class PlanarCurvedRefinement:
 
 
 def refine_planar_curved_domain(domain, *, pattern='uniform', max_geometry_boxes=None):
-    if not isinstance(domain,PlanarCurvedDomain) or pattern not in ('uniform','bisection'):
-        raise ValueError('curved planar refinement requires a PlanarCurvedDomain and uniform/bisection pattern')
+    if not isinstance(domain,PlanarCurvedDomain) or pattern not in ('uniform','bisection','boundary'):
+        raise ValueError('curved planar refinement requires a PlanarCurvedDomain and uniform/bisection/boundary pattern')
     budget=domain.max_geometry_boxes if max_geometry_boxes is None else max_geometry_boxes
     marked=set()
     if pattern=='bisection':
         marked={tuple(sorted(map(int,cell[1:3]))) for cell in domain.cell_nodes}
+    elif pattern=='boundary':
+        boundary_edges={tuple(sorted(map(int,edge[:2]))) for edge in domain.boundary_nodes}
+        for cell in domain.cell_nodes:
+            edges={tuple(sorted((int(cell[a]),int(cell[b])))) for a,b in _EDGES}
+            if edges & boundary_edges:
+                marked.update(edges)
     points=domain.points_xy_m.tolist()
     cache={}
     rows,cols,values=[],[],[]

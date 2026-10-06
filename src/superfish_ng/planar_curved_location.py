@@ -7,7 +7,7 @@ boundary contact. Newton residual tolerance never admits an exterior point.
 from fractions import Fraction
 import numpy as np
 from .planar_curved import PlanarCurvedDomain
-from .planar_curved_geometry import strict_array
+from .planar_curved_geometry import strict_array, _closed_reference_mask
 
 
 def _value(poly, t):
@@ -140,7 +140,7 @@ class PlanarCurvedLocator:
                 fraction = min(fraction, .95*(1-ref.sum())/step.sum())
             for _ in range(40):
                 candidate = ref+fraction*step
-                if np.any(candidate < 0) or candidate.sum() > 1:
+                if not _closed_reference_mask(candidate[None, :])[0]:
                     fraction *= .5
                     continue
                 trial = element.evaluate([candidate])['points_xy_m'][0]

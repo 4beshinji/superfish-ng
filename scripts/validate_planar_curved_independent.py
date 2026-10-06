@@ -36,6 +36,8 @@ def independent_integrals(solution, order=20):
     energy *= np.array([EPS0, MU0])[:, None]/4
     t, w = leggauss(order)
     t, w = (t+1)/2, w/2
+    from superfish_ng.planar_curved_geometry import _canonical_boundary_parameters
+    t = _canonical_boundary_parameters(t)
     wall = np.zeros(solution.case.modes)
     for cell, local in zip(solution.case.domain.boundary_cells, solution.case.domain.boundary_local_edges):
         if local == 0:

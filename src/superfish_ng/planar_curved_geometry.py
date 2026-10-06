@@ -7,15 +7,56 @@ here. Node order is vertices 0/1/2, then reference midpoints 01/12/20.
 """
 from dataclasses import dataclass
 from fractions import Fraction
+from functools import lru_cache
 import numpy as np
 from .high_order import basis_p2
 
 _GRADIENTS = np.array([[-1., -1.], [1., 0.], [0., 1.]])
 
 
+def _closed_reference_mask(ref):
+    """Classify supplied binary64 points, including sums rounded to one.
+
+    Only the rounded equality can conceal an exterior point. Interior Gauss
+    rules stay on the vectorized path; ambiguous sums use exact rational signs.
+    """
+    with np.errstate(over='ignore', invalid='ignore'):
+        total = ref.sum(axis=1)
+    inside = np.all((ref >= 0) & (ref <= 1), axis=1) & (total <= 1)
+    for index in np.flatnonzero(inside & (total == 1)):
+        inside[index] = sum(Fraction(float(v)) for v in ref[index]) <= 1
+    return inside
+
+
+def _canonical_boundary_parameters(parameters):
+    """Choose binary64 parameters with exactly representable complements.
+
+    Use the same parameters for owner reference points and physical wall data.
+    This changes a Gauss point by at most half an ulp of the unit interval.
+    """
+    return 1-(1-parameters)
+
+
 def immutable_array(values, dtype):
     array = np.asarray(values, dtype=dtype)
     return np.frombuffer(array.tobytes(), dtype=array.dtype).reshape(array.shape)
+
+
+def _reference_basis(ref):
+    basis = [basis_p2([1-x-y, x, y], _GRADIENTS) for x, y in ref]
+    return np.array([pair[0] for pair in basis]), np.array([pair[1] for pair in basis])
+
+
+@lru_cache(maxsize=32)
+def _cached_reference_basis(reference_bytes):
+    """Reuse exact reference tables only, after public input validation.
+
+    Callers limit each rule to 4096 points. No physical geometry, Jacobians,
+    fields or matrices are cached. Immutable storage prevents result mutation
+    from affecting later cells; evaluate returns a fresh public values array.
+    """
+    ref = np.frombuffer(reference_bytes, dtype=float).reshape(-1, 2)
+    return tuple(immutable_array(array, float) for array in _reference_basis(ref))
 
 
 def strict_array(values, columns, label, *, indices=False):
@@ -115,11 +156,12 @@ class PlanarQuadraticTriangle:
 
     def evaluate(self, reference_points):
         ref = strict_array(reference_points, 2, 'planar reference points')
-        if np.any(ref < 0) or np.any(ref.sum(axis=1) > 1):
+        if not np.all(_closed_reference_mask(ref)):
             raise ValueError('planar reference points must lie in the closed unit triangle')
-        basis = [basis_p2([1-x-y, x, y], _GRADIENTS) for x, y in ref]
-        values = np.array([pair[0] for pair in basis])
-        gradients = np.array([pair[1] for pair in basis])
+        if len(ref) <= 4096:
+            values, gradients = _cached_reference_basis(ref.tobytes())
+        else:
+            values, gradients = _reference_basis(ref)
         relative = self.points_xy_m-self.points_xy_m[0]
         jacobian = np.einsum('ia,qib->qab', relative, gradients)
         determinant = np.linalg.det(jacobian)
@@ -128,7 +170,7 @@ class PlanarQuadraticTriangle:
         physical = np.einsum('qia,qab->qib', gradients, np.linalg.inv(jacobian))
         return dict(points_xy_m=self.points_xy_m[0]+values@relative,
                     jacobian=jacobian, determinant_m2=determinant,
-                    basis_values=values, basis_gradients=physical)
+                    basis_values=values.copy(), basis_gradients=physical)
 
 
 @dataclass(frozen=True, eq=False)
@@ -216,6 +258,57 @@ def _adjacent(first, second, padding, budget, pair):
         _separated(tail, after, padding, budget, pair)
 
 
+def _overlapping_edge_boxes(bounds, budget, keys):
+    """Every closed padded AABB pair, once, with bounded deterministic search.
+
+    Self-node splits partition the unordered pair set exactly. Different nodes
+    can be skipped only when their full control-point boxes are disjoint. Charge
+    every node/leaf box comparison to the same budget used by the narrow phase.
+    In particular, touching boxes and zero-width boxes remain candidates.
+    """
+    low, high = bounds[:, 0], bounds[:, 1]
+    centers = low+(high-low)/2
+
+    def build(indices):
+        lo, hi = low[indices].min(axis=0), high[indices].max(axis=0)
+        if len(indices) <= 8:
+            return lo, hi, indices, None, None
+        axis = int(np.argmax(hi-lo))
+        order = indices[np.argsort(centers[indices, axis], kind='stable')]
+        middle = len(order)//2
+        return lo, hi, indices, build(order[:middle]), build(order[middle:])
+
+    if not len(bounds):
+        return
+    tree = build(np.arange(len(bounds)))
+    pending = [(tree, tree)]
+    while pending:
+        first, second = pending.pop()
+        alo, ahi, a, left_a, right_a = first
+        blo, bhi, b, left_b, right_b = second
+        if first is second:
+            if left_a is not None:
+                pending.extend(((right_a, right_a), (left_a, right_a), (left_a, left_a)))
+                continue
+            pairs = ((int(a[i]), int(a[j])) for i in range(len(a)) for j in range(i+1, len(a)))
+        else:
+            budget.consume((keys[int(a[0])], keys[int(b[0])]))
+            if np.any(ahi < blo) or np.any(bhi < alo):
+                continue
+            if left_a is not None and (left_b is None or len(a) >= len(b)):
+                pending.extend(((right_a, second), (left_a, second)))
+                continue
+            if left_b is not None:
+                pending.extend(((first, right_b), (first, left_b)))
+                continue
+            pairs = ((int(i), int(j)) for i in a for j in b)
+        for i, j in pairs:
+            i, j = min(i, j), max(i, j)
+            budget.consume((keys[i], keys[j]))
+            if np.all(high[i] >= low[j]) and np.all(high[j] >= low[i]):
+                yield i, j
+
+
 def check_planar_edges(points, incidence, maximum):
     """Every unique mesh edge, with one total budget for broad/narrow phases."""
     scale = float(np.max(np.ptp(points, axis=0)))
@@ -233,25 +326,18 @@ def check_planar_edges(points, incidence, maximum):
             raise ValueError(f'planar geometry cusp/reversal or UNVERIFIED: {keys[i]}')
     bounds = np.array([edge.bounds(padding) for edge in edges])
     budget = GeometryBudget(maximum)
-    active = []
     candidates = 0
-    for i in np.argsort(bounds[:, 0, 0], kind='stable'):
-        active = [j for j in active if bounds[j, 1, 0] >= bounds[i, 0, 0]]
-        for j in active:
-            pair = (keys[j], keys[i])
-            budget.consume(pair)
-            if bounds[i, 1, 1] < bounds[j, 0, 1] or bounds[j, 1, 1] < bounds[i, 0, 1]:
-                continue
-            candidates += 1
-            shared = set(keys[i]) & set(keys[j])
-            if shared:
-                node = next(iter(shared))
-                first = edges[j] if keys[j][1] == node else edges[j].reversed()
-                second = edges[i] if keys[i][0] == node else edges[i].reversed()
-                _adjacent(first, second, padding, budget, pair)
-            else:
-                _separated(edges[j], edges[i], padding, budget, pair)
-        active.append(int(i))
+    for j, i in _overlapping_edge_boxes(bounds, budget, keys):
+        pair = (keys[j], keys[i])
+        candidates += 1
+        shared = set(keys[i]) & set(keys[j])
+        if shared:
+            node = next(iter(shared))
+            first = edges[j] if keys[j][1] == node else edges[j].reversed()
+            second = edges[i] if keys[i][0] == node else edges[i].reversed()
+            _adjacent(first, second, padding, budget, pair)
+        else:
+            _separated(edges[j], edges[i], padding, budget, pair)
     return dict(status='PASS', edges=len(edges), overlapping_box_pairs=candidates,
                 boxes_checked=budget.checked, max_geometry_boxes=maximum,
                 roundoff_padding_m=padding*scale, scope='all unique xy quadratic edges')

@@ -11,7 +11,8 @@ from .constants import C0, TAU, EPS0, MU0
 from .planar import _eigenpairs, _restore
 from .planar_curved import PlanarCurvedCase
 from .planar_curved_fem import planar_curved_matrices
-from .planar_curved_geometry import strict_array, immutable_array
+from .planar_curved_geometry import (strict_array, immutable_array,
+    _closed_reference_mask, _canonical_boundary_parameters)
 
 
 def _reference_inputs(solution, cell_indices, reference_points):
@@ -23,7 +24,7 @@ def _reference_inputs(solution, cell_indices, reference_points):
         raise ValueError('curved planar field cell indices require a vector')
     cells = strict_array([[i] for i in indices], 1, 'curved planar cell indices', indices=True)[:, 0]
     ref = strict_array(reference_points, 2, 'curved planar field reference points')
-    if len(cells) != len(ref) or np.any(cells >= len(solution.space.cell_nodes)) or np.any(ref < 0) or np.any(ref.sum(axis=1) > 1):
+    if len(cells) != len(ref) or np.any(cells >= len(solution.space.cell_nodes)) or not np.all(_closed_reference_mask(ref)):
         raise ValueError('curved planar fields require valid cells and points in the closed reference triangle')
     return cells, ref
 
@@ -39,6 +40,25 @@ def _components(scalar, derivative, omega, polarization):
         fields.update(Hz_real_A_per_m=scalar, Ex_quadrature_V_per_m=-derivative[..., 1]/(omega*EPS0),
                       Ey_quadrature_V_per_m=derivative[..., 0]/(omega*EPS0))
     return fields
+
+
+def _cell_point_groups(cells):
+    """Group original point indices once, keeping each owner's input order.
+
+    Quadrature batches normally already have ordered owners; those need only
+    contiguous slices. Arbitrary batches use a stable sort, rather than one
+    complete point-vector mask per owner. No field arithmetic is reordered
+    within an owner and assignments retain the caller's point order.
+    """
+    if not len(cells):
+        return
+    ordered = bool(np.all(cells[1:] >= cells[:-1]))
+    permutation = None if ordered else np.argsort(cells, kind='stable')
+    owners = cells if ordered else cells[permutation]
+    boundaries = np.concatenate(([0], np.flatnonzero(owners[1:] != owners[:-1])+1, [len(cells)]))
+    for start, stop in zip(boundaries[:-1], boundaries[1:]):
+        selected = slice(start, stop) if ordered else permutation[start:stop]
+        yield int(owners[start]), selected
 
 
 @dataclass(frozen=True)
@@ -60,8 +80,7 @@ class PlanarCurvedSolution:
             raise ValueError('curved planar mode index is out of range')
         cells, ref = _reference_inputs(self, cell_indices, reference_points)
         scalar, derivative, points = np.empty(len(cells)), np.empty((len(cells), 2)), np.empty_like(ref)
-        for cell in np.unique(cells):
-            selected = np.flatnonzero(cells == cell)
+        for cell, selected in _cell_point_groups(cells):
             mapped = self.case.domain.elements[cell].evaluate(ref[selected])
             coefficient = self.coefficients[self.space.cell_nodes[cell], mode]
             scalar[selected] = mapped['basis_values']@coefficient
@@ -81,8 +100,7 @@ class PlanarCurvedSolution:
         cells, ref = _reference_inputs(self, cell_indices, reference_points)
         scalar = np.empty((len(cells), self.case.modes))
         derivative = np.empty((len(cells), self.case.modes, 2))
-        for cell in np.unique(cells):
-            selected = np.flatnonzero(cells == cell)
+        for cell, selected in _cell_point_groups(cells):
             mapped = self.case.domain.elements[cell].evaluate(ref[selected])
             coefficient = self.coefficients[self.space.cell_nodes[cell]]
             scalar[selected] = mapped['basis_values']@coefficient
@@ -157,6 +175,7 @@ def planar_curved_quantities(solution, mode=0):
         ue, um = gradient/(4*omega**2*EPS0), MU0*scalar/4
     nodes, weights = np.polynomial.legendre.leggauss(case.wall_quadrature_order)
     nodes, weights = (nodes+1)/2, weights/2
+    nodes = _canonical_boundary_parameters(nodes)
     domain = case.domain
     wall = 0.
     for edge, (cell, local) in enumerate(zip(domain.boundary_cells, domain.boundary_local_edges)):

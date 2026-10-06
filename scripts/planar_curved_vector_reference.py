@@ -8,7 +8,7 @@ scalar amplitude is changed. Kept outside production; compare with its public
 import numpy as np
 from dataclasses import fields
 from superfish_ng.constants import EPS0, MU0, TAU
-from superfish_ng.planar_curved_geometry import strict_array
+from superfish_ng.planar_curved_geometry import strict_array, _closed_reference_mask
 from superfish_ng.planar_curved_solver import PlanarCurvedSolution, _reference_inputs
 
 
@@ -16,7 +16,7 @@ def original_vectors(solution, cell, refs):
     if isinstance(cell, bool) or not isinstance(cell, (int, np.integer)) or not 0 <= cell < len(solution.space.cell_nodes):
         raise ValueError('vector reference requires an original cell index')
     refs = strict_array(refs, 2, 'vector reference points')
-    if np.any(refs < 0) or np.any(refs.sum(axis=1) > 1):
+    if not np.all(_closed_reference_mask(refs)):
         raise ValueError('vector reference points must be in the closed reference triangle')
     bary = np.column_stack((1-refs.sum(axis=1), refs))
     gradient = np.array([[-1., -1.], [1., 0.], [0., 1.]])
