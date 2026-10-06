@@ -301,3 +301,27 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-geometry-bvh/src:/tmp/su
 元399製品不変・geometry/refinement二変更を明示した実検査99269は、A3/A4/B4物理再構築と
 全係数/周波数bitwise・全RF完全一致、元A受入再確認の後、一回の新境界Bを解く。
 最大予算/512ε/全gateは不変、現時点では実検証中。成功を先取りせず、尺度2/全P07も残す。
+
+
+P07条件照合で、[既存strict参照所属の反例](PLANAR_CURVED_REFERENCE_CACHE.md#p07完了前に是正するstrict参照所属)を発見。
+0.5とその隣の0.5より大きいbinary64の正確な和は1超だが、float和1で元APIが受理する。
+新FEM0の元実装reproducerを保持し、P07完了前の修正条件に追加する。
+独立cache branchは参照表だけの重複計算を省き、全mapped/K/M bitwise保存と単要素14〜17倍を確認した。
+25種類の分割unit成功と保存済みA4の物理再構築78576を分けて記録する。
+新branchは既存三checkoutの生存ソースを変更せず、main未統合/P07未受入。
+
+
+## 実uniform角TM A5と参照表再利用の終端（2026-10-07）
+
+分離A5/34914は3011.913秒PASS/終了0、新実FEM1。A4→A5対象三群でf差1.277928e−6、
+E差1.662977e−5、H差1.598729e−3、全RF差3.813018e−3。
+旧A4の全RF差0.703815%未達を保持し、新実A5で0.381302%へ減少して原0.5%gateを満たした。
+完全band/独立energy・壁差最大2.570e−11、元map丸め1.875377e−14もPASS。
+400旧製品不変・geometry一変更、前後401分離製品/使用9validatorと準備/元A4全artifactは不変。
+全11artifactのsnapshotと別終端auditを同親に保存。独立B/尺度2/全P07の受入へ拡張しない。
+
+参照表再利用/78576も288.568秒PASS/終了0、新FEM0。元楕円TM A4の全chart/native/K/M/lowest spectrumを
+物理再構築し、全係数/周波数bitwiseと全RF/metadata完全一致、独立積分最大1.037e−13を確認した。
+全7artifact snapshotと終端auditを保持。性能条件と旧399製品不変・geometry/refinement二変更を別記する。
+cache branch単独のsource固定を解除し、次のP07修正は既存のstrict参照所属。
+この完了を元一ULP外参照受理の解消や全P07完了とはしない。他三checkoutの生存源は変更しない。

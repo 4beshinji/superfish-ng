@@ -79,9 +79,9 @@ main製品401は不変、未統合。別実検査handle27869、出力 `out/p07-p
 元A4の全係数/周波数bitwise/全RF metadata一致と独立energy/壁≤6.968e−12を確認。
 分離実測27869は終了0、実L5の98304cell/147968edge・7452020box検査/同じ1e8予算でPASS。
 元親map丸め1.875377e−14、解析面積/周長もPASS。新FEM0。
-次の実uniform A5 TMをhandle34914へ開始、出力同親corner-tm-s1-uniform-A5 / solve-corner-A5.log。
+実uniform A5 TMのhandle34914は終了0/3011.913秒PASS、出力同親corner-tm-s1-uniform-A5 / solve-corner-A5.log。
 400旧製品不変/geometry一ファイル変更、全prepared/元A4 artifactを照合して新実FEM一回を検証する。
-main401は不変、branch401/使用検証器は34914終端まで固定。L5のf/E/H/RF成功とは扱わない。
+main401は不変、34914の源固定は終了し、branch401/使用検証器は残る43214とN64四handleの終端まで固定。A4→A5対象f/E/H/全RF差は全PASS、独立B/尺度2/全P07は未受入。
 分離保存B5復旧43214も開始、出力同親corner-te-s2-saved-B5-recovery / recover-corner-te-s2.log。
 旧35422は終了143、cause不明、B5全rawが保存済みなので再FEMせず物理再構築/比較だけで復旧する。
 N64 TMの25663/5330/19527は1e8 geometry予算切れで終了1、各L0〜L3保存済み。別終端audit保持。
@@ -112,6 +112,20 @@ main401も残る旧四handleの終端まで固定。P07/全goal ACTIVE、N64実�
 旧399製品不変・geometry/refinement二変更、全元8/9/10validator、実終端、元係数/全RF完全一致を必須とする。
 三保存解を物理再構築し、元Aの受入を再確認後、一回の新境界B FEM/元E/H/全RFを検査する。
 branch401/使用10validatorは終端まで固定、main/bvh branch源を変更しない。RF/P07成功は未確認。
+
+
+独立性能branch `p07-reference-basis-cache`、worktree `/tmp/superfish-ng-p07-reference-basis-cache`。
+[参照表のbitwise保存・実測・strict残件](../PLANAR_CURVED_REFERENCE_CACHE.md)。
+参照basisだけを最大32表/各4096点まで再利用、実J/K/M/場/係数/RFは再計算する。
+新3/旧直接利用22の25種類は分割成功。初回24PASS/既存一ULP所属への期待1FAILを保持し、
+cache互換範囲のその一件だけ0.003秒PASS（68737）。元APIの一ULP外参照受理は別reproducerで確認した。
+単要素order8/12/16実測は14〜17倍、全mapped配列/K/M bitwise一致。
+保存済みellipse TM A4の実物理再構築78576は終了0/288.568秒PASS、新FEM0、出力 `out/p07-planar-reference-basis-cache-20261007/results/`。
+前後branch401/使用11コード不変、全元係数/周波数bitwise・全RF metadata完全一致、独立積分最大1.037e−13。
+cache単独source固定を解除し、次はstrict参照所属を是正する。main/BVH/boundaryの生存源固定は継続。
+既存strict参照の和丸め不備はP07完了前に是正する必要があり、性能成功から解消済みとはしない。
+壁参照/元場/locatorの厳密閉所属を整合し、内部boundary表現と実壁RFを別検証する。
+全goal/P07 ACTIVE、P08/P09と全原要件を維持。
 
 ### 先行実行の履歴
 
