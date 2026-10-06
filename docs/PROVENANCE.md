@@ -4325,3 +4325,5 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 2026-10-07 P09 [固定曲線有限guard](PLANAR_CURVED_SPECTRAL_RESOLUTION.md)：自作xy P2制限/transfer/assembler/全被覆を再利用し、Cartesian面積shifted inverseの残差と尺度則を独立導出。TE静的核/TM PECを保持。別dense generalized eighと二尺度/回転・予算停止、新4＋関連6PASS。元405製品不変、新外部資料/依存/legacy参照なし。近傍有限スペクトルだけでrank/連続誤差/identityを保証しない。
 
 2026-10-07 P09 [元E/H追跡](PLANAR_CURVED_TRACKING.md)：自作の数学的割当/ID集合merge/Gram圧縮を再利用し、xy E/Hと固定二次guardを独立に接続。実TE楕円反射parity/rank交換、円対称doublet、90度回転f一致/E不一致の停止、全RF/元配列不変を対照とした。新8＋旧14分割PASS、元406製品不変、新外部資料/依存/legacy参照なし。個別回復/実調整/所有操作は未受入。
+
+2026-10-07 P09 [個別ID回復核](PLANAR_CURVED_IDENTITY_RECOVERY.md)：自作中立ID集合評価を再利用し、元曲線xy E/Hの継承/過去anchor比較を再計算。実反射偶奇・rank交換/回復と後続、全元byte/RF、真縮退/guard/集合/予算停止、新4＋関連6PASS。元407製品不変、新外部資料/依存/legacy参照なし。所有anchor束縛と実調整/再開/GUIは継続。

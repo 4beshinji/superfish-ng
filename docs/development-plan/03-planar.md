@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **個別回復leaf（2026-10-07）**：[完全元場による過去anchor回復核](../PLANAR_CURVED_IDENTITY_RECOVERY.md)。新4＋関連6の10件PASS、元407製品不変。所有snapshotへのanchor束縛と調整/再開/GUIは継続。
+
 - **追跡核leaf（2026-10-07）**：[元E/H/有限guardの専用二状態API](../PLANAR_CURVED_TRACKING.md)。新8＋旧14の分割22件PASS、実rank交換/反射parity・真doublet/全RF確認、元406製品不変。回復/実調整/所有再開/GUIを残しIN_PROGRESS。
 
 - **有限guard leaf（2026-10-07）**：[固定二次境界の細分スペクトル](../PLANAR_CURVED_SPECTRAL_RESOLUTION.md)。新4＋関連6の10件PASS、元405製品不変。rank/identityの受入は後続。

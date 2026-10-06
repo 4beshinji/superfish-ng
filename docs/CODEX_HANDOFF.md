@@ -1,5 +1,7 @@
 現行の作業順・依存待ち・受入証拠・実行中処理は[現行入口](development-plan/CURRENT.md)を参照する。以下の追記は履歴であり、古い「次は」「生存中」を現在の指示/状態として扱わない。
 
+2026-10-07 P09進行：[専用個別ID回復核](PLANAR_CURVED_IDENTITY_RECOVERY.md)。継承PASS/個別未確定に限り過去元E/Hを再比較し、全ID集合整合まで回復fはnull。実楕円→円→楕円の反射parity/rank交換と後続継承、全元byte/RF、新4＋関連6の10件26.658秒PASS。元407製品不変。所有過去anchor束縛・実調整/再開/GUIと全123カードgoalは継続。
+
 2026-10-07 P09進行：[元E/H追跡核](PLANAR_CURVED_TRACKING.md)。E/H独立割当・符号/ID集合一致・有限上位guardを接続。新8＋旧14、20＋追加1＋追加1の22件PASS。実TE楕円の反射parity付きrank交換/全RF、真doublet、周波数一致でもE/H不一致の拒否を確認。元406製品不変。P09/全123カードgoal未完、次は個別ID回復・形状法則/実調整と所有再開/GUI。
 
 2026-10-07 P09進行：[固定二次境界の有限スペクトルguard](PLANAR_CURVED_SPECTRAL_RESOLUTION.md)。元P2制限/全被覆とnodal transferからshifted inverse区間を診断。独立TE/TM dense spectrum・二尺度/回転・細分前の全予算停止、新4＋関連6の10件3.689秒PASS。元405製品不変、新guard1モジュール。P09/全goal継続、次は元E/H両割当＋有限群/guard越境の追跡核。
