@@ -499,3 +499,15 @@ boundary branchの数値handleは全終了。統合kernelへのV2 source bridge�
 新FEM0、全元chart/native/K/M/最低帯・元配列bytes・全RF metadata・全六TM壁traceを検査する。
 cache branch全401と使用10validatorを両実終端まで固定する。主源38783も固定継続。
 円半径.02 TM/source bridge/主統合/全条件監査が残り、P07 IN_PROGRESSと全123カードgoalを維持する。
+
+## 終了済み物理gateの横断照合（2026-10-07）
+
+[元条件別監査](../PLANAR_CURVED_ACCEPTANCE.md)の既存円四case/非円形八case/求積四case/共変六case/幾何八系列を
+元数値限界・全対象/guard rank・全RF schema/理由付きN/A・元map boundで照合した。
+読取report/source manifest前後hashと監査コードhashを
+`out/p07-planar-exact-reference-20261007/completed-physical-gates-bound-inputs.json` に保存。
+report形式差による監査側三KeyErrorは元logを保持して明示対応し、製品/raw/gateを変更していない。
+新FEM/物理再構築/unitは全0。元38783と角TM bridge16323/8632は実行中、source固定を継続する。
+未終端/主統合を受入へ数えず、P07 IN_PROGRESSを維持する。
+[P08実装準備](../PLANAR_CURVED_INTEGRATION_PLAN.md)でnative/Project/CLI-worker/Study/GUIの直接利用先と
+独立受入・旧版再生の順序を確認した。コード読取のみでP08実装/受入ではない。全123カードgoalを継続する。

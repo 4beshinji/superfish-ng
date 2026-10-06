@@ -28,6 +28,17 @@ P07 IN_PROGRESS、全123カードgoal ACTIVE。各日付付き専用文書を局
 
 ## 完了前の具体条件
 
+2026-10-07の横断照合では、既存reportの円絶対/固定最終二水準四case、非円形独立A/B八case、
+求積四case、粗い元Domainの共変六case、有限幾何八系列を元数値gateで確認した。
+全対象群/guardのrank被覆、全RF schema/理由付きnull・peak/J/m、独立20次積分、元map boundを別々に検査する。
+Boolean PASSだけを根拠にせずf/E/H/RFの数値と元群数を確認した。
+出力はignored `out/p07-planar-exact-reference-20261007/completed-physical-gates-bound-inputs.json`。
+監査コードhashと読取report/source manifestの全hashを前後照合し、入力を結び付ける。
+これは元受入rawの物理再構築や全P07受入の再実行ではなく、新FEM/物理再構築/unitは全0。
+初回監査のreport形式差（coarse/fine RFとfirst/second RF、restriction boundとchart bound）による
+KeyError三logを保持し、元データ/許容値を変えず形式別の明示照合へ修正した。
+下記未確認条件はこの横断照合でも未完了のまま残る。
+
 1. 元円独立38783の半径.02 TMを含む全四caseの実終端と完全report/source/rawを受入する。
 2. 角TM二尺度の新境界Bは最後二水準/独立A対B/完全guard/独立積分を原gateで受入済み。全11artifact/401源/10validatorの終端snapshotを最終照合へ使う。
 3. 統合予定kernelで元accepted noncircleの全native/K/M/最低帯・係数/周波数bitwise・全RF metadataと
