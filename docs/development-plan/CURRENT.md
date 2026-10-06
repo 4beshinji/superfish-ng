@@ -75,6 +75,9 @@ corner TE s1=68744 / TM s1=35844 / TE s2=27629 / TM s2=70344。
 独立FEM尺度・回転・平行移動の新3unitは0.083秒PASS。専用session71524を開始、
 出力同親 `covariance/` / `covariance.log`、401製品と使用7検証器をhash固定。
 全10handleの終端を観測し、各受入と原P07受入を分ける。
+終端：楕円TE尺度1/25516は351.293秒PASS（5実FEM、A L3/B L3の全gate、401製品不変）。
+共変性71524は11.919秒PASS（円/楕円/角両偏波12実FEM、全場/RF尺度則最大5.346e−13）。
+現在は円mesh38783と非円形の残7handleが継続中。終了した25516/71524を再起動しない。
 [仕様・分割検査・失敗履歴](../PLANAR_CURVED_INDEPENDENT.md)。
 sessionを `write_stdin` で観測し、timeoutを理由に再起動しない。P07/全goalは未完了。
 

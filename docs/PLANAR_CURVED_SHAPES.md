@@ -66,6 +66,20 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv
 新外部資料・依存・legacy参照なし。独立pair/面積/可積分性は既存のMaxwell/弱形式から導出。
 seed/full validate/hosted CIは未実行。native/操作はP08、追跡/調整はP09の別受入。
 
+### 終端した部分受入
+
+楕円TE尺度1/session25516は351.293秒PASS/終了0。元5FEMを保持し、
+A L2→L3、B L2→L3、A L3対B L3の全対象群/全RF/独立area-wallがPASS。
+401製品と使用8検証器は不変。BのE最大差0.999808%は1%基準内、許容差を変更しない。
+
+| 比較 | 最大f差 | 最大E L2差 | 最大H L2差 | 最大全RF差 |
+| --- | ---: | ---: | ---: | ---: |
+| A L2→L3 | 3.607015e−6 | 2.686892e−3 | 7.338870e−5 | 1.296093e−5 |
+| B L2→L3 | 4.984624e−5 | 9.998081e−3 | 5.235744e−4 | 1.922774e−4 |
+| A L3対B L3 | 4.197011e−6 | 2.921948e−3 | 6.349375e−5 | 1.632441e−5 |
+
+この1caseの有限差を真楕円の絶対誤差上界や全P07受入とはしない。他7caseは計算継続。
+
 ## 独立FEMの尺度・回転・平行移動
 
 `validate_planar_curved_covariance.py` は円/楕円/graded L字の粗い初期Domainを使い、
@@ -80,7 +94,9 @@ seed/full validate/hosted CIは未実行。native/操作はP08、追跡/調整�
 新3unitは0.083秒PASS/終了0。独立に解いた曲線patchの全場/全RF尺度則と、
 frequency/amplitude差を整合で消さないこと、不正群/非proper回転/不完全geometryを拒否することを確認。
 専用session71524、出力 `out/p07-planar-curved-independent-20261007/covariance/`、
-logは同親 `covariance.log`、使用7検証器と401製品をhash固定して実行中。
+logは同親 `covariance.log`。11.919秒PASS/終了0、12実FEMを保存、
+使用7検証器と401製品hash不変。円/楕円/L字の両偏波、全正帯の群で全gateがPASS、
+全vector/RF尺度則の最大相対差5.346e−13。粗い離散形式の共変性に限定する。
 
 ```sh
 OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -m unittest -v test_planar_curved_covariance_reference
