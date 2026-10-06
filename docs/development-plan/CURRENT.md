@@ -103,6 +103,16 @@ N64円TM尺度2/66415も終了1/2501.715秒、L0〜L3保存、L4幾何予算1e8�
 branch401/共用11validator/新driverを34914/43214/上の四handleの終端まで固定する。
 main401も残る旧四handleの終端まで固定。P07/全goal ACTIVE、N64実受入は未確認。
 
+
+独立追加branch `p07-boundary-refinement`、worktree `/tmp/superfish-ng-p07-boundary-refinement`。
+元楕円TM B4の壁RF未達と一様/二分の丸め終端に対し、明示的な境界cell適合細分を実装した。
+[元map/energy不変量と実検証範囲](../PLANAR_CURVED_BOUNDARY_REFINEMENT.md)。
+新3/旧直接利用10の計13unitは8.048秒PASS/59598終了0、変更前の独立一件ERRORを保持。
+新実handle99269、出力 `out/p07-planar-boundary-refinement-20261007/ellipse-tm-s1-boundary/` と同名log。
+旧399製品不変・geometry/refinement二変更、全元8/9/10validator、実終端、元係数/全RF完全一致を必須とする。
+三保存解を物理再構築し、元Aの受入を再確認後、一回の新境界B FEM/元E/H/全RFを検査する。
+branch401/使用10validatorは終端まで固定、main/bvh branch源を変更しない。RF/P07成功は未確認。
+
 ### 先行実行の履歴
 
 2026-10-07 P07：専用比較器 `scripts/planar_curved_mesh_reference.py` と

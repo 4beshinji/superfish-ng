@@ -293,3 +293,11 @@ L3→L4元E/H/全RF、完全guard、円解析全対象群または楕円完全ba
 ```sh
 OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-geometry-bvh/src:/tmp/superfish-ng-p07-geometry-bvh/scripts UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -u out/p07-planar-geometry-bvh-20261007/continue-N64-TM.py --shape circle --scale 1
 ```
+
+
+丸め終端への次のbounded対応は別branchの[適合境界細分](PLANAR_CURVED_BOUNDARY_REFINEMENT.md)。
+新 `boundary` patternの元map/全有理被覆・粗K/M保存・内部cell保持を新3/旧直接利用10unitで確認し、
+13件8.048秒PASS/59598終了0。main/BVH branchの生存中401源を変更せず、別checkoutで進める。
+元399製品不変・geometry/refinement二変更を明示した実検査99269は、A3/A4/B4物理再構築と
+全係数/周波数bitwise・全RF完全一致、元A受入再確認の後、一回の新境界Bを解く。
+最大予算/512ε/全gateは不変、現時点では実検証中。成功を先取りせず、尺度2/全P07も残す。
