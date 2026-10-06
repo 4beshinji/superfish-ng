@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **有限guard leaf（2026-10-07）**：[固定二次境界の細分スペクトル](../PLANAR_CURVED_SPECTRAL_RESOLUTION.md)。新4＋関連6の10件PASS、元405製品不変。rank/identityの受入は後続。
+
 - **元場leaf（2026-10-07）**：[E/H自己・交差Gram](../PLANAR_CURVED_FIELD_COMPARISON.md)。新8＋関連10の分割18件PASS、元404製品不変。元場内積だけでidentity/周波数gate/調整を受入済みとしない。
 
 - **進行（2026-10-07）**：[元二次写像の比較分割](../PLANAR_CURVED_COMPARISON.md)。新7＋関連12の19件PASS、元403製品不変。幾何leafのみ受入、元E/H・個別ID/実調整/最終細分・所有再開/GUIを残しIN_PROGRESS。

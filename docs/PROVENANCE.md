@@ -4321,3 +4321,5 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 2026-10-07 P09 [参照比較分割](PLANAR_CURVED_COMPARISON.md)：既存自作Fraction交差/二次係数/制限評価だけを数学として再利用し、xy専用の全被覆/PEC/mid/局所丸めと実native面積を実装。独立多項式写像の面積/一次moment/正逆対応、7新＋12関連PASS。元403製品不変、新1モジュール。新外部資料・依存・legacy参照なし。曲線場/identity/調整/所有操作は後続。
 
 2026-10-07 P09 [元E/H内積](PLANAR_CURVED_FIELD_COMPARISON.md)：自作P2求積/元12場/strict復元/完全参照分割を使い、xy専用の実面積密度内積を実装。元K/M energyと相似/振幅/符号・独立定数場を対照とした。strided導出診断の過剰な完全一致だけを修正し、物理gate不変。新8＋関連10分割PASS、元404製品不変、新外部資料/依存/legacy参照なし。identity/調整/所有操作は継続。
+
+2026-10-07 P09 [固定曲線有限guard](PLANAR_CURVED_SPECTRAL_RESOLUTION.md)：自作xy P2制限/transfer/assembler/全被覆を再利用し、Cartesian面積shifted inverseの残差と尺度則を独立導出。TE静的核/TM PECを保持。別dense generalized eighと二尺度/回転・予算停止、新4＋関連6PASS。元405製品不変、新外部資料/依存/legacy参照なし。近傍有限スペクトルだけでrank/連続誤差/identityを保証しない。
