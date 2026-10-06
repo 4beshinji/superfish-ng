@@ -6,7 +6,9 @@
 P08の[版3専用native](PLANAR_CURVED_NATIVE.md)を実装、新7件＋旧版直接利用5件1.684秒PASS。
 [共通Case/Project/CLI-worker/Study/元場表示](PLANAR_CURVED_OPERATIONS.md)も実装し、新9件分割受入、
 直接利用先48件32.964秒PASS。曲線実workerの中止/終端/新job再起動・元byte importも確認。
-次は実ブラウザーの曲線入力/保存再生・サーバー再起動と旧版操作。P08はIN_PROGRESS。
+[P08全条件受入](PLANAR_CURVED_OPERATION_ACCEPTANCE.md)：実Chrome15＋旧13＋別server7、計35項目PASS。
+元全native/全RF/12場・曲線Study/中止/新job/別server再生、全hash/元FAIL保全を確認。
+全job/両server終端、Chrome slot 0、生存handleなし。P08 DONE、次はP09曲線比較/追跡/調整・所有再開。
 P09/原互換要件/全123カードgoalは継続する。
 
 2026-09-29 DEV-BROWSER-01完了：[GUI検証のブラウザー資源管理](BROWSER_RESOURCES.md)。63本の起動/停止を共通化し、並列2・30分・一時512 MiB監視、例外/親SIGKILLの回収を実装。対象15件・実GUI7項目・静的ギャラリーPASS、所有slot/プロセス残存0、検証サーバー終了0。製品src変更なし。開発計画の物理カードとは独立した利用者指定の基盤修正。

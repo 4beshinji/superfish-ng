@@ -13,6 +13,10 @@ P08の先行条件が成立したため、下記の版付きnative保存・全�
 新9件は分割受入、関連48件32.964秒PASS。実workerの中止/終端/新job再起動と元byte importを確認。
 次は実ブラウザー曲線入力・保存再生・サーバー再起動と旧版操作、P08全条件監査。
 
+全条件受入追記：[P08 DONE](PLANAR_CURVED_OPERATION_ACCEPTANCE.md)。実Chrome35項目と
+全元native/全RF/12場・別server再生/実終端・全hash監査を受入。以下の未実装記述は着手前の読取履歴。
+次はP09の曲線比較/追跡/調整・所有再開。全123カードgoalは継続する。
+
 ## 現行コードで必要な変更
 
 専用`PlanarCurvedCase`は既に`superfish_ng_planar_case` schema_version 3を厳密に読込み、

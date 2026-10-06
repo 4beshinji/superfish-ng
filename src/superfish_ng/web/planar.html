@@ -12,6 +12,7 @@
 <label>偏波<select id="polarization"><option value="te">TE — 縦磁場Hz</option><option value="tm">TM — 縦電場Ez</option></select></label>
 <div id="rectangle"><label>幅 [<span class="length-unit">mm</span>]<input id="width" type="number" step="any"></label><label>高さ [<span class="length-unit">mm</span>]<input id="height" type="number" step="any"></label><label>x分割数<input id="nx" type="number" min="2" step="1"></label><label>y分割数<input id="ny" type="number" min="2" step="1"></label></div>
 <p id="polygon-note" hidden>多角形の元メッシュを保持します。形状や節点の変更は下のProject JSONで行えます。</p>
+<p id="curved-note" hidden>曲線形状を保持し、二次要素で計算します。形状の変更は下のProject JSONで行えます。</p>
 <label>要素次数<select id="order"><option value="1">P1</option><option value="2">P2</option></select></label>
 <label>モード数<input id="modes" type="number" min="1" step="1"></label>
 <label>単位長エネルギー U′ [J/m]<input id="energy" type="number" step="any"></label>

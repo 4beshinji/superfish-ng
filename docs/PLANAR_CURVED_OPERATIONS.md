@@ -4,6 +4,9 @@
 共通入口の実装と限定操作検査を受入れる。実ブラウザーの曲線フォーム・保存往復・
 サーバー再起動と旧版操作の受入は残り、GUI APIの成功でP08をDONEにしない。
 
+受入追記：[実Chromeと別server再生の全条件監査](PLANAR_CURVED_OPERATION_ACCEPTANCE.md)は
+35項目PASS/全hash不変/全handle終端。P08 DONE。下記の限定操作検査と実ブラウザー受入を区別する。
+
 ## 接続と独立契約
 
 `planar_case_from_dict`と`PlanarProject`は版3を専用曲線parserへ明示dispatchする。

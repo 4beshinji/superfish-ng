@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07受入済み、P08共通入口/CLI-worker/Study/元場表示を実装し実ブラウザーへ継続。
+更新：2026-10-07、P07/P08全条件受入済み、次はP09の曲線比較/追跡/調整・所有再開。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -14,7 +14,7 @@
 
 ## 次の着手
 
-**[P08：平面曲線native・Project・GUIを接続する](03-planar.md#p08)**。先行P07はDONE。
+**[P09：平面曲線の比較・調整を接続する](03-planar.md#p09)**。先行P04/P08はDONE。
 [P07全条件監査](../PLANAR_CURVED_ACCEPTANCE.md)で二尺度円絶対/固定最終差/独立A/B、求積、
 八幾何系列、楕円・再入角両偏波、共変則、五source bridge/三補足と主source統合を受入した。
 元失敗・全raw/source/archiveを保持し、最終主401は受入kernelと完全一致、元主源から四変更/397不変。
@@ -22,11 +22,15 @@
 新7件＋旧版1/2直接利用5件は終了0/1.684秒PASS。曲線/共有P2/seedの数値源は変更していない。
 続く[共通Case/Project/CLI-worker/Study/表示](../PLANAR_CURVED_OPERATIONS.md)を実装。
 新9件は7件＋修正2件の分割受入、直接利用先48件32.964秒PASS。実worker中止/終端/新job再起動・元byte importも確認。
-次は[P08接続計画](../PLANAR_CURVED_INTEGRATION_PLAN.md)の実ブラウザー曲線入力・保存再生・サーバー再起動と旧版操作。
+続く[P08全条件監査](../PLANAR_CURVED_OPERATION_ACCEPTANCE.md)で、実Chrome15＋旧13＋新server7、計35項目を受入した。
+全元五native/全RF/12場、Project往復/元byte import、曲線Study・中止/新job/別server再生がPASS。
+専用数学は不変、全403実装hashも各browser実行中不変、外部要求0。全job/両server終端、Chrome slot 0。
+元FAIL/成功・全rawを保持し、新FEM0の最終hash監査をPASS。P08をDONEとする。
 Project/dispatcher/CLI-worker/Study/GUIと実中止/再起動/旧版再生はP08の必須範囲。
-APIの限定受入だけでは実ブラウザー操作の全受入へ数えない。
-P09の比較/追跡/調整・所有再開も残る。P04/P05/P06/P07はDONE、原互換親P02/D02とH17/H18、
-P08/P09と原要件を含む全123カードgoalは未完了。
+上記APIと実ブラウザー・全条件監査を別に受入し、限定unitだけで完了へ数えていない。
+次の有界変更はP09の元曲線写像・係数を保つ比較空間と独立E/H/RF差。不変量を先に再現し、
+周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
+P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
 P03の新7/既存25件、計32件は1.871秒PASS（終了0）。
 範囲・初回テスト入力エラー・解析不変量・コマンドは上記専用文書に記録。

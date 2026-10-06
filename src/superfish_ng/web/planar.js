@@ -23,7 +23,8 @@ function loadProject(p){
  project=structuredClone(p);const c=p.case;unit=p.display_length_unit;$('unit').value=unit;
  $('name').value=c.name;$('polarization').value=c.model.polarization;$('order').value=c.mesh.element_order;$('modes').value=c.modes;
  $('energy').value=c.rf.stored_energy_j_per_m;$('conductivity').value=c.rf.conductivity_s_per_m;
- $('rectangle').hidden=c.schema_version!==1;$('polygon-note').hidden=c.schema_version===1;
+ $('rectangle').hidden=c.schema_version!==1;$('polygon-note').hidden=c.schema_version!==2;
+ $('curved-note').hidden=c.schema_version!==3;$('order').disabled=c.schema_version===3;
  if(c.schema_version===1){const scale=unit==='mm'?1000:1;$('width').value=c.geometry.width_m*scale;$('height').value=c.geometry.height_m*scale;$('nx').value=c.mesh.nx;$('ny').value=c.mesh.ny;}
  document.querySelectorAll('.length-unit').forEach(el=>el.textContent=unit);
  $('document').value=JSON.stringify(p,null,2);$('dirty').textContent='入力を復元済み';

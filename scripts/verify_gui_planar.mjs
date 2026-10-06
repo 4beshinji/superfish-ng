@@ -228,7 +228,7 @@ try {
   await click('#new');await wait('project.case.schema_version===1 && document.querySelector("#nx").value==="16"');await fill('#nx',300);await fill('#ny',300);await click('#start');await wait('document.querySelector("#jobs .job button")?.textContent==="中止"');
   report.cancelled_job=await ev('document.querySelector("#jobs .job").dataset.job');await click('#jobs .job button');await wait('document.querySelector("#jobs .job strong")?.textContent.startsWith("cancelled")',30000);
   report.checks.push({operation:'actual planar worker cancellation',passed:true});
-  await click('nav a');await wait('document.querySelector("#shape polygon")');
+  await click('nav a[href="/"]');await wait('document.querySelector("#shape polygon")');
   await check('planar jobs excluded from axisymmetric tracking selectors','[...document.querySelectorAll("#tracking-previous option,#tracking-current option")].every(o=>!'+JSON.stringify([report.rectangle_job,report.polygon_job])+'.includes(o.value))');
   await click('a[href="/planar.html"]');await wait('document.querySelector("#width")?.value==="310"');
   await call('Page.navigate',{url:launch.origin+'/planar.html?job='+report.polygon_job},sessionId);await wait(`typeof selected!=="undefined" && selected===${JSON.stringify(report.polygon_job)}`);

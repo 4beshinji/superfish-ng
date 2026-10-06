@@ -10,7 +10,11 @@ P08版3専用nativeは `test_planar_curved_saved`。新7件＋旧版1/2直接利
 全元配列/12場/全RF保持・再hash改変拒否、最低正帯/PEC/正規化と途中変更を検査。
 [反例・コマンド・範囲](PLANAR_CURVED_NATIVE.md)。共通Case/Project/CLI-worker/Study/表示は
 `test_planar_curved_operations`。新9件分割受入、直接利用先48件32.964秒PASS。
-[初回2テスト誤り・修正2件だけの再実行・選択コマンド・範囲](PLANAR_CURVED_OPERATIONS.md)。実ブラウザーは別途必須。
+[初回2テスト誤り・修正2件だけの再実行・選択コマンド・範囲](PLANAR_CURVED_OPERATIONS.md)。
+P08の実Chromeは `verify_gui_planar_curved.mjs` / 旧 `verify_gui_planar.mjs` / 別serverの
+`verify_gui_planar_curved_replay.mjs`。15＋13＋7、計35項目PASS、全403実装hash不変/外部要求0。
+`audit_planar_curved_operations.py` は新FEM/物理再構築0の最終照合。
+[全条件・初回GUI反例/旧検証器リンク修正・監査V2・終端/回収](PLANAR_CURVED_OPERATION_ACCEPTANCE.md)。P08 DONE。
 
 TEのN16/32/64集約はignored `out/p07-planar-curved-geometry-20261007/audit-te-geometry-series-rf-schema.py`。先行元場/FEM証拠を全hash/source/数値gate付きで再利用し、新FEM/unitは0。[四系列の限定監査・二回の入力/schema修正](PLANAR_CURVED_GEOMETRY_SERIES.md)。幾何探索改善の新4/関連19unitは別branch `p07-geometry-bvh` の記録を参照し、main受入へ混同しない。
 

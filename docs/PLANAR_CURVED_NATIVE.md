@@ -4,6 +4,9 @@
 `planar_curved_saved`を追加した。P08はIN_PROGRESSであり、Project/共通dispatch、
 CLI-worker、Study、元場表示と実GUI操作は続く必須範囲である。
 
+全条件受入追記：[P08 DONE](PLANAR_CURVED_OPERATION_ACCEPTANCE.md)。共通入口と実Chrome35項目、
+別server再生/全元native/全RF・実終端を受入。以下は最初の専用native段階の記録である。
+
 ## 契約と実装
 
 `save_planar_curved_run` / `read_planar_curved_run` / `planar_curved_result`は
