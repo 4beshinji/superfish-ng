@@ -38,7 +38,9 @@ TE/TM dense spectrum・二尺度/回転・全予算preflightを確認し、元40
 実TE楕円rank交換は反射parity/全RFと照合、円doubletと周波数一致/E不一致は個別IDを発明しない。
 元406製品不変。[専用個別ID回復核](../PLANAR_CURVED_IDENTITY_RECOVERY.md)も新4＋関連6、10件26.658秒PASS。
 実反射parity/rank交換→回復→後続と全元byte/RF、真縮退/guard/集合越境/予算停止を確認、元407製品不変。
-P09はIN_PROGRESS、次は元の全二次節点を保持する形状法則/実調整。不変量を先に再現し、
+[元全二次節点の形状則](../PLANAR_CURVED_SHAPE_LAW.md)も新4＋関連4、8件1.249秒PASS。
+proper affineの全区間det・全mid/PEC・実円f/energy/G/Q尺度、元408製品不変。
+P09はIN_PROGRESS、次は検索/最終固定境界細分の試行生成/参照chartと実調整。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 

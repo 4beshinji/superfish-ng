@@ -1,3 +1,5 @@
+P09形状生成は `test_planar_curved_shape`、関連 `test_planar_affine_shape` と版3Project直接消費1件。新4＋関連4の8件1.249秒PASS。[全mid/PEC・閉区間反例・実円尺度・範囲](PLANAR_CURVED_SHAPE_LAW.md)。実調整/所有再開/GUI受入は後続。
+
 P09専用回復は `test_planar_curved_identity_recovery`。関連 `test_planar_identity_recovery test_mode_identity_recovery.IdentityRecoveryInvariantTests`。新4＋関連6、10件26.658秒PASS。[実反射parity/rank交換と回復・null停止・範囲](PLANAR_CURVED_IDENTITY_RECOVERY.md)。所有過去anchorの束縛/再開/GUI受入は後続。
 
 P09専用追跡は `test_planar_curved_tracking`。新8＋既存 `test_planar_tracking test_mode_tracking` 14件を20＋追加1＋追加1で受入。[独立反射parity付き実rank交換・E/H不一致・doublet・guard・範囲](PLANAR_CURVED_TRACKING.md)。共通所有/回復/調整/GUI受入は後続。
