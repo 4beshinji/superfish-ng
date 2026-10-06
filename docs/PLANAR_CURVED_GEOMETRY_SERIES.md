@@ -347,3 +347,35 @@ strict参照修正の保存TE/TM物理再構築74571は230.797秒PASS/終了0、
 TE0、TM最大2.221e−16。独立energy/壁最大1.037e−13、前後401branch製品/使用7code/元artifact不変。
 別terminal audit/全7artifact snapshotを保持し、bounded strict条件を受入した。
 branch単独のsource固定を解除するがmain/BVH/boundary生存源は変更しない。mainへ未統合、全P07/goalは未完了。
+
+
+## 楕円TM境界B・角TE尺度2の終端と角TM残件（2026-10-07）
+
+99269は2464.466秒PASS/終了0。元A3/A4/B4を物理再構築し、新境界Bの実FEMだけ一回追加した。
+21760cell（旧B4は20480）、最終元map丸め7.028348e−14。B4→境界Bの対象f差最大2.1547e−8、
+E差4.0985e−6、H差2.076318e−4、全RF差1.701740e−3。独立A4対BのRF差最大5.874163e−5。
+完全band/独立energy・実壁積分も原gateでPASSし、楕円TM尺度1 A4/境界Bを受入した。
+元399製品不変・geometry/refinement二変更、前後401分離製品/使用10validator/全元artifact不変。
+別終端auditと全12artifact snapshotを保持。楕円二尺度の両偏波は各固定FEM条件を満たした。
+
+角TE尺度2の保存済みB5復旧43214も3891.121秒PASS/終了0、新FEM0。
+元終了143の原因は依然未確定。A3/B4/B5を全元chart/nativeから再構築し、全係数/周波数bitwiseと
+元A3/B4全RF完全一致を確認した。対象B4→B5のf差1.101088e−5、E差4.222931e−3、
+H差1.208029e−4、RF差3.629551e−5、独立A3対B5 RF差3.721745e−6。
+完全band/独立積分もPASSしA3/B5を受入、角TE両尺度の固定FEM条件を満たした。
+400旧製品不変・geometry一変更、前後401分離製品/使用10validatorと元39artifact不変。
+復旧出力全8artifactのsnapshot/終端auditを保持し、保存済みFEMを再solveしない。
+
+角TM混合細分50414/27391は終了1、7130.991/7129.920秒。各新3実FEMでAの混合細分は受入したが、
+Bの第3対象群は最後二水準RF差5.514924e−3（0.551492%）で0.5%gate未達。
+対象第1/2群RF差4.502693e−3/4.409091e−3、全f/E/Hと独立A/B（RF最大2.182286e−3）はPASS。
+全401製品/使用10validator/元22artifact不変、各全21artifact snapshotと実終端auditを保持する。
+B/角TM/P07を受入せず、既存境界patternで各尺度の保存Bへ局所細分を一回だけ追加する。
+新driver `extend_planar_curved_corner_boundary.py` の全source/終端/raw preflightは二尺度PASS。
+元accepted Aと最終Bを全chart/native/RFから物理再構築し、再FEMせず、新境界Bだけ各一実FEMを検証する。
+boundary branch401製品/使用10validatorをhandle37232/67404の終端まで固定する。
+出力 `out/p07-planar-boundary-refinement-20261007/corner-tm-s{1,2}-boundary/` と同名log。
+1e8 geometry予算・512ε元map丸め・f/E/H/RF許容値・完全guard・独立積分は全て維持する。
+
+上記終端四件の限定監査は新FEM/unit/物理再構築0。全前後hashと数値gateを照合し、受入を
+証明済み形状/偏波/尺度に限定する。元円独立mesh38783、N64 TM四件、全P07とP08/P09は継続する。

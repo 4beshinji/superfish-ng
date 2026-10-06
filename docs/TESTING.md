@@ -723,3 +723,9 @@ READMEや進行記録の更新だけで全結果を無効化しない。未実�
 新seedのpillbox/shaped_cellの全モード辞書（f/RFを含む）は上記の既存受入出力と完全一致した。
 CIのYAMLとトリガーをローカルで確認し、Hosted CIと全unittestは今回は実行していない。
 既存1,456テスト・物理許容差・benchmarksを維持して、実行条件と入口を変更した。
+
+
+2026-10-07 P07 bounded元場grouping：新3/旧solver7・strict4の14件1.464秒PASS/95559終了0。
+384点/128ownerの元mask全走査反例1件は49920>3072でFAIL/0.211秒、原log保持。
+順序付き/random/逆順の両偏波で元全12場/scalar/勾配/座標bitwiseと製造線形Maxwell符号を確認。
+[範囲・コマンド・保存実解測定](PLANAR_CURVED_FIELD_GROUPING.md)。full/seed/GUI/CIは未実行。

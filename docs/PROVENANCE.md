@@ -4288,3 +4288,11 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 2026-10-07 分離閉AABB：実98304cell L5の全geometryは7452020回/同予算1e8でPASS、元親map相対丸め1.875377e−14、解析面積/周長もPASS。新FEM0。実物理検査34914は元A4全artifactと既完了geometry証拠/400旧製品不変・一geometry変更を照合し、未実施uniform A5を一回だけ新FEMで検証中。旧源401不変と変更後source遷移を混同しない。新外部資料/依存/legacy参照なし。
 
 2026-10-07 追加終端：楕円TM尺度1N32の実5FEM/全gateは2457.414秒PASS、31元artifact/401製品/10検証器hashを保持。N64 TM三例の1e8予算切れを別保存した。再入角TE尺度2の終了143は原因不明で保存B5を保持し、新FEM0の物理再構築/比較を別出力で実行中。400旧製品不変・一geometry変更を明示し、旧source401不変と混同しない。新外部資料/依存/legacy参照なし。
+
+
+2026-10-07 P07終端追記：楕円TM尺度1の境界B/99269、角TE尺度2保存B5復旧/43214は元gateでPASS。
+角TM混合二尺度50414/27391は第3群RF0.551492%でFAILを保持し、境界Bを各一実FEMだけ追加検証する。
+参照表/strict branchの元場point groupingは旧自作Python演算とのbitwise不変量で限定検証。
+[geometry/終端](PLANAR_CURVED_GEOMETRY_SERIES.md)、[boundary](PLANAR_CURVED_BOUNDARY_REFINEMENT.md)、
+[point grouping](PLANAR_CURVED_FIELD_GROUPING.md)に範囲と検査を記録（各branchの対象文書を参照）。
+新外部資料、依存、legacyソース/バイナリ参照、実solveの解析置換、物理許容値変更はない。
