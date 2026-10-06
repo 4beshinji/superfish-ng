@@ -88,3 +88,18 @@ solver state/代数診断を作らず、行列/スペクトル/独立energy・�
 旧bridge validator10コードは元hashで別保全し、TM mode0だった古いprobeの範囲を上書きしない。
 cache branchの数値利用handleは全終了しsource固定を解除した。main38783とboundary37232/67404は生存固定。
 角TM二尺度と円独立半径.02 TMの全gate、統合予定sourceへの残bridge/主統合/P07全条件監査を継続する。
+
+## 角TM二尺度の実受入とV2 bridge開始（2026-10-07）
+
+元境界B37232/67404は4200.212/4189.588秒PASS/終了0。各新FEM一回、元A/B二解を全物理再構築。
+対象三群last-two RF最大0.002367392/A対B0.004554814、f/E/H・全六帯guard・独立積分も元gateでPASS。
+401製品/10validator/全旧raw不変、各11artifact snapshotと観測終端auditは
+`out/p07-planar-boundary-refinement-20261007/corner-tm-s{1,2}-boundary-*` に保持する。
+旧混合B第三群RF0.551492% FAILを消さず、境界細分で受入した別実解と区別する。
+
+V2 bridge16323/8632はcache checkoutで実行中。同じ親out下の
+`source-bridge-corner-tm-s{1,2}-boundary/` と同名logを保持する。
+元sourceはgeometry/refinement二変更のboundary variant、新sourceは四変更の統合候補kernel。
+全元parent/native/K/M/最低帯、係数/周波数dtype+tobytes、全RF metadata/roundoff、
+独立energy/壁・signed公共場と全六TM正modeの32Gauss実壁Ez=0を検査する。
+新FEM0。cache401製品/使用10validatorを両実終端まで固定する。主38783とP07/全goalは継続中。

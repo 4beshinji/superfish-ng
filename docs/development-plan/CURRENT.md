@@ -56,7 +56,7 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 処理 | 生存handle / 出力（全てout/以下） |
 | --- | --- |
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
-| 角TM二尺度の境界B追加 | 37232 / 67404、p07-planar-boundary-refinement-20261007/corner-tm-s{1,2}-boundary |
+| 角TM二尺度の受入解source bridge | 16323 / 8632、p07-planar-exact-reference-20261007/source-bridge-corner-tm-s{1,2}-boundary |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -487,3 +487,15 @@ cache branchの数値利用handleは全終了しsource固定を解除した。ma
 照合はignored `out/p07-planar-exact-reference-20261007/final-integration-candidate-hashes.json`。
 この候補の作成は主branchへの統合やP07完了ではない。元円独立半径.02 TMと角TM二尺度、残source bridge、
 主source統合/全条件監査を実終端後に完了する。P08/P09と全123カードgoalを維持する。
+
+## 角TM二尺度境界Bの実受入（2026-10-07）
+
+37232/67404は終了0、4200.212/4189.588秒PASS。既存A/Bを物理再構築し、新FEMは各一回だけ。
+元B69632cellから73442cellへの境界局所細分で、対象三群の最後二水準RF最大0.002367392、
+独立A/B RF最大0.004554814となり、元0.005条件を両尺度で満たした。f/E/H・全六帯guard・独立積分もPASS。
+独立積分差最大1.284e−12、元map相対bound4.126e−14。混合B第3群0.551492%の元FAILは保持する。
+全401製品/使用10validator/全旧raw不変を終端後にも照合し、各全11artifactのsnapshotと観測終端auditを保存。
+boundary branchの数値handleは全終了。統合kernelへのV2 source bridgeを16323/8632で開始した。
+新FEM0、全元chart/native/K/M/最低帯・元配列bytes・全RF metadata・全六TM壁traceを検査する。
+cache branch全401と使用10validatorを両実終端まで固定する。主源38783も固定継続。
+円半径.02 TM/source bridge/主統合/全条件監査が残り、P07 IN_PROGRESSと全123カードgoalを維持する。
