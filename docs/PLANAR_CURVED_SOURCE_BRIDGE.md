@@ -103,3 +103,16 @@ V2 bridge16323/8632はcache checkoutで実行中。同じ親out下の
 全元parent/native/K/M/最低帯、係数/周波数dtype+tobytes、全RF metadata/roundoff、
 独立energy/壁・signed公共場と全六TM正modeの32Gauss実壁Ez=0を検査する。
 新FEM0。cache401製品/使用10validatorを両実終端まで固定する。主38783とP07/全goalは継続中。
+
+## 角TM二尺度V2 bridgeの受入（2026-10-07）
+
+16323/8632は718.140/719.193秒PASS/終了0、新FEM0。各受入B73442cellの全元chart/native/K/M/最低帯を再構築。
+係数/周波数dtype+tobytesをsigned zeroまで保持し、全RF metadata完全一致、RF丸め差最大0/2.221e−16。
+全六正modeの全実壁32Gauss Ez厳密zero、48cell×3参照点の全signed公共E/H/literal差最大1.575e−16。
+独立20次energy/実壁差最大1.284e−12、元map相対bound4.126e−14。全guardと元bandを保持した。
+401製品/使用10validator/全元accepted raw不変、各全6artifact snapshotと実終端auditを保持する。
+終端auditは同親 `audit-corner-source-bridge-terminal.py/.log`。
+cacheと主由来統合候補の全401製品hashも完全一致し、元主sourceの397不変/四変更を維持する。
+V2は初めから全mode壁traceと配列bytesを検査するため、三先行例に使った補足checkerを再実行しない。
+必要な非円形五例のsource bridgeが揃い、cache source固定を解除した。主38783は生存固定。
+これは主branch統合/P07全受入ではない。円半径.02 TMの実終端と主統合/全条件監査を継続する。

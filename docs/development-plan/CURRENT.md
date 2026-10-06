@@ -56,7 +56,6 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 | 処理 | 生存handle / 出力（全てout/以下） |
 | --- | --- |
 | 元円独立A/B | 38783 / p07-planar-curved-independent-20261007/mesh |
-| 角TM二尺度の受入解source bridge | 16323 / 8632、p07-planar-exact-reference-20261007/source-bridge-corner-tm-s{1,2}-boundary |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
@@ -511,3 +510,14 @@ report形式差による監査側三KeyErrorは元logを保持して明示対応
 未終端/主統合を受入へ数えず、P07 IN_PROGRESSを維持する。
 [P08実装準備](../PLANAR_CURVED_INTEGRATION_PLAN.md)でnative/Project/CLI-worker/Study/GUIの直接利用先と
 独立受入・旧版再生の順序を確認した。コード読取のみでP08実装/受入ではない。全123カードgoalを継続する。
+
+## 角TM二尺度V2 source bridge終端（2026-10-07）
+
+16323/8632は終了0、718.140/719.193秒PASS、新FEM0。各元受入B73442cellの全元chart/native/K/M/最低帯を
+統合候補と同一401製品kernelで再構築した。元係数/周波数dtypeとbytes、全RF metadataは完全保存。
+RF相対丸め差最大0/2.221e−16、独立20次energy/実壁差最大1.284e−12、signed公共場/literal差最大1.575e−16。
+全六正TM modeの全実壁32Gauss点でEz厳密zero、元map相対bound4.126e−14も維持した。
+全401製品/使用10validator/全accepted元raw不変を終端後にも照合し、各全6artifact snapshotと観測終端auditを保存。
+cacheと統合候補の全401hashも一致。cache branchの数値handleは全終了しsource固定を解除した。
+必要な非円形五source bridgeと三補足は受入済み。主源38783の実終端、主統合とP07全条件監査が残る。
+元円独立半径.02 TMを継続し、P07 IN_PROGRESS、P08/P09と全123カードgoalを維持する。

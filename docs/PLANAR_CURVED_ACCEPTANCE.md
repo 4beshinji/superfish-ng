@@ -23,7 +23,7 @@ P07 IN_PROGRESS、全123カードgoal ACTIVE。各日付付き専用文書を局
 | 全元parent完全被覆・P2制限・T接続なし・最終元map丸め≤512ε/local extent | Fraction restriction chain/共通parent overlay、[boundary保存不変量](PLANAR_CURVED_BOUNDARY_REFINEMENT.md) | 全accepted caseで確認。projection/許容値緩和なし。累積丸め/予算失敗を保持 |
 | 全域detJ/外周simple閉接触・strict入力・unknown/予算不足のFEM前拒否 | P06 geometryと[閉AABB BVH](PLANAR_CURVED_GEOMETRY_SERIES.md)、[厳密閉参照](PLANAR_CURVED_EXACT_REFERENCE.md) | BVH新4＋旧19、Fraction一ULP反例と閉壁整合28種類分割PASS。主sourceへstrict修正は未統合 |
 | 元場point batchの演算/順序保存 | [grouping新3＋旧11の14unitと実TM B5再構築](PLANAR_CURVED_FIELD_GROUPING.md) | bitwise/全RF metadata/独立energy・壁PASS。単回random scalarは低速化、全入力や全FEMの倍率を主張しない |
-| 旧源variantから統合予定strict/cache/grouping kernelへ保存配列/全RFを結び付ける | 元401製品＋15validator保全、[noncircle source bridge](PLANAR_CURVED_SOURCE_BRIDGE.md) | 新4unit分割PASS、楕円TM/角TE三例の実bridgeとbyte/全帯trace補足PASS。旧validator source保全済み。受入角TM二尺度bridge16323/8632実行中、最終source統合は未完了 |
+| 旧源variantから統合予定strict/cache/grouping kernelへ保存配列/全RFを結び付ける | 元401製品＋15validator保全、[noncircle source bridge](PLANAR_CURVED_SOURCE_BRIDGE.md) | 新4unit分割PASS、楕円TM/角TE三例の実bridgeとbyte/全帯trace補足PASS。角TM二尺度V2 bridgeも終了0、全六mode壁trace/bytes/全RF/独立積分PASS。必要な五bridge受入済み、最終source統合は未完了 |
 | source・provenance・検査範囲・coherent local commit | [CURRENT](development-plan/CURRENT.md)、各raw/source/validator hash・観測終端audit、専用文書/ローカルcommits | 局所証拠として保存。legacy source/binary参照・新依存なし。hosted CI/full/seed/GUI実行を未観測のまま主張しない |
 
 ## 完了前の具体条件
@@ -42,7 +42,7 @@ KeyError三logを保持し、元データ/許容値を変えず形式別の明�
 1. 元円独立38783の半径.02 TMを含む全四caseの実終端と完全report/source/rawを受入する。
 2. 角TM二尺度の新境界Bは最後二水準/独立A対B/完全guard/独立積分を原gateで受入済み。全11artifact/401源/10validatorの終端snapshotを最終照合へ使う。
 3. 統合予定kernelで元accepted noncircleの全native/K/M/最低帯・係数/周波数bitwise・全RF metadataと
-   canonical閉壁浮動差≤1e−12、signed公共場/独立積分を確認する。角TMも同条件で結び付ける。
+   canonical閉壁浮動差≤1e−12、signed公共場/独立積分を確認済み。角TM二尺度もV2 bridgeで同条件を満たした。
 4. 既存利用handle実終端後に四製品・二strict validator・対応testsを限定統合し、源を保全した旧証拠と
    新kernelの一致を監査する。sourceの差を「全401不変」と表現しない。
 5. この表の全P07条件を実際の最終sourceとartifactで再照合し、未確認が残ればIN_PROGRESSを維持する。
