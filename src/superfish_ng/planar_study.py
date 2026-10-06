@@ -61,12 +61,14 @@ class PlanarStudy:
                 if case['schema_version']==1:
                     case['geometry']['width_m']*=value;case['geometry']['height_m']*=value
                 else:
-                    for points in (case['geometry']['vertices_xy_m'],case['mesh']['points_xy_m']):
+                    groups = ((case['geometry']['domain']['points_xy_m'],) if case['schema_version']==3
+                              else (case['geometry']['vertices_xy_m'],case['mesh']['points_xy_m']))
+                    for points in groups:
                         for point in points:
                             point[0]*=value;point[1]*=value
             elif self.parameter.startswith('/case/geometry/'):
                 if case['schema_version']!=1:
-                    raise ValueError('rectangle width/height sweeps cannot rewrite an explicit polygon mesh; use uniform_scale or a declared transformation')
+                    raise ValueError('rectangle width/height sweeps cannot rewrite an explicit polygon or curved mesh; use uniform_scale or a declared transformation')
                 case['geometry'][self.parameter.rsplit('/',1)[-1]]=value
             else:
                 case['rf'][self.parameter.rsplit('/',1)[-1]]=value

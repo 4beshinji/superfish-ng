@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07全条件受入・主統合完了、P08専用nativeを実装し操作経路へ継続。
+更新：2026-10-07、P07受入済み、P08共通入口/CLI-worker/Study/元場表示を実装し実ブラウザーへ継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -20,8 +20,11 @@
 元失敗・全raw/source/archiveを保持し、最終主401は受入kernelと完全一致、元主源から四変更/397不変。
 最初の有界変更として[版3専用native](../PLANAR_CURVED_NATIVE.md)の全配列/RF再構築・改変拒否を実装。
 新7件＋旧版1/2直接利用5件は終了0/1.684秒PASS。曲線/共有P2/seedの数値源は変更していない。
-次は[P08接続計画](../PLANAR_CURVED_INTEGRATION_PLAN.md)の共通Case/Project/solver dispatchとCLI元点probe。
-続くProject/dispatcher/CLI-worker/Study/GUIと実中止/再起動/旧版再生までがP08の必須範囲。
+続く[共通Case/Project/CLI-worker/Study/表示](../PLANAR_CURVED_OPERATIONS.md)を実装。
+新9件は7件＋修正2件の分割受入、直接利用先48件32.964秒PASS。実worker中止/終端/新job再起動・元byte importも確認。
+次は[P08接続計画](../PLANAR_CURVED_INTEGRATION_PLAN.md)の実ブラウザー曲線入力・保存再生・サーバー再起動と旧版操作。
+Project/dispatcher/CLI-worker/Study/GUIと実中止/再起動/旧版再生はP08の必須範囲。
+APIの限定受入だけでは実ブラウザー操作の全受入へ数えない。
 P09の比較/追跡/調整・所有再開も残る。P04/P05/P06/P07はDONE、原互換親P02/D02とH17/H18、
 P08/P09と原要件を含む全123カードgoalは未完了。
 

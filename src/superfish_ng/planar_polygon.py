@@ -66,6 +66,9 @@ class PlanarPolygonCase:
 
 def planar_case_from_dict(data):
     from .planar import PlanarCase
+    if isinstance(data,dict) and type(data.get('schema_version')) is int and data['schema_version']==3:
+        from .planar_curved import PlanarCurvedCase
+        return PlanarCurvedCase.from_dict(data)
     if isinstance(data,dict) and type(data.get('schema_version')) is int and data['schema_version']==2:
         return PlanarPolygonCase.from_dict(data)
     return PlanarCase.from_dict(data)

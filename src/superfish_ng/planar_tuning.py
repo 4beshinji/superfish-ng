@@ -44,6 +44,8 @@ def validate_planar_tune(request):
             type(request['schema_version']) is not int or request['schema_version'] not in (1, 2, 3, 4)):
         raise ValueError('expected superfish_ng_planar_tune schema_version 1, 2, 3 or 4')
     project = PlanarProject.from_dict(request['project'])
+    from .planar_project import require_straight_planar_case
+    require_straight_planar_case(project.case, 'planar tuning')
     polynomial = version in (2, 4) or version == 3 and request['parameter'] == 'deformation'
     if polynomial:
         law = (PlanarPiecewiseShapeLaw if version == 4 else PlanarAffineShapeLaw).from_dict(request['shape_law'])
@@ -89,6 +91,8 @@ def trial_planar_project(request, value, phase):
     if phase not in ('search', 'refinement'):
         raise ValueError('planar tune phase must be search or refinement')
     project = PlanarProject.from_dict(request['project'])
+    from .planar_project import require_straight_planar_case
+    require_straight_planar_case(project.case, 'planar tuning trial')
     if request['schema_version'] in (2, 3, 4) and request['parameter'] == 'deformation':
         law_type = PlanarPiecewiseShapeLaw if request['schema_version'] == 4 else PlanarAffineShapeLaw
         project = law_type.from_dict(request['shape_law']).project(explicit_planar_project(project), value)

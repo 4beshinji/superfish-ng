@@ -27,6 +27,8 @@ def explicit_planar_project(project):
     if type(project.case) is PlanarPolygonCase:
         return PlanarProject.from_dict(project.to_dict())
     case = project.case
+    from .planar_project import require_straight_planar_case
+    require_straight_planar_case(case, 'straight planar shape conversion')
     x, y = np.meshgrid(np.linspace(0, case.width_m, case.nx+1),
                        np.linspace(0, case.height_m, case.ny+1))
     points = np.column_stack((x.ravel(), y.ravel()))

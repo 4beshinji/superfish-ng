@@ -8,7 +8,8 @@ CLI-worker、Study、元場表示と実GUI操作は続く必須範囲である�
 
 `save_planar_curved_run` / `read_planar_curved_run` / `planar_curved_result`は
 `PlanarCurvedCase` / `PlanarCurvedSolution`の専用API。schema_version 3を用いる。
-旧版1/2の専用読取は維持し、この段階では共通入口から版3を受け付けない。
+旧版1/2の専用読取は維持した。最初のこの段階では共通入口から版3を受け付けず、
+続く[共通操作経路](PLANAR_CURVED_OPERATIONS.md)で版3へ明示dispatchを追加した。
 保存形式は`case.json`、`mesh.npz`、`fields.npz`、`results.json`、最後に公開する
 `manifest.json`の五ファイル。新規出力だけを作り、既存ディレクトリを上書きしない。
 

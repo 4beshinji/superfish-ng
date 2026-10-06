@@ -54,6 +54,8 @@ def _source(path):
         solution = verify_planar_job(path, _load(path/'job.json'), _load(path/'manifest.json'))
     else:
         solution = read_planar_run(path)
+    from .planar_project import require_straight_planar_case
+    require_straight_planar_case(solution.case, 'planar tracking')
     if hashes != (_job_hashes(path) if managed else _native_hashes(path)):
         raise ValueError('planar tracking source changed during verification')
     return (path/'solution' if managed else path), solution, dict(

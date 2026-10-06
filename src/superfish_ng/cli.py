@@ -854,7 +854,7 @@ def main(argv=None):
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-planar','replay-planar','probe-planar'):
-            from .planar import PlanarCase,solve_planar,PlanarFieldSampler
+            from .planar_solve import solve_planar_case as solve_planar
             from .planar_saved import save_planar_run,read_planar_run
             if args.command=='solve-planar':
                 from .planar_polygon import load_planar_case

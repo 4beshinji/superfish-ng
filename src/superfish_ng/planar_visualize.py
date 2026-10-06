@@ -8,7 +8,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.tri import Triangulation
 from matplotlib.collections import LineCollection
-from .planar_display import display_planar_fields, verified_planar_view, publish_planar_view
+from .planar_display import display_planar_fields, planar_boundary_segments, verified_planar_view, publish_planar_view
 
 
 def plot_planar_mode(run, out, mode=1, show_mesh=False, length_unit='mm', mode_label=None):
@@ -34,7 +34,7 @@ def plot_planar_mode(run, out, mode=1, show_mesh=False, length_unit='mm', mode_l
                    ('Ey_quadrature_V_per_m', 1e-6, 'Ey quadrature [MV/m]')])
     fig, axes = plt.subplots(1, 3, figsize=(14, 5), layout='constrained')
     try:
-        boundary = solution.space.points_xy_m[solution.space.boundary_edges] * scale
+        boundary = planar_boundary_segments(solution) * scale
         for ax, (key, factor, label) in zip(axes, components):
             values = display['fields'][key] * factor
             limit = max(float(np.max(np.abs(values))), 1e-30)

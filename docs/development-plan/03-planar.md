@@ -309,7 +309,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 - **現状（2026-10-07）**：IN_PROGRESS。[版3専用native](../PLANAR_CURVED_NATIVE.md)の
   元配列/全RF再構築・改変拒否を実装、新7件＋旧版直接利用5件は1.684秒PASS。
-  共通Case/Project/dispatch・CLI-worker/Study/表示/実GUIと実中止/再起動は残る。
+  [共通Case/Project/CLI-worker/Study/表示](../PLANAR_CURVED_OPERATIONS.md)も新9件分割受入、関連48件PASS。
+  実worker中止/終端/新job再起動を確認。実ブラウザー・旧版操作・サーバー再起動と全条件監査は残る。
 - **親課題**：P02 / O02。**種別**：実装。初期状態：未着手。
 - **先行条件**：[P07](03-planar.md#p07)
 - **コミット件名案**：`feat: 平面曲線native・Project・GUIを接続する`

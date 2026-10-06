@@ -9,7 +9,9 @@ P08の先行条件が成立したため、下記の版付きnative保存・全�
 
 現在の実装：P08 IN_PROGRESS。[版3専用native](PLANAR_CURVED_NATIVE.md)を先に実装し、
 新7件＋旧版直接利用5件は1.684秒PASS。元数値kernelは変更していない。
-共通Case/Project/dispatch、CLI-worker/Study/GUIと実操作受入は下記の順で継続する。
+[共通Case/Project/dispatch、CLI-worker/Study/元場表示](PLANAR_CURVED_OPERATIONS.md)も実装し、
+新9件は分割受入、関連48件32.964秒PASS。実workerの中止/終端/新job再起動と元byte importを確認。
+次は実ブラウザー曲線入力・保存再生・サーバー再起動と旧版操作、P08全条件監査。
 
 ## 現行コードで必要な変更
 

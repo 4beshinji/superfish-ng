@@ -50,6 +50,8 @@ class PlanarConvergence:
         if not isinstance(self.project, PlanarProject):
             raise ValueError('planar convergence requires a PlanarProject')
         object.__setattr__(self, 'project', PlanarProject.from_dict(self.project.to_dict()))
+        from .planar_project import require_straight_planar_case
+        require_straight_planar_case(self.project.case, 'planar convergence')
         integer(self.levels, 'levels', 3)
         integer(self.max_triangles, 'max_triangles')
         if not isinstance(self.mode_ranks, (tuple, list)) or not self.mode_ranks:
