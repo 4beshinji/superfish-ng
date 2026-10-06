@@ -63,6 +63,18 @@ logは同親の `quadrature-final.log`。二尺度・両偏波のarea8/12/16、w
 TE半径0.01のB L2→L3はTE01 E差1.027957%で未達、A L3対B L3/解析対照はPASS。
 許容差を維持しB L4を追加中。楕円/角入力の新4unitは4.734秒PASS、
 vector化候補の新3unitは0.018秒PASS/単一patch10.56倍実測、使用validatorへ未接続。
+後続の明示adapterは全array/元RF/全参照比較の追加2unitをPASS、群guard拒否1unitもPASS。
+円meshの使用検証器には接続せず、別の[楕円・再入角driver](../PLANAR_CURVED_SHAPES.md)へ接続した。
+楕円TE尺度1/session25516と角TE尺度1/session68744が実行中。
+出力は同親 `ellipse-te-s1/` と `corner-te-s1/`、logは同名 `.log`。
+全8非円形を並行検査：ellipse TE s1=25516 / TM s1=12945 / TE s2=25128 / TM s2=92077、
+corner TE s1=68744 / TM s1=35844 / TE s2=27629 / TM s2=70344。
+各出力は同親 `<shape>-<polarization>-s<scale>/`、logは同名 `.log`。
+これらは401製品と使用8検証器をhash固定。円38783を含む全9handle終端まで変更しない。
+非円形TE尺度1のA L2→L3は楕円/角ともPASS、Bの初期未達を保持して細分中。
+独立FEM尺度・回転・平行移動の新3unitは0.083秒PASS。専用session71524を開始、
+出力同親 `covariance/` / `covariance.log`、401製品と使用7検証器をhash固定。
+全10handleの終端を観測し、各受入と原P07受入を分ける。
 [仕様・分割検査・失敗履歴](../PLANAR_CURVED_INDEPENDENT.md)。
 sessionを `write_stdin` で観測し、timeoutを理由に再起動しない。P07/全goalは未完了。
 

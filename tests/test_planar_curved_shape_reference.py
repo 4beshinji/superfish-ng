@@ -3,9 +3,11 @@
 from pathlib import Path
 import sys
 import unittest
+from types import SimpleNamespace
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
 from planar_curved_shape_reference import ellipse_domain, ellipse_geometry, corner_domain, corner_harmonic_integrals
+from validate_planar_curved_shapes import mode_groups, band_checks
 
 
 class PlanarCurvedShapeReferenceTests(unittest.TestCase):
@@ -43,6 +45,21 @@ class PlanarCurvedShapeReferenceTests(unittest.TestCase):
         for radius in (-1., .01):
             with self.assertRaises(ValueError):
                 corner_harmonic_integrals(.01, inner_radius=radius)
+
+    def test_complete_neumann_pair_and_group_guards_fail_closed(self):
+        from superfish_ng.constants import C0
+        self.assertEqual(mode_groups('corner', 'te'), [1, 1, 2, 1, 1])
+        frequencies = np.array([.39, .60, 1., 1., 1.08, 1.13])*C0/.02
+        solution = SimpleNamespace(case=SimpleNamespace(polarization='te'), frequencies_hz=frequencies)
+        self.assertTrue(band_checks(solution, 'corner', 1)['passed'])
+        changed = frequencies.copy()
+        changed[3] *= 1.001
+        solution.frequencies_hz = changed
+        self.assertFalse(band_checks(solution, 'corner', 1)['passed'])
+        changed = frequencies.copy()
+        changed[4] = changed[3]*(1+1e-4)
+        solution.frequencies_hz = changed
+        self.assertFalse(band_checks(solution, 'corner', 1)['complete_band_separated'])
 
 
 if __name__ == '__main__':

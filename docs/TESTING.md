@@ -1,3 +1,5 @@
+P07非円形の固定FEM差は `scripts/validate_planar_curved_shapes.py --shape ellipse|corner --polarization te|tm --scale 1|2 --out <new>`。各側の元12成分/全RFと共通parent chartでA/B/最終二水準を別検査する。元配列を保持するvector化adapterは `test_planar_curved_vector_reference`、群guardは `test_planar_curved_shape_reference`。実独立FEMの全vector/RF尺度・回転則は `test_planar_curved_covariance_reference` と `scripts/validate_planar_curved_covariance.py`。[範囲と進行記録](PLANAR_CURVED_SHAPES.md)。
+
 P07独立A/B内部mesh・増求積は `test_planar_curved_mesh_reference` と直接利用する `test_planar_curved_convergence_reference`。専用 `scripts/validate_planar_curved_independent.py` は二尺度・両偏波の完全元Domain/元場/全RF、物理再構築/全artifact hash、独立面積/法線除去壁積分を検査する。[受入範囲・未達・実行記録](PLANAR_CURVED_INDEPENDENT.md)。楕円/角入力の独立幾何・局所可積分性は `test_planar_curved_shape_reference`。検証専用vector化候補は `test_planar_curved_vector_reference` で元12成分API/符号付き既知場を照合するが、実行中validatorには未接続。
 
 P07最終二水準は `test_planar_curved_convergence_reference` の既知P2制限・共通群回転・E/H別周波数則・振幅差・改変拒否。`scripts/validate_planar_curved_convergence.py` は元raw全hashと製品hashを照合して保持解を物理再構築し、親chart再生成/全元E/H/全RFを別判定する。[限定範囲と失敗・追加細分](PLANAR_CURVED_CONVERGENCE.md)。独立A/Bmesh/増次数/幾何系列/楕円/角は別gate。

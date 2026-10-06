@@ -6,8 +6,10 @@ scalar amplitude is changed. Kept outside production; compare with its public
 12-component API before using this kernel in an acceptance driver.
 """
 import numpy as np
+from dataclasses import fields
 from superfish_ng.constants import EPS0, MU0, TAU
 from superfish_ng.planar_curved_geometry import strict_array
+from superfish_ng.planar_curved_solver import PlanarCurvedSolution, _reference_inputs
 
 
 def original_vectors(solution, cell, refs):
@@ -50,3 +52,28 @@ def original_vectors(solution, cell, refs):
     if not np.isfinite(electric).all() or not np.isfinite(magnetic).all():
         raise ValueError('original vector reference exceeds finite SI arithmetic')
     return electric, magnetic
+
+
+class _VectorizedValidationSolution(PlanarCurvedSolution):
+    """Explicit validator adapter retaining all original solution arrays.
+
+    RF still uses the production routine and original coefficients; only the
+    all-mode field sampling used by comparison/independent area rules changes.
+    """
+    def all_fields_at_reference(self, cell_indices, reference_points):
+        cells, refs = _reference_inputs(self, cell_indices, reference_points)
+        electric = np.empty((len(refs), 3, self.case.modes), dtype=complex)
+        magnetic = np.empty_like(electric)
+        for cell in np.unique(cells):
+            selected = np.flatnonzero(cells == cell)
+            electric[selected], magnetic[selected] = original_vectors(self, int(cell), refs[selected])
+        return {f'{name}{axis}_{phase}_{unit}': getattr(vector[:, i], part)
+            for name, unit, vector in (('E', 'V_per_m', electric), ('H', 'A_per_m', magnetic))
+            for i, axis in enumerate('xyz') for phase, part in (('real', 'real'), ('quadrature', 'imag'))}
+
+
+def vectorized_validation_view(solution):
+    if not isinstance(solution, PlanarCurvedSolution):
+        raise ValueError('validation adapter requires an actual curved planar solution')
+    return _VectorizedValidationSolution(**{field.name: getattr(solution, field.name)
+        for field in fields(PlanarCurvedSolution)})
