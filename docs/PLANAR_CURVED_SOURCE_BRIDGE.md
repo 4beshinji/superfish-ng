@@ -56,7 +56,7 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-reference-basis-cache/sr
 楕円TM境界Bと角TE二尺度B5の全元chart/native/K/M/最低帯を新kernelで再構築し、
 元係数/周波数の一致・全RF metadata完全一致を確認。RF浮動差最大3.331e−16、
 独立energy/壁最大1.288e−11、signed公共場/literal差最大1.343e−16。
-前後401製品/使用10validator/全元accepted rawは不変、各全8artifact snapshotと実終端auditを保存。
+前後401製品/使用10validator/全元accepted rawは不変、各全6artifact snapshotと実終端auditを保存。
 三旧validatorの全10コードは `source-bridge-validator-before-all-mode-PEC/` に元hash付きで保全した。
 旧bridge内の明示TM壁probeはmode0だけだった。共通 `_restore` は元から全modeの拘束係数≠0を拒否しており、
 旧受入eig状態の全帯PEC拘束は保持されるが、独立trace probeの範囲を全帯へ補強する。
@@ -75,3 +75,16 @@ solver state/代数診断を作らず、行列/スペクトル/独立energy・�
 角TE二尺度の補足54225/85631は実検証中。branch401/使用4validatorを両実終端まで固定する。
 出力は各元bridge名に `-fields` を付けた同親folder/log。
 新源への角TM二尺度bridgeと主source統合は残条件であり、全P07/全goalは未完了。
+
+
+## 三例のbyte/全帯trace補足終端（2026-10-07）
+
+76506/54225/85631は27.817/149.105/150.160秒PASS/終了0。
+三物理bridgeの全accepted raw/sourceとのbindingを保ち、同じ元配列dtype/tobytesをsigned zeroまで照合した。
+楕円TMは全6正modeの全実壁32Gauss点でEz厳密zero、全signed公共E/Hも独立literal式と1e−12以下で一致。
+角TE二尺度も同じbyte/公共signed場条件を確認。代数diagnosticsやsolver stateは作っていない。
+新FEM/行列・スペクトル再生/独立energy・壁積分の再実行は全0。元三物理bridgeの実証拠を再利用する。
+前後401製品/使用4validator/全親bridge・元rawは不変、各全6artifact snapshotと実終端auditを保持。
+旧bridge validator10コードは元hashで別保全し、TM mode0だった古いprobeの範囲を上書きしない。
+cache branchの数値利用handleは全終了しsource固定を解除した。main38783とboundary37232/67404は生存固定。
+角TM二尺度と円独立半径.02 TMの全gate、統合予定sourceへの残bridge/主統合/P07全条件監査を継続する。

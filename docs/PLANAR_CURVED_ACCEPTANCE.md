@@ -23,7 +23,7 @@ P07 IN_PROGRESS、全123カードgoal ACTIVE。各日付付き専用文書を局
 | 全元parent完全被覆・P2制限・T接続なし・最終元map丸め≤512ε/local extent | Fraction restriction chain/共通parent overlay、[boundary保存不変量](PLANAR_CURVED_BOUNDARY_REFINEMENT.md) | 全accepted caseで確認。projection/許容値緩和なし。累積丸め/予算失敗を保持 |
 | 全域detJ/外周simple閉接触・strict入力・unknown/予算不足のFEM前拒否 | P06 geometryと[閉AABB BVH](PLANAR_CURVED_GEOMETRY_SERIES.md)、[厳密閉参照](PLANAR_CURVED_EXACT_REFERENCE.md) | BVH新4＋旧19、Fraction一ULP反例と閉壁整合28種類分割PASS。主sourceへstrict修正は未統合 |
 | 元場point batchの演算/順序保存 | [grouping新3＋旧11の14unitと実TM B5再構築](PLANAR_CURVED_FIELD_GROUPING.md) | bitwise/全RF metadata/独立energy・壁PASS。単回random scalarは低速化、全入力や全FEMの倍率を主張しない |
-| 旧源variantから統合予定strict/cache/grouping kernelへ保存配列/全RFを結び付ける | 元401製品＋15validator保全、[三noncircle source bridge](PLANAR_CURVED_SOURCE_BRIDGE.md) | 新3unit PASS、楕円TM/角TE三例の実bridge未確認。角TM受入後のbridge/最終source統合も未完了 |
+| 旧源variantから統合予定strict/cache/grouping kernelへ保存配列/全RFを結び付ける | 元401製品＋15validator保全、[三noncircle source bridge](PLANAR_CURVED_SOURCE_BRIDGE.md) | 新4unit分割PASS、楕円TM/角TE三例の実bridgeとbyte/全帯trace補足PASS。旧validator source保全済み。角TM受入後のbridge/最終source統合は未完了 |
 | source・provenance・検査範囲・coherent local commit | [CURRENT](development-plan/CURRENT.md)、各raw/source/validator hash・観測終端audit、専用文書/ローカルcommits | 局所証拠として保存。legacy source/binary参照・新依存なし。hosted CI/full/seed/GUI実行を未観測のまま主張しない |
 
 ## 完了前の具体条件
