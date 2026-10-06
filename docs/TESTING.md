@@ -1,3 +1,5 @@
+P09専用追跡は `test_planar_curved_tracking`。新8＋既存 `test_planar_tracking test_mode_tracking` 14件を20＋追加1＋追加1で受入。[独立反射parity付き実rank交換・E/H不一致・doublet・guard・範囲](PLANAR_CURVED_TRACKING.md)。共通所有/回復/調整/GUI受入は後続。
+
 P09有限guardは `test_planar_curved_spectral_resolution`、関連 `test_planar_curved_refinement test_planar_tracking_fields`。新4＋既存6の10件3.689秒PASS。[独立dense有限スペクトル・尺度・予算・範囲](PLANAR_CURVED_SPECTRAL_RESOLUTION.md)。連続誤差/identity/調整受入の代用ではない。
 
 P09元場leafは `test_planar_curved_field_overlap`、直接利用元 `test_planar_curved_comparison test_planar_tracking_fields`。修正後17件5.552秒＋追加未解決energy反例1件PASS。[独立E/H energy・strided反例・範囲](PLANAR_CURVED_FIELD_COMPARISON.md)。追跡/調整/所有GUIの受入は別。

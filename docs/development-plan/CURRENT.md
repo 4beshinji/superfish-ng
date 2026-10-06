@@ -34,7 +34,9 @@ P09の[元E/H自己・交差Gram](../PLANAR_CURVED_FIELD_COMPARISON.md)も新8�
 strided解の導出診断末尾bitを修正し、微小residualでも未解決energyを拒否、元404製品不変。
 [固定二次境界の有限guard](../PLANAR_CURVED_SPECTRAL_RESOLUTION.md)も新4＋関連6、10件3.689秒PASS。
 TE/TM dense spectrum・二尺度/回転・全予算preflightを確認し、元405製品不変。
-P09はIN_PROGRESS。次の有界変更は元E/H両割当＋有限区間群/guard越境の追跡核。不変量を先に再現し、
+[元E/H追跡核](../PLANAR_CURVED_TRACKING.md)も新8＋既存14を20＋追加1＋追加1で受入。
+実TE楕円rank交換は反射parity/全RFと照合、円doubletと周波数一致/E不一致は個別IDを発明しない。
+元406製品不変。P09はIN_PROGRESS、次は完全anchorによる個別ID回復と形状法則/実調整。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
