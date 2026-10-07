@@ -48,6 +48,14 @@
 全validateはこのカードの節目で一度起動し、事前に全discoveryを重複させていない。
 全実行終端まではsrc/tests/scripts/examplesを固定する。
 
+P09の16受入記録が参照する91 evidence/log entryを改めてhash照合した。
+`out/p09-planar-curved-large-gui-20261007/p09-evidence-inventory.json` は欠落0/不一致0、
+`evidence-inventory-audit.log` は終了0。これは歴史的証拠ファイルの整合性検査で、
+新しいFEM/物理再生/全件成功を証明する数へ加算しない。
+また `historical-tuning-source-audit.json` は生成当時/現行の `_trial`/`_assess`/
+`_reconstruct`/`validate_planar_curved_tune` がAST同一であることと、本書/大容量GUI文書の
+全ローカルリンク先の存在を確認した。
+
 大容量GUI監査は基準e395996の全420製品源不変、元7trial×九ファイル=63 entry、
 完全科学保存と元native五byte/実download五byteを確認した。
 生成時の曲線源15件は14現行不変＋1生成当時archive一致。古いmanifestを現行creatorへ置換しない。
