@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07/P08全条件受入済み、P09の所有調整/移動再生APIまで受入、独立履歴/CLI-worker/GUIを継続。
+更新：2026-10-07、P07/P08全条件受入済み、P09の所有調整/独立履歴/移動再生APIまで受入、CLI-worker/GUIを継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -51,7 +51,13 @@ proper affineの全区間det・全mid/PEC・実円f/energy/G/Q尺度、元408製
 元九byte/claim/creator、相対prefix/初回・途中失敗checkpoint/別owner再開、strict/再hash拒否を確認。
 元受入円TM/回復付きTEの全取込・移動再生1件865.527秒PASS、両gate/元RF/全ID/過去anchor一致。
 元411製品/全123カード不変、元rawと失敗を保持、全handle実終端。
-P09はIN_PROGRESS、次は独立追跡履歴・CLI-worker/取消し/再起動・実GUIと全条件監査。不変量を先に再現し、
+[所有二点・独立履歴/過去anchor・移動再生](../PLANAR_CURVED_TRACKING_HISTORY.md)も新13種類＋関連10を分割受入。
+native五/完了job九/import job八の元byte/Project/creator/claimを保持し、反射parity付き実rank交換、
+円subspace→過去anchor回復→後続継承、新owner回復/延長、誤anchor/断絶/ID置換/真縮退/guard/max停止を確認。
+後のコピー中に先のsourceを変える検出漏れを実再現・修正。変異試験の相対path誤りも明示し元FAIL保全。
+修正2件8.128秒、通常/移動/import3件44.114秒、関連10件41.362秒PASS。
+最終byte監査PASS：元412製品/全123カード・依存/anchor不変、9所有履歴/23内包二点を照合、全handle実終端。
+P09はIN_PROGRESS、次はCLI-worker/取消し/再起動・実GUIと全条件監査。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
@@ -78,7 +84,9 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-現行checkpoint：[P09所有調整の元受入native取込・移動再生](../PLANAR_CURVED_TUNING_SAVED.md)。handle46796は終了0、全元九byte/両gate/全ID/anchorを照合。最終監査11391も終了0、現行source固定なし。
+現行checkpoint：[P09所有二点・独立履歴・過去anchor/移動再生](../PLANAR_CURVED_TRACKING_HISTORY.md)。全13新種類＋関連10を分割受入し最終byte監査終了0。生存処理/製品source固定なし。
+65155/12200/55397/23678/55353/12906/80164/32393/84387/25747は全実終端。55353/12906の変異未発火FAILと80164の実変異FAILは保存し、32393の修正2件PASS/84387の通常3件PASSを区別する。
+先行[P09所有調整の元受入native取込・移動再生](../PLANAR_CURVED_TUNING_SAVED.md)のhandle46796/最終監査11391も終了0、全元九byte/両gate/全ID/anchorを保持。
 所有保存の初回/安全/関連は51684/61711/12626/10261が全実終端。先行実調整の61861/15076/22872/89290/75862/60455/81561/73075も全実終端。
 [P07全条件受入](../PLANAR_CURVED_ACCEPTANCE.md)の元証拠も保持する。
 元円38783は終了0、全四case/12B解/全66artifact/元401源/5validatorの照合・保全後に主統合した。

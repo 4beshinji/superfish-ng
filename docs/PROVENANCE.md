@@ -1,3 +1,5 @@
+2026-10-07 P09所有二点/独立履歴：[元native連鎖・実過去anchor・移動再生](PLANAR_CURVED_TRACKING_HISTORY.md)。自作の専用曲線native/E/H/guard/回復核へ接続し、物理非依存のID集合/hash/copy/writeだけを既存層から再利用。元五/八/九byte・Project/creator/claimを保持しコピー先に新求解を帰属させない。反射parity/実rank交換・真doubletを独立対照とし、遅いsource変異検出漏れを実再現・修正、試験path誤りと全FAILも明示/保全。新13種類＋関連10分割PASS、元412製品/全123カード不変、新外部資料/依存/legacy参照なし。CLI-worker/GUIは継続。
+
 2026-10-07 P09所有調整：[全元nativeコピー・相対prefix・移動後物理再生](PLANAR_CURVED_TUNING_SAVED.md)。既存直線所有層から物理非依存のpath/snapshot/copy/writeだけを再利用し、全物理は専用Cartesian P2の元E/H/guard/ID回復へ接続。コピー先に新求解を帰属させずcreator/claim/全九byteを保持。新7種類＋関連3の分割受入、元411製品/全123カード不変。保存FEM帯再構築と元円/TE対照を使用、新trialを再生成せず元失敗/rawを保全。新外部資料/依存/legacy参照なし。独立履歴/CLI-worker/GUIは継続。
 
 2026-10-07 P09実調整：[元Cartesian E/H・両周波数gate・完全native replay](PLANAR_CURVED_TUNING.md)。自作の元P2形状/細分/有理chart、有限guard/ID回復、native物理再生と物理非依存の二分決定を使用。元410製品不変、新8種類＋関連11を分割受入。円Bessel根と同有限作用素の独立dense TE spectrum/反射parityが対照。絶対係数差の検査誤りとcheckpoint入力拒否の修正・全元FAIL/rawを記録。新外部資料・依存・legacy参照なし。所有CLI-worker/GUIは継続。

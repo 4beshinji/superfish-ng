@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **独立履歴leaf（2026-10-07）**：[所有二点・元native連鎖・過去anchor/移動再生](../PLANAR_CURVED_TRACKING_HISTORY.md)。新13種類＋関連10を分割受入。元五/八/九byteと実反射parity、回復→後続、誤anchor/断絶/guard/max停止を確認。遅いsource変異の検出漏れを再現・修正し元FAILを保全。元412製品/全123カード不変、全handle実終端。CLI-worker/取消し/再起動・実GUIとP09全条件監査は継続。
+
 - **所有調整leaf（2026-10-07）**：[元九byte/相対prefix・完全移動再生](../PLANAR_CURVED_TUNING_SAVED.md)。新7種類＋関連3を分割受入。円TM/回復付きTE全取込・移動再生1件865.527秒PASS。元411製品/全123カード不変。独立履歴・CLI-worker/取消し/実GUIは継続。
 
 - **実調整leaf（2026-10-07）**：[元E/H/二gate/完全native replay](../PLANAR_CURVED_TUNING.md)。新8種類＋関連11を分割受入。円TM絶対f、非円形TEの実rank/反射parity・検索/最終anchor回復、null/失敗保全を確認。元410製品/全123カード不変。所有prefix/移動・履歴・CLI-worker/実GUIは継続。

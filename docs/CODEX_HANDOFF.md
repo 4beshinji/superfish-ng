@@ -1,5 +1,7 @@
 現行の作業順・依存待ち・受入証拠・実行中処理は[現行入口](development-plan/CURRENT.md)を参照する。以下の追記は履歴であり、古い「次は」「生存中」を現在の指示/状態として扱わない。
 
+2026-10-07 P09進行：[所有二点比較・独立履歴・過去anchor/移動再生](PLANAR_CURVED_TRACKING_HISTORY.md)。元native五/完了job九/import job八byte、Project/creator/claimと反射parity付き実rank交換を保持。回復後継承・新owner回復/延長、誤anchor/断絶/ID置換/真縮退/guard/max停止を確認。新13種類＋関連10を分割受入し、遅いsource変異の検出漏れを再現・修正、試験path誤り/元FAILも保全。修正2件8.128秒・通常3件44.114秒・関連10件41.362秒PASS。最終byte監査もPASS、元412製品/全123カード不変、全handle実終端。次はCLI-worker/取消し/再起動・実GUIとP09全条件監査。全goal継続。
+
 2026-10-07 P09進行：[所有曲線調整・移動後完全再生](PLANAR_CURVED_TUNING_SAVED.md)。元九byte/claim/creatorを保持し、相対prefix・初回/途中失敗checkpoint・別owner再開・strict/再hash改変拒否を確認。円TM/回復付きTEの全取込/移動再生1件865.527秒を含む新7種類＋関連3を分割受入。元411製品/全123カード不変、全handle実終端。独立履歴・CLI-worker/実取消し/再起動・GUIとP09全条件監査は続く。全goal継続。
 
 2026-10-07 P09進行：[元E/Hの実FEM調整・二gate・完全再生](PLANAR_CURVED_TUNING.md)。円TM/非円形TE実rank交換と過去anchor回復、全元native/最終固定境界・null停止を確認。新8種類＋関連11を分割受入。絶対係数差の検査誤り・不正checkpoint拒否を修正し元FAIL/rawを保全、再開prefix再構築一回を検査。元410製品と全123カード不変。全handle実終端。次は所有コピー/移動・追跡履歴・CLI-worker/取消し/実GUIとP09全条件監査。全goal継続。
