@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07/P08全条件受入済み、P09の所有調整/独立履歴/移動再生APIまで受入、CLI-worker/GUIを継続。
+更新：2026-10-07、P07/P08全条件受入済み、P09の所有調整/独立履歴API・所有二点CLI-workerまで受入、履歴/調整CLI-workerとGUIを継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -57,7 +57,13 @@ native五/完了job九/import job八の元byte/Project/creator/claimを保持し
 後のコピー中に先のsourceを変える検出漏れを実再現・修正。変異試験の相対path誤りも明示し元FAIL保全。
 修正2件8.128秒、通常/移動/import3件44.114秒、関連10件41.362秒PASS。
 最終byte監査PASS：元412製品/全123カード・依存/anchor不変、9所有履歴/23内包二点を照合、全handle実終端。
-P09はIN_PROGRESS、次はCLI-worker/取消し/再起動・実GUIと全条件監査。不変量を先に再現し、
+[所有比較CLI-worker](../PLANAR_CURVED_TRACKING_JOBS.md)も新6種類＋関連10を分割受入。
+元五/九byte/creator・元source移動後worker完了、kind降格/再hash報告拒否を確認。
+実running取消し−15→新job終了0→管理器再起動/移動後完全再生、実CLI PASS=0/guard=1。
+初回1件8.741秒、安全3件13.829秒、runtime2件25.711秒PASS。
+関連9成功/1読込ERROR（指定名誤り）を保持し、不足1件1.800秒PASSで補完した。
+最終監査PASS：元414源の変更はjobs/cliへの入口追加のみ、元412科学/その他源と全123カード不変、全handle実終端。
+P09はIN_PROGRESS、次は履歴/調整CLI-worker・調整checkpoint/実取消し/再開・実GUIと全条件監査。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
@@ -84,7 +90,9 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-現行checkpoint：[P09所有二点・独立履歴・過去anchor/移動再生](../PLANAR_CURVED_TRACKING_HISTORY.md)。全13新種類＋関連10を分割受入し最終byte監査終了0。生存処理/製品source固定なし。
+現行checkpoint：[P09所有比較CLI-worker・実取消し/再起動・移動再生](../PLANAR_CURVED_TRACKING_JOBS.md)。新6種類＋関連10分割受入、最終byte監査終了0。生存処理/製品source固定なし。
+61167/39091/75840/95073/41610は全実終端。95073は9成功/指定名読込ERRORの終了1、41610で不足1件を終了0で補完。実取消しworker−15/成功worker0も回収した。
+先行[P09所有二点・独立履歴・過去anchor/移動再生](../PLANAR_CURVED_TRACKING_HISTORY.md)も全13新種類＋関連10分割受入/最終byte監査終了0。
 65155/12200/55397/23678/55353/12906/80164/32393/84387/25747は全実終端。55353/12906の変異未発火FAILと80164の実変異FAILは保存し、32393の修正2件PASS/84387の通常3件PASSを区別する。
 先行[P09所有調整の元受入native取込・移動再生](../PLANAR_CURVED_TUNING_SAVED.md)のhandle46796/最終監査11391も終了0、全元九byte/両gate/全ID/anchorを保持。
 所有保存の初回/安全/関連は51684/61711/12626/10261が全実終端。先行実調整の61861/15076/22872/89290/75862/60455/81561/73075も全実終端。

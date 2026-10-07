@@ -68,6 +68,10 @@ def read_job(directory, verify=True):
             return state
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_curved_tracking_jobs import is_planar_curved_tracking, verify_planar_curved_tracking
+        if is_planar_curved_tracking(directory, state, manifest):
+            verify_planar_curved_tracking(directory, state, manifest)
+            return state
         from .magnetic_report_jobs import is_magnetic_report_job, verify_magnetic_report_job
         if is_magnetic_report_job(directory, state, manifest):
             verify_magnetic_report_job(directory, state, manifest)
@@ -456,6 +460,11 @@ class JobManager:
         """Track two verified planar native spectra in a dedicated worker."""
         from .planar_tracking_jobs import start_planar_tracking
         return start_planar_tracking(self, previous, current, request)
+
+    def start_planar_curved_tracking(self, previous, current, request):
+        """Own complete Cartesian P2 operands and compare their original E/H in a worker."""
+        from .planar_curved_tracking_jobs import start_planar_curved_tracking
+        return start_planar_curved_tracking(self, previous, current, request)
 
     def import_planar_result(self, source):
         """Import verified planar native bytes, preserving their explicit mesh."""

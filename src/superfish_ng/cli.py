@@ -223,6 +223,11 @@ def main(argv=None):
     hphi_history_extend.add_argument('--out',type=Path,required=True)
     hphi_history_replay=sub.add_parser('replay-hphi-history',help='recompute the full owned hphi ancestry and identity chain')
     hphi_history_replay.add_argument('run',type=Path)
+    curved_planar_tracking=sub.add_parser('execute-planar-curved-tracking',help='own and compare original Cartesian P2 E/H fields with finite guards')
+    curved_planar_tracking.add_argument('previous',type=Path);curved_planar_tracking.add_argument('current',type=Path)
+    curved_planar_tracking.add_argument('request',type=Path);curved_planar_tracking.add_argument('--out',required=True,type=Path)
+    curved_planar_replay=sub.add_parser('replay-planar-curved-tracking',help='fully replay both owned curved native operands and their correspondence')
+    curved_planar_replay.add_argument('run',type=Path)
     planar_tracking=sub.add_parser('execute-planar-tracking',help='track physical electric subspaces under a declared rectangle or polygon mapping')
     planar_tracking.add_argument('previous',type=Path)
     planar_tracking.add_argument('current',type=Path)
@@ -547,6 +552,12 @@ def main(argv=None):
             result=(execute_hphi_tracking(args.previous,args.current,HphiTrackingRequest.load(args.request),args.out)
                     if args.command=='execute-hphi-tracking' else read_hphi_tracking(args.run))
             print(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False));return 0
+        if args.command in ('execute-planar-curved-tracking','replay-planar-curved-tracking'):
+            from .planar_curved_tracking import PlanarCurvedTrackingRequest
+            from .planar_curved_tracking_jobs import execute_planar_curved_tracking,read_planar_curved_tracking
+            result=(execute_planar_curved_tracking(args.previous,args.current,PlanarCurvedTrackingRequest.load(args.request),args.out)
+                    if args.command=='execute-planar-curved-tracking' else read_planar_curved_tracking(args.run))
+            print(json.dumps(result,indent=2,allow_nan=False));return 0 if result['status']=='PASS' else 1
         if args.command in ('execute-planar-tracking','replay-planar-tracking'):
             from .planar_tracking import PlanarTrackingRequest
             from .planar_tracking_jobs import execute_planar_tracking, read_planar_tracking
