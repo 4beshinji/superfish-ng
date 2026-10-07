@@ -1,5 +1,8 @@
 # 選択移送の明示参照座標：版2のstrict入力検査
 
+現行追補：[03計算工程](CURVED_SELECTION_CHARTS_CORE.md)をDONE。公開版2APIは接続済み。
+以下の未接続/拒否の記述は02受入時点の履歴。次は04の完全再生/CLI。
+
 2026-10-08 JST、ADD-N04-selection-charts-02 **DONE**。先行仕様commit `78d5c10`。
 [固定仕様](CURVED_SELECTION_CHARTS_SPEC.md)の版2七フィールドを、
 `curved_selection_transfer._validate_chart_request` で検査する。

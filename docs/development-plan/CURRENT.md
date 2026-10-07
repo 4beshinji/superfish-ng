@@ -1,8 +1,10 @@
 # 現行の作業入口
 
 更新：2026-10-08、P07/P08/P09/N03全条件受入済み。原123カードは76 DONE/2 IN_PROGRESS（H17、C07-planar）/45 PLANNED。
-N04既存残件の追加8カードを含む全131カードは78 DONE/2 IN_PROGRESS/51 PLANNED。全goalと原互換32要件は継続中。
+N04既存残件の追加8カードを含む全131カードは79 DONE/2 IN_PROGRESS/50 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+2026-10-08 ADD-N04-selection-charts-03 **DONE**：[独立初期接続の版2選択移送API](../CURVED_SELECTION_CHARTS_CORE.md)。全有理親被覆と旧選択各要素の面積保存、二policy、独立番号/逆方向/非nested/frozen/非アフィンと尺度4/8/32則・原TM対称/予算拒否を確認。初回38件は35 PASS/3 import ERROR、補完初回のsibling import ERRORを保全し、新test読み込み修正後3件10.443秒・終了0。38個別PASSを分割受入、成功35件を重複実行しない。旧selection ASTと元default builderの全report/評価配列一致、元1439中他1437源byte一致・新1440対象/1227 Python源。新幾何FEM0、旧TM実6求解を観測（TE経路はwrapper未計測）、full/seed/GUI/専用validator0。全131は79 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45、次は04の完全再生/CLI。親N04/原32要件/全goalは継続。
 
 2026-10-08 ADD-N04-selection-charts-02 **DONE**：[明示参照座標の版2 strict入力検査](../CURVED_SELECTION_CHARTS_INPUT.md)。七項目の未知/欠落/型/版混用、選択番号/予算、二chart/list/有限/巨大int、raw重複/NaNと入力不変を新7個別unitで確認。直接消費の旧選択移送8件と合わせ15件1.761秒・終了0。先行ImportError/1 test4 errorsを保全し、新helper以外の元module全AST一致・他1437源byte一致を監査。新1439対象/1226 Python源、新FEM/seed/full/GUI/legacy0。公開版2の計算/保存/GUIは未接続で拒否を維持、03〜06は後続。原123は76/2/45、全131は78 DONE/2 IN_PROGRESS/51 PLANNED。次はADD-N04-selection-charts-03、親N04/原32要件/全goalは継続。
 

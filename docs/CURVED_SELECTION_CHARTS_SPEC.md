@@ -2,7 +2,8 @@
 
 2026-10-08 JST、ADD-N04-selection-charts-01 **DONE**。開始commit `e76e58a`。
 親N04の[元残件4](N04_ACCEPTANCE.md)を、要求・保存版2と必須五工程へ具体化した。
-**版2の製品実装は未完**。以下の入力例は提案された版2を表し、現行公開APIは拒否する。
+01受入時点は版2未実装で公開APIが拒否した。現在は[03計算工程](CURVED_SELECTION_CHARTS_CORE.md)もDONEで、
+公開APIが版2を計算する。完全再生/CLI・GUI・専用FEM受入は04〜06に残る。
 旧版1、一般FEM、RF・モードID・公開適応停止は変更していない。
 
 ## 対象、元要求と表現
@@ -144,7 +145,8 @@ contour=Noneで元curved geometryから生成し直した。製品/数値ゲー�
 
 2026-10-08：02の[strict入力工程](CURVED_SELECTION_CHARTS_INPUT.md)をDONE。
 新7/元直接8個別PASS、15件1.761秒・終了0。公開版2の計算/保存/GUIは03〜06の後続。
-以下は各工程の固定条件。
+[03計算工程](CURVED_SELECTION_CHARTS_CORE.md)もDONE。新9/旧29の38個別PASS、
+全有理被覆と独立三積分/尺度則を受入。次は04。以下は各工程の固定条件。
 
 下記工程をTSVへ追加し、親N04・V03/V05の依存へ接続する。01仕様のDONEだけで親を閉じない。
 

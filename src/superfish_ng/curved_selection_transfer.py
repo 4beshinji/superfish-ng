@@ -125,16 +125,62 @@ def _validate_chart_request(request):
                 raise ValueError('reference_vertices require finite dimensionless coordinate pairs')
 
 
+def _transfer_reference_chart_selection(previous,current,request):
+    """Select a cover or contained subset after validating both entire charts."""
+    # The partition module also uses this module's native-history helpers.
+    from .curved_reference_partition import build_curved_reference_partition
+
+    _validate_chart_request(request);request=deepcopy(request)
+    if not all(isinstance(p,Project) for p in (previous,current)):
+        raise ValueError('curved selection transfer requires two Projects')
+    projects=[Project.from_dict(p.to_dict()) for p in (previous,current)]
+    partition=build_curved_reference_partition(*projects,reference_vertices=request['reference_vertices'],
+        max_pair_tests=request['max_pair_tests'],max_triangles=request['max_triangles'],allow_tm_symmetry=True)
+    report=partition.report;old_count,new_count=report['final_cell_counts']
+    selected=set(request['selected_cells'])
+    if max(selected)>=old_count:raise ValueError('selected_cells index exceeds the old final mesh')
+    covered=defaultdict(F);source_covered=defaultdict(F);overlaps=[]
+    for row in report['triangles']:
+        if row['previous_cell'] not in selected:continue
+        area=F(*row['determinant'])/2
+        covered[row['current_cell']]+=area;source_covered[row['previous_cell']]+=area
+        overlaps.append(deepcopy(row))
+    source_area={cell:F(*report['previous_areas'][cell]) for cell in sorted(selected)}
+    if any(source_covered[cell]!=area for cell,area in source_area.items()):
+        raise ValueError('selection intersections do not exactly cover each source selected cell')
+    cells=[];partial=[];coverage=[]
+    for cell,area in sorted(covered.items()):
+        fraction=area/F(*report['current_areas'][cell])
+        if not 0<fraction<=1:raise ValueError('selection coverage exceeds a target reference cell')
+        if fraction<1:partial.append(cell)
+        if request['coverage_policy']=='intersects' or fraction==1:cells.append(cell)
+        coverage.append(dict(current_cell=cell,covered_fraction=_encode(fraction),covered_reference_area=_encode(area)))
+    return dict(schema_version=2,document_type='curved_selection_transfer',status='PASS',
+        previous_project=projects[0].to_dict(),current_project=projects[1].to_dict(),request=request,
+        reference_partition=report,physical_error_bound=None,
+        selection=dict(selected_cells=cells,partially_covered_cells=partial,coverage=coverage,overlaps=overlaps,
+            previous_final_cell_count=old_count,current_final_cell_count=new_count,
+            total_pair_tests=report['total_pair_tests'],
+            source_reference_area=_encode(sum(source_area.values(),F(0))),
+            intersection_reference_area=_encode(sum(source_covered.values(),F(0))),
+            source_cell_area_checks=[dict(previous_cell=cell,source_reference_area=_encode(area),
+                intersection_reference_area=_encode(source_covered[cell])) for cell,area in source_area.items()]),
+        scope='exact rational selected-region coverage in declared common initial vertex charts; independent native P2 histories and original TM boundary roles validated; reference fractions are not physical area/volume fractions or FEM error estimates; selected target cells are a cover or a contained subset, not necessarily the identical region')
+
+
 def transfer_curved_cell_selection(previous,current,request):
     """Return a replayable selection document for independent local histories.
 
-    Base triangulations must correspond under the declared boundary policy.
+    Version 1 requires corresponding base triangulations; version 2 uses
+    explicitly declared initial vertex charts across independent connectivity.
     Final triangulations need not be nested or isomorphic. Native refinement
     parent maps are composed exactly, then rational clipping measures selected
     material regions in the common base reference coordinates. Intersects
     selects positive-area overlap; contained selects complete coverage. Edge/
     point contact has zero area and never selects a cell by itself.
     """
+    if isinstance(request,dict) and request.get('schema_version')==2:
+        return _transfer_reference_chart_selection(previous,current,request)
     _validate_request(request);request=deepcopy(request)
     prepared=[_prepare(p) for p in (previous,current)]
     projects=[p for p,_,_ in prepared];bases=[s for _,s,_ in prepared]

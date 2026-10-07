@@ -1,5 +1,7 @@
 # N04の要件・証拠・残件の照合
 
+2026-10-08 ADD-N04-selection-charts-03 **DONE**：[独立初期接続の版2選択移送API](CURVED_SELECTION_CHARTS_CORE.md)。全有理親被覆と旧選択各要素の面積保存、二policy、独立番号/逆方向/非nested/frozen/非アフィンと尺度4/8/32則・原TM対称/予算拒否を確認。初回38件は35 PASS/3 import ERROR、補完初回のsibling import ERRORを保全し、新test読み込み修正後3件10.443秒・終了0。38個別PASSを分割受入、成功35件を重複実行しない。旧selection ASTと元default builderの全report/評価配列一致、元1439中他1437源byte一致・新1440対象/1227 Python源。新幾何FEM0、旧TM実6求解を観測（TE経路はwrapper未計測）、full/seed/GUI/専用validator0。全131は79 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45、次は04の完全再生/CLI。親N04/原32要件/全goalは継続。
+
 2026-10-08追補：[選択移送strict入力02](CURVED_SELECTION_CHARTS_INPUT.md)をDONE。新7/旧8個別PASS、15件1.761秒・終了0。公開版2計算は未実装、03の全被覆/二policy/対称opt-inへ進む。全131は78/2/51、親N04/原四群/全goalは継続。
 
 2026-10-08追補：[異なる初期接続への選択移送仕様01](CURVED_SELECTION_CHARTS_SPEC.md)をDONE。元1432源不変、六入力例/有理被覆と閉式三積分、対称受理差を確認。公開版2は未実装、02〜06を必須後続として追加、全131は77/2/52。親N04/原四群/全goalは継続。次は02。
