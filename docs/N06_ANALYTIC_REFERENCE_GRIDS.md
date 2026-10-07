@@ -46,3 +46,20 @@ physical_acceptance_status=NATIVE_SOURCE_DOMAIN_ID_CHECKS_REQUIRED、physical_er
 rawは `out/n06-cost-recording-20261007/analytic-grid-*.log` と `analytic-grid-acceptance.json`。
 実保存参照package、共通native/domain判定、実worker費用/12独立実行は後続。
 N06・N04・親G03・全goalは継続する。
+
+## 共有参照packageの実保存/終端監査
+
+commit bacabc6の全1423源を固定し、同じ元Case/sourceから四格子を実生成した。
+円筒Gauss16/24は5120/11520体積点と80/120軸点、球は2048/4608体積点と128/192軸点。
+全配列を四NPZへlossless保存し、allow_pickle=Falseで完全array一致を確認した。
+完全Case/source/両R/Q・全wall/analytic peak、元入力四SHAをmetadataへ保持する。
+全1423源、helper自身、四元入力、四metadata/四NPZを終端監査で再hashした。
+両次数/両ケースのUe/Um各.5 Jと全shape/finiteを再確認し、欠測の削除は0。
+これは新たな共有準備consumerであり、unit件数やnative benchmarkへ加算しない。
+
+生成は0.995978秒・終了0/PASS、recorder lifetimeに限りimport/プロセス開始は含まない。
+process peak RSS=89391104 bytes。片側FEM費用をこの共有準備で割り引かない。
+新FEM/12benchmark/seed/full0、元1423源は不変。
+rawは `analytic-reference-grids/manifest.json`、四JSON/四NPZ、
+`analytic-reference-export-acceptance.json` とexport/audit log。
+N06実workerの全native source/domain/実ID/量別精度・費用確認は後続。
