@@ -7,9 +7,10 @@ canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これ�
 現在の受入範囲・証拠の現存/欠落は [B01対応台帳](docs/development-plan/B01-ledger.md)、
 日付ごとの実装履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md) を参照してください。
 
-D09の専用RF評価は [材料三水準](docs/MATERIAL_HPHI_RF_CONVERGENCE.md) と
-[直線真空三水準](docs/VACUUM_HPHI_RF_CONVERGENCE.md) を限定受入しています。
-元個別E/H・有限guard・量別収束が成立する場合だけ制約/採用を判定し、曲線側と全条件受入は継続中です。
+D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
+[直線真空](docs/VACUUM_HPHI_RF_CONVERGENCE.md)、[曲線P2](docs/CURVED_HPHI_RF_CONVERGENCE.md)の
+三水準を限定受入しています。元個別E/H・有限guard・量別収束が成立する場合だけ制約/採用を判定します。
+D09全条件の監査と全開発計画は継続中です。
 
 ## 主な機能
 

@@ -151,6 +151,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 [直線真空三水準/実個別ID・全壁RF制約](../VACUUM_HPHI_RF_CONVERGENCE.md)も限定受入。新8＋直接消費17の全25件を分割PASS/実終了0。独立TEM/Besselと粗い一般穴の数値未達、二ID順序継承・保存移動/型偽装拒否を確認。元422製品ファイル中420不変、旧定義/核/許容差・全123台帳不変。曲線側と全条件監査は後続、D09 IN_PROGRESS。
 
+2026-10-07 D09曲線三水準の限定受入：[完全P2参照・元chart/実個別E/H/全PEC壁RF](../CURVED_HPHI_RF_CONVERGENCE.md)。新8＋直接消費8＋独立同軸TM追加1の17件は分割PASS・全実終了0。解析TEMとTMのf/H/E/壁loss誤差減少、真正曲線穴の全領域/壁・尺度則と粗系列UNVERIFIED、strict能力・guard/予算/phase・保存移動/型偽装/元変異拒否を確認。等価な有理chart表記のFEM0反例を修正し、元数値AST/正常chartを保持。初期1177/修正後1178源の固定と元423製品源中421不変を監査。最後の保存完全再生1件1925.090秒も終了0。原同軸TM三nativeを保存後、NumPy scalar拒否のrunner ERRORを保全し、float入力で元場を再利用した1件49.705秒を受入。専用validatorは成功数値core/元creatorとsource結合し、CLI help/既存出力拒否を別確認、全数値CLIの重複求解は実施しない。rawは out/d09-curved-rf-convergence-20261007/acceptance.json。D09全条件監査は後続、全123台帳・原互換32要件・全goalを維持。科学核/旧RF定義/許容差不変、新full/seed/legacy0、全handle終端。
+
 ### HφのRF制約評価を追加する
 
 - **親課題**：D03。**種別**：実装。初期状態：未着手。

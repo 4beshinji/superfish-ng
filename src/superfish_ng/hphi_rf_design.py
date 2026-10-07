@@ -282,3 +282,60 @@ def read_vacuum_hphi_rf_design(path):
     canonical=lambda value:json.dumps(value,sort_keys=True,ensure_ascii=False,allow_nan=False)
     if canonical(expected)!=canonical(document):raise ValueError('vacuum RF assessment differs from fully reconstructed native evidence')
     return expected
+
+
+def assess_curved_hphi_rf_design(directories, convergence, criteria):
+    """Reconstruct three dedicated curved natives and independently judge RF bounds."""
+    from .curved_hphi_rf_convergence import CurvedHphiRFConvergence, compare_curved_hphi_rf_convergence
+    if type(convergence) is not CurvedHphiRFConvergence:
+        raise ValueError('curved RF design requires CurvedHphiRFConvergence')
+    convergence=CurvedHphiRFConvergence.from_dict(convergence.to_dict())
+    if type(directories) not in (list,tuple) or len(directories)!=3:
+        raise ValueError('curved RF design requires three distinct original native directories')
+    directories=[Path(p) for p in directories]
+    before=[_snapshot(p) for p in directories]
+    directories=[p.resolve() for p in directories]
+    if len(set(directories))!=3:raise ValueError('curved RF design requires three distinct original native directories')
+    for path,project in zip(directories,convergence.convergence.projects):
+        case=hphi_case_from_dict(parse_json((path/'case.json').read_text(encoding='utf-8')))
+        if case.to_dict()!=project.case.to_dict():raise ValueError('curved RF native differs from the original level Project')
+        validate_hphi_rf_criteria(case,criteria)
+    solutions=[read_hphi_run(path) for path in directories]
+    assessment=compare_curved_hphi_rf_convergence(convergence,solutions)
+    refinement='TARGETS_MET' if assessment['status']=='PASS' else 'UNVERIFIED'
+    decision=_evaluate_hphi_envelopes(convergence.convergence.projects[0].case,criteria,refinement,assessment['selected_rf'])
+    if before!=[_snapshot(p) for p in directories]:raise ValueError('curved RF native sequence changed during full assessment')
+    return dict(schema_version=1,document_type='curved_hphi_rf_design_assessment',
+        native_runs=[str(p) for p in directories],native_sha256=before,convergence=convergence.to_dict(),
+        criteria=deepcopy(criteria),capabilities=hphi_rf_capabilities(convergence.convergence.projects[0].case),
+        assessment=assessment,**decision,physical_error_bound=None,geometry_approximation_assessed=False,
+        scope='three original fixed-domain quadratic vacuum FEMs with individually verified sampled E/H IDs, finite spectral guards and separate frequency/fields/full-wall/RF gates; empirical interval criteria, not surface peak, continuum error, optimizer or global optimality acceptance')
+
+
+def save_curved_hphi_rf_design(directories, convergence, criteria, path):
+    """Save the complete replayable assessment outside every immutable native."""
+    path=Path(path)
+    if any(path.parent.resolve()==Path(p).resolve() for p in directories):
+        raise ValueError('curved RF assessment must be saved outside the native directories')
+    report=assess_curved_hphi_rf_design(directories,convergence,criteria)
+    report['native_runs']=[os.path.relpath(p,path.parent.resolve()) for p in report['native_runs']]
+    if report['native_sha256']!=[_snapshot(Path(p)) for p in directories]:
+        raise ValueError('curved RF natives changed before assessment publication')
+    with path.open('x',encoding='utf-8') as stream:
+        json.dump(report,stream,indent=2,ensure_ascii=False,allow_nan=False);stream.write('\n')
+    return report
+
+
+def read_curved_hphi_rf_design(path):
+    """Reject forged criteria/IDs/convergence/value/types through full native replay."""
+    from .curved_hphi_rf_convergence import CurvedHphiRFConvergence
+    path=Path(path);document=parse_json(path.read_text(encoding='utf-8'))
+    if (type(document) is not dict or type(document.get('native_runs')) is not list or
+        any(type(p) is not str for p in document['native_runs'])):
+        raise ValueError('expected a curved RF assessment with three native references')
+    convergence=CurvedHphiRFConvergence.from_dict(document.get('convergence'))
+    expected=assess_curved_hphi_rf_design([path.parent/p for p in document['native_runs']],convergence,document.get('criteria'))
+    expected['native_runs']=document['native_runs']
+    canonical=lambda value:json.dumps(value,sort_keys=True,ensure_ascii=False,allow_nan=False)
+    if canonical(expected)!=canonical(document):raise ValueError('curved RF assessment differs from fully reconstructed native evidence')
+    return expected

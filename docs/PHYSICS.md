@@ -556,8 +556,10 @@ Vは反射後の符号付き軸場に通過位相を掛けて積分する。既�
 
 ## 専用Hφの三水準RF評価（2026-10-07）
 
-[直線真空](VACUUM_HPHI_RF_CONVERGENCE.md)と[無損失線形材料](MATERIAL_HPHI_RF_CONVERGENCE.md)は
+[直線真空](VACUUM_HPHI_RF_CONVERGENCE.md)、[無損失線形材料](MATERIAL_HPHI_RF_CONVERGENCE.md)、
+[曲線P2](CURVED_HPHI_RF_CONVERGENCE.md)は
 元全domain/全PEC壁の三水準を再構築し、元E/Hの個別ID・有限guardとf/場/RFを別に判定する。
 直線真空は共通phase付き元場直接差を2*pi*r体積で評価する。Q0は全壁損失だけ、
 両R/Qは明示有効真空軸の場合だけ。粗い元穴領域の局所wall/場未達はUNVERIFIEDを保つ。
-観測三水準包絡は連続誤差上界/peak精度の保証ではなく、D09曲線側と全条件受入は継続する。
+曲線側も元二次写像と全壁chartを保持し、各水準の実個別ID/rankで元E/HとRFを評価する。
+観測三水準包絡は連続誤差上界/peak精度の保証ではなく、D09全条件の監査は継続する。
