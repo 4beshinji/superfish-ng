@@ -2,14 +2,17 @@
 
 2026-10-08 JST、[N08受入監査](N08_ACCEPTANCE.md)で既存残件を再照合した。
 新しい物理やユーザー範囲の追加ではなく、[N04の既存残件4](N04_ACCEPTANCE.md)を分割する。
-原123カードを保持し、以下の追加3カードをTSVにPLANNEDとして登録する。
+原123カードを保持し、追加3仕様カードと選択移送の必須五後続カードをTSVに登録する。
+選択移送01だけDONE、他7カードはPLANNED。全131は77/2/52。
 仕様カードは着手可能。未確定の入力/数値ゲートを持つ実装カードをreadyとしない。
 仕様の受入後、[L05の具体カード化手順](development-plan/08-external.md#条件付き要件から追加カードを作る手順)
 に沿って必要な入力/計算/保存/操作/独立受入を接続し、親N04の依存へ追加する。
 
 ## ADD-N04-selection-charts-01
 
-**親N04、先行N08、種別仕様、状態PLANNED**。
+**親N04、先行N08、種別仕様、状態DONE**。
+[版2七項目/保存/全被覆/対称/実装五工程の固定仕様](CURVED_SELECTION_CHARTS_SPEC.md)を2026-10-08受入。
+六例/既存幾何の読取検証であり、公開版2移送は未実装。次はADD-N04-selection-charts-02。
 異なる初期接続・頂点数・境界分割を持つ二Project間の選択領域移送を仕様化する。
 現行 `curved_selection_transfer.transfer_curved_cell_selection` / `_validate_request` /
 `replay_curved_selection_transfer` は版1で、初期一対一対応を必須とする。

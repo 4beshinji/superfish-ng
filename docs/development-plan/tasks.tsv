@@ -119,9 +119,14 @@ L06	V01	B01	調査	PLANNED	08-external.md#l06	実機参照の来歴と再現条�
 L07	V01	L06 N03	条件付き検証	PLANNED	08-external.md#l07	実機の入力と比較を作る
 V01	V02	B03	仕様	DONE	09-release.md#v01	統合受入の対象と必要証拠を固定する
 V02	V02	V01 S07 C08	検証	PLANNED	09-release.md#v02	配布と旧保存移行を検証する
-V03	V02	V02 D04 D11 N04 N08 H18 P10	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
+V03	V02	V02 D04 D11 N04 N08 H18 P10 ADD-N04-selection-charts-06	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
 V04	V02	V02 D11	検証	PLANNED	09-release.md#v04	実業務手順を利用者視点で受入する
-V05	V02	V03 V04 L07 C08 S07 ADD-N04-selection-charts-01 ADD-N04-boundary-remesh-01 ADD-N04-rf-goal-01	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
-ADD-N04-selection-charts-01	N04	N08	仕様	PLANNED	../N04_REMAINING_CARDS.md#add-n04-selection-charts-01	異なる初期接続の選択領域移送を仕様化する
+V05	V02	V03 V04 L07 C08 S07 ADD-N04-selection-charts-06 ADD-N04-boundary-remesh-01 ADD-N04-rf-goal-01	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
+ADD-N04-selection-charts-01	N04	N08	仕様	DONE	../N04_REMAINING_CARDS.md#add-n04-selection-charts-01	異なる初期接続の選択領域移送を仕様化する
 ADD-N04-boundary-remesh-01	N04	N08	仕様	PLANNED	../N04_REMAINING_CARDS.md#add-n04-boundary-remesh-01	二次境界分割を変更する再メッシュ生成を仕様化する
 ADD-N04-rf-goal-01	N04	N08	仕様	PLANNED	../N04_REMAINING_CARDS.md#add-n04-rf-goal-01	RF重み付き版5の一般ケース対照を仕様化する
+ADD-N04-selection-charts-02	N04 O02	ADD-N04-selection-charts-01	入力	PLANNED	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	要求版2と明示参照座標のstrict検査を追加する
+ADD-N04-selection-charts-03	N04 O02	ADD-N04-selection-charts-02	実装	PLANNED	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	全参照分割から選択領域の移送を計算する
+ADD-N04-selection-charts-04	N04 O02	ADD-N04-selection-charts-03	保存/CLI	PLANNED	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2の完全再生とCLIを接続する
+ADD-N04-selection-charts-05	N04 O02	ADD-N04-selection-charts-04	操作	PLANNED	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2を図上選択と履歴GUIへ接続する
+ADD-N04-selection-charts-06	N04 O02	ADD-N04-selection-charts-05	検証	PLANNED	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2の独立幾何と実FEMを受入する
