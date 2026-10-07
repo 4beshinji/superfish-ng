@@ -1,5 +1,8 @@
 # 選択移送の明示参照座標：版2のstrict入力検査
 
+現行追補：[04完全再生/CLI](CURVED_SELECTION_CHARTS_SAVED.md)をDONE。版2保存readerも接続済み。
+以下の未接続/版1のみの記述は当該工程受入時点の履歴。次は05のGUI。
+
 現行追補：[03計算工程](CURVED_SELECTION_CHARTS_CORE.md)をDONE。公開版2APIは接続済み。
 以下の未接続/拒否の記述は02受入時点の履歴。次は04の完全再生/CLI。
 

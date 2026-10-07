@@ -249,7 +249,22 @@ def _same_json_values(actual,expected):
     return type(actual) is type(expected) and actual==expected
 
 
+def _replay_reference_chart_selection(document):
+    fields=('schema_version','document_type','status','previous_project','current_project','request',
+            'reference_partition','selection','physical_error_bound','scope')
+    keys(document,fields,fields,'curved selection chart transfer document')
+    if type(document['schema_version']) is not int or document['schema_version']!=2 or document['document_type']!='curved_selection_transfer':
+        raise ValueError('curved selection chart transfer document requires schema_version=2 and its document_type')
+    expected=transfer_curved_cell_selection(Project.from_dict(document['previous_project']),
+        Project.from_dict(document['current_project']),document['request'])
+    if not _same_json_values(document,expected):
+        raise ValueError('curved selection chart transfer document differs from full reconstruction')
+    return expected
+
+
 def replay_curved_selection_transfer(document):
+    if isinstance(document,dict) and document.get('schema_version')==2:
+        return _replay_reference_chart_selection(document)
     fields=('schema_version','document_type','status','previous_project','current_project','request','base_correspondence','selection','scope')
     keys(document,fields,fields,'curved selection transfer document')
     if type(document['schema_version']) is not int or document['schema_version']!=1 or document['document_type']!='curved_selection_transfer':

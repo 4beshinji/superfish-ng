@@ -1,5 +1,8 @@
 # 異なる初期接続への曲線選択移送：版2計算工程
 
+現行追補：[04完全再生/CLI](CURVED_SELECTION_CHARTS_SAVED.md)をDONE。版2保存readerも接続済み。
+以下の未接続/版1のみの記述は当該工程受入時点の履歴。次は05のGUI。
+
 2026-10-08 JST、ADD-N04-selection-charts-03 **DONE**。開始commit `78870c6`。
 [固定仕様](CURVED_SELECTION_CHARTS_SPEC.md)の全参照被覆・二policyを公開Python APIへ接続した。
 全131カードは79 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。

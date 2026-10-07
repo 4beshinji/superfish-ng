@@ -249,5 +249,181 @@ class CurvedSelectionChartsTests(unittest.TestCase):
             transfer_curved_cell_selection(projects[0], te, request)
 
 
+class CurvedSelectionChartsSavedTests(unittest.TestCase):
+    def document(self):
+        projects, request = fixture()
+        return transfer_curved_cell_selection(*projects, request)
+
+    def assert_bad_documents(self, document, mutations):
+        from superfish_ng.curved_selection_transfer import replay_curved_selection_transfer
+        for label, mutate in mutations:
+            changed = deepcopy(document)
+            mutate(changed)
+            before = deepcopy(changed)
+            with self.subTest(label=label), self.assertRaises(ValueError):
+                replay_curved_selection_transfer(changed)
+            self.assertEqual(changed, before)
+
+    def test_full_document_round_trip_both_policies_and_browser_numbers(self):
+        import json
+        from superfish_ng.curved_selection_transfer import replay_curved_selection_transfer
+
+        def browser(value):
+            if type(value) is dict:
+                return {k: browser(v) for k, v in value.items()}
+            if type(value) is list:
+                return [browser(v) for v in value]
+            return int(value) if type(value) is float and value.is_integer() else value
+
+        projects, request = fixture()
+        for policy in ('intersects', 'contained'):
+            document = transfer_curved_cell_selection(*projects, dict(request, coverage_policy=policy))
+            for serialized in (json.loads(json.dumps(document)), browser(document)):
+                before = deepcopy(serialized)
+                replayed = replay_curved_selection_transfer(serialized)
+                self.assertEqual(replayed, document)
+                self.assertEqual(serialized, before)
+                replayed['selection']['coverage'][0]['covered_fraction'][0] += 1
+                self.assertEqual(serialized, before)
+
+    def test_top_level_version_metadata_and_project_refusals(self):
+        document = self.document()
+        mutations = []
+        for key in document:
+            mutations.append(('missing '+key, lambda d, k=key: d.pop(k)))
+        for key, value in (('extra', 1), ('schema_version', True), ('schema_version', 2.),
+                           ('schema_version', 1), ('schema_version', 3),
+                           ('document_type', 'other'), ('status', 'FAIL'),
+                           ('scope', 'physical accuracy verified'), ('physical_error_bound', 0),
+                           ('base_correspondence', {}), ('previous_project', None)):
+            mutations.append((str((key, value)), lambda d, k=key, v=value: d.update({k: v})))
+        mutations.extend([
+            ('unknown project field', lambda d: d['previous_project'].update(extra=1)),
+            ('source point count', lambda d: d['current_project']['mesh_data']['points'].pop()),
+            ('reflection', lambda d: d['current_project'].update(reflect_full=True)),
+            ('request version', lambda d: d['request'].update(schema_version=1)),
+            ('source selection', lambda d: d['request'].update(selected_cells=[1])),
+            ('chart boundary', lambda d: d['request']['reference_vertices'][1][4].__setitem__(0, .125)),
+        ])
+        self.assert_bad_documents(document, mutations)
+
+    def test_all_selection_and_partition_evidence_is_reconstructed_with_strict_types(self):
+        document = self.document()
+        mutations = []
+        for group in ('selection', 'reference_partition'):
+            for key in document[group]:
+                mutations.append(('missing '+group+'.'+key, lambda d, g=group, k=key: d[g].pop(k)))
+            mutations.append(('extra '+group, lambda d, g=group: d[g].update(extra=1)))
+        mutations.extend([
+            ('integer cell as float', lambda d: d['selection']['selected_cells'].__setitem__(0, 0.)),
+            ('integer cell as bool', lambda d: d['selection']['coverage'][0].update(current_cell=False)),
+            ('fraction bool numerator', lambda d: d['selection']['coverage'][0]['covered_fraction'].__setitem__(0, True)),
+            ('fraction float denominator', lambda d: d['selection']['coverage'][0]['covered_fraction'].__setitem__(1, 3.)),
+            ('source area', lambda d: d['selection']['source_reference_area'].__setitem__(0, 2)),
+            ('cell area check', lambda d: d['selection']['source_cell_area_checks'][0].update(previous_cell=True)),
+            ('overlap parent', lambda d: d['selection']['overlaps'][0].update(previous_cell=1)),
+            ('overlap barycentric', lambda d: d['selection']['overlaps'][0]['previous_barycentric'][0][0].__setitem__(0, 9)),
+            ('partition triangle', lambda d: d['reference_partition']['triangles'][0].update(current_cell=True)),
+            ('partition coverage', lambda d: d['reference_partition']['previous_covered_areas'][0].__setitem__(0, 2)),
+            ('pair count', lambda d: d['selection'].update(total_pair_tests=41.)),
+            ('empty contained forgery', lambda d: d['selection'].update(selected_cells=[])),
+        ])
+        self.assert_bad_documents(document, mutations)
+
+    def test_saved_budgets_raw_duplicate_keys_and_nonfinite_requests_are_rejected(self):
+        import json
+        from superfish_ng.curved_selection_transfer import replay_curved_selection_transfer
+        document = self.document()
+        self.assert_bad_documents(document, [
+            ('pair budget', lambda d: d['request'].update(max_pair_tests=40)),
+            ('triangle budget', lambda d: d['request'].update(max_triangles=3)),
+            ('boolean budget', lambda d: d['request'].update(max_triangles=True)),
+            ('nonfinite chart', lambda d: d['request']['reference_vertices'][0][0].__setitem__(0, float('inf'))),
+        ])
+        for raw in (json.dumps(document).replace('"schema_version": 2', '"schema_version": 2, "schema_version": 2', 1),
+                    json.dumps(document).replace('"max_pair_tests": 100000', '"max_pair_tests": 100000, "max_pair_tests": 100000', 1)):
+            with self.assertRaisesRegex(ValueError, 'duplicate JSON key'):
+                parse_json(raw)
+        bad = deepcopy(document)
+        bad['request']['reference_vertices'][0][0][0] = float('nan')
+        with self.assertRaises(ValueError):
+            replay_curved_selection_transfer(parse_json(json.dumps(bad)))
+
+    def test_non_nested_frozen_and_original_symmetry_saved_reconstruction(self):
+        from superfish_ng.curved_selection_transfer import replay_curved_selection_transfer
+        from superfish_ng.frozen_curved_refinement import freeze_curved_refinement
+        projects, request = fixture()
+        projects = [replace(p, case=replace(p.case, curved_refinement_steps=(
+            Step('uniform'), Step('marked', (side,), 1.)))) for side, p in enumerate(projects)]
+        for tag in ('electric_symmetry', 'magnetic_symmetry'):
+            inputs = [symmetry(p, 'z_min', tag) for p in projects]
+            for frozen in (False, True):
+                inputs = [freeze_curved_refinement(p) for p in inputs] if frozen else inputs
+                document = transfer_curved_cell_selection(*inputs, request)
+                self.assertEqual(replay_curved_selection_transfer(document), document)
+
+    def test_cli_both_policies_exclusive_output_raw_refusals_and_portable_replay(self):
+        from contextlib import redirect_stdout, redirect_stderr
+        import io
+        import json
+        import tempfile
+        from superfish_ng.cli import main
+        projects, request = fixture()
+
+        def run(args):
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                return main(args)
+
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            for name, project in zip(('old', 'new'), projects):
+                project.save(root / (name+'.json'))
+            original = {p: p.read_bytes() for p in root.iterdir()}
+            for policy in ('intersects', 'contained'):
+                value = dict(request, coverage_policy=policy)
+                request_path = root / 'request.json'
+                request_path.write_text(json.dumps(value))
+                output = root / (policy+'.json')
+                args = ['transfer-curved-selection', str(root/'old.json'), str(root/'new.json'),
+                        '--request', str(request_path), '--out', str(output)]
+                self.assertEqual(run(args), 0)
+                saved = output.read_bytes()
+                self.assertEqual(parse_json(saved.decode()), transfer_curved_cell_selection(*projects, value))
+                self.assertEqual(run(args), 2)
+                self.assertEqual(output.read_bytes(), saved)
+                self.assertEqual(run(['replay-curved-selection-transfer', str(output)]), 0)
+                self.assertEqual(output.read_bytes(), saved)
+            invalid_requests = [
+                '{"schema_version":2,"schema_version":2}',
+                json.dumps(dict(request, max_pair_tests=40)),
+                json.dumps(dict(request, reference_vertices=[[[float('nan'), 0], [1, 0], [0, 1]]]*2)),
+            ]
+            for i, raw in enumerate(invalid_requests):
+                request_path.write_text(raw)
+                output = root / ('invalid-'+str(i)+'.json')
+                args[-1] = str(output)
+                self.assertEqual(run(args), 2)
+                self.assertFalse(output.exists())
+            bad = self.document()
+            bad['selection']['coverage'][0]['covered_fraction'][0] = True
+            bad_path = root/'bad.json'
+            bad_path.write_text(json.dumps(bad))
+            saved_bad = bad_path.read_bytes()
+            self.assertEqual(run(['replay-curved-selection-transfer', str(bad_path)]), 2)
+            self.assertEqual(bad_path.read_bytes(), saved_bad)
+            self.assertEqual(original, {p: p.read_bytes() for p in original})
+            moved = root/'moved'
+            moved.mkdir()
+            for policy in ('intersects', 'contained'):
+                (root/(policy+'.json')).rename(moved/(policy+'.json'))
+            for p in original:
+                p.unlink()
+            request_path.unlink()
+            for p in moved.iterdir():
+                before = p.read_bytes()
+                self.assertEqual(run(['replay-curved-selection-transfer', str(p)]), 0)
+                self.assertEqual(p.read_bytes(), before)
+
+
 if __name__ == '__main__':
     unittest.main()
