@@ -21,6 +21,12 @@ temp commit8dbf122で限定受入。新5unit1.396秒・終了0、全四入力の
 最初の監査で主の生成egg-info六点のtemp不在を見落とした点数仮定は失敗を保全し訂正。
 計画12行は全NOT_RUN、新FEM0。主へ入力/実装を統合して実workerへ接続する工程は後続。
 
+計測接続の追加：[引数/返り値/元例外を保つserial呼出し観測](../N06_CALL_OBSERVATION.md)を
+temp commit0c336fbで限定受入。新5unit0.001秒・終了0、独立10秒の配分・binding復元と
+部分登録失敗/外部置換の保全を確認。元1200＋既受入六源は不変、temp1208 Python/全1409。
+四moduleの27個別unitを別証拠として保持し、既存反復分を重複加算しない。
+主1405源は固定、実FEM/12比較の計測接続と主統合は後続。
+
 2026-10-07 N06費用記録器 **IN_PROGRESS**：[serial stageのinclusive/exclusive・失敗/欠測](../N06_EFFICIENCY_TIMING.md)。主N03全validate handle64569の1405対象源を固定し、別ツリーで新二源だけを追加。独立18秒配分/未配賦、元失敗/中断・非有限/逆行時計・未知RSS・未完了/完成後・foreign threadを新7unit0.002秒・終了0で確認。元1200 Python源のbyte一致/temp1202固定、主統合/物理系列/予算執行/12benchmark実行は後続。N06全受入へ数えず新FEM/seed/full/benchmark0、原123は72 DONE/4 IN_PROGRESS（H17/C07-planar/N03/N06）/47 PLANNED、原互換32要件/全goalは継続。
 
 ## N03全検証：localhost環境修正後handle64569を実行中
