@@ -1,5 +1,7 @@
 # C00: 互換基準と受入台帳
 
+2026-10-07：[C07-planar矩形準備](PLANAR_SUPERFISH_COMPARISON.md)。候補デッキ/NG入力と全未確認ケース表を生成、旧Cartesian新規実行0。K10/C00.VのF/I/O/N/WはUNVERIFIEDを維持し、6限定候補を全互換受入へ数えない。
+
 2026-09-22：[B03必須範囲と不足仕様](development-plan/B03-required-scope.md)で全32行の既存要件を維持し、限定入力/期待量/単位/比較方法を対応付けた。未知仕様の採否とC00.Vは未確認。TM旧集約の欠落とTE集約hash一致を区別する。
 
 2026-09-22：[B02再監査](development-plan/B02-reference-audit.md)で全32行の版付き根拠/未確認理由を更新。入力・設定・出力7件はhash一致、R25は欠落。調査完了はC00.V受入ではない。

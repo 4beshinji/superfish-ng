@@ -1,3 +1,5 @@
+2026-10-07 C07-planar着手：[矩形二尺度TE10/TE01/TM11の参照比較準備](PLANAR_SUPERFISH_COMPARISON.md)。既存入口に明示prepare-onlyを接続し、新5＋既存比較7の12件0.772秒は終了0。候補6ケース/18水準/90入力の生成は終了3（UNVERIFIED）、旧/NG新求解0、実モード対応・四量・F/I/O/N/Wを全未確認で保存。Wine/旧prefix不在、7.17偏波/単位長規約を推測して変換しない。C07-planar IN_PROGRESS、曲線/多角形の条件表は後続。P09受入源/全検証をこの限定実行と重複集計せず、製品src不変。全123カードは62 DONE/2 IN_PROGRESS/59 PLANNED、全goal継続。
+
 現行の作業順・依存待ち・受入証拠・実行中処理は[現行入口](development-plan/CURRENT.md)を参照する。以下の追記は履歴であり、古い「次は」「生存中」を現在の指示/状態として扱わない。
 
 2026-10-07 P09全条件受入：[条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)の元14条件＋[共有checkpoint完全公開](PLANAR_CHECKPOINT_PUBLICATION.md)を受入。修正後の全validate handle69844は2359検査/479モジュール、3215.343秒、0FAIL・0ERROR・3skipで実終了0/PASS。全1366源は開始/終端/現行一致。seedは9モード/207周波数・RF量を相対1e-10で別照合し、最大相対差はf=0、RF=8.881784197001248e-16。元全validateの終了1と初回metadata監査AssertionErrorは保全し、入力Case/mesh/両PEC端・全旧規約一致と既知のdomain/scope注記だけを厳密に確認した。数値許容差は不変。3skipを実行済み物理へ数えず、専用円/TE移動再生は既存実検査865.527秒の証拠と区別する。新FEM/全検証の文書用再実行なし。P09 DONE、全123カードは62 DONE/1 IN_PROGRESS/60 PLANNED、全goal継続。次はC07-planar。

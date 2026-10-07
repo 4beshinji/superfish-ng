@@ -97,7 +97,7 @@ C05	C03	C04	条件付き実装	PLANNED	06-compatibility.md#c05	必要なプロ�
 C06	C03	C05	検証	PLANNED	06-compatibility.md#c06	旧後処理への受渡しを実証する
 C07-TM	C04 C00	B03 C03	検証	PLANNED	06-compatibility.md#c07-tm	機能別ブラックボックス比較を整備する：既存真空TMと曲線変換
 C07-TE	C04 C00	B03 D03	検証	PLANNED	06-compatibility.md#c07-te	機能別ブラックボックス比較を整備する：軸対称TE
-C07-planar	C04 C00	B03 P09	検証	PLANNED	06-compatibility.md#c07-planar	機能別ブラックボックス比較を整備する：平面TE/TM
+C07-planar	C04 C00	B03 P09	検証	IN_PROGRESS	06-compatibility.md#c07-planar	機能別ブラックボックス比較を整備する：平面TE/TM
 C07-hphi	C04 C00	B03 H13	検証	PLANNED	06-compatibility.md#c07-hphi	機能別ブラックボックス比較を整備する：真空/内導体Hφ
 C07-material	C04 C00	B03 H16	検証	PLANNED	06-compatibility.md#c07-material	機能別ブラックボックス比較を整備する：材料Hφ
 C07-static	C04 C00	B03 S01 S02 S03 S04 S05	検証	PLANNED	06-compatibility.md#c07-static	機能別ブラックボックス比較を整備する：静的S01〜S05の確認済み範囲

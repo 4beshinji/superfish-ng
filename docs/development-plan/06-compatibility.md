@@ -143,6 +143,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## C07-planar
 
+- **矩形準備leaf（2026-10-07、IN_PROGRESS）**：[二尺度/両偏波の明示UNVERIFIED入口](../PLANAR_SUPERFISH_COMPARISON.md)。候補6ケース/18水準/90入力、旧/NG新求解0、生成終了3。新5＋旧比較7の12件0.772秒は終了0。四量/全受入軸/実対応/両側細分は未確認、曲線/多角形条件と親受入は継続。
+
 ### 機能別ブラックボックス比較を整備する：平面TE/TM
 
 - **親課題**：C04 / C00。**種別**：検証。初期状態：未着手。

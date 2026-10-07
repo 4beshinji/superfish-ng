@@ -1,3 +1,5 @@
+2026-10-07：[C07-planarの明示UNVERIFIED準備入口](PLANAR_SUPERFISH_COMPARISON.md)を追加。矩形候補の生成だけで旧版比較をPASSへ数えない。以下の軸対称実行は歴史的証拠であり、新Cartesian実行へ流用しない。
+
 # Wine版SUPERFISHとの照合 — 2026-09-05
 
 既存Wine環境のAUTOFISHを実行し、独立したSuperfish-NGのFEM計算と比較した。

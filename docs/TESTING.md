@@ -1,3 +1,5 @@
+2026-10-07 C07-planar着手：[矩形二尺度TE10/TE01/TM11の参照比較準備](PLANAR_SUPERFISH_COMPARISON.md)。既存入口に明示prepare-onlyを接続し、新5＋既存比較7の12件0.772秒は終了0。候補6ケース/18水準/90入力の生成は終了3（UNVERIFIED）、旧/NG新求解0、実モード対応・四量・F/I/O/N/Wを全未確認で保存。Wine/旧prefix不在、7.17偏波/単位長規約を推測して変換しない。C07-planar IN_PROGRESS、曲線/多角形の条件表は後続。P09受入源/全検証をこの限定実行と重複集計せず、製品src不変。全123カードは62 DONE/2 IN_PROGRESS/59 PLANNED、全goal継続。
+
 現行の検証状態は[現行入口](development-plan/CURRENT.md)と以下のP09全条件受入記録を参照する。日付付きleaf記録は履歴であり、古い実行中handleを現在の状態へ数えない。
 
 P09大容量checkpoint実GUIは `verify_gui_planar_curved_large_checkpoint.mjs` で円5＋不足2/TE8、分割15項目PASS。実科学body/完全保存/両gate/過去anchor/元場の実順位/元五byte・全download/画像を確認し、全420源/元7trial九byte/全123カード不変を監査。初回debugger失敗・download不足・歴史的creator照合の誤りを保全。[実終端と照合](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。節目の全validateは一度起動してhandle60083で実行中、まだfull/seed受入ではない。[条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)。
