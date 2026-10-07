@@ -12,6 +12,10 @@ D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
 三水準を受入しています。元個別E/H・有限guard・量別収束が成立する場合だけ制約/採用を判定します。
 [評価の原条件監査](docs/HPHI_RF_DESIGN_ACCEPTANCE.md)は完了し、探索運用と全開発計画は継続中です。
 
+直線TMのprofile・段差・単一輪郭を元境界法則から調整する
+[版9の実装と原条件監査](docs/STRAIGHT_TM_TUNING_ACCEPTANCE.md)を受入しました。
+独立細分が未達なら停止し、個別ID・元要求・最終場・両R/Qを保存/CLI/GUIで保持します。
+
 ## 主な機能
 
 | 分野 | 内容 |

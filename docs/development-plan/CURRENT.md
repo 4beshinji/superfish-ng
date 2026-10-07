@@ -1,8 +1,18 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-65 DONE/3 IN_PROGRESS（H17、C07-planar、D02）/55 PLANNED。全goalと原互換32要件は継続中。
+66 DONE/2 IN_PROGRESS（H17、C07-planar）/55 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D02原条件：DONE、次はD03
+
+2026-10-07 D02原カード **DONE**：[直線TM調整の条件別監査](../STRAIGHT_TM_TUNING_ACCEPTANCE.md)。D01法則からの試行/追跡/独立細分/保存再開、独立円筒f/H/E/壁loss/両R/Q、実段差の元境界/体積/個別ID、無効中間形状の求解前停止、API/CLI/実Chromeの元要求/最終場/両R/Q一致を原6条件群で照合。52個別unit＋実Chrome7項目を源/元logへ再結合し、監査内の新FEM/unit/full/seed/legacy0。一般折返し輪郭は正しい未達停止/完全再生を受入し、追加二系列の差71.166/31.378 kHzをTUNEDへ変更しない。初稿監査の「折返し輪郭成功」は原カードを超える追加条件だったため、原文との照合記録を残し、原条件へ戻した。全1275源固定・全handle/server/browser終端、slot 0。原123はD02だけDONEへ変更、66 DONE/2 IN_PROGRESS（H17/C07-planar）/55 PLANNED。親D02/P01/全goal/原互換32要件は継続、次はD03（TE階段/一般輪郭）。rawは out/d02-whole-acceptance-20261007/acceptance.json。
+
+D03の受入条件はTE Eφ独立解析、実段差と独立細分・対称偶奇、
+未確認停止/所有保存再開。TM境界条件を流用せず、現行版9のTE拒否を維持して着手する。
+既存曲線TEの受入を再実装へ戻さない。全handle/server/browser終端、source固定解除。
+
+## D02限定受入の履歴
 
 ## D02コア限定受入：IN_PROGRESS
 

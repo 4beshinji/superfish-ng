@@ -1,5 +1,7 @@
 H15-b進行中（2026-09-22）：[材料重み付き元E/H比較](MATERIAL_HPHI_FIELDS.md)を実装。独立Gauss/Vandermonde、非一様cross密度、真空極限/一様材料/正逆尺度/位相/元RF不変の新5＋関連8件PASS、全handle終端。次はmu_r重み付きq/u質量射影（hphi_mass_projection.pyの既存構造を参照、真空行列への置換は不可）。H15-b/親H15/全goalは未完了。
 
+2026-10-07 D02原カード **DONE**：[直線TM調整の条件別監査](STRAIGHT_TM_TUNING_ACCEPTANCE.md)。D01法則からの試行/追跡/独立細分/保存再開、独立円筒f/H/E/壁loss/両R/Q、実段差の元境界/体積/個別ID、無効中間形状の求解前停止、API/CLI/実Chromeの元要求/最終場/両R/Q一致を原6条件群で照合。52個別unit＋実Chrome7項目を源/元logへ再結合し、監査内の新FEM/unit/full/seed/legacy0。一般折返し輪郭は正しい未達停止/完全再生を受入し、追加二系列の差71.166/31.378 kHzをTUNEDへ変更しない。初稿監査の「折返し輪郭成功」は原カードを超える追加条件だったため、原文との照合記録を残し、原条件へ戻した。全1275源固定・全handle/server/browser終端、slot 0。原123はD02だけDONEへ変更、66 DONE/2 IN_PROGRESS（H17/C07-planar）/55 PLANNED。親D02/P01/全goal/原互換32要件は継続、次はD03（TE階段/一般輪郭）。rawは out/d02-whole-acceptance-20261007/acceptance.json。
+
 H15-a受入（2026-09-22）：[固定材料領域と全界面の比較分割](MATERIAL_HPHI_COMPARISON.md)。明示ID全単射/固定係数、全元セルと界面両側セルを保持。独立面積/体積/界面長、非一様正逆写像、番号/ID改名、1 ULPずれ拒否の新7件＋関連10件PASS、変更1件追加検査PASS、全handle終端。次はH15-bの材料重み付き元E/Hとscalar射影。親H15/全goalは未完了。
 
 H13-e/親H13受入（2026-09-22）：[全条件監査](CURVED_HPHI_ACCEPTANCE.md)。穴付き実中止/再開・元場6+6ファイル一致、回復調整Chrome4項目/元24ファイル不変/現行368hash一致、回復履歴Chrome5項目/49所有ファイル不変を確認。4 MiB HTTP不備を再現・修正し新2件＋実HTTP1件PASS、失敗と修正後再検査を分割証拠で保持。全handle/検証サーバー終端、src固定を解除。次はH15-a（H14 DONE、H15-a〜cの分割は99ce82a）。原90カード/全goalは未完了。
