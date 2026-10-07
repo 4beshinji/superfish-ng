@@ -1,8 +1,10 @@
 # 現行の作業入口
 
 更新：2026-10-08、P07/P08/P09/N03全条件受入済み。原123カードは76 DONE/2 IN_PROGRESS（H17、C07-planar）/45 PLANNED。
-N04既存残件の追加8カードを含む全131カードは77 DONE/2 IN_PROGRESS/52 PLANNED。全goalと原互換32要件は継続中。
+N04既存残件の追加8カードを含む全131カードは78 DONE/2 IN_PROGRESS/51 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+2026-10-08 ADD-N04-selection-charts-02 **DONE**：[明示参照座標の版2 strict入力検査](../CURVED_SELECTION_CHARTS_INPUT.md)。七項目の未知/欠落/型/版混用、選択番号/予算、二chart/list/有限/巨大int、raw重複/NaNと入力不変を新7個別unitで確認。直接消費の旧選択移送8件と合わせ15件1.761秒・終了0。先行ImportError/1 test4 errorsを保全し、新helper以外の元module全AST一致・他1437源byte一致を監査。新1439対象/1226 Python源、新FEM/seed/full/GUI/legacy0。公開版2の計算/保存/GUIは未接続で拒否を維持、03〜06は後続。原123は76/2/45、全131は78 DONE/2 IN_PROGRESS/51 PLANNED。次はADD-N04-selection-charts-03、親N04/原32要件/全goalは継続。
 
 2026-10-08 ADD-N04-selection-charts-01 **DONE**：[異なる初期接続への選択移送版2仕様](../CURVED_SELECTION_CHARTS_SPEC.md)。旧2/新3要素・追加軸頂点の六正常/拒否例を固定し、全有理被覆・二policy/無次元面積と物理三積分を分離。現行の版1/版2拒否を先に再現、既存chartの被覆率2/3・1/3・1/2と閉式三積分は最大相対3.331e-16でPASS。元版1の磁気対称はPASS/既存chartは拒否の差を再現し、新版callerのstrict opt-inと旧consumer不変を指定。初回fixture contour ERRORを保全して入力生成だけ訂正、新FEM/unit/seed/full/legacy0、元1432源byte不変・六例追加後1438。要求七項目/保存十項目・raw/改竄/予算・GUI・独立gateを固定し、必須五後続カードを追加。原123は76/2/45、全131は77 DONE/2 IN_PROGRESS/52 PLANNED。次はADD-N04-selection-charts-02、親N04/原32要件/全goalは継続。
 

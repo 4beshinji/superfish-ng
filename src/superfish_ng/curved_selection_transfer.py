@@ -85,6 +85,46 @@ def _validate_request(request):
     if len(set(cells))!=len(cells):raise ValueError('selected_cells must be unique')
 
 
+def _validate_chart_request(request):
+    """Check version-2 metadata without inferring geometry or correspondence.
+
+    Mesh-dependent vertex counts, cell ranges, orientation and complete chart
+    coverage require the geometry stage. This validator does not itself add
+    version-2 support to the public selection-transfer operation.
+    """
+    from math import isfinite
+
+    fields=('schema_version','selected_cells','boundary_pairing','coverage_policy',
+            'max_pair_tests','max_triangles','reference_vertices')
+    keys(request,fields,fields,'curved selection chart request')
+    if type(request['schema_version']) is not int or request['schema_version']!=2:
+        raise ValueError('curved selection chart schema_version must be 2')
+    if type(request['boundary_pairing']) is not str or request['boundary_pairing']!='declared_reference_polylines':
+        raise ValueError('boundary_pairing must be declared_reference_polylines for selection charts')
+    if type(request['coverage_policy']) is not str or request['coverage_policy'] not in ('intersects','contained'):
+        raise ValueError('coverage_policy must be intersects or contained')
+    for name in ('max_pair_tests','max_triangles'):
+        if type(request[name]) is not int or request[name]<1:
+            raise ValueError(f'{name} must be a positive integer')
+    cells=request['selected_cells']
+    if type(cells) is not list or not cells:
+        raise ValueError('selected_cells must be a nonempty array of old final cell indices')
+    if any(type(cell) is not int or cell<0 for cell in cells):
+        raise ValueError('selected_cells entries must be nonnegative integers')
+    if len(set(cells))!=len(cells):raise ValueError('selected_cells must be unique')
+    charts=request['reference_vertices']
+    if type(charts) is not list or len(charts)!=2:
+        raise ValueError('reference_vertices must contain previous and current chart arrays')
+    for chart in charts:
+        if type(chart) is not list or len(chart)<3:
+            raise ValueError('reference_vertices must give at least three initial vertex pairs per chart')
+        for point in chart:
+            if type(point) is not list or len(point)!=2 or any(
+                    type(value) not in (int,float) or (type(value) is float and not isfinite(value))
+                    for value in point):
+                raise ValueError('reference_vertices require finite dimensionless coordinate pairs')
+
+
 def transfer_curved_cell_selection(previous,current,request):
     """Return a replayable selection document for independent local histories.
 

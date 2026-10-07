@@ -25,7 +25,7 @@ TE、鏡映後の全空洞、組立Project、直線P1経路、軸非接続/材�
 | coverage_policy | `intersects` または `contained` |
 | max_pair_tests | 正整数。全参照辺/自己交差/両側交差の合計予算 |
 | max_triangles | 正整数。各native初期/履歴後要素数と共通交差三角形数の上限。各Caseが厳しければその元上限も保持 |
-| reference_vertices | `[previous_chart,current_chart]`。各chartは各初期source_mesh頂点と同じ順番・個数のlist |
+| reference_vertices | `[previous_chart,current_chart]`。各chartは三頂点以上で、各初期source_mesh頂点と同じ順番・個数のlist |
 | chart内の各頂点 | 上記配列の要素は有限int/float二座標のlist。無次元。bool/NaN/Inf/文字列/余分な座標を拒否 |
 
 上表の最後の行はreference_verticesの内部条件であり、独立フィールドではない。
@@ -141,6 +141,10 @@ contour=Noneで元curved geometryから生成し直した。製品/数値ゲー�
 新文献・依存・旧資産参照なし。既存の自作有理数交差/参照履歴と初等閉式積分を利用した。
 
 ## 必須五工程と独立受入ゲート
+
+2026-10-08：02の[strict入力工程](CURVED_SELECTION_CHARTS_INPUT.md)をDONE。
+新7/元直接8個別PASS、15件1.761秒・終了0。公開版2の計算/保存/GUIは03〜06の後続。
+以下は各工程の固定条件。
 
 下記工程をTSVへ追加し、親N04・V03/V05の依存へ接続する。01仕様のDONEだけで親を閉じない。
 
