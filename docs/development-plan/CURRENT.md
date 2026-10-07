@@ -1,8 +1,17 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-69 DONE/2 IN_PROGRESS（H17、C07-planar）/52 PLANNED。全goalと原互換32要件は継続中。
+69 DONE/3 IN_PROGRESS（H17、C07-planar、N02）/51 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## N02入力・来歴工程：IN_PROGRESS
+
+2026-10-07 N02第一工程 **IN_PROGRESS**：[幾何/表面比較の入力・来歴計画](../N02_GEOMETRY_SURFACE_PLAN.md)。五Case/全45点のstrict指定、独立面積・体積/全曲線/鋭角、解析球の元根条件、旧4 reportのSHA/PASS/楕円区間、欠落UNVERIFIED・自作FEM参照拒否、排他的保存/完全再生を接続。新8＋直接6の14個別unitを分割受入、実CLIのplanned45/newFEM0も確認。初稿baseline項目・affine selector誤記は失敗を保全して必要分だけ修正。元1190源の変更はCLI一つ、旧数値全関数/楕円数値bodyはAST同一、新2源を加え1192。新FEM/seed/full/legacy0、全handle終端。N02の実保存場・5種差分/反例・楕円新判定再生は後続。原123は69 DONE/3 IN_PROGRESS（H17/C07-planar/N02）/51 PLANNED、親G03/N03/原互換32要件/全goalを維持。次はN02保存行列・場/ピーク/求積の比較。rawは out/n02-geometry-surface-plan-20261007/。
+
+全処理handle終端、source固定解除。数値/FEM実行は0。
+次は元保存3×3行列と個別ID、幾何/FEM/求積/場/peak差の実報告。
+共通領域の被覆・欠測を記録し、未収束/場不一致/幾何未確認の反例と旧楕円判定一致を確認する。
+N03実検証の後にD07、N02未完のまま親G03/N03や全goalを閉じない。
 
 ## N01仕様：DONE、次はN02
 

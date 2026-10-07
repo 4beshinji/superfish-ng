@@ -113,9 +113,40 @@ def quadrature_check(solution):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--archive', type=Path, required=True)
+    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs.add_argument('--archive', type=Path, help='existing ellipse archive; preserves the original numerical path')
+    inputs.add_argument('--catalog', type=Path, help='strict N01 case catalog; currently input/provenance planning only')
+    parser.add_argument('--catalog-sha256', help='explicit SHA256 of the intended catalog input')
+    parser.add_argument('--case', dest='case_ids', nargs='+', help='catalog case ids in requested order; omitted selects all')
+    parser.add_argument('--plan-only', action='store_true', help='validate catalog Cases/references without mesh construction or FEM')
     parser.add_argument('--out', type=Path, required=True)
-    args = parser.parse_args(); archive = args.archive.resolve(); out = args.out.resolve()
+    args = parser.parse_args()
+    if args.catalog is not None:
+        if not args.plan_only or args.catalog_sha256 is None:
+            parser.error('--catalog requires --plan-only and --catalog-sha256; numerical catalog execution is not implemented yet')
+        from superfish_ng.geometry_surface_plan import build_geometry_surface_plan
+        from superfish_ng.project import parse_json
+        raw = parse_json(args.catalog.read_text(encoding='utf-8'))
+        # Detailed validation, including every unselected record, occurs in the
+        # plan builder before creating the output directory.
+        ids = args.case_ids
+        if ids is None:
+            if not isinstance(raw, dict) or not isinstance(raw.get('records'), list):
+                parser.error('--catalog requires a records list')
+            ids = [r.get('id') if isinstance(r, dict) else None for r in raw['records']]
+        request = dict(schema_version=1, document_type='geometry_surface_plan_request',
+                       catalog=str(args.catalog), catalog_sha256=args.catalog_sha256, case_ids=ids)
+        out = args.out.resolve()
+        if out.exists():
+            raise FileExistsError(out)
+        result = build_geometry_surface_plan(request)
+        out.mkdir(parents=True, exist_ok=False)
+        write(out/'plan.json', result)
+        print(result['status'], 'planned FEM', result['planned_fem_solves'], 'new FEM', result['new_fem_solves'], flush=True)
+        return 0
+    if args.plan_only or args.catalog_sha256 is not None or args.case_ids is not None:
+        parser.error('--plan-only/--catalog-sha256/--case require --catalog')
+    archive = args.archive.resolve(); out = args.out.resolve()
     accepted_path = archive/'comparison.json'; accepted = json.loads(accepted_path.read_text())
     assert accepted['status'] == 'PASS' and accepted['physical_peak_convergence'] == 'UNVERIFIED'
     out.mkdir(parents=True, exist_ok=False); started = time.monotonic(); before = fingerprints()
