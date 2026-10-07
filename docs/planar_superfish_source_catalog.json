@@ -1,0 +1,325 @@
+{
+  "format": "superfish_ng_planar_reference_sources",
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "triangle-te",
+      "feature_ids": [
+        "P02",
+        "P04"
+      ],
+      "conditions": [
+        "simple polygon xy; P2; whole original mesh; peak Uprime=1 J/m"
+      ],
+      "case": {
+        "path": "out/planar-polygon-examples-final-20260909/te/case.json",
+        "sha256": "ae39bbd0d5f71fa23ec1e8b202e4f465bb70dc0c265f8392da6d2fef91d42377"
+      },
+      "evidence": [
+        {
+          "path": "out/planar-polygon-examples-final-20260909/report.json",
+          "sha256": "22f0bf10d1d04616cb7d1ee6034433fb7dbbc024cdacd54c1a5ef424d678f9ad"
+        }
+      ]
+    },
+    {
+      "id": "p08-ellipse-te",
+      "feature_ids": [
+        "P07",
+        "P08"
+      ],
+      "conditions": [
+        "original quadratic domain and both polarizations; native/API/CLI/GUI source"
+      ],
+      "case": {
+        "path": "out/p08-planar-curved-native-20261007/browser-fixtures/te-native/case.json",
+        "sha256": "20d10a874a22d2384200ac95423b4f9b90207b882412149582b41822a83d91a3"
+      },
+      "evidence": [
+        {
+          "path": "out/p08-planar-curved-native-20261007/final-p08-acceptance-v2.json",
+          "sha256": "f97f94d5886100bbc8703ee40f5e363a60f4ff1fdc561a54812b9c3cdac1a2ff"
+        }
+      ]
+    },
+    {
+      "id": "triangle-tm",
+      "feature_ids": [
+        "P02",
+        "P04"
+      ],
+      "conditions": [
+        "simple polygon xy; P2; whole original mesh; peak Uprime=1 J/m"
+      ],
+      "case": {
+        "path": "out/planar-polygon-examples-final-20260909/tm/case.json",
+        "sha256": "3a81559890017e1d33483c1570d6d23c031ba9b307ec82a9023e287b208f827e"
+      },
+      "evidence": [
+        {
+          "path": "out/planar-polygon-examples-final-20260909/report.json",
+          "sha256": "22f0bf10d1d04616cb7d1ee6034433fb7dbbc024cdacd54c1a5ef424d678f9ad"
+        }
+      ]
+    },
+    {
+      "id": "p08-ellipse-tm",
+      "feature_ids": [
+        "P07",
+        "P08"
+      ],
+      "conditions": [
+        "original quadratic domain and both polarizations; native/API/CLI/GUI source"
+      ],
+      "case": {
+        "path": "out/p08-planar-curved-native-20261007/browser-fixtures/tm-native/case.json",
+        "sha256": "4fd245469774a33a4f9e1cd03c68ac6367ed0aa55ae40fbf6b5d10bf305e40e8"
+      },
+      "evidence": [
+        {
+          "path": "out/p08-planar-curved-native-20261007/final-p08-acceptance-v2.json",
+          "sha256": "f97f94d5886100bbc8703ee40f5e363a60f4ff1fdc561a54812b9c3cdac1a2ff"
+        }
+      ]
+    },
+    {
+      "id": "circle-tm-trial1",
+      "feature_ids": [
+        "P07",
+        "P09"
+      ],
+      "conditions": [
+        "circle-inspired fixed quadratic domain; affine-scale search"
+      ],
+      "case": {
+        "path": "out/p09-planar-curved-tuning-20261007/initial-acceptance/circle/first/trial-001/solution/case.json",
+        "sha256": "d25965090eedac9b5c78df2ec73dee51e5be3746bc68c0482f8b9020eccad309"
+      },
+      "evidence": [
+        {
+          "path": "out/p09-planar-curved-tuning-20261007/tuning-acceptance.json",
+          "sha256": "d90e2e9c289df2e888369572189c2d058c743044e363b77a4b1f20b37f3f129e"
+        }
+      ]
+    },
+    {
+      "id": "circle-tm-trial2",
+      "feature_ids": [
+        "P07",
+        "P09"
+      ],
+      "conditions": [
+        "circle-inspired fixed quadratic domain; affine-scale search"
+      ],
+      "case": {
+        "path": "out/p09-planar-curved-tuning-20261007/initial-acceptance/circle/first/trial-002/solution/case.json",
+        "sha256": "a8cff755d9b8307f9a5e1f04d9288a09fecf59398d761bbf384680ac0daa7075"
+      },
+      "evidence": [
+        {
+          "path": "out/p09-planar-curved-tuning-20261007/tuning-acceptance.json",
+          "sha256": "d90e2e9c289df2e888369572189c2d058c743044e363b77a4b1f20b37f3f129e"
+        }
+      ]
+    },
+    {
+      "id": "circle-tm-trial3",
+      "feature_ids": [
+        "P07",
+        "P09"
+      ],
+      "conditions": [
+        "circle-inspired fixed quadratic domain; affine-scale search"
+      ],
+      "case": {
+        "path": "out/p09-planar-curved-tuning-20261007/initial-acceptance/circle/rest/trial-003/solution/case.json",
+        "sha256": "3c8869f680c58f989735abafc3f688f9e67ae08dac468ba2322fc06c3da4bcb9"
+      },
+      "evidence": [
+        {
+          "path": "out/p09-planar-curved-tuning-20261007/tuning-acceptance.json",
+          "sha256": "d90e2e9c289df2e888369572189c2d058c743044e363b77a4b1f20b37f3f129e"
+        }
+      ]
+    },
+    {
+      "id": "circle-tm-trial4",
+      "feature_ids": [
+        "P07",
+        "P09"
+      ],
+      "conditions": [
+        "fixed original quadratic boundary final restriction; independent target and mesh gates"
+      ],
+      "case": {
+        "path": "out/p09-planar-curved-tuning-20261007/initial-acceptance/circle/rest/trial-004/solution/case.json",
+        "sha256": "cf6796eb461a3e9dc04e56752c0979d8dcac3aa880af55d9ca56c91cc6be1c17"
+      },
+      "evidence": [
+        {
+          "path": "out/p09-planar-curved-tuning-20261007/tuning-acceptance.json",
+          "sha256": "d90e2e9c289df2e888369572189c2d058c743044e363b77a4b1f20b37f3f129e"
+        }
+      ]
+    },
+    {
+      "id": "ellipse-te-trial1",
+      "feature_ids": [
+        "P07",
+        "P09"
+      ],
+      "conditions": [
+        "proper affine nonuniform family; actual reflection parity and rank exchange; earlier anchor 0"
+      ],
+      "case": {
+        "path": "out/p09-planar-curved-tuning-20261007/te-acceptance/ellipse/run/trial-001/solution/case.json",
+        "sha256": "4d53aa0c492c3a20dd7f485a308b4b55267b69f8187cf0539556d3dfb0ad2410"
+      },
+      "evidence": [
+        {
+          "path": "out/p09-planar-curved-tuning-20261007/tuning-acceptance.json",
+          "sha256": "d90e2e9c289df2e888369572189c2d058c743044e363b77a4b1f20b37f3f129e"
+        }
+      ]
+    },
+    {
+      "id": "ellipse-te-trial2",
+      "feature_ids": [
+        "P07",
+        "P09"
+      ],
+      "conditions": [
+        "proper affine nonuniform family; actual reflection parity and rank exchange; earlier anchor 0"
+      ],
+      "case": {
+        "path": "out/p09-planar-curved-tuning-20261007/te-acceptance/ellipse/run/trial-002/solution/case.json",
+        "sha256": "c1d4eedcd8e50f3bd312236c9597ec24fe00c0a3a50689e9b21d46ceb6cf2cb4"
+      },
+      "evidence": [
+        {
+          "path": "out/p09-planar-curved-tuning-20261007/tuning-acceptance.json",
+          "sha256": "d90e2e9c289df2e888369572189c2d058c743044e363b77a4b1f20b37f3f129e"
+        }
+      ]
+    },
+    {
+      "id": "ellipse-te-trial3",
+      "feature_ids": [
+        "P07",
+        "P09"
+      ],
+      "conditions": [
+        "fixed-boundary final refinement and earlier anchor 0; separate target/mesh gates"
+      ],
+      "case": {
+        "path": "out/p09-planar-curved-tuning-20261007/te-acceptance/ellipse/run/trial-003/solution/case.json",
+        "sha256": "576e554100595e7ed741e973f9710e3bdf865f388c92c6c1d55f3c13581fd056"
+      },
+      "evidence": [
+        {
+          "path": "out/p09-planar-curved-tuning-20261007/tuning-acceptance.json",
+          "sha256": "d90e2e9c289df2e888369572189c2d058c743044e363b77a4b1f20b37f3f129e"
+        }
+      ]
+    },
+    {
+      "id": "circle-te-doublet",
+      "feature_ids": [
+        "P09"
+      ],
+      "conditions": [
+        "true doublet; no individual mode correspondence or evaluated frequency"
+      ],
+      "case": {
+        "path": "out/p09-planar-curved-tuning-20261007/safety-acceptance/doublet/run/trial-001/solution/case.json",
+        "sha256": "a1dc350e5bc23a59f322378de264c077368d21393deb935479979153dca2a310"
+      },
+      "evidence": [
+        {
+          "path": "out/p09-planar-curved-tuning-20261007/safety-test.log",
+          "sha256": "fe47fa13b2147e8ed13f06e8ff1ad0d45442525e76bd08d09837f43c37d85dd0"
+        }
+      ]
+    },
+    {
+      "id": "piecewise-trial1",
+      "feature_ids": [
+        "P03",
+        "P04"
+      ],
+      "conditions": [
+        "piecewise original polygon trial; full input with fixed comparison/shape-law history retained at owner; input copy alone is not history replay"
+      ],
+      "case": {
+        "path": "out/p04c-planar-browser-20261002/workspace/20261002-152401-ad7cdb862c/execution/trial-001/solution/case.json",
+        "sha256": "120abab9efbfdfe2fd1a9af7cce0ef01e1bf52fedaf4618b379502f7cca2e0bf"
+      },
+      "evidence": [
+        {
+          "path": "out/p04c-planar-browser-20261002/native-audit.json",
+          "sha256": "82156fd65ee454214ca8b8ee2070694820f873fb274b9f0db39adafb1b08864a"
+        }
+      ]
+    },
+    {
+      "id": "piecewise-trial2",
+      "feature_ids": [
+        "P03",
+        "P04"
+      ],
+      "conditions": [
+        "piecewise original polygon trial; full input with fixed comparison/shape-law history retained at owner; input copy alone is not history replay"
+      ],
+      "case": {
+        "path": "out/p04c-planar-browser-20261002/workspace/20261002-152401-ad7cdb862c/execution/trial-002/solution/case.json",
+        "sha256": "16185631078fc0e0f10086bfdbfccc5dddde7d0383fac537f97c68e03a3e01ff"
+      },
+      "evidence": [
+        {
+          "path": "out/p04c-planar-browser-20261002/native-audit.json",
+          "sha256": "82156fd65ee454214ca8b8ee2070694820f873fb274b9f0db39adafb1b08864a"
+        }
+      ]
+    },
+    {
+      "id": "piecewise-trial3",
+      "feature_ids": [
+        "P03",
+        "P04"
+      ],
+      "conditions": [
+        "piecewise original polygon trial; full input with fixed comparison/shape-law history retained at owner; input copy alone is not history replay"
+      ],
+      "case": {
+        "path": "out/p04c-planar-browser-20261002/workspace/20261002-152401-ad7cdb862c/execution/trial-003/solution/case.json",
+        "sha256": "0e8c631d076e3de8818e041ee758b98f458b79cca447a8a0fe1ccea9ec69572b"
+      },
+      "evidence": [
+        {
+          "path": "out/p04c-planar-browser-20261002/native-audit.json",
+          "sha256": "82156fd65ee454214ca8b8ee2070694820f873fb274b9f0db39adafb1b08864a"
+        }
+      ]
+    },
+    {
+      "id": "piecewise-trial4",
+      "feature_ids": [
+        "P03",
+        "P04"
+      ],
+      "conditions": [
+        "piecewise original polygon trial; full input with fixed comparison/shape-law history retained at owner; input copy alone is not history replay"
+      ],
+      "case": {
+        "path": "out/p04c-planar-browser-20261002/workspace/20261002-152401-ad7cdb862c/execution/trial-004/solution/case.json",
+        "sha256": "973a142a97b6dbbe6395ea94bc79b38bcd70543f8353fe371711822c35311911"
+      },
+      "evidence": [
+        {
+          "path": "out/p04c-planar-browser-20261002/native-audit.json",
+          "sha256": "82156fd65ee454214ca8b8ee2070694820f873fb274b9f0db39adafb1b08864a"
+        }
+      ]
+    }
+  ]
+}

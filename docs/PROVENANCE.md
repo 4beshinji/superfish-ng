@@ -1,3 +1,5 @@
+2026-10-07 C07-planar元領域表：[polygon/P04区分試行/P08曲線/P09尺度・非一様・doubletのhash束縛](PLANAR_SUPERFISH_COMPARISON.md#元多角形全二次領域と操作条件のケース表)。元入力16＋矩形6=22行/106入力の生成は終了3、元case byte保持、生成内FEM/物理再生0・旧新規実行0。前回NG commandの汎用solve拒否を終了2で再現し、solve-planarへ修正。新4＋前回12の16件1.097秒PASS、読込エラー処理追加後の関連4件0.292秒PASS（再検査として区別）。局所矩形CLI/FEM計2回で解析f/1 J/m/両R/QのN/Aを確認。旧四量/全受入軸/実mode対応はUNVERIFIED、曲線/任意polygon AF未用意をnull/理由付きで保存。製品420源/全123カード不変、C07-planarと全goalは継続。
+
 2026-10-07 C07-planar着手：[矩形二尺度TE10/TE01/TM11の参照比較準備](PLANAR_SUPERFISH_COMPARISON.md)。既存入口に明示prepare-onlyを接続し、新5＋既存比較7の12件0.772秒は終了0。候補6ケース/18水準/90入力の生成は終了3（UNVERIFIED）、旧/NG新求解0、実モード対応・四量・F/I/O/N/Wを全未確認で保存。Wine/旧prefix不在、7.17偏波/単位長規約を推測して変換しない。C07-planar IN_PROGRESS、曲線/多角形の条件表は後続。P09受入源/全検証をこの限定実行と重複集計せず、製品src不変。全123カードは62 DONE/2 IN_PROGRESS/59 PLANNED、全goal継続。
 
 2026-10-07 P09大容量GUI：[元円TM/非円形TEの全科学checkpoint・元場byte](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。自作の先行所有結果/完全物理再生と共通browser-session/CDP操作を再利用し、新native求解0、製品420源不変。API意味だけをChromium公式Network protocol定義から参照（リンク先文書にURL/範囲）、POST記録上限と順序付きURL許可/遮断を検証器へ設定した。外部実装のコピー/新依存/legacy参照なし。切断の根本原因は未確定。分割15項目と元7trial九byte/完全保存を監査し、歴史的creatorは14現行一致＋1保存済み生成当時源一致。元FAIL/ERRORは保全。全validate/全条件・全goalは継続。

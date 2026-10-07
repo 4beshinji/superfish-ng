@@ -33,13 +33,21 @@ P09だけをDONEへ変更し、全123カードの内容/依存と原互換要件
 
 ## C07-planar進行中：参照比較準備
 
+元入力16件（polygon/区分試行/曲線両偏波/尺度・非一様・true doublet）をhash/receipt付きで追加した。
+矩形6を含む22行/106入力の生成は終了3。全case byte/全二次midを保持、準備内FEM/再生0・旧実行0。
+前回NG commandの汎用solve拒否を実終了2で再現しsolve-planarへ修正。新4＋前回12の16件1.097秒PASS、
+読込エラー処理追加後の関連4件0.292秒PASSは再検査。unit内矩形CLI/FEMは計2回、局所解析f/1 J/m/両R/Q N/Aを確認。
+`docs/planar_superfish_source_catalog.json` と `out/c07-planar-scope-20261007/scope-acceptance.json` が入力/証拠を束縛する。
+曲線/任意polygon AFの未用意はnull/理由付き、legacy四量/全受入軸と実対応/両側細分はUNVERIFIED。
+製品420源と全123台帳不変、生存handleなし。次は原C07条件ごとの欠落と再実行入力契約の監査。
+
 [矩形候補と全未確認ケース表](../PLANAR_SUPERFISH_COMPARISON.md)を既存比較入口へ接続した。
 二尺度TE10/TE01/TM11の6ケース/18水準/90入力、終了3（UNVERIFIED）、旧/NG新求解0。
 新5＋旧比較7の12検査0.772秒は終了0。四量・F/I/O/N/W・実モード対応と両側細分は全未確認。
 Wine/Xvfb/以前のprefixが不在。7.17の偏波/場成分/単位長量を推測して変換しない。
 P09受入後の変更は比較入口/新準備helper/新offline検査と文書で、製品src420源は不変。
 P09直前全検証と今回の限定検査を重複集計しない。現行処理の生存handleなし。
-次はP09円/非円形/曲線・P04多角形/ID/調整の条件を参照表へ対応付ける。
+上記元領域表へ入力を対応付けたが、旧版入力/四量/両側実細分の受入は残る。
 C07-planar全条件と全goalは継続し、未確認をPASSへ変えない。
 
 ## 横断レビューと計画（2026-09-22）

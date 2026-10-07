@@ -61,13 +61,17 @@ def candidate_inputs(case, indices, dx_cm, target_hz):
             'SF.INI': '[Global]\nTAPE40=C\nStoreTempDataInRAM=No\n[SF7]\nDecimalPlaces=10\nExpandedTable=No\n'}
 
 
-def prepare(out, *, project_root=ROOT):
+def prepare(out, *, project_root=ROOT, source_catalog=None):
     """Write a new ignored output tree and a strict, non-PASS case manifest."""
     out = Path(out).resolve()
     project_root = Path(project_root).resolve()
     allowed = project_root / 'out'
     if out == allowed or not out.is_relative_to(allowed):
         raise ValueError('raw reference preparation must be a new subdirectory of project out/')
+    catalog = None
+    if source_catalog is not None:
+        from planar_reference_sources import load_source_catalog
+        catalog = load_source_catalog(source_catalog, project_root)
     out.mkdir(parents=True, exist_ok=False)
     report = {'format': FORMAT, 'schema_version': 1, 'status': 'UNVERIFIED',
               'passed': False, 'new_legacy_runs': 0, 'new_ng_solves': 0,
@@ -118,10 +122,13 @@ def prepare(out, *, project_root=ROOT):
                                        'ng_run': {'status': 'NOT_RUN', 'exit_code': None,
                                                   'working_directory': str(project_root),
                                                   'expected_command': ['uv', 'run', '--no-sync', 'python', '-m',
-                                                                       'superfish_ng', 'solve', f'{project_relative}/ng-case.json',
+                                                                       'superfish_ng', 'solve-planar', f'{project_relative}/ng-case.json',
                                                                        '--out', f'{project_relative}/ng-result']}})
             item['both_sides_refinement'] = {'status': 'UNVERIFIED', 'reason': 'three input levels prepared; neither solver executed'}
             report['cases'].append(item)
+    if catalog is not None:
+        from planar_reference_sources import append_source_cases
+        append_source_cases(report, out, catalog, project_root)
     for path in sorted(out.rglob('*')):
         if path.is_file():
             report['files'][path.relative_to(out).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()

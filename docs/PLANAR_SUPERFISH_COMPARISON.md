@@ -1,5 +1,11 @@
 # C07-planar：平面TE/TMの参照比較準備
 
+2026-10-07追補：P04/P08/P09の元入力16件を[hash束縛catalog](planar_superfish_source_catalog.json)へ追加した。
+矩形6件を含む22行/106入力は終了3（UNVERIFIED）。原P2曲線を直線・解析conicへ置換しない。
+矩形NG commandの汎用 `solve` 拒否を実終了2で再現し、`solve-planar`へ修正。
+新4＋前回12の選択16検査1.097秒PASS、catalog読込エラーをactionableにした後の関連4件0.292秒PASS。
+後者は再検査であり、新しい固有検査4件や合計20件へ加算しない。C07-planarはIN_PROGRESS。
+
 2026-10-07、先行B03/P09 DONE後の有界変更。今回の受入は、既存比較入口からの
 候補デッキ/NG入力・版付き表の生成、未知の参照をPASSへ数えないこと、出力保全とstrict拒否。
 新5検査＋既存TM比較5/TE相補比較2、計12件0.772秒、実終了0/PASS。
@@ -89,3 +95,70 @@ SFO energy/phase/相補TM契約を確定する根拠にはしない。web抽出�
 次はP09の円/非円形/曲線元領域・実ID/調整条件とP04多角形条件を版付き表へ対応付ける。
 旧版での厳密な二次領域/曲線指定が不明な場合、勝手に直線化して同一領域と宣言しない。
 原32互換要件/全123カード/全goalは継続する。
+
+## 元多角形・全二次領域と操作条件のケース表
+
+[元入力catalog](planar_superfish_source_catalog.json)は16元caseのSHA-256とhistorical receiptを束縛する。
+public生成入口は次の通り。新出力を使い、旧矩形のみの準備rootを上書きしない。
+
+```sh
+OPENBLAS_NUM_THREADS=1 UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/compare_superfish.py --planar --prepare-only --planar-source-table docs/planar_superfish_source_catalog.json --out out/c07-planar-scope-20261007/candidates
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -m unittest -v test_planar_reference_sources test_planar_superfish_preparation test_superfish_comparison test_superfish_te_comparison
+```
+
+caseごとのNG再実行commandは `solve-planar`、旧実行/周波数/元場/RF/表面量/全F/I/O/N/WはUNVERIFIED。
+caseコピーだけを所有履歴・anchor・調整再開の再生と扱わず、historial receipt/ownerを別に参照する。
+
+| 元case（source-接頭付きで表へ保存） | 偏波/版/セル | 対応する製品条件 | 旧版側の入力・比較 |
+|---|---|---|---|
+| triangle-te | TE/v2/64 | 元三角形/単位長/native操作例 | UNVERIFIED、任意polygon PEC/IBOUND入力未確認 |
+| p08-ellipse-te | TE/v3/16 | 曲線両偏波/native/GUI元入力 | UNVERIFIED、全二次領域の7.17入力未確定 |
+| triangle-tm | TM/v2/64 | 元三角形/単位長/native操作例 | UNVERIFIED、任意polygon PEC/IBOUND入力未確認 |
+| p08-ellipse-tm | TM/v3/16 | 曲線両偏波/native/GUI元入力 | UNVERIFIED、全二次領域の7.17入力未確定 |
+| circle-tm-trial1 | TM/v3/256 | proper affine尺度検索/固定境界の最終二gate | UNVERIFIED、全二次領域の7.17入力未確定 |
+| circle-tm-trial2 | TM/v3/256 | proper affine尺度検索/固定境界の最終二gate | UNVERIFIED、全二次領域の7.17入力未確定 |
+| circle-tm-trial3 | TM/v3/256 | proper affine尺度検索/固定境界の最終二gate | UNVERIFIED、全二次領域の7.17入力未確定 |
+| circle-tm-trial4 | TM/v3/1024 | proper affine尺度検索/固定境界の最終二gate | UNVERIFIED、全二次領域の7.17入力未確定 |
+| ellipse-te-trial1 | TE/v3/256 | 非一様/実rank交換/過去anchor0/最終二gate | UNVERIFIED、全二次領域の7.17入力未確定 |
+| ellipse-te-trial2 | TE/v3/256 | 非一様/実rank交換/過去anchor0/最終二gate | UNVERIFIED、全二次領域の7.17入力未確定 |
+| ellipse-te-trial3 | TE/v3/1024 | 非一様/実rank交換/過去anchor0/最終二gate | UNVERIFIED、全二次領域の7.17入力未確定 |
+| circle-te-doublet | TE/v3/16 | 元全二次領域/真doublet停止 | UNVERIFIED、全二次領域の7.17入力未確定 |
+| piecewise-trial1 | TE/v2/128 | 区分試行/元polygon/固定最終細分 | UNVERIFIED、任意polygon PEC/IBOUND入力未確認 |
+| piecewise-trial2 | TE/v2/128 | 区分試行/元polygon/固定最終細分 | UNVERIFIED、任意polygon PEC/IBOUND入力未確認 |
+| piecewise-trial3 | TE/v2/128 | 区分試行/元polygon/固定最終細分 | UNVERIFIED、任意polygon PEC/IBOUND入力未確認 |
+| piecewise-trial4 | TE/v2/512 | 区分試行/元polygon/固定最終細分 | UNVERIFIED、任意polygon PEC/IBOUND入力未確認 |
+
+すべて生成先の `ng-case.json` は元caseとbyte一致。元polygonの全点/全cell、曲線の全六節点/全mid/全境界を保ち、
+元8 source/creatorと場/RFの受入そのものを変更しない。Case parserで全領域/単位/偏波/版を検査するが、
+新FEM/物理再生は準備中0。receiptのhash一致は旧版比較の科学受入ではない。
+旧versionでこの領域を表すAFが不明な16行は `legacy_deck.path=null` と理由を記載し、未用意を隠さない。
+矩形の候補AF18組だけで全曲線の入力対応を満たしたと主張しない。
+
+不足/改変/未知schema/未知物理/二重ID/危険なpath、source/receipt hashの不一致は出力作成前に拒否する。
+コピーの前後にも全source/receiptを再照合する。途中の変更で失敗した場合、部分出力を完了表へ公開しない。
+入力やreceiptはowned examples/outの範囲に限定し、user-owned legacy資産へ探索を広げない。
+任意名で別物理を通す経路や、元creatorを現行sourceへ上書きする処理は追加していない。
+
+## 実コマンドの修正と実行範囲
+
+前回の矩形準備表の `ng_run.expected_command` は汎用 `solve` を指定していた。
+実入力で `error: case: unknown keys ['format', 'modes']`、終了2を確認し、
+`out/c07-planar-scope-20261007/rectangle-command-baseline.log` に保持した。FEM実行前の拒否で、元入力を変更しない。
+専用 `solve-planar` に修正し、生成commandの実CLI/nativeをunitで確認した。
+TE10矩形P2 n16の解析f相対1e-4、U′=1 J/m、加速R/Q二定義の理由付きN/Aが独立対照。
+この局所f検査を高位全モード/場形状/壁損失/表面peak/旧版の受入へ流用しない。
+
+選択16件は実終了0、1.097秒。原logは `selected-tests.log`。
+その後に欠落/非UTF-8 catalogを短い入力エラーへする処理を追加し、関連4件0.292秒を実終了0で確認した。
+原logは `source-guards-final.log`。実矩形CLI/FEMは各run中1回、計2回（同じ局所条件の再検査）。
+生成器自体・源hash監査は新FEM/物理再生0で、旧版新規実行は0。
+prepared reportのNOT_RUNは生成時の状態であり、このunitの実CLIを全caseの実施へ書き戻していない。
+全16元入力と22行/106ファイルは `scope-acceptance.json` で読取照合する。
+準備handle26048は実終了3、全unit handleは実終了0。生存処理なし。
+
+この拡張でもC07-planar全条件は未達。特に7.17偏波・signed SF7成分/phase、U/Pの単位長規約、
+polygonの任意PEC指定、二次領域と真conicの別、両側実細分/モード対応/運用終了が未確認。
+P1、一般非円形/再入角、多角形TM区分調整、一般Study/追跡/GUI条件についても、
+今回の限定case入力がすべての実行証拠を代表すると主張しない。
+次は原C07カードの各条件とこれらの欠落を対応付け、参照不能でも再実行可能な入力契約を満たす方法を検討する。
+原P02の伝搬/TEM/材料の採否と全32互換要件は維持する。

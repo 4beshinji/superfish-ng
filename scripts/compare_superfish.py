@@ -153,13 +153,14 @@ def main():
     parser.add_argument('--run-legacy', action='store_true', help='explicitly authorize local Wine execution')
     parser.add_argument('--planar', action='store_true', help='prepare explicitly UNVERIFIED Cartesian reference cases')
     parser.add_argument('--prepare-only', action='store_true', help='write candidates without executing either solver')
+    parser.add_argument('--planar-source-table', type=Path, help='strict owned NG source catalog for the UNVERIFIED comparison table')
     args = parser.parse_args()
-    if args.planar or args.prepare_only:
+    if args.planar or args.prepare_only or args.planar_source_table:
         if not (args.planar and args.prepare_only) or args.run_legacy:
             parser.error('Cartesian preparation requires --planar --prepare-only without --run-legacy; reference physics remains UNVERIFIED')
         from prepare_planar_superfish_comparison import prepare
         try:
-            report = prepare(args.out)
+            report = prepare(args.out, source_catalog=args.planar_source_table)
         except (ValueError, FileExistsError) as error:
             parser.error(str(error))
         print(f'Prepared {len(report["cases"])} planar candidates: UNVERIFIED (no solver runs): {args.out}', flush=True)

@@ -143,6 +143,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## C07-planar
 
+- **元領域表leaf（2026-10-07、IN_PROGRESS）**：[hash束縛16元入力＋矩形6](../PLANAR_SUPERFISH_COMPARISON.md#元多角形全二次領域と操作条件のケース表)。22行/106入力の生成は終了3、全case byte/二次mid保持、準備内FEM/再生0。汎用solveの実拒否2を再現しsolve-planarへ修正、新4＋旧12の16件と追加読込guard後の関連4再検査は終了0。曲線/polygon AF未用意・旧四量/全軸/実対応/両側実細分は未確認。親カードと全goal継続。
+
 - **矩形準備leaf（2026-10-07、IN_PROGRESS）**：[二尺度/両偏波の明示UNVERIFIED入口](../PLANAR_SUPERFISH_COMPARISON.md)。候補6ケース/18水準/90入力、旧/NG新求解0、生成終了3。新5＋旧比較7の12件0.772秒は終了0。四量/全受入軸/実対応/両側細分は未確認、曲線/多角形条件と親受入は継続。
 
 ### 機能別ブラックボックス比較を整備する：平面TE/TM
