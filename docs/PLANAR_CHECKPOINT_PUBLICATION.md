@@ -3,7 +3,7 @@
 2026-10-07、P09節目全validateで発見した共有保存処理の有界修正。
 受入条件は、公開checkpointが存在すれば完全JSONであること、既存targetを上書きしないこと、
 元JSON byte/元trial/strict parser/科学計算と取消し時の再開条件を保つこと。
-修正と限定検査はPASS。共有変更の新全validate handle69844は実行中で、P09全体の完了証拠は未確定。
+修正・限定検査・共有変更後の全validateとseed f/RF照合はPASS。P09全条件は受入済み。
 
 ## 最初の失敗
 
@@ -38,11 +38,16 @@ FEM行列、固有値、場、RF、mode identity判定と許容差は変更し�
 上書き拒否、旧失敗報告の末尾改行を扱う。加えて元の実worker取消し/移動/再開/管理器再作成を再検査する。
 元全実行は2354検査/478モジュール、3200.524秒、2FAIL・5ERROR・3skipで実終了1。
 全report/開始時1365源不変を `full-failed-final-audit.json` で確認し、その後に修正を適用した。
-共有保存変更のため、限定検査成功後に新rootで全 `scripts/validate.py` を実行中。
+共有保存変更のため、限定検査成功後に新rootで全 `scripts/validate.py` を一度実行した。
 元FAILは保全し、新全実行のunittest/seed周波数・RF/指紋を別に監査する。
 限定45検査66.391秒、実worker取消し/移動/再開/管理器再作成1検査40.442秒は実終了0/PASS。
 原失敗testの取消し待機条件/時間は変更していない。
-新全validateはhandle69844、全1366源を開始時に固定。全/seed結果は終端まで未受入。
+新全validate handle69844は実終了0/PASS。2359検査/479モジュール、3215.343秒、失敗0/エラー0/skip3。
+全1366源は開始/終端/現行一致。元5失敗モジュールと保存の全直接消費先は成功した。
+seed9モード/207周波数・RF量は別の相対1e-10照合でPASS、最大相対差f=0/RF=8.881784197001248e-16。
+3skipの未実施範囲・既存専用実再生証拠・初回metadata監査AssertionErrorと厳密修正は
+[P09受入記録](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md#修正後の全検証seed照合)に記録した。数値gateは不変。
+`new-full-terminal.json` / `p09-final-acceptance.json` / `p09-final-card-audit.log` は終端/全条件監査PASS。
 rawは `out/p09-checkpoint-publication-20261007`、原FAILは元rootに保全。
 
 ```sh

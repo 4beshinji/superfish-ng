@@ -1,8 +1,8 @@
 # P09 曲線比較・追跡・調整の条件別監査
 
-2026-10-07、原カード[P09](development-plan/03-planar.md#p09)の全条件を監査中。
+2026-10-07、原カード[P09](development-plan/03-planar.md#p09)の元14条件と共有公開修正を全条件受入。
 先行P04/P08はDONE。本書の表は既に受入済みの限定検査を統合するもので、
-新しい全件実行数へ加算しない。節目の全validateはまだ実行中で、P09はIN_PROGRESS。
+新しい全件実行数へ加算しない。修正後の節目全validateは実終了0/PASS、P09はDONE。
 全123カードと原互換課題の完走はこのカード単独の完了と区別する。
 
 ## 元条件と証拠
@@ -22,7 +22,7 @@
 | 所有再開・移動・改変拒否 | [調整保存](PLANAR_CURVED_TUNING_SAVED.md)の完全元native再生/新owner、再hashした係数の物理拒否。新7種類＋関連3を分割受入。[履歴](PLANAR_CURVED_TRACKING_HISTORY.md)は新13種類＋関連10、遅い祖先改変の検出漏れを再現して修正 | PASS |
 | CLI/workerで実取消し・再開・再起動 | [二点](PLANAR_CURVED_TRACKING_JOBS.md)新6種類＋関連10、[履歴](PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)新8種類＋関連5、[調整](PLANAR_CURVED_TUNING_JOBS.md)新8種類＋関連5。実running取消し−15/新worker0、管理器再起動、source生存中の移動、元creator/claim不変、失敗を成功にしない終了コード | PASS |
 | GUI操作・元場/実ID・保存地点 | [専用GUI](PLANAR_CURVED_GUI.md)19 strict操作/新API8種類＋関連6種類、実Chrome調整/再開7＋render1。[履歴実操作](PLANAR_CURVED_GUI_HISTORY.md)は比較/回復/延長/取消し・真doublet/nullの分割14項目。[大容量](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)は円5＋不足2/TE8の分割15項目 | PASS |
-| 節目の全unittest・seed f/RF・固定源 | 元全validateは2354検査/478モジュールで終了1（2FAIL・5ERROR・3skip）、全1365源不変を監査。分類/検証器と[共有公開処理](PLANAR_CHECKPOINT_PUBLICATION.md)を修正し、限定45＋実取消し/移動/再開1はPASS。新全validate handle69844を別rootで実行中、全1366源を固定。元FAILを保全し、新full/skip/seed f+RFはまだ未確定 | 新全実行中・未受入 |
+| 節目の全unittest・seed f/RF・固定源 | 元全validate終了1を保持。修正後は2359検査/479モジュール、3215.343秒、0FAIL・0ERROR・3skipで実終了0/PASS。全1366源は開始/終端/現行一致。seed9モード/207量を相対1e-10で別照合しf最大差0・RF最大差8.881784197001248e-16。skipの範囲は下記 | PASS |
 
 ## 数値と範囲
 
@@ -47,11 +47,14 @@
 既に受入済みで変更のない数値源を、文書の更新だけのために再実行しない。
 元全validateを節目で一度起動し、事前に全discoveryを重複させていない。
 元全実行中に再現した共有保存競合を終端後に修正し、限定45＋実取消し/再開1PASS後に新全validateを起動した。
-全実行終端まではsrc/tests/scripts/examplesを固定する。
+修正後全実行の開始から実終端までsrc/tests/scripts/examples全1366源を固定し、終端後の現行源とも一致した。
 
 最終監査の条件mapは `out/p09-checkpoint-publication-20261007/completion-audit-plan.json`。
 本表の元14行と追加の完全公開不変量を結び付け、13行の歴史的限定receipt、
-新全実行/seed f+RFの未確定、共有消費先の検査、skipの個別確認を分けて記録した。
+開始時点の新全実行/seed f+RFの未確定、共有消費先の検査、skipの個別確認を分けて記録した。
+最終結果は同rootの `p09-final-acceptance.json` / `p09-final-card-audit.log`（実終了0）。
+元14行＋追加完全公開不変量を全受入し、16歴史的receipt/91 entryのhashと科学源の互換性を最終照合した。
+この読取監査は新FEM/物理再生0であり、全goalの完了ではない。
 このmap自体を新検査数やP09完了証拠へ加算しない。
 
 P09の16受入記録が参照する91 evidence/log entryを改めてhash照合した。
@@ -68,4 +71,36 @@ P09の16受入記録が参照する91 evidence/log entryを改めてhash照合�
 新外部実装/依存/legacyソース再利用なし。大容量検証器のCDP設定だけは
 [Chromiumの公式Network protocol定義](https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/pdl/domains/Network.pdl)
 のAPI意味を参照した。旧ソルバー比較/実測/Hosted CI/科学GPUは今回未実施。
-P09の状態は全validateと残る監査が終端した後に判定する。後続はC07-planar→P10。
+P09はDONE。全123カードと原互換32要件は維持し、後続はC07-planar→P10。
+
+## 修正後の全検証・seed照合
+
+全コマンドと限定45＋実取消し/移動/再開1検査は[公開修正記録](PLANAR_CHECKPOINT_PUBLICATION.md)に記載。
+新全rootは `out/validation-p09-publication-20261007`。`validation.json` はfull PASS、
+`test-run/report.json` は2359検査/479モジュール、失敗0/エラー0/skip3。
+全コマンド終了0、実handle69844終端0を `new-full-terminal.json` へ保存し、数値源固定を解除した。
+全unit内のGUI API/worker検査は実Chromeの再実行ではなく、実Chrome証拠は上表の歴史的限定検査である。
+
+skipは次の3件。前2件は任意NGSolve環境不在で未実施、最後は専用受入native rootを要するため既定全実行では未実施。
+専用円TM/回復付きTEの実取込・移動・完全再生は[所有調整](PLANAR_CURVED_TUNING_SAVED.md)で865.527秒PASS済み。
+科学調整kernelは生成当時のarchiveとAST一致、今回の保存修正は共有消費先の全検証と限定実取消しで別確認した。
+これらのskipを実行済み物理検査へ数えない。
+
+- `test_independent_comparison.ReferencePhysicsTests.test_pillbox_frequency_rf_and_bessel_field`
+- `test_independent_comparison.ReferencePhysicsTests.test_reference_rejects_unsupported_physics`
+- `test_planar_curved_tuning_saved.PlanarCurvedOwnedTuningTests.test_actual_accepted_circle_and_recovered_ellipse_import_move_and_replay`
+
+seedは旧benchmarks/validationとpillbox6＋合成shaped3の9モード、各23量=207量を別照合。
+周波数/全RFの事前gateは相対1e-10で不変、複素電圧の実部/虚部には同じ全体実符号だけを許す。
+最大相対差は周波数0、RF 8.881784197001248e-16。Case/mesh/両PEC端、1 J規格化、
+全旧phasor/energy/電圧/VTK規約、加速器定義R/Q=2×回路定義R/Qを照合した。
+pillbox絶対fの0.003基準とshaped自己細分は別の検証で、連続誤差上界やsurface peak精度を主張しない。
+
+初回 `full-final-audit.log` のmetadata全体一致assertはAssertionErrorとなったまま保全した。
+既存出力が追加したdomain注記（入力領域の積分・対称面損失なし・自動倍化なし）と、
+明示対称部分領域も含むcapability scope文字列が旧metadataと異なるためである。
+修正版 `audit-full-closed-domain-after-terminal.py` は既知の旧/新scope文字列と新domain値を厳密確認し、
+全旧規約・実Case/mesh・閉PEC端一致を要求した。注記以外の無条件除外や数値許容差の変更は行っていない。
+`full-final-audit-closed-domain.log` と `seed-regression.json` はPASS。
+最終カード監査は全条件・原失敗・skip・源/receiptを照合し実終了0。
+文書と台帳の変更だけのためにFEM/全検証/専用validatorを再実行していない。

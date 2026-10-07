@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **全条件受入（2026-10-07、DONE）**：[元14条件＋共有公開修正](../PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)。修正後全validateは2359検査/479モジュール、3215.343秒、0FAIL/0ERROR/3skipで実終了0。全1366源固定、seed9モード/207量の別照合PASS（f最大差0、RF最大差8.881784197001248e-16、相対gate1e-10不変）。元失敗/skip/metadata監査修正と歴史的証拠を区別。全123カードと全goalは継続、次はC07-planar。以下leaf記録は受入までの履歴。
+
 - **大容量GUI leaf（2026-10-07）**：[円TM/非円形TEの完全checkpoint](../PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。円5＋不足2/TE8の分割15項目PASS、実TE body95,690,800/102,474,277 byteでHTTP200、全保存/両gate/anchor0/実順位2と元五byte download一致。全420源/元7trial九byte/全123カード不変、全browser/server終端。元FAIL/ERRORと歴史的creatorを保全。[全条件監査](../PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)を継続し、節目の全validate handle60083は実行中。P09/全goal未完。
 
 - **実GUI履歴 leaf（2026-10-07）**：[実Chrome比較・履歴回復/延長・取消しと診断表示](../PLANAR_CURVED_GUI_HISTORY.md)。元TE四nativeから実順位交換/真doublet/null、順序付き履歴/過去anchor回復/後続延長/max停止、全元五byte/親不変と場画像を確認。13項目＋null表示1の分割14項目PASS。検証器の期待式/非同期待ちERRORと実Page is too largeを保全し、診断の全文scroll/null明示の表示2件だけ修正。7完了job/510 entry/全420 creator監査PASS、元420源中418科学/その他源と全123カード不変。実取消し−15/他7worker0、全3server/Chrome終端、外部要求0/slot 0。次は受入円/非円形TEの大容量調整checkpoint実GUIとP09全条件監査。全goal継続。

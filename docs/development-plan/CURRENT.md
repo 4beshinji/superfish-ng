@@ -1,47 +1,35 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07/P08全条件受入済み、P09の専用GUI/調整再開まで限定受入、実GUI比較/履歴回復/延長/取消しまで分割受入、大容量checkpoint実GUIまで分割受入、全条件監査と節目の全validateを継続。
-原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
+更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
+62 DONE/1 IN_PROGRESS（H17）/60 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
-## 実行中（2026-10-07、P09節目の全validate）
+## 現在の受入状態（2026-10-07、P09 DONE）
 
-[大容量GUI](../PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)は円5＋不足2/TE8、分割15項目PASS。
-TEの元場取込は実順位2、実HTTP bodyは95,690,800/102,474,277 byteでHTTP200、
-元五byte/全download一致。全420源/元7trial九byte/完全保存と全123カード不変を最終監査した。
-初回debugger失敗/円download不足/歴史的creator照合の監査誤りを保持し、不足だけ補完。
-GUI server90242/TE browser46225は実終了0、worker-terminal空/Chrome slot 0/外部要求0。
-生成時の曲線15源は14現行不変＋1生成当時archive一致であり、全15源現行一致とは扱わない。
+[P09元14条件＋追加公開不変量の最終監査](../PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)を受入した。
+円TM/非円形TEの両周波数gate、元E/Hと実順位/過去anchor、固定二次境界・全元場、
+曖昧/予算不足停止、所有移動/再生、実CLI-worker取消し/再起動/再開、実Chrome/大容量保存を確認済み。
+16歴史的receipt/91 entryのhashと科学源互換性を最終照合し、限定証拠を新規全実行数へ加算しない。
 
-元の **全validate handle60083** は `out/validation-p09-milestone-20261007` で実終了1。
-2354検査/478モジュール、3200.524秒、2FAIL・5ERROR・3skip。
-`full-failed-final-audit.json` は全reportと開始時src/tests/scripts/examples1365源不変を監査した。
-元のFAILを全件成功として扱わず、失敗でseedへ進まなかったことも保持する。
+元全validate handle60083は2354検査/478モジュール、3200.524秒、2FAIL・5ERROR・3skipで終了1。
+途中JSON公開による実取消しERRORと分類/検証器の失敗を保全した。
+[共有checkpointの完全公開](../PLANAR_CHECKPOINT_PUBLICATION.md)を修正し、元JSON byte/上書き拒否を維持。
+限定45検査66.391秒＋実取消し/移動/再開/管理器再作成1検査40.442秒は終了0/PASS。
+保存2源の変更定義は `_write`/`execute_planar_tune` のみ。他7/9定義は元archiveとAST同一。
+歴史的大容量GUIの420源不変（e395996基準）と今回の保存2源変更を区別する。
 
-失敗は、専用Hphi tune例をCaseとして読む `test_model_contract`/`test_project` 各2ERROR、
-固定個数63/実際71の `test_browser_session` と古い拒否messageの `test_curved_hphi_workspace` 各1FAIL、
-実取消し時の部分JSON公開による `test_planar_piecewise_tuning_jobs` 1ERROR。
-別に `verify_gui_rf_optimization.mjs` のlaunchBrowser import漏れをFEM/Chrome起動前に実再現した。
-
-[共有checkpointの完全公開修正](../PLANAR_CHECKPOINT_PUBLICATION.md)を適用した。
-同一filesystemの私有stageへ完全JSONを書き、flush/fsync後にhard linkで上書きせず公開する。
-旧raw経路も接続し、元JSON byte/末尾改行を維持。途中終了/非有限値/実producer強制終了と
-既存target不変を検査する。SIGKILL時の未完了私有stageをcheckpoint/完了成果物へ数えず、strict owner検査は緩めない。
-要求例は専用parserで完全検証し、通常Case/Projectでの拒否と元入力/Project往復を維持した。
-検証器は実inventoryの全71構文/lifecycle/importを確認し、固定個数だけの前提を除いた。
-
-限定45検査66.391秒と元実worker取消し/移動/再開/管理器再作成1検査40.442秒は終了0/PASS。
-rawは `out/p09-checkpoint-publication-20261007` の両log/`bounded-acceptance.json`。
-保存2源の変更定義は `_write`/`execute_planar_tune` だけ、他の7/9定義は元archiveとAST同一。
-上記大容量GUIの420源不変は受入時e395996基準の証拠で、今回の保存2源変更とは分ける。
-
-共有変更の **新全validate handle69844** を `out/validation-p09-publication-20261007.log` / 同名directoryで実行中。
-8 isolated unittest worker。先に全discoveryを重複実行せず、限定検査後に全validateを一度起動した。
-`out/p09-checkpoint-publication-20261007/new-full-start-source.json` の全1366fingerprintを保存。
-このhandleの実終端までsrc/tests/scripts/examplesを編集しない。docs/outの記録だけ進める。
-観測timeoutだけで再起動しない。新全結果/seed f+RF/P09全条件を照合してから完了を判定する。
-全seed/全件PASSは未証明。元/新full、限定検査、新native求解0のGUI leafを区別する。
-全goal/P09 IN_PROGRESS、原互換条件と全123カードを縮小しない。
+修正後の全validate handle69844は別root `out/validation-p09-publication-20261007` で終了0/full PASS。
+2359検査/479モジュール、3215.343秒、失敗0/エラー0/skip3、全1366源は開始/終端/現行一致。
+事前全discoveryの重複実行なし。元5失敗モジュールと共有保存消費先も成功した。
+seed9モード/207量は相対1e-10で別照合、最大相対差f=0/RF=8.881784197001248e-16。
+初回metadata全体一致AssertionErrorは保全し、既知domain/scope注記を厳密確認、
+Case/mesh/閉PEC端/全旧規約一致を要求してPASS。数値許容差は変更していない。
+任意NGSolve2件と専用native rootを要する1件のskipを実行済み物理へ数えない。
+専用円/TE取込・移動再生は既存実検査865.527秒PASSの限定証拠として維持する。
+raw終端/最終監査は `out/p09-checkpoint-publication-20261007/new-full-terminal.json` と
+`p09-final-acceptance.json` / `p09-final-card-audit.log`。監査は新FEM/物理再生0。
+生存handle/worker/serverはなし、歴史的Chrome slot 0、源固定解除。文書用の数値再実行なし。
+P09だけをDONEへ変更し、全123カードの内容/依存と原互換要件を維持した。
 
 ## 横断レビューと計画（2026-09-22）
 
@@ -52,6 +40,15 @@ rawは `out/p09-checkpoint-publication-20261007` の両log/`bounded-acceptance.j
 既存115開発カードの状態は維持する。以下は既存機能開発の次着手であり、今回の文書作成の継続作業ではない。
 
 ## 次の着手
+
+**[C07-planar：平面TE/TMのブラックボックス比較](06-compatibility.md#c07-planar)**。
+先行B03/P09はDONE。版/入力設定/hash・実モード対応・両側細分・実行上限/終了/失敗を
+ケース表へ固定し、f・場・RF・表面量とF/I/O/N/Wを別判定する。
+7.17平面偏波/単位長量の仕様を推測せず、参照不能なら実行可能なデッキとUNVERIFIEDを残す。
+既存比較入口と専用検査を対象とし、legacyソース/バイナリ内部を参照しない。
+後続はP10。P09完了を全goal/原互換課題の完了へ読み替えない。
+
+## P07〜P09の受入履歴
 
 **[P09：平面曲線の比較・調整を接続する](03-planar.md#p09)**。先行P04/P08はDONE。
 [P07全条件監査](../PLANAR_CURVED_ACCEPTANCE.md)で二尺度円絶対/固定最終差/独立A/B、求積、

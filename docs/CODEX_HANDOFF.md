@@ -1,6 +1,6 @@
 現行の作業順・依存待ち・受入証拠・実行中処理は[現行入口](development-plan/CURRENT.md)を参照する。以下の追記は履歴であり、古い「次は」「生存中」を現在の指示/状態として扱わない。
 
-2026-10-07 P09節目の元全validateは2354検査/478モジュール、2FAIL・5ERROR・3skipで終了1。開始時1365源不変を監査した。[共有checkpointの完全公開修正](PLANAR_CHECKPOINT_PUBLICATION.md)と専用要求例の分類/検証器importを修正し、限定45検査66.391秒＋実取消し/移動/再開/管理器再作成1検査40.442秒は終了0/PASS。新全validate handle69844を別rootで実行中、src/tests/scripts/examples全1366源を固定。元FAILを保全し、P09/full/seed成功は未証明。
+2026-10-07 P09全条件受入：[条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)の元14条件＋[共有checkpoint完全公開](PLANAR_CHECKPOINT_PUBLICATION.md)を受入。修正後の全validate handle69844は2359検査/479モジュール、3215.343秒、0FAIL・0ERROR・3skipで実終了0/PASS。全1366源は開始/終端/現行一致。seedは9モード/207周波数・RF量を相対1e-10で別照合し、最大相対差はf=0、RF=8.881784197001248e-16。元全validateの終了1と初回metadata監査AssertionErrorは保全し、入力Case/mesh/両PEC端・全旧規約一致と既知のdomain/scope注記だけを厳密に確認した。数値許容差は不変。3skipを実行済み物理へ数えず、専用円/TE移動再生は既存実検査865.527秒の証拠と区別する。新FEM/全検証の文書用再実行なし。P09 DONE、全123カードは62 DONE/1 IN_PROGRESS/60 PLANNED、全goal継続。次はC07-planar。
 
 
 2026-10-07 P09進行：[円TM/非円形TEの完全大容量GUI checkpoint](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。円5＋不足2/TE8、分割15項目PASS。実TE body95,690,800/102,474,277 byteでHTTP200、全科学保存/両gate/過去anchor0/実順位2の元場五byte・全download一致。全420製品源/元7trial九byte/全123カード不変、全browser/server終端・slot 0/外部要求0。元debugger失敗/円download不足/生成時creatorの監査誤りを保全し、歴史的源は14現行不変＋1生成当時archive一致と照合。新native求解0。全validate handle60083は実行中で、full/seed成功は未証明。[P09条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)と全goalを継続。

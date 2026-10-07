@@ -1,6 +1,8 @@
+現行の検証状態は[現行入口](development-plan/CURRENT.md)と以下のP09全条件受入記録を参照する。日付付きleaf記録は履歴であり、古い実行中handleを現在の状態へ数えない。
+
 P09大容量checkpoint実GUIは `verify_gui_planar_curved_large_checkpoint.mjs` で円5＋不足2/TE8、分割15項目PASS。実科学body/完全保存/両gate/過去anchor/元場の実順位/元五byte・全download/画像を確認し、全420源/元7trial九byte/全123カード不変を監査。初回debugger失敗・download不足・歴史的creator照合の誤りを保全。[実終端と照合](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。節目の全validateは一度起動してhandle60083で実行中、まだfull/seed受入ではない。[条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)。
 
-2026-10-07 P09節目の元全validateは2354検査/478モジュール、2FAIL・5ERROR・3skipで終了1。開始時1365源不変を監査した。[共有checkpointの完全公開修正](PLANAR_CHECKPOINT_PUBLICATION.md)と専用要求例の分類/検証器importを修正し、限定45検査66.391秒＋実取消し/移動/再開/管理器再作成1検査40.442秒は終了0/PASS。新全validate handle69844を別rootで実行中、src/tests/scripts/examples全1366源を固定。元FAILを保全し、P09/full/seed成功は未証明。
+2026-10-07 P09全条件受入：[条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)の元14条件＋[共有checkpoint完全公開](PLANAR_CHECKPOINT_PUBLICATION.md)を受入。修正後の全validate handle69844は2359検査/479モジュール、3215.343秒、0FAIL・0ERROR・3skipで実終了0/PASS。全1366源は開始/終端/現行一致。seedは9モード/207周波数・RF量を相対1e-10で別照合し、最大相対差はf=0、RF=8.881784197001248e-16。元全validateの終了1と初回metadata監査AssertionErrorは保全し、入力Case/mesh/両PEC端・全旧規約一致と既知のdomain/scope注記だけを厳密に確認した。数値許容差は不変。3skipを実行済み物理へ数えず、専用円/TE移動再生は既存実検査865.527秒の証拠と区別する。新FEM/全検証の文書用再実行なし。P09 DONE、全123カードは62 DONE/1 IN_PROGRESS/60 PLANNED、全goal継続。次はC07-planar。
 
 
 P09実曲線GUIは新 `verify_gui_planar_curved_history.mjs` により、実比較/取消し/新job・真doublet集合継続・元native連鎖・過去anchor回復/延長/max停止・全元五byte/親不変/RF/場表示を13項目、null表示修正を1項目の分割14項目で受入。検証器期待式/完了待ちERRORと実診断Page is too largeを保全し、製品は全文scroll/未確定表示だけ修正。数値unit/full/seed再実行なし。[raw・実終端・byte監査・後続範囲](PLANAR_CURVED_GUI_HISTORY.md)。大容量調整checkpoint実GUIとP09全条件は継続。
