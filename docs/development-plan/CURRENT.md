@@ -1,15 +1,22 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-65 DONE/2 IN_PROGRESS（H17、C07-planar）/56 PLANNED。全goalと原互換32要件は継続中。
+65 DONE/3 IN_PROGRESS（H17、C07-planar、D02）/55 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D02コア限定受入：IN_PROGRESS
+
+2026-10-07 D02コア限定受入：[直線TM形状法則](../STRAIGHT_TM_TUNING.md)。版9の元全境界owner/SI式/まとめた座標更新・実区分比較を通常tune、最終細分、保存再開、版6回復wrapperへ接続した。新metadata6＋実物理6＋直接消費40の52個別検査を分割受入。独立円筒Bessel f/H/E/全壁loss/両R/Q、実段差の元場尺度則・完全再生、無効中間形状の求解前拒否、曖昧ID停止を確認。粗段差83.248 kHzは失敗を保持し、角局所細分の別系列は元10 kHz条件内6.240 kHzでTUNED。一般折返し輪郭は元1 Hz細分条件未達を保持。検査側ERRORと粗系列FAILの元logを保全し、成功済みケースは繰り返さず不足分を補った。1182源の固定、旧製品変更2ファイルの4関数に限定、科学核/RF定義/許容差不変。全handle実終端、新full/seed/legacy0。D02はIN_PROGRESS（実GUI/API/CLI一致と全条件監査が残る）、全123は65 DONE/3 IN_PROGRESS/55 PLANNED、原互換32要件/全goal継続。rawは out/d02-straight-tuning-20261007/bounded-audit-pre-docs.json。
+
+次は版9元shape_lawをGUIへ忠実に復元/構築し、API/CLI/実Chromeで最終場・両R/Qを照合する。
+全handle終端/live=[]。一般輪郭の成功系列と全条件監査は未受入。
 
 ## D01仕様：DONE、次はD02
 
 2026-10-07 D01仕様 **DONE**：[非曲線TM/TEの形状・区分写像・対称/最終細分](../NONCURVED_TUNING_SCOPE.md)。profile/階段/単一一般輪郭の六正常/拒否要求と元追跡先を固定。現行profile正常2、未対応4、不正6、将来六領域の両bounds/面積・体積尺度と不正拒否、未実装版9拒否、TE異セクター事前拒否をmetadataだけで確認。136式は既存SI parserに適合し、初稿leaf拒否/runner引数順ERRORを保全して修正。製品/テスト/script1179源不変、新FEM/unit/seed/full/legacy0。現在の区分TM追跡と不足するTM調整/TE直線区分追跡を分離し、既存曲線TEを再実装へ戻さない。原123台帳はD01状態だけ変更、65 DONE/2 IN_PROGRESS/56 PLANNED。D02/D03実装・親D02/P01/全goal/原互換32要件は継続、次はD02。
 
 D02の受入条件は、元Project/固定区分法則からの実TM試行・個別ID・独立細分、
-無効形状停止、API/CLI/実GUIの元要求と最終場/両R/Q一致。直線schema9は現在未実装で拒否する。
+無効形状停止、API/CLI/実GUIの元要求と最終場/両R/Q一致。直線schema9のTMコアは限定受入済み。実GUI/API/CLI一致と全条件監査が残る。
 影響先はtuning・saved_mode_tracking・piecewise tracking・jobs/gui_tuning。
 [仕様の全六要求と検査](../NONCURVED_TUNING_SCOPE.md)とTESTINGから必要な直接消費検査を選ぶ。
 処理handle/worker/serverはなし。H17/C07-planarの未確認を保持して実装可能なD02を進める。
