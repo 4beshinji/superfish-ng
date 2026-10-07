@@ -14,6 +14,13 @@ temp commit9d39451で限定受入した。実workerの10個別unitは1.037秒・
 実参照準備4.562449秒/peak RSS1340436480 bytesは共有費用で12benchmarkには数えない。
 主統合と12実比較は未実施、N03 full handle64569は固定源で継続中。
 
+入力の追加：[共通Case/source meshと交替12行の固定計画](../N06_FIXED_EXECUTION_PLAN.md)を
+temp commit8dbf122で限定受入。新5unit1.396秒・終了0、全四入力のSHA/欠落/symlink拒否と
+元controls/初期領域・独立copyを確認。丸めCase/meshはN03保存元の完全同byte。
+元1200＋既受入四源は不変、temp1206 Python/全1407、main全1405は固定。
+最初の監査で主の生成egg-info六点のtemp不在を見落とした点数仮定は失敗を保全し訂正。
+計画12行は全NOT_RUN、新FEM0。主へ入力/実装を統合して実workerへ接続する工程は後続。
+
 2026-10-07 N06費用記録器 **IN_PROGRESS**：[serial stageのinclusive/exclusive・失敗/欠測](../N06_EFFICIENCY_TIMING.md)。主N03全validate handle64569の1405対象源を固定し、別ツリーで新二源だけを追加。独立18秒配分/未配賦、元失敗/中断・非有限/逆行時計・未知RSS・未完了/完成後・foreign threadを新7unit0.002秒・終了0で確認。元1200 Python源のbyte一致/temp1202固定、主統合/物理系列/予算執行/12benchmark実行は後続。N06全受入へ数えず新FEM/seed/full/benchmark0、原123は72 DONE/4 IN_PROGRESS（H17/C07-planar/N03/N06）/47 PLANNED、原互換32要件/全goalは継続。
 
 ## N03全検証：localhost環境修正後handle64569を実行中
