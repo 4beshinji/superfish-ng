@@ -145,6 +145,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## D09
 
+2026-10-07 **IN_PROGRESS**。[五nativeの全RF量取得/strict能力・保存再生](../HPHI_RF_DESIGN.md)を第一実装。新6件9.674秒＋直接利用18件51.316秒は終了0。独立同軸TEM/尺度・一様/二層材料のf/場/壁lossを確認。単一場の制約/採用は全UNVERIFIED/null。元三水準・個別ID/guard・量別収束/全体採用の接続は続行し、D09全受入へ数えない。rawは `out/d09-hphi-rf-observation-20261007/acceptance.json`。
+
 ### HφのRF制約評価を追加する
 
 - **親課題**：D03。**種別**：実装。初期状態：未着手。

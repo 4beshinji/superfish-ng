@@ -1,8 +1,12 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-63 DONE/2 IN_PROGRESS（H17、C07-planar）/58 PLANNED。全goalと原互換32要件は継続中。
+63 DONE/3 IN_PROGRESS（H17、C07-planar、D09）/57 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D09進行中：五nativeのRF観測
+
+[能力判定/元全RF量/保存再生](../HPHI_RF_DESIGN.md)を第一実装。新6件9.674秒＋直接利用18件51.316秒は終了0。独立同軸TEM/二尺度・一様/二層のf/場/全壁loss、五native・有効真空軸/両R/Q・移動再生/変異拒否を確認。単一場はUNVERIFIED/採用値・個別ID null。旧420源の科学定義は全不変、新adapterと既存入口importのみ。次は専用三水準/元E・H個別ID/guardと量別収束・包絡採用。D09全原条件・親D03/全goalは継続。全handle終端、seed/full/専用validatorの追加実行なし。
 
 ## D05仕様受入と次の開発
 
