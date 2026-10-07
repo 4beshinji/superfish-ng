@@ -6,6 +6,14 @@
 
 ## N06費用記録器：別ツリー限定受入、主統合待ち
 
+追加：新プロセスの[時間/RSS超過・group停止と終端費用](../N06_PROCESS_SUPERVISOR.md)を
+temp commit9d39451で限定受入した。実workerの10個別unitは1.037秒・終了0、
+元1200源/既受入計測器二源は不変、temp1204/主全検証1405を確認。
+全RSS欠測は非成功、退出0も物理合格にしない。丸め共有参照は全三h/五モードを保持し、
+96空間点/480場vectorと保存元が完全一致、NPZ再読込も完全一致。
+実参照準備4.562449秒/peak RSS1340436480 bytesは共有費用で12benchmarkには数えない。
+主統合と12実比較は未実施、N03 full handle64569は固定源で継続中。
+
 2026-10-07 N06費用記録器 **IN_PROGRESS**：[serial stageのinclusive/exclusive・失敗/欠測](../N06_EFFICIENCY_TIMING.md)。主N03全validate handle64569の1405対象源を固定し、別ツリーで新二源だけを追加。独立18秒配分/未配賦、元失敗/中断・非有限/逆行時計・未知RSS・未完了/完成後・foreign threadを新7unit0.002秒・終了0で確認。元1200 Python源のbyte一致/temp1202固定、主統合/物理系列/予算執行/12benchmark実行は後続。N06全受入へ数えず新FEM/seed/full/benchmark0、原123は72 DONE/4 IN_PROGRESS（H17/C07-planar/N03/N06）/47 PLANNED、原互換32要件/全goalは継続。
 
 ## N03全検証：localhost環境修正後handle64569を実行中
