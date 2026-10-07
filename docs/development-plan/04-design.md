@@ -147,6 +147,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 2026-10-07 **IN_PROGRESS**。[五nativeの全RF量取得/strict能力・保存再生](../HPHI_RF_DESIGN.md)を第一実装。新6件9.674秒＋直接利用18件51.316秒は終了0。独立同軸TEM/尺度・一様/二層材料のf/場/壁lossを確認。単一場の制約/採用は全UNVERIFIED/null。元三水準・個別ID/guard・量別収束/全体採用の接続は続行し、D09全受入へ数えない。rawは `out/d09-hphi-rf-observation-20261007/acceptance.json`。
 
+[材料三水準/有限個別ID・RF制約](../MATERIAL_HPHI_RF_CONVERGENCE.md)を限定受入。新1件103.018秒＋新5件1168.208秒＋直接消費15件61.074秒、数値終端後のregion対応拒否1件7.140秒（FEM0）は実終了0。正常数値源/旧テストはarchive AST同一、拒否Ifのみ追加。台帳/全原条件は維持、真空/曲線三水準とD09全条件監査は続く。全handle終端、D09 IN_PROGRESS。
+
 ### HφのRF制約評価を追加する
 
 - **親課題**：D03。**種別**：実装。初期状態：未着手。

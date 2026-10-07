@@ -4,7 +4,22 @@
 63 DONE/3 IN_PROGRESS（H17、C07-planar、D09）/57 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
-## D09進行中：五nativeのRF観測
+## D09材料三水準：限定受入
+
+[元全材料/個別E・H/有限guardと量別RF・制約](../MATERIAL_HPHI_RF_CONVERGENCE.md)を限定受入。
+独立二層TEM三水準の新1件103.018秒＋残新5件1168.208秒、直接消費15件61.074秒は実終了0。
+原領域IDを入れ替え同じIDの体積が半減するメタデータ反例は終了1。初回runner root欠落ERRORも保全。
+数値終端後に隣接material/region対応のidentity拒否Ifだけ追加、新1件7.140秒（FEM0）がPASS。
+全22検査を分割受入し、元科学AST・元全テストASTはarchiveと完全一致、追加Ifは既存正常fixtureでfalse。
+既存421源中419不変、既存adapterには四関数追加/旧全AST不変、既存探索には三import追加のみ。
+数値段階1368 hashとarchive/現行の互換監査を行い、文書/拒否追加のために数値を再実行しない。
+全123カード・D09 IN_PROGRESS・原条件/依存は維持。全handle終端、生存処理/worker/browserなし。
+raw/受入監査は `out/d09-material-rf-convergence-20261007/acceptance.json`。seed/full/専用validator/legacy追加0。
+次はD09真空/曲線の三水準アダプタ。元E/Hの個別IDと有限guardを別に要求し、
+各水準の実選択rankを使い、同順位診断をID追跡へ読み替えない。曲線壁は元二次referenceへ全積分を集約する。
+D09全原条件・親D03/原互換32要件/全goalはACTIVEで継続する。以下の第一実装は既存履歴。
+
+## D09第一実装受入履歴：五nativeのRF観測
 
 [能力判定/元全RF量/保存再生](../HPHI_RF_DESIGN.md)を第一実装。新6件9.674秒＋直接利用18件51.316秒は終了0。独立同軸TEM/二尺度・一様/二層のf/場/全壁loss、五native・有効真空軸/両R/Q・移動再生/変異拒否を確認。単一場はUNVERIFIED/採用値・個別ID null。旧420源の科学定義は全不変、新adapterと既存入口importのみ。次は専用三水準/元E・H個別ID/guardと量別収束・包絡採用。D09全原条件・親D03/全goalは継続。全handle終端、seed/full/専用validatorの追加実行なし。
 

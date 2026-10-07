@@ -138,3 +138,90 @@ def read_hphi_rf_design(path):
     if canonical(expected) != canonical(document):
         raise ValueError('Hphi RF observation differs from fully reconstructed native evidence')
     return expected
+
+
+def _evaluate_hphi_envelopes(case, criteria, refinement_status, rows):
+    """Internal predicate on fully reconstructed observations, never input claims."""
+    criteria=validate_hphi_rf_criteria(case,criteria)
+    quantities=list(dict.fromkeys([criteria['objective']['quantity'],*[c['quantity'] for c in criteria['constraints']]]))
+    envelopes={}
+    for name in quantities:
+        values=[row.get(name) for row in rows]
+        envelopes[name]=([min(values),max(values)] if len(values)==3 and
+            all(_number(v) and v>=0 for v in values) else None)
+    constraints=[]
+    for constraint in criteria['constraints']:
+        interval=envelopes[constraint['quantity']]
+        if interval is None:status='UNVERIFIED'
+        elif (('lower' not in constraint or interval[0]>=constraint['lower']) and
+              ('upper' not in constraint or interval[1]<=constraint['upper'])):status='MET'
+        elif (('lower' in constraint and interval[1]<constraint['lower']) or
+              ('upper' in constraint and interval[0]>constraint['upper'])):status='VIOLATED'
+        else:status='UNRESOLVED'
+        constraints.append(dict(constraint=deepcopy(constraint),unit=UNITS[constraint['quantity']],observed_envelope=interval,status=status))
+    objective=criteria['objective'];interval=envelopes[objective['quantity']]
+    if refinement_status!='TARGETS_MET' or interval is None or any(c['status']=='UNVERIFIED' for c in constraints):status='UNVERIFIED'
+    elif any(c['status']=='VIOLATED' for c in constraints):status='CONSTRAINTS_VIOLATED'
+    elif any(c['status']=='UNRESOLVED' for c in constraints):status='CONSTRAINTS_UNRESOLVED'
+    else:status='CRITERIA_MET'
+    value=interval[1 if objective['direction']=='minimize' else 0] if status=='CRITERIA_MET' else None
+    return dict(status=status,refinement_status=refinement_status,constraints=constraints,
+        objective=dict(**objective,unit=UNITS[objective['quantity']],observed_envelope=interval,eligible_value=value),
+        observed_envelopes=envelopes)
+
+
+def assess_material_hphi_rf_design(directories, convergence, criteria):
+    """Reconstruct three dedicated material natives and independently judge RF bounds."""
+    from .material_hphi_convergence import MaterialHphiConvergence, compare_material_hphi_convergence
+    if type(convergence) is not MaterialHphiConvergence:
+        raise ValueError('material RF design requires MaterialHphiConvergence')
+    convergence=MaterialHphiConvergence.from_dict(convergence.to_dict())
+    if type(directories) not in (list,tuple) or len(directories)!=3:
+        raise ValueError('material RF design requires three distinct original native directories')
+    directories=[Path(p) for p in directories]
+    before=[_snapshot(p) for p in directories]
+    directories=[p.resolve() for p in directories]
+    if len(set(directories))!=3:raise ValueError('material RF design requires three distinct original native directories')
+    for path,project in zip(directories,convergence.projects):
+        case=hphi_case_from_dict(parse_json((path/'case.json').read_text(encoding='utf-8')))
+        if case.to_dict()!=project.case.to_dict():raise ValueError('material RF native differs from the original level Project')
+        validate_hphi_rf_criteria(case,criteria)
+    solutions=[read_hphi_run(path) for path in directories]
+    assessment=compare_material_hphi_convergence(convergence,solutions)
+    refinement='TARGETS_MET' if assessment['status']=='PASS' else 'UNVERIFIED'
+    decision=_evaluate_hphi_envelopes(convergence.projects[0].case,criteria,refinement,assessment['selected_rf'])
+    if before!=[_snapshot(p) for p in directories]:raise ValueError('material RF native sequence changed during full assessment')
+    return dict(schema_version=1,document_type='material_hphi_rf_design_assessment',
+        native_runs=[str(p) for p in directories],native_sha256=before,convergence=convergence.to_dict(),
+        criteria=deepcopy(criteria),capabilities=hphi_rf_capabilities(convergence.projects[0].case),
+        assessment=assessment,**decision,physical_error_bound=None,geometry_approximation_assessed=False,
+        scope='three original fixed-domain material FEMs with individually verified sampled E/H IDs, finite spectral guards and separate frequency/fields/region/full-wall/RF gates; empirical interval criteria, not surface peak, continuum error, optimizer or global optimality acceptance')
+
+
+def save_material_hphi_rf_design(directories, convergence, criteria, path):
+    """Save the complete replayable assessment outside every immutable native."""
+    path=Path(path)
+    if any(path.parent.resolve()==Path(p).resolve() for p in directories):
+        raise ValueError('material RF assessment must be saved outside the native directories')
+    report=assess_material_hphi_rf_design(directories,convergence,criteria)
+    report['native_runs']=[os.path.relpath(p,path.parent.resolve()) for p in report['native_runs']]
+    if report['native_sha256']!=[_snapshot(Path(p)) for p in directories]:
+        raise ValueError('material RF natives changed before assessment publication')
+    with path.open('x',encoding='utf-8') as stream:
+        json.dump(report,stream,indent=2,ensure_ascii=False,allow_nan=False);stream.write('\n')
+    return report
+
+
+def read_material_hphi_rf_design(path):
+    """Reject forged criteria/IDs/convergence/value/types through full native replay."""
+    from .material_hphi_convergence import MaterialHphiConvergence
+    path=Path(path);document=parse_json(path.read_text(encoding='utf-8'))
+    if (type(document) is not dict or type(document.get('native_runs')) is not list or
+        any(type(p) is not str for p in document['native_runs'])):
+        raise ValueError('expected a material RF assessment with three native references')
+    convergence=MaterialHphiConvergence.from_dict(document.get('convergence'))
+    expected=assess_material_hphi_rf_design([path.parent/p for p in document['native_runs']],convergence,document.get('criteria'))
+    expected['native_runs']=document['native_runs']
+    canonical=lambda value:json.dumps(value,sort_keys=True,ensure_ascii=False,allow_nan=False)
+    if canonical(expected)!=canonical(document):raise ValueError('material RF assessment differs from fully reconstructed native evidence')
+    return expected

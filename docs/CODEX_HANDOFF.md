@@ -1,3 +1,5 @@
+2026-10-07 D09材料三水準の限定受入：[個別E/H・有限guard/元場/RF収束と制約](MATERIAL_HPHI_RF_CONVERGENCE.md)。新物理1件103.018秒＋残新5件1168.208秒、直接消費15件61.074秒は実終了0。固定region IDの体積が半減する対応入替えを別のメタデータ反例で再現し、数値終端後にidentity対応の事前拒否だけ追加、新1件7.140秒（FEM0）もPASS。元22検査のscopeと元FAIL/runner ERRORを保全。既存421源中419不変、旧全定義/数値核・許容差と全123台帳不変。新診断の数値段階archiveと現行は追加拒否If以外AST同一で、受入済みidentity入力の科学結果を再利用し数値を重複実行しない。全handle終端、D09全原条件/親D03/全goalは継続。次は真空/曲線の専用三水準接続。
+
 2026-10-07 D09第一実装：[専用HφのRF量取得・能力判定](HPHI_RF_DESIGN.md)。五nativeの全領域/全PEC壁/材料region・有効真空軸両R/Qを元場から再構築し、strict能力判定を再構築前に接続。単一場は全体/制約UNVERIFIED・採用値/個別ID null。新6件9.674秒＋直接利用18件51.316秒、実終了0/PASS。独立同軸TEM/二尺度・一様/二層材料のf/場/壁loss、全保存/移動・偽装/遅い変異を確認。新adapterと既存入口のimport追加のみ、旧420源中419不変・全既存定義/科学核不変。D09 IN_PROGRESS、三水準/個別ID/採用接続が残る。全123は63 DONE/3 IN_PROGRESS/57 PLANNED、全goal継続。
 
 2026-10-07 D05仕様受入：[RF探索の量・能力・未評価条件](RF_OPTIMIZATION_SCOPE.md)。現行六量と追加物理の定義/単位/明示方向/N/A・未実装を分離し、未収束を採用しない全体predicateと初期/最終の独立三水準を固定した。静的磁石/熱はL02/L03。読取監査のみ、製品420源不変、既存fullの関連結果を再利用し、新FEM/unit/seed/full/legacy実行0。全123カードはD05だけDONEへ変更（63 DONE/2 IN_PROGRESS/58 PLANNED）、親D03・原互換32要件・全goalは継続。次はD09、C07-planarは参照環境情報待ち。
