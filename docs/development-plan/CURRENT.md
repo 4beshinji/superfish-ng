@@ -1,8 +1,16 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-66 DONE/2 IN_PROGRESS（H17、C07-planar）/55 PLANNED。全goalと原互換32要件は継続中。
+66 DONE/3 IN_PROGRESS（H17、C07-planar、D03）/54 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D03直線TE追跡コア：IN_PROGRESS
+
+2026-10-07 D03第一実装：[直線TEの元Eφ/回転体積・鏡映追跡](../STRAIGHT_TE_TRACKING.md)。独立非一様体積積分で現行Hφ読取KeyErrorを先に再現し、schema1の元Eφ専用比較を接続。元セクター/通常・鏡映混在/全境界をsample前に拒否し、元半meshを全鏡映領域へ導出する。新10＋直接消費29の39個別検査を分割受入、実段差/折返し/保存完全再生・両端/二偶奇/P1/P2・真の二ローブsample・G/QとEφ/Hr/Hz尺度則（最大4.637e-15）/両R/Q N/Aを確認。低overlapのmatches空配列を参照した検査ERRORを保全し、元overlap_matrixの検査へ修正。1184 Python源固定、旧製品変更2ファイル/3関数、科学核/RF閾値不変。新full/seed/legacy0・全handle終端。D03だけIN_PROGRESS、全123は66 DONE/3 IN_PROGRESS/54 PLANNED。版9TE調整/独立細分/操作接続とD03全監査、全goal/原互換32要件は未完。rawは out/d03-te-straight-tracking-20261007/acceptance.json。
+
+次は元版9法則をTE調整へ接続し、Bessel円筒のf/Eφ/Hr/Hz、
+実段差/独立細分と対称偶奇、未確認停止・保存再開を検査する。
+現行版9のTE拒否を維持して追跡コアだけ先に受入。全handle終端、source固定解除。
 
 ## D02原条件：DONE、次はD03
 

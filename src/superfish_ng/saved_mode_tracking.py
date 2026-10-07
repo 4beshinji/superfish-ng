@@ -39,7 +39,7 @@ def _snapshot(directory):
     return dict(directory=str(directory),sha256=result)
 
 
-def validate_tracking_controls(controls):
+def validate_tracking_controls(controls,*,allow_straight_symmetry=False):
     """Validate every step configuration before a Study may stop early."""
     names=('mapping','sample_order','minimum_overlap','minimum_assignment_margin','relative_cluster_gap','minimum_relative_singular_value')
     if isinstance(controls,dict) and controls.get('mapping')=='nested_affine':
@@ -70,7 +70,7 @@ def validate_tracking_controls(controls):
     if 'minimum_cluster_link' in controls:_control(controls['minimum_cluster_link'],'minimum_cluster_link')
     if mapping=='piecewise_remesh':
         from .piecewise_remesh_tracking import validate_comparison_meshes
-        validate_comparison_meshes(controls['comparison_meshes'])
+        validate_comparison_meshes(controls['comparison_meshes'],allow_symmetry=allow_straight_symmetry)
     if mapping=='affine_remesh':
         from .affine_remesh_tracking import validate_affine_map
         validate_affine_map(controls['affine_map'])
@@ -89,7 +89,7 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     keys(request,fields,fields,'mode tracking request')
     _canonical(request)
     controls=request['controls']
-    validate_tracking_controls(controls)
+    validate_tracking_controls(controls,allow_straight_symmetry=True)
     normalized=deepcopy(request);root=Path.cwd() if base_directory is None else Path(base_directory)
     directories=[]
     for name in ('previous_run','current_run'):
@@ -104,8 +104,8 @@ def build_saved_mode_tracking(request,*,base_directory=None):
     if any(polarizations):
         if not all(polarizations):
             raise ValueError('mixed TE/TM tracking is unsupported; use two results with the same polarization')
-        if controls['mapping'] not in ('normalized_cylinder','normalized_profile','affine_remesh','curved_same_domain') and not (controls['mapping']=='piecewise_remesh' and all(m['schema_version'] in (2,3,4,5) for m in controls['comparison_meshes'])):
-            raise ValueError('TE saved tracking requires normalized_cylinder, normalized_profile or native curved affine_remesh/curved_same_domain/declared quadratic piecewise_remesh mapping')
+        if controls['mapping'] not in ('normalized_cylinder','normalized_profile','affine_remesh','curved_same_domain') and not (controls['mapping']=='piecewise_remesh' and all(m['schema_version'] in (1,2,3,4,5) for m in controls['comparison_meshes'])):
+            raise ValueError('TE saved tracking requires normalized_cylinder, normalized_profile or native affine_remesh/curved_same_domain/declared straight or quadratic piecewise_remesh mapping')
         from .te_saved import read_te_run
         solutions=[read_te_run(path) for path in directories]
     else:
