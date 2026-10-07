@@ -1,8 +1,18 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-67 DONE/3 IN_PROGRESS（H17、C07-planar、D06）/53 PLANNED。全goalと原互換32要件は継続中。
+68 DONE/2 IN_PROGRESS（H17、C07-planar）/53 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D06原条件：DONE、次はN01
+
+2026-10-07 D06 **DONE**：[元直線TM候補の実座標探索/三水準個別ID/所有保存再開](../STRAIGHT_RF_CANDIDATE_SEARCH.md)。3形状で両変数6候補/18 FEM、独立Bessel f/H/E/全壁loss/両R/Q、実順位交換ID、invalid候補FEM0・曖昧2モード即停止・予算/祖先保全を確認。先行33＋新8の41個別unitを分割受入。曲線版1〜3の10元試行/30 native水準を完全再生（新FEM0）。検査側mass/contour条件・端点1 ulp ERRORを保全し不足分だけ再検査。全RF assessment null、例の18 FEM成果物もFINAL_UNVERIFIEDを保持。旧数値AST/許容差不変、1190源の検査修正以外固定・全handle終端、新full/seed/legacy0。原123は68 DONE/2 IN_PROGRESS/53 PLANNED、親D03/原互換32要件/全goalは継続。次はN01（N02/N03→D07の依存準備）。rawは out/d06-straight-native-search-20261007/acceptance.json。
+
+全製品/数値源固定・全handle終端、source固定解除。
+次はN01の幾何3水準/FEM3水準・独立参照・場/RF/peakの元精度条件を確認する。
+N02/N03を先に満たしてからD07へ進む。D08も依存成立、D04はH18/P10/C07-TE待ち。
+
+## D06第一工程の履歴
 
 ## D06第一工程：候補台帳、IN_PROGRESS
 

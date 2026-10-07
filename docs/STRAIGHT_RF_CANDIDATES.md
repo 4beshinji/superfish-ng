@@ -1,5 +1,8 @@
 # D06第一工程：直線TMの多変数候補
 
+2026-10-07：後続の[実native座標探索・D06原条件監査](STRAIGHT_RF_CANDIDATE_SEARCH.md)を受入し、
+D06はDONE。以下のIN_PROGRESS記載は第一工程の履歴。RF採用評価はD07で継続する。
+
 2026-10-07、D02の元全境界法則を多変数の候補生成へ接続した。
 D06は **IN_PROGRESS**。探索器・実候補の個別ID追跡・所有solve checkpointへの
 接続と原条件の全監査は次工程。RF制約の収束評価はD07として残す。

@@ -1,0 +1,416 @@
+{
+  "schema_version": 1,
+  "document_type": "straight_rf_candidate_search_request",
+  "candidate_request": {
+    "schema_version": 1,
+    "document_type": "straight_rf_candidate_request",
+    "project": {
+      "project_version": 1,
+      "case": {
+        "schema_version": 3,
+        "name": "cavity",
+        "geometry": {
+          "type": "stepped_profile",
+          "points_zr_m": [
+            [
+              0.0,
+              0.0625
+            ],
+            [
+              0.0625,
+              0.0625
+            ],
+            [
+              0.0625,
+              0.09375
+            ],
+            [
+              0.125,
+              0.09375
+            ]
+          ]
+        },
+        "mesh": {
+          "nr": 6,
+          "nz": 8
+        },
+        "solver": {
+          "modes": 1,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "reflect_full": false,
+      "display_length_unit": "mm"
+    },
+    "shape_law": {
+      "format": "straight_piecewise_shape_law",
+      "version": 1,
+      "reference_comparison_mesh": {
+        "schema_version": 1,
+        "length_unit": "m",
+        "coordinate_order": "rz",
+        "index_base": 0,
+        "points": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.125
+          ],
+          [
+            0.09375,
+            0.125
+          ],
+          [
+            0.09375,
+            0.0625
+          ],
+          [
+            0.0625,
+            0.0625
+          ],
+          [
+            0.0625,
+            0.0
+          ]
+        ],
+        "triangles": [
+          [
+            4,
+            0,
+            5
+          ],
+          [
+            4,
+            1,
+            0
+          ],
+          [
+            4,
+            2,
+            1
+          ],
+          [
+            2,
+            4,
+            3
+          ]
+        ],
+        "boundary_edges": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            0
+          ]
+        ],
+        "boundary_tags": [
+          "axis",
+          "pec",
+          "pec",
+          "pec",
+          "pec",
+          "pec"
+        ]
+      },
+      "case_boundary_vertices": [
+        {
+          "case_vertex": 0,
+          "reference_vertex": 5
+        },
+        {
+          "case_vertex": 1,
+          "reference_vertex": 4
+        },
+        {
+          "case_vertex": 2,
+          "reference_vertex": 3
+        },
+        {
+          "case_vertex": 3,
+          "reference_vertex": 2
+        }
+      ],
+      "bindings": [
+        {
+          "vertex": 0,
+          "coordinate": "r",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.0,
+                "unit": "m"
+              },
+              {
+                "variable": "radial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 0,
+          "coordinate": "z",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.0,
+                "unit": "m"
+              },
+              {
+                "variable": "axial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 1,
+          "coordinate": "r",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.0,
+                "unit": "m"
+              },
+              {
+                "variable": "radial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 1,
+          "coordinate": "z",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.125,
+                "unit": "m"
+              },
+              {
+                "variable": "axial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 2,
+          "coordinate": "r",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.09375,
+                "unit": "m"
+              },
+              {
+                "variable": "radial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 2,
+          "coordinate": "z",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.125,
+                "unit": "m"
+              },
+              {
+                "variable": "axial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 3,
+          "coordinate": "r",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.09375,
+                "unit": "m"
+              },
+              {
+                "variable": "radial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 3,
+          "coordinate": "z",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.0625,
+                "unit": "m"
+              },
+              {
+                "variable": "axial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 4,
+          "coordinate": "r",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.0625,
+                "unit": "m"
+              },
+              {
+                "variable": "radial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 4,
+          "coordinate": "z",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.0625,
+                "unit": "m"
+              },
+              {
+                "variable": "axial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 5,
+          "coordinate": "r",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.0625,
+                "unit": "m"
+              },
+              {
+                "variable": "radial"
+              }
+            ]
+          }
+        },
+        {
+          "vertex": 5,
+          "coordinate": "z",
+          "expression": {
+            "op": "mul",
+            "args": [
+              {
+                "constant": 0.0,
+                "unit": "m"
+              },
+              {
+                "variable": "axial"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "controls": {
+      "mapping": "piecewise_remesh",
+      "sample_order": 8,
+      "minimum_overlap": 0.97,
+      "minimum_assignment_margin": 0.05,
+      "relative_cluster_gap": 1e-06,
+      "minimum_relative_singular_value": 1e-08
+    },
+    "max_candidates": 6,
+    "variables": [
+      {
+        "name": "radial",
+        "unit": "1",
+        "lower": 0.9,
+        "upper": 1.1
+      },
+      {
+        "name": "axial",
+        "unit": "1",
+        "lower": 0.9,
+        "upper": 1.1
+      }
+    ]
+  },
+  "poll_variables": [
+    {
+      "name": "radial",
+      "initial": 1.0,
+      "step": 0.01,
+      "tolerance": 0.01
+    },
+    {
+      "name": "axial",
+      "initial": 1.0,
+      "step": 0.01,
+      "tolerance": 0.01
+    }
+  ],
+  "max_trials": 6,
+  "initial_ids": [
+    "mode-1"
+  ],
+  "refinement_scale": 2
+}
