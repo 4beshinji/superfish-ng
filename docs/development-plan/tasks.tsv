@@ -117,7 +117,7 @@ L04	L01 L02	B03 L01 L02 L03	監査	PLANNED	08-external.md#l04	周辺機能の採
 L05	C00	B01	作業規則	PLANNED	08-external.md#l05	新たに確定した必須仕様をコミットへ展開する
 L06	V01	B01	調査	PLANNED	08-external.md#l06	実機参照の来歴と再現条件を揃える
 L07	V01	L06 N03	条件付き検証	PLANNED	08-external.md#l07	実機の入力と比較を作る
-V01	V02	B03	仕様	PLANNED	09-release.md#v01	統合受入の対象と必要証拠を固定する
+V01	V02	B03	仕様	DONE	09-release.md#v01	統合受入の対象と必要証拠を固定する
 V02	V02	V01 S07 C08	検証	PLANNED	09-release.md#v02	配布と旧保存移行を検証する
 V03	V02	V02 D04 D11 N04 N08 H18 P10	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
 V04	V02	V02 D11	検証	PLANNED	09-release.md#v04	実業務手順を利用者視点で受入する

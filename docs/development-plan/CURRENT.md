@@ -1,8 +1,12 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-71 DONE/3 IN_PROGRESS（H17、C07-planar、N03）/49 PLANNED。全goalと原互換32要件は継続中。
+72 DONE/3 IN_PROGRESS（H17、C07-planar、N03）/48 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## V01統合受入仕様：DONE（実受入は後続）
+
+2026-10-07 V01仕様 **DONE**：[統合受入の環境/原32行F・I・O・N・W/業務/移行/配布境界](../V01_INTEGRATED_ACCEPTANCE_SCOPE.md)。現行Linux実機＋Python3.12.3/NumPy2.5.2/SciPy1.18.1を候補とし、追加OS/実業務の未決には具体的選択肢を示す。原32行を全保持し、製品の専用validator/元受入と旧対象版の未確認を対応付け、V02の新規環境/各公開保存reader、V03の固定源full＋別seed f/RF、V04の本人評価/自動UIの区別、配布allowlist/依存ライセンス/旧資産非同梱を固定。文書のみ、リンク/実在入口/32行網羅とB03依存を確認、1405全検証対象源不変、新unit/FEM/seed/full/配布0。V02〜V05/原互換32要件/全goalは未受入。原123は72 DONE/3 IN_PROGRESS（H17/C07-planar/N03）/48 PLANNED、N03 full handle72074は継続。
 
 ## N05比較仕様：DONE（N03全検証と別の文書作業）
 
