@@ -20,6 +20,13 @@ temp371b800の四module/四testと丸め二入力を追加し、元1405源は全
 開発FEM11回、N05の12benchmarkは0。元1415源は不変、新1417対象/1210 Python源。
 既存fullは追加前1405源、新五unitは別証拠。独立参照判定と完全再生/resumeは後続、N06はIN_PROGRESS。
 
+[元振幅・共通符号・量別参照/ピーク両端の有限標本leaf](../N06_SAMPLE_ACCURACY.md)を
+temp611f548で新8unit0.001秒・終了0で受入し、同byteで主統合した。
+手計算の0.006/1.006、Eだけ逆符号の差2、peak上端1.02のFAIL、欠測/ゼロnorm/RQ規約と
+重みunderflowのUNVERIFIEDを確認。元[0,2]の下端0を欠測としたFAILは保全してvalidatorを訂正。
+元1417源は不変、新1419対象/1212 Python源。六moduleは41個別unitの別証拠、新FEM/12比較0。
+有限標本PASSを物理受入にしない。完全元Case/P2領域・被覆/実ID/独立参照byteとの接続は次工程。
+
 ## N06費用記録器：別ツリー限定受入、主統合待ち
 
 追加：新プロセスの[時間/RSS超過・group停止と終端費用](../N06_PROCESS_SUPERVISOR.md)を

@@ -12,6 +12,8 @@ rawは `out/n06-cost-recording-20261007/main-foundation-integration.json`。
 続いて[実一様worker](N06_UNIFORM_WORKER.md)を新5個別unit・独立円筒場/球RFで
 分割受入して同byte統合した。既存1415源は不変、新1417対象/1210 Python源。
 独立参照評価/全段階の内側接続・12実比較は未実施で、N06はIN_PROGRESS。
+[有限標本の精度leaf](N06_SAMPLE_ACCURACY.md)も新8unitの元証拠と同byteで統合した。
+元1417源は不変、新1419対象/1212 Python源。実保存場/全域参照との接続は後続。
 
 2026-10-07。N06はIN_PROGRESS、[N05の固定比較仕様](N05_ADAPTIVE_EFFICIENCY_PLAN.md)を先行とする。
 最初の範囲は費用記録器だけ。物理ケース実行・独立精度/費用比較・N06全受入は後続。
