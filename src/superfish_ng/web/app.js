@@ -2474,7 +2474,8 @@ function tuningParameterMode() {
   $("tune-polynomial-help").hidden=$("tune-binding-law").value!=="polynomial";
   $("tune-affine-settings").hidden=$("tune-binding-law").value!=="affine";
   $("tune-harmonic-settings").hidden=$("tune-binding-law").value!=="harmonic";
-  $("tune-profile-bindings").hidden=["affine","harmonic","expression-profile","expression-curved"].includes($("tune-binding-law").value);
+  $("tune-profile-bindings").hidden=["affine","harmonic","expression-profile","expression-curved","straight-piecewise"].includes($("tune-binding-law").value);
+  $("tune-straight-settings").hidden=$("tune-binding-law").value!=="straight-piecewise";
   $("tune-expression-settings").hidden=!$("tune-binding-law").value.startsWith("expression-");
   $("tune-expression-curve-settings").hidden=$("tune-binding-law").value!=="expression-curved";
   $("tune-partition-settings").hidden=!$("tune-partition-enabled").checked;
@@ -2530,12 +2531,24 @@ function showTuning(response) {
     body.append(row);
   }
   $("tune-request").value=JSON.stringify(d.request,null,2);$("tune-coupled").checked=r.schema_version>=2;
-  $("tune-binding-law").value=[7,8].includes(r.schema_version) ? (r.geometry_kind==="profile" ? "expression-profile" : "expression-curved") : r.schema_version===5 ? "harmonic" : r.schema_version===4 ? "affine" : r.schema_version===3 ? "polynomial" : "linear";
+  $("tune-binding-law").value=r.schema_version===9 ? "straight-piecewise" : [7,8].includes(r.schema_version) ? (r.geometry_kind==="profile" ? "expression-profile" : "expression-curved") : r.schema_version===5 ? "harmonic" : r.schema_version===4 ? "affine" : r.schema_version===3 ? "polynomial" : "linear";
   $("tune-partition-enabled").checked=r.schema_version===8;
   if(r.schema_version===8)$("tune-mesh-schedule").value=JSON.stringify(r.mesh_schedule,null,2);
   if(r.schema_version>=2) {
     $("tune-parameter-name").value=r.parameter;$("tune-parameter-unit").value=r.parameter_unit;
-    if([7,8].includes(r.schema_version)) {
+    if(r.schema_version===9) {
+      $("tune-straight-law").value=JSON.stringify(r.shape_law,null,2);
+      applyProject(r.project);
+      $("tracking-mapping").value=r.controls.mapping;
+      for(const [id,key] of [["order","sample_order"],["overlap","minimum_overlap"],["margin","minimum_assignment_margin"],
+          ["gap","relative_cluster_gap"],["rank","minimum_relative_singular_value"]]) $("tracking-"+id).value=r.controls[key];
+      $("tracking-retain").checked=r.controls.cluster_transition_policy!==undefined;
+      if($("tracking-retain").checked) {
+        $("tracking-policy").value=r.controls.cluster_transition_policy;
+        $("tracking-link").value=r.controls.minimum_cluster_link;
+      }
+      trackingButtons();
+    } else if([7,8].includes(r.schema_version)) {
       $("tune-expression-bindings").value=JSON.stringify(r.bindings,null,2);
       if(r.geometry_kind==="curved_harmonic") {
         $("tune-expression-rf").value=r.rf_coordinates;$("tune-expression-angle").value=r.minimum_corner_angle_deg;
@@ -2589,6 +2602,7 @@ bind("tune-prepare",async()=>{
   const signature=tuningInputSignature(),project=await preview();
   if(signature!==tuningInputSignature())throw Error("調整入力の確認中に入力が変わりました。現在の入力でやり直してください。");
   const coupled=$("tune-coupled").checked,vertex=coupled ? 0 : number("tune-vertex");
+  const straight=coupled && $("tune-binding-law").value==="straight-piecewise";
   const affine=coupled && $("tune-binding-law").value==="affine";
   const expression=coupled && $("tune-binding-law").value.startsWith("expression-");
   const expressionCurved=expression && $("tune-binding-law").value==="expression-curved";
@@ -2598,7 +2612,13 @@ bind("tune-prepare",async()=>{
   const request={schema_version:1,project,parameter:`/case/geometry/points_zr_m/${vertex}/${$("tune-coordinate").value}`,
     bounds:[number("tune-low"),number("tune-high")],target_hz:number("tune-target")*1e6,frequency_tolerance_hz:number("tune-frequency-tolerance"),
     parameter_tolerance:number("tune-parameter-tolerance"),max_trials:number("tune-max-trials"),initial_ids,mode_id:$("tune-mode-id").value,
-    controls:trackingControls(affine,harmonic),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
+    controls:trackingControls(affine,harmonic || straight),refinement_scale:number("tune-refinement"),mesh_frequency_tolerance_hz:number("tune-mesh-tolerance")};
+  if(straight) {
+    Object.assign(request,{schema_version:9,parameter:$("tune-parameter-name").value,parameter_unit:$("tune-parameter-unit").value});
+    // Preserve raw law text so duplicate keys reach the strict server parser.
+    $("tune-request").value=JSON.stringify(request,null,2).slice(0,-1)+',"shape_law":'+$("tune-straight-law").value+'}';
+    return;
+  }
   if(expression) {
     const partitioned=expressionCurved && $("tune-partition-enabled").checked;
     Object.assign(request,{schema_version:partitioned ? 8 : 7,geometry_kind:expressionCurved ? "curved_harmonic" : "profile",

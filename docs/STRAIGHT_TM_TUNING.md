@@ -53,5 +53,28 @@ _request/_geometry_project/pair_controlsと回復wrapperのvalidate_requestの�
 科学核/RF積分/旧閾値は不変。全handle実終端、新full/seed/legacy0。
 新依存・外部資料・GPU・hosted CIを使用していない。
 
-未完は版9GUI入力復元/構築、API/CLI/実GUIの元要求・最終場・両R/Q一致、
-一般輪郭成功系列、D02全原条件監査。既存GUI旧版の検査を新版実操作へ数えない。
+コア受入時の未完項目のうちGUI/入口一致は下記で受入。一般輪郭成功系列とD02全原条件監査が残る。
+
+
+## GUIと入口一致
+
+2026-10-07、コア9b6e091後の限定受入。
+実Chrome/153の元段差2試行PAUSEDで、変更方法linearへの誤復元を先に再現した。
+専用「直線境界の局所変形」入力に全法則を復元し、元Projectと追跡判定も戻す。
+形状法則のraw JSONを保持し、重複キーをサーバーのstrict parserで求解前に拒否する。
+
+scripts/verify_gui_straight_tuning.mjsは既存browser-session.mjsを使用し、
+外部要求を遮断、元source hash、実クリック/入力、保存download、改竄拒否、
+元要求完全再構築、実再開、両gate、元個別順位の最終場表示を確認する。
+必須 --url/--out/--request、任意 --checkpoint で元PAUSEDを再利用する。
+raw: out/d02-straight-gui-20261007/。baseline.log終了1、corrected.log終了0、7項目PASS。
+1275源は開始/終端で不変、ブラウザーslotとサーバーは全終端した。
+
+同じ原要求を独立API execute_tuneとCLI tuneで実行し、両方4試行TUNED・終了0。
+元最終mesh/Case、Hφ/Er/Ez、f/U/Ue/Um/Pwall/Q/G/両R/Qの相対差はGUIと0
+（確認閾値1e-10）。表示用importのfields.npz/case/results/modes/axis/VTKも元byte一致。
+api-cli-receipt.jsonとleaf-audit.jsonに原結果/差/範囲を保存。
+初回比較runnerが誤ってtune.jsonを読んだ終了1を保全し、
+正しいcheckpoint-004.jsonの原結果を読取/全再生するだけで終了0に修正。
+修正比較内の新eig求解0。文書のための再求解・full/seed/legacyは行わない。
+Python製品・元検査は9b6e091から不変。全D02/一般輪郭成功の受入とは区別する。
