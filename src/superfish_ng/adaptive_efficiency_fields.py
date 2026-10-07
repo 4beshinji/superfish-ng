@@ -61,6 +61,33 @@ The caller must bind saved sources, whole Case/domain and actual mode IDs.
                 raise ValueError('curved candidate tree geometry UNVERIFIED: nonfinite radius or centres')
             self.tree = cKDTree(centres)
 
+    @classmethod
+    def from_saved_run(cls, directory):
+        """Use the strict original reader, including its completion checks.
+
+        The affine saved namespace is adapted only as the original sampling
+        container: original coefficient/frequency/mesh/space objects, no solve
+        or renormalization. The caller must still pin source bytes before/after
+        and bind the complete initial Case/domain and actual individual IDs.
+        """
+        from .config import Case
+        from .saved import read_solution
+        saved = read_solution(directory)
+        case = getattr(saved, 'case', None)
+        model = None if not isinstance(case, Case) or case.model is None else case.model.to_dict()
+        if (model is None or case.element_order != 2 or case.z_min != 'pec' or case.z_max != 'pec' or
+                (model['physics'], model['coordinates'], model['polarization'], model['azimuthal_index']) !=
+                ('rf_eigenmode', 'axisymmetric', 'tm', 0) or
+                model['materials'] != [dict(id='vacuum', type='vacuum')] or
+                model['regions'] != [dict(id='cavity', material='vacuum', domain='interior')]):
+            raise ValueError('saved efficiency samples require closed vacuum axis-connected m=0 TM P2')
+        if isinstance(saved, CurvedSolution):
+            return cls(saved)
+        if case.geometry_order != 1 or saved.element_order != 2:
+            raise ValueError('saved efficiency field container disagrees with original P2 geometry/order')
+        return cls(Solution(saved.mesh, None, None, None, saved.frequencies_hz, saved.u, None, None,
+                            element_order=2, space=saved.space))
+
     def candidate_cells(self, point):
         """Return exactly the original containing curved boxes, in cell order."""
         raw = np.asarray(point)

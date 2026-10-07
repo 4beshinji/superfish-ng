@@ -143,6 +143,43 @@ class AdaptiveEfficiencyFieldsTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'nonfinite'):
                 sampler.evaluate(point)
 
+    def test_saved_affine_factory_reconstructs_original_all_mode_fields_without_solving(self):
+        case = Case.from_dict(self.plan['cases'][0]['request']['case'])
+        solution = solve(case)
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Path(tmp)/'affine-native'
+            save_run(case, solution, run)
+            saved = read_solution(run)
+            points = np.vstack((saved.mesh.points, [[.017,.043], [0.,.123]]))
+            with patch('superfish_ng.solver.solve', side_effect=AssertionError('replay must not solve')):
+                sampler = EfficiencyFieldSampler.from_saved_run(run)
+                result = sampler.evaluate(points)
+            np.testing.assert_array_equal(sampler.solution.u, solution.u)
+            np.testing.assert_array_equal(sampler.solution.frequencies_hz, solution.frequencies_hz)
+            for mode in range(case.modes):
+                expected = FieldSampler.from_solution(saved).evaluate(points, mode=mode)
+                np.testing.assert_array_equal(result['fields'][:,mode], np.column_stack([expected[k] for k in COMPONENTS]))
+
+    def test_saved_factory_preserves_reader_failure_and_rejects_unsupported_case_before_fields(self):
+        from types import SimpleNamespace
+        error = ValueError('original incomplete saved run')
+        with patch('superfish_ng.saved.read_solution', side_effect=error):
+            with self.assertRaises(ValueError) as caught:
+                EfficiencyFieldSampler.from_saved_run('unused')
+        self.assertIs(caught.exception, error)
+        case = Case.from_dict(self.plan['cases'][0]['request']['case'])
+        unsupported = (replace(case, element_order=1), replace(case, z_min='electric_symmetry'),
+                       replace(case, model=replace(case.model, polarization='te')))
+        for actual in unsupported:
+            with patch('superfish_ng.saved.read_solution', return_value=SimpleNamespace(case=actual)):
+                with self.assertRaisesRegex(ValueError, 'closed vacuum.*TM P2'):
+                    EfficiencyFieldSampler.from_saved_run('unused')
+        # The curved branch consumes the already reconstructed original object.
+        with patch('superfish_ng.saved.read_solution', return_value=self.manufactured):
+            sampler = EfficiencyFieldSampler.from_saved_run('unused')
+        self.assertIs(sampler.solution, self.manufactured)
+        self.assertIs(sampler.solution.u, self.manufactured.u)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -18,6 +18,13 @@ N06計47個別unit、旧full/seedを新源へ昇格しない。N05の12benchmark
 peak RSS1196466176 bytes。全1421源不変、新FEM/12benchmark/seed/full0。
 これはN03保存FEM2の再生費用であり、N06の新一様/適応実測は後続。
 
+[元保存readerから直線/曲線場へ接続](../N06_NATIVE_FIELD_LOOKUP.md#元保存readerからの直線曲線接続)
+するclassmethodを追加。新二unit0.242秒・終了0/PASS、実円筒のsolveなし全mode再生一致、
+未対応Case拒否/元例外/元曲線object保持を確認。旧module/六検査の全ASTは追加分以外不変。
+1421対象/1214 Python源、1419点不変・二点だけ追加。N06計49個別unit。
+旧二byteを明示archiveで解決し、元全格子consumerの証拠を再利用する。
+新二検査の開発FEM2回、N05の12benchmark/seed/fullは0、N06は継続中。
+
 ## N03元条件：DONE、全検証/別seed照合終端
 
 2026-10-08 JST：N03 **DONE**。五合成系列の元場/RF・両側二区間と失敗保全を受入。修正環境の全validate handle64569は2485検査/499モジュール、4772.019秒・終了0/PASS。0FAIL/0ERROR、skipは3件で未実行物理へ数えない。全1405対象源は開始/終端/監査時一致。seed9モードの周波数・RF207量を元相対1e-10で別照合し、最大相対差f=0/RF=8.88178e-16。既知の入力domain/scope注記だけを厳密に確認し、元Case/mesh/両PEC端・旧規約は不変。元1199源は明示した変更前三源archiveで解決し、全523bound入力を再hash。初回HTTP環境FAIL/244モジュールの終了130と元長楕円体R/Q FAILは保全。原123は73 DONE/3 IN_PROGRESS（H17/C07-planar/N06）/47 PLANNED。N04/親G03・原互換32要件・全goalは継続。詳細は[N03の条件別受入](../N03_ACCEPTANCE.md)。

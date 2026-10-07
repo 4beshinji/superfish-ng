@@ -85,3 +85,27 @@ rawは `rounded-native-grid-replay/report.json`、二native NPZ、
 `rounded-native-grid-replay-acceptance.json` と元/修正/監査log。
 ここで使ったnativeはN03の受入済みFEM2保存場で、新N06 benchmarkではない。
 新FEM/12benchmark/seed/fullは0。新一様/適応実行への同じ参照/域束縛は後続。
+
+## 元保存readerからの直線/曲線接続
+
+元直線read_solutionはSolutionではなく検証済みnamespaceを返すため、
+新`EfficiencyFieldSampler.from_saved_run`を追加した。
+元strict reader/completion検査を先に実施し、閉PEC/真空/m=0 TM/P2の完全Caseを確認する。
+直線は元mesh/space/係数/周波数の同じobjectをsampling containerへ接続するだけで、
+新solve/規格化/係数置換は行わない。曲線は元の再構築objectをそのまま使う。
+sourceの前後SHA/同じ初期Case/全域/実IDの束縛は外側に残す。
+
+未実装classmethodの二AttributeErrorをbaseline0.236秒として保存した。
+新二unitは0.242秒・終了0/PASS。実円筒を保存/再構築し、solve禁止下で全mode場と
+元reader/samplerの完全array一致、元係数/周波数一致を確認した。
+元reader例外の同一object、P1/TE/対称端のsampling前拒否、曲線の元object保持を確認した。
+開発FEMはbaseline/final各一回、計2回。新個別件数は二つだけでN06計49件。
+旧六検査と旧sampler moduleは追加二method/一classmethodを除いて完全AST一致。
+旧二byteはgit f749923とSHA照合してraw `before-saved-field-factory/` に保全した。
+したがって元六unitと全丸め格子再生の証拠を再利用し、場を再計算しない。
+1421対象/1214 Python源は同じ数、1419点不変・変更二点は追加だけ。
+監査器の秒数仮定(.260秒)のFAILも保存し、実logの.242秒へ監査だけ訂正した。
+最初のtest挿入位置で旧method末尾が新methodへ移ったため、実行前に元ASTへ戻した。
+新baseline/finalは追加二件だけを実行し、旧検査の省略版を受入へ数えていない。
+rawは `field-sampler-saved-factory-{baseline,final,audit,audit-followup}.log` と
+`field-sampler-saved-factory-acceptance.json`。seed/full/12benchmark0、N06はIN_PROGRESS。
