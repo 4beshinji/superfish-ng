@@ -15,7 +15,25 @@ GUI server90242/TE browser46225は実終了0、worker-terminal空/Chrome slot 0/
 
 残る **全validate handle60083** は `out/validation-p09-milestone-20261007.log` / 同名directory。
 8 isolated unittest worker、全suiteを事前重複実行せず一度起動し、まだ実行中。
-seed/全件PASSは未証明。観測timeoutだけで再起動しない。
+seed/全件PASSは未証明。途中の `test_model_contract` は1 method内の調整要求例2件でERROR。
+通常Case移行テストが専用Hphi tune形式をCaseとして読んだ分類誤りで、strict parserの拒否は正しい。
+全完了reportの集約では `test_browser_session` の検証器数63/実際71と、
+`test_curved_hphi_workspace` の古い拒否message期待式にも各1FAILを確認した。
+加えて全71検証器のimport照合で `verify_gui_rf_optimization.mjs` だけ共有launchBrowserのimport漏れを確認し、
+実起動のReferenceErrorをFEM/Chrome起動前に再現した。
+さらに `test_project` も同じ専用Hphi tune例2件のCase/Project誤分類でERROR。
+`test_planar_piecewise_tuning_jobs` は実worker取消し後に不完全JSONを読みERRORとなった。
+共有 `_write` が公開先を先に作る製品側の競合で、待ち時間やparse再試行では回避しない。
+[完全公開の有界修正と受入条件](../PLANAR_CHECKPOINT_PUBLICATION.md)を記録した。
+独立の保存不変量を元実装で再現した：部分serialization/非有限値の拒否で公開先が残り、
+実producer強制終了後にも部分JSONが残る（raw `publication-invariant-baseline.log` と
+`publication-killed-producer-baseline.log` を保全）。
+同じfilesystemの私有一時ファイルへ完全JSONを書き、flush/fsync後にhard linkで上書きせず公開する修正を準備。
+通常/例外経路では一時ファイルを除去する。SIGKILL時の私有stageは未完了ownerに残り得るが、
+checkpoint/完了成果物として公開・受入しない。旧raw tune経路も同じ公開不変量を守り、JSON byteは維持する。
+元全実行を終端まで保全し、全失敗を確定してから該当4test/共有保存2源/検証器importと新保存検査を修正する。
+限定検査と実取消し/再開が成功した後、共有保存変更のため新rootで全validateを実施する。
+元FAILを全件成功へ読み替えず、新全実行のseed f+RFと照合する。観測timeoutだけで再起動しない。
 `milestone-start-source.json` にsrc/tests/scripts/examples全1365fingerprintを保存した。
 このhandleの実終端までsrc/tests/scripts/examplesを編集しない。docs/outの記録/監査だけ進める。
 新native求解0のGUI leafと、別rootのfull/seed実行を区別する。

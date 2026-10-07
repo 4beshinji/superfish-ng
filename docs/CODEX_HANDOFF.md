@@ -1,5 +1,8 @@
 現行の作業順・依存待ち・受入証拠・実行中処理は[現行入口](development-plan/CURRENT.md)を参照する。以下の追記は履歴であり、古い「次は」「生存中」を現在の指示/状態として扱わない。
 
+2026-10-07 P09全validateの途中で、実取消し時の不完全JSON公開を確認。[共有checkpointの完全公開修正](PLANAR_CHECKPOINT_PUBLICATION.md)の不変量を元実装で再現した。元全実行終端まで製品源を固定し、原子的・上書きなし公開の限定検査後に共有変更の全validateを新rootで実施する。修正案準備段階で、P09/full/seed成功は未証明。
+
+
 2026-10-07 P09進行：[円TM/非円形TEの完全大容量GUI checkpoint](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。円5＋不足2/TE8、分割15項目PASS。実TE body95,690,800/102,474,277 byteでHTTP200、全科学保存/両gate/過去anchor0/実順位2の元場五byte・全download一致。全420製品源/元7trial九byte/全123カード不変、全browser/server終端・slot 0/外部要求0。元debugger失敗/円download不足/生成時creatorの監査誤りを保全し、歴史的源は14現行不変＋1生成当時archive一致と照合。新native求解0。全validate handle60083は実行中で、full/seed成功は未証明。[P09条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)と全goalを継続。
 
 2026-10-07 P09進行：[実Chrome比較・履歴回復/延長・取消しと診断表示](PLANAR_CURVED_GUI_HISTORY.md)。元TE四nativeから実順位交換/真doublet/null、順序付き履歴/過去anchor回復/後続延長/max停止、全元五byte/親不変と場画像を確認。13項目＋null表示1の分割14項目PASS。検証器の期待式/非同期待ちERRORと実Page is too largeを保全し、診断の全文scroll/null明示の表示2件だけ修正。7完了job/510 entry/全420 creator監査PASS、元420源中418科学/その他源と全123カード不変。実取消し−15/他7worker0、全3server/Chrome終端、外部要求0/slot 0。次は受入円/非円形TEの大容量調整checkpoint実GUIとP09全条件監査。全goal継続。
