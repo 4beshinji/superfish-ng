@@ -37,6 +37,14 @@ peak RSS1196466176 bytes。全1421源不変、新FEM/12benchmark/seed/full0。
 次数16/24の完全体積/軸点を全保存し、両R/Q/全壁/解析ピークと元Case/sourceを保持する。
 12独立native実行・域/実ID/量別精度と費用は引き続き実装中。
 
+[完全Case/sourceと保存全領域の束縛](../N06_SAVED_DOMAIN_BINDING.md)も限定受入。
+解析曲線が同じでも全P2境界が異なる独立反例を先に再現し、Case/source混合は元validatorの拒否を保全。
+新5個別unit2.248秒・終了0/PASS、実円筒/球初回と全域細分、違う初期source/同じ曲線の別chord Case拒否、
+linked/TE/遅いCSV変異と全native前後SHAを確認。DOMAIN_VERIFIEDと実ID/精度を分離する。
+開発FEM6回（N06計23回）、N05の12benchmark/seed/fullは0。
+元1423対象源不変、新1425対象/1218 Python源、N06計59個別unit。
+次は参照bundleと元domain/ID判定・全段階費用をfresh workerへ接続し、固定12行を実測する。
+
 ## N03元条件：DONE、全検証/別seed照合終端
 
 2026-10-08 JST：N03 **DONE**。五合成系列の元場/RF・両側二区間と失敗保全を受入。修正環境の全validate handle64569は2485検査/499モジュール、4772.019秒・終了0/PASS。0FAIL/0ERROR、skipは3件で未実行物理へ数えない。全1405対象源は開始/終端/監査時一致。seed9モードの周波数・RF207量を元相対1e-10で別照合し、最大相対差f=0/RF=8.88178e-16。既知の入力domain/scope注記だけを厳密に確認し、元Case/mesh/両PEC端・旧規約は不変。元1199源は明示した変更前三源archiveで解決し、全523bound入力を再hash。初回HTTP環境FAIL/244モジュールの終了130と元長楕円体R/Q FAILは保全。原123は73 DONE/3 IN_PROGRESS（H17/C07-planar/N06）/47 PLANNED。N04/親G03・原互換32要件・全goalは継続。詳細は[N03の条件別受入](../N03_ACCEPTANCE.md)。
