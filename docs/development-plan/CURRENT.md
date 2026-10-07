@@ -1,8 +1,16 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-67 DONE/2 IN_PROGRESS（H17、C07-planar）/54 PLANNED。全goalと原互換32要件は継続中。
+67 DONE/3 IN_PROGRESS（H17、C07-planar、D06）/53 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D06第一工程：候補台帳、IN_PROGRESS
+
+2026-10-07 D06第一工程：[直線TMの多変数候補台帳](../STRAIGHT_RF_CANDIDATES.md)。元Project/全境界owner/SI式から3形状を独立生成し、変数/候補順・分割再開の実形状一致、invalid候補と上限・null assessment/IDを保存。新6＋直接25＋単変数物理2の33個別unitを分割受入、実段差2 FEMのH/E尺度差最大4.498e-14。TE selector誤記loader ERRORは元logを保全し正しい1件だけ追加。旧RF全関数AST/5入口源byte不変、1188 Python snapshot以後不変、全handle終端、新full/seed/legacy0。既存RF入口の能力規約は維持。D06はIN_PROGRESS、探索器/実候補ID・所有solve checkpointと全条件監査が残る。原123は67 DONE/3 IN_PROGRESS/53 PLANNED、全goal/原互換32要件を維持。rawは out/d06-straight-candidates-20261007/acceptance.json。
+
+次は同じ元候補を座標探索・実native個別ID/所有solve履歴へ接続する。
+D05の能力規約に従い、収束評価未実装の量を目的/制約として受け付けない。
+全handle終端、source固定解除。
 
 ## D03原条件：DONE、次はD06
 

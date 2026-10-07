@@ -10,7 +10,7 @@ from .studies import Study
 from .te import is_te
 
 
-def _law(request,project):
+def _law(request,project,*,variable_units=None):
     case=project.case
     if (case.geometry_order!=1 or case.geometry_type not in ('profile','stepped_profile','contour')
             or project.sections is not None or project.mesh_data is not None):
@@ -20,6 +20,7 @@ def _law(request,project):
         validate_te_request(request,project)
     elif case.z_min!='pec' or case.z_max!='pec' or project.reflect_full:
         raise ValueError('straight TM tune requires closed PEC ends without reflection')
+    if variable_units is None:variable_units={request['parameter']:request['parameter_unit']}
     law=request['shape_law']
     names=('format','version','reference_comparison_mesh','case_boundary_vertices','bindings')
     keys(law,names,names,'straight shape law')
@@ -48,22 +49,24 @@ def _law(request,project):
         if i>=len(mesh.points) or coordinate not in ('r','z') or type(coordinate) is not str or (i,coordinate) in seen:
             raise ValueError('straight binding requires a distinct valid original reference vertex and coordinate r or z')
         seen.add((i,coordinate))
-        metadata=validate_scalar_expression(binding['expression'],{request['parameter']:request['parameter_unit']},expected_unit='m')
+        metadata=validate_scalar_expression(binding['expression'],variable_units,expected_unit='m')
         active=active or bool(metadata['variables'])
     if not active:raise ValueError('at least one straight binding must reference the parameter')
     return law,field
 
 
-def _trial_geometry(request,project,value):
-    law,field=_law(request,project)
+def _trial_geometry(request,project,value,*,variable_units=None,variable_values=None):
+    law,field=_law(request,project,variable_units=variable_units)
+    if variable_units is None:variable_units={request['parameter']:request['parameter_unit']}
+    if variable_values is None:variable_values={request['parameter']:value}
     data=deepcopy(law['reference_comparison_mesh']);raw=project.to_dict()
     for binding in law['bindings']:
         coordinate=0 if binding['coordinate']=='r' else 1
         try:
             data['points'][binding['vertex']][coordinate]=evaluate_scalar_expression(binding['expression'],
-                {request['parameter']:value},{request['parameter']:request['parameter_unit']},expected_unit='m')
+                variable_values,variable_units,expected_unit='m')
         except ValueError as exc:
-            raise ValueError(f'straight binding {binding["vertex"]}/{binding["coordinate"]} at {request["parameter"]}={value}: {exc}') from exc
+            raise ValueError(f'straight binding {binding["vertex"]}/{binding["coordinate"]} at {variable_values}: {exc}') from exc
     vertices=raw['case']['geometry'][field]
     for owner in law['case_boundary_vertices']:
         vertices[owner['case_vertex']]=list(reversed(data['points'][owner['reference_vertex']]))

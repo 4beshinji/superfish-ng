@@ -69,7 +69,7 @@ D02	D02	D01	実装	DONE	04-design.md#d02	TMの階段・一般輪郭調整を接�
 D03	P01 D02	D01	実装	DONE	04-design.md#d03	TEの階段・一般輪郭調整を接続する
 D04	P01 D02	D02 D03 H18 P10 C07-TE	監査	PLANNED	04-design.md#d04	P01とD02の原要件を最終照合する
 D05	D03	B01	仕様	DONE	04-design.md#d05	D03の目的量と制約の残要件を固定する
-D06	D03	D02 D05	実装	PLANNED	04-design.md#d06	一般TM形状のRF探索候補を生成する
+D06	D03	D02 D05	実装	IN_PROGRESS	04-design.md#d06	一般TM形状のRF探索候補を生成する
 D07	D03 N03	D06 N03	実装	PLANNED	04-design.md#d07	RF制約の収束と独立最終評価を拡張する
 D08	D03	D05 D03 P09	実装	PLANNED	04-design.md#d08	TEと平面RFの制約評価を追加する
 D09	D03	D05 H16	実装	DONE	04-design.md#d09	HφのRF制約評価を追加する
