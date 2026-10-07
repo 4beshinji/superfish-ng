@@ -18,6 +18,7 @@ import numpy as np
 from . import adaptive_refinement as affine
 from . import curved_adaptive_refinement as curved
 from .adaptive_efficiency_accuracy import _error, assess_efficiency_samples
+from .adaptive_efficiency_assembly_reuse import reuse_high_order_assembly
 from .adaptive_efficiency_domain import _native_files, verify_efficiency_saved_domain
 from .adaptive_efficiency_fields import EfficiencyFieldSampler
 from .adaptive_efficiency_observation import observe_selected_calls
@@ -208,6 +209,7 @@ def execute_efficiency_worker(execution,bindings,directory,*,max_new_levels=None
                         ids=pair['tracking']['current_mode_ids']
                         if pair['status']!='PASS' or not pair['tracking']['individual_ids_complete']:
                             status='IDENTITY_UNVERIFIED'
+                    assembly_reuse=None
                     if status=='IDENTITY_UNVERIFIED':
                         mode=None;q=None;surface=None;indicator=None;quad=None;rf_quad=None
                     else:
@@ -217,8 +219,13 @@ def execute_efficiency_worker(execution,bindings,directory,*,max_new_levels=None
                                        if case.geometry_order==2 else affine.residual_indicator(case,current,mode=mode)
                                        if execution['method']=='adaptive' else None)
                         with recorder.phase('higher_quadrature_and_rf_integrals'):
-                            quad=curved._quadrature(current,request,mode,indicator) if case.geometry_order==2 else dict(passed=True,scope='exact affine P2 polynomial forms')
-                            rf_quad=quadrature_check(current,mode) if case.geometry_order==2 else dict(status='PASS',scope='original exact affine P2 volume/wall polynomial and phase integrals')
+                            if case.geometry_order==2:
+                                with reuse_high_order_assembly(recorder,current.space,request['quadrature_check_order']) as assembly_reuse:
+                                    quad=curved._quadrature(current,request,mode,indicator)
+                                    rf_quad=quadrature_check(current,mode)
+                            else:
+                                quad=dict(passed=True,scope='exact affine P2 polynomial forms')
+                                rf_quad=dict(status='PASS',scope='original exact affine P2 volume/wall polynomial and phase integrals')
                         surface=curved._surface(current,mode,q) if case.geometry_order==2 else affine.surface_intervals(case,current,mode)
                     moments=_moments(current,case.geometry_order)
                     moment_pass=not levels or all(abs(v/levels[0]['moments'][k]-1)<2e-12 for k,v in enumerate(moments))
@@ -227,6 +234,7 @@ def execute_efficiency_worker(execution,bindings,directory,*,max_new_levels=None
                     row=dict(index=index,status=native_status,refinement_kind=kind,marked_cells=marked,run=str(run),
                              current_mode_ids=deepcopy(ids),mode_index=mode,tracking=pair,quantities=q,indicator=indicator,
                              surface=surface,quadrature_check=quad,rf_quadrature_check=rf_quad,domain=domain,
+                             high_order_assembly_reuse=assembly_reuse,
                              moments=list(moments),fixed_moments_passed=moment_pass,ritz_passed=ritz_pass,
                              all_frequencies_hz=current.frequencies_hz.tolist(),triangles=len(current.space.geometry.cell_nodes) if case.geometry_order==2 else len(current.mesh.triangles),
                              dofs=len(current.u))

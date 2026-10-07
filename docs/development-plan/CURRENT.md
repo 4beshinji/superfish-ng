@@ -1,8 +1,10 @@
 # 現行の作業入口
 
 更新：2026-10-08、P07/P08/P09/N03全条件受入済み。原90カードと追加子カードを含む全123カードは
-74 DONE/2 IN_PROGRESS（H17、C07-planar）/47 PLANNED。全goalと原互換32要件は継続中。
+74 DONE/3 IN_PROGRESS（H17、C07-planar、N07）/46 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+2026-10-08 N07 **IN_PROGRESS**：[同じ高次native組立一箇所の共有](../N07_HIGH_QUADRATURE_REUSE.md)。N06実測の24次数重複を実保存場で先に再現し、新9個別unit＋元marked mass一検査を分割受入。独立Maxwell/Green積分・親子Galerkin保存、実adaptive二水準の元場/RF/求積、厳密型/コピー変異/失効/予算/元例外/競合/threadを確認。初回RestrictedGeometry欠落と型不正の命中FAILを保全して必要分だけ訂正。開発FEM6回、元worker archive/1429源不変、新1432対象/1225 Python源。次は元N05の固定12行/二反復/目標/予算で前後実測、採用判断は未確定。原123は74 DONE/3 IN_PROGRESS（H17/C07-planar/N07）/46 PLANNED、全goal/N04は継続。
 
 2026-10-08 N06 **DONE**：[固定12実行の独立精度/費用と終端監査](../N06_ACCEPTANCE.md)。12/12 TARGETS_MET・50新FEM水準・全900量別誤差の保存配列再計算PASS。全1430源、546 native file/100全場NPZ/1747束縛入力/795元出力を監査。円筒/丸めは一様、球は適応が確認DOF・時間で有利な範囲を二反復で報告し、一般優位を主張しない。plotだけの視覚修正は旧script/CSV/図を保全してAST同一を確認、新FEM/seed/full0。原123は74 DONE/2 IN_PROGRESS（H17/C07-planar）/47 PLANNED。次はN07の同じ高次組立の重複一原因の修正採否、N04/原32要件/全goalは継続。
 
