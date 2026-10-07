@@ -2,6 +2,8 @@
 
 2026-09-22：P02を回復核a・所有履歴b・調整c・GUI監査dへ分割。原90カードを維持、TSVは115行。親P02は全子条件受入まで未完。[分割仕様](03-planar.md#p02-a)。
 
+2026-10-07 N02 **DONE**：[保存3×3行列の別量評価・原条件受入](../N02_GEOMETRY_SURFACE_MATRIX.md)。厳密な全Case九点・元source mesh/個別ID・completion全byteを保持し、幾何/FEM/求積12・16・24/元場/離散peak上下界を別判定。新10＋直接7の17個別unitを分割受入。新粗い三モード九点は7新FEM＋2再利用、243.639秒・終了0、全ID/場/求積成立でも初回RQ/磁場peak未達で正しくFAIL。元楕円9 nativeは391.579秒・終了0、原五量/全変化/場/求積/全ゲート完全一致PASS、新FEM0。CLI検査側参照ディレクトリFAILとreceipt SHAキー誤記を保全し必要分だけ修正、数値再実行なし。元1194源の変更はCLI一つ、旧helper/数値body AST同一・新3源込み1197前後固定。全handle終端、新seed/full/legacy0。独立物理/物理peak誤差は未確認/nullを維持。原123は70 DONE/2 IN_PROGRESS（H17/C07-planar）/51 PLANNED、親G03/N03/互換32要件/全goalは継続。次はN03各滑らかな実精度系列・両側細分。rawは out/n02-surface-matrix-20261007/acceptance.json。
+
 **[現行入口：次の着手・依存待ち・受入証拠・実行中処理](CURRENT.md)**。以下の日付付き追記は履歴。現行入口の更新手順に従い、古い進捗を新しい開始命令にしない。
 
 H16-d/親H16受入（2026-09-22）：[材料調整・保存・GUI全条件監査](../MATERIAL_HPHI_TUNING_ACCEPTANCE.md)。最後の実Chromeは調整回復/最終細分4、中止/再開5、新サーバー軸RF再生2、不正物理拒否5項目が分割PASS。全native/Project取込一致、回復元24ファイル・全385実装hash不変、外部要求0、全handle終端。既存数値ログと実装差分を照合し、材料核の無変更を確認。次は依存が満たされたB02の対象版・入力資料調査。H17はB03を待つ。原90カードと全goalは継続。

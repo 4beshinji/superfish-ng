@@ -1,8 +1,15 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-69 DONE/3 IN_PROGRESS（H17、C07-planar、N02）/51 PLANNED。全goalと原互換32要件は継続中。
+70 DONE/2 IN_PROGRESS（H17、C07-planar）/51 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## N02全条件：DONE、次はN03
+
+2026-10-07 N02 **DONE**：[保存3×3行列の別量評価・原条件受入](../N02_GEOMETRY_SURFACE_MATRIX.md)。厳密な全Case九点・元source mesh/個別ID・completion全byteを保持し、幾何/FEM/求積12・16・24/元場/離散peak上下界を別判定。新10＋直接7の17個別unitを分割受入。新粗い三モード九点は7新FEM＋2再利用、243.639秒・終了0、全ID/場/求積成立でも初回RQ/磁場peak未達で正しくFAIL。元楕円9 nativeは391.579秒・終了0、原五量/全変化/場/求積/全ゲート完全一致PASS、新FEM0。CLI検査側参照ディレクトリFAILとreceipt SHAキー誤記を保全し必要分だけ修正、数値再実行なし。元1194源の変更はCLI一つ、旧helper/数値body AST同一・新3源込み1197前後固定。全handle終端、新seed/full/legacy0。独立物理/物理peak誤差は未確認/nullを維持。原123は70 DONE/2 IN_PROGRESS（H17/C07-planar）/51 PLANNED、親G03/N03/互換32要件/全goalは継続。次はN03各滑らかな実精度系列・両側細分。rawは out/n02-surface-matrix-20261007/acceptance.json。
+
+全処理handle終端、source固定解除。次はN03の元五Case・45点を専用validatorで実行し、
+原二区間条件・独立参照の有無・費用を記録する。粗い反例や旧一モード楕円を新精度受入へ昇格しない。
 
 ## N02場対応工程：IN_PROGRESS
 

@@ -82,7 +82,7 @@ D11-planar	D03 O02	D10-planar	実装	PLANNED	04-design.md#d11-planar	追加RF探
 D11-hphi	D03 O02	D10-hphi	実装	PLANNED	04-design.md#d11-hphi	追加RF探索のGUIとD03受入を仕上げる：HφのGUI
 D11	D03 O02	D11-TE D11-planar D11-hphi	監査	PLANNED	04-design.md#d11	追加RF探索のGUIとD03受入を仕上げる（統合照合）
 N01	G03 N03	B01	仕様	DONE	05-accuracy.md#n01	幾何・表面場の受入ケースを固定する
-N02	G03 N03	N01	実装	IN_PROGRESS	05-accuracy.md#n02	幾何と表面場の独立比較器を拡充する
+N02	G03 N03	N01	実装	DONE	05-accuracy.md#n02	幾何と表面場の独立比較器を拡充する
 N03	G03 N03	N02	検証	PLANNED	05-accuracy.md#n03	非球形と丸め形状の物理精度を検証する
 N04	N03 G03	N03 C03	監査	PLANNED	05-accuracy.md#n04	N03とG03の受入範囲を確定する
 N05	N04	N01	仕様	PLANNED	05-accuracy.md#n05	適応細分の精度対費用の比較条件を固定する

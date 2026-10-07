@@ -164,3 +164,7 @@ OPENBLAS_NUM_THREADS=1 python scripts/validate.py --skip-tests --out out/validat
 
 作業前に [AGENTS.md](AGENTS.md)、[CONTRIBUTING.md](CONTRIBUTING.md)、[CODEX_HANDOFF.md](docs/CODEX_HANDOFF.md) を読んでください。
 `docs/BACKLOG.md` から件を選び、受け入れ基準・変更対象テスト・証拠を記録してから実装します。
+
+[N02の幾何・表面診断器](docs/N02_GEOMETRY_SURFACE_MATRIX.md)は保存3×3行列の
+幾何/FEM/求積/元場/離散ピークを別判定し、原楕円の判定一致を確認した。
+新非球形・丸め形状の実精度受入は次のN03で継続する。

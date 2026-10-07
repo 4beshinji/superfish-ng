@@ -117,11 +117,26 @@ def main():
     inputs.add_argument('--archive', type=Path, help='existing ellipse archive; preserves the original numerical path')
     inputs.add_argument('--catalog', type=Path, help='strict N01 case catalog; currently input/provenance planning only')
     inputs.add_argument('--field-pair-request', type=Path, help='strict saved native field-pair request; no new FEM')
+    inputs.add_argument('--matrix-request', type=Path, help='strict native 3x3 surface matrix request; no new FEM')
     parser.add_argument('--catalog-sha256', help='explicit SHA256 of the intended catalog input')
     parser.add_argument('--case', dest='case_ids', nargs='+', help='catalog case ids in requested order; omitted selects all')
     parser.add_argument('--plan-only', action='store_true', help='validate catalog Cases/references without mesh construction or FEM')
     parser.add_argument('--out', type=Path, required=True)
     args = parser.parse_args()
+    if args.matrix_request is not None:
+        if args.plan_only or args.catalog_sha256 is not None or args.case_ids is not None:
+            parser.error('--plan-only/--catalog-sha256/--case require --catalog')
+        from superfish_ng.geometry_surface_matrix import build_geometry_surface_matrix
+        from superfish_ng.project import parse_json
+        request = parse_json(args.matrix_request.read_text(encoding='utf-8'))
+        out = args.out.resolve()
+        if out.exists():
+            raise FileExistsError(out)
+        report = build_geometry_surface_matrix(request, base_directory=args.matrix_request.resolve().parent)
+        out.mkdir(parents=True, exist_ok=False)
+        write(out/'matrix.json', report)
+        print(report['status'], 'native points', report['supplied_native_points'], 'new FEM', report['new_fem_solves'], flush=True)
+        return {'PASS': 0, 'FAIL': 1, 'UNVERIFIED': 3, 'SINGULAR_GEOMETRY': 3}[report['status']]
     if args.field_pair_request is not None:
         if args.plan_only or args.catalog_sha256 is not None or args.case_ids is not None:
             parser.error('--plan-only/--catalog-sha256/--case require --catalog')
