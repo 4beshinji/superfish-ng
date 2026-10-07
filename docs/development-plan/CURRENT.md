@@ -4,6 +4,10 @@
 70 DONE/3 IN_PROGRESS（H17、C07-planar、N03）/50 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
+## N03追加水準と独立参照実領域：IN_PROGRESS
+
+2026-10-07 N03追加水準 **IN_PROGRESS**：[元失敗系列/実ID来歴/参照実領域](../N03_APPENDED_FEM_WINDOW.md)。長楕円体の元source/P2にFEM3/4六点を保存、460.209秒・終了0・1199源不変。別ツリーの版4は元plan/0・1の実Hφ来歴を保ち2/3/4を評価し、次数10/全9248000点のため資源上限16777216を明示する。新7＋直接3の10個別unit分割PASS、主版1/2/3と元物理閾値は維持、実9＋来歴2点は1034.638秒・終了0・PASS・新FEM0、temp1200源不変。独立丸め形状PASS、鋭角は非ピークPASSとSINGULARを保持。ellipse/prolateの粗参照の領域外点を保全し、参照実境界の全polar fan/体積/lookup六件を確認、体積差最大1.866e-14・欠測0。失敗二形状の独立比較handle22395と追加長楕円体の最終FEM4照合handle64791は主1199源を固定中。N03/親G03/原123/互換32要件/全goalを維持、全物理受入は後続。rawは out/n03-native-surface-series-20261007/appended-window-checkpoint.json。
+
 ## N03全行列と独立球：IN_PROGRESS
 
 2026-10-07 N03後続 **IN_PROGRESS**：[版3全行列と独立球](../N03_CURVED_TRACKING_RESOURCES.md)。保存45点の再評価は1025.114秒・終了0・新FEM0・1199源不変。球/楕円/丸め形状は全条件PASS、鋭角はSINGULAR_GEOMETRYとnumerical PASSを別表示、長楕円体はR/Qの二変化未達をFAILで保持。同じ元メッシュ/P2幾何にFEM3/4を六点明示追加中。独立球の全領域対応/Gauss16・24/三個別ID/両側二変化/元場RFは44.191秒・終了0でPASS。解析領域外点、未分割fan体積、参照root誤記の検査側失敗を保全し、曲線partitionと単位的体積密度規約を明示した。非球形/鋭角の独立比較と追加長楕円体は続行中、実行中は1199源を固定。原123は70 DONE/3 IN_PROGRESS/50 PLANNED、原互換32要件/親G03/N03/全goalを維持。rawは out/n03-native-surface-series-20261007/matrix-and-sphere-checkpoint.json。
