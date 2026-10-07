@@ -132,6 +132,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### 測定された適応処理の不足を修正する
 
+2026-10-08 N07 **DONE**：[同じ高次native組立の実測と採用](../N07_ACCEPTANCE.md)。固定12/12 TARGETS_MET・50新FEM水準、900量別誤差を全保存配列から再計算PASS。全1432源を固定し、前後546 native file/100全場NPZは全byte・全配列・全modeで完全一致。選択/実ID/元停止/RF/求積・N06元795出力を保持し、次数24の重複組立34回を省いた。曲線8行の全体時間は同じ反復で6.2–9.2%短縮、円筒の微増とRSS増加も保持。共有は専用診断区間だけに採用し、公開適応全体の加速とは呼ばない。新9個別unit/元marked massの証拠を再利用、開発FEM6とbenchmark50を分離、新監査FEM/標本/seed/full/legacy0。全handle終端、六図視覚確認。原123は75 DONE/2 IN_PROGRESS（H17/C07-planar）/46 PLANNED、次はN08。親N04/原32要件/全goalは継続。
+
 - **親課題**：N04。**種別**：条件付き実装。初期状態：未着手。
 - **先行条件**：[N06](05-accuracy.md#n06)
 - **コミット件名案**：`fix: 測定された適応処理の不足を修正する`

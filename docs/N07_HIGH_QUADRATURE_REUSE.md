@@ -1,6 +1,7 @@
 # N07：同じ高次native組立の共有
 
-2026-10-08 JST、N07 IN_PROGRESS。測定された一原因だけを選ぶ。
+2026-10-08 JST、N07 **DONE**。[固定12行の前後照合・費用と採用](N07_ACCEPTANCE.md)を受入した。
+以下は着手時の実装/限定検査記録。測定された一原因だけを選んだ。
 [N06実測](N06_ACCEPTANCE.md)で、丸めuniform反復1の高次求積確認内assembly九回が86.471秒を占めた。
 元 `_quadrature` と `geometry_surface_numerics.quadrature_check` は、同じspaceの次数24を重ねて組み立てる。
 受入条件は、同じN05三ケース/二反復/12行・目標/予算で前後比較し、元場/RF・親子質量を保つこと。
@@ -51,6 +52,6 @@ cached Kの定数二次形を `4 integral(r dA)`、Mを `integral(r^3 dA)` と�
 重複実行は個別件数へ加算しない。新seed/full/legacyは0。
 
 rawは `out/n07-high-order-reuse-20261008` の各log、`worker-before.py`、`assembly-reuse-limited-acceptance.json`。
-主uv/BLAS1/明示PYTHONPATH、standard unittest。全12実測の完了前にN07をDONEへ進めない。
-次は同じ固定N05 planとaccepted参照で、新 `out/validation-n07-high-order-reuse-20261008` へ12fresh実行する。
-全native/全mode場/量別RF・求積・選択/実IDとN06前データを再生比較し、費用/メモリの両反復を報告する。
+主uv/BLAS1/明示PYTHONPATH、standard unittest。限定受入時はN07 IN_PROGRESSを維持した。
+後続の固定12fresh実測と全native/全mode場/量別RF・求積・選択/実IDの前後監査は、
+[N07受入](N07_ACCEPTANCE.md)で終端後に採用判断を記録した。

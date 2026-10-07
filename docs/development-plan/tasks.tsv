@@ -87,7 +87,7 @@ N03	G03 N03	N02	検証	DONE	05-accuracy.md#n03	非球形と丸め形状の物理
 N04	N03 G03	N03 C03	監査	PLANNED	05-accuracy.md#n04	N03とG03の受入範囲を確定する
 N05	N04	N01	仕様	DONE	05-accuracy.md#n05	適応細分の精度対費用の比較条件を固定する
 N06	N04	N05	実装	DONE	05-accuracy.md#n06	適応と一様細分の比較を実行する
-N07	N04	N06	条件付き実装	IN_PROGRESS	05-accuracy.md#n07	測定された適応処理の不足を修正する
+N07	N04	N06	条件付き実装	DONE	05-accuracy.md#n07	測定された適応処理の不足を修正する
 N08	N04 O02	N07	実装	PLANNED	05-accuracy.md#n08	適応の一般ケース・保存・N04受入を確認する
 C01	C00 C02 G03	B02	条件付き仕様	PLANNED	06-compatibility.md#c01	旧曲線入力の変換仕様を確定する
 C02	C02 G03	C01	条件付き実装	PLANNED	06-compatibility.md#c02	NT=2/3のstrict読込と変換記録を追加する
