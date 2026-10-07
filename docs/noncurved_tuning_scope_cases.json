@@ -1,0 +1,6175 @@
+{
+  "document_type": "D01_noncurved_tuning_scope_examples",
+  "schema_version": 1,
+  "scope": "specification examples; proposed tuning schema9 is not implemented; metadata validation is not FEM acceptance",
+  "records": [
+    {
+      "id": "tm-profile",
+      "polarization": "tm",
+      "geometry_type": "profile",
+      "synthetic_geometry": true,
+      "current_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.078125
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/points_zr_m/0/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/0",
+            "multiplier": 0.125,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/1",
+            "multiplier": 0.078125,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_expected": "ACCEPTED_PREFLIGHT_ONLY",
+      "current_reason": null,
+      "current_refusal_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.078125
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_cylinder",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/points_zr_m/0/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/0",
+            "multiplier": 0.125,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/1",
+            "multiplier": 0.078125,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_refusal_reason": "normalized_cylinder tune bounds must retain constant radius",
+      "future_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.078125
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.078125,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                0,
+                2,
+                1
+              ],
+              [
+                4,
+                2,
+                0
+              ],
+              [
+                2,
+                4,
+                3
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 2
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.078125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "future_expected": "D02_TM_OR_D03_TE_REQUIRED_NOT_IMPLEMENTED",
+      "future_refusal_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.078125
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.078125,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                0,
+                2,
+                1
+              ],
+              [
+                4,
+                2,
+                0
+              ],
+              [
+                2,
+                4,
+                3
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 2
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "constant": -0.01,
+                "unit": "m"
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.078125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "existing_tracking_entry": "profile_mode_tracking.track_profile_modes",
+      "native_FEM_or_frequency_accuracy_verified": false
+    },
+    {
+      "id": "tm-stepped_profile",
+      "polarization": "tm",
+      "geometry_type": "stepped_profile",
+      "synthetic_geometry": true,
+      "current_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "stepped_profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.09375
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/points_zr_m/0/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/3/0",
+            "multiplier": 0.125,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/3/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_expected": "REJECTED_UNSUPPORTED",
+      "current_reason": "tune requires an unassembled continuous positive-radius profile with closed PEC ends",
+      "current_refusal_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "stepped_profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.03125,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.09375
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/points_zr_m/0/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/3/0",
+            "multiplier": 0.125,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/3/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_refusal_reason": "stepped_profile requires nondecreasing z from zero, isolated nonzero vertical steps, and nonvertical first/last segments",
+      "future_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "stepped_profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.09375
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.09375,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                4,
+                0,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                4,
+                2,
+                1
+              ],
+              [
+                2,
+                4,
+                3
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                5
+              ],
+              [
+                5,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 5
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 3,
+              "reference_vertex": 2
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "future_expected": "D02_TM_OR_D03_TE_REQUIRED_NOT_IMPLEMENTED",
+      "future_refusal_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "stepped_profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.09375
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.09375,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                4,
+                0,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                4,
+                2,
+                1
+              ],
+              [
+                2,
+                4,
+                3
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                5
+              ],
+              [
+                5,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 5
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 3,
+              "reference_vertex": 2
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "constant": 0.03125,
+                "unit": "m"
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "existing_tracking_entry": "piecewise_remesh_tracking.track_piecewise_remesh_modes",
+      "native_FEM_or_frequency_accuracy_verified": false
+    },
+    {
+      "id": "tm-contour",
+      "polarization": "tm",
+      "geometry_type": "contour",
+      "synthetic_geometry": true,
+      "current_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "contour",
+              "vertices_zr_m": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.09375,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.0625
+                ]
+              ],
+              "edge_tags": [
+                "axis",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/vertices_zr_m/2/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_expected": "REJECTED_UNSUPPORTED",
+      "current_reason": "tune requires an unassembled continuous positive-radius profile with closed PEC ends",
+      "current_refusal_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "contour",
+              "vertices_zr_m": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.09375,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.0625
+                ]
+              ],
+              "edge_tags": [
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/vertices_zr_m/2/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_refusal_reason": "contour edge 0 has an invalid axis tag",
+      "future_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "contour",
+              "vertices_zr_m": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.09375,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.0625
+                ]
+              ],
+              "edge_tags": [
+                "axis",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.09375,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.09375
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                2,
+                4,
+                3
+              ],
+              [
+                4,
+                0,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                1,
+                4,
+                2
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                5
+              ],
+              [
+                5,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 0
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 1
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 2
+            },
+            {
+              "case_vertex": 3,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 4,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 5,
+              "reference_vertex": 5
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "future_expected": "D02_TM_OR_D03_TE_REQUIRED_NOT_IMPLEMENTED",
+      "future_refusal_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "contour",
+              "vertices_zr_m": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.09375,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.0625
+                ]
+              ],
+              "edge_tags": [
+                "axis",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "tm",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.09375,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.09375
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                2,
+                4,
+                3
+              ],
+              [
+                4,
+                0,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                1,
+                4,
+                2
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                5
+              ],
+              [
+                5,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 0
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 1
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 2
+            },
+            {
+              "case_vertex": 3,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 4,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 5,
+              "reference_vertex": 5
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "existing_tracking_entry": "piecewise_remesh_tracking.track_piecewise_remesh_modes",
+      "native_FEM_or_frequency_accuracy_verified": false
+    },
+    {
+      "id": "te-profile",
+      "polarization": "te",
+      "geometry_type": "profile",
+      "synthetic_geometry": true,
+      "current_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.078125
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/points_zr_m/0/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/0",
+            "multiplier": 0.125,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/1",
+            "multiplier": 0.078125,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_expected": "ACCEPTED_PREFLIGHT_ONLY",
+      "current_reason": null,
+      "current_refusal_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.078125
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_cylinder",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/points_zr_m/0/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/0",
+            "multiplier": 0.125,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/1",
+            "multiplier": 0.078125,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_refusal_reason": "TE tuning/tracking integration is pending for this geometry or mapping; use a straight positive-radius profile, normalized_profile (or normalized_cylinder for cylinders) and at most one symmetry end",
+      "future_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.078125
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.078125,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                0,
+                2,
+                1
+              ],
+              [
+                4,
+                2,
+                0
+              ],
+              [
+                2,
+                4,
+                3
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 2
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.078125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "future_expected": "D02_TM_OR_D03_TE_REQUIRED_NOT_IMPLEMENTED",
+      "future_refusal_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.078125
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.078125,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                0,
+                2,
+                1
+              ],
+              [
+                4,
+                2,
+                0
+              ],
+              [
+                2,
+                4,
+                3
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 2
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "constant": -0.01,
+                "unit": "m"
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.078125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "existing_tracking_entry": "profile_mode_tracking.track_profile_modes",
+      "native_FEM_or_frequency_accuracy_verified": false
+    },
+    {
+      "id": "te-stepped_profile",
+      "polarization": "te",
+      "geometry_type": "stepped_profile",
+      "synthetic_geometry": true,
+      "current_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "stepped_profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.09375
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/points_zr_m/0/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/3/0",
+            "multiplier": 0.125,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/3/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_expected": "REJECTED_UNSUPPORTED",
+      "current_reason": "TE tuning/tracking integration is pending for this geometry or mapping; use a straight positive-radius profile, normalized_profile (or normalized_cylinder for cylinders) and at most one symmetry end",
+      "current_refusal_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "stepped_profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.03125,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.09375
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/points_zr_m/0/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/1/1",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/0",
+            "multiplier": 0.0625,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/2/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/3/0",
+            "multiplier": 0.125,
+            "offset_m": 0.0
+          },
+          {
+            "path": "/case/geometry/points_zr_m/3/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_refusal_reason": "stepped_profile requires nondecreasing z from zero, isolated nonzero vertical steps, and nonvertical first/last segments",
+      "future_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "stepped_profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.09375
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.09375,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                4,
+                0,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                4,
+                2,
+                1
+              ],
+              [
+                2,
+                4,
+                3
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                5
+              ],
+              [
+                5,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 5
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 3,
+              "reference_vertex": 2
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "future_expected": "D02_TM_OR_D03_TE_REQUIRED_NOT_IMPLEMENTED",
+      "future_refusal_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "stepped_profile",
+              "points_zr_m": [
+                [
+                  0.0,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.0625
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.125,
+                  0.09375
+                ]
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.09375,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                4,
+                0,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                4,
+                2,
+                1
+              ],
+              [
+                2,
+                4,
+                3
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                5
+              ],
+              [
+                5,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 5
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 3,
+              "reference_vertex": 2
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "constant": 0.03125,
+                "unit": "m"
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "existing_tracking_entry": "saved_mode_tracking rejects straight schema1 paired meshes; TE Ephi piecewise adapter required",
+      "native_FEM_or_frequency_accuracy_verified": false
+    },
+    {
+      "id": "te-contour",
+      "polarization": "te",
+      "geometry_type": "contour",
+      "synthetic_geometry": true,
+      "current_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "contour",
+              "vertices_zr_m": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.09375,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.0625
+                ]
+              ],
+              "edge_tags": [
+                "axis",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/vertices_zr_m/2/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_expected": "REJECTED_UNSUPPORTED",
+      "current_reason": "TE tuning/tracking integration is pending for this geometry or mapping; use a straight positive-radius profile, normalized_profile (or normalized_cylinder for cylinders) and at most one symmetry end",
+      "current_refusal_request": {
+        "schema_version": 2,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "contour",
+              "vertices_zr_m": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.09375,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.0625
+                ]
+              ],
+              "edge_tags": [
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "normalized_profile",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "bindings": [
+          {
+            "path": "/case/geometry/vertices_zr_m/2/1",
+            "multiplier": 0.09375,
+            "offset_m": 0.0
+          }
+        ]
+      },
+      "current_refusal_reason": "contour edge 0 has an invalid axis tag",
+      "future_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "contour",
+              "vertices_zr_m": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.09375,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.0625
+                ]
+              ],
+              "edge_tags": [
+                "axis",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.09375,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.09375
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                2,
+                4,
+                3
+              ],
+              [
+                4,
+                0,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                1,
+                4,
+                2
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                5
+              ],
+              [
+                5,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "axis",
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 0
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 1
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 2
+            },
+            {
+              "case_vertex": 3,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 4,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 5,
+              "reference_vertex": 5
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "future_expected": "D02_TM_OR_D03_TE_REQUIRED_NOT_IMPLEMENTED",
+      "future_refusal_request": {
+        "schema_version": 9,
+        "project": {
+          "project_version": 1,
+          "case": {
+            "schema_version": 3,
+            "name": "cavity",
+            "geometry": {
+              "type": "contour",
+              "vertices_zr_m": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.0
+                ],
+                [
+                  0.125,
+                  0.09375
+                ],
+                [
+                  0.0625,
+                  0.09375
+                ],
+                [
+                  0.09375,
+                  0.0625
+                ],
+                [
+                  0.0,
+                  0.0625
+                ]
+              ],
+              "edge_tags": [
+                "axis",
+                "pec",
+                "pec",
+                "pec",
+                "pec",
+                "pec"
+              ]
+            },
+            "mesh": {
+              "nr": 4,
+              "nz": 6
+            },
+            "solver": {
+              "modes": 2,
+              "element_order": 2
+            },
+            "rf": {
+              "beta": 1.0,
+              "conductivity_s_per_m": 58000000.0,
+              "normalization_j": 1.0
+            },
+            "model": {
+              "physics": "rf_eigenmode",
+              "coordinates": "axisymmetric",
+              "polarization": "te",
+              "azimuthal_index": 0,
+              "materials": [
+                {
+                  "id": "vacuum",
+                  "type": "vacuum"
+                }
+              ],
+              "regions": [
+                {
+                  "id": "cavity",
+                  "material": "vacuum",
+                  "domain": "interior"
+                }
+              ]
+            }
+          },
+          "reflect_full": false,
+          "display_length_unit": "mm"
+        },
+        "parameter": "scale",
+        "parameter_unit": "1",
+        "bounds": [
+          0.9,
+          1.1
+        ],
+        "target_hz": 2398339664.0,
+        "frequency_tolerance_hz": 10000.0,
+        "parameter_tolerance": 1e-06,
+        "max_trials": 16,
+        "initial_ids": [
+          "mode-1",
+          "mode-2"
+        ],
+        "mode_id": "mode-1",
+        "controls": {
+          "mapping": "piecewise_remesh",
+          "sample_order": 8,
+          "minimum_overlap": 0.97,
+          "minimum_assignment_margin": 0.05,
+          "relative_cluster_gap": 1e-06,
+          "minimum_relative_singular_value": 1e-08
+        },
+        "refinement_scale": 2,
+        "mesh_frequency_tolerance_hz": 10000.0,
+        "shape_law": {
+          "format": "straight_piecewise_shape_law",
+          "version": 1,
+          "reference_comparison_mesh": {
+            "schema_version": 1,
+            "length_unit": "m",
+            "coordinate_order": "rz",
+            "index_base": 0,
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.125
+              ],
+              [
+                0.09375,
+                0.125
+              ],
+              [
+                0.09375,
+                0.0625
+              ],
+              [
+                0.0625,
+                0.09375
+              ],
+              [
+                0.0625,
+                0.0
+              ]
+            ],
+            "triangles": [
+              [
+                2,
+                4,
+                3
+              ],
+              [
+                4,
+                0,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                1,
+                4,
+                2
+              ]
+            ],
+            "boundary_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                4,
+                5
+              ],
+              [
+                5,
+                0
+              ]
+            ],
+            "boundary_tags": [
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec",
+              "pec"
+            ]
+          },
+          "case_boundary_vertices": [
+            {
+              "case_vertex": 0,
+              "reference_vertex": 0
+            },
+            {
+              "case_vertex": 1,
+              "reference_vertex": 1
+            },
+            {
+              "case_vertex": 2,
+              "reference_vertex": 2
+            },
+            {
+              "case_vertex": 3,
+              "reference_vertex": 3
+            },
+            {
+              "case_vertex": 4,
+              "reference_vertex": 4
+            },
+            {
+              "case_vertex": 5,
+              "reference_vertex": 5
+            }
+          ],
+          "bindings": [
+            {
+              "vertex": 0,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 0,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 1,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 2,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.125,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 3,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 4,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.09375,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "r",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0625,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            },
+            {
+              "vertex": 5,
+              "coordinate": "z",
+              "expression": {
+                "op": "mul",
+                "args": [
+                  {
+                    "constant": 0.0,
+                    "unit": "m"
+                  },
+                  {
+                    "variable": "scale"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "existing_tracking_entry": "saved_mode_tracking rejects straight schema1 paired meshes; TE Ephi piecewise adapter required",
+      "native_FEM_or_frequency_accuracy_verified": false
+    }
+  ],
+  "sector_mismatch": {
+    "previous": {
+      "schema_version": 3,
+      "name": "cavity",
+      "geometry": {
+        "type": "profile",
+        "points_zr_m": [
+          [
+            0.0,
+            0.1
+          ],
+          [
+            0.2,
+            0.1
+          ]
+        ]
+      },
+      "mesh": {
+        "nr": 24,
+        "nz": 32
+      },
+      "solver": {
+        "modes": 3
+      },
+      "rf": {
+        "beta": 1.0,
+        "conductivity_s_per_m": 58000000.0,
+        "normalization_j": 1.0
+      },
+      "boundaries": {
+        "z_min": "pec",
+        "z_max": "magnetic_symmetry"
+      },
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "axisymmetric",
+        "polarization": "te",
+        "azimuthal_index": 0,
+        "materials": [
+          {
+            "id": "vacuum",
+            "type": "vacuum"
+          }
+        ],
+        "regions": [
+          {
+            "id": "cavity",
+            "material": "vacuum",
+            "domain": "interior"
+          }
+        ]
+      }
+    },
+    "current": {
+      "schema_version": 3,
+      "name": "cavity",
+      "geometry": {
+        "type": "profile",
+        "points_zr_m": [
+          [
+            0.0,
+            0.1
+          ],
+          [
+            0.2,
+            0.1
+          ]
+        ]
+      },
+      "mesh": {
+        "nr": 24,
+        "nz": 32
+      },
+      "solver": {
+        "modes": 3
+      },
+      "rf": {
+        "beta": 1.0,
+        "conductivity_s_per_m": 58000000.0,
+        "normalization_j": 1.0
+      },
+      "boundaries": {
+        "z_min": "pec",
+        "z_max": "electric_symmetry"
+      },
+      "model": {
+        "physics": "rf_eigenmode",
+        "coordinates": "axisymmetric",
+        "polarization": "te",
+        "azimuthal_index": 0,
+        "materials": [
+          {
+            "id": "vacuum",
+            "type": "vacuum"
+          }
+        ],
+        "regions": [
+          {
+            "id": "cavity",
+            "material": "vacuum",
+            "domain": "interior"
+          }
+        ]
+      }
+    },
+    "expected": "REJECTED",
+    "observed_reason": "TE profile tracking requires matching ends and at most one source symmetry plane"
+  }
+}

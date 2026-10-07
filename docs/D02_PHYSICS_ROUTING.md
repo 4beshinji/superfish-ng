@@ -1,5 +1,9 @@
 # D02の物理別接続と未完事項
 
+2026-10-07 D01仕様 **DONE**：[非曲線TM/TEの形状・区分写像・対称/最終細分](NONCURVED_TUNING_SCOPE.md)。profile/階段/単一一般輪郭の六正常/拒否要求と元追跡先を固定。現行profile正常2、未対応4、不正6、将来六領域の両bounds/面積・体積尺度と不正拒否、未実装版9拒否、TE異セクター事前拒否をmetadataだけで確認。136式は既存SI parserに適合し、初稿leaf拒否/runner引数順ERRORを保全して修正。製品/テスト/script1179源不変、新FEM/unit/seed/full/legacy0。現在の区分TM追跡と不足するTM調整/TE直線区分追跡を分離し、既存曲線TEを再実装へ戻さない。原123台帳はD01状態だけ変更、65 DONE/2 IN_PROGRESS/56 PLANNED。D02/D03実装・親D02/P01/全goal/原互換32要件は継続、次はD02。
+
+現行のD01仕様は上記リンク。以下の2026-09-15表は当時の履歴で、平面P01〜P09とHφ H10/H13/H15/H16の限定受入は[現行入口](development-plan/CURRENT.md)を参照。全物理の親受入は別に維持する。
+
 2026-09-15 JST。元`COMPATIBILITY_PLAN.md`のD02.S/I/Vと、BACKLOG P2-02の
 「他物理の調整」を現在の専用入力・ソルバー・追跡の入口へ対応付けた。
 過去の曲線TE追加ごとの未完記述を、全物理の完成判定として使わない。

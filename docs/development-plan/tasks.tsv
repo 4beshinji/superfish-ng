@@ -64,7 +64,7 @@ P07	P02	P06	実装	DONE	03-planar.md#p07	平面曲線の実解と元場・RFを�
 P08	P02 O02	P07	実装	DONE	03-planar.md#p08	平面曲線native・Project・GUIを接続する
 P09	P02 D02	P04 P08	実装	DONE	03-planar.md#p09	平面曲線の比較・調整を接続する
 P10	P02	P09 C07-planar	監査	PLANNED	03-planar.md#p10	P02の物理範囲と残要件を受入監査する
-D01	D02 P01	B01	仕様	PLANNED	04-design.md#d01	非曲線TM/TE調整の形状対応を確定する
+D01	D02 P01	B01	仕様	DONE	04-design.md#d01	非曲線TM/TE調整の形状対応を確定する
 D02	D02	D01	実装	PLANNED	04-design.md#d02	TMの階段・一般輪郭調整を接続する
 D03	P01 D02	D01	実装	PLANNED	04-design.md#d03	TEの階段・一般輪郭調整を接続する
 D04	P01 D02	D02 D03 H18 P10 C07-TE	監査	PLANNED	04-design.md#d04	P01とD02の原要件を最終照合する

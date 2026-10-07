@@ -1,8 +1,18 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-64 DONE/2 IN_PROGRESS（H17、C07-planar）/57 PLANNED。全goalと原互換32要件は継続中。
+65 DONE/2 IN_PROGRESS（H17、C07-planar）/56 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D01仕様：DONE、次はD02
+
+2026-10-07 D01仕様 **DONE**：[非曲線TM/TEの形状・区分写像・対称/最終細分](../NONCURVED_TUNING_SCOPE.md)。profile/階段/単一一般輪郭の六正常/拒否要求と元追跡先を固定。現行profile正常2、未対応4、不正6、将来六領域の両bounds/面積・体積尺度と不正拒否、未実装版9拒否、TE異セクター事前拒否をmetadataだけで確認。136式は既存SI parserに適合し、初稿leaf拒否/runner引数順ERRORを保全して修正。製品/テスト/script1179源不変、新FEM/unit/seed/full/legacy0。現在の区分TM追跡と不足するTM調整/TE直線区分追跡を分離し、既存曲線TEを再実装へ戻さない。原123台帳はD01状態だけ変更、65 DONE/2 IN_PROGRESS/56 PLANNED。D02/D03実装・親D02/P01/全goal/原互換32要件は継続、次はD02。
+
+D02の受入条件は、元Project/固定区分法則からの実TM試行・個別ID・独立細分、
+無効形状停止、API/CLI/実GUIの元要求と最終場/両R/Q一致。直線schema9は現在未実装で拒否する。
+影響先はtuning・saved_mode_tracking・piecewise tracking・jobs/gui_tuning。
+[仕様の全六要求と検査](../NONCURVED_TUNING_SCOPE.md)とTESTINGから必要な直接消費検査を選ぶ。
+処理handle/worker/serverはなし。H17/C07-planarの未確認を保持して実装可能なD02を進める。
 
 ## D09全原条件：DONE
 
