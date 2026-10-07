@@ -8,7 +8,13 @@
 
 2026-10-08 JST：N03 **DONE**。五合成系列の元場/RF・両側二区間と失敗保全を受入。修正環境の全validate handle64569は2485検査/499モジュール、4772.019秒・終了0/PASS。0FAIL/0ERROR、skipは3件で未実行物理へ数えない。全1405対象源は開始/終端/監査時一致。seed9モードの周波数・RF207量を元相対1e-10で別照合し、最大相対差f=0/RF=8.88178e-16。既知の入力domain/scope注記だけを厳密に確認し、元Case/mesh/両PEC端・旧規約は不変。元1199源は明示した変更前三源archiveで解決し、全523bound入力を再hash。初回HTTP環境FAIL/244モジュールの終了130と元長楕円体R/Q FAILは保全。原123は73 DONE/3 IN_PROGRESS（H17/C07-planar/N06）/47 PLANNED。N04/親G03・原互換32要件・全goalは継続。詳細は[N03の条件別受入](../N03_ACCEPTANCE.md)。
 
-主1405源の固定を解除。次は受入済みN06基盤を同byteで主統合する。
+主1405源の固定を解除。受入済みN06基盤を同byteで主統合した。
+temp371b800の四module/四testと丸め二入力を追加し、元1405源は全byte不変、
+主1415対象/1208 Python源。28個別unitの別証拠を再利用、追加前fullを新源へ昇格しない。
+新FEM/seed/full/12benchmarkは0。N06はIN_PROGRESS、原123の73/3/47は不変。
+次は一様workerの独立円筒物理と曲線固定P2経路、独立参照/段階費用へ接続する。
+別ツリー `/tmp/superfish-ng-n06-uniform-worker-20261008` に新uniform workerを実装中。
+その新源はまだ未検査/主未統合で、主の受入源と混同しない。
 
 ## N06費用記録器：別ツリー限定受入、主統合待ち
 

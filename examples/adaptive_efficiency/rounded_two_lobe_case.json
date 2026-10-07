@@ -1,0 +1,112 @@
+{
+  "schema_version": 3,
+  "name": "synthetic_N01_rounded_two_lobe",
+  "geometry": {
+    "type": "curved_contour",
+    "curves": [
+      {
+        "type": "line",
+        "start_zr_m": [
+          0.0,
+          0.0
+        ],
+        "end_zr_m": [
+          0.21875,
+          0.0
+        ]
+      },
+      {
+        "type": "ellipse_arc",
+        "center_zr_m": [
+          0.15625,
+          0.0
+        ],
+        "semiaxes_m": [
+          0.0625,
+          0.0625
+        ],
+        "start_rad": 0.0,
+        "sweep_rad": 2.214297435588181,
+        "rotation_rad": 0.0
+      },
+      {
+        "type": "ellipse_arc",
+        "center_zr_m": [
+          0.109375,
+          0.0625
+        ],
+        "semiaxes_m": [
+          0.015625,
+          0.015625
+        ],
+        "start_rad": -0.9272952180016122,
+        "sweep_rad": -1.2870022175865687,
+        "rotation_rad": 0.0
+      },
+      {
+        "type": "ellipse_arc",
+        "center_zr_m": [
+          0.0625,
+          0.0
+        ],
+        "semiaxes_m": [
+          0.0625,
+          0.0625
+        ],
+        "start_rad": 0.9272952180016122,
+        "sweep_rad": 2.214297435588181,
+        "rotation_rad": 0.0
+      }
+    ],
+    "edge_tags": [
+      "axis",
+      "pec",
+      "pec",
+      "pec"
+    ],
+    "join_tolerance_m": 1e-14,
+    "minimum_gap_m": 0.0,
+    "chord_tolerance_m": 3.125e-05,
+    "chord_max_segments": 20000
+  },
+  "mesh": {
+    "nr": 24,
+    "nz": 32,
+    "geometry_order": 2,
+    "contour_mesh": {
+      "max_edge_m": 0.02,
+      "min_angle_deg": 5.0,
+      "max_triangles": 250000,
+      "max_rounds": 12
+    }
+  },
+  "solver": {
+    "modes": 3,
+    "quadrature_order": 12,
+    "element_order": 2
+  },
+  "rf": {
+    "beta": 1.0,
+    "conductivity_s_per_m": 58000000.0,
+    "normalization_j": 1.0
+  },
+  "model": {
+    "physics": "rf_eigenmode",
+    "coordinates": "axisymmetric",
+    "polarization": "tm",
+    "azimuthal_index": 0,
+    "materials": [
+      {
+        "id": "vacuum",
+        "type": "vacuum"
+      }
+    ],
+    "regions": [
+      {
+        "id": "cavity",
+        "material": "vacuum",
+        "domain": "interior"
+      }
+    ]
+  }
+}

@@ -1,5 +1,14 @@
 # N06：重複を避ける段階費用の記録器
 
+2026-10-08 JST：N03全validate/別seed207量の終端監査後、費用記録器・process停止器・
+固定入力計画・call観測の四moduleと四test、丸め二入力をtemp commit371b800と
+同byteで主ツリーへ統合した。元1405対象源は全byte不変、新1415対象/1208 Python源。
+新八Python源は四module/28個別unitの別証拠を使用し、同byteの統合で再実行しない。
+N03の2485/499 fullは追加前1405源に限る。統合だけの新FEM/seed/full/12benchmarkは0。
+N06はIN_PROGRESS、実uniform/adaptive worker・全物理精度/費用比較は後続。
+rawは `out/n06-cost-recording-20261007/main-foundation-integration.json`。
+以下の「主統合待ち」は日付付き履歴として読む。
+
 2026-10-07。N06はIN_PROGRESS、[N05の固定比較仕様](N05_ADAPTIVE_EFFICIENCY_PLAN.md)を先行とする。
 最初の範囲は費用記録器だけ。物理ケース実行・独立精度/費用比較・N06全受入は後続。
 N03全validate handle64569の主1405対象ファイルを固定したまま、
