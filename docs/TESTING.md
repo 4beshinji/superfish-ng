@@ -1,3 +1,5 @@
+2026-10-08 N06 **DONE**：[固定12実行の独立精度/費用と終端監査](N06_ACCEPTANCE.md)。12/12 TARGETS_MET・50新FEM水準・全900量別誤差の保存配列再計算PASS。全1430源、546 native file/100全場NPZ/1747束縛入力/795元出力を監査。円筒/丸めは一様、球は適応が確認DOF・時間で有利な範囲を二反復で報告し、一般優位を主張しない。plotだけの視覚修正は旧script/CSV/図を保全してAST同一を確認、新FEM/seed/full0。原123は74 DONE/2 IN_PROGRESS（H17/C07-planar）/47 PLANNED。次はN07の同じ高次組立の重複一原因の修正採否、N04/原32要件/全goalは継続。
+
 2026-10-08 N06 fresh実行器の限定受入：[元FEM/全参照/停止と固定12行](N06_FRESH_EXECUTION.md)。新15個別unitを分割受入（N06計74）、開発新FEM23回（累計46）。元1425対象源は不変、新1430対象/1223 Python源。初回検査double/元名のERROR・FAILを保全して関係分だけ訂正確認。元科学kernel不変、seed/full/12benchmark0。次は固定12実測と終端監査、N06/全goalは継続。
 
 2026-10-08 N06元TM場lookupの限定受入：[全供給点/元逆写像と独立物理微分](N06_NATIVE_FIELD_LOOKUP.md)。新6個別unitを共有入口強化後0.583秒・終了0/PASS、開発FEM4回。元1419源は全byte不変、新1421対象/1214 Python源、N06計47個別unit。元の全候補box/全点全mode場、保存球/円筒、欠測/不正物理/未確認/元中断を確認。N05の12benchmark/seed/full/legacyは0、独立参照/元領域/実ID束縛と実費用は後続。N06・N04・親G03・原32要件/全goalは継続。

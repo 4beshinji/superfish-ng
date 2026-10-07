@@ -140,6 +140,7 @@ def plot_errors(out):
         import matplotlib
         matplotlib.use('Agg')
         import matplotlib.pyplot as plt
+        from matplotlib.ticker import MaxNLocator, NullFormatter
     except ImportError:
         return dict(status='MATPLOTLIB_UNAVAILABLE', files=[], csv_preserved=True)
     files = []
@@ -147,6 +148,7 @@ def plot_errors(out):
         for x, label in (('dofs', 'Native DOFs'), ('submission_prefix_seconds', 'Submission to end of level (s)')):
             fig, axes = plt.subplots(3, 3, figsize=(15, 11), constrained_layout=True)
             for ax, (quantity, limit) in zip(axes.flat, LIMITS.items()):
+                observed=[]
                 for method, color in (('uniform', 'tab:blue'), ('adaptive', 'tab:orange')):
                     for repetition in (1, 2):
                         for order in (16, 24):
@@ -154,17 +156,28 @@ def plot_errors(out):
                                     r['method'] == method and int(r['repetition']) == repetition and int(r['gauss_order']) == order and
                                     r['relative_error'] and r[x]]
                             if rows:
+                                observed.extend(float(r['relative_error']) for r in rows)
                                 ax.plot([float(r[x]) for r in rows], [float(r['relative_error']) for r in rows],
                                         color=color, linestyle='-' if order == 24 else '--', marker='o' if repetition == 1 else 'x',
                                         markersize=3, label=f'{method} rep{repetition} G{order}')
                 ax.axhline(limit, color='black', linestyle=':', label='Fixed N05 limit')
-                ax.set_xscale('log'); ax.set_yscale('symlog', linthresh=1e-12)
+                if x=='dofs':
+                    ax.set_xscale('log');ax.xaxis.set_minor_formatter(NullFormatter())
+                else:ax.xaxis.set_major_locator(MaxNLocator(nbins=5))
+                positive=[v for v in observed if v>0]
+                upper=max([limit,*observed])*1.5
+                if any(v==0 for v in observed):
+                    ax.set_yscale('symlog',linthresh=1e-12);ax.set_ylim(0,upper)
+                else:
+                    ax.set_yscale('log');ax.set_ylim(min([limit,*positive])*.5,upper)
+                ax.yaxis.set_minor_formatter(NullFormatter())
                 ax.set_title(quantity); ax.set_xlabel(label); ax.set_ylabel('Relative error'); ax.grid(alpha=.2)
-            axes.flat[0].legend(fontsize=7)
+            handles,labels=axes.flat[0].get_legend_handles_labels()
+            fig.legend(handles,labels,loc='outside lower center',ncol=5,fontsize=8)
             fig.suptitle(case + ': finite full supplied grids; all failed/limited prefixes retained')
             name=f'{case}-errors-vs-{x}.png'
             fig.savefig(out / name, dpi=130); plt.close(fig); files.append(name)
-    return dict(status='PLOTS_WRITTEN', files=files, zero_error_display='symlog preserves zero; linear threshold 1e-12',
+    return dict(status='PLOTS_WRITTEN', files=files, zero_error_display='positive errors use log; zero errors use nonnegative symlog with linear threshold 1e-12',
                 scope='separate nine quantities, both Gauss orders and two repetitions; curves do not imply confirmed acceptance')
 
 

@@ -1,8 +1,10 @@
 # 現行の作業入口
 
 更新：2026-10-08、P07/P08/P09/N03全条件受入済み。原90カードと追加子カードを含む全123カードは
-73 DONE/3 IN_PROGRESS（H17、C07-planar、N06）/47 PLANNED。全goalと原互換32要件は継続中。
+74 DONE/2 IN_PROGRESS（H17、C07-planar）/47 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+2026-10-08 N06 **DONE**：[固定12実行の独立精度/費用と終端監査](../N06_ACCEPTANCE.md)。12/12 TARGETS_MET・50新FEM水準・全900量別誤差の保存配列再計算PASS。全1430源、546 native file/100全場NPZ/1747束縛入力/795元出力を監査。円筒/丸めは一様、球は適応が確認DOF・時間で有利な範囲を二反復で報告し、一般優位を主張しない。plotだけの視覚修正は旧script/CSV/図を保全してAST同一を確認、新FEM/seed/full0。原123は74 DONE/2 IN_PROGRESS（H17/C07-planar）/47 PLANNED。次はN07の同じ高次組立の重複一原因の修正採否、N04/原32要件/全goalは継続。
 
 N06の[元FEM/全参照/実停止とfresh直列実行器](../N06_FRESH_EXECUTION.md)を限定受入。
 新15個別unit（N06計74）、実球/直線adaptiveの元prefix一致、独立全場、参照未達時の継続、
