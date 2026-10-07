@@ -12,9 +12,13 @@
 temp371b800の四module/四testと丸め二入力を追加し、元1405源は全byte不変、
 主1415対象/1208 Python源。28個別unitの別証拠を再利用、追加前fullを新源へ昇格しない。
 新FEM/seed/full/12benchmarkは0。N06はIN_PROGRESS、原123の73/3/47は不変。
-次は一様workerの独立円筒物理と曲線固定P2経路、独立参照/段階費用へ接続する。
-別ツリー `/tmp/superfish-ng-n06-uniform-worker-20261008` に新uniform workerを実装中。
-その新源はまだ未検査/主未統合で、主の受入源と混同しない。
+次は独立参照/段階費用と均等・適応の実比較へ接続する。
+[一様worker](../N06_UNIFORM_WORKER.md)は別ツリーtemp f5eaf4bで新5個別unitを分割受入し、
+同byteで主へ統合した。円筒の実三水準Bessel元場/f/全壁loss/両R/Q/U1、
+球の元P2境界/Ritz/ID/12・24求積/独立根RF、次solve前の上限停止/元solver失敗を確認。
+検査側marker名とboundary status仮定のFAIL/ERRORは保全して必要分だけ再検査した。
+開発FEM11回、N05の12benchmarkは0。元1415源は不変、新1417対象/1210 Python源。
+既存fullは追加前1405源、新五unitは別証拠。独立参照判定と完全再生/resumeは後続、N06はIN_PROGRESS。
 
 ## N06費用記録器：別ツリー限定受入、主統合待ち
 
