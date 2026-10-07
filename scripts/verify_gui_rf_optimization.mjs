@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Real local browser input and computation. Requires a running GUI and Chrome.
+import { launchBrowser } from "./browser-session.mjs";
 import { spawn, execFile } from "node:child_process";
 import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import { resolve } from "node:path";

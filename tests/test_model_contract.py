@@ -45,6 +45,19 @@ class ModelContractTests(unittest.TestCase):
         for path in Path('examples').glob('*.json'):
             with self.subTest(path=path):
                 data = parse_json(path.read_text(encoding="utf-8"))
+                if data.get("format") == "superfish_ng_hphi_tune":
+                    # Dedicated requests are validated in their own format;
+                    # the legacy Case migration must keep rejecting them.
+                    from superfish_ng.hphi_tuning import validate_hphi_tune
+                    original = copy.deepcopy(data)
+                    project = validate_hphi_tune(data)
+                    self.assertEqual(data, original)
+                    self.assertEqual(project.to_dict(), data["project"])
+                    with self.assertRaisesRegex(ValueError, "case: unknown keys"):
+                        Case.from_dict(data)
+                    with self.assertRaisesRegex(ValueError, "case: unknown keys"):
+                        upgrade_case(data)
+                    continue
                 old = (Study.from_dict(data).project.case if "study_version" in data
                        else Case.from_dict(data))
                 new = Case.from_dict(upgrade_case(old.to_dict()))

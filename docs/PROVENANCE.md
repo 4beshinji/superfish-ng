@@ -1,6 +1,6 @@
 2026-10-07 P09大容量GUI：[元円TM/非円形TEの全科学checkpoint・元場byte](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。自作の先行所有結果/完全物理再生と共通browser-session/CDP操作を再利用し、新native求解0、製品420源不変。API意味だけをChromium公式Network protocol定義から参照（リンク先文書にURL/範囲）、POST記録上限と順序付きURL許可/遮断を検証器へ設定した。外部実装のコピー/新依存/legacy参照なし。切断の根本原因は未確定。分割15項目と元7trial九byte/完全保存を監査し、歴史的creatorは14現行一致＋1保存済み生成当時源一致。元FAIL/ERRORは保全。全validate/全条件・全goalは継続。
 
-2026-10-07 P09全validateの途中で、実取消し時の不完全JSON公開を確認。[共有checkpointの完全公開修正](PLANAR_CHECKPOINT_PUBLICATION.md)の不変量を元実装で再現した。元全実行終端まで製品源を固定し、原子的・上書きなし公開の限定検査後に共有変更の全validateを新rootで実施する。修正案準備段階で、P09/full/seed成功は未証明。
+2026-10-07 P09節目の元全validateは2354検査/478モジュール、2FAIL・5ERROR・3skipで終了1。開始時1365源不変を監査した。[共有checkpointの完全公開修正](PLANAR_CHECKPOINT_PUBLICATION.md)と専用要求例の分類/検証器importを修正し、限定45検査66.391秒＋実取消し/移動/再開/管理器再作成1検査40.442秒は終了0/PASS。新全validate handle69844を別rootで実行中、src/tests/scripts/examples全1366源を固定。元FAILを保全し、P09/full/seed成功は未証明。
 
 
 2026-10-07 P09実GUI：[元E/H比較・履歴anchor回復/延長・取消し](PLANAR_CURVED_GUI_HISTORY.md)。先行自作の実TE四native・typed worker/全物理再生を実Chrome操作で確認し、既存共通browser-session/CDP検証構造を再利用。新native求解0、反射parity/実順位交換/真doublet/nullと元五byte/親不変が対照。元FAIL/ERRORを保持し、製品は診断全文scroll/未確定表示2件だけ修正。分割14項目、7完了job/510 entry/全420 creator監査、元420源中418と全123カード不変。新外部資料/依存/legacy参照なし。大容量調整GUI/全条件と全goalは継続。

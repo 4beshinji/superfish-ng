@@ -13,31 +13,34 @@ TEの元場取込は実順位2、実HTTP bodyは95,690,800/102,474,277 byteでHT
 GUI server90242/TE browser46225は実終了0、worker-terminal空/Chrome slot 0/外部要求0。
 生成時の曲線15源は14現行不変＋1生成当時archive一致であり、全15源現行一致とは扱わない。
 
-残る **全validate handle60083** は `out/validation-p09-milestone-20261007.log` / 同名directory。
-8 isolated unittest worker、全suiteを事前重複実行せず一度起動し、まだ実行中。
-seed/全件PASSは未証明。途中の `test_model_contract` は1 method内の調整要求例2件でERROR。
-通常Case移行テストが専用Hphi tune形式をCaseとして読んだ分類誤りで、strict parserの拒否は正しい。
-全完了reportの集約では `test_browser_session` の検証器数63/実際71と、
-`test_curved_hphi_workspace` の古い拒否message期待式にも各1FAILを確認した。
-加えて全71検証器のimport照合で `verify_gui_rf_optimization.mjs` だけ共有launchBrowserのimport漏れを確認し、
-実起動のReferenceErrorをFEM/Chrome起動前に再現した。
-さらに `test_project` も同じ専用Hphi tune例2件のCase/Project誤分類でERROR。
-`test_planar_piecewise_tuning_jobs` は実worker取消し後に不完全JSONを読みERRORとなった。
-共有 `_write` が公開先を先に作る製品側の競合で、待ち時間やparse再試行では回避しない。
-[完全公開の有界修正と受入条件](../PLANAR_CHECKPOINT_PUBLICATION.md)を記録した。
-独立の保存不変量を元実装で再現した：部分serialization/非有限値の拒否で公開先が残り、
-実producer強制終了後にも部分JSONが残る（raw `publication-invariant-baseline.log` と
-`publication-killed-producer-baseline.log` を保全）。
-同じfilesystemの私有一時ファイルへ完全JSONを書き、flush/fsync後にhard linkで上書きせず公開する修正を準備。
-通常/例外経路では一時ファイルを除去する。SIGKILL時の私有stageは未完了ownerに残り得るが、
-checkpoint/完了成果物として公開・受入しない。旧raw tune経路も同じ公開不変量を守り、JSON byteは維持する。
-元全実行を終端まで保全し、全失敗を確定してから該当4test/共有保存2源/検証器importと新保存検査を修正する。
-限定検査と実取消し/再開が成功した後、共有保存変更のため新rootで全validateを実施する。
-元FAILを全件成功へ読み替えず、新全実行のseed f+RFと照合する。観測timeoutだけで再起動しない。
-`milestone-start-source.json` にsrc/tests/scripts/examples全1365fingerprintを保存した。
-このhandleの実終端までsrc/tests/scripts/examplesを編集しない。docs/outの記録/監査だけ進める。
-新native求解0のGUI leafと、別rootのfull/seed実行を区別する。
-全validateの実結果/seed f+RFとP09全条件を照合してからカードの完了を判定する。
+元の **全validate handle60083** は `out/validation-p09-milestone-20261007` で実終了1。
+2354検査/478モジュール、3200.524秒、2FAIL・5ERROR・3skip。
+`full-failed-final-audit.json` は全reportと開始時src/tests/scripts/examples1365源不変を監査した。
+元のFAILを全件成功として扱わず、失敗でseedへ進まなかったことも保持する。
+
+失敗は、専用Hphi tune例をCaseとして読む `test_model_contract`/`test_project` 各2ERROR、
+固定個数63/実際71の `test_browser_session` と古い拒否messageの `test_curved_hphi_workspace` 各1FAIL、
+実取消し時の部分JSON公開による `test_planar_piecewise_tuning_jobs` 1ERROR。
+別に `verify_gui_rf_optimization.mjs` のlaunchBrowser import漏れをFEM/Chrome起動前に実再現した。
+
+[共有checkpointの完全公開修正](../PLANAR_CHECKPOINT_PUBLICATION.md)を適用した。
+同一filesystemの私有stageへ完全JSONを書き、flush/fsync後にhard linkで上書きせず公開する。
+旧raw経路も接続し、元JSON byte/末尾改行を維持。途中終了/非有限値/実producer強制終了と
+既存target不変を検査する。SIGKILL時の未完了私有stageをcheckpoint/完了成果物へ数えず、strict owner検査は緩めない。
+要求例は専用parserで完全検証し、通常Case/Projectでの拒否と元入力/Project往復を維持した。
+検証器は実inventoryの全71構文/lifecycle/importを確認し、固定個数だけの前提を除いた。
+
+限定45検査66.391秒と元実worker取消し/移動/再開/管理器再作成1検査40.442秒は終了0/PASS。
+rawは `out/p09-checkpoint-publication-20261007` の両log/`bounded-acceptance.json`。
+保存2源の変更定義は `_write`/`execute_planar_tune` だけ、他の7/9定義は元archiveとAST同一。
+上記大容量GUIの420源不変は受入時e395996基準の証拠で、今回の保存2源変更とは分ける。
+
+共有変更の **新全validate handle69844** を `out/validation-p09-publication-20261007.log` / 同名directoryで実行中。
+8 isolated unittest worker。先に全discoveryを重複実行せず、限定検査後に全validateを一度起動した。
+`out/p09-checkpoint-publication-20261007/new-full-start-source.json` の全1366fingerprintを保存。
+このhandleの実終端までsrc/tests/scripts/examplesを編集しない。docs/outの記録だけ進める。
+観測timeoutだけで再起動しない。新全結果/seed f+RF/P09全条件を照合してから完了を判定する。
+全seed/全件PASSは未証明。元/新full、限定検査、新native求解0のGUI leafを区別する。
 全goal/P09 IN_PROGRESS、原互換条件と全123カードを縮小しない。
 
 ## 横断レビューと計画（2026-09-22）

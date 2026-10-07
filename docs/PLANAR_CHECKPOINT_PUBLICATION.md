@@ -3,7 +3,7 @@
 2026-10-07、P09節目全validateで発見した共有保存処理の有界修正。
 受入条件は、公開checkpointが存在すれば完全JSONであること、既存targetを上書きしないこと、
 元JSON byte/元trial/strict parser/科学計算と取消し時の再開条件を保つこと。
-現状は元全validate実行中・修正案準備まで。P09の完了証拠にはまだ加えない。
+修正と限定検査はPASS。共有変更の新全validate handle69844は実行中で、P09全体の完了証拠は未確定。
 
 ## 最初の失敗
 
@@ -19,7 +19,7 @@
 原ログは `out/p09-planar-curved-large-gui-20261007/publication-invariant-baseline.log` と
 `publication-killed-producer-baseline.log`。これらは保存不変量の証拠で、FEM精度検査ではない。
 
-## 修正案と範囲
+## 修正と範囲
 
 同じfilesystem上の私有stageへJSONを完全に書き、flush/fsyncして閉じた後、
 `os.link` で上書きなしに最終pathへ公開する。競合して最終pathが既にあれば失敗し、元targetを保持する。
@@ -36,7 +36,22 @@ FEM行列、固有値、場、RF、mode identity判定と許容差は変更し�
 
 新独立検査は途中serialization/非有限値/実producer強制終了、完全payload byte、
 上書き拒否、旧失敗報告の末尾改行を扱う。加えて元の実worker取消し/移動/再開/管理器再作成を再検査する。
-元全実行の全失敗と1365源fingerprintを終端後に確定し、その後に修正を適用する。
-共有保存変更のため、限定検査成功後に新rootで全 `scripts/validate.py` を実行する。
+元全実行は2354検査/478モジュール、3200.524秒、2FAIL・5ERROR・3skipで実終了1。
+全report/開始時1365源不変を `full-failed-final-audit.json` で確認し、その後に修正を適用した。
+共有保存変更のため、限定検査成功後に新rootで全 `scripts/validate.py` を実行中。
 元FAILは保全し、新全実行のunittest/seed周波数・RF/指紋を別に監査する。
-新外部依存/外部実装/legacyソース再利用なし。実結果とローカルcommitは未確定。
+限定45検査66.391秒、実worker取消し/移動/再開/管理器再作成1検査40.442秒は実終了0/PASS。
+原失敗testの取消し待機条件/時間は変更していない。
+新全validateはhandle69844、全1366源を開始時に固定。全/seed結果は終端まで未受入。
+rawは `out/p09-checkpoint-publication-20261007`、原FAILは元rootに保全。
+
+```sh
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -m unittest -v test_planar_checkpoint_publication test_browser_session test_curved_hphi_workspace test_model_contract test_project test_hphi_tuning.HphiTuneRequestTests test_planar_tuning
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -m unittest -v test_planar_piecewise_tuning_jobs.PlanarPiecewiseTuneJobTests.test_actual_cancel_select_prefix_move_resume_and_manager_restart
+OPENBLAS_NUM_THREADS=1 UV_CACHE_DIR=/tmp/superfish-ng-uv-cache MPLCONFIGDIR=/tmp/superfish-ng-matplotlib-p09-publication uv run --no-sync python scripts/validate.py --out out/validation-p09-publication-20261007
+```
+
+`bounded-acceptance.json` は両logの実終端/45＋1検査と元source archiveを照合した。
+保存2源で変更された定義は `_write`/`execute_planar_tune` のみ、他7/9定義はAST同一。
+全8変更path/新1test/1365→1366源を `repair-source-delta.json` に記録した。
+これらの監査に新FEM/物理再生は加えていない。新外部依存/外部実装/legacyソース再利用なし。

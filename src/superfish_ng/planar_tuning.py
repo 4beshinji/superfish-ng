@@ -6,7 +6,6 @@ physics-independent bracket decision is shared with axisymmetric tuning.
 """
 from copy import deepcopy
 from dataclasses import replace
-import json
 from pathlib import Path
 
 from .config import integer, keys, positive
@@ -258,15 +257,14 @@ def execute_planar_tune(request, directory, *, max_new_trials=None, checkpoint=N
                 raise ValueError('prior planar tune sources changed during execution')
             if implementation != _implementation_hashes():
                 raise RuntimeError('implementation changed during planar tune execution')
-            serialized = json.dumps(result, indent=2, allow_nan=False)+'\n'
-            with (directory/f'checkpoint-{index+1:03d}.json').open('x', encoding='utf-8') as stream:
-                stream.write(serialized)
+            from .planar_tuning_saved import _write
+            _write(directory/f'checkpoint-{index+1:03d}.json', result)
         except Exception as exc:
             failure = dict(request=request, attempt=trial, trial_run=str(run),
                 preceding_trial_runs=runs, status='FAILED', error_type=type(exc).__name__, error=str(exc),
                 scope='failed trial is not a frequency evaluation; prior checkpoints remain separate')
-            with (directory/f'failure-{index+1:03d}.json').open('x', encoding='utf-8') as stream:
-                json.dump(failure, stream, indent=2, allow_nan=False)
+            from .planar_tuning_saved import _write
+            _write(directory/f'failure-{index+1:03d}.json', failure, trailing_newline=False)
             raise
         previous = result; runs.append(str(run)); count += 1
     return previous

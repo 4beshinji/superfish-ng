@@ -22,7 +22,7 @@
 | 所有再開・移動・改変拒否 | [調整保存](PLANAR_CURVED_TUNING_SAVED.md)の完全元native再生/新owner、再hashした係数の物理拒否。新7種類＋関連3を分割受入。[履歴](PLANAR_CURVED_TRACKING_HISTORY.md)は新13種類＋関連10、遅い祖先改変の検出漏れを再現して修正 | PASS |
 | CLI/workerで実取消し・再開・再起動 | [二点](PLANAR_CURVED_TRACKING_JOBS.md)新6種類＋関連10、[履歴](PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)新8種類＋関連5、[調整](PLANAR_CURVED_TUNING_JOBS.md)新8種類＋関連5。実running取消し−15/新worker0、管理器再起動、source生存中の移動、元creator/claim不変、失敗を成功にしない終了コード | PASS |
 | GUI操作・元場/実ID・保存地点 | [専用GUI](PLANAR_CURVED_GUI.md)19 strict操作/新API8種類＋関連6種類、実Chrome調整/再開7＋render1。[履歴実操作](PLANAR_CURVED_GUI_HISTORY.md)は比較/回復/延長/取消し・真doublet/nullの分割14項目。[大容量](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)は円5＋不足2/TE8の分割15項目 | PASS |
-| 節目の全unittest・seed f/RF・固定源 | `out/validation-p09-milestone-20261007` の全validateを一度起動、handle60083の同じ実行を観測中。途中で `test_model_contract` の専用Hphi tune例2件のCase誤分類ERROR、`test_browser_session` の固定個数と `test_curved_hphi_workspace` の古いmessage期待式に各1FAILを観測。さらに `test_project` の同形式誤分類ERRORと、`test_planar_piecewise_tuning_jobs` の実取消し時の不完全JSON公開ERRORを確認。後者は共有保存処理の競合で、独立serialization/実producer強制終了の不変量FAILも保全した。終了状態・skip・seed f/RF・開始時1365源fingerprintの一致は未確定。元全実終端後に原子的・上書きなし公開と分類/検証器を修正し、限定検査後に共有変更の全validateを新rootで実施する | 実行中・途中ERROR |
+| 節目の全unittest・seed f/RF・固定源 | 元全validateは2354検査/478モジュールで終了1（2FAIL・5ERROR・3skip）、全1365源不変を監査。分類/検証器と[共有公開処理](PLANAR_CHECKPOINT_PUBLICATION.md)を修正し、限定45＋実取消し/移動/再開1はPASS。新全validate handle69844を別rootで実行中、全1366源を固定。元FAILを保全し、新full/skip/seed f+RFはまだ未確定 | 新全実行中・未受入 |
 
 ## 数値と範囲
 
@@ -45,7 +45,8 @@
 各リンク先に限定検査の実コマンド・raw・失敗/補完・基準源を記録した。
 元のFAIL/ERRORを保持し、成功を分割受入と一括PASSの別なく集計しない。
 既に受入済みで変更のない数値源を、文書の更新だけのために再実行しない。
-全validateはこのカードの節目で一度起動し、事前に全discoveryを重複させていない。
+元全validateを節目で一度起動し、事前に全discoveryを重複させていない。
+元全実行の終端後に再現した共有保存競合を修正し、限定45＋実取消し/再開1PASS後に新全validateを起動した。
 全実行終端まではsrc/tests/scripts/examplesを固定する。
 
 P09の16受入記録が参照する91 evidence/log entryを改めてhash照合した。

@@ -47,6 +47,19 @@ class ProjectTests(unittest.TestCase):
                     # A Study is still not a standalone Case/Project document.
                     with self.assertRaises(ValueError):load_document(text)
                     project=study.project
+                elif raw.get('format') == 'superfish_ng_hphi_tune':
+                    from superfish_ng.hphi_tuning import validate_hphi_tune
+                    from superfish_ng.hphi_project import HphiProject
+                    original = copy.deepcopy(raw)
+                    project = validate_hphi_tune(raw)
+                    self.assertEqual(raw, original)
+                    self.assertEqual(project.to_dict(), raw['project'])
+                    self.assertEqual(HphiProject.from_dict(project.to_dict()).to_dict(), project.to_dict())
+                    with self.assertRaisesRegex(ValueError, 'case: unknown keys'):
+                        load_document(text)
+                    with self.assertRaisesRegex(ValueError, 'case: unknown keys'):
+                        Case.load(path)
+                    continue
                 else:
                     project = load_document(text)
                     self.assertEqual(project.case.to_dict(), Case.load(path).to_dict())

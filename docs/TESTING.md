@@ -1,6 +1,6 @@
 P09大容量checkpoint実GUIは `verify_gui_planar_curved_large_checkpoint.mjs` で円5＋不足2/TE8、分割15項目PASS。実科学body/完全保存/両gate/過去anchor/元場の実順位/元五byte・全download/画像を確認し、全420源/元7trial九byte/全123カード不変を監査。初回debugger失敗・download不足・歴史的creator照合の誤りを保全。[実終端と照合](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。節目の全validateは一度起動してhandle60083で実行中、まだfull/seed受入ではない。[条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)。
 
-2026-10-07 P09全validateの途中で、実取消し時の不完全JSON公開を確認。[共有checkpointの完全公開修正](PLANAR_CHECKPOINT_PUBLICATION.md)の不変量を元実装で再現した。元全実行終端まで製品源を固定し、原子的・上書きなし公開の限定検査後に共有変更の全validateを新rootで実施する。修正案準備段階で、P09/full/seed成功は未証明。
+2026-10-07 P09節目の元全validateは2354検査/478モジュール、2FAIL・5ERROR・3skipで終了1。開始時1365源不変を監査した。[共有checkpointの完全公開修正](PLANAR_CHECKPOINT_PUBLICATION.md)と専用要求例の分類/検証器importを修正し、限定45検査66.391秒＋実取消し/移動/再開/管理器再作成1検査40.442秒は終了0/PASS。新全validate handle69844を別rootで実行中、src/tests/scripts/examples全1366源を固定。元FAILを保全し、P09/full/seed成功は未証明。
 
 
 P09実曲線GUIは新 `verify_gui_planar_curved_history.mjs` により、実比較/取消し/新job・真doublet集合継続・元native連鎖・過去anchor回復/延長/max停止・全元五byte/親不変/RF/場表示を13項目、null表示修正を1項目の分割14項目で受入。検証器期待式/完了待ちERRORと実診断Page is too largeを保全し、製品は全文scroll/未確定表示だけ修正。数値unit/full/seed再実行なし。[raw・実終端・byte監査・後続範囲](PLANAR_CURVED_GUI_HISTORY.md)。大容量調整checkpoint実GUIとP09全条件は継続。

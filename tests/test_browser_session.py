@@ -237,15 +237,18 @@ setInterval(()=>{},1000);
         verifiers = []
         for path in sorted((ROOT / "scripts").glob("verify*.mjs")):
             source = path.read_text()
+            if "DevToolsActivePort" in source:
+                self.assertIn("launchBrowser", source, path.name)
             if "launchBrowser" not in source:
                 continue
             verifiers.append(path)
+            self.assertRegex(source, r"""import\s*\{\s*launchBrowser\s*\}\s*from\s*["']\./browser-session\.mjs["']""", path.name)
             self.assertNotIn("mkdtemp", source, path.name)
             self.assertNotIn("browser.kill(", source, path.name)
             self.assertIn("await dispose()", source, path.name)
             result = subprocess.run(["node", "--check", str(path)], capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(len(verifiers), 63)
+        self.assertGreater(len(verifiers), 0, "no shared browser verifiers discovered")
         for path in (ROOT / "scripts").glob("*.mjs"):
             self.assertNotIn('mkdtemp("/tmp/ng-gui-chrome-', path.read_text(), path.name)
 

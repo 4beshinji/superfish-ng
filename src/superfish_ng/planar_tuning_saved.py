@@ -7,8 +7,10 @@ that the receiving owner executed it.
 """
 from copy import deepcopy
 import json
+import os
 from pathlib import Path
 import shutil
+import tempfile
 
 from .config import integer, keys
 from .jobs import _digest, _implementation_hashes
@@ -147,9 +149,28 @@ def _portable(document, owner):
     return result
 
 
-def _write(path, document):
-    with Path(path).open('x', encoding='utf-8') as stream:
-        json.dump(document, stream, indent=2, allow_nan=False); stream.write('\n')
+def _write(path, document, *, trailing_newline=True):
+    """Publish complete JSON atomically without replacing an existing target.
+
+    An abruptly killed producer may leave a private staging file. It never
+    exposes that partial file as a checkpoint or completed owned artifact.
+    """
+    path = Path(path)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8',
+                prefix='.planar-json-', suffix='.tmp', dir=path.parent,
+                delete=False) as stream:
+            temporary = Path(stream.name)
+            json.dump(document, stream, indent=2, allow_nan=False)
+            if trailing_newline:
+                stream.write('\n')
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.link(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink()
 
 
 def _copy_trial(source, target, expected):
