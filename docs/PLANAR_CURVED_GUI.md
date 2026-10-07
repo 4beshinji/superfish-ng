@@ -1,5 +1,7 @@
 # 平面曲線の比較・履歴・調整GUI
 
+2026-10-07後続：[実Chrome比較・履歴回復/延長・取消し](PLANAR_CURVED_GUI_HISTORY.md)を分割14項目で受入し、診断全文scroll/未確定表示を修正した。残る大容量調整checkpointとP09全条件は継続。以下は初回GUI接続の検証履歴。
+
 2026-10-07、P09の有界GUI接続。P09はIN_PROGRESS、全123カードgoalは継続する。
 受入条件は、専用strict要求の往復、元nativeのE/H・有限guard・個別ID/集合の保持、
 実過去anchor回復と延長、要求へ束縛した停止checkpointの再生/新job再開、

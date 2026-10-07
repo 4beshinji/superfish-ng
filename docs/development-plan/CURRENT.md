@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07/P08全条件受入済み、P09の専用GUI/調整再開まで限定受入、実GUI比較/履歴/取消し・大容量checkpointと全条件監査を継続。
+更新：2026-10-07、P07/P08全条件受入済み、P09の専用GUI/調整再開まで限定受入、実GUI比較/履歴回復/延長/取消しまで分割受入、大容量checkpointと全条件監査を継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -80,7 +80,12 @@ native五/完了job九/import job八の元byte/Project/creator/claimを保持し
 実Chrome調整6＋再開1、表示修正後render-only1項目PASS。元socket/検証器/監査器ERRORとrawを保持し不足だけ補完。
 最終byte監査PASS：16完了job/768 entry/全420 creator源、元五byte import/九byte prefix、元417源中412/全123カード不変。
 全handle/両server終端、Chrome slot 0/外部要求0。
-P09はIN_PROGRESS、次は実Chrome比較・履歴回復/延長・取消し、受入円/TE大容量checkpointと全条件監査。不変量を先に再現し、
+[実Chrome比較・履歴回復/延長・取消し](../PLANAR_CURVED_GUI_HISTORY.md)も13＋null表示1の分割14項目PASS。
+元TE四native、実順位/真doublet・元場連鎖・過去anchorと最大段数停止・全元五byte/親不変/画像を確認。
+検証器期待/非同期待ちERRORと実Page is too largeを保持し、全文scroll/null明示の表示2件だけ修正。
+最終監査PASS：7完了job/510 entry/全420 creator源、元420源中418科学/その他源と全123カード不変。
+実取消し−15/他7worker0、全3server/Chrome終端、外部要求0/slot 0。
+P09はIN_PROGRESS、次は受入円/非円形TEの大容量調整checkpoint実GUIと全条件監査。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
