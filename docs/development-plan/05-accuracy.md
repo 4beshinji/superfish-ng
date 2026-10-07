@@ -24,6 +24,9 @@
 
 ### 幾何と表面場の独立比較器を拡充する
 
+2026-10-07：場対応工程を限定受入。[新10/直接4unit・旧楕円9保存解/8区間の完全一致](../N02_GEOMETRY_SURFACE_FIELDS.md)。
+3×3の五量/幾何/求積/peak集約・反例が残りN02はIN_PROGRESSを維持。
+
 2026-10-07：N01はDONE。入力・来歴工程を限定受入しN02はIN_PROGRESS。
 [14個別unit/実CLI入力計画と元条件の残件](../N02_GEOMETRY_SURFACE_PLAN.md)。
 実保存場の比較/反例/楕円の新判定再生が残る。FEM/seed/fullは0。

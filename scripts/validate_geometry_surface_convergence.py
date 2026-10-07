@@ -116,11 +116,26 @@ def main():
     inputs = parser.add_mutually_exclusive_group(required=True)
     inputs.add_argument('--archive', type=Path, help='existing ellipse archive; preserves the original numerical path')
     inputs.add_argument('--catalog', type=Path, help='strict N01 case catalog; currently input/provenance planning only')
+    inputs.add_argument('--field-pair-request', type=Path, help='strict saved native field-pair request; no new FEM')
     parser.add_argument('--catalog-sha256', help='explicit SHA256 of the intended catalog input')
     parser.add_argument('--case', dest='case_ids', nargs='+', help='catalog case ids in requested order; omitted selects all')
     parser.add_argument('--plan-only', action='store_true', help='validate catalog Cases/references without mesh construction or FEM')
     parser.add_argument('--out', type=Path, required=True)
     args = parser.parse_args()
+    if args.field_pair_request is not None:
+        if args.plan_only or args.catalog_sha256 is not None or args.case_ids is not None:
+            parser.error('--plan-only/--catalog-sha256/--case require --catalog')
+        from superfish_ng.geometry_surface_fields import build_saved_geometry_surface_fields
+        from superfish_ng.project import parse_json
+        request = parse_json(args.field_pair_request.read_text(encoding='utf-8'))
+        out = args.out.resolve()
+        if out.exists():
+            raise FileExistsError(out)
+        report = build_saved_geometry_surface_fields(request, base_directory=args.field_pair_request.resolve().parent)
+        out.mkdir(parents=True, exist_ok=False)
+        write(out/'fields.json', report)
+        print(report['status'], 'new FEM', report['new_fem_solves'], flush=True)
+        return {'PASS': 0, 'FAIL': 1, 'UNVERIFIED': 3}[report['status']]
     if args.catalog is not None:
         if not args.plan_only or args.catalog_sha256 is None:
             parser.error('--catalog requires --plan-only and --catalog-sha256; numerical catalog execution is not implemented yet')

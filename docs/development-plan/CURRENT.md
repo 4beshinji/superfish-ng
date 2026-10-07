@@ -4,6 +4,15 @@
 69 DONE/3 IN_PROGRESS（H17、C07-planar、N02）/51 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
+## N02場対応工程：IN_PROGRESS
+
+2026-10-07 N02場対応工程 **IN_PROGRESS**：[元P2場・個別ID・欠測の比較](../N02_GEOMETRY_SURFACE_FIELDS.md)。元Hφ/Er/Ezと単一符号・絶対軸Ez、全centroid/重み/欠測を保存し、固定P2はN01の強い追跡も要求。振幅2%/直交不一致/ゼロ軸/真の順位交換/近縮退・予算停止、実2 FEM/3モード・completion全byte/保存完全再生・CLI一致/後export変異を確認。新10＋直接4の14個別unitを分割受入。ゼロ軸FAILをUNVERIFIEDへ修正し、Case製造ERRORの1件だけ再検査。旧楕円の9 native/8元場区間は166.641秒、終了0、元Study報告完全一致・全欠測0・新FEM0。旧1モードの互換証拠を新3モード/独立物理へ昇格しない。元1192源の変更はCLI一つ、科学核/閾値とarchive数値bodyは不変、新2源を加え1194・全handle終端。新seed/full/legacy0。原123は69 DONE/3 IN_PROGRESS（H17/C07-planar/N02）/51 PLANNEDを維持。次はN02保存3×3行列の五量/幾何/求積/peak別評価、親G03/N03/原互換32要件/全goalは継続。rawは out/n02-surface-fields-20261007/。
+
+全処理handle終端、source固定解除。
+次はSHAで結んだ新保存3×3行列に、独立幾何/固定FEM二変化/求積12・16・24/peak区間二変化を追加する。
+故意のピーク未収束・幾何未確認と、旧楕円全量の新集約判定一致までN02を閉じない。
+その後N03実精度検証→D07。全goalは未完。
+
 ## N02入力・来歴工程：IN_PROGRESS
 
 2026-10-07 N02第一工程 **IN_PROGRESS**：[幾何/表面比較の入力・来歴計画](../N02_GEOMETRY_SURFACE_PLAN.md)。五Case/全45点のstrict指定、独立面積・体積/全曲線/鋭角、解析球の元根条件、旧4 reportのSHA/PASS/楕円区間、欠落UNVERIFIED・自作FEM参照拒否、排他的保存/完全再生を接続。新8＋直接6の14個別unitを分割受入、実CLIのplanned45/newFEM0も確認。初稿baseline項目・affine selector誤記は失敗を保全して必要分だけ修正。元1190源の変更はCLI一つ、旧数値全関数/楕円数値bodyはAST同一、新2源を加え1192。新FEM/seed/full/legacy0、全handle終端。N02の実保存場・5種差分/反例・楕円新判定再生は後続。原123は69 DONE/3 IN_PROGRESS（H17/C07-planar/N02）/51 PLANNED、親G03/N03/原互換32要件/全goalを維持。次はN02保存行列・場/ピーク/求積の比較。rawは out/n02-geometry-surface-plan-20261007/。
