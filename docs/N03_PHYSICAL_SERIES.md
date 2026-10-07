@@ -52,7 +52,15 @@ raw rootは `out/n03-native-surface-series-20261007/`。
 全主数値ジョブ終端後、三変更源＋新testを同一byteで統合し、残る1196源も同一を確認。
 `appended-main-integration.json` に全before/after SHAとtemp commit `81bce60` を保存する。
 変更前三源は `before-appended-main-integration/` に保存し、元検査の1199源を明示解決する。
-同一byteの統合のためunit/FEMを重複実行しない。次に節目の全validateを一度行う。
+同一byteの統合のためunit/FEMを重複実行しない。節目の全validateを実行したところ、
+初回のHTTP一件がsandboxのsocket禁止でPermissionErrorとなった。
+同じソースの同じHTTP一件はlocalhost可の環境で2.792秒・終了0/PASS。
+初回handle72074は244/499モジュール完了時にrunnerへSIGINTを送り、既存finallyで
+全module worker/孫を後始末し、1919.016秒・終了130・全1405源不変で保全した。
+初回をfull受入とは呼ばない。数値ソース/閾値は変更せず、正しいlocalhost環境で
+全validate handle64569を新 `out/validation-n03-milestone-localhost-20261007` へ再実行中。
+初回と再実行の開始snapshot1405は一致する。失敗を修正するための再実行であり、
+件数や完成文言だけを更新するための重複実行ではない。
 
 場比較は実P2/参照曲線境界の全fanと正のJacobian・独立体積を確認し、
 密度比の平方根で固定円筒成分の単位的L2測度を合わせる。Maxwell変形則ではない。
