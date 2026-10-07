@@ -65,7 +65,7 @@ $('save-image').onclick=()=>{if(imageBlob)download(imageBlob,'planar-fields.png'
 for(const [id,action,name] of [['probe','planar-probe','planar-probe.csv'],['probe-meta','planar-probe-metadata','planar-probe.csv.json']])$(id).onclick=run(async()=>{if(!selected)throw Error('結果を選択してください');const data={id:selected,mode:Number($('mode').value),points_xy_m:JSON.parse($('points').value)};if(id==='probe')download(await api(action,data,true),name);else download(new Blob([JSON.stringify(await api(action,data),null,2)+'\n'],{type:'application/json'}),name);});
 for(const input of document.querySelectorAll('.editor input,.editor select,.editor textarea'))input.addEventListener('input',()=>{$('dirty').textContent='未保存の編集';});
 window.addEventListener('beforeunload',()=>{if(imageURL)URL.revokeObjectURL(imageURL);});
-run(async()=>{loadProject(await api('planar-normalize',{document:fresh()}));await refresh();const id=new URLSearchParams(location.search).get('job');if(id)await openResult(id);})();
+run(async()=>{loadProject(await api('planar-normalize',{document:fresh()}));await refresh();const query=new URLSearchParams(location.search),id=query.get('job');if(id)await openResult(id);if(query.has('mode')){const mode=Number(query.get('mode'));if(!result||!Number.isInteger(mode)||mode<1||mode>result.modes.length)throw Error('表示モードは保存帯の有効な順位を指定してください');$('mode').value=mode;showQuantities();}})();
 let refreshing=false;setInterval(async()=>{if(refreshing)return;refreshing=true;try{await refresh();}catch(error){failure(error);}finally{refreshing=false;}},1500);
 
 let selectedStudy=null,currentStudy=null;

@@ -11,6 +11,7 @@ from .jobs import _implementation_hashes, read_job
 from .planar_jobs import _native_hashes, KIND
 from .planar_project import PlanarProject
 from .project import parse_json
+from .gui_planar_curved import ACTIONS as CURVED_ACTIONS, planar_curved_response
 
 ACTIONS = {
     'planar-normalize-tune': ['request'], 'planar-start-tune': ['request','max_new_trials'],
@@ -36,11 +37,14 @@ ACTIONS = {
     'planar-probe-metadata': ['id', 'mode', 'points_xy_m'],
     'planar-download': ['id', 'file'],
 }
+ACTIONS.update(CURVED_ACTIONS)
 
 
 def planar_response(manager, action, data, render_lock, plot_cache):
     """Return payload and media type; caller enforces local session authentication."""
     if action not in ACTIONS: raise ValueError('unknown planar operation')
+    if action in CURVED_ACTIONS:
+        return planar_curved_response(manager,action,data),'application/json; charset=utf-8'
     if action in ('planar-normalize-tune','planar-start-tune','planar-resume-tune','planar-replay-tune',
                   'planar-tune-result','planar-tune-checkpoints','planar-open-tune-checkpoint','planar-tune-trial'):
         from .gui_planar_tuning import planar_tuning_response

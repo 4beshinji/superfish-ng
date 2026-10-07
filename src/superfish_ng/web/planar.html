@@ -3,7 +3,7 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Superfish-NG — 平面RF</title><link rel="stylesheet" href="/style.css"><script defer src="/planar.js"></script></head>
 <body>
 <header><div><span class="eyebrow">CARTESIAN CUTOFF RF WORKSPACE</span><h1>平面RF</h1></div><p>xy断面の場と壁損失<br><small>真空・単一PEC境界 / TE・TM / 遮断問題</small></p></header>
-<nav aria-label="ファイル操作">
+<nav aria-label="ファイル操作"><a href="/planar-curved.html">曲線の比較・調整</a>
       <a href="/magnetic.html">磁気後処理報告</a><a href="/">軸対称ワークスペース</a><button id="new">矩形を新規作成</button><label class="file">Projectを開く<input id="open" type="file" accept=".json"></label><button id="save">Projectを保存</button><span id="dirty" role="status"></span><a href="/static.html">静電場・静磁場</a><a href="/static-study.html">静的Study</a></nav>
 <div id="error" role="alert" hidden></div>
 <main><div class="editor"><section><h2>断面と計算条件</h2>
@@ -17,7 +17,7 @@
 <label>モード数<input id="modes" type="number" min="1" step="1"></label>
 <label>単位長エネルギー U′ [J/m]<input id="energy" type="number" step="any"></label>
 <label>壁導電率 [S/m]<input id="conductivity" type="number" step="any"></label>
-<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。曲線・材料・穴・伝搬は未対応です。平面のモード追跡は下の専用操作で行います。</p>
+<button id="start" class="primary">計算を開始</button><p>断面に一様な縦方向、伝搬定数0。材料・穴・伝搬は未対応です。<a href="/planar-curved.html">曲線の比較・調整</a>は専用画面で行います。直線平面のモード追跡は下の操作を使います。</p>
 <details><summary>Project JSONを編集</summary><textarea id="document" rows="18" aria-label="Project JSON"></textarea><button id="apply">JSONを適用</button><p>座標は表示単位によらずSIのmです。フォームへの反映には「JSONを適用」を押してください。</p></details>
 </section><section><h2>保存結果の取込</h2><label>ローカルnativeまたはジョブのディレクトリ<input id="import-path" type="text"></label><button id="import">保存結果を取り込む</button><p>保存係数と元メッシュを保持して検証します。新たな計算は「計算を開始」で行います。</p></section></div>
 <div><section id="tune-panel"><h2>周波数を調整する</h2>

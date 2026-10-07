@@ -25,21 +25,27 @@ ASSETS = Path(__file__).with_name("web")
 _REQUEST_BYTES = 4 * 1024 * 1024
 _CHECKPOINT_REQUEST_BYTES = 64 * 1024 * 1024
 _CHECKPOINT_ACTIONS = frozenset(("hphi-replay-tune", "hphi-resume-tune", "hphi-tune-trial"))
+_CURVED_PLANAR_CHECKPOINT_BYTES = 128 * 1024 * 1024
+_CURVED_PLANAR_CHECKPOINT_ACTIONS = frozenset(("planar-curved-replay-tune", "planar-curved-resume-tune", "planar-curved-tune-trial"))
 
 
-def read_api_request(stream, content_length):
+def read_api_request(stream, content_length, *, action_hint=None):
     """Read a bounded authenticated API envelope, preserving strict JSON parsing."""
     size = int(content_length)
-    if not 0 < size <= _CHECKPOINT_REQUEST_BYTES:
-        raise ValueError("request must be between 1 byte and 64 MiB")
+    large_curve = action_hint in _CURVED_PLANAR_CHECKPOINT_ACTIONS
+    limit = _CURVED_PLANAR_CHECKPOINT_BYTES if large_curve else _CHECKPOINT_REQUEST_BYTES
+    if not 0 < size <= limit:
+        raise ValueError(f"request must be between 1 byte and {limit // (1024 * 1024)} MiB")
     raw = stream.read(size)
     if len(raw) != size:
         raise ValueError("request body is shorter than Content-Length")
     data = parse_json(raw)
     if not isinstance(data, dict):
         raise ValueError("request must be an object")
-    if size > _REQUEST_BYTES and (not isinstance(data.get("action"), str) or data["action"] not in _CHECKPOINT_ACTIONS):
-        raise ValueError("request exceeds 4 MiB; only Hphi checkpoint replay, resume and trial import allow up to 64 MiB")
+    if large_curve and data.get('action') != action_hint:
+        raise ValueError('curved checkpoint action header differs from the strict request action')
+    if size > _REQUEST_BYTES and (not isinstance(data.get("action"), str) or data['action'] not in _CHECKPOINT_ACTIONS | _CURVED_PLANAR_CHECKPOINT_ACTIONS):
+        raise ValueError("request exceeds 4 MiB; only dedicated checkpoint replay, resume and trial import allow larger bodies")
     return data
 
 
@@ -132,6 +138,8 @@ def create_server(workspace, port=0):
                 "/style.css": "style.css",
                 "/planar.html": "planar.html",
                 "/planar.js": "planar.js",
+                "/planar-curved.html": "planar-curved.html",
+                "/planar-curved.js": "planar-curved.js",
                 "/hphi.html": "hphi.html",
                 "/hphi.js": "hphi.js",
                 "/magnetic.html": "magnetic.html",
@@ -161,7 +169,8 @@ def create_server(workspace, port=0):
             if self.path != "/api":
                 return self.reply({"error": "not found"}, 404)
             try:
-                data = read_api_request(self.rfile, self.headers.get("Content-Length", "0"))
+                data = read_api_request(self.rfile, self.headers.get("Content-Length", "0"),
+                                        action_hint=self.headers.get('X-NG-Action'))
                 action = data.get("action")
                 allowed = {
                     "assess-rf-peaks": ["id", "mode"],

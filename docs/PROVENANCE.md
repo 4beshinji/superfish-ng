@@ -1,3 +1,5 @@
+2026-10-07 P09専用GUI：[元E/H/ID履歴・停止checkpoint・実調整再開](PLANAR_CURVED_GUI.md)。先行自作曲線専用worker/全物理再生をlocalhostへ接続し、中立なGUI輸送/JSON保存/元native取り込みとbrowser資源管理を再利用。科学kernel/gate不変、反射parity/rank・実逆尺度/真doublet・全元byteが独立対照。API新8＋関連6、実Chrome6＋1/render-only1を分割受入、元ERROR/FAILと作成時2asset版を保全。16job/768 entry/420 creator監査、元417源中412/全123カード不変。新外部資料/依存/legacy参照なし。残る実GUI/全条件と全goalは継続。
+
 2026-10-07 P09所有調整CLI-worker：[元九byte/creator・停止checkpoint・実取消し/再開](PLANAR_CURVED_TUNING_JOBS.md)。自作曲線FEM/元E/H/guard/ID回復/所有再生へ接続し、中立な状態/hash/claim/子プロセスと純粋な二分判断を再利用。取消し後の要求束縛を別submission/start記録で保持し、コピーに新求解を帰属させない。円Bessel絶対f/二gate/逆尺度と真TE縮退を独立対照とし、trial元全RF/場を再検証。新8＋関連5分割受入、元416源中414/全123カード不変。試験後片付けERROR/相対path FAILと全rawを保持、新外部資料/依存/legacy参照なし。実GUI/全goalは継続。
 
 2026-10-07 P09独立履歴CLI-worker：[元二点/job・native/ID連鎖・実過去anchor・回復/延長](PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。自作曲線所有履歴/回復核と比較workerの完全再生へ接続し、中立なジョブ状態/hash/copy/子プロセス管理を共有。元creator/claim/全byteを保持し、対応PASSを離散精度の保証と数えない。新8＋関連5分割PASS、元415源中413不変・変更はjobs/cli入口追加のみ、全123カード不変。実取消し/回復/延長/再起動/移動・全CLI・生存中元source移動と17job/73snapshot監査を受入。API不在と変異rawを保持、新外部資料/依存/legacy参照なし。調整CLI-worker/checkpoint・実GUIは継続。

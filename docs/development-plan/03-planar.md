@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **専用GUI leaf（2026-10-07）**：[専用曲線GUI・元E/H/ID履歴・停止checkpoint選択/実再開](../PLANAR_CURVED_GUI.md)。19 strict操作/専用ページを接続し、新API8種類＋関連6種類を分割受入。実Chrome調整6＋再開1項目、表示修正後render-only1項目PASS。socket権限ERROR/検証器readiness・scope ERROR/監査器path・heading誤りと元rawを保持し、不足だけ補完。16完了job/768 entry/全420 creator源・元五byte import/九byte prefix監査PASS、元417源中412/全123カード不変。全handle/両server終端、Chrome slot 0/外部要求0。次は実Chrome比較・履歴回復/延長・取消し、受入円/TE大容量checkpointとP09全条件監査。全goal継続。
+
 - **所有調整操作leaf（2026-10-07）**：[所有調整CLI-worker・停止checkpoint・実取消し/再開・移動再生](../PLANAR_CURVED_TUNING_JOBS.md)。元九byte/creator/claimと投入要求を保持し、ゼロ/途中失敗prefix、再hash/kind/claim拒否、円TMの実最終細分・両gate・独立Bessel絶対差を確認。新8＋関連5を分割受入、実running取消し−15/再開worker0、元source生存中移動・管理器再起動、CLI PAUSED=0/真doublet UNVERIFIED=1もPASS。試験の管理器後片付けERROR/関連相対path FAILを保持し不足各1件だけ補完。9完了job/15trial snapshot監査PASS、元416源中414不変・jobs/cli入口追加のみ、全123カード不変。全handle/worker実終端。次は実GUIとP09全条件監査。全goal継続。
 
 - **独立履歴操作leaf（2026-10-07）**：[CLI-worker・過去anchor回復/延長・実取消し/再起動・移動再生](../PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。新8＋関連5分割PASS。元二点/比較job全byte、native/ID連鎖と実anchor、親不変、true doublet/guard/max停止、再hash回復f拒否を確認。実worker取消し−15/新履歴・回復・延長0、CLI全経路/移動再生もPASS。生存中元source移動の強化1件115.147秒も追加PASS。17完了job/73二点snapshot監査PASS、元415源中413と全123カード不変。調整worker/checkpoint/実GUIと全条件監査は継続。

@@ -1,3 +1,5 @@
+P09専用曲線GUIは `test_gui_planar_curved` 新8種類と直接利用先6種類を分割受入。strict要求、元byte/遅い変異、実anchor回復/延長、停止checkpoint/ゼロprefix/新job再開/生存中元source移動、実順位import、真doublet nullと認証HTTP/128 MiB限定輸送を確認。実Chrome調整6＋再開1、表示修正後render-only1項目も分割PASS。socket権限ERRORと検証器途中ERRORを保全し不足だけ補完。[コマンド・実終端・byte監査・未確認範囲](PLANAR_CURVED_GUI.md)。実Chrome比較/履歴/取消し、大容量円/TE科学checkpointとP09全条件は後続。
+
 P09所有調整CLI-workerは `test_planar_curved_tuning_jobs` 新8種類、関連旧調整worker2/所有曲線prefix1/共通seed完了1/専用履歴CLI1の5種類を分割受入。元九byte/creator、失敗prefix/停止selector、実取消し/新job/管理器再起動/移動、再hash拒否、円TMの両gate/独立絶対fと真doubletのnull/CLI終了1を確認。試験後片付けERRORと関連相対path FAILを保全し不足だけ補完。[全コマンド・実終端・最終byte監査・範囲](PLANAR_CURVED_TUNING_JOBS.md)。実GUIとP09全条件監査は後続。
 
 P09独立履歴CLI-workerは `test_planar_curved_tracking_history_jobs` 新8、関連旧平面履歴CLI/worker/kind3・先行曲線比較job1・共通seed完了1の5種類を分割受入。元byte/実anchor/親不変/回復→延長・true doublet/guard/max停止、変異/再hash回復f拒否、実running取消し/管理器再起動/全CLI/移動再生を確認。[全コマンド/実終端/17job・73snapshot/生存中元source移動監査/範囲](PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。調整worker・実GUIは後続。
