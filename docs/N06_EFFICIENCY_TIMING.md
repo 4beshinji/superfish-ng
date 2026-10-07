@@ -46,3 +46,22 @@ tempの新二源を含む1202源を固定した。主全validateの1405対象源
 主数値ジョブ終端後に同一byteで統合し、専用validatorの入力/共通初期領域・
 物理参照・選択/全域確認・全stage計測/予算・保存へ接続する。
 12実行の実精度/費用と失敗保全が揃うまでN06を閉じない。
+
+## 独立丸め参照の共有準備
+
+受入済みN03丸め参照のGauss16/24（全22528/50688体積点＋物理軸）を、
+全三h水準/全五モードを保持した二つのNPZへ詰め替えた。
+元N03のコンパクト報告/元全field報告の一致、1199源（変更前三源はarchiveへ明示解決）、
+全bound入力/現代参照byte、元fieldsの名前/順序/単位を確認した。
+元参照読み手と完全AST一致の関数で、実保存NG fieldsを96空間点/480場vectorで再評価し、
+元診断値と全成分の**完全一致**を確認した。NPZはallow_pickle=Falseで全配列を
+再読込して元値と完全一致。標本削除・係数/規格化/閾値変更はない。
+
+これは新固有値求解0・新全grid場標本0の共有参照準備で、12native benchmarkには数えない。
+旧の有限Gauss診断の適用範囲/元reference選択IDをそのまま保持し、
+新しい連続誤差やpeak認証を作らない。N06の実native経路への接続は未実施。
+計測器の実consumerとしてrecorder-lifetimeは4.562449秒、process peak RSSは1340436480 bytes。
+この秒には既に済んだimport/過去参照求解を含めず、外側/共有費用として別に計測/記録する。
+Matplotlib importは書込不能の既定cacheから一時/tmpへfallbackした旨の元logを保持した。
+主1405源とtemp計測器は前後不変、元7unitの後のsource変更/反復はない。
+rawは `rounded-reference-grid/manifest.json`、二NPZ、`reference-grid-export-acceptance.json`。
