@@ -1,3 +1,5 @@
+2026-10-07 D05仕様受入：[RF探索の量・能力・未評価条件](RF_OPTIMIZATION_SCOPE.md)。現行六量と追加物理の定義/単位/明示方向/N/A・未実装を分離し、未収束を採用しない全体predicateと初期/最終の独立三水準を固定した。静的磁石/熱はL02/L03。読取監査のみ、製品420源不変、既存fullの関連結果を再利用し、新FEM/unit/seed/full/legacy実行0。全123カードはD05だけDONEへ変更（63 DONE/2 IN_PROGRESS/58 PLANNED）、親D03・原互換32要件・全goalは継続。次はD09、C07-planarは参照環境情報待ち。
+
 2026-10-07 C07-planar元領域表：[polygon/P04区分試行/P08曲線/P09尺度・非一様・doubletのhash束縛](PLANAR_SUPERFISH_COMPARISON.md#元多角形全二次領域と操作条件のケース表)。元入力16＋矩形6=22行/106入力の生成は終了3、元case byte保持、生成内FEM/物理再生0・旧新規実行0。前回NG commandの汎用solve拒否を終了2で再現し、solve-planarへ修正。新4＋前回12の16件1.097秒PASS、読込エラー処理追加後の関連4件0.292秒PASS（再検査として区別）。局所矩形CLI/FEM計2回で解析f/1 J/m/両R/QのN/Aを確認。旧四量/全受入軸/実mode対応はUNVERIFIED、曲線/任意polygon AF未用意をnull/理由付きで保存。製品420源/全123カード不変、C07-planarと全goalは継続。
 
 2026-10-07 C07-planar着手：[矩形二尺度TE10/TE01/TM11の参照比較準備](PLANAR_SUPERFISH_COMPARISON.md)。既存入口に明示prepare-onlyを接続し、新5＋既存比較7の12件0.772秒は終了0。候補6ケース/18水準/90入力の生成は終了3（UNVERIFIED）、旧/NG新求解0、実モード対応・四量・F/I/O/N/Wを全未確認で保存。Wine/旧prefix不在、7.17偏波/単位長規約を推測して変換しない。C07-planar IN_PROGRESS、曲線/多角形の条件表は後続。P09受入源/全検証をこの限定実行と重複集計せず、製品src不変。全123カードは62 DONE/2 IN_PROGRESS/59 PLANNED、全goal継続。

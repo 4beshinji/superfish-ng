@@ -72,6 +72,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## D05
 
+2026-10-07 **DONE**。[目的量/制約仕様](../RF_OPTIMIZATION_SCOPE.md)の全原条件を読取監査で受入。現行六量/追加能力/N/A・全体未収束predicate・独立三水準・L02/L03分離を照合。製品420源不変、既存full関連結果を再利用し新数値実行0。rawは `out/d05-rf-optimization-scope-20261007/acceptance.json`。次はD09、親D03/全goalは継続。
+
 ### D03の目的量と制約の残要件を固定する
 
 - **親課題**：D03。**種別**：仕様。初期状態：未着手。
