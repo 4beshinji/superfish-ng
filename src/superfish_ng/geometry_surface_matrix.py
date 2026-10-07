@@ -13,7 +13,7 @@ import json
 import math
 from pathlib import Path
 
-from .config import keys
+from .config import Case,keys
 from .curved_same_domain_tracking import compare_quadratic_boundaries
 from .geometry_surface_fields import compare_geometry_surface_fields, _native_snapshot, validate_native_resources
 from .geometry_surface_plan import build_geometry_surface_plan, _path, _bytes, _equal, _sha, _source_hashes
@@ -88,24 +88,41 @@ def assess_matrix_evidence(groups, geometry_fields, *, finite_peak_required):
 
 def _descriptor(request, root):
     version = request.get('schema_version') if isinstance(request, dict) else None
-    if type(version) is not int or version not in (1, 2, 3):
-        raise ValueError('geometry surface matrix request requires schema_version 1, 2 or 3')
-    if version in (1, 3):
+    if type(version) is not int or version not in (1, 2, 3, 4):
+        raise ValueError('geometry surface matrix request requires schema_version 1, 2, 3 or 4')
+    if version in (1, 3, 4):
         fields = ('schema_version', 'document_type', 'plan_request', 'runs')
-        if version==3:fields+=('native_tracking_resources',)
+        if version in (3,4):fields+=('native_tracking_resources',)
+        if version==4:fields+=('uniform_fem_levels','identity_prefix_runs')
         keys(request, fields, fields, 'geometry surface matrix request')
         _equal(request['document_type'], 'geometry_surface_matrix_request', 'matrix document type')
         plan = build_geometry_surface_plan(request['plan_request'], base_directory=root)
         if len(plan['cases']) != 1:
             raise ValueError('matrix plan_request must select exactly one complete catalog case')
         case = plan['cases'][0]
-        data = dict(case_id=case['id'], expected_cases=[[r['case'] for r in group] for group in case['matrix']],
+        levels=[0,1,2];prefix=[];resource_cap=8388608
+        if version==4:
+            levels=request['uniform_fem_levels']
+            if (type(levels) is not list or len(levels)!=3 or any(type(v) is not int for v in levels)
+                    or levels!=list(range(levels[0],levels[0]+3)) or not 0<=levels[0]<=2):
+                raise ValueError('uniform_fem_levels requires three adjacent integer levels within 0..4')
+            prefix=request['identity_prefix_runs'];resource_cap=16777216
+            if type(prefix) is not list or len(prefix)!=levels[0]:
+                raise ValueError('identity_prefix_runs must retain every original level from 0 to the declared first level minus one')
+        original_cases=[[r['case'] for r in group] for group in case['matrix']]
+        expected=original_cases if version!=4 else [[replace(Case.from_dict(c),curved_refinement_levels=level).to_dict()
+            for c,level in zip(group,levels)] for group in original_cases]
+        prefix_expected=[replace(Case.from_dict(original_cases[0][0]),curved_refinement_levels=level).to_dict()
+                         for level in range(levels[0])]
+        data = dict(case_id=case['id'], expected_cases=expected,
                     initial_ids=case['initial_ids'], target_id=case['target_mode_id'],
                     finite_peak_required=case['finite_peak_required'], reference=case['physical_reference'],
                     moments=(case['independent_geometry']['meridian_area_m2'], case['independent_geometry']['rotational_volume_m3']),
                     geometry_diagnostic=case['geometry_diagnostic'], plan=plan,
                     historical=None, historical_source=None, native_policy='N01_strong_individual_ids',
-                    native_resources=None if version==1 else validate_native_resources(request['native_tracking_resources']))
+                    native_resources=None if version==1 else validate_native_resources(request['native_tracking_resources'],maximum_budget=resource_cap),
+                    uniform_fem_levels=deepcopy(levels),native_resource_budget_limit=resource_cap,
+                    identity_prefix_paths=[None if p is None else _path(p,root) for p in prefix],identity_prefix_cases=prefix_expected)
         runs = request['runs']
     else:
         fields = ('schema_version', 'document_type', 'archive_report')
@@ -126,11 +143,12 @@ def _descriptor(request, root):
                                    reason='original NG ellipse is a historical diagnostic, never an independent Maxwell or physical-peak reference'),
                     moments=ellipsoid_moments(.1, .08), geometry_diagnostic=None, plan=None,
                     historical=historical, historical_source=dict(path=str(path), sha256=HISTORICAL_ELLIPSE_SHA),
-                    native_policy='original_single_mode_Study_fields_with_explicit_quadratic_boundary_checks',native_resources=None)
+                    native_policy='original_single_mode_Study_fields_with_explicit_quadratic_boundary_checks',native_resources=None,
+                    uniform_fem_levels=[0,1,2],native_resource_budget_limit=8388608,identity_prefix_paths=[],identity_prefix_cases=[])
     if type(runs) is not list or len(runs) != 3 or any(type(g) is not list or len(g) != 3 for g in runs):
         raise ValueError('runs must contain three geometry rows, each with three uniform FEM entries')
     paths = [[None if p is None else _path(p, root) for p in group] for group in runs]
-    supplied = [p for g in paths for p in g if p is not None]
+    supplied = [p for g in paths for p in g if p is not None]+[p for p in data['identity_prefix_paths'] if p is not None]
     if len(set(supplied)) != len(supplied):
         raise ValueError('matrix runs must identify distinct original native solutions; do not repeat one result')
     return data, paths
@@ -140,11 +158,12 @@ def _unresolved_field(reason):
     return dict(status='UNVERIFIED', reason=reason, comparison=None, previous_mode_index=None, current_mode_index=None)
 
 
-def _field(previous, current, ids, target, mapping, native_resources=None):
+def _field(previous, current, ids, target, mapping, native_resources=None,native_resource_budget_limit=8388608):
     if previous is None or current is None or ids is None or any(i is None for i in ids):
         return _unresolved_field('native source or all individual mode IDs are unavailable'), None
     try:
-        report = compare_geometry_surface_fields(previous, current, ids, mapping=mapping,native_resources=native_resources)
+        report = compare_geometry_surface_fields(previous, current, ids, mapping=mapping,native_resources=native_resources,
+            native_resource_budget_limit=native_resource_budget_limit)
     except ValueError as error:
         if 'UNVERIFIED' not in str(error):
             raise
@@ -157,6 +176,22 @@ def _field(previous, current, ids, target, mapping, native_resources=None):
     match = matches[0]
     return dict(status=match['status'], comparison=report,
                 previous_mode_index=match['previous_mode_index'], current_mode_index=match['current_mode_index']), next_ids
+
+
+def _prefix_identity(prefix, first, initial_ids, target, resources, resource_cap):
+    """Carry actual Hphi IDs from the original level0; no rank relabeling."""
+    if not prefix:
+        ids=deepcopy(initial_ids) if first is not None else None
+        comparisons=[]
+    else:
+        ids=deepcopy(initial_ids) if prefix[0] is not None else None
+        comparisons=[]
+        for a,b in zip(prefix,prefix[1:]+[first]):
+            field,ids=_field(a,b,ids,target,'curved_same_domain',resources,resource_cap)
+            comparisons.append(field)
+    resolved=ids is not None and all(i is not None for i in ids)
+    return dict(status='PASS' if resolved else 'UNVERIFIED',current_ids=ids,comparisons=comparisons,
+        scope='actual complete individual Hphi ancestry from original level0; prefix field accuracy recorded separately, not a new convergence interval')
 
 
 def _row(solution, ids, target, run):
@@ -213,8 +248,11 @@ def _historical_compatibility(groups, geometry_fields, descriptor):
 def build_geometry_surface_matrix(request, *, base_directory=None):
     root = Path.cwd() if base_directory is None else Path(base_directory).resolve()
     source = _source_hashes(); descriptor, paths = _descriptor(request, root)
-    flat = [p for g in paths for p in g if p is not None]; before = [_native_snapshot(p) for p in flat]
+    flat = [p for g in paths for p in g if p is not None]
+    prefix_paths=descriptor['identity_prefix_paths'];prefix_flat=[p for p in prefix_paths if p is not None]
+    all_paths=flat+prefix_flat;before = [_native_snapshot(p) for p in all_paths]
     solutions = [[None if p is None else read_solution(p) for p in group] for group in paths]
+    prefix=[None if p is None else read_solution(p) for p in prefix_paths]
     expected = descriptor['expected_cases']; physical = None
     for g, group in enumerate(solutions):
         base = None; mesh = None
@@ -229,8 +267,10 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
                 from .geometry_surface_plan import _independent_geometry
                 curve = _independent_geometry(dict(axial_semiaxis_m=.1, radial_semiaxis_m=.08))
                 _equal(case.curved_contour.to_dict()['curves'], curve['curves'], 'original ellipse whole meridian')
-            if case.curved_refinement_steps or case.curved_refinement_levels != level:
-                raise ValueError('matrix requires uniform FEM levels 0/1/2, without changed local history')
+            if case.curved_refinement_steps or case.curved_refinement_levels != descriptor['uniform_fem_levels'][level]:
+                if request['schema_version']!=4:
+                    raise ValueError('matrix requires uniform FEM levels 0/1/2, without changed local history')
+                raise ValueError('matrix requires its declared uniform FEM levels, without changed local history')
             raw = replace(case, curved_refinement_levels=0).to_dict()
             if base is None: base, mesh = raw, solution.source_mesh_data
             if raw != base or solution.source_mesh_data != mesh:
@@ -241,6 +281,15 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
                 raise ValueError('all geometry/FEM points require identical whole physical Cases')
     groups, coarse_links, ids_grid = [], [], []
     ids = descriptor['initial_ids']; target = descriptor['target_id']; historical = descriptor['historical'] is not None
+    prefix_report=None
+    if request['schema_version']==4:
+        family=[s for s in prefix+solutions[0] if s is not None]
+        for solution,expected in zip(prefix,descriptor['identity_prefix_cases']):
+            if solution is not None:_equal(solution.case.to_dict(),expected,'complete original identity prefix Case')
+        if family and any(s.source_mesh_data!=family[0].source_mesh_data for s in family):
+            raise ValueError('identity prefix must retain the exact original source mesh of the first geometry row')
+        prefix_report=_prefix_identity(prefix,solutions[0][0],ids,target,descriptor['native_resources'],descriptor['native_resource_budget_limit'])
+        ids=prefix_report['current_ids']
     for g, group in enumerate(solutions):
         if g:
             link, ids = _field(solutions[g-1][0], group[0], ids_grid[g-1][0], target, 'analytic_geometry_approximations')
@@ -251,7 +300,7 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
             if a is None or b is None: boundaries.append(None)
             else:
                 compare_quadratic_boundaries(a, b); boundaries.append(True)
-            field, ids = _field(a, b, row_ids[-1], target, 'analytic_geometry_approximations' if historical else 'curved_same_domain',descriptor['native_resources'])
+            field, ids = _field(a, b, row_ids[-1], target, 'analytic_geometry_approximations' if historical else 'curved_same_domain',descriptor['native_resources'],descriptor['native_resource_budget_limit'])
             fields.append(field); row_ids.append(ids)
         ids_grid.append(row_ids)
         rows = [_row(s, identity, target, p) for s, identity, p in zip(group, row_ids, paths[g])]
@@ -275,7 +324,7 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
         geometry_fields.append(field)
     assessment = assess_matrix_evidence(groups, geometry_fields, finite_peak_required=descriptor['finite_peak_required'])
     compatibility = _historical_compatibility(groups, geometry_fields, descriptor)
-    if before != [_native_snapshot(p) for p in flat] or source != _source_hashes():
+    if before != [_native_snapshot(p) for p in all_paths] or source != _source_hashes():
         raise ValueError('geometry surface matrix native/implementation sources changed during assessment')
     if descriptor['historical_source'] is not None:
         bound = descriptor['historical_source']
@@ -289,6 +338,8 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
     else:
         normalized['plan_request'] = descriptor['plan']['request']
         normalized['runs'] = [[None if p is None else str(p) for p in group] for group in paths]
+        if request['schema_version']==4:
+            normalized['identity_prefix_runs']=[None if p is None else str(p) for p in prefix_paths]
     result=dict(schema_version=request['schema_version'], document_type='geometry_surface_matrix', request=normalized,
                 status=assessment['status'], case_id=descriptor['case_id'], target_mode_id=target,
                 native_policy=descriptor['native_policy'], sources=before, implementation_sha256=source,
@@ -299,10 +350,15 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
                 planned_native_points=9, supplied_native_points=len(flat), new_fem_solves=0,
                 physical_acceptance_status='UNVERIFIED', physical_error_bound=None,
                 scope='source-identified native 3x3 matrix, target-only convergence with all individual IDs required, separate geometry/FEM/quadrature/field/discrete peak gates; no independent physical-peak guarantee')
-    if request['schema_version']==3:
+    if request['schema_version'] in (3,4):
         # Preserve the configured resources in the assessment even when no
         # native nodes were supplied; the request and report must agree.
         result['native_tracking_resources']=deepcopy(descriptor['native_resources'])
+    if request['schema_version']==4:
+        result['uniform_fem_levels']=deepcopy(descriptor['uniform_fem_levels'])
+        result['identity_prefix']=prefix_report
+        result['supplied_identity_prefix_points']=len(prefix_flat)
+        result['native_resource_budget_limit']=descriptor['native_resource_budget_limit']
     return result
 
 

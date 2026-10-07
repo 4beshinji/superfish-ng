@@ -128,10 +128,13 @@ def track_curved_same_domain_modes(previous,current,previous_ids,*,mapping,sampl
 
 
 def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None,
-                        sample_budget=262144,uniform_parent_sampling=False,**controls):
+                        sample_budget=262144,uniform_parent_sampling=False,
+                        sample_budget_limit=8388608,**controls):
     if type(sample_order) is not int or not 2<=sample_order<=32:raise ValueError('curved_same_domain sample_order must be an integer from 2 to 32')
-    if type(sample_budget) is not int or not 1<=sample_budget<=8388608:
-        raise ValueError('curved tracking sample_budget must be an integer from 1 to 8388608')
+    if type(sample_budget_limit) is not int or sample_budget_limit not in (8388608,16777216):
+        raise ValueError('curved tracking sample_budget_limit must be 8388608 or 16777216')
+    if type(sample_budget) is not int or not 1<=sample_budget<=sample_budget_limit:
+        raise ValueError(f'curved tracking sample_budget must be an integer from 1 to {sample_budget_limit}')
     if type(uniform_parent_sampling) is not bool:
         raise ValueError('uniform_parent_sampling must be boolean')
     if uniform_parent_sampling and affine is not None:
@@ -155,6 +158,8 @@ def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None
             scope='identical native curve parameterization and coincident represented quadratic boundary; checked adjacent uniform P2 restrictions; sample-order convergence required; not physical convergence acceptance',
             sampling_method='checked_uniform_parent_reference_coordinates',sample_budget=sample_budget,
             parent_polynomial_certificate=sampled['certificate'])
+        if sample_budget_limit!=8388608:
+            report['physical_mapping']['maximum_sample_budget']=sample_budget_limit
         return report
     rule=list(triangle_quadrature(order=sample_order));q=np.array([b[1:] for b,_ in rule]);reference=np.array([w for _,w in rule])
     samplers=[FieldSampler.from_solution(s) for s in solutions];values=[[],[]];weights=[];volumes=[]

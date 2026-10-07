@@ -149,25 +149,32 @@ def _legacy_mode(previous, current, i, j, overlap, identified, axis_error):
                 gates=gates, status=('PASS' if all(gates.values()) else 'FAIL') if verified else 'UNVERIFIED')
 
 
-def validate_native_resources(resources):
+def validate_native_resources(resources,*,maximum_budget=8388608):
     """Explicit computational resources; original field gates remain fixed."""
+    if type(maximum_budget) is not int or maximum_budget not in (8388608,16777216):
+        raise ValueError('native resource budget limit must be 8388608 or 16777216')
     keys(resources, ('sample_budget', 'sampling'), ('sample_budget', 'sampling'), 'native tracking resources')
     budget=resources['sample_budget']
-    if type(budget) is not int or not 1<=budget<=8388608:
-        raise ValueError('native tracking sample_budget must be an integer from 1 to 8388608')
+    if type(budget) is not int or not 1<=budget<=maximum_budget:
+        raise ValueError(f'native tracking sample_budget must be an integer from 1 to {maximum_budget}')
     if resources['sampling']!='uniform_parent_p2':
         raise ValueError('native tracking resources require sampling=uniform_parent_p2; original inverse sampling remains the default')
     return deepcopy(resources)
 
 
-def compare_geometry_surface_fields(previous, current, previous_ids, *, mapping, native_resources=None):
+def compare_geometry_surface_fields(previous, current, previous_ids, *, mapping, native_resources=None,
+                                    native_resource_budget_limit=8388608):
     """Compare provided native fields; saved wrapper additionally verifies FEM/RF.
 
     Polynomial fixtures can exercise this in-memory diagnostic, but are not
     eigenpairs. Only the saved wrapper provides the native eigenpair provenance.
     """
+    if type(native_resource_budget_limit) is not int or native_resource_budget_limit not in (8388608,16777216):
+        raise ValueError('native resource budget limit must be 8388608 or 16777216')
+    if native_resources is None and native_resource_budget_limit!=8388608:
+        raise ValueError('extended native resource budget limit requires explicit native resources')
     if native_resources is not None:
-        native_resources=validate_native_resources(native_resources)
+        native_resources=validate_native_resources(native_resources,maximum_budget=native_resource_budget_limit)
         if mapping!='curved_same_domain':
             raise ValueError('native tracking resources apply only to fixed quadratic domain comparisons')
     boundary = _validate_pair(previous, current, previous_ids, mapping)
@@ -226,6 +233,7 @@ def compare_geometry_surface_fields(previous, current, previous_ids, *, mapping,
                           individual_ids_complete=False)
         else:
             extras={} if native_resources is None else dict(sample_budget=budget,uniform_parent_sampling=True)
+            if native_resource_budget_limit!=8388608:extras['sample_budget_limit']=native_resource_budget_limit
             native = track_curved_same_domain_modes(previous, current, previous_ids, **TRACKING, **extras)
     statuses = [m['status'] for m in modes]
     resolved = len(modes) == previous.case.modes and all(s != 'UNVERIFIED' for s in statuses)
@@ -242,6 +250,8 @@ def compare_geometry_surface_fields(previous, current, previous_ids, *, mapping,
     native_controls=deepcopy(TRACKING) if native is not None else None
     if native_resources is not None and native_controls is not None:
         native_controls['resource_limits']=native_resources
+        if native_resource_budget_limit!=8388608:
+            native_controls['maximum_sample_budget']=native_resource_budget_limit
     return dict(status=status, mapping=mapping, previous_ids=deepcopy(previous_ids), current_ids=current_ids,
                 modes=modes, sampling=sampling, legacy_comparison=legacy_report,
                 native_fixed_geometry_tracking=native, quadratic_boundary_coincidence=boundary,

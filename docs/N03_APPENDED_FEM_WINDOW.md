@@ -14,8 +14,9 @@ catalogの `fixed_geometry_fem_requirement` は元meshを保ったuniform追加�
 元source meshと各P2境界の一致、元1199源の不変を確認した。
 この時点では実ID・RF・ピーク・求積・独立物理の受入は別に残る。
 
-主ツリーの公開要求は版1/2/3。版4は
-`/tmp/superfish-ng-n03-appended-matrix-20261007` の別作業ツリーで検証中である。
+主ツリーの公開要求は版1/2/3/4。版4は
+`/tmp/superfish-ng-n03-appended-matrix-20261007` の別作業ツリーで検証し、
+独立比較の全ジョブ終端後に、受入源と全1200 Pythonファイルのbyte一致を確認して統合した。
 新7＋直接3の10個別unitは分割PASS。元バージョンと科学核/RF定義・許容差は維持する。
 版4を拒否するbaseline、kinematic順位交換・真の縮退/欠測、完全Case/source不一致の
 sample前拒否、保存完全再生・排他/CLI、旧版3/既定逆写像を確認した。
@@ -23,7 +24,9 @@ sample前拒否、保存完全再生・排他/CLI、旧版3/既定逆写像を�
 実保存九点＋ID来歴二点の評価は、同じtemp源1200を固定して1034.638秒・終了0でPASS。
 新FEM0、全三ID・全場・求積・幾何不変量・五量の二区間が成立した。
 幾何2の最終二R/Q変化は0.1285%/0.01598%、元0.5%条件内。
-元0/1/2のFAILと六追加nativeの費用を保持し、主ツリーへの源統合と最終独立照合は後続。
+元0/1/2のFAILと六追加nativeの費用を保持する。
+最終FEM4の独立照合は1017.615秒・終了0・PASS、元1199源/参照全byte不変。
+[五系列の元条件監査と範囲](N03_PHYSICAL_SERIES.md)を参照。
 
 ## 要求と判定
 
@@ -69,7 +72,9 @@ locator toleranceを1e-6〜1e-12に下げても同じ点が失敗することを
 `conic-polar-fan-preflight.json` は二形状×参照三水準の六件PASS。
 実領域の体積差は最大1.866e-14、全標本・極付近の実field lookupは欠測0、新固有値求解0。
 これは幾何/lookupの確認であり、場・RF精度の受入ではない。
-有限Gauss16/24の全比較を、失敗した二形状だけ再評価中。
+有限Gauss16/24の全比較を、失敗した二形状だけ再評価した。
+元ellipseはPASS、元prolateは場/参照二区間/RF一致PASSでも元native行列FAILを保つ。
+追加prolateのFEM4照合は別報告でPASS。元失敗の報告を上書きしない。
 
 細かいnativeの点検索には [SciPy cKDTree](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.html)
 で全AABBを囲む半径による候補検索を使い、その後元AABB条件・元inverseを適用する。
@@ -77,5 +82,9 @@ eps=0、候補番号順と既存30 iteration/1024 boxを保ち、16点で全候�
 既存samplerとの場一致も検査する。場や許容差の変更ではない。
 実装はraw検証器のみで、製品のsampler/依存は変更しない。
 
-追加全行列と独立二形状が終端した後、元カード条件への証拠を照合し、
-必要な修正・統合・ローカルコミットを続ける。N03/親G03/原123カード/互換32要件/全goalは未完。
+追加全行列と独立二形状は終端し、元カード条件の五系列監査もPASS。
+統合前の旧三源を `before-appended-main-integration/` に保存した。
+統合前flightの相対manifestキーにabsolute relative_toを適用した検査側ValueErrorを保全し、
+源を書き換える前にキー形式を修正した。数値再実行・許容差変更はない。
+統合源は検証済みtemp commit `81bce60` と同一、新unit/FEM再実行0。
+節目の全validate受入は後続。N03/親G03/原123カード/互換32要件/全goalは未完。
