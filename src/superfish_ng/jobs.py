@@ -68,6 +68,10 @@ def read_job(directory, verify=True):
             return state
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_curved_tuning_jobs import is_planar_curved_tune, verify_planar_curved_tune_job
+        if is_planar_curved_tune(directory, state, manifest):
+            verify_planar_curved_tune_job(directory, state, manifest)
+            return state
         from .planar_curved_tracking_history_jobs import is_planar_curved_history, verify_planar_curved_history
         if is_planar_curved_history(directory, state, manifest):
             verify_planar_curved_history(directory, state, manifest)
@@ -474,6 +478,11 @@ class JobManager:
         """Own original Cartesian P2 pairs and replay their chain in a worker."""
         from .planar_curved_tracking_history_jobs import start_planar_curved_history
         return start_planar_curved_history(self, paths, request)
+
+    def start_planar_curved_tune(self, request, *, max_new_trials=None, checkpoint=None):
+        """Run owned Cartesian P2 tuning and resume only a verified paused prefix."""
+        from .planar_curved_tuning_jobs import start_planar_curved_tune
+        return start_planar_curved_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
 
     def extend_planar_curved_history(self, history, next_pair, *, recovery=None):
         """Extend a fully replayed curved history into a new immutable job."""

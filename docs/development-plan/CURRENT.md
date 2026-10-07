@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07/P08全条件受入済み、P09の所有調整API・二点/独立履歴CLI-workerまで受入、調整CLI-worker/checkpointとGUIを継続。
+更新：2026-10-07、P07/P08全条件受入済み、P09の二点/独立履歴/所有調整CLI-worker・停止checkpointまで受入、実GUIと全条件監査を継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -70,7 +70,13 @@ native五/完了job九/import job八の元byte/Project/creator/claimを保持し
 実running取消し−15→新履歴・回復・延長worker全0、管理器再起動/移動後全再生と全CLI/終了コードも確認。
 生存中の元native/二点移動もworker caseだけを強化して1件115.147秒追加PASS、他7新method不変。
 最終監査PASS：17完了履歴job/73二点snapshot、全416作成源、元415源の変更はjobs/cli入口追加のみ、413源/全123カード不変。
-P09はIN_PROGRESS、次は調整CLI-worker・checkpoint/実取消し/再開・実GUIと全条件監査。不変量を先に再現し、
+[所有調整CLI-worker](../PLANAR_CURVED_TUNING_JOBS.md)も新8＋関連5を分割受入。
+元九byte/creator/claim、停止checkpointの要求/投入prefix束縛とゼロ/途中失敗の再開、再hash/kind拒否を確認。
+円TM実FEMの独立絶対差2.764e-5と両gate、真TE doubletのnull/UNVERIFIED、全CLIと移動再生がPASS。
+実running取消し−15→新worker終了0、旧管理器を閉じて新管理器で再開し、元source生存中移動/再起動を確認。
+後片付けERROR/関連相対path FAILを保全し、不足各1件だけ補完。
+最終監査PASS：9完了job/15trial snapshot、元416源中414/全123カード不変、jobs/cli追加入口のみ。
+P09はIN_PROGRESS、次は実GUIと全条件監査。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
@@ -97,7 +103,9 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-現行checkpoint：[P09独立履歴CLI-worker・回復/延長・実取消し/再起動・移動再生](../PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。新8＋関連5分割受入、最終byte監査終了0。生存処理/製品source固定なし。
+現行checkpoint：[P09所有調整CLI-worker・停止checkpoint・実取消し/再開・移動再生](../PLANAR_CURVED_TUNING_JOBS.md)。新8＋関連5分割受入、最終byte監査終了0。生存処理/製品source固定なし。
+5437/80226/14801/95624/62893/50083/1548/70391と最終監査は全実終端。14801はCLI成功/後片付けERRORの終了1、62893は関連4成功/相対path FAILの終了1を保持し、1548/50083で不足各1件を終了0で補完。実取消しworker−15/再開worker0も回収した。全417製品sourceを最後の数値handle終端まで固定した。
+先行checkpoint：[P09独立履歴CLI-worker・回復/延長・実取消し/再起動・移動再生](../PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。新8＋関連5分割受入、最終byte監査終了0。生存処理/製品source固定なし。
 37608/34617/53610/54618/71078、追加83912と両監査14029/17875は全実終端0。生存handleへの観測timeoutでは同じ実行を追跡し、実終端まで全416製品sourceを固定した。実取消しworker−15/新履歴・回復・延長worker全0も回収し、生存中の元source移動も確認した。
 先行[P09所有比較CLI-worker・実取消し/再起動・移動再生](../PLANAR_CURVED_TRACKING_JOBS.md)も新6種類＋関連10分割受入、最終byte監査終了0。
 61167/39091/75840/95073/41610は全実終端。95073は9成功/指定名読込ERRORの終了1、41610で不足1件を終了0で補完。実取消しworker−15/成功worker0も回収した。

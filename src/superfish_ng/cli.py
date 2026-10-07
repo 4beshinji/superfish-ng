@@ -37,6 +37,12 @@ def main(argv=None):
         if command not in ('replay-tune','replay-tune-planar','replay-tune-hphi','replay-tune-curved-hphi','replay-tune-material-hphi'):
             tuning.add_argument('--out',type=Path,required=True)
             tuning.add_argument('--max-new-trials',type=int)
+    for command in ('tune-planar-curved','resume-tune-planar-curved','replay-tune-planar-curved'):
+        curved_tuning=sub.add_parser(command,help='execute or fully replay owned Cartesian P2 tuning with original fields and both frequency gates')
+        curved_tuning.add_argument('document',type=Path)
+        if command!='tune-planar-curved':curved_tuning.add_argument('--checkpoint-index',type=int,help='select a verified checkpoint from a stopped tuning job')
+        if command!='replay-tune-planar-curved':
+            curved_tuning.add_argument('--out',type=Path,required=True);curved_tuning.add_argument('--max-new-trials',type=int)
     for command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
         adaptive=sub.add_parser(command,help='bisect unverified geometry sweep intervals with explicit limits, or replay all decisions')
         adaptive.add_argument('document',type=Path)
@@ -499,6 +505,32 @@ def main(argv=None):
             project.save(args.out)
             sys.stdout.write(project.dumps())
             return 0
+        if args.command in ('tune-planar-curved','resume-tune-planar-curved','replay-tune-planar-curved'):
+            from .planar_curved_tuning_jobs import execute_planar_curved_tune_job,read_planar_curved_tune_job,read_planar_curved_tune_job_checkpoint
+            from .planar_curved_tuning_saved import read_owned_planar_curved_tune
+            from .planar_curved_tuning_saved import CHECKPOINT_KEYS
+            from .config import keys
+            from .planar_curved_tracking_saved import _load
+            if args.command=='tune-planar-curved':result=execute_planar_curved_tune_job(_load(args.document),args.out,max_new_trials=args.max_new_trials)
+            else:
+                index=args.checkpoint_index
+                if args.document.is_dir():
+                    if index is None:
+                        if args.command=='resume-tune-planar-curved':raise ValueError('resume from a stopped curved job requires --checkpoint-index')
+                        result=read_planar_curved_tune_job(args.document)
+                    else:
+                        result=read_planar_curved_tune_job_checkpoint(args.document,index)
+                        checkpoint=args.document/'execution'/f'checkpoint-{index:03d}.json'
+                else:
+                    if index is not None:raise ValueError('--checkpoint-index applies only to a stopped curved tuning job directory')
+                    checkpoint=args.document;result=None
+                    if args.command=='replay-tune-planar-curved':result=read_owned_planar_curved_tune(checkpoint)
+                if args.command=='resume-tune-planar-curved':
+                    if result is None:
+                        document=_load(checkpoint);keys(document,CHECKPOINT_KEYS,CHECKPOINT_KEYS,'owned curved tune checkpoint');request=document['request']
+                    else:request=result['request']
+                    result=execute_planar_curved_tune_job(request,args.out,max_new_trials=args.max_new_trials,checkpoint=checkpoint)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0 if result['status'] in ('TUNED','PAUSED') else 1
         if args.command in ('execute-planar-curved-history','extend-planar-curved-history','recover-planar-curved-history','replay-planar-curved-history'):
             from .planar_curved_tracking_history import PlanarCurvedTrackingHistoryRequest
             from .planar_curved_tracking_history_jobs import (execute_planar_curved_history,extend_planar_curved_history,

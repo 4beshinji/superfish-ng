@@ -1,3 +1,5 @@
+P09所有調整CLI-workerは `test_planar_curved_tuning_jobs` 新8種類、関連旧調整worker2/所有曲線prefix1/共通seed完了1/専用履歴CLI1の5種類を分割受入。元九byte/creator、失敗prefix/停止selector、実取消し/新job/管理器再起動/移動、再hash拒否、円TMの両gate/独立絶対fと真doubletのnull/CLI終了1を確認。試験後片付けERRORと関連相対path FAILを保全し不足だけ補完。[全コマンド・実終端・最終byte監査・範囲](PLANAR_CURVED_TUNING_JOBS.md)。実GUIとP09全条件監査は後続。
+
 P09独立履歴CLI-workerは `test_planar_curved_tracking_history_jobs` 新8、関連旧平面履歴CLI/worker/kind3・先行曲線比較job1・共通seed完了1の5種類を分割受入。元byte/実anchor/親不変/回復→延長・true doublet/guard/max停止、変異/再hash回復f拒否、実running取消し/管理器再起動/全CLI/移動再生を確認。[全コマンド/実終端/17job・73snapshot/生存中元source移動監査/範囲](PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。調整worker・実GUIは後続。
 
 P09所有比較CLI-workerは `test_planar_curved_tracking_jobs` 新6種類、関連 `test_jobs` 全7/旧平面追跡CLI・worker2/P08曲線CLI1を分割受入。元byte/creator・実running取消し/新job/管理器再起動/移動、kind降格/再hash拒否、CLI PASS=0/UNVERIFIED=1を確認。関連誤指定ERRORは保存し不足1件だけ補完。[全コマンド/実終端/最終監査/範囲](PLANAR_CURVED_TRACKING_JOBS.md)。履歴/調整worker・実GUIは後続。
