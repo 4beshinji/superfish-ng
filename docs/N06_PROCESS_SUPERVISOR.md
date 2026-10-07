@@ -16,7 +16,9 @@ Linux `/proc` のworker VmHWMを標本化し、超過を検出したら専用pro
 猶予後にKILLし、元workerをwait4で回収する。壁時計超過も同じ停止経路を使用する。
 RSS標本間の一時超過は終端wait4の実high-water値で再判定する。
 標本化した停止であり、常時32 GiB以下を保証するhard capとは呼ばない。
-単一workerとそのthreadのRSSを対象にする。子孫の同時RSS合計は計測しない。
+live VmHWMは単一workerとそのthreadのRSSを対象にする。終端wait4高水位は
+workerが回収した子孫の最大RSSを含み得る。二つの観測値とそのscopeを明示して保存する。
+子孫の同時RSS合計は計測しない。
 benchmark worker自身が全処理を終えてから退出する必要があり、退出後にgroupが
 残った場合は停止してPROCESS_TREE_UNVERIFIEDとする。
 
@@ -50,3 +52,23 @@ rawは `out/n06-cost-recording-20261007/process-runner-*.log` と
 Linux以外は実行前に非対応として拒否する。主公開経路への統合、共通初期入力、
 全段階の計測接続、量別参照精度・二回全域確認、二反復/三ケースの実比較は後続。
 この限定受入でN06カードや全goalを閉じない。
+
+## 終端メモリscopeの訂正
+
+後続の実子孫128 MiB allocation/worker-self getrusageの比較で、wait4の終端高水位は
+worker単体を超え、回収済み子孫の値を含むことを確認した。
+元の「子孫を除く」というscope表示が不十分だった。
+最初の反例は子孫RSSがworker-selfの3倍という検査側の不要な仮定で失敗した。
+実worker-selfには起動時の高水位も残るため、必要な不変量である「子孫がselfを超える」へ
+検査側を訂正した。元logは保全し、元scopeは旧sourceで二キー欠落を別に再現する。
+表示metadataだけを修正した。
+測定/停止/回収の計算法や上限は変更しない。
+[Linux getrusage規約](https://www.man7.org/linux/man-pages/man2/getrusage.2.html)と
+[wait4規約](https://www.man7.org/linux/man-pages/man2/wait4.2.html)を確認した。
+getrusageのRUSAGE_CHILDRENの値は回収された子孫の最大高水位であり、同時RSS合計ではない。
+
+修正metadata源の共有入口11件実行は、既存10件PASSと新検査の上記仮定FAILを
+1.140秒で保全した。検査側訂正後は新1件だけ0.104秒・終了0で再検査しPASS。
+同じ修正helperの既存10件を再実行せず、11個別件の分割証拠として使用する。
+元scopeの欠落は旧helper byteで訂正後の新1件を実行しKeyError・終了1で再現した。
+計算法の全AST（docstring/三scope metadataのみ除外）と既存10検査bodyの同一を確認する。

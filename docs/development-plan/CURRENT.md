@@ -27,6 +27,13 @@ temp commit0c336fbで限定受入。新5unit0.001秒・終了0、独立10秒の�
 四moduleの27個別unitを別証拠として保持し、既存反復分を重複加算しない。
 主1405源は固定、実FEM/12比較の計測接続と主統合は後続。
 
+2026-10-08 JST：終端RSSの[子孫高水位scope](../N06_PROCESS_SUPERVISOR.md#終端メモリscopeの訂正)を
+実プロセスで確認してtemp commit371b800で表示metadataだけ訂正した。
+live worker VmHWMとwait4（回収済み子孫を含み得る最大高水位）を別に名付け、同時tree合計とは呼ばない。
+旧scopeのKeyErrorを元byteで再現。検査側の不要な3倍仮定FAILは保全し、必要なselfとの差へ訂正。
+同じ修正helperの既存10件PASS＋訂正した新1件0.104秒PASSを分割受入、四moduleは28個別件。
+計算法AST/元10検査bodyは不変、main1405源とtemp1208/全1409を固定。N06はIN_PROGRESS。
+
 2026-10-07 N06費用記録器 **IN_PROGRESS**：[serial stageのinclusive/exclusive・失敗/欠測](../N06_EFFICIENCY_TIMING.md)。主N03全validate handle64569の1405対象源を固定し、別ツリーで新二源だけを追加。独立18秒配分/未配賦、元失敗/中断・非有限/逆行時計・未知RSS・未完了/完成後・foreign threadを新7unit0.002秒・終了0で確認。元1200 Python源のbyte一致/temp1202固定、主統合/物理系列/予算執行/12benchmark実行は後続。N06全受入へ数えず新FEM/seed/full/benchmark0、原123は72 DONE/4 IN_PROGRESS（H17/C07-planar/N03/N06）/47 PLANNED、原互換32要件/全goalは継続。
 
 ## N03全検証：localhost環境修正後handle64569を実行中
