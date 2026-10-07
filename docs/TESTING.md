@@ -1,3 +1,5 @@
+P09所有調整は `test_planar_curved_tuning_saved` の新7種類、関連旧所有helper2/元曲線native binding1を分割受入。元九byte/尺度/相対prefix・初回/途中失敗・strict/再hash拒否、円TM/回復付きTEの全取込・移動再生1件865.527秒PASS。[全コマンド・保存帯再構築・範囲](PLANAR_CURVED_TUNING_SAVED.md)。大きい専用caseは元受入rootを明示して実行済み、default skipを成功に数えない。CLI-worker/実GUIは後続。
+
 P09実調整APIは `test_planar_curved_tuning` の新8種類。関連 `test_planar_tuning test_planar_tuning_recovery test_planar_curved_tuning_trials` 11種類を分割受入。円TM/TE実rank交換・独立dense/反射parity・両gate・元native完全再生・null停止/失敗保全、parser修正と元FAIL保全は[専用記録](PLANAR_CURVED_TUNING.md)。全suite一括成功とは扱わず、所有移動/履歴/CLI-worker/GUIは後続。
 
 P09試行生成は `test_planar_curved_tuning_trials`、関連 `test_planar_curved_shape test_planar_curved_comparison`。新4＋関連11の15件10.289秒PASS。[元全六節点の独立閉式・累積chart/改変・予算・実元E/H](PLANAR_CURVED_TUNING_TRIALS.md)。実調整/所有保存/GUI受入は後続。

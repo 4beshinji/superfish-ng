@@ -46,7 +46,8 @@ checkpointは完全要求、絶対native path、全八source hash、元chart/追
 PAUSEDからの再開は既存checkpointを検証し、別directoryへ新試行を追記する。
 失敗は `failure-NNN.json` として新実行に保存し、先行完了checkpoint/nativeを変更しない。
 失敗記録を周波数評価として扱わない。実行中は各appendで全先行native hashと製品実装hashを照合する。
-所有コピー/相対path移動、独立追跡履歴、process取消し、CLI-worker/実GUIは後続の必須範囲。
+所有コピー/相対path移動は[専用所有API](PLANAR_CURVED_TUNING_SAVED.md)で後続受入した。
+独立追跡履歴、process取消し、CLI-worker/実GUIは続く必須範囲。
 
 ## 限定検査と来歴
 

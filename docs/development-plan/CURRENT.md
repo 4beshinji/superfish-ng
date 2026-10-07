@@ -1,6 +1,6 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07/P08全条件受入済み、P09の実調整/二gate/完全再生APIまで受入、所有再開/操作を継続。
+更新：2026-10-07、P07/P08全条件受入済み、P09の所有調整/移動再生APIまで受入、独立履歴/CLI-worker/GUIを継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
@@ -47,7 +47,11 @@ proper affineの全区間det・全mid/PEC・実円f/energy/G/Q尺度、元408製
 真doublet/上位guard/予算停止とnull周波数、先行全byte保全・異試行/保存改変拒否を確認した。
 絶対係数差の検査誤り・不正checkpoint入力拒否を修正し元FAIL/rawを保持。
 元410製品と全123カード台帳/依存/文書anchorは不変、全handle実終端。
-P09はIN_PROGRESS、次は所有prefixコピー/移動・独立追跡履歴・CLI-worker/取消し/再起動・実GUIと全条件監査。不変量を先に再現し、
+[所有調整・移動後完全再生](../PLANAR_CURVED_TUNING_SAVED.md)も新7種類＋関連3を分割受入。
+元九byte/claim/creator、相対prefix/初回・途中失敗checkpoint/別owner再開、strict/再hash拒否を確認。
+元受入円TM/回復付きTEの全取込・移動再生1件865.527秒PASS、両gate/元RF/全ID/過去anchor一致。
+元411製品/全123カード不変、元rawと失敗を保持、全handle実終端。
+P09はIN_PROGRESS、次は独立追跡履歴・CLI-worker/取消し/再起動・実GUIと全条件監査。不変量を先に再現し、
 周波数・場・RF・表面量を分け、mode rankをidentityへ読み替えない。保存/追跡/調整/所有再開は続く必須範囲。
 P04/P05/P06/P07/P08はDONE、原互換親P02/D02とH17/H18、P09と原要件を含む全123カードgoalは未完了。
 
@@ -74,7 +78,8 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 ## 実行中処理とソース固定
 
-現行checkpoint：[P09実調整APIの限定受入](../PLANAR_CURVED_TUNING.md)。61861/15076/22872/89290/75862/60455/81561/73075は全実終端。現行source固定なし。
+現行checkpoint：[P09所有調整の元受入native取込・移動再生](../PLANAR_CURVED_TUNING_SAVED.md)。handle46796は終了0、全元九byte/両gate/全ID/anchorを照合。最終監査11391も終了0、現行source固定なし。
+所有保存の初回/安全/関連は51684/61711/12626/10261が全実終端。先行実調整の61861/15076/22872/89290/75862/60455/81561/73075も全実終端。
 [P07全条件受入](../PLANAR_CURVED_ACCEPTANCE.md)の元証拠も保持する。
 元円38783は終了0、全四case/12B解/全66artifact/元401源/5validatorの照合・保全後に主統合した。
 旧source/validatorは元hashでarchiveへ明示解決し、元成功/失敗の条件を保持する。
@@ -82,7 +87,8 @@ H17は[損失範囲整理](../MATERIAL_HPHI_LOSS_SCOPE.md)まで実施しIN_PROG
 
 | 処理 | 生存handle / 出力（全てout/以下） |
 | --- | --- |
-| 実行中の数値処理 | なし。旧handle38783/16323/8632等は全実終端済み |
+| P09所有取込・移動後完全再生 | 46796/11391は終了0。`out/p09-planar-curved-owned-tuning-20261007/accepted-case-test.log` / `owned-acceptance.json`。元rawを保持 |
+| その他の数値処理 | なし。旧handle38783/16323/8632等は全実終端済み |
 
 終端を観測した元非円形：TE楕円二尺度は成功25516/25128。
 楕円TM尺度1/12945は終了1（B L4 RF未達）、角TE68744/27629と角TM35844/70344も終了1。
