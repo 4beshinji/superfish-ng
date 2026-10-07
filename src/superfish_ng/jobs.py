@@ -68,6 +68,10 @@ def read_job(directory, verify=True):
             return state
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_curved_tracking_history_jobs import is_planar_curved_history, verify_planar_curved_history
+        if is_planar_curved_history(directory, state, manifest):
+            verify_planar_curved_history(directory, state, manifest)
+            return state
         from .planar_curved_tracking_jobs import is_planar_curved_tracking, verify_planar_curved_tracking
         if is_planar_curved_tracking(directory, state, manifest):
             verify_planar_curved_tracking(directory, state, manifest)
@@ -465,6 +469,21 @@ class JobManager:
         """Own complete Cartesian P2 operands and compare their original E/H in a worker."""
         from .planar_curved_tracking_jobs import start_planar_curved_tracking
         return start_planar_curved_tracking(self, previous, current, request)
+
+    def start_planar_curved_history(self, paths, request):
+        """Own original Cartesian P2 pairs and replay their chain in a worker."""
+        from .planar_curved_tracking_history_jobs import start_planar_curved_history
+        return start_planar_curved_history(self, paths, request)
+
+    def extend_planar_curved_history(self, history, next_pair, *, recovery=None):
+        """Extend a fully replayed curved history into a new immutable job."""
+        from .planar_curved_tracking_history_jobs import start_extended_planar_curved_history
+        return start_extended_planar_curved_history(self, history, next_pair, recovery=recovery)
+
+    def recover_planar_curved_history(self, history, recovery):
+        """Recover an unresolved curved ID set from a bound earlier snapshot."""
+        from .planar_curved_tracking_history_jobs import start_recovered_planar_curved_history
+        return start_recovered_planar_curved_history(self, history, recovery)
 
     def import_planar_result(self, source):
         """Import verified planar native bytes, preserving their explicit mesh."""

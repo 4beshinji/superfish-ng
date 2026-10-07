@@ -1,3 +1,5 @@
+2026-10-07 P09独立履歴CLI-worker：[元二点/job・native/ID連鎖・実過去anchor・回復/延長](PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。自作曲線所有履歴/回復核と比較workerの完全再生へ接続し、中立なジョブ状態/hash/copy/子プロセス管理を共有。元creator/claim/全byteを保持し、対応PASSを離散精度の保証と数えない。新8＋関連5分割PASS、元415源中413不変・変更はjobs/cli入口追加のみ、全123カード不変。実取消し/回復/延長/再起動/移動・全CLI・生存中元source移動と17job/73snapshot監査を受入。API不在と変異rawを保持、新外部資料/依存/legacy参照なし。調整CLI-worker/checkpoint・実GUIは継続。
+
 2026-10-07 P09所有比較CLI-worker：[元五/九byte・実worker/取消し/再起動・移動再生](PLANAR_CURVED_TRACKING_JOBS.md)。先行の自作専用曲線所有比較へ接続し、共通ジョブ状態/write/hash/子プロセス管理だけを再利用。元creator/claim/全場/RFを保持し、対応PASSを離散誤差精度の成功と数えない。新6種類＋関連10分割PASS、元414源の変更はjobs/cli入口追加のみ、科学/その他412源・全123カード不変。元API不在/誤指定ERROR/全rawを保持し、新外部資料/依存/legacy参照なし。履歴/調整CLI-worker・実GUIは継続。
 
 2026-10-07 P09所有二点/独立履歴：[元native連鎖・実過去anchor・移動再生](PLANAR_CURVED_TRACKING_HISTORY.md)。自作の専用曲線native/E/H/guard/回復核へ接続し、物理非依存のID集合/hash/copy/writeだけを既存層から再利用。元五/八/九byte・Project/creator/claimを保持しコピー先に新求解を帰属させない。反射parity/実rank交換・真doubletを独立対照とし、遅いsource変異検出漏れを実再現・修正、試験path誤りと全FAILも明示/保全。新13種類＋関連10分割PASS、元412製品/全123カード不変、新外部資料/依存/legacy参照なし。CLI-worker/GUIは継続。

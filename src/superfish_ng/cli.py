@@ -179,6 +179,17 @@ def main(argv=None):
     planar_convergence.add_argument('--out',required=True,type=Path)
     planar_convergence_replay=sub.add_parser('replay-planar-convergence',help='recompute all saved planar refinement diagnostics')
     planar_convergence_replay.add_argument('run',type=Path)
+    curved_planar_history=sub.add_parser('execute-planar-curved-history',help='own curved pairs or comparison jobs and fully replay their ordered ancestry')
+    curved_planar_history.add_argument('request',type=Path);curved_planar_history.add_argument('--steps',type=Path,nargs='+',required=True)
+    curved_planar_history.add_argument('--out',type=Path,required=True)
+    curved_planar_extend=sub.add_parser('extend-planar-curved-history',help='append a pair to a fully verified curved history in a new job')
+    curved_planar_extend.add_argument('history',type=Path);curved_planar_extend.add_argument('next_pair',type=Path)
+    curved_planar_extend.add_argument('--recovery',type=Path);curved_planar_extend.add_argument('--out',type=Path,required=True)
+    curved_planar_recover=sub.add_parser('recover-planar-curved-history',help='recover an unresolved ID set using an actual earlier owned curved snapshot')
+    curved_planar_recover.add_argument('history',type=Path);curved_planar_recover.add_argument('request',type=Path)
+    curved_planar_recover.add_argument('--out',type=Path,required=True)
+    curved_planar_history_replay=sub.add_parser('replay-planar-curved-history',help='recompute all original curved native fields, ID continuity and anchor recovery')
+    curved_planar_history_replay.add_argument('run',type=Path)
     planar_history=sub.add_parser('execute-planar-history',help='copy and fully replay an ordered planar tracking history')
     planar_history.add_argument('request',type=Path)
     planar_history.add_argument('--steps',type=Path,nargs='+',required=True)
@@ -488,6 +499,21 @@ def main(argv=None):
             project.save(args.out)
             sys.stdout.write(project.dumps())
             return 0
+        if args.command in ('execute-planar-curved-history','extend-planar-curved-history','recover-planar-curved-history','replay-planar-curved-history'):
+            from .planar_curved_tracking_history import PlanarCurvedTrackingHistoryRequest
+            from .planar_curved_tracking_history_jobs import (execute_planar_curved_history,extend_planar_curved_history,
+                recover_planar_curved_history,read_planar_curved_history)
+            from .planar_curved_tracking_saved import _load
+            from .planar_curved_identity_recovery import PlanarCurvedIdentityRecoveryRequest
+            if args.command=='execute-planar-curved-history':
+                result=execute_planar_curved_history(args.steps,PlanarCurvedTrackingHistoryRequest.load(args.request),args.out)
+            elif args.command=='extend-planar-curved-history':
+                recovery=None if args.recovery is None else PlanarCurvedIdentityRecoveryRequest.from_dict(_load(args.recovery))
+                result=extend_planar_curved_history(args.history,args.next_pair,args.out,recovery=recovery)
+            elif args.command=='recover-planar-curved-history':
+                result=recover_planar_curved_history(args.history,PlanarCurvedIdentityRecoveryRequest.from_dict(_load(args.request)),args.out)
+            else:result=read_planar_curved_history(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0 if result['status']=='PASS' else 1
         if args.command in ('execute-planar-history','extend-planar-history','replay-planar-history','recover-planar-history'):
             from .planar_tracking_history import PlanarTrackingHistoryRequest
             from .planar_tracking_history_saved import execute_planar_history,extend_planar_history,read_planar_history

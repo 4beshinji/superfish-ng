@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **独立履歴操作leaf（2026-10-07）**：[CLI-worker・過去anchor回復/延長・実取消し/再起動・移動再生](../PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。新8＋関連5分割PASS。元二点/比較job全byte、native/ID連鎖と実anchor、親不変、true doublet/guard/max停止、再hash回復f拒否を確認。実worker取消し−15/新履歴・回復・延長0、CLI全経路/移動再生もPASS。生存中元source移動の強化1件115.147秒も追加PASS。17完了job/73二点snapshot監査PASS、元415源中413と全123カード不変。調整worker/checkpoint/実GUIと全条件監査は継続。
+
 - **所有比較操作leaf（2026-10-07）**：[CLI-worker・実running取消し/新job/管理器再起動・移動再生](../PLANAR_CURVED_TRACKING_JOBS.md)。新6種類＋関連10分割PASS。元五/九byte・creator、kind降格/再hash拒否、実CLI PASS=0/guard=1を確認。関連指定名ERRORを保持し不足1件補完。元414源の変更はjobs/cli入口追加だけ、412不変、全123カード不変。履歴/調整CLI-worker・実GUIと全条件監査は継続。
 
 - **独立履歴leaf（2026-10-07）**：[所有二点・元native連鎖・過去anchor/移動再生](../PLANAR_CURVED_TRACKING_HISTORY.md)。新13種類＋関連10を分割受入。元五/八/九byteと実反射parity、回復→後続、誤anchor/断絶/guard/max停止を確認。遅いsource変異の検出漏れを再現・修正し元FAILを保全。元412製品/全123カード不変、全handle実終端。CLI-worker/取消し/再起動・実GUIとP09全条件監査は継続。
