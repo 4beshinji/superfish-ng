@@ -1,5 +1,7 @@
 # D09：曲線Hφの実個別IDと三水準RF制約
 
+現在のD09全原条件監査は **DONE**。[条件別受入](HPHI_RF_DESIGN_ACCEPTANCE.md)を参照。以下の限定受入/未完記述は当時の履歴。探索運用D10-hphiと全goalは継続。
+
 `CurvedHphiRFConvergence` は元の完全二次領域・全native chartを保持する三水準RF評価。
 [単一観測](HPHI_RF_DESIGN.md)、[材料三水準](MATERIAL_HPHI_RF_CONVERGENCE.md)、
 [直線真空三水準](VACUUM_HPHI_RF_CONVERGENCE.md)の後続で、[D05量/採用契約](RF_OPTIMIZATION_SCOPE.md)に従う。

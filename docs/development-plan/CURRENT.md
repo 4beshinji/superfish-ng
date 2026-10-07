@@ -1,8 +1,19 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-63 DONE/3 IN_PROGRESS（H17、C07-planar、D09）/57 PLANNED。全goalと原互換32要件は継続中。
+64 DONE/2 IN_PROGRESS（H17、C07-planar）/57 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D09全原条件：DONE
+
+2026-10-07 D09全原条件 **DONE**：[Hφ RF評価の条件別監査](../HPHI_RF_DESIGN_ACCEPTANCE.md)。単一/材料/直線真空/曲線P2の四受入receipt、独立同軸TEM/TM・一様/二層・全PEC壁・有効/不正軸経路、実個別E/H・有限guard・量別二変化/全包絡採用・保存完全再生を照合。過去76個別test IDの源/元log hashを再結合した読取監査で、新FEM/unit/seed/full/legacy0。粗曲線の数値未達はUNVERIFIEDを維持、peak/連続誤差は保証しない。過去真空receiptのコマンド表記5件（二重method suffix）は元記録を保全して訂正版を別保存。原123台帳はD09状態だけ変更、64 DONE/2 IN_PROGRESS/57 PLANNED。H17追加損失判断・D10-hphi探索運用・親D03/原互換32要件/全goalは未完。次は依存が揃ったD01の非曲線TM/TE形状対応仕様。
+
+実装コミット `c91583a` と全四receipt、同軸TM原15byte hashを照合。
+rawは `out/d09-whole-acceptance-20261007/conditions.json` / `audit.log`。
+過去の限定受入/「次は」の節は当時の履歴。現在の次工程はD01で、D10-hphiの先行D07は未受入。
+H17/C07-planarの資料・環境未確認を保留したまま独立カードを進める。
+
+## D09限定受入の履歴
 
 ## D09曲線三水準：限定受入
 

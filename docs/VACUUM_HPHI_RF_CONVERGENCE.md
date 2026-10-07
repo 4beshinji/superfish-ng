@@ -1,5 +1,7 @@
 # D09：直線真空Hφの三水準とRF制約
 
+現在のD09全原条件監査は **DONE**。[条件別受入](HPHI_RF_DESIGN_ACCEPTANCE.md)を参照。以下の限定受入/未完記述は当時の履歴。探索運用D10-hphiと全goalは継続。
+
 `VacuumHphiConvergence` は同軸、正半径一般領域、軸接続領域の元Project三件と
 隣接E/H追跡二件を要求する。[専用RF観測](HPHI_RF_DESIGN.md)、
 [材料三水準](MATERIAL_HPHI_RF_CONVERGENCE.md)、[D05量/採用契約](RF_OPTIMIZATION_SCOPE.md)の後続。

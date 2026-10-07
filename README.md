@@ -9,8 +9,8 @@ canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これ�
 
 D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
 [直線真空](docs/VACUUM_HPHI_RF_CONVERGENCE.md)、[曲線P2](docs/CURVED_HPHI_RF_CONVERGENCE.md)の
-三水準を限定受入しています。元個別E/H・有限guard・量別収束が成立する場合だけ制約/採用を判定します。
-D09全条件の監査と全開発計画は継続中です。
+三水準を受入しています。元個別E/H・有限guard・量別収束が成立する場合だけ制約/採用を判定します。
+[評価の原条件監査](docs/HPHI_RF_DESIGN_ACCEPTANCE.md)は完了し、探索運用と全開発計画は継続中です。
 
 ## 主な機能
 

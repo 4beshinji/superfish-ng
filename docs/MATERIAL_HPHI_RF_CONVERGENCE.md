@@ -1,5 +1,7 @@
 # D09：材料Hφの三水準とRF制約
 
+現在のD09全原条件監査は **DONE**。[条件別受入](HPHI_RF_DESIGN_ACCEPTANCE.md)を参照。以下の限定受入/未完記述は当時の履歴。探索運用D10-hphiと全goalは継続。
+
 `MaterialHphiConvergence` は専用材料Project三件と隣接E/H追跡宣言二件を要求する。
 [単一native観測](HPHI_RF_DESIGN.md)の後続で、元の固定全領域・全材料界面・全PEC壁を保ち、
 元FEMから個別ID/有限guard・場・RF収束を再検証する。[D05](RF_OPTIMIZATION_SCOPE.md)の採用契約に従う。
