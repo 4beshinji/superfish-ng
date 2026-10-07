@@ -88,6 +88,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### 適応細分の精度対費用の比較条件を固定する
 
+2026-10-07 N05仕様 **DONE**：[三対照の同一初期領域・量別精度・固定費用比較](../N05_ADAPTIVE_EFFICIENCY_PLAN.md)。円筒/球とN01丸め二ローブ幾何2を選び、元Case/source/P2・両側同じ初期求解/全壁/個別ID、元五量・独立元場と二回全域確認を固定。各方式2回・順序交替の計12実行、8水準/250000要素/3600秒/32GiB・BLAS1、段階/全体時間・RSSと共有参照費用の計測境界を実行前に指定。旧球の適応非優位を保持し、精度達成と効率改善を別条件にする。文書だけの受入、新unit/FEM/seed/full0、主1200源不変。N06/N07/N08/N04と全goalは後続。原123は71 DONE/3 IN_PROGRESS（H17/C07-planar/N03）/49 PLANNED。別実行のN03全validate handle72074は継続し、src/tests/scripts/examplesを固定中。
+
 - **親課題**：N04。**種別**：仕様。初期状態：未着手。
 - **先行条件**：[N01](05-accuracy.md#n01)
 - **コミット件名案**：`docs: 適応細分の精度対費用の比較条件を固定する`
