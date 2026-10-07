@@ -1,5 +1,7 @@
 # N08：公開適応・保存・GUIと親N04の受入監査
 
+2026-10-08終端追記：N08 **DONE**。[条件別受入と元失敗・費用・親残件](N08_ACCEPTANCE.md)。以下は着手時の固定計画。
+
 2026-10-08 JST、N08 **IN_PROGRESS**。先行N07は `a860099` で受入済み。
 原123カードは75 DONE/3 IN_PROGRESS（H17/C07-planar/N08）/45 PLANNED。
 対象は[原N08](development-plan/05-accuracy.md#n08)と、既存の[N04受入表・残件四群](N04_ACCEPTANCE.md)。

@@ -153,6 +153,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### 適応の一般ケース・保存・N04受入を確認する
 
+2026-10-08 N08 **DONE**：[公開適応六系列/30保存水準と現行GUI30操作の受入](../N08_ACCEPTANCE.md)。公開選択/停止・RF/表面/求積とcheckpoint全文書が完全一致、保存監査の新FEM0。実GUI中止再開/上限/積分未達を確認し、直線初回の説明文FAILは保全して11+8操作で補完、曲線11操作PASS。全1432源固定、元N03全1405源byte一致と66個別PASSを再利用、1747入力/795出力再hash、全handle/12 GUIジョブ/server/browser終端。親N04は既存残件を保持してIN_PROGRESS、追加3仕様カードを[具体化](../N04_REMAINING_CARDS.md)。原123は76 DONE/2 IN_PROGRESS（H17/C07-planar）/45 PLANNED、追加3 PLANNED込み全126は76/2/48。次はADD-N04-selection-charts-01、原32要件/全goalは継続。
+
 2026-10-08 N08 **IN_PROGRESS**：[公開適応/保存/GUIと原N04四群の受入監査](../N08_ACCEPTANCE_PLAN.md)。N07はa860099でDONE。N06/N07の三形状・固定12行/全場/費用を再利用し、六adaptive nativeを公開engine自身で再構築・保存replay照合する。元選択/停止・公開保存/再開は無変更、solve禁止・新FEM0で検査する。N03全検証の実中止再開/上限/GUIと現行関連源の一致は確認済み、原N04_ACCEPTANCEの四群を保持して監査する。原123は75 DONE/3 IN_PROGRESS（H17/C07-planar/N08）/45 PLANNED。未達が残る場合は親を閉じず、全goal/原32要件は継続。
 
 - **親課題**：N04 / O02。**種別**：実装。初期状態：未着手。

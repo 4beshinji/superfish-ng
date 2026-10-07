@@ -88,7 +88,7 @@ N04	N03 G03	N03 C03	監査	PLANNED	05-accuracy.md#n04	N03とG03の受入範囲�
 N05	N04	N01	仕様	DONE	05-accuracy.md#n05	適応細分の精度対費用の比較条件を固定する
 N06	N04	N05	実装	DONE	05-accuracy.md#n06	適応と一様細分の比較を実行する
 N07	N04	N06	条件付き実装	DONE	05-accuracy.md#n07	測定された適応処理の不足を修正する
-N08	N04 O02	N07	実装	IN_PROGRESS	05-accuracy.md#n08	適応の一般ケース・保存・N04受入を確認する
+N08	N04 O02	N07	実装	DONE	05-accuracy.md#n08	適応の一般ケース・保存・N04受入を確認する
 C01	C00 C02 G03	B02	条件付き仕様	PLANNED	06-compatibility.md#c01	旧曲線入力の変換仕様を確定する
 C02	C02 G03	C01	条件付き実装	PLANNED	06-compatibility.md#c02	NT=2/3のstrict読込と変換記録を追加する
 C03	C02 G03	C02	検証	PLANNED	06-compatibility.md#c03	旧曲線変換の等価計算を検証する
@@ -121,4 +121,7 @@ V01	V02	B03	仕様	DONE	09-release.md#v01	統合受入の対象と必要証拠�
 V02	V02	V01 S07 C08	検証	PLANNED	09-release.md#v02	配布と旧保存移行を検証する
 V03	V02	V02 D04 D11 N04 N08 H18 P10	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
 V04	V02	V02 D11	検証	PLANNED	09-release.md#v04	実業務手順を利用者視点で受入する
-V05	V02	V03 V04 L07 C08 S07	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
+V05	V02	V03 V04 L07 C08 S07 ADD-N04-selection-charts-01 ADD-N04-boundary-remesh-01 ADD-N04-rf-goal-01	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
+ADD-N04-selection-charts-01	N04	N08	仕様	PLANNED	../N04_REMAINING_CARDS.md#add-n04-selection-charts-01	異なる初期接続の選択領域移送を仕様化する
+ADD-N04-boundary-remesh-01	N04	N08	仕様	PLANNED	../N04_REMAINING_CARDS.md#add-n04-boundary-remesh-01	二次境界分割を変更する再メッシュ生成を仕様化する
+ADD-N04-rf-goal-01	N04	N08	仕様	PLANNED	../N04_REMAINING_CARDS.md#add-n04-rf-goal-01	RF重み付き版5の一般ケース対照を仕様化する
