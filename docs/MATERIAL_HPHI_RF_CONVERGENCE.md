@@ -3,7 +3,8 @@
 `MaterialHphiConvergence` は専用材料Project三件と隣接E/H追跡宣言二件を要求する。
 [単一native観測](HPHI_RF_DESIGN.md)の後続で、元の固定全領域・全材料界面・全PEC壁を保ち、
 元FEMから個別ID/有限guard・場・RF収束を再検証する。[D05](RF_OPTIMIZATION_SCOPE.md)の採用契約に従う。
-D09の真空/内導体/曲線側の三水準接続と全条件受入、D10-hphiの実探索/所有運用は続く。
+[直線真空/内導体側の三水準](VACUUM_HPHI_RF_CONVERGENCE.md)も限定受入済み。
+D09の曲線側三水準と全条件受入、D10-hphiの実探索/所有運用は続く。
 
 ## 宣言と入口
 

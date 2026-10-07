@@ -4,6 +4,13 @@
 63 DONE/3 IN_PROGRESS（H17、C07-planar、D09）/57 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
+## D09直線真空三水準：限定受入
+
+2026-10-07 D09直線真空三水準の限定受入：[元個別E/H・有限guard/全PEC壁・RF制約](../VACUUM_HPHI_RF_CONVERGENCE.md)。新同軸1件25.044秒、軸/一般穴2件96.598秒、残新4件210.948秒、追加実ID順序継承1件58.180秒、直接消費17件54.389秒は実終了0。独立TEMとBessel TM010のf・元E/H・全壁loss/RQ誤差は各水準で減少。粗い一般穴はID成立でもf/E/局所壁gate未達をUNVERIFIEDに保持。保存移動/型偽装/遅い元変異・phase・guard/予算/数値未達と実二ID順序入替え拒否を確認。全25検査の分割受入で、既存422製品ファイル中420不変、旧RF評価定義/科学核/許容差不変、旧optimizerは三import追加だけ。元数値開始snapshotと追加検査源を別に固定し、全123台帳・D09 IN_PROGRESSを維持。全handle終端、新full/seed/専用validator/legacy0。曲線三水準/D09全条件と全goalは継続。
+
+raw/元source/台帳の監査は `out/d09-vacuum-rf-convergence-20261007/acceptance.json`。
+次は曲線P2全参照/元chartを保つ専用RF三水準アダプタ、その後D09全条件監査。
+
 ## D09材料三水準：限定受入
 
 [元全材料/個別E・H/有限guardと量別RF・制約](../MATERIAL_HPHI_RF_CONVERGENCE.md)を限定受入。

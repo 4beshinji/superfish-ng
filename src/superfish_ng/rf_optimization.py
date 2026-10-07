@@ -17,7 +17,8 @@ from .jobs import execute_project, _implementation_hashes, _digest
 from .hphi_rf_design import (observe_hphi_rf_design, save_hphi_rf_design,
                              read_hphi_rf_design, validate_hphi_rf_criteria,
                              assess_material_hphi_rf_design, save_material_hphi_rf_design,
-                             read_material_hphi_rf_design)
+                             read_material_hphi_rf_design, assess_vacuum_hphi_rf_design,
+                             save_vacuum_hphi_rf_design, read_vacuum_hphi_rf_design)
 
 
 def validate_optimization_request(request):
