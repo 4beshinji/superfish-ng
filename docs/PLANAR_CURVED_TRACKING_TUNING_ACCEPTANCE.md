@@ -46,8 +46,13 @@
 元のFAIL/ERRORを保持し、成功を分割受入と一括PASSの別なく集計しない。
 既に受入済みで変更のない数値源を、文書の更新だけのために再実行しない。
 元全validateを節目で一度起動し、事前に全discoveryを重複させていない。
-元全実行の終端後に再現した共有保存競合を修正し、限定45＋実取消し/再開1PASS後に新全validateを起動した。
+元全実行中に再現した共有保存競合を終端後に修正し、限定45＋実取消し/再開1PASS後に新全validateを起動した。
 全実行終端まではsrc/tests/scripts/examplesを固定する。
+
+最終監査の条件mapは `out/p09-checkpoint-publication-20261007/completion-audit-plan.json`。
+本表の元14行と追加の完全公開不変量を結び付け、13行の歴史的限定receipt、
+新全実行/seed f+RFの未確定、共有消費先の検査、skipの個別確認を分けて記録した。
+このmap自体を新検査数やP09完了証拠へ加算しない。
 
 P09の16受入記録が参照する91 evidence/log entryを改めてhash照合した。
 `out/p09-planar-curved-large-gui-20261007/p09-evidence-inventory.json` は欠落0/不一致0、
