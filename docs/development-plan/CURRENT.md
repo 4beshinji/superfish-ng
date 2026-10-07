@@ -1,8 +1,18 @@
 # 現行の作業入口
 
 更新：2026-10-07、P07/P08/P09全条件受入済み。原90カードと追加子カードを含む全123カードは
-66 DONE/3 IN_PROGRESS（H17、C07-planar、D03）/54 PLANNED。全goalと原互換32要件は継続中。
+67 DONE/2 IN_PROGRESS（H17、C07-planar）/54 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## D03原条件：DONE、次はD06
+
+2026-10-07 D03原カード **DONE**：[直線TE調整の原条件監査](../STRAIGHT_TE_TUNING_ACCEPTANCE.md)。元版9法則をTE Eφ/対称半領域/鏡映・固定RF/N/Aへ接続し、独立Bessel f/Eφ/Hr/Hz/全PEC壁loss、実段差/独立細分/両端二偶奇、未確認/無効形状停止・所有保存再開を照合。追跡39＋調整35の74個別unitを源/元logに結合し、実Chromeは分割9項目PASS。API/CLI/GUIの元要求/decision/最終Eφ/Hr/Hzと7 RF量は相対差0、両R/Q N/A、表示importの元6科学ファイルbyte一致。磁気対称段差は通常/鏡映とも元10 kHz条件内8.974 kHz、閉PEC/電気対称25.043 kHzと粗折返し輪郭1.348 MHzの未達は保持。混在端がsampleへ進む反例を先に再現して拒否を追加。検査のcontour boundaries、独立peak振幅係数、RF表の行/列selector ERROR/FAILを保全し、不足分を修正して再検査した。1279源固定・全handle/server/browser終端、slot 0、新full/seed/legacy0。D03だけDONEへ変更、原123は67 DONE/2 IN_PROGRESS/54 PLANNED。親P01/D02/全goal/原互換32要件は継続。次は依存成立のD06、D04はH18/P10/C07-TEを待つ。rawは out/d03-whole-acceptance-20261007/acceptance.json。
+
+D06はD02/D05の依存成立。元直線TM法則によるRF探索候補、invalid candidateと
+未確認/細分条件の保持を実装・検証する。D07の収束/独立評価とN03は別条件で保持する。
+全handle/server/browser終端、source固定解除。全goalは未完。
+
+## D03限定受入の履歴
 
 ## D03直線TE追跡コア：IN_PROGRESS
 

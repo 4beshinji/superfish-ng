@@ -23,7 +23,8 @@ def _sector(solutions):
             raise ValueError('TE straight comparison requires native straight profile, stepped_profile or contour geometry')
     ends=[(c.z_min,c.z_max) for c in cases]
     count=sum(tag!='pec' for tag in ends[0])
-    if ends[0]!=ends[1] or count>1 or (reflected[0] and count!=1):
+    if (ends[0]!=ends[1] or any(tag not in ('pec','electric_symmetry','magnetic_symmetry') for tag in ends[0])
+            or count>1 or (reflected[0] and count!=1)):
         raise ValueError('TE straight comparison requires matching source symmetry sectors and at most one symmetry end; reflected fields require one source plane')
     sector=None if count==0 else dict(source_end_conditions=dict(zip(('z_min','z_max'),ends[0])),
         reflected=reflected[0],mode_indices='source symmetry-sector frequency order; not full-spectrum ranks')

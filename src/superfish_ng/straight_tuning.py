@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Owned straight polygon laws and derived comparison maps for scalar TM tune."""
+"""Owned straight polygon laws and derived comparison maps for scalar TM/TE tune."""
 from copy import deepcopy
 from .config import integer,keys
 from .project import Project
@@ -7,15 +7,19 @@ from .mesh_input import mesh_from_dict
 from .scalar_expressions import validate_scalar_expression,evaluate_scalar_expression
 from .saved_mode_tracking import validate_tracking_controls
 from .studies import Study
+from .te import is_te
 
 
 def _law(request,project):
     case=project.case
-    from .te import is_te
-    if (is_te(case) or case.geometry_order!=1 or case.geometry_type not in ('profile','stepped_profile','contour')
-            or case.z_min!='pec' or case.z_max!='pec' or project.sections is not None
-            or project.reflect_full or project.mesh_data is not None):
-        raise ValueError('straight tune version 9 requires an unassembled closed-PEC vacuum TM profile, stepped_profile or contour without an explicit solver mesh; TE integration is pending')
+    if (case.geometry_order!=1 or case.geometry_type not in ('profile','stepped_profile','contour')
+            or project.sections is not None or project.mesh_data is not None):
+        raise ValueError('straight tune version 9 requires an unassembled native straight profile, stepped_profile or contour without an explicit solver mesh')
+    if is_te(case):
+        from .te_tuning import validate_te_request
+        validate_te_request(request,project)
+    elif case.z_min!='pec' or case.z_max!='pec' or project.reflect_full:
+        raise ValueError('straight TM tune requires closed PEC ends without reflection')
     law=request['shape_law']
     names=('format','version','reference_comparison_mesh','case_boundary_vertices','bindings')
     keys(law,names,names,'straight shape law')
@@ -80,7 +84,7 @@ def validate_request(request,project):
     if type(controls) is not dict or controls.get('mapping')!='piecewise_remesh' or 'comparison_meshes' in controls:
         raise ValueError('straight tune requires piecewise_remesh controls without input comparison_meshes; maps are derived from original trials')
     reference=law['reference_comparison_mesh']
-    validate_tracking_controls(dict(controls,comparison_meshes=[reference,reference]))
+    validate_tracking_controls(dict(controls,comparison_meshes=[reference,reference]),allow_straight_symmetry=is_te(project.case))
 
 
 def trial_project(request,project,value,phase):
@@ -100,5 +104,5 @@ def pair_controls(request,previous_value,current_value,previous_project,current_
             raise ValueError('straight comparison Project differs from its original parameter law or declared final refinement')
         mesh_from_dict(project.case,data);meshes.append(data)
     controls=deepcopy(request['controls']);controls['comparison_meshes']=meshes
-    validate_tracking_controls(controls)
+    validate_tracking_controls(controls,allow_straight_symmetry=is_te(source.case))
     return controls

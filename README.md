@@ -16,6 +16,9 @@ D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
 [版9の実装と原条件監査](docs/STRAIGHT_TM_TUNING_ACCEPTANCE.md)を受入しました。
 独立細分が未達なら停止し、個別ID・元要求・最終場・両R/Qを保存/CLI/GUIで保持します。
 
+直線TEも [版9調整の原条件監査](docs/STRAIGHT_TE_TUNING_ACCEPTANCE.md) を受入しました。
+元Eφと対称セクター/鏡映の順位を保ち、加速量と両R/QはN/Aで表示します。
+
 ## 主な機能
 
 | 分野 | 内容 |

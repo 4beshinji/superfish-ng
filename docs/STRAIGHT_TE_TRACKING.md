@@ -1,5 +1,7 @@
 # 元直線TE場の区分写像追跡
 
+2026-10-07更新：版9のTE接続とD03原カードは [STRAIGHT_TE_TUNING_ACCEPTANCE.md](STRAIGHT_TE_TUNING_ACCEPTANCE.md) で受入。以下の「TE版9拒否/未接続」は各段階の履歴。親P01/D02/全goalは継続。
+
 2026-10-07、D03追跡コア限定受入。版9調整とD03全条件は未完。
 
 ## 物理と宣言

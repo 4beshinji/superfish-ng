@@ -1,5 +1,7 @@
 # D01：非曲線TM/TE調整の形状対応
 
+2026-10-07更新：版9のTE接続とD03原カードは [STRAIGHT_TE_TUNING_ACCEPTANCE.md](STRAIGHT_TE_TUNING_ACCEPTANCE.md) で受入。以下の「TE版9拒否/未接続」は各段階の履歴。親P01/D02/全goalは継続。
+
 2026-10-07追記：TM版9コアの限定受入は [STRAIGHT_TM_TUNING.md](STRAIGHT_TM_TUNING.md)。以下の「現行拒否」はD01仕様時点の履歴。TE版9は引き続き拒否し、D02全条件は未受入。
 
 2026-10-07、D01の仕様。profile・階段・軸接続単一一般輪郭の既存対応、不足する試行写像、

@@ -81,10 +81,7 @@ class StraightTuningGeometryTests(unittest.TestCase):
         _request(r)
         with self.assertRaises(ValueError):_project(r,1.,'search')
 
-    def test_unsupported_te_mesh_sections_and_zero_geometry_change_refused(self):
-        records=json.loads(Path('docs/noncurved_tuning_scope_cases.json').read_text())['records']
-        r=deepcopy(next(x['future_request'] for x in records if x['id']=='te-stepped_profile'))
-        with self.assertRaises(ValueError):_request(r)
+    def test_explicit_mesh_and_zero_geometry_change_refused(self):
         r=request();r['project']['mesh']=deepcopy(r['shape_law']['reference_comparison_mesh'])
         with self.assertRaises(ValueError):_request(r)
         r=request()

@@ -191,6 +191,19 @@ try {
     await click(`[data-job="${id}"] button`);
     await wait(`!tuningBusy && tuningResult?.document.status===${JSON.stringify(status)} && tuningResult.document.trials.length===${count}`,60000);
   };
+
+  if(args["--rf-checkpoint"]) {
+    report.scope="Only the previously missing TE RF applicability display; no new tuning solve";
+    await loadFile(args["--rf-checkpoint"]);await wait('!tuningBusy && tuningResult?.document.status==="TUNED"');
+    const oldJob=await ev('currentJob');await click("#tune-open-field");
+    await wait(`currentJob!==${JSON.stringify(oldJob)} && !document.querySelector("#field-image").hidden`,60000);
+    await wait('document.querySelector("#rf-table").textContent.includes("N/A（TEの軸方向電場はゼロ）")');
+    await check("both TE R/Q definitions display N/A with the physical reason",'(()=>{const headers=[...document.querySelectorAll("#rf-table th")],indices=headers.flatMap((h,i)=>h.textContent.startsWith("R/Q")?[i]:[]),rows=[...document.querySelectorAll("#rf-table tr")].filter(r=>r.querySelector("td"));return indices.length===2 && rows.length>0 && rows.every(r=>indices.every(i=>r.querySelectorAll("td")[i].textContent==="N/A（TEの軸方向電場はゼロ）"))})()');
+    report.field_job=await ev('currentJob');
+    await writeFile(out+"/completed.json",await ev('tuningResult.serialized'));
+    const rect=await ev('(()=>{const r=document.querySelector("#rf-table").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}})()');
+    const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/te-rf-table.png",Buffer.from(shot.data,"base64"));
+  } else {
   if(args["--checkpoint"]) {
     await loadFile(args["--checkpoint"]);
     await wait('!tuningBusy && tuningResult?.document.status==="PAUSED"');
@@ -228,9 +241,15 @@ try {
   await check("a forged original shape law cannot replace the verified result",'tuningResult.document.status==="TUNED" && JSON.parse(document.querySelector("#tune-request").value).shape_law.bindings[0].vertex!==99999');
   const oldJob=await ev('currentJob');await click("#tune-open-field");await wait(`currentJob!==${JSON.stringify(oldJob)} && !document.querySelector("#field-image").hidden`,60000);
   await check("final original field opens at its tracked individual rank",'Number(document.querySelector("#mode").value)===tuningResult.document.trials.at(-1).current_mode_ids.indexOf(tuningResult.document.request.mode_id)+1');
+  if(request.project.case.model?.polarization==="te") {
+    await check("TE field identities and acceleration applicability are explicit",'document.querySelector("#tune-status").textContent.includes("TE Eφ") && document.querySelector("#tune-status").textContent.includes("加速量は適用外")');
+    await wait('document.querySelector("#rf-table").textContent.includes("N/A（TEの軸方向電場はゼロ）")');
+    await check("both TE R/Q definitions display N/A with the physical reason",'(()=>{const headers=[...document.querySelectorAll("#rf-table th")],indices=headers.flatMap((h,i)=>h.textContent.startsWith("R/Q")?[i]:[]),rows=[...document.querySelectorAll("#rf-table tr")].filter(r=>r.querySelector("td"));return indices.length===2 && rows.length>0 && rows.every(r=>indices.every(i=>r.querySelectorAll("td")[i].textContent==="N/A（TEの軸方向電場はゼロ）"))})()');
+  }
   report.field_job=await ev('currentJob');
   const rect=await ev('(()=>{const r=document.querySelector("#tune-status").getBoundingClientRect(),b=document.querySelector("#tune-trials").getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:b.bottom-r.top,scale:1}})()');
   const shot=await call("Page.captureScreenshot",{captureBeyondViewport:true,clip:rect},sessionId);await writeFile(out+"/tuning-result.png",Buffer.from(shot.data,"base64"));
+  }
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);
   if(!report.passed)throw Error("straight tuning GUI checks failed");

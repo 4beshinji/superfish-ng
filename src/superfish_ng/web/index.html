@@ -589,7 +589,7 @@
             <div id="tune-straight-settings" hidden>
               <p>直線profile・段差・単一輪郭の元境界と比較用メッシュを指定します。各元座標を単位付きの式で同時に変更します。境界の対応と壁条件を保持し、途中で無効な形状になれば直前の保存を保持して停止します。</p>
               <label>元境界の対応・比較用メッシュ・座標式（JSON）<textarea id="tune-straight-law" rows="10">{}</textarea></label>
-              <p class="hint">真空・閉PECの軸対称TMが対象です。追跡の判定条件は上の設定を使い、各試行間の比較メッシュはこの法則から導出します。</p>
+              <p class="hint">真空の軸対称TMは閉PEC、TEは同じ対称セクターを保持します。TEの加速量は適用外です。追跡の判定条件は上の設定を使い、各試行間の比較メッシュはこの法則から導出します。</p>
             </div>
             <div id="tune-affine-settings" hidden>
               <p>r′=a(x)r、z′=b(x)r+c(x)z。radial_scale、axial_scale、axial_shearの係数を定数項から順に指定します。係数cₖの単位は1/(設計変数の単位)ᵏです。元メッシュの対応を保持し、最終細分の倍率には2の累乗を指定します。不正形状や細分対応の変化では停止します。</p>
