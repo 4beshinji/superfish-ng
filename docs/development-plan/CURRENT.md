@@ -4,6 +4,13 @@
 73 DONE/3 IN_PROGRESS（H17、C07-planar、N06）/47 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
+N06の[元FEM/全参照/実停止とfresh直列実行器](../N06_FRESH_EXECUTION.md)を限定受入。
+新15個別unit（N06計74）、実球/直線adaptiveの元prefix一致、独立全場、参照未達時の継続、
+例外/費用非重複、固定12行/上限/失敗保全を確認した。検査double・元refinement名・log parserの
+初回ERROR/FAILは保全し、関係分だけ訂正確認。開発新FEM23回（累計46）、12benchmarkは0。
+元1425対象源不変、新1430対象/1223 Python源。新seed/full0、N06/全goalは継続。
+次は同じcommit/sourceで固定12実測、両反復の量別精度/費用と全入力/出力の終端監査。
+
 N06：[全供給点の元TM場評価](../N06_NATIVE_FIELD_LOOKUP.md)を限定受入した。
 物理一次uの独立E/H微分、全候補box一致、球/円筒の実保存場と元全点/全モード値、
 未確認/中断/欠測拒否を新6個別unitで確認。Case/space係数数の強化後0.583秒・終了0/PASS。
