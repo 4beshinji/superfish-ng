@@ -1,5 +1,8 @@
 # G03の現行要件照合
 
+2026-10-07 N01仕様 **DONE**：[幾何3×FEM3・元場/RF/ピーク/独立参照の五合成ケース](N01_GEOMETRY_SURFACE_CASES.md)。球/楕円の旧成功と元五量閾値を保持し、長楕円体・接線連続丸め二ローブ・鋭い導体先端を固定。五Case/15幾何入力のstrict解析、独立面積/体積とsmooth/singularをmetadataだけで確認。初稿端点projection UNVERIFIEDを保全し別明示寸法を選択、製品/閾値は変更せず1190 Python源不変。独立非球形Maxwell/物理peak参照はnull/未確認のままA01固定隔離環境と許可済みblack-boxの経路/両側細分を指定。図を目視確認、新FEM/unit/seed/full/legacy0。原123は69 DONE/2 IN_PROGRESS/52 PLANNED、親G03/N03/原互換32要件/全goalは継続、次はN02。rawは out/n01-geometry-surface-cases-20261007/。
+
+
 2026-09-14 JST、開始HEAD d8855b0。前段階の構築版10を含む実装を、
 [COMPATIBILITY_PLAN.mdのG03/N03行](COMPATIBILITY_PLAN.md)と
 [CONIC_GEOMETRY.mdの番号付き5段階](CONIC_GEOMETRY.md)に照合した。

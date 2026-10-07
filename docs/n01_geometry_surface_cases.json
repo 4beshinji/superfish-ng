@@ -1,0 +1,772 @@
+{
+  "schema_version": 1,
+  "document_type": "N01_geometry_surface_case_catalog",
+  "scope": "vacuum axis-connected closed PEC m=0 TM P2, SI peak phasors; five synthetic cases; specification only",
+  "quantity_change_limits": {
+    "frequency_hz": 0.0001,
+    "r_over_q_accelerator_ohm": 0.005,
+    "geometry_factor_ohm": 0.005,
+    "epk_over_eacc": 0.01,
+    "bpk_over_eacc_mt_per_mv_per_m": 0.01
+  },
+  "field_gates": {
+    "native_axis_relative_l2": 0.01,
+    "legacy_pair_overlap": 0.98,
+    "legacy_pair_margin": 0.02,
+    "relative_cluster_gap": 1e-06,
+    "sphere_independent_volume_electric_magnetic_relative_l2": 0.01,
+    "modern_reference_volume_electric_magnetic_relative_l2": 0.005
+  },
+  "native_tracking_controls": {
+    "mapping": "curved_same_domain",
+    "sample_order": 10,
+    "minimum_overlap": 0.98,
+    "minimum_assignment_margin": 0.05,
+    "relative_cluster_gap": 1e-06,
+    "minimum_relative_singular_value": 1e-08
+  },
+  "fixed_geometry_fem_requirement": "both consecutive intervals at each of three fixed quadratic geometries; preserve original mesh and append uniform refinements",
+  "geometry_requirement": "both consecutive geometry intervals between finest FEM rows plus analytic boundary position/area/volume decrease; geometry accuracy independent from FEM and quadrature",
+  "quadrature": {
+    "orders": [
+      12,
+      16,
+      24
+    ],
+    "relative_tolerance": 1e-08,
+    "role": "same represented field, no additional eigensolve; inspect plateau instead of weakening criteria"
+  },
+  "records": [
+    {
+      "id": "N01-sphere-control",
+      "synthetic": true,
+      "base_case": {
+        "schema_version": 3,
+        "name": "synthetic_N01_sphere_control",
+        "geometry": {
+          "type": "curved_contour",
+          "curves": [
+            {
+              "type": "line",
+              "start_zr_m": [
+                0.0,
+                0.0
+              ],
+              "end_zr_m": [
+                0.16,
+                0.0
+              ]
+            },
+            {
+              "type": "ellipse_arc",
+              "center_zr_m": [
+                0.08,
+                0.0
+              ],
+              "semiaxes_m": [
+                0.08,
+                0.08
+              ],
+              "start_rad": 0.0,
+              "sweep_rad": 3.141592653589793,
+              "rotation_rad": 0.0
+            }
+          ],
+          "edge_tags": [
+            "axis",
+            "pec"
+          ],
+          "join_tolerance_m": 1e-14,
+          "minimum_gap_m": 0.0,
+          "chord_tolerance_m": 0.0016,
+          "chord_max_segments": 20000
+        },
+        "mesh": {
+          "nr": 24,
+          "nz": 32,
+          "geometry_order": 2,
+          "contour_mesh": {
+            "max_edge_m": 0.064,
+            "min_angle_deg": 5.0,
+            "max_triangles": 250000,
+            "max_rounds": 12
+          }
+        },
+        "solver": {
+          "modes": 3,
+          "quadrature_order": 12,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "geometry_chord_tolerances_m": [
+        0.0016,
+        0.0004,
+        0.0001
+      ],
+      "fem_uniform_levels": [
+        0,
+        1,
+        2
+      ],
+      "matrix_size": [
+        3,
+        3
+      ],
+      "target_mode_id": "target",
+      "initial_ids": [
+        "target",
+        "guard-2",
+        "guard-3"
+      ],
+      "geometry_parameters": {
+        "axial_semiaxis_m": 0.08,
+        "radial_semiaxis_m": 0.08
+      },
+      "independent_meridian_area_m2": 0.01005309649148734,
+      "independent_rotational_volume_m3": 0.0021446605848506324,
+      "expected_geometry_status": "SMOOTH_WITHIN_TOLERANCE",
+      "physical_reference": {
+        "status": "ANALYTICAL_REFERENCE_AVAILABLE",
+        "source": "docs/SPHERE_REFERENCE.md",
+        "rf_values": {
+          "frequency_hz": 1636396800.1301022,
+          "r_over_q_accelerator_ohm": 53.614578258374166,
+          "r_over_q_circuit_ohm": 26.807289129187083,
+          "geometry_factor_ohm": 379.5118136788254
+        },
+        "field_source": "superfish_ng.analytic_sphere.SphereTM",
+        "prior_report": {
+          "path": "out/n03-surface-convergence-final-20260908/validation.json",
+          "sha256": "8dc50fe396c3f6e557f7894c79a9a94cddbe682ef189fa42305d3215c737bcee",
+          "status": "PREVIOUSLY_ACCEPTED",
+          "new_fem": 0
+        }
+      },
+      "finite_peak_required": true,
+      "physical_peak_reference": "SphereTM independent PEC boundary fields"
+    },
+    {
+      "id": "N01-ellipse-archive",
+      "synthetic": true,
+      "base_case": {
+        "schema_version": 3,
+        "name": "synthetic_N01_ellipsoid_archive",
+        "geometry": {
+          "type": "curved_contour",
+          "curves": [
+            {
+              "type": "line",
+              "start_zr_m": [
+                0.0,
+                0.0
+              ],
+              "end_zr_m": [
+                0.2,
+                0.0
+              ]
+            },
+            {
+              "type": "ellipse_arc",
+              "center_zr_m": [
+                0.1,
+                0.0
+              ],
+              "semiaxes_m": [
+                0.1,
+                0.08
+              ],
+              "start_rad": 0.0,
+              "sweep_rad": 3.141592653589793,
+              "rotation_rad": 0.0
+            }
+          ],
+          "edge_tags": [
+            "axis",
+            "pec"
+          ],
+          "join_tolerance_m": 1e-14,
+          "minimum_gap_m": 0.0,
+          "chord_tolerance_m": 0.002,
+          "chord_max_segments": 20000
+        },
+        "mesh": {
+          "nr": 24,
+          "nz": 32,
+          "geometry_order": 2,
+          "contour_mesh": {
+            "max_edge_m": 0.02,
+            "min_angle_deg": 5.0,
+            "max_triangles": 250000,
+            "max_rounds": 12
+          }
+        },
+        "solver": {
+          "modes": 3,
+          "quadrature_order": 12,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "geometry_chord_tolerances_m": [
+        0.002,
+        0.000125,
+        3.125e-05
+      ],
+      "fem_uniform_levels": [
+        0,
+        1,
+        2
+      ],
+      "matrix_size": [
+        3,
+        3
+      ],
+      "target_mode_id": "target",
+      "initial_ids": [
+        "target",
+        "guard-2",
+        "guard-3"
+      ],
+      "geometry_parameters": {
+        "axial_semiaxis_m": 0.1,
+        "radial_semiaxis_m": 0.08
+      },
+      "independent_meridian_area_m2": 0.012566370614359173,
+      "independent_rotational_volume_m3": 0.0026808257310632906,
+      "expected_geometry_status": "SMOOTH_WITHIN_TOLERANCE",
+      "physical_reference": {
+        "status": "INDEPENDENT_MAXWELL_REFERENCE_UNVERIFIED",
+        "rf_values": null,
+        "field_source": null,
+        "prior_report": {
+          "path": "out/g03-separated-surface-independent-20260914/report.json",
+          "sha256": "a025a9b0974bce2deec421032957fdd317733330b4fa7fdba1ce496eda48f0e2",
+          "status": "PREVIOUSLY_ACCEPTED",
+          "new_fem": 0
+        },
+        "legacy_computed_modes": 1
+      },
+      "finite_peak_required": true,
+      "physical_peak_reference": null,
+      "historical_ng_baseline": {
+        "report": "out/g03-separated-surface-independent-20260914/report.json",
+        "report_sha256": "a025a9b0974bce2deec421032957fdd317733330b4fa7fdba1ce496eda48f0e2",
+        "finest_geometry_fem_intervals": {
+          "frequency_hz": [
+            1614587073.9033542,
+            1614587073.9033542
+          ],
+          "r_over_q_accelerator_ohm": [
+            17.503083029976455,
+            17.503083029976455
+          ],
+          "geometry_factor_ohm": [
+            409.2893300859903,
+            409.2893300859903
+          ],
+          "epk_over_eacc": [
+            2.6386165590738515,
+            2.6386165590738524
+          ],
+          "bpk_over_eacc_mt_per_mv_per_m": [
+            17.688429761191838,
+            17.68843121098723
+          ]
+        },
+        "scope": "accepted historical single-mode native NG diagnostic; not an independent Maxwell or physical-peak reference; current three-mode series is a new verification input"
+      }
+    },
+    {
+      "id": "N01-prolate-new",
+      "synthetic": true,
+      "base_case": {
+        "schema_version": 3,
+        "name": "synthetic_N01_prolate_new",
+        "geometry": {
+          "type": "curved_contour",
+          "curves": [
+            {
+              "type": "line",
+              "start_zr_m": [
+                0.0,
+                0.0
+              ],
+              "end_zr_m": [
+                0.32,
+                0.0
+              ]
+            },
+            {
+              "type": "ellipse_arc",
+              "center_zr_m": [
+                0.16,
+                0.0
+              ],
+              "semiaxes_m": [
+                0.16,
+                0.08
+              ],
+              "start_rad": 0.0,
+              "sweep_rad": 3.141592653589793,
+              "rotation_rad": 0.0
+            }
+          ],
+          "edge_tags": [
+            "axis",
+            "pec"
+          ],
+          "join_tolerance_m": 1e-14,
+          "minimum_gap_m": 0.0,
+          "chord_tolerance_m": 0.0016,
+          "chord_max_segments": 20000
+        },
+        "mesh": {
+          "nr": 24,
+          "nz": 32,
+          "geometry_order": 2,
+          "contour_mesh": {
+            "max_edge_m": 0.064,
+            "min_angle_deg": 5.0,
+            "max_triangles": 250000,
+            "max_rounds": 12
+          }
+        },
+        "solver": {
+          "modes": 3,
+          "quadrature_order": 12,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "geometry_chord_tolerances_m": [
+        0.0016,
+        0.0004,
+        0.0001
+      ],
+      "fem_uniform_levels": [
+        0,
+        1,
+        2
+      ],
+      "matrix_size": [
+        3,
+        3
+      ],
+      "target_mode_id": "target",
+      "initial_ids": [
+        "target",
+        "guard-2",
+        "guard-3"
+      ],
+      "geometry_parameters": {
+        "axial_semiaxis_m": 0.16,
+        "radial_semiaxis_m": 0.08
+      },
+      "independent_meridian_area_m2": 0.02010619298297468,
+      "independent_rotational_volume_m3": 0.004289321169701265,
+      "expected_geometry_status": "SMOOTH_WITHIN_TOLERANCE",
+      "physical_reference": {
+        "status": "INDEPENDENT_MAXWELL_REFERENCE_UNVERIFIED",
+        "rf_values": null,
+        "field_source": null
+      },
+      "finite_peak_required": true,
+      "physical_peak_reference": null
+    },
+    {
+      "id": "N01-rounded-two-lobe",
+      "synthetic": true,
+      "base_case": {
+        "schema_version": 3,
+        "name": "synthetic_N01_rounded_two_lobe",
+        "geometry": {
+          "type": "curved_contour",
+          "curves": [
+            {
+              "type": "line",
+              "start_zr_m": [
+                0.0,
+                0.0
+              ],
+              "end_zr_m": [
+                0.21875,
+                0.0
+              ]
+            },
+            {
+              "type": "ellipse_arc",
+              "center_zr_m": [
+                0.15625,
+                0.0
+              ],
+              "semiaxes_m": [
+                0.0625,
+                0.0625
+              ],
+              "start_rad": 0.0,
+              "sweep_rad": 2.214297435588181,
+              "rotation_rad": 0.0
+            },
+            {
+              "type": "ellipse_arc",
+              "center_zr_m": [
+                0.109375,
+                0.0625
+              ],
+              "semiaxes_m": [
+                0.015625,
+                0.015625
+              ],
+              "start_rad": -0.9272952180016122,
+              "sweep_rad": -1.2870022175865687,
+              "rotation_rad": 0.0
+            },
+            {
+              "type": "ellipse_arc",
+              "center_zr_m": [
+                0.0625,
+                0.0
+              ],
+              "semiaxes_m": [
+                0.0625,
+                0.0625
+              ],
+              "start_rad": 0.9272952180016122,
+              "sweep_rad": 2.214297435588181,
+              "rotation_rad": 0.0
+            }
+          ],
+          "edge_tags": [
+            "axis",
+            "pec",
+            "pec",
+            "pec"
+          ],
+          "join_tolerance_m": 1e-14,
+          "minimum_gap_m": 0.0,
+          "chord_tolerance_m": 0.0005,
+          "chord_max_segments": 20000
+        },
+        "mesh": {
+          "nr": 24,
+          "nz": 32,
+          "geometry_order": 2,
+          "contour_mesh": {
+            "max_edge_m": 0.02,
+            "min_angle_deg": 5.0,
+            "max_triangles": 250000,
+            "max_rounds": 12
+          }
+        },
+        "solver": {
+          "modes": 3,
+          "quadrature_order": 12,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "geometry_chord_tolerances_m": [
+        0.0005,
+        0.000125,
+        3.125e-05
+      ],
+      "fem_uniform_levels": [
+        0,
+        1,
+        2
+      ],
+      "matrix_size": [
+        3,
+        3
+      ],
+      "target_mode_id": "target",
+      "initial_ids": [
+        "target",
+        "guard-2",
+        "guard-3"
+      ],
+      "geometry_parameters": {
+        "lobe_radius_m": 0.0625,
+        "half_center_separation_m": 0.046875,
+        "fillet_radius_m": 0.015625,
+        "fillet_center_radius_m": 0.0625,
+        "throat_radius_m": 0.046875
+      },
+      "independent_meridian_area_m2": 0.011422182094877349,
+      "independent_rotational_volume_m3": 0.001967633854523379,
+      "expected_geometry_status": "SMOOTH_WITHIN_TOLERANCE",
+      "physical_reference": {
+        "status": "INDEPENDENT_MAXWELL_REFERENCE_UNVERIFIED",
+        "rf_values": null,
+        "field_source": null
+      },
+      "finite_peak_required": true,
+      "physical_peak_reference": null
+    },
+    {
+      "id": "N01-sharp-two-lobe",
+      "synthetic": true,
+      "base_case": {
+        "schema_version": 3,
+        "name": "synthetic_N01_sharp_two_lobe",
+        "geometry": {
+          "type": "curved_contour",
+          "curves": [
+            {
+              "type": "line",
+              "start_zr_m": [
+                0.0,
+                0.0
+              ],
+              "end_zr_m": [
+                0.21875,
+                0.0
+              ]
+            },
+            {
+              "type": "ellipse_arc",
+              "center_zr_m": [
+                0.15625,
+                0.0
+              ],
+              "semiaxes_m": [
+                0.0625,
+                0.0625
+              ],
+              "start_rad": 0.0,
+              "sweep_rad": 2.4188584057763776,
+              "rotation_rad": 0.0
+            },
+            {
+              "type": "ellipse_arc",
+              "center_zr_m": [
+                0.0625,
+                0.0
+              ],
+              "semiaxes_m": [
+                0.0625,
+                0.0625
+              ],
+              "start_rad": 0.7227342478134157,
+              "sweep_rad": 2.4188584057763776,
+              "rotation_rad": 0.0
+            }
+          ],
+          "edge_tags": [
+            "axis",
+            "pec",
+            "pec"
+          ],
+          "join_tolerance_m": 1e-14,
+          "minimum_gap_m": 0.0,
+          "chord_tolerance_m": 0.0005,
+          "chord_max_segments": 20000
+        },
+        "mesh": {
+          "nr": 24,
+          "nz": 32,
+          "geometry_order": 2,
+          "contour_mesh": {
+            "max_edge_m": 0.02,
+            "min_angle_deg": 5.0,
+            "max_triangles": 250000,
+            "max_rounds": 12
+          }
+        },
+        "solver": {
+          "modes": 3,
+          "quadrature_order": 12,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "geometry_chord_tolerances_m": [
+        0.0005,
+        0.000125,
+        3.125e-05
+      ],
+      "fem_uniform_levels": [
+        0,
+        1,
+        2
+      ],
+      "matrix_size": [
+        3,
+        3
+      ],
+      "target_mode_id": "target",
+      "initial_ids": [
+        "target",
+        "guard-2",
+        "guard-3"
+      ],
+      "geometry_parameters": {
+        "lobe_radius_m": 0.0625,
+        "half_center_separation_m": 0.046875,
+        "conductor_tip_angle_rad": 1.4454684956268313,
+        "vacuum_interior_angle_rad": 4.837716811552755,
+        "throat_radius_m": 0.04133986423538423
+      },
+      "independent_meridian_area_m2": 0.011386471783597606,
+      "independent_rotational_volume_m3": 0.0019574234012082396,
+      "expected_geometry_status": "SINGULAR_GEOMETRY",
+      "physical_reference": {
+        "status": "SINGULAR_PEAK_CONTROL",
+        "rf_values": null,
+        "field_source": null
+      },
+      "finite_peak_required": false,
+      "physical_peak_reference": null
+    }
+  ],
+  "reference_reports": [
+    {
+      "path": "out/n03-surface-convergence-final-20260908/validation.json",
+      "sha256": "8dc50fe396c3f6e557f7894c79a9a94cddbe682ef189fa42305d3215c737bcee",
+      "status": "PREVIOUSLY_ACCEPTED",
+      "new_fem": 0
+    },
+    {
+      "path": "out/g03-separated-surface-independent-20260914/report.json",
+      "sha256": "a025a9b0974bce2deec421032957fdd317733330b4fa7fdba1ce496eda48f0e2",
+      "status": "PREVIOUSLY_ACCEPTED",
+      "new_fem": 0
+    },
+    {
+      "path": "out/g03-separated-surface-20260914/acceptance.json",
+      "sha256": "d9e8a5548685bfe7503b0535db3969bf3262daafa560f3df95bdaada34d00b7c",
+      "status": "PREVIOUSLY_ACCEPTED",
+      "new_fem": 0
+    },
+    {
+      "path": "out/a01-backend-20260914/final-corrected/comparison.json",
+      "sha256": "f04ea49f6322da98359006b4c0f2b443f576b606c09aa63360db193c65904b34",
+      "status": "PREVIOUSLY_ACCEPTED",
+      "new_fem": 0
+    }
+  ],
+  "independent_reference_route": {
+    "primary": "A01 fixed cavsim2d/NGSolve isolated environment, same complete native curves and full PEC tags, own mesh/E-space and both-side refinements; adapter capability/domain must be verified before treating outputs as reference",
+    "pin": "48741ff46ca44463281a5ab5945328615881b502",
+    "metadata": "benchmarks/cavsim2d/a01-20260914.json",
+    "fallback": "explicitly authorized Wine black-box if installed and exact target convention/geometry confirmed; no legacy source/binary inspection",
+    "when_unavailable": "keep Maxwell/physical peak reference row UNVERIFIED; never reuse NG output as independent reference"
+  },
+  "baseline_preservation": "previous sphere and ellipsoid evidence remains accepted only in its original scope; do not rerun for metadata or count it as new FEM"
+}
