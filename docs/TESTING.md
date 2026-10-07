@@ -1,3 +1,5 @@
+P09大容量checkpoint実GUIは `verify_gui_planar_curved_large_checkpoint.mjs` で円5＋不足2/TE8、分割15項目PASS。実科学body/完全保存/両gate/過去anchor/元場の実順位/元五byte・全download/画像を確認し、全420源/元7trial九byte/全123カード不変を監査。初回debugger失敗・download不足・歴史的creator照合の誤りを保全。[実終端と照合](PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。節目の全validateは一度起動してhandle60083で実行中、まだfull/seed受入ではない。[条件別監査](PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)。
+
 P09実曲線GUIは新 `verify_gui_planar_curved_history.mjs` により、実比較/取消し/新job・真doublet集合継続・元native連鎖・過去anchor回復/延長/max停止・全元五byte/親不変/RF/場表示を13項目、null表示修正を1項目の分割14項目で受入。検証器期待式/完了待ちERRORと実診断Page is too largeを保全し、製品は全文scroll/未確定表示だけ修正。数値unit/full/seed再実行なし。[raw・実終端・byte監査・後続範囲](PLANAR_CURVED_GUI_HISTORY.md)。大容量調整checkpoint実GUIとP09全条件は継続。
 
 P09専用曲線GUIは `test_gui_planar_curved` 新8種類と直接利用先6種類を分割受入。strict要求、元byte/遅い変異、実anchor回復/延長、停止checkpoint/ゼロprefix/新job再開/生存中元source移動、実順位import、真doublet nullと認証HTTP/128 MiB限定輸送を確認。実Chrome調整6＋再開1、表示修正後render-only1項目も分割PASS。socket権限ERRORと検証器途中ERRORを保全し不足だけ補完。[コマンド・実終端・byte監査・未確認範囲](PLANAR_CURVED_GUI.md)。実Chrome比較/履歴/取消し、大容量円/TE科学checkpointとP09全条件は後続。

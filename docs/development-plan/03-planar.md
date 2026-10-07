@@ -329,6 +329,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P09
 
+- **大容量GUI leaf（2026-10-07）**：[円TM/非円形TEの完全checkpoint](../PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。円5＋不足2/TE8の分割15項目PASS、実TE body95,690,800/102,474,277 byteでHTTP200、全保存/両gate/anchor0/実順位2と元五byte download一致。全420源/元7trial九byte/全123カード不変、全browser/server終端。元FAIL/ERRORと歴史的creatorを保全。[全条件監査](../PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)を継続し、節目の全validate handle60083は実行中。P09/全goal未完。
+
 - **実GUI履歴 leaf（2026-10-07）**：[実Chrome比較・履歴回復/延長・取消しと診断表示](../PLANAR_CURVED_GUI_HISTORY.md)。元TE四nativeから実順位交換/真doublet/null、順序付き履歴/過去anchor回復/後続延長/max停止、全元五byte/親不変と場画像を確認。13項目＋null表示1の分割14項目PASS。検証器の期待式/非同期待ちERRORと実Page is too largeを保全し、診断の全文scroll/null明示の表示2件だけ修正。7完了job/510 entry/全420 creator監査PASS、元420源中418科学/その他源と全123カード不変。実取消し−15/他7worker0、全3server/Chrome終端、外部要求0/slot 0。次は受入円/非円形TEの大容量調整checkpoint実GUIとP09全条件監査。全goal継続。
 
 - **専用GUI leaf（2026-10-07）**：[専用曲線GUI・元E/H/ID履歴・停止checkpoint選択/実再開](../PLANAR_CURVED_GUI.md)。19 strict操作/専用ページを接続し、新API8種類＋関連6種類を分割受入。実Chrome調整6＋再開1項目、表示修正後render-only1項目PASS。socket権限ERROR/検証器readiness・scope ERROR/監査器path・heading誤りと元rawを保持し、不足だけ補完。16完了job/768 entry/全420 creator源・元五byte import/九byte prefix監査PASS、元417源中412/全123カード不変。全handle/両server終端、Chrome slot 0/外部要求0。次は実Chrome比較・履歴回復/延長・取消し、受入円/TE大容量checkpointとP09全条件監査。全goal継続。

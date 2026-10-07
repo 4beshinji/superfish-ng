@@ -1,8 +1,26 @@
 # 現行の作業入口
 
-更新：2026-10-07、P07/P08全条件受入済み、P09の専用GUI/調整再開まで限定受入、実GUI比較/履歴回復/延長/取消しまで分割受入、大容量checkpointと全条件監査を継続。
+更新：2026-10-07、P07/P08全条件受入済み、P09の専用GUI/調整再開まで限定受入、実GUI比較/履歴回復/延長/取消しまで分割受入、大容量checkpoint実GUIまで分割受入、全条件監査と節目の全validateを継続。
 原90カードと追加子カードを含む全123カードの計画は継続中。P04の完了は全goalの完了ではない。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
+
+## 実行中（2026-10-07、P09節目の全validate）
+
+[大容量GUI](../PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)は円5＋不足2/TE8、分割15項目PASS。
+TEの元場取込は実順位2、実HTTP bodyは95,690,800/102,474,277 byteでHTTP200、
+元五byte/全download一致。全420源/元7trial九byte/完全保存と全123カード不変を最終監査した。
+初回debugger失敗/円download不足/歴史的creator照合の監査誤りを保持し、不足だけ補完。
+GUI server90242/TE browser46225は実終了0、worker-terminal空/Chrome slot 0/外部要求0。
+生成時の曲線15源は14現行不変＋1生成当時archive一致であり、全15源現行一致とは扱わない。
+
+残る **全validate handle60083** は `out/validation-p09-milestone-20261007.log` / 同名directory。
+8 isolated unittest worker、全suiteを事前重複実行せず一度起動し、まだ実行中。
+seed/全件PASSは未証明。観測timeoutだけで再起動しない。
+`milestone-start-source.json` にsrc/tests/scripts/examples全1365fingerprintを保存した。
+このhandleの実終端までsrc/tests/scripts/examplesを編集しない。docs/outの記録/監査だけ進める。
+新native求解0のGUI leafと、別rootのfull/seed実行を区別する。
+全validateの実結果/seed f+RFとP09全条件を照合してからカードの完了を判定する。
+全goal/P09 IN_PROGRESS、原互換条件と全123カードを縮小しない。
 
 ## 横断レビューと計画（2026-09-22）
 
