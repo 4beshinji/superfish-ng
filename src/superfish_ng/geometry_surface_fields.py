@@ -149,12 +149,27 @@ def _legacy_mode(previous, current, i, j, overlap, identified, axis_error):
                 gates=gates, status=('PASS' if all(gates.values()) else 'FAIL') if verified else 'UNVERIFIED')
 
 
-def compare_geometry_surface_fields(previous, current, previous_ids, *, mapping):
+def validate_native_resources(resources):
+    """Explicit computational resources; original field gates remain fixed."""
+    keys(resources, ('sample_budget', 'sampling'), ('sample_budget', 'sampling'), 'native tracking resources')
+    budget=resources['sample_budget']
+    if type(budget) is not int or not 1<=budget<=8388608:
+        raise ValueError('native tracking sample_budget must be an integer from 1 to 8388608')
+    if resources['sampling']!='uniform_parent_p2':
+        raise ValueError('native tracking resources require sampling=uniform_parent_p2; original inverse sampling remains the default')
+    return deepcopy(resources)
+
+
+def compare_geometry_surface_fields(previous, current, previous_ids, *, mapping, native_resources=None):
     """Compare provided native fields; saved wrapper additionally verifies FEM/RF.
 
     Polynomial fixtures can exercise this in-memory diagnostic, but are not
     eigenpairs. Only the saved wrapper provides the native eigenpair provenance.
     """
+    if native_resources is not None:
+        native_resources=validate_native_resources(native_resources)
+        if mapping!='curved_same_domain':
+            raise ValueError('native tracking resources apply only to fixed quadratic domain comparisons')
     boundary = _validate_pair(previous, current, previous_ids, mapping)
     sampled, weights, hcommon, common, sampling = _samples(previous, current)
     modes, legacy_modes, current_ids = [], [], [None]*current.case.modes
@@ -202,12 +217,16 @@ def compare_geometry_surface_fields(previous, current, previous_ids, *, mapping)
     native = None
     if mapping == 'curved_same_domain':
         count = sum(len(s.space.geometry.cell_nodes) for s in (previous, current))*TRACKING['sample_order']**2
-        if count > 262144:
-            native = dict(status='UNVERIFIED', reason='N01 sample_order=10 exceeds native 262144 sample budget',
-                          planned_samples=count, sample_budget=262144, current_mode_ids=[None]*current.case.modes,
+        budget=262144 if native_resources is None else native_resources['sample_budget']
+        if count > budget:
+            reason=('N01 sample_order=10 exceeds native 262144 sample budget' if native_resources is None else
+                    f'N01 sample_order=10 requires {count} samples, exceeding declared budget {budget}')
+            native = dict(status='UNVERIFIED', reason=reason,
+                          planned_samples=count, sample_budget=budget, current_mode_ids=[None]*current.case.modes,
                           individual_ids_complete=False)
         else:
-            native = track_curved_same_domain_modes(previous, current, previous_ids, **TRACKING)
+            extras={} if native_resources is None else dict(sample_budget=budget,uniform_parent_sampling=True)
+            native = track_curved_same_domain_modes(previous, current, previous_ids, **TRACKING, **extras)
     statuses = [m['status'] for m in modes]
     resolved = len(modes) == previous.case.modes and all(s != 'UNVERIFIED' for s in statuses)
     native_identified = native is None or (native['status'] == 'PASS' and native['individual_ids_complete'])
@@ -220,10 +239,13 @@ def compare_geometry_surface_fields(previous, current, previous_ids, *, mapping)
                          surface_field='physical surface-peak convergence not assessed by this Study')
     if native is not None:
         current_ids = native['current_mode_ids'] if native_identified else [None]*current.case.modes
+    native_controls=deepcopy(TRACKING) if native is not None else None
+    if native_resources is not None and native_controls is not None:
+        native_controls['resource_limits']=native_resources
     return dict(status=status, mapping=mapping, previous_ids=deepcopy(previous_ids), current_ids=current_ids,
                 modes=modes, sampling=sampling, legacy_comparison=legacy_report,
                 native_fixed_geometry_tracking=native, quadratic_boundary_coincidence=boundary,
-                native_controls=deepcopy(TRACKING) if native is not None else None,
+                native_controls=native_controls,
                 field_gates=deepcopy(FIELD_GATES), physical_error_bound=None,
                 continuous_field_accuracy='UNVERIFIED',
                 scope='Hphi correspondence plus absolute axis Ez gate; centroid electric/magnetic relative L2 diagnostics with explicit missing samples; no full-domain field error bound, FEM/geometry/peak/quadrature acceptance or independent reference')

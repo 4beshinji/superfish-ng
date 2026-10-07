@@ -229,3 +229,37 @@ class SavedGeometrySurfaceMatrixTests(unittest.TestCase):
         with patch.object(matrix, '_source_hashes', side_effect=[original, dict(original, counterfeit='0'*64)]):
             with self.assertRaisesRegex(ValueError, 'sources changed'):
                 matrix.build_geometry_surface_matrix(self.request())
+
+    def test_version_three_declares_resources_without_promoting_unknown_nodes(self):
+        request=self.request();request['schema_version']=3
+        request['native_tracking_resources']=dict(sample_budget=8388608,sampling='uniform_parent_p2')
+        report=build_geometry_surface_matrix(request)
+        self.assertEqual(report['status'],'UNVERIFIED')
+        self.assertEqual(report['request']['native_tracking_resources'],request['native_tracking_resources'])
+        self.assertEqual(report['new_fem_solves'],0)
+        self.assertIsNone(report['physical_error_bound'])
+        for bad in (dict(sample_budget=True,sampling='uniform_parent_p2'),dict(sample_budget=8388608,sampling='inverse'),
+                    dict(sample_budget=8388608,sampling='uniform_parent_p2',minimum_overlap=.9)):
+            altered=deepcopy(request);altered['native_tracking_resources']=bad
+            with self.assertRaises(ValueError):build_geometry_surface_matrix(altered)
+        # Resource controls are an explicit new request version, never silently
+        # inserted into an existing source-bound version-one or archive request.
+        request['schema_version']=1
+        with self.assertRaises(ValueError):build_geometry_surface_matrix(request)
+
+    def test_version_three_save_replay_and_cli_keep_declared_resources(self):
+        request=self.request();request['schema_version']=3
+        request['native_tracking_resources']=dict(sample_budget=8388608,sampling='uniform_parent_p2')
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);path=root/'matrix.json'
+            report=save_geometry_surface_matrix(request,path)
+            self.assertEqual(read_geometry_surface_matrix(path),report)
+            source=root/'request.json';source.write_text(json.dumps(request))
+            process=subprocess.run([sys.executable,'scripts/validate_geometry_surface_convergence.py',
+                '--matrix-request',str(source),'--out',str(root/'cli')],cwd=ROOT,capture_output=True,text=True)
+            self.assertEqual(process.returncode,3,process.stderr)
+            self.assertEqual(json.loads((root/'cli/matrix.json').read_text()),report)
+            mutated=deepcopy(report);mutated['request']['native_tracking_resources']['sample_budget']=262144
+            path.write_text(json.dumps(mutated))
+            with self.assertRaisesRegex(ValueError,'replay differs'):
+                read_geometry_surface_matrix(path)

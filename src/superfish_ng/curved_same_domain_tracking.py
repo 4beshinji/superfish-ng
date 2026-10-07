@@ -127,12 +127,35 @@ def track_curved_same_domain_modes(previous,current,previous_ids,*,mapping,sampl
     return _track_curved_modes(previous,current,previous_ids,sample_order=sample_order,**controls)
 
 
-def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None,**controls):
+def _track_curved_modes(previous,current,previous_ids,*,sample_order,affine=None,
+                        sample_budget=262144,uniform_parent_sampling=False,**controls):
     if type(sample_order) is not int or not 2<=sample_order<=32:raise ValueError('curved_same_domain sample_order must be an integer from 2 to 32')
+    if type(sample_budget) is not int or not 1<=sample_budget<=8388608:
+        raise ValueError('curved tracking sample_budget must be an integer from 1 to 8388608')
+    if type(uniform_parent_sampling) is not bool:
+        raise ValueError('uniform_parent_sampling must be boolean')
+    if uniform_parent_sampling and affine is not None:
+        raise ValueError('uniform parent sampling UNVERIFIED: affine comparison requires the original physical inverse sampler')
     boundary=_compare_quadratic_boundaries(previous,current,affine);solutions=(previous,current)
     te=is_te(previous.case);field='Ephi_V_per_m' if te else 'Hphi_A_per_m'
     counts=[len(s.space.geometry.cell_nodes) for s in solutions];count=sum(counts)*sample_order**2
-    if count>262144:raise ValueError('curved_same_domain exceeds 262144 samples; reduce sample_order or mesh size')
+    if count>sample_budget:
+        if sample_budget==262144:
+            raise ValueError('curved_same_domain exceeds 262144 samples; reduce sample_order or mesh size')
+        raise ValueError(f'curved_same_domain UNVERIFIED: {count} samples exceed declared budget {sample_budget}')
+    if uniform_parent_sampling:
+        from .uniform_curved_sampling import uniform_curved_pair_samples
+        sampled=uniform_curved_pair_samples(previous,current,sample_order=sample_order)
+        if len(sampled['weights'])!=count:
+            raise ValueError('uniform P2 sampling UNVERIFIED: quadrature sample count differs from the declared complete rule')
+        report=track_sampled_mode_subspaces(*sampled['values'],sampled['weights'],previous.frequencies_hz,current.frequencies_hz,previous_ids,
+            comparison_description='same represented quadratic boundary; physical Hphi at both curved meshes quadrature points; half-sum physical r dr dz measure',**controls)
+        report['physical_mapping']=dict(name='curved_same_domain',sample_order=sample_order,sample_count=count,triangle_counts=counts,
+            axisymmetric_volumes_m3=sampled['volumes_m3'],boundary_coincidence=boundary,field='Hphi_A_per_m',
+            scope='identical native curve parameterization and coincident represented quadratic boundary; checked adjacent uniform P2 restrictions; sample-order convergence required; not physical convergence acceptance',
+            sampling_method='checked_uniform_parent_reference_coordinates',sample_budget=sample_budget,
+            parent_polynomial_certificate=sampled['certificate'])
+        return report
     rule=list(triangle_quadrature(order=sample_order));q=np.array([b[1:] for b,_ in rule]);reference=np.array([w for _,w in rule])
     samplers=[FieldSampler.from_solution(s) for s in solutions];values=[[],[]];weights=[];volumes=[]
     for side,solution in enumerate(solutions):

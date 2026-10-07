@@ -15,7 +15,7 @@ from pathlib import Path
 
 from .config import keys
 from .curved_same_domain_tracking import compare_quadratic_boundaries
-from .geometry_surface_fields import compare_geometry_surface_fields, _native_snapshot
+from .geometry_surface_fields import compare_geometry_surface_fields, _native_snapshot, validate_native_resources
 from .geometry_surface_plan import build_geometry_surface_plan, _path, _bytes, _equal, _sha, _source_hashes
 from .geometry_surface_numerics import (quantity_intervals, quantity_changes, boundary_error,
                                        mapped_moments, quadrature_check, ellipsoid_moments)
@@ -88,10 +88,11 @@ def assess_matrix_evidence(groups, geometry_fields, *, finite_peak_required):
 
 def _descriptor(request, root):
     version = request.get('schema_version') if isinstance(request, dict) else None
-    if type(version) is not int or version not in (1, 2):
-        raise ValueError('geometry surface matrix request requires schema_version 1 or 2')
-    if version == 1:
+    if type(version) is not int or version not in (1, 2, 3):
+        raise ValueError('geometry surface matrix request requires schema_version 1, 2 or 3')
+    if version in (1, 3):
         fields = ('schema_version', 'document_type', 'plan_request', 'runs')
+        if version==3:fields+=('native_tracking_resources',)
         keys(request, fields, fields, 'geometry surface matrix request')
         _equal(request['document_type'], 'geometry_surface_matrix_request', 'matrix document type')
         plan = build_geometry_surface_plan(request['plan_request'], base_directory=root)
@@ -103,7 +104,8 @@ def _descriptor(request, root):
                     finite_peak_required=case['finite_peak_required'], reference=case['physical_reference'],
                     moments=(case['independent_geometry']['meridian_area_m2'], case['independent_geometry']['rotational_volume_m3']),
                     geometry_diagnostic=case['geometry_diagnostic'], plan=plan,
-                    historical=None, historical_source=None, native_policy='N01_strong_individual_ids')
+                    historical=None, historical_source=None, native_policy='N01_strong_individual_ids',
+                    native_resources=None if version==1 else validate_native_resources(request['native_tracking_resources']))
         runs = request['runs']
     else:
         fields = ('schema_version', 'document_type', 'archive_report')
@@ -124,7 +126,7 @@ def _descriptor(request, root):
                                    reason='original NG ellipse is a historical diagnostic, never an independent Maxwell or physical-peak reference'),
                     moments=ellipsoid_moments(.1, .08), geometry_diagnostic=None, plan=None,
                     historical=historical, historical_source=dict(path=str(path), sha256=HISTORICAL_ELLIPSE_SHA),
-                    native_policy='original_single_mode_Study_fields_with_explicit_quadratic_boundary_checks')
+                    native_policy='original_single_mode_Study_fields_with_explicit_quadratic_boundary_checks',native_resources=None)
     if type(runs) is not list or len(runs) != 3 or any(type(g) is not list or len(g) != 3 for g in runs):
         raise ValueError('runs must contain three geometry rows, each with three uniform FEM entries')
     paths = [[None if p is None else _path(p, root) for p in group] for group in runs]
@@ -138,11 +140,11 @@ def _unresolved_field(reason):
     return dict(status='UNVERIFIED', reason=reason, comparison=None, previous_mode_index=None, current_mode_index=None)
 
 
-def _field(previous, current, ids, target, mapping):
+def _field(previous, current, ids, target, mapping, native_resources=None):
     if previous is None or current is None or ids is None or any(i is None for i in ids):
         return _unresolved_field('native source or all individual mode IDs are unavailable'), None
     try:
-        report = compare_geometry_surface_fields(previous, current, ids, mapping=mapping)
+        report = compare_geometry_surface_fields(previous, current, ids, mapping=mapping,native_resources=native_resources)
     except ValueError as error:
         if 'UNVERIFIED' not in str(error):
             raise
@@ -249,7 +251,7 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
             if a is None or b is None: boundaries.append(None)
             else:
                 compare_quadratic_boundaries(a, b); boundaries.append(True)
-            field, ids = _field(a, b, row_ids[-1], target, 'analytic_geometry_approximations' if historical else 'curved_same_domain')
+            field, ids = _field(a, b, row_ids[-1], target, 'analytic_geometry_approximations' if historical else 'curved_same_domain',descriptor['native_resources'])
             fields.append(field); row_ids.append(ids)
         ids_grid.append(row_ids)
         rows = [_row(s, identity, target, p) for s, identity, p in zip(group, row_ids, paths[g])]
@@ -287,7 +289,7 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
     else:
         normalized['plan_request'] = descriptor['plan']['request']
         normalized['runs'] = [[None if p is None else str(p) for p in group] for group in paths]
-    return dict(schema_version=request['schema_version'], document_type='geometry_surface_matrix', request=normalized,
+    result=dict(schema_version=request['schema_version'], document_type='geometry_surface_matrix', request=normalized,
                 status=assessment['status'], case_id=descriptor['case_id'], target_mode_id=target,
                 native_policy=descriptor['native_policy'], sources=before, implementation_sha256=source,
                 plan=descriptor['plan'], historical_source=descriptor['historical_source'],
@@ -297,6 +299,11 @@ def build_geometry_surface_matrix(request, *, base_directory=None):
                 planned_native_points=9, supplied_native_points=len(flat), new_fem_solves=0,
                 physical_acceptance_status='UNVERIFIED', physical_error_bound=None,
                 scope='source-identified native 3x3 matrix, target-only convergence with all individual IDs required, separate geometry/FEM/quadrature/field/discrete peak gates; no independent physical-peak guarantee')
+    if request['schema_version']==3:
+        # Preserve the configured resources in the assessment even when no
+        # native nodes were supplied; the request and report must agree.
+        result['native_tracking_resources']=deepcopy(descriptor['native_resources'])
+    return result
 
 
 def save_geometry_surface_matrix(request, path, *, base_directory=None):
