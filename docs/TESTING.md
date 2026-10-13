@@ -1,3 +1,5 @@
+2026-10-14 RF版5固定36 runner：[範囲とコマンド](CURVED_RF_GOAL_EFFICIENCY_FIXED_RUNNER.md)。新summary6/runner5＋元metrics9の20個別unitが7.204秒PASS。36 control mock/新FEM0、実保存PAUSED集計は新求解なし。数値核不変、fixed36/seed/full/GUI/Hosted CIの受入を代行しない。
+
 2026-10-14 RF版5worker04：[実TERM/KILLと参照contextの検証](CURVED_RF_GOAL_EFFICIENCY_TERMINATION.md)。新9を含む52個別unitを変更別に分割PASS、最後のSHA型拒否はintegrity6件のみ補完。新実process20 FEM/unit内1別、全187配列/全RF・六ケースのMaxwell尺度則と原12 eventの全保存再生を確認。scope/log/再利用は同書と[条件別受入](CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)。数値body/閾値不変、固定36/GUI/seed/full/Hosted CIは今回未実行。
 
 2026-10-14 RF版5比較CLI：[限定受入とコマンド](CURVED_RF_GOAL_EFFICIENCY_CLI.md)。新CLI/reference/worker/resume/saved/costs/processの51個別unit（新8含む）が22.098秒PASS。後続変更に関係するarchive integrity5件/strict1件だけ補完した。実CLI2新FEM/二完全再生・新固有求解0、全29配列と元全RF一致。数学核/閾値不変でseed/full/GUI/Hosted CIは今回0。元FAIL/未実装/環境ERRORと限定scopeを保持する。
