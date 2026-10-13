@@ -1,6 +1,6 @@
 # Superfish-NG
 
-[RF版5対照の独立全域参照](docs/CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を六ケース・両Gauss次数で確認した。球の解析場と長球/丸めの全五modeを保持し、22個別unitと全域積分・相似則がPASS。[04の比較指標と採用祖先判定](docs/CURVED_RF_GOAL_EFFICIENCY_WORKER.md)も17個別unitで確認した。固定36要求の実worker/費用比較/保存GUIへの接続は進行中で、親N04と全計画は未完。
+[RF版5対照の独立全域参照](docs/CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を六ケース・両Gauss次数で確認した。球の解析場と長球/丸めの全五modeを保持し、22個別unitと全域積分・相似則がPASS。[04の比較指標と採用祖先判定](docs/CURVED_RF_GOAL_EFFICIENCY_WORKER.md)も17個別unitで確認した。[新規workerの12求解](docs/CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)で実分岐と全場を確認した。全保存再生/中止再開・固定36実行・GUIは後続で、親N04と全計画は未完。
 
 軸対称RF空洞のための独立実装 FEM ソルバー（`0.1.0` research seed、Python 3.10+ / NumPy・SciPy）。
 canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これを基準に形状・メッシュ・RF量・

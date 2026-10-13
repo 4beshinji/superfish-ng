@@ -47,9 +47,12 @@ def assess_rf_goal_pair(previous, current):
         # The original sample metric supplies the common sign and original
         # parent field norm. RF scalars use current/previous instead. Its peak
         # diagnostic is replaced by the two-interval upper bound below.
+        reference_quantities=dict(previous['quantities'])
+        for key in PEAKS:
+            reference_quantities[key]=previous['peak_intervals'][key][0]
         row=assess_efficiency_samples(previous['fields'],current['fields'],previous['weights'],
             previous['axis_ez'],current['axis_ez'],previous['axis_weights'],
-            current['quantities'],previous['quantities'],current['peak_intervals'])
+            current['quantities'],reference_quantities,current['peak_intervals'])
         if row['status']=='UNVERIFIED':
             return _result({},row['common_hphi_sign'],row['unverified_reason'])
         errors=deepcopy(row['relative_errors'])

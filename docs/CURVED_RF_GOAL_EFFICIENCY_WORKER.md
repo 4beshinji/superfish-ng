@@ -3,8 +3,9 @@
 2026-10-13 JST、`ADD-N04-rf-goal-04` **IN_PROGRESS**。
 [原仕様](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)のうち、比較側の全量指標と停止判定を実装した。
 新`curved_rf_goal_efficiency_metrics.py`は純粋な数値/記録集約で、FEMを実行しない。
-実worker/CLI、版5の全event観測、元checkpointの完全再生、別journalのuniform continuation、
-費用/失敗/実中止再開との接続は未実装であり、04の完了条件は保留する。
+[新規native実行](CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)も接続し、12新FEMの公開分岐/全場を確認した。
+専用CLI/全比較journalの完全再生、別uniform continuationの実証、全観測/実中止再開は未完であり、
+04の完了条件は保留する。
 36実行05・GUI/全条件06・親N04と全goalは継続。
 
 ## 実装した入口
@@ -56,4 +57,4 @@ uv/unittest、BLAS1、`PYTHONPATH=src:tests`で対象moduleと関連8件だけ�
 公開版5の選択/停止、旧N05/06 worker、原閾値は変更しない。
 
 全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45。
-次はこの判定を元版5branchと全event保存/再生へ接続し、実workerと全費用を検証する。
+次は新規実行の元prefixを保つ全journal再生/再開、追加一様確認、全観測/CLIを完成する。
