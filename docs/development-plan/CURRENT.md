@@ -27,8 +27,10 @@ JSON/canonicalも元bodyを抽出し、Project/旧canonical転送・同軸native
 計測alias・反射の拒否順・独立比較のCase・保存場fixtureの求解契約・失敗reportの旧期待値という5点を修正した。
 隔離した自作sourceで58個別unitを分割PASSし、実P2の一回組立計測と行列/場/全RF一致、独立Bessel f/H/E/壁loss/RQ、3形状54 FEMのpause/resume/完全再生を確認した。
 終端後に検証した5ファイルだけを主ツリーへbyte一致で反映。他1487 sourceは不変。rawはout/rf03-lower-helpers-20261013/integration-followup-applied.json。
-次はこのsourceを固定したfull再検証とseedのf/全RF benchmark比較。RF-03は未受入で、58件を主ツリーのfull成功へ読み替えない。
-全152は95 DONE/4 IN_PROGRESS/53 PLANNED、RF-03はIN_PROGRESS、RF残6枚はPLANNED。
+[RF-03の固定full受入](../LOWER_SHARED_HELPERS.md)：2689 test/528 module、3910.941秒、終了0/PASS、FAIL/ERROR0/既存SKIP3。前後1492 sourceは完全一致。
+同fullのseed全RFと保存再構築を照合し、f差ゼロ・物理量相対差最大8.882e-16。初回失敗/分割58件はそれぞれ元scopeで保持する。
+次は隔離検証済みRF-04の所有worker候補を反映し、RF-05/08へ進む。
+全152は96 DONE/3 IN_PROGRESS/53 PLANNED、RF-03はDONE、RF残6枚は未受入。
 既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。

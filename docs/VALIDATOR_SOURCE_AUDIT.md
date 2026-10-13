@@ -60,3 +60,8 @@ rawの終端receiptは`out/rf03-lower-helpers-20261013/full-initial-terminal.jso
 隔離した同じ自作sourceで当該4 unitはPASS。製品validatorは変更していない。
 58個別の統合追補検査へ束縛した5 sourceを終端後に主ツリーへbyte一致で反映し、成功fullの再検証を次工程に置く。
 旧7 unitの受入とstubのfull/seed表示を、新しい実fullの数値成功へ読み替えない。
+
+
+## 実full成功側の前後監査（2026-10-14）
+
+`out/validation-rf03-integration-fixed-20261014`は終了0/full PASS。2689 test/528 module、FAIL/ERROR0/既存SKIP3、前後1492 source/file一覧はUNCHANGED、差分三集合は空。子tests/convergenceの実終了0と同runのseed全RF比較を[RF-03受入](LOWER_SHARED_HELPERS.md)へ結合した。初回終了1の実監査も保持し、成功側で置き換えない。endpoint監査であり実行中の一時変更を常時監視する保証ではない。

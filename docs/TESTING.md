@@ -1,3 +1,5 @@
+2026-10-14 RF-03 **DONE**：[下位共通処理の受入](LOWER_SHARED_HELPERS.md)。値検査/JSON/来歴を三段階で抽出し旧APIを維持。修正後の実fullは2689 test/528 module、3910.941秒、終了0/PASS、FAIL/ERROR0/既存SKIP3、前後1492 sourceはUNCHANGED。同fullのseed全RF/保存再構築を照合しf差ゼロ・物理量相対差最大8.882e-16。初回full失敗と修正58件の分割証拠を保持。全152は96 DONE/3 IN_PROGRESS/53 PLANNED、後続6枚と全goalは継続。
+
 RF-02の環境選択：[core/GUI環境契約](DEPENDENCIES.md#current-environments)。GUIを含むfull validatorには`plot`を導入する。core-onlyは `scripts/check_core_environment.py` とCIの既存5非GUIunitを選び、全GUIをskipしたfullとして報告しない。Python 3.10/3.12の解決版・過去benchmarkは別に記録する。RF-02の8個別ID/二版16実行・wheel資産監査はout/rf02-environments-20261013/acceptance.json、full/seed/ブラウザー/Hosted CIは未実行。次の着手順は[CURRENT](development-plan/CURRENT.md)。
 
 2026-10-13 RF-01 **DONE**：[validatorの前後ソース監査](VALIDATOR_SOURCE_AUDIT.md)。開始/終了に一覧を取り直し、内容変更/追加/削除を非ゼロ終了/受入不可にする。子失敗の元終了code/log、元数値例外、skip-tests範囲を保持し、失敗にも終端reportを保存。元fixture三差分の誤PASSとmesh不足ERRORを保全し、新5＋直接runner2の7個別unitが0.471秒PASS。数値部はcontroller stubで、元seed body/CLI登録はAST不変、他1486源byte不変、新testで1488。新FEM/seed/full/GUI/依存/legacy0。新validatorの実full監査は次の広範統合/節目で確認。全152は93 DONE/3 IN_PROGRESS/56 PLANNED、RF残9枚/全goalは継続。次はRF-09→RF-02→RF-03。
