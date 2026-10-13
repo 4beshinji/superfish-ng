@@ -1,3 +1,5 @@
+2026-10-14 RF-05 **DONE**：[調整判断の責務分離](TUNING_DECISION.md)。元数学bodyを保持した下位判断と旧転送、planar/三系Hφの入口正規化を接続。114判断/174専用adapter比較、10moduleの55個別unit/1655.399秒/終了0/PASS、元六成果物の全RF/ID/判断再生を確認。七ファイルbyte一致反映、他1487 source不変。数値核/参照/許容差/schema不変、追加full/seed0。全152は98 DONE/3 IN_PROGRESS/51 PLANNED、残4枚/全goalは継続。
+
 2026-10-14 RF-04 **DONE**：[Hφ所有workerの共通契約](OWNED_TUNING_WORKER.md)。三系の旧差を維持し明示callbackでlifecycle/所有検証/prefixを共通化。worker14＋GUI service6の20個別unit、旧新12 FEMのnative/Project byte・全RF/判断一致、六成果物の追加求解なし再生とAST/signature確認。検証済み四ファイルをbyte一致反映、他1489 source不変。JobManager/数値核/schema不変、追加full/seed/実ブラウザー0。全152は97 DONE/4 IN_PROGRESS/51 PLANNED、RF-05は隔離sourceで実行中、残5枚/全goalは継続。
 
 2026-10-14 RF-03 **DONE**：[下位共通処理の受入](LOWER_SHARED_HELPERS.md)。値検査/JSON/来歴を三段階で抽出し旧APIを維持。修正後の実fullは2689 test/528 module、3910.941秒、終了0/PASS、FAIL/ERROR0/既存SKIP3、前後1492 sourceはUNCHANGED。同fullのseed全RF/保存再構築を照合しf差ゼロ・物理量相対差最大8.882e-16。初回full失敗と修正58件の分割証拠を保持。全152は96 DONE/3 IN_PROGRESS/53 PLANNED、後続6枚と全goalは継続。

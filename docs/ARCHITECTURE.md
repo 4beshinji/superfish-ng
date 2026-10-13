@@ -2,7 +2,7 @@
 
 <a id="current-architecture"></a>
 
-## 現行の入口と責務（2026-10-13、RF-09）
+## 現行の入口と責務（2026-10-14、RF-09以降の反映）
 
 以下は現存する実装の索引。[リファクタリング計画](REFACTORING_PLAN.md)の目標図とは
 区別する。進捗の正本は[CURRENT](development-plan/CURRENT.md)。下の日付付きADRや
@@ -22,7 +22,9 @@
 [owned_tuning_worker.py](../src/superfish_ng/owned_tuning_worker.py)は三系の明示contract/callbackで
 投入/状態/所有snapshot/manifest/完全再生/prefixを扱う。各adapterの厳密物理検査、native再生、
 試行実行とcheckpoint番号/保存pathの差は維持し、JobManagerと数値核は変更していない。
-RF-05以降は未受入。
+[tuning_decision.py](../src/superfish_ng/tuning_decision.py)は正規化済み要求/確認済み試行から
+元のbracket停止/次試行dictを返す。標準mathだけに依存し、物理検査/回復/予算停止/親は
+入口側に残す。[RF-05受入](TUNING_DECISION.md)を完了し、RF-06/07/08/10は未受入。
 Case・FEM・場・量・native readerは以下の物理別経路に分かれており、任意のCaseを
 canonical `solve` や `save_run` へ渡せる統一APIではない。
 

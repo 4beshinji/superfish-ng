@@ -19,7 +19,8 @@ from .hphi_field_overlap import _declared_mesh, _verified_solution
 from .hphi_native import solve_hphi
 from .hphi_tracking import HphiTrackingRequest, _track_hphi_modes
 from .mode_tracking import tracked_frequency_hz
-from .tuning import _decision
+from .tuning_decision import decide_next_trial
+from .tuning_identity_recovery import base_request
 from .hphi_shape_tuning import validate_shape_law, shape_project, shape_comparison_mapping, tune_scope, tune_parameter_unit
 
 
@@ -179,7 +180,7 @@ def _tune_decision(request, trials):
     # Keep dedicated budget stops outside the shared bisection vocabulary.
     if trials and trials[-1]['status'] == 'MESH_LIMIT':
         return dict(status='MESH_LIMIT', next_trial=None, reason=trials[-1]['tracking']['verification_reasons'][0])
-    decision = _decision(request, trials)
+    decision = decide_next_trial(base_request(request), trials)
     if decision['status'] == 'PAUSED' and trials and decision['next_trial']['phase'] == 'search':
         # Uniform scaling has one fixed shape reference. An intermediate
         # non-binary scale ratio can introduce avoidable contour roundoff.

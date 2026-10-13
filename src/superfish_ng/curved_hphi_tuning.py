@@ -18,7 +18,8 @@ from .hphi_tuning_identity_recovery import validate_recovery_policy
 from .hphi_identity_recovery import _assess
 from .mode_tracking import tracked_frequency_hz
 from .fem import triangle_quadrature
-from .tuning import _decision
+from .tuning_decision import decide_next_trial
+from .tuning_identity_recovery import base_request
 
 
 def validate_curved_hphi_tune(request):
@@ -84,7 +85,7 @@ def curved_hphi_tune_decision(request,trials):
     """Decision on internally verified trials; this does not certify input reports."""
     if trials and trials[-1]['status']=='MESH_LIMIT':
         return dict(status='MESH_LIMIT',next_trial=None,reason=trials[-1]['tracking']['verification_reasons'][0])
-    decision=_decision(request,trials)
+    decision=decide_next_trial(base_request(request), trials)
     if trials and decision['status']=='PAUSED' and decision['next_trial']['phase']=='search':
         decision['next_trial']['parent_index']=0
     return decision

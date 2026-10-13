@@ -24,7 +24,8 @@ from .planar_jobs import execute_planar_project, _job_hashes, verify_planar_job
 from .jobs import _implementation_hashes
 from .mode_tracking import tracked_frequency_hz
 from .saved_mode_tracking import _canonical
-from .tuning import _decision
+from .tuning_decision import decide_next_trial
+from .tuning_identity_recovery import base_request
 from .planar_tuning_recovery import validate_planar_recovery_policy, recover_planar_tune_trial
 
 
@@ -153,7 +154,7 @@ def _assemble(request, runs):
     trials, sources, solutions = [], [], []
     controls = PlanarTrackingControls.from_dict(request['controls'])
     for index, run in enumerate(runs):
-        decision = _decision(request, trials)
+        decision = decide_next_trial(base_request(request), trials)
         if decision['status'] != 'PAUSED':
             raise ValueError('planar tune contains trials after a terminal decision')
         trial = decision['next_trial']
@@ -195,7 +196,7 @@ def _assemble(request, runs):
             trials[-1].update(initial_tracking=initial_tracking, identity_recovery=recovery)
     if sources != [_job_hashes(Path(run)) for run in runs]:
         raise ValueError('planar tune sources changed during complete replay')
-    decision = _decision(request, trials)
+    decision = decide_next_trial(base_request(request), trials)
     return dict(format='superfish_ng_planar_tune_checkpoint', schema_version=1,
         request=deepcopy(request), trial_runs=list(runs), trial_sources_sha256=sources,
         trials=trials, decision=decision, status=decision['status'], can_resume=decision['status']=='PAUSED',

@@ -2,7 +2,7 @@
 
 作成：2026-09-22。更新：2026-10-14。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04を受入済み。RF-05を隔離sourceで実施中、残5枚は未受入で計画全体は継続中。**
+（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04/RF-05を受入済み。残4枚は未受入で計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
@@ -87,7 +87,7 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 | RF-02 環境/任意依存 | F02/F08 | RF-01 | core/GUI条件、導入手順、環境証拠 | DONE |
 | RF-03 下位共通処理 | F03 | RF-01/02 | 入力、JSON、来歴を別々に抽出 | DONE |
 | RF-04 所有worker | F04 | RF-03 | 直線→曲線→材料の順で移行し、最後に統合確認 | DONE |
-| RF-05 調整決定 | F05 | RF-03 | 決定の抽出→各物理アダプター移行 | IN_PROGRESS |
+| RF-05 調整決定 | F05 | RF-03 | 決定の抽出→各物理アダプター移行 | DONE |
 | RF-06 CLI分割 | F06 | RF-03 | 一つのコマンド群ずつ。RF-04/05の対象群はその移行後 | PLANNED |
 | RF-07 HTTP/画面分割 | F06 | RF-04、RF-06 | HTTP輸送/操作表→一つの画面状態群ずつ | PLANNED |
 | RF-08 テスト境界 | F07 | RF-03 | 変更する領域のfixture/入力/実FEM操作を分離 | PLANNED |
@@ -233,7 +233,7 @@ worker wrapperだけの変更なら数値全validatorを一律追加しないが
 
 ### RF-05：確認済み試行から次動作を決める処理を分離する
 
-2026-10-14 **IN_PROGRESS**：隔離コピーで元decision bodyを標準mathだけのtuning_decisionへ抽出。旧tuning._decisionを転送し、planar/直線Hφ/曲線Hφ/材料Hφとplanar所有prefixの正規化を呼出側へ移した。114旧/純粋/転送判断・174専用adapter比較、元数学bodyと正規化以外の全関数ASTはPASS。10直接tuning/回復moduleの実FEM unitは実行中、主ツリーへ未反映/未受入。rawはout/rf05-tuning-decision-20261014。
+2026-10-14 **DONE**：[調整判断の受入](TUNING_DECISION.md)。元decisionを標準mathだけの下位へ抽出し、旧tuning._decision転送とplanar/三系Hφの入口正規化・専用MESH_LIMIT/親処理を保持。114旧/純粋/転送判断・174専用adapterと元数学AST、10直接tuning/回復moduleの55個別unitが1655.399秒/終了0/PASS、元六成果物の全RF/ID/判断再生もPASS。検証済み七ファイルをbyte一致で反映、他1487 source不変。数値核/参照/許容差/schemaは不変、追加full/seed0。rawはout/rf05-tuning-decision-20261014/acceptance.json。
 
 対象：`tuning.py:_decision`と、planar/直線Hφ/曲線Hφ/材料Hφの呼出元。
 要求の物理別正規化と`base_request`は入口側に置き、共通決定はファイル/solverへ依存させない。

@@ -14,7 +14,8 @@ from .project import parse_json
 from .jobs import _state, _write_json, _digest, _implementation_hashes
 from .saved_mode_tracking import _canonical
 from .planar_tuning import validate_planar_tune, execute_planar_tune, read_planar_tune, replay_planar_tune
-from .tuning import _decision
+from .tuning_decision import decide_next_trial
+from .tuning_identity_recovery import base_request
 from .planar_tuning_saved import (_copy_trial, _snapshot_trial, _portable,
                                   CHECKPOINT_KEYS)
 
@@ -223,7 +224,7 @@ def verify_planar_tune_job(directory, state, manifest):
         prefix = deepcopy(result)
         for key in ('trial_runs', 'trial_sources_sha256', 'trials'):
             prefix[key] = prefix[key][:number]
-        prefix['decision'] = _decision(prefix['request'], prefix['trials'])
+        prefix['decision'] = decide_next_trial(base_request(prefix['request']), prefix['trials'])
         prefix['status'] = prefix['decision']['status']
         prefix['can_resume'] = prefix['status'] == 'PAUSED'
         expected_prefix = _portable(prefix, directory/'execution') if owned else prefix
