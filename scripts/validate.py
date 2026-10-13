@@ -23,18 +23,22 @@ from superfish_ng.io import save_run
 from superfish_ng.rf import quantities
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--out', type=Path, required=True, help='new output directory')
-    parser.add_argument('--test-workers', type=int, default=min(8, os.cpu_count() or 1),
-                        help='isolated unittest module processes (default: up to 8; 1 uses original serial discovery)')
-    parser.add_argument('--skip-tests', action='store_true',
-                        help='run only seed numerical checks; explicitly records that unittest was not run')
-    args = parser.parse_args()
-    if args.test_workers < 1:
-        parser.error('--test-workers must be a positive integer')
-    out = args.out.resolve()
-    out.mkdir(parents=True, exist_ok=False)
+def _source_snapshot():
+    # Re-enumerate at BOTH ends so added/deleted files cannot escape the audit.
+    return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for folder in ('src','tests','scripts','examples') for p in sorted((ROOT/folder).rglob('*'))
+            if p.is_file() and '__pycache__' not in p.parts}
+
+
+def _source_audit(before, after):
+    changed=sorted(k for k in before.keys() & after.keys() if before[k]!=after[k])
+    added=sorted(after.keys()-before.keys());deleted=sorted(before.keys()-after.keys())
+    return dict(schema_version=1,status='CHANGED' if changed or added or deleted else 'UNCHANGED',
+                before=before,after=after,changed=changed,added=added,deleted=deleted,
+                scope='endpoint content and file inventory in src/tests/scripts/examples; excludes __pycache__; no continuous mutation monitor')
+
+
+def _run_checks(args, out, report):
     env = dict(os.environ, PYTHONPATH=str(ROOT/'src'))
     test_command = ([sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v']
                     if args.test_workers == 1 else [sys.executable, str(ROOT/'scripts/run_tests.py'),
@@ -42,7 +46,7 @@ def main():
     commands = [] if args.skip_tests else [('tests', test_command)]
     commands.append(('convergence',
                      [sys.executable, '-m', 'superfish_ng', 'converge', '--out', str(out/'pillbox_convergence.json')]))
-    runs = []
+    runs = report['commands']
     for name, command in commands:
         start = time.perf_counter()
         parallel_tests = name == 'tests' and args.test_workers > 1
@@ -54,6 +58,7 @@ def main():
             run = subprocess.run(command, cwd=ROOT, env=env, capture_output=True, text=True)
             (out/f'{name}.log').write_text(run.stdout+run.stderr, encoding='utf-8')
         runs.append({'name': name, 'command': command[1:], 'exit_code': run.returncode, 'seconds': time.perf_counter()-start})
+        if name=='tests':report['tests']['status']='FAIL' if run.returncode else 'PASS'
         if run.returncode:
             if not parallel_tests:
                 print(run.stdout+run.stderr, file=sys.stderr)
@@ -74,21 +79,55 @@ def main():
         profile_rows.append({'nr':nr,'nz':nz,'nodes':len(s.mesh.points),'quantities':quantities(c,s)})
     (out/'shaped_refinement.json').write_text(json.dumps({'status':'self-convergence only; not external validation',
                                                        'rows':profile_rows},indent=2)+'\n')
-    fingerprints = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
-                    for folder in ['src','tests','scripts','examples'] for p in sorted((ROOT/folder).rglob('*'))
-                    if p.is_file() and '__pycache__' not in p.parts}
-    report = {'passed': all(r['exit_code']==0 for r in runs) and max(m['relative_error'] for m in modes)<.003,
-              'scope': 'seed-numerics' if args.skip_tests else 'full',
-              'tests': {'status': 'NOT_RUN' if args.skip_tests else 'PASS'},
+    report['passed']=all(r['exit_code']==0 for r in runs) and max(m['relative_error'] for m in modes)<.003
+    return 0 if report['passed'] else 1
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--out', type=Path, required=True, help='new output directory')
+    parser.add_argument('--test-workers', type=int, default=min(8, os.cpu_count() or 1),
+                        help='isolated unittest module processes (default: up to 8; 1 uses original serial discovery)')
+    parser.add_argument('--skip-tests', action='store_true',
+                        help='run only seed numerical checks; explicitly records that unittest was not run')
+    args = parser.parse_args()
+    if args.test_workers < 1:
+        parser.error('--test-workers must be a positive integer')
+    out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
+    before=_source_snapshot()
+    # Publish the starting inventory before any child command/numerical checks.
+    (out/'source-before.json').write_text(json.dumps(before,indent=2)+'\n',encoding='utf-8')
+    report = {'passed': False, 'scope': 'seed-numerics' if args.skip_tests else 'full',
+              'tests': {'status': 'NOT_RUN'},
               'environment': {'python':platform.python_version(),'numpy':np.__version__,'scipy':scipy.__version__,
                               'platform':platform.platform(),'openblas_num_threads':os.environ.get('OPENBLAS_NUM_THREADS'),
                               'test_workers':args.test_workers},
-              'commands':runs,'source_sha256':fingerprints,
+              'commands':[],
               'not_performed':(['unittest suite (--skip-tests)'] if args.skip_tests else []) +
                               ['external solver comparison','legacy SUPERFISH comparison','measured cavity validation','GUI/ParaView interactive check']}
-    (out/'validation.json').write_text(json.dumps(report,indent=2)+'\n')
+    exit_code=1;original_error=None
+    try:
+        exit_code=_run_checks(args,out,report)
+    except BaseException as error:
+        original_error=error;report.update(passed=False,error_type=type(error).__name__,error=str(error))
+        raise
+    finally:
+        try:
+            after=_source_snapshot();audit=_source_audit(before,after)
+        except Exception as error:
+            after=None;audit=dict(schema_version=1,status='UNAVAILABLE',before=before,after=None,
+                                 changed=None,added=None,deleted=None,error_type=type(error).__name__,error=str(error))
+        report['source_sha256']=after;report['source_audit']=audit
+        report['source_changed_during_run']=None if after is None else before!=after
+        report['passed']=bool(report['passed'] and exit_code==0 and audit['status']=='UNCHANGED')
+        try:
+            (out/'source-audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
+            (out/'validation.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+        except BaseException as error:
+            if original_error is None:raise
+            if hasattr(original_error,'add_note'):original_error.add_note('validator report also failed: '+str(error))
     print(f"Validation {'PASS' if report['passed'] else 'FAIL'} ({report['scope']}): {out}")
-    return 0 if report['passed'] else 1
+    return exit_code if exit_code else (0 if report['passed'] else 1)
 
 
 if __name__ == '__main__':

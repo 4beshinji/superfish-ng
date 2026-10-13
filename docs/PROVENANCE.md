@@ -1,3 +1,5 @@
+2026-10-13：[RF-01前後監査](VALIDATOR_SOURCE_AUDIT.md)。既存seminar runnerの前後照合を設計参考に、validateの元対象を前後で再列挙し追加/削除も検査する。一時fixtureの実子プロセスと数値stubで制御契約を検証し、物理full/seed受入へ数えない。元seed数値bodyとCLI登録を維持、製品FEM/RF source不変、新外部資料・依存・legacy参照なし。
+
 2026-10-13：[RF-11求解契約](AFFINE_SOLUTION_CONTRACT.md)。改修前の自作solver/RF/保存/reader四sourceをSHA固定して別名実行し、レビューの入力差替えを再現。制限された旧SUPERFISH sourceではない。元メッシュ交換・FEM組立・鏡映法則を再利用し、規格化/物理許容差とRF積分ASTを維持。旧2正常nativeと5不整合を別判定、seed source前後不変とmetadata後の元場再構築を記録。新外部資料・依存・legacy参照なし。
 
 2026-10-13：[RF版5の予算停止と追加求解ゼロの再開](CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)。既存4T参照細分guardと既存計測/元全保存再検証を再利用。検証時の低上限と追跡制御例外の注入を明示し、固定36/実資源上限の受入には数えない。新3FEMの元全配列/RF一致とUe/Uhを確認、原1484中他1481源byte不変、元FAIL/fixture ERRORを保全。新外部資料・依存・legacy参照なし。

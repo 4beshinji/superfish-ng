@@ -2,7 +2,7 @@
 
 作成：2026-09-22。更新：2026-10-13。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**RF-11を受入済み。RF-01〜RF-10は未着手で、計画全体は継続中。**
+（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01を受入済み。残9枚は未着手で、計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
@@ -83,7 +83,7 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 | カード | 対応所見 | 先行条件 | 変更単位の目安 | 状態 |
 | --- | --- | --- | --- | --- |
 | RF-11 入力・解の対応 | S01/S03 | なし | 求解契約と後処理条件を分離し、RF/保存/読込へ接続 | DONE |
-| RF-01 検証来歴 | F01/S02 | RF-11 | validatorの来歴とその失敗検査 | PLANNED |
+| RF-01 検証来歴 | F01/S02 | RF-11 | validatorの来歴とその失敗検査 | DONE |
 | RF-02 環境/任意依存 | F02/F08 | RF-01 | core/GUI条件、導入手順、環境証拠 | PLANNED |
 | RF-03 下位共通処理 | F03 | RF-01/02 | 入力、JSON、来歴を別々に抽出 | PLANNED |
 | RF-04 所有worker | F04 | RF-03 | 直線→曲線→材料の順で移行し、最後に統合確認 | PLANNED |
@@ -144,6 +144,8 @@ seed TMの公開RF/保存経路に影響するのでseed validatorを実行し�
 <a id="rf-01"></a>
 
 ### RF-01：総合validatorのソース固定を検査する
+
+2026-10-13 **DONE**：[受入と監査範囲](VALIDATOR_SOURCE_AUDIT.md)。7個別unit、元数値/CLIのAST一致、失敗時の終端reportを記録。新方式の実full監査は次の広範統合/節目に行う。
 
 対象：`scripts/validate.py`、必要な専用runner検査、TESTING/PARALLEL_VALIDATION。
 参考：`scripts/seminar_suite.py`の既存前後照合。
