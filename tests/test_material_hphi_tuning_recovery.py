@@ -11,7 +11,7 @@ from superfish_ng.material_hphi_tuning import run_material_hphi_tune,material_hp
 from superfish_ng.hphi_project import HphiProject
 from superfish_ng.hphi_tracking import HphiTrackingControls
 from test_material_hphi_tracking_crossing import material
-from test_material_hphi_tuning import request as base_request
+from support.material_hphi_tuning_fixtures import material_tune_request as base_request
 
 
 def request(exact=False,n=6):

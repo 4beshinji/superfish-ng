@@ -11,7 +11,7 @@ from superfish_ng.curved_hphi_tuning_saved import read_curved_hphi_tune
 from superfish_ng.jobs import JobManager, read_job
 
 
-from test_curved_hphi_tuning_saved import request
+from support.curved_hphi_tuning_fixtures import curved_tune_request as request
 
 
 class CurvedHphiTuningJobTests(unittest.TestCase):

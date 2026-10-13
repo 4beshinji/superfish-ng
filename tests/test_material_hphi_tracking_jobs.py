@@ -8,7 +8,7 @@ from superfish_ng.hphi_native import save_hphi_run
 from superfish_ng.hphi_jobs import execute_hphi_project
 from superfish_ng.hphi_project import HphiProject
 from superfish_ng.jobs import JobManager,read_job
-from test_material_hphi_tuning_saved import request as tune_request
+from support.material_hphi_tuning_fixtures import material_tune_request as tune_request
 from superfish_ng.material_hphi_shape_tuning import MaterialHphiShapeLaw
 from superfish_ng.material_hphi_tune_trials import build_material_hphi_tune_trial,material_hphi_trial_comparison
 from superfish_ng.material_hphi import solve_material_hphi

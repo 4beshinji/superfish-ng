@@ -6,7 +6,7 @@ from unittest.mock import patch
 from superfish_ng.cli import main
 from superfish_ng.curved_hphi_tuning_saved import read_curved_hphi_tune
 from superfish_ng.curved_hphi_saved import read_curved_hphi_run,curved_hphi_result
-from test_curved_hphi_tuning_saved import request
+from support.curved_hphi_tuning_fixtures import curved_tune_request as request
 
 
 class CurvedHphiTuneCliTests(unittest.TestCase):

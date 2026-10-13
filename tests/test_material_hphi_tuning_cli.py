@@ -6,7 +6,7 @@ from unittest.mock import patch
 from superfish_ng.cli import main
 from superfish_ng.material_hphi_tuning_saved import read_material_hphi_tune
 from superfish_ng.material_hphi_saved import read_material_hphi_run,material_hphi_result
-from test_material_hphi_tuning_saved import request
+from support.material_hphi_tuning_fixtures import material_tune_request as request
 
 
 class MaterialHphiTuneCliTests(unittest.TestCase):

@@ -13,7 +13,7 @@ from superfish_ng.material_hphi_saved import read_material_hphi_run,material_hph
 from superfish_ng.material_hphi_tuning_saved import read_material_hphi_tune,replay_material_hphi_tune
 from superfish_ng.material_hphi_tuning_jobs import verify_material_hphi_tune_job
 from test_material_hphi_tuning_recovery import request
-from test_material_hphi_tuning import request as base_request
+from support.material_hphi_tuning_fixtures import material_tune_request as base_request
 from superfish_ng.constants import C0
 
 

@@ -4,7 +4,7 @@ from pathlib import Path
 import json,tempfile,unittest
 from unittest.mock import patch
 import numpy as np
-from test_material_hphi_tuning import request
+from support.material_hphi_tuning_fixtures import material_tune_request as request
 from superfish_ng.material_hphi_saved import read_material_hphi_run,material_hphi_result
 
 

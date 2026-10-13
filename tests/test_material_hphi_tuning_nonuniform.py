@@ -7,7 +7,7 @@ from superfish_ng.constants import C0,TAU
 from superfish_ng.material_hphi_shape_tuning import MaterialHphiShapeLaw
 from superfish_ng.material_hphi_tuning import run_material_hphi_tune
 from superfish_ng.hphi_project import HphiProject
-from test_material_hphi_tuning import request
+from support.material_hphi_tuning_fixtures import material_tune_request as request
 
 
 class MaterialHphiNonuniformTuningTests(unittest.TestCase):

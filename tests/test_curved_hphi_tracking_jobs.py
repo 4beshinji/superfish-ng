@@ -8,7 +8,7 @@ from superfish_ng.hphi_native import save_hphi_run
 from superfish_ng.hphi_jobs import execute_hphi_project
 from superfish_ng.hphi_project import HphiProject
 from superfish_ng.jobs import JobManager,read_job
-from test_curved_hphi_tuning_saved import request as tune_request
+from support.curved_hphi_tuning_fixtures import curved_tune_request as tune_request
 from superfish_ng.curved_hphi_shape_tuning import CurvedHphiShapeLaw
 from superfish_ng.curved_hphi_tune_trials import build_curved_hphi_tune_trial,curved_hphi_trial_comparison
 from superfish_ng.curved_hphi import solve_curved_hphi

@@ -1,3 +1,5 @@
+2026-10-14 RF-08 **DONE**：[Hφ調整fixture境界](TEST_FIXTURE_BOUNDARIES.md)。四builder/18 inter-test importを物理別supportへ移し、元21 module body/26生成byte/2689 IDを維持、新入力3 IDを追加。入力/runner9＋実保存15の24個別unitがPASS、独立参照/製品source不変。27 file byte一致反映、他1473 source不変、現行収集2692 ID/529 module。削除/重複FEM削減/性能比較なし。全152は99 DONE/3 IN_PROGRESS/50 PLANNED、残3枚/全goalは継続。
+
 2026-10-14 RF-05 **DONE**：[調整判断の責務分離](TUNING_DECISION.md)。元数学bodyを保持した下位判断と旧転送、planar/三系Hφの入口正規化を接続。114判断/174専用adapter比較、10moduleの55個別unit/1655.399秒/終了0/PASS、元六成果物の全RF/ID/判断再生を確認。七ファイルbyte一致反映、他1487 source不変。数値核/参照/許容差/schema不変、追加full/seed0。全152は98 DONE/3 IN_PROGRESS/51 PLANNED、残4枚/全goalは継続。
 
 2026-10-14 RF-04 **DONE**：[Hφ所有workerの共通契約](OWNED_TUNING_WORKER.md)。三系の旧差を維持し明示callbackでlifecycle/所有検証/prefixを共通化。worker14＋GUI service6の20個別unit、旧新12 FEMのnative/Project byte・全RF/判断一致、六成果物の追加求解なし再生とAST/signature確認。検証済み四ファイルをbyte一致反映、他1489 source不変。JobManager/数値核/schema不変、追加full/seed/実ブラウザー0。全152は97 DONE/4 IN_PROGRESS/51 PLANNED、RF-05は隔離sourceで実行中、残5枚/全goalは継続。

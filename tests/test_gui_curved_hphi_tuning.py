@@ -4,7 +4,7 @@ from pathlib import Path
 from superfish_ng.gui_hphi import hphi_response
 from superfish_ng.jobs import JobManager
 from superfish_ng.hphi_project import HphiProject
-from test_curved_hphi_tuning_saved import request
+from support.curved_hphi_tuning_fixtures import curved_tune_request as request
 
 
 class CurvedHphiTuneGuiTests(unittest.TestCase):

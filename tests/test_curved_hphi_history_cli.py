@@ -7,7 +7,7 @@ from superfish_ng.cli import main
 from superfish_ng.curved_hphi import solve_curved_hphi
 from superfish_ng.hphi_native import save_hphi_run
 from superfish_ng.curved_hphi_tracking_history import CurvedHphiTrackingHistoryRequest
-from test_curved_hphi_tracking_crossing import coax
+from support.curved_hphi_geometry import coax
 from test_curved_hphi_tracking import request
 
 

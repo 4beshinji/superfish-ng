@@ -8,7 +8,7 @@ from superfish_ng.material_hphi import MaterialHphiCase,solve_material_hphi
 from superfish_ng.material_hphi_tracking import MaterialHphiTrackingRequest,track_material_hphi_modes
 from superfish_ng.rf_materials import RFMaterialPartition,LinearRFMaterial,RFMaterialRegion
 from superfish_ng.hphi_geometry_mapping import HphiGeometryMapping
-from test_curved_hphi_tracking_crossing import coax
+from support.curved_hphi_geometry import coax
 from test_material_hphi_comparison import request
 
 

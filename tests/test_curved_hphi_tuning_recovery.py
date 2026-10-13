@@ -8,7 +8,7 @@ from superfish_ng.constants import C0
 from superfish_ng.hphi_project import HphiProject
 from superfish_ng.curved_hphi_shape_tuning import CurvedHphiShapeLaw
 from superfish_ng.hphi_tracking import HphiTrackingControls
-from test_curved_hphi_tracking_crossing import coax
+from support.curved_hphi_geometry import coax
 from test_curved_hphi_tuning import request as base_request
 
 

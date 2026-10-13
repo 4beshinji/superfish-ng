@@ -24,7 +24,8 @@
 試行実行とcheckpoint番号/保存pathの差は維持し、JobManagerと数値核は変更していない。
 [tuning_decision.py](../src/superfish_ng/tuning_decision.py)は正規化済み要求/確認済み試行から
 元のbracket停止/次試行dictを返す。標準mathだけに依存し、物理検査/回復/予算停止/親は
-入口側に残す。[RF-05受入](TUNING_DECISION.md)を完了し、RF-06/07/08/10は未受入。
+入口側に残す。[RF-05受入](TUNING_DECISION.md)を完了し、[RF-08](TEST_FIXTURE_BOUNDARIES.md)でHφ調整の共有fixtureを物理別tests/supportへ移した。
+独立参照はscriptに保持し、入力専用検査と実保存/全量比較を別に選べる。RF-06/07/10は未受入。
 Case・FEM・場・量・native readerは以下の物理別経路に分かれており、任意のCaseを
 canonical `solve` や `save_run` へ渡せる統一APIではない。
 

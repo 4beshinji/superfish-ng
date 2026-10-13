@@ -2,7 +2,7 @@
 
 作成：2026-09-22。更新：2026-10-14。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04/RF-05を受入済み。残4枚は未受入で計画全体は継続中。**
+（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04/RF-05/RF-08を受入済み。残3枚は未受入で計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
@@ -90,7 +90,7 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 | RF-05 調整決定 | F05 | RF-03 | 決定の抽出→各物理アダプター移行 | DONE |
 | RF-06 CLI分割 | F06 | RF-03 | 一つのコマンド群ずつ。RF-04/05の対象群はその移行後 | PLANNED |
 | RF-07 HTTP/画面分割 | F06 | RF-04、RF-06 | HTTP輸送/操作表→一つの画面状態群ずつ | PLANNED |
-| RF-08 テスト境界 | F07 | RF-03 | 変更する領域のfixture/入力/実FEM操作を分離 | PLANNED |
+| RF-08 テスト境界 | F07 | RF-03 | 変更する領域のfixture/入力/実FEM操作を分離 | DONE |
 | RF-09 現行構成の索引 | F09/S06 | なし。実行順はRF-01直後 | 現行仕様と履歴を分け、各抽出時に更新 | DONE |
 | RF-10 再生費用 | F10 | RF-04/05/08 | 測定1件→効果が確認できた箇所のみ改善 | PLANNED |
 
@@ -283,6 +283,8 @@ worker wrapperだけの変更なら数値全validatorを一律追加しないが
 <a id="rf-08"></a>
 
 ### RF-08：fixtureと独立参照、入力検査と実FEM検査を分ける
+
+2026-10-14 **DONE**：[Hφ調整fixture境界](TEST_FIXTURE_BOUNDARIES.md)。元四生成関数を物理別tests/supportへ移し、21 test module/18 inter-test importを接続。26旧新生成byteと元TestCase body・2689 IDを維持し、求解禁止の三形式入力3 IDを追加。現行runnerは2692 ID/529 module。入力/runner9＋実保存15の24個別unitが終了0/PASS、独立参照/製品source不変。検証済み27ファイルをbyte一致反映、他1473 source不変。テスト削除/重複FEM削減/速度比較は行わない。rawはout/rf08-fixtures-20261014/acceptance.json。
 
 対象は次に変更する一領域から選ぶ。初候補はHφ worker群またはstatic Study群。
 `tests/support/`相当へ移すのは再利用する形状/要求生成等であり、テスト間importを削減する。
