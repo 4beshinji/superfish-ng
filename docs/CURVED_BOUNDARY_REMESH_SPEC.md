@@ -7,6 +7,9 @@
 現行追補：[02 strict入力](CURVED_BOUNDARY_REMESH_INPUT.md)をDONE。以下の未実装は仕様受入時点の記録。
 公開版2計算はまだ未接続で、次は03。
 
+現行追補：[03生成API](CURVED_BOUNDARY_REMESH_CORE.md)もDONE。公開版2は接続済み。
+元Caseで確定した初期meshをseedへ明示して元区間を保ち、41個別unitを分割受入。次は04。
+
 ## 対象と採用する表現
 
 元の解析曲線、材料、SI単位、RF座標、正規化、mode設定を保持し、元の内部接続を捨てて
@@ -84,6 +87,7 @@ JSONの重複キーは`project.parse_json`で、NaN/Infinityは読取後の数�
    `_boundary_case`で境界を正準化し、旧内部座標/接続/番号をseed生成へ使わない。
    元境界辺数が予算超過ならseed生成前に拒否する。
 2. 正準境界座標の各軸幅から`D=2*sqrt(Δr²+Δz²)`を計算し、有限正数を確認する。
+   メッシュ省略Projectも元Caseで先に確定し、以下の作業用Projectへそのmeshを明示する。
    seed専用コピーだけの弦長上限をD、弦面積上限をD²、境界/角サイズ指定をなしとし、
    元角度下限と要素予算を保つ。履歴0、`max_seed_rounds`を既存版1の生成器に渡す。
    これは最終サイズの緩和ではなく、元境界上のP2領域を保つ内部seedの作成条件である。

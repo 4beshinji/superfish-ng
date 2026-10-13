@@ -1,5 +1,8 @@
 # 境界再メッシュ生成版2のstrict入力検査
 
+現行追補：[03生成API](CURVED_BOUNDARY_REMESH_CORE.md)をDONE。公開版2は接続済み。
+以下の未接続記述は02受入時点の履歴。次は04の完全保存再生/CLI。
+
 2026-10-13 JST、ADD-N04-boundary-remesh-02 **DONE**。先行仕様commit `de2afc4`。
 [固定仕様](CURVED_BOUNDARY_REMESH_SPEC.md)の九共通項目と一履歴指定を、
 `curved_remesh_generation.validate_generation_settings`へ実装した。

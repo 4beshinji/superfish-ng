@@ -132,12 +132,16 @@ class CurvedBoundaryRemeshInputTests(unittest.TestCase):
             with self.subTest(field=name), self.assertRaises(ValueError):
                 self.validate(dict(legacy, **{name: settings()[name]}))
 
-    def test_public_generation_still_refuses_unimplemented_v2_without_mesh_or_solve(self):
+    def test_public_generation_validates_v2_before_dispatch_without_mesh_or_solve(self):
         from superfish_ng.curved_remesh_generation import generate_curved_remesh_plan
         project = Project.load(EXAMPLES / 'nonaffine-project.json')
-        with patch('superfish_ng.curved_remesh_generation._boundary_case') as mesher, \
+        with patch('superfish_ng.curved_remesh_generation._generate_boundary_remesh_plan') as generate, \
              patch('superfish_ng.solver.solve') as solve:
+            generate.return_value = {'checked_dispatch': True}
+            self.assertEqual(generate_curved_remesh_plan(project, settings()), generate.return_value)
+            generate.assert_called_once_with(project, settings())
+            generate.reset_mock()
             with self.assertRaises(ValueError):
-                generate_curved_remesh_plan(project, settings())
-            mesher.assert_not_called()
+                generate_curved_remesh_plan(project, dict(settings(), boundary_policy='reproject_analytic'))
+            generate.assert_not_called()
             solve.assert_not_called()

@@ -151,7 +151,12 @@ def generate_curved_remesh_plan(project,settings):
     Boundary vertices/edges/tags never move or split. The final native P2 maps
     and every new history prefix must pass existing remesh checks; a failed
     heuristic is an error, never a quality/physics certificate or a partial plan.
+
+    Version 2 instead bounds the final native chords and permits subdivision
+    of the original P2 boundary through a frozen restriction history.
     """
+    if isinstance(settings,dict) and type(settings.get('schema_version')) is int and settings['schema_version']==2:
+        return _generate_boundary_remesh_plan(project,validate_generation_settings(settings))
     plan=_settings(settings)
     if not isinstance(project,Project):raise ValueError('curved remesh generation requires a Project')
     project=Project.from_dict(project.to_dict());case=project.case
@@ -201,3 +206,185 @@ def generate_curved_remesh_plan(project,settings):
         if marked.any():mesh=_split_marked_edges(working,mesh,edges,cell_edges,marked,limit)
         elif len(oversized):mesh=_insert_centroids(working,mesh,oversized,limit)
     raise AssertionError('unreachable remesh generation state')
+
+
+def _native_chord_mesh(space):
+    from types import SimpleNamespace
+    return SimpleNamespace(points=space.geometry.points_rz_m,triangles=space.geometry.cell_nodes[:,:3])
+
+
+def _native_size_marks(working,space,edge_limit):
+    """Measure final-native endpoint chords, retaining the original corners."""
+    areas,edges,cell_edges,ends,delta,lengths=_measure(_native_chord_mesh(space))
+    if not np.isfinite(areas).all() or not np.isfinite(lengths).all() or np.any(areas<=0) or np.any(lengths<=0):
+        raise ValueError('boundary remesh requires finite positive native chord areas and edge lengths')
+    marked=lengths>edge_limit*(1+1e-12)
+    boundary=np.bincount(cell_edges.ravel(),minlength=len(edges))==1
+    if working.boundary_max_edge_m is not None:
+        marked |= boundary & ~np.all(ends[:,:,0]==0,axis=1) & (lengths>working.boundary_max_edge_m*(1+1e-12))
+    if working.corner_max_edge_m is not None:
+        vertices=np.asarray(working.contour.vertices_zr_m)[:,::-1]
+        incoming=vertices-np.roll(vertices,1,axis=0);outgoing=np.roll(vertices,-1,axis=0)-vertices
+        turn=np.abs(incoming[:,0]*outgoing[:,1]-incoming[:,1]*outgoing[:,0])
+        corners=vertices[turn>1e-12*np.linalg.norm(incoming,axis=1)*np.linalg.norm(outgoing,axis=1)]
+        for corner in corners:
+            fraction=np.clip(np.sum((corner-ends[:,0])*delta,axis=1)/lengths**2,0,1)
+            distance=np.linalg.norm(ends[:,0]+fraction[:,None]*delta-corner,axis=1)
+            marked |= (distance<=working.corner_radius_m*(1+1e-12)) & (lengths>working.corner_max_edge_m*(1+1e-12))
+    return areas,edges,cell_edges,marked
+
+
+def _restriction_counts(space,step):
+    """Predict exact child counts without allocating the refined geometry.
+
+    The edge closure mirrors the unchanged marked restriction kernel. Actual
+    counts are checked after construction so a future kernel change cannot
+    silently bypass the generation budgets.
+    """
+    g=space.geometry;cells=len(g.cell_nodes);boundary=len(g.boundary_nodes)
+    if step.kind=='uniform':return 4*cells,2*boundary
+    requested=np.asarray(step.marked_cells)
+    if any(i>=cells for i in step.marked_cells):
+        raise ValueError('marked_cells refers outside the current new generation prefix')
+    vertices=g.cell_nodes[:,:3]
+    edges,inverse=np.unique(np.sort(vertices[:,[[0,1],[1,2],[2,0]]].reshape(-1,2),axis=1),axis=0,return_inverse=True)
+    cell_edges=inverse.reshape(-1,3);marked=np.zeros(len(edges),dtype=bool)
+    if step.split_pattern is None:
+        marked[cell_edges[requested]]=True
+        scale=float(np.max(np.ptp(g.points_rz_m,axis=0)))
+        lengths=np.linalg.norm((g.points_rz_m[edges[:,1]]-g.points_rz_m[edges[:,0]])/scale,axis=1)
+        longest=cell_edges[np.arange(cells),np.argmax(lengths[cell_edges],axis=1)]
+        while True:
+            required=longest[marked[cell_edges].any(axis=1)]
+            if marked[required].all():break
+            marked[required]=True
+    else:
+        from .curved_split_pattern import curved_topology_digest
+        if step.split_pattern.parent_topology_sha256!=curved_topology_digest(space):
+            raise ValueError('split pattern parent topology differs from the new generation prefix')
+        lookup={tuple(map(int,edge)):i for i,edge in enumerate(edges)}
+        if any(edge not in lookup for edge in step.split_pattern.split_edges):
+            raise ValueError('split pattern names an absent parent edge')
+        marked[[lookup[edge] for edge in step.split_pattern.split_edges]]=True
+    boundary_edges=np.bincount(cell_edges.ravel(),minlength=len(edges))==1
+    return cells+int(marked[cell_edges].sum()),boundary+int(np.count_nonzero(marked & boundary_edges))
+
+
+def _generation_budget(counts,settings):
+    for count,name in zip(counts,('max_triangles','max_boundary_edges')):
+        if count>settings[name]:
+            raise ValueError(f'boundary remesh needs {count} {name.removeprefix("max_")}, exceeding {name}={settings[name]}')
+
+
+def _check_generation_space(space,settings,angle):
+    from .curved_marked_refinement import _minimum_corner_angle
+    _generation_budget((len(space.geometry.cell_nodes),len(space.geometry.boundary_nodes)),settings)
+    actual=_minimum_corner_angle(space.geometry.local_maps)
+    if actual<angle:
+        raise ValueError(f'boundary remesh minimum corner angle {actual:.9g} is below required {angle:.9g}')
+
+
+def _apply_generation_step(space,step,settings,angle):
+    from dataclasses import replace
+    from .curved_refinement import refine_curved_space
+    from .curved_marked_refinement import refine_marked_curved_space
+    counts=_restriction_counts(space,step)
+    _generation_budget(counts,settings)
+    if step.kind=='uniform':
+        result=refine_curved_space(space)
+    else:
+        result=refine_marked_curved_space(space,list(step.marked_cells),max_triangles=settings['max_triangles'],
+                minimum_corner_angle_deg=max(angle,step.minimum_corner_angle_deg),split_pattern=step.split_pattern)
+        step=replace(step,split_pattern=result.split_pattern)
+    actual=(len(result.space.geometry.cell_nodes),len(result.space.geometry.boundary_nodes))
+    if actual!=counts:raise ValueError('boundary remesh restriction counts differ from the budget prediction')
+    _check_generation_space(result.space,settings,angle)
+    return result.space,step
+
+
+def _generate_boundary_remesh_plan(project,settings):
+    """Regenerate a seed and restrict its P2 maps to satisfy final sizes."""
+    from dataclasses import replace
+    from .mesh_controls import ContourMeshControls
+    from .curved_space import case_curved_space
+    from .curved_refinement_steps import CurvedRefinementStep,steps_from_dict
+    from .te import is_te
+    if not isinstance(project,Project):raise ValueError('curved remesh generation requires a Project')
+    project=Project.from_dict(project.to_dict());case=project.case
+    if case.curved_contour is None or case.geometry_order!=2 or project.sections is not None:
+        raise ValueError('curved remesh generation requires unassembled native P2 geometry')
+    if is_te(case):
+        from .curved_same_domain_tracking import _te_end_conditions
+        _te_end_conditions([case,case])
+    elif project.reflect_full or any(tag not in ('axis','pec') for tag in case.curved_contour.edge_tags):
+        raise ValueError('TM curved remesh generation requires direct closed PEC/axis geometry')
+    case_limit=case.contour_mesh.max_triangles if case.contour_mesh is not None else 250000
+    if settings['max_triangles']>case_limit:
+        raise ValueError(f'curved remesh generation max_triangles exceeds original Case limit {case_limit}')
+    original=make_mesh(case) if project.mesh_data is None else mesh_from_dict(case,project.mesh_data)
+    working=_boundary_case(case,original)
+    root_edges=len(working.contour.vertices_zr_m)
+    if root_edges>settings['max_boundary_edges']:
+        raise ValueError(f'max_boundary_edges={settings["max_boundary_edges"]} is below the {root_edges} original P2 intervals; root interval coalescing is unsupported')
+    _generation_budget((root_edges-2,root_edges),settings)
+    bounds=np.ptp(np.asarray(working.contour.vertices_zr_m),axis=0)
+    diameter=2*math.hypot(*bounds);seed_area=diameter*diameter
+    if not math.isfinite(diameter) or not math.isfinite(seed_area) or diameter<=0 or seed_area<=0:
+        raise ValueError('boundary remesh seed dimensions must be finite and positive')
+    angle=max(settings['minimum_corner_angle_deg'],case.contour_mesh.min_angle_deg) if case.contour_mesh else settings['minimum_corner_angle_deg']
+    # These relaxed sizes exist only in the temporary seed-generation Case.
+    # The original Case controls are restored and enforced on the final mesh.
+    seed_controls=replace(case.contour_mesh,max_edge_m=diameter) if case.contour_mesh else ContourMeshControls(diameter,min_angle_deg=angle)
+    # An implicit source must be materialized before relaxing working sizes;
+    # regenerating it under those sizes would change its original intervals.
+    seed_project=replace(project,mesh_data=mesh_to_dict(original) if project.mesh_data is None else project.mesh_data,
+                        case=replace(case,contour_mesh=seed_controls,
+                        boundary_max_edge_m=None,corner_max_edge_m=None,corner_radius_m=None))
+    seed_settings=dict(schema_version=1,max_chord_edge_m=diameter,max_chord_triangle_area_m2=seed_area,
+        minimum_corner_angle_deg=angle,max_triangles=settings['max_triangles'],max_rounds=settings['max_seed_rounds'],curved_refinement_levels=0)
+    try:
+        plan=generate_curved_remesh_plan(seed_project,seed_settings)
+    except ValueError as exc:
+        raise ValueError(f'boundary remesh seed failed within max_seed_rounds={settings["max_seed_rounds"]}: {exc}') from exc
+    seed=remesh_curved_project(project,plan)
+    current=case_curved_space(seed.case,mesh_from_dict(seed.case,seed.mesh_data))
+    _check_generation_space(current,settings,angle)
+    steps=[]
+    if 'curved_refinement_steps' in settings:
+        declared=steps_from_dict(settings['curved_refinement_steps'])
+    else:
+        declared=(CurvedRefinementStep('uniform') for _ in range(settings['curved_refinement_levels']))
+    for index,step in enumerate(declared,1):
+        try:current,frozen=_apply_generation_step(current,step,settings,angle)
+        except ValueError as exc:raise ValueError(f'boundary remesh declared history step {index}: {exc}') from exc
+        steps.append(frozen)
+    edge_limit=min(settings['max_chord_edge_m'],case.contour_mesh.max_edge_m) if case.contour_mesh else settings['max_chord_edge_m']
+    area_limit=settings['max_chord_triangle_area_m2']
+    for iteration in range(settings['max_rounds']+1):
+        areas,edges,cell_edges,marked=_native_size_marks(working,current,edge_limit)
+        selected=np.flatnonzero(marked[cell_edges].any(axis=1) | (areas>area_limit*(1+1e-12)))
+        if not len(selected):break
+        if iteration==settings['max_rounds']:
+            lengths=np.linalg.norm(current.geometry.points_rz_m[edges[:,1]]-current.geometry.points_rz_m[edges[:,0]],axis=1)
+            raise ValueError(f'boundary remesh unmet after max_rounds={settings["max_rounds"]}: {len(selected)} cells violate edge/area/Case local sizes; maximum chord edge={lengths.max():.9g} m, area={areas.max():.9g} m2')
+        step=CurvedRefinementStep('marked',tuple(map(int,selected)),angle)
+        current,frozen=_apply_generation_step(current,step,settings,angle)
+        steps.append(frozen)
+    quality=contour_mesh_quality(_native_chord_mesh(current))
+    if quality['min_angle_deg']<angle:
+        raise ValueError(f'boundary remesh chord minimum angle {quality["min_angle_deg"]:.9g} is below required {angle:.9g}')
+    if steps:
+        del plan['curved_refinement_levels']
+        plan['curved_refinement_steps']=[step.to_dict() for step in steps]
+    # Existing remesh replays every prefix, including its geometry, constraints
+    # and whole-interval boundary equality against the original full history.
+    candidate=remesh_curved_project(project,plan)
+    replay=case_curved_space(candidate.case,mesh_from_dict(candidate.case,candidate.mesh_data))
+    _check_generation_space(replay,settings,angle)
+    for name in ('points_rz_m','cell_nodes','boundary_nodes','boundary_curve_indices','boundary_parameters'):
+        if not np.array_equal(getattr(current.geometry,name),getattr(replay.geometry,name)):
+            raise ValueError('boundary remesh frozen history does not reproduce the generated geometry')
+    areas,_,cell_edges,marked=_native_size_marks(working,replay,edge_limit)
+    if marked.any() or np.any(areas>area_limit*(1+1e-12)):
+        raise ValueError('boundary remesh replay violates final chord sizes')
+    return plan

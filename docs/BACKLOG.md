@@ -1,3 +1,5 @@
+2026-10-13 ADD-N04-boundary-remesh-03 **DONE**：[元P2境界を分割する生成API](CURVED_BOUNDARY_REMESH_CORE.md)。全区間/三幾何積分・Green/Hφ=r質量・親子K/M・4/8/32尺度、Case全サイズ、512/64→128/32粗化、固定履歴/事前予算/TE両端二タグ×反射を確認。初回41件40 PASS/1 ERRORを保全し、暗黙sourceがseed条件で再生成される不具合を元mesh明示で修正、一件再検査3.705秒PASS。計41個別PASS、旧bodyは版2分岐以外のAST一致、FEM/RF核不変。新FEM/seed/full/GUI/legacy0。全136は85 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。次は04完全保存再生/CLI、親N04/全goalは継続。
+
 2026-10-13 ADD-N04-boundary-remesh-02 **DONE**：[生成版2のstrict入力](CURVED_BOUNDARY_REMESH_INPUT.md)。九共通項目＋一履歴の型/版/有限/予算/固定pattern/コピー・raw重複と旧版を、新9＋旧生成9の18個別unitで確認、16.186秒・終了0。先行helper未実装ERRORは保全。元1451対象の他1450源byte一致、新helper以外の旧module全AST一致、公開版2はまだ拒否。新FEM/seed/full/GUI/legacy0。全136は84 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-03、親N04/全goalは継続。
 
 2026-10-13 ADD-N04-boundary-remesh-01 **DONE**：[元P2境界分割を変更する生成版2仕様](CURVED_BOUNDARY_REMESH_SPEC.md)。矩形/非アフィンの現行サイズ拒否を先に再現し、既存固定履歴で境界32/28辺・全P2/三幾何積分保存を確認。旧64→32辺の粗化と再投影の体積差2.176e-4/拒否も確認。元1444源byte不変、solve禁止の表現probeのみで新FEM/unit/seed/full/GUI0。九項目＋一履歴・七項目保存・五後続と独立6FEMゲートを固定、公開版2は未実装。全136は83 DONE/2 IN_PROGRESS/51 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-02、親N04/全goalは継続。
