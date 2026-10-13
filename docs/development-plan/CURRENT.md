@@ -22,7 +22,8 @@ RF-02を[core/GUI・Python版別の環境契約](../DEPENDENCIES.md#current-envi
 RF-03は値検査の元bodyを抽出し、config転送/同軸入口と直接10unit・75互換probeを確認した。
 JSON/canonicalも元bodyを抽出し、Project/旧canonical転送・同軸native、直接17unit/143互換probe/113例題hash一致を確認した。
 来歴も元SHA/JSON置換bodyを抽出し、jobs/completion転送・Hφ所有hash、直接25unitとbyte/例外/失敗保存保持を確認した。
-次は三段階の広範統合で、新validatorの実full前後監査とseedのf/全RFを確認する。
+三段階の広範統合fullは固定1492 source/8 processで実行中（out/validation-rf03-integration-20261014）。
+計測alias・反射検査順・独立比較fixtureのCase差分を検出した。実行中のsourceを変えず、終端の前後監査/失敗記録を保持した後に修正し、fullとseedのf/全RFを確認する。RF-03は未受入。
 全152は95 DONE/4 IN_PROGRESS/53 PLANNED、RF-03はIN_PROGRESS、RF残6枚はPLANNED。
 既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 
