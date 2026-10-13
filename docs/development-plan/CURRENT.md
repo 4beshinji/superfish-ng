@@ -37,7 +37,8 @@ JSON/canonicalも元bodyを抽出し、Project/旧canonical転送・同軸native
 入力/runner9＋保存15の24個別unitがPASS、参照/製品source不変、候補27 fileをbyte一致反映、他1473 source不変。現行収集2692 ID/529 moduleを旧full2689件のscopeへ読み替えない。
 [RF-06 CLI境界](../CLI_COMMAND_BOUNDARIES.md)もDONE。曲線Hφ三コマンドを抽出、全173 parser/help/順序と他170操作ASTを保持。
 直接13 unit/35.770秒/終了0/PASS、13旧新出力/終了code/旧native/実上書き拒否比較。候補二ファイルをbyte一致反映、他1499 source不変。
-全152は100 DONE/3 IN_PROGRESS/49 PLANNED、11枚中9枚を受入済み。次はRF-07のHTTP/操作表/一JS workflowと実ブラウザー・wheel、RF-10の三履歴長費用測定。その後全11枚の条件別証拠監査と固定source fullを実施する。
+[RF-07 HTTP/画面境界](../GUI_COMMAND_BOUNDARIES.md)もDONE。20個別unitを分割PASS、実Chrome36項目、GUI/CLI全係数/f/全RF/独立Green、最終wheel17資産と旧新実HTTP172 strict操作/認証等13条件/未許可5pathを確認。七ファイルbyte反映、他1497 source不変、初回誤指定と同値alias整理を区別。
+全152は101 DONE/3 IN_PROGRESS/48 PLANNED、11枚中10枚を受入済み。次はRF-10の三履歴長費用測定。その後全11枚の条件別証拠監査と固定source fullを実施する。
 既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。

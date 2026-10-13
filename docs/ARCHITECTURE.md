@@ -10,7 +10,11 @@
 
 `cli.py` は170操作の登録/実行を保持し、曲線Hφ三コマンドは
 [cli_curved_hphi_tuning.py](../src/superfish_ng/cli_curved_hphi_tuning.py)の明示登録/実行へ渡す。
-mainは解析/選択/元例外・終了codeを担当する。`gui.py` はHTTP輸送と業務操作のdispatchを持つ。`jobs.py` のJobManagerから物理別workerへ渡す。
+mainは解析/選択/元例外・終了codeを担当する。`gui.py` は管理器/アクセス/contextとserverを接続し、
+[gui_http.py](../src/superfish_ng/gui_http.py)へ認証/輸送/応答、
+[gui_operations.py](../src/superfish_ng/gui_operations.py)へ172操作のキー/handler選択を渡す。
+[curved-deformation-workflow.js](../src/superfish_ng/web/curved-deformation-workflow.js)が曲線変形の状態/DOM/要求を持ち、appは現在のeditor/APIをadapterで接続する。
+`jobs.py` のJobManagerから物理別workerへ渡す。
 共通値検査は [input_validation.py](../src/superfish_ng/input_validation.py) へ抽出し、
 `config.py` の旧APIは転送する。同軸専用入力も下位検査を直接利用する。
 重複キー拒否JSON/canonical文字列は [json_codec.py](../src/superfish_ng/json_codec.py) へ抽出し、
@@ -26,7 +30,7 @@ mainは解析/選択/元例外・終了codeを担当する。`gui.py` はHTTP輸
 [tuning_decision.py](../src/superfish_ng/tuning_decision.py)は正規化済み要求/確認済み試行から
 元のbracket停止/次試行dictを返す。標準mathだけに依存し、物理検査/回復/予算停止/親は
 入口側に残す。[RF-05受入](TUNING_DECISION.md)を完了し、[RF-08](TEST_FIXTURE_BOUNDARIES.md)でHφ調整の共有fixtureを物理別tests/supportへ移した。
-独立参照はscriptに保持し、入力専用検査と実保存/全量比較を別に選べる。[RF-06 CLI境界](CLI_COMMAND_BOUNDARIES.md)を受入し、RF-07/10は未受入。
+独立参照はscriptに保持し、入力専用検査と実保存/全量比較を別に選べる。[RF-06 CLI境界](CLI_COMMAND_BOUNDARIES.md)を受入し、[RF-07 HTTP/画面境界](GUI_COMMAND_BOUNDARIES.md)も受入した。RF-10と最終統合は未受入。
 Case・FEM・場・量・native readerは以下の物理別経路に分かれており、任意のCaseを
 canonical `solve` や `save_run` へ渡せる統一APIではない。
 

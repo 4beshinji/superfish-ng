@@ -2,7 +2,7 @@
 
 作成：2026-09-22。更新：2026-10-14。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04/RF-05/RF-08/RF-06を受入済み。RF-07/RF-10と最終統合受入は残り、計画全体は継続中。**
+（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04/RF-05/RF-08/RF-06/RF-07を受入済み。RF-10と最終統合受入は残り、計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
@@ -89,7 +89,7 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 | RF-04 所有worker | F04 | RF-03 | 直線→曲線→材料の順で移行し、最後に統合確認 | DONE |
 | RF-05 調整決定 | F05 | RF-03 | 決定の抽出→各物理アダプター移行 | DONE |
 | RF-06 CLI分割 | F06 | RF-03 | 一つのコマンド群ずつ。RF-04/05の対象群はその移行後 | DONE |
-| RF-07 HTTP/画面分割 | F06 | RF-04、RF-06 | HTTP輸送/操作表→一つの画面状態群ずつ | PLANNED |
+| RF-07 HTTP/画面分割 | F06 | RF-04、RF-06 | HTTP輸送/操作表→一つの画面状態群ずつ | DONE |
 | RF-08 テスト境界 | F07 | RF-03 | 変更する領域のfixture/入力/実FEM操作を分離 | DONE |
 | RF-09 現行構成の索引 | F09/S06 | なし。実行順はRF-01直後 | 現行仕様と履歴を分け、各抽出時に更新 | DONE |
 | RF-10 再生費用 | F10 | RF-04/05/08 | 測定1件→効果が確認できた箇所のみ改善 | PLANNED |
@@ -269,6 +269,8 @@ worker wrapperだけの変更なら数値全validatorを一律追加しないが
 <a id="rf-07"></a>
 
 ### RF-07：HTTP輸送と画面状態を業務操作から分離する
+
+2026-10-14 **DONE**：[HTTP/曲線変形画面の境界](GUI_COMMAND_BOUNDARIES.md)。元認証/4・64・128 MiB/応答ASTと172操作のキー/handlerを維持し、曲線変形を状態/DOM/要求へ抽出。個別20unitを分割PASS、実Chrome36項目、全native係数/f/全RF/独立Greenを確認。最終wheel展開後17資産と旧新HTTP172拒否/認証等13条件/未許可5pathが一致。検証済み七ファイルをbyte反映、他1497 source不変。初回誤指定/同値alias整理は別記、科学核/依存/schema不変。rawはout/rf07-http-workflow-20261014/acceptance.json。RF-10と最終統合は継続。
 
 対象：`gui.py`、関連`gui_*`、`web/app.js`。既存の専用画面を活用する。
 最初はHTTP認証/応答/サイズ制限を固定し、操作名・許可キー・handlerを明示表で結び付ける。

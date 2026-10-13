@@ -206,19 +206,19 @@ try {
     await loadFile('#deformation-open',folder+'/rf-target.json');await wait('$("deformation-geometry").value.includes("0.25")');
     await select('deformation-rf','axis_fraction');await startPreview();
     await check('axis-fraction selector scales all explicit RF coordinates',
-      '(()=>{const r=deformationResult.response.target.rf_coordinates;return Math.abs(r.active_length_m/.1875-1)<1e-14 && Math.abs(r.voltage_interval_m[0]/.025-1)<1e-14 && Math.abs(r.voltage_interval_m[1]/.225-1)<1e-14 && Math.abs(r.phase_origin_m/.0375-1)<1e-14 && r.phase_origin_explicit && $("deformation-rf-info").textContent.includes("187.500")})()');
-    const scaled=await ev('deformationResult.response.target.project');await writeFile(out+'/rf-scaled.json',JSON.stringify(scaled,null,2));
+      '(()=>{const r=deformationWorkflow.prepared.response.target.rf_coordinates;return Math.abs(r.active_length_m/.1875-1)<1e-14 && Math.abs(r.voltage_interval_m[0]/.025-1)<1e-14 && Math.abs(r.voltage_interval_m[1]/.225-1)<1e-14 && Math.abs(r.phase_origin_m/.0375-1)<1e-14 && r.phase_origin_explicit && $("deformation-rf-info").textContent.includes("187.500")})()');
+    const scaled=await ev('deformationWorkflow.prepared.response.target.project');await writeFile(out+'/rf-scaled.json',JSON.stringify(scaled,null,2));
     await select('deformation-rf','fixed');await startPreview();
     await check('fixed selector preserves all explicit RF coordinates',
-      '(()=>{const r=deformationResult.response.target.rf_coordinates;return r.active_length_m===.15 && r.voltage_interval_m[0]===.02 && r.voltage_interval_m[1]===.18 && r.phase_origin_m===.03 && r.phase_origin_explicit})()');
+      '(()=>{const r=deformationWorkflow.prepared.response.target.rf_coordinates;return r.active_length_m===.15 && r.voltage_interval_m[0]===.02 && r.voltage_interval_m[1]===.18 && r.phase_origin_m===.03 && r.phase_origin_explicit})()');
     await fill('#deformation-angle',60);await startPreview();
-    await check('invalid quality floor clears any previous candidate','!deformationResult && $("deformation-apply").disabled && $("error").textContent.includes("strictly between") && $("deformation-status").textContent.includes("準備できません")');
+    await check('invalid quality floor clears any previous candidate','!deformationWorkflow.prepared && $("deformation-apply").disabled && $("error").textContent.includes("strictly between") && $("deformation-status").textContent.includes("準備できません")');
     await open(folder+'/folded-source.json');await loadFile('#deformation-open',folder+'/folded-target.json');
     await wait('$("deformation-geometry").value.includes("0.04")');await fill('#deformation-angle',1);await startPreview();
-    await check('a valid concave target with an actually folded mesh is refused','!deformationResult && $("deformation-apply").disabled && $("error").textContent.includes("Jacobian")');
+    await check('a valid concave target with an actually folded mesh is refused','!deformationWorkflow.prepared && $("deformation-apply").disabled && $("error").textContent.includes("Jacobian")');
     await prepare();await ev('window.__baseApi=api;window.__release=null;api=async(...args)=>{const r=await __baseApi(...args);if(args[0]==="preview-curved-deformation")await new Promise(resolve=>window.__release=resolve);return r}');
     await click('#deformation-preview');await wait('!!window.__release',120000);await fill('#beta',.9);await fill('#beta',1);await ev('__release()');await wait('!$("deformation-preview").disabled');
-    await check('change and restoration of identical values still invalidates an in-flight response','!deformationResult && $("deformation-apply").disabled && $("error").textContent.includes("入力が変わりました")');await ev('api=__baseApi');
+    await check('change and restoration of identical values still invalidates an in-flight response','!deformationWorkflow.prepared && $("deformation-apply").disabled && $("error").textContent.includes("入力が変わりました")');await ev('api=__baseApi');
     await prepare();await startPreview();
     await check('preview label remains readable in the narrow editor',
       'parseFloat(getComputedStyle(document.querySelector("#deformation-boundary text")).fontSize)===26 && $("deformation-geometry").getBoundingClientRect().width>.9*$("deformation-panel").getBoundingClientRect().width');
@@ -235,8 +235,8 @@ try {
   await fill('#deformation-geometry','{"type":"curved_contour","type":"curved_contour"}');await startPreview();
   await check('duplicate geometry fields reach strict server reader and cannot apply','$("error").textContent.includes("duplicate JSON key") && $("deformation-apply").disabled && $("deformation-view").hidden');
   await fill('#deformation-geometry',geometryText);await startPreview();
-  await check('valid preview is separate from current Project and exposes native P2 boundary','!!deformationResult && !$("deformation-view").hidden && document.querySelectorAll("#deformation-boundary path").length===2 && [...document.querySelectorAll("#deformation-boundary path")].every(p=>p.getAttribute("d").includes(" Q "))');
-  const response=await ev('deformationResult.response');
+  await check('valid preview is separate from current Project and exposes native P2 boundary','!!deformationWorkflow.prepared && !$("deformation-view").hidden && document.querySelectorAll("#deformation-boundary path").length===2 && [...document.querySelectorAll("#deformation-boundary path")].every(p=>p.getAttribute("d").includes(" Q "))');
+  const response=await ev('deformationWorkflow.prepared.response');
   if(!isDeepStrictEqual(response.target.project,expected) || !isDeepStrictEqual(await ev('collect()'),original))throw Error('Preview differs from CLI or changed source');
   await writeFile(out+'/preview.json',JSON.stringify(response,null,2));
   report.checks.push({operation:'full preview Project equals CLI deformation and source remains unchanged',passed:true});
@@ -253,14 +253,14 @@ try {
   if(!isDeepStrictEqual(await ev('collect()'),original))throw Error('Undo failed to restore exact editor source');
   report.checks.push({operation:'Undo restores source geometry, source mesh, complete history and RF controls',passed:true});
   await startPreview();await click('#deformation-apply');await fill('#beta',.9);
-  await check('later RF edits invalidate Undo without overwriting the edit','$("deformation-undo").disabled && !deformationUndo && $("beta").value==="0.9"');
+  await check('later RF edits invalidate Undo without overwriting the edit','$("deformation-undo").disabled && !deformationWorkflow.undo && $("beta").value==="0.9"');
   await prepare();await startPreview();await click('#deformation-apply');await click('#save');
   let saved;
   for(let n=0;n<200;n++){try{saved=JSON.parse(await readFile(out+'/downloads/cavity-project.json','utf8'));break;}catch{}await sleep(100);}
   if(!isDeepStrictEqual(saved,expected))throw Error('Normal Project save differs from candidate');
   await open(out+'/downloads/cavity-project.json');
   if(!isDeepStrictEqual((await ev('api("normalize",{document:collect()})')).project,expected))throw Error('Reload changes candidate');
-  await check('normal Project save/reload retains exact case and numbered mesh and clears old Undo','$("deformation-undo").disabled && !deformationUndo');
+  await check('normal Project save/reload retains exact case and numbered mesh and clears old Undo','$("deformation-undo").disabled && !deformationWorkflow.undo');
   await ev('window.__baseApi=api;window.__job=null;api=async(...args)=>{const r=await __baseApi(...args);if(args[0]==="start")window.__job=r.id;return r}');
   await click('#run');await wait('!!window.__job');const job=await ev('__job'),selector=`#jobs .job[data-job="${job}"]`;
   await wait(`document.querySelector(${JSON.stringify(selector+' strong')})?.textContent.startsWith("計算完了")`,240000);
@@ -276,16 +276,16 @@ try {
     await prepare();await ev('window.__release=null;api=async(...args)=>{const r=await __baseApi(...args);if(args[0]==="preview-curved-deformation")await new Promise(resolve=>window.__release=resolve);return r}');
     await click('#deformation-preview');await wait('!!window.__release',120000);
     await fill('#'+field,value);await ev('__release()');await wait('!$("deformation-preview").disabled');
-    await check(`in-flight ${field} change refuses stale candidate`,'!deformationResult && $("deformation-apply").disabled && $("deformation-view").hidden && $("error").textContent.includes("入力が変わりました")');
+    await check(`in-flight ${field} change refuses stale candidate`,'!deformationWorkflow.prepared && $("deformation-apply").disabled && $("deformation-view").hidden && $("error").textContent.includes("入力が変わりました")');
     await ev('api=__baseApi');
   }
   await prepare();await startPreview();await fill('#deformation-angle',2);
-  await check('editing a prepared request removes candidate, overlay and download','!deformationResult && $("deformation-save").disabled && $("deformation-apply").disabled && $("deformation-view").hidden');
+  await check('editing a prepared request removes candidate, overlay and download','!deformationWorkflow.prepared && $("deformation-save").disabled && $("deformation-apply").disabled && $("deformation-view").hidden');
   await fill('#deformation-angle',1);await startPreview();
   await ev('$("beta").value="0.9"');await click('#deformation-apply');
-  await check('apply checks current values even without an input event','!deformationResult && $("error").textContent.includes("入力が変わりました") && $("beta").value==="0.9"');
+  await check('apply checks current values even without an input event','!deformationWorkflow.prepared && $("error").textContent.includes("入力が変わりました") && $("beta").value==="0.9"');
   await prepare();await startPreview();await click('#deformation-apply');await ev('$("beta").value="0.9"');await click('#deformation-undo');
-  await check('Undo checks current values even without an input event','!deformationUndo && $("error").textContent.includes("Projectが変わりました") && $("beta").value==="0.9"');
+  await check('Undo checks current values even without an input event','!deformationWorkflow.undo && $("error").textContent.includes("Projectが変わりました") && $("beta").value==="0.9"');
   await prepare();await ev('window.__release=null;api=async(...args)=>{const r=await __baseApi(...args);if(args[0]==="normalize")await new Promise(resolve=>window.__release=resolve);return r}');
   await click('#deformation-template');await wait('!!window.__release');await fill('#beta',.9);await ev('__release()');await wait('!$("deformation-template").disabled');
   await check('template generation also rejects a stale source','$("error").textContent.includes("入力が変わりました") && $("beta").value==="0.9"');await ev('api=__baseApi');
@@ -293,7 +293,7 @@ try {
   await writeFile(out+'/unfrozen.json',JSON.stringify(unfrozen));await open(out+'/unfrozen.json');await startPreview();
   await check('unfrozen history is refused with an actionable freeze instruction','$("error").textContent.includes("freeze-curved-refinement") && $("deformation-apply").disabled');
   await prepare();await startPreview();await open(out+'/downloads/deformed-project.json');
-  await check('replacing Project clears any earlier prepared candidate','!deformationResult && !deformationUndo && $("deformation-apply").disabled && $("deformation-view").hidden');
+  await check('replacing Project clears any earlier prepared candidate','!deformationWorkflow.prepared && !deformationWorkflow.undo && $("deformation-apply").disabled && $("deformation-view").hidden');
   await prepare();await startPreview();
   await check('SI editor uses available panel width','$("deformation-geometry").getBoundingClientRect().width>.9*$("deformation-panel").getBoundingClientRect().width');
   }

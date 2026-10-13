@@ -1,3 +1,5 @@
+2026-10-14 RF-07 **DONE**：[HTTP/曲線変形画面の境界](GUI_COMMAND_BOUNDARIES.md)。HTTP認証/制限/応答と172操作表を分離し、一JS workflowの状態/DOM/要求を抽出。20個別unitを分割PASS、実Chrome21＋6＋既存9項目PASS、GUI/CLIの全係数/周波数一致と全RF/独立Green確認。最終wheel展開/17資産/172 strict操作/認証等13条件/未許可path5条件の旧新実HTTP一致。七ファイルbyte一致反映、他1497 source不変、同値alias整理/初回誤指定を保全。新依存/科学核/schema変更なし。全152は101 DONE/3 IN_PROGRESS/48 PLANNED、RF残1枚と最終統合/全goalは継続。
+
 2026-10-14 RF-06 **DONE**：[CLI登録と実行の境界](CLI_COMMAND_BOUNDARIES.md)。曲線Hφ三コマンドを明示登録/実行へ分割し、他170操作/元例外境界と全173 parser/help/順序を維持。直接13 unit/35.770秒/終了0/PASS、13旧新stdout/stderr/code/旧native/実上書き拒否比較。二ファイルbyte一致反映、他1499 source不変。数値核/schema/依存/公開entry point不変、追加full/seed0。全152は100 DONE/3 IN_PROGRESS/49 PLANNED、RF残2枚/最終統合/全goalは継続。
 
 2026-10-14 RF-08 **DONE**：[Hφ調整fixture境界](TEST_FIXTURE_BOUNDARIES.md)。四builder/18 inter-test importを物理別supportへ移し、元21 module body/26生成byte/2689 IDを維持、新入力3 IDを追加。入力/runner9＋実保存15の24個別unitがPASS、独立参照/製品source不変。27 file byte一致反映、他1473 source不変、現行収集2692 ID/529 module。削除/重複FEM削減/性能比較なし。全152は99 DONE/3 IN_PROGRESS/50 PLANNED、残3枚/全goalは継続。
