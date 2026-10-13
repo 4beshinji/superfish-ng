@@ -108,6 +108,25 @@ class CurvedRFGoalReferenceGeometryTests(unittest.TestCase):
 
 
 class CurvedRFGoalReferenceIntegrityTests(unittest.TestCase):
+    def test_reference_binding_relocation_requires_every_original_input_and_exact_archive_sha(self):
+        from superfish_ng.curved_rf_goal_efficiency_reference import _verify_reference_bindings
+        from superfish_ng.completion import digest
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=root/'source.py';archive=root/'archive.py';grid=root/'grid.npz';extra=root/'extra.py'
+            source.write_text('current source');archive.write_text('original source');grid.write_bytes(b'fixed independent grid');extra.write_text('optional implementation source')
+            a=digest(archive);g=digest(grid);e=digest(extra)
+            required={str(archive):a,str(grid):g}
+            reference=dict(required_bound_inputs=required,bound_inputs=dict(required,**{str(extra):e}),
+                source_relocations={str(source):dict(path=str(archive),sha256=a)})
+            archives={a:str(archive),e:str(extra)}
+            original={str(source):a,str(grid):g}
+            _verify_reference_bindings(original,reference,archives)
+            _verify_reference_bindings(dict(required,**{str(extra):e}),reference,archives)
+            for bad in ({str(grid):g},{str(source):a},{str(source):'0'*64,str(grid):g},
+                        {str(root/'wrong-source.py'):a,str(grid):g},dict(original,unknown='0'*64),
+                        dict(original,**{str(root/'extra-source.py'):[]})):
+                with self.subTest(bad=bad),self.assertRaises(ValueError):_verify_reference_bindings(bad,reference,archives)
+
     def test_explicit_historical_archive_binds_exact_bytes_and_never_executes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);current=root/'current.py';archive=root/'archive.py'

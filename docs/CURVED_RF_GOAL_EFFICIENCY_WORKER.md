@@ -1,5 +1,7 @@
 # RF版5対照worker：比較指標と採用祖先
 
+現行：2026-10-14、04の[条件別受入](CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)を完了。以下は日付付きの部分受入記録。
+
 2026-10-13 JST、`ADD-N04-rf-goal-04` **IN_PROGRESS**。
 [原仕様](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)のうち、比較側の全量指標と停止判定を実装した。
 新`curved_rf_goal_efficiency_metrics.py`は純粋な数値/記録集約で、FEMを実行しない。

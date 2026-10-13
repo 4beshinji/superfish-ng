@@ -9,11 +9,9 @@ import argparse
 from copy import deepcopy
 from datetime import datetime, timezone
 import os
-import math
 from pathlib import Path
 import platform
 import subprocess
-import stat
 import sys
 import time
 
@@ -21,14 +19,14 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
 
 from superfish_ng.adaptive_efficiency_process import run_measured_process
-from superfish_ng.adaptive_efficiency_reference import _bound_file
 from superfish_ng.completion import digest
+from superfish_ng.curved_rf_goal_efficiency_bundle import read_json_binding, file_inventory, bundle_state, verify_bundle
 from superfish_ng.config import integer, keys
 from superfish_ng.curved_rf_goal_efficiency_io import publish_rf_goal_json
 from superfish_ng.curved_rf_goal_efficiency_plan import (
     build_curved_rf_goal_efficiency_plan, request_for_curved_rf_goal_efficiency_execution)
 from superfish_ng.curved_rf_goal_efficiency_resume import resume_curved_rf_goal_efficiency_worker
-from superfish_ng.curved_rf_goal_efficiency_saved import read_curved_rf_goal_efficiency, _same_saved
+from superfish_ng.curved_rf_goal_efficiency_saved import read_curved_rf_goal_efficiency
 from superfish_ng.curved_rf_goal_efficiency_worker import execute_curved_rf_goal_efficiency_worker
 from superfish_ng.project import parse_json
 
@@ -49,13 +47,6 @@ def environment():
                 blas_threads=os.environ.get('OPENBLAS_NUM_THREADS'), gpu_used=False,
                 commit=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
                 utc=datetime.now(timezone.utc).isoformat())
-
-
-def read_json_binding(path, sha):
-    path = _bound_file(path, sha, {})
-    value = parse_json(path.read_text(encoding='utf-8'))
-    _bound_file(path, sha, {})
-    return value
 
 
 def fresh_invocation(execution_id, *, max_new_events=None, source_archives=None):
@@ -101,47 +92,6 @@ def new_output(path):
     if path.exists() or path.is_symlink():raise FileExistsError(path)
     if any(p.is_symlink() for p in path.parents):raise ValueError('RF output parents must not be symlinks')
     return path
-
-
-def file_inventory(root):
-    """Bind partial staging and logs as evidence, never as complete checkpoints."""
-    files = {}
-    for path in sorted(root.rglob('*')):
-        if path.is_symlink():raise ValueError('RF process bundle must not contain symlinks')
-        if path.is_dir():continue
-        if not stat.S_ISREG(path.stat().st_mode):raise ValueError('RF process bundle requires regular files')
-        relative = path.relative_to(root).as_posix()
-        if relative == 'manifest.json':continue
-        sha = digest(path)
-        _bound_file(path, sha, {})
-        files[relative] = sha
-    return files
-
-
-def bundle_state(root, process, journal, source_changed):
-    state = 'PROCESS_RECEIPT_MISSING' if process is None else process['status']
-    if state == 'PROCESS_EXITED':
-        if type(process.get('exit_code')) is not int or process['exit_code'] != 0:
-            raise ValueError('exited RF process requires integer exit code zero')
-        if journal is None:state = 'WORKER_RESULT_MISSING'
-        else:
-            terminal = root/'worker-terminal.json'
-            if not terminal.is_file():state = 'WORKER_RECEIPT_MISSING'
-            else:
-                receipt = parse_json(terminal.read_text())
-                publication = receipt.get('result_publication')
-                if (receipt.get('document_type') != 'curved_rf_goal_efficiency_worker_terminal' or
-                        type(receipt.get('schema_version')) is not int or receipt['schema_version'] != 1 or
-                        receipt.get('status') != 'RETURNED' or receipt.get('exception_type') is not None or
-                        type(publication) is not dict or publication.get('status') != 'COMPLETED'):
-                    raise ValueError('RF successful process must retain returned worker and complete result publication')
-                values = [publication.get('wall_seconds'), receipt.get('invocation_wall_seconds'), process.get('wall_seconds')]
-                if any(type(v) not in (int,float) or not math.isfinite(v) or v < 0 for v in values) or values != sorted(values):
-                    raise ValueError('RF result write must lie within invocation and process walls')
-                submission = receipt.get('submission_wall_seconds')
-                if type(submission) not in (int,float) or not math.isfinite(submission) or submission < values[1]:
-                    raise ValueError('RF submission wall must cover worker invocation')
-    return 'SOURCE_CHANGED' if source_changed else state
 
 
 def worker_command(path, sha, out, submission_origin):
@@ -227,32 +177,6 @@ def run_invocation(invocation, out):
             scope='one fixed row; process exit/source audit are not scientific acceptance; '
                   'all completed/partial local bytes and logs bound after terminal reap; independent full replay is separate')
         publish_rf_goal_json(out/'manifest.json', manifest)
-    return manifest
-
-
-def verify_bundle(path, sha):
-    manifest = read_json_binding(path, sha);root = Path(path).absolute().parent
-    fields = ('schema_version','document_type','status','source_audit','process','numerical_status','files','physical_error_bound','scope')
-    keys(manifest, fields, fields, 'RF process bundle')
-    if (type(manifest['schema_version']) is not int or manifest['schema_version'] != 1 or
-            manifest['document_type'] != 'curved_rf_goal_efficiency_process_bundle' or manifest['physical_error_bound'] is not None):
-        raise ValueError('RF process bundle schema differs')
-    _same_saved(manifest['files'], file_inventory(root), 'RF process bundle full inventory')
-    process_path = root/'process'/'process.json'
-    process = parse_json(process_path.read_text()) if process_path.is_file() else None
-    _same_saved(manifest['process'], process, 'RF original terminal process')
-    before = parse_json((root/'sources-before.json').read_text());after = parse_json((root/'sources-after.json').read_text())
-    audit = manifest['source_audit']
-    expected = dict(status='UNCHANGED' if before == after else 'CHANGED',
-        changed=sorted(k for k in before.keys() & after.keys() if before[k] != after[k]),
-        added=sorted(after.keys()-before.keys()), deleted=sorted(before.keys()-after.keys()), scope=audit['scope'])
-    _same_saved(audit, expected, 'RF original source audit')
-    result = root/'native'/'result.json'
-    journal = parse_json(result.read_text()) if result.is_file() else None
-    state = bundle_state(root, process, journal, before != after)
-    _same_saved(manifest['status'], state, 'RF original bundle status')
-    _same_saved(manifest['numerical_status'], None if journal is None else journal['status'], 'RF original numerical status')
-    _bound_file(path, sha, {})
     return manifest
 
 

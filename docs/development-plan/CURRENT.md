@@ -1,5 +1,8 @@
 # 現行の作業入口
 
+2026-10-14 ADD-N04-rf-goal-04 **DONE**：[worker条件別受入](../CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)。実TERM/KILL五再開・新checkpoint前/後と元prefix保持、参照source移設/追加archiveの全必須SHAを接続。新9を含む52個別unit分割PASS、実process新20FEM（unit内1別）、元187配列byte/全RF一致。六初回PAUSED/Maxwell尺度則、原12event/全24sampleを現行数値bodyで完全再生、新固有求解0。16 bundle/各1511 source前後UNCHANGED、実wait4/tool終端。数学body/閾値/保存版は不変、失敗と完成数値を保全、seed/full/GUI/固定36は今回0。全152は103 DONE/2 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goal継続。次はADD-N04-rf-goal-05。
+
+
 2026-10-14 ADD-N04-rf-goal-04 **IN_PROGRESS**：[専用CLI/外側終端費用](../CURVED_RF_GOAL_EFFICIENCY_CLI.md)。固定一行の起動・PAUSED再開・全bundle/journal再生を接続。新8を含む51個別unit PASS、球一様2新FEMの29 native/sample配列byte・全mode/RFと元無中断が一致、Ue/Uh最大差1.333e-15。旧参照SHAによる実終了1を保持し、明示52元source archiveで期待SHA/数値不変のまま照合。新規7.018150秒/再開14.691503秒、結果書込も外側時間に包含、再生新固有求解0。三process/1509 source前後UNCHANGED・全handle終端。一般kill再開と統合異常系が04の残件、固定36/GUIは05/06。全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全goal継続。
 
 
@@ -42,7 +45,7 @@ JSON/canonicalも元bodyを抽出し、Project/旧canonical転送・同軸native
 直接13 unit/35.770秒/終了0/PASS、13旧新出力/終了code/旧native/実上書き拒否比較。候補二ファイルをbyte一致反映、他1499 source不変。
 [RF-07 HTTP/画面境界](../GUI_COMMAND_BOUNDARIES.md)もDONE。20個別unitを分割PASS、実Chrome36項目、GUI/CLI全係数/f/全RF/独立Green、最終wheel17資産と旧新実HTTP172 strict操作/認証等13条件/未許可5pathを確認。七ファイルbyte反映、他1497 source不変、初回誤指定と同値alias整理を区別。
 [RF-10曲線Hφ再生費用](../OWNED_REPLAY_COST.md)もDONE。三履歴長/未確認/実中止prefixの60測定操作と13個別unit/737.939秒がPASS、元9native/27mode/全量/ID/判断/独立尺度保持。履歴4でplain warm34.482→9.954秒/read14→4/組立196→56、実装hashの追加読取/RSSも記録。候補四ファイルbyte反映、他1503 source不変。
-全152は102 DONE/3 IN_PROGRESS/47 PLANNED。[元11枚の最終受入](../REFACTORING_ACCEPTANCE.md)を完了した。条件別証拠/下位依存方向/原141行保持と最終wheel/core3.10/3.12がPASS、固定1507 source fullは実session3414の終了0/full PASS。2698実行枠（2693個別ID、元5重複保持）/530module、3904.661秒、FAIL/ERROR0・既存SKIP3、前後source完全一致。seed全9modeのf差0/全RF物理量差最大8.882e-16と保存再構築もPASS。今回の全11枚のリファクタリングgoalは完了条件を満たす。原の未受入機能/配布カードをDONEへ昇格せず、従来工程はADD-N04-rf-goal-04の残件から継続する。
+全152は102 DONE/3 IN_PROGRESS/47 PLANNED。[元11枚の最終受入](../REFACTORING_ACCEPTANCE.md)を完了した。条件別証拠/下位依存方向/原141行保持と最終wheel/core3.10/3.12がPASS、固定1507 source fullは実session3414の終了0/full PASS。2698実行枠（2693個別ID、元5重複保持）/530module、3904.661秒、FAIL/ERROR0・既存SKIP3、前後source完全一致。seed全9modeのf差0/全RF物理量差最大8.882e-16と保存再構築もPASS。今回の全11枚のリファクタリングgoalは完了条件を満たす。原の未受入機能/配布カードをDONEへ昇格せず、従来工程のADD-N04-rf-goal-04は上記条件別監査でDONE。次はADD-N04-rf-goal-05の固定36実行へ進む。
 既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。

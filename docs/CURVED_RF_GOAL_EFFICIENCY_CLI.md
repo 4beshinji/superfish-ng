@@ -1,5 +1,7 @@
 # RF版5対照：専用CLIと外側の終端費用
 
+現行：2026-10-14、04の[条件別受入](CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)を完了。以下は日付付きの部分受入記録。
+
 2026-10-14 JST、`ADD-N04-rf-goal-04` の限定受入。04は **IN_PROGRESS**。
 固定36実行05、GUI/原条件監査06、親N04と全計画は未完。
 

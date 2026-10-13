@@ -1,3 +1,5 @@
+2026-10-14 RF版5worker04：[実TERM/KILLと参照contextの検証](CURVED_RF_GOAL_EFFICIENCY_TERMINATION.md)。新9を含む52個別unitを変更別に分割PASS、最後のSHA型拒否はintegrity6件のみ補完。新実process20 FEM/unit内1別、全187配列/全RF・六ケースのMaxwell尺度則と原12 eventの全保存再生を確認。scope/log/再利用は同書と[条件別受入](CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)。数値body/閾値不変、固定36/GUI/seed/full/Hosted CIは今回未実行。
+
 2026-10-14 RF版5比較CLI：[限定受入とコマンド](CURVED_RF_GOAL_EFFICIENCY_CLI.md)。新CLI/reference/worker/resume/saved/costs/processの51個別unit（新8含む）が22.098秒PASS。後続変更に関係するarchive integrity5件/strict1件だけ補完した。実CLI2新FEM/二完全再生・新固有求解0、全29配列と元全RF一致。数学核/閾値不変でseed/full/GUI/Hosted CIは今回0。元FAIL/未実装/環境ERRORと限定scopeを保持する。
 
 2026-10-14 全11カードの[最終統合受入](REFACTORING_ACCEPTANCE.md)：製品`237f6cd`の固定1507 sourceでfull validator一回が実終了0/PASS（session3414、8 process）。2698実行枠/530module、3904.661秒、FAIL/ERROR0・元SKIP3、前後source完全一致。2693個別IDと元5重複を含むdiscovery Counterも一致。seed全9modeはf差0/全RF物理量差最大8.882e-16、保存再構築・両R/Q/U不変量を確認。元11条件/下位依存/原141行/索引とwheel17実HTTP資産・core3.10/3.12を結合。NGSolve2件と専用circle/TE root1件の未実行を明記し、過去の部分/失敗証拠は保持。文書/件数訂正のためのfull/FEM再実行はない。

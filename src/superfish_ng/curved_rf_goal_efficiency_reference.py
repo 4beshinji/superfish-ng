@@ -166,7 +166,7 @@ def _bindings(supplied):
     return deepcopy(supplied), {str(root/_PREPARED_PATH):_PREPARED_SHA256}, registry['historical_source_aliases']
 
 
-def _historical_source(path, expected, bound, aliases, archives=None):
+def _historical_source(path, expected, bound, aliases, archives=None, relocations=None):
     from .adaptive_efficiency_reference import _bound_file
     from .completion import digest
     path=Path(path)
@@ -181,15 +181,19 @@ def _historical_source(path, expected, bound, aliases, archives=None):
         if archive is not None:
             if type(archive) is not str or not Path(archive).is_absolute():
                 raise ValueError('RF reference source archive requires an absolute path')
-            return _bound_file(archive,expected,bound)
+            actual=_bound_file(archive,expected,bound)
+            if relocations is not None:relocations[str(path)]=dict(path=str(actual),sha256=expected)
+            return actual
     alias=aliases.get(str(path))
     if alias is None or alias['sha256']!=expected:
         raise ValueError('RF reference historical source is missing or changed: '+str(path))
     root=Path(__file__).resolve().parents[2]
-    return _bound_file(root/alias['path'],expected,bound)
+    actual=_bound_file(root/alias['path'],expected,bound)
+    if relocations is not None:relocations[str(path)]=dict(path=str(actual),sha256=expected)
+    return actual
 
 
-def _original_n06_reference(family, bindings, bound, aliases, archives=None):
+def _original_n06_reference(family, bindings, bound, aliases, archives=None, relocations=None):
     """Reuse original bytes with explicit same-content historical source paths.
 
     N06's original reader demands its entire old source tree in place. Later UI
@@ -209,7 +213,7 @@ def _original_n06_reference(family, bindings, bound, aliases, archives=None):
         for relative,h in manifest['source_sha256'].items():
             if Path(relative).is_absolute() or '..' in Path(relative).parts:
                 raise ValueError('invalid historical sphere source path')
-            _historical_source(root/relative,h,bound,aliases,archives)
+            _historical_source(root/relative,h,bound,aliases,archives,relocations)
         grids=[]
         for entry in (g for g in manifest['grids'] if g['case_id']=='sphere'):
             _,meta=_read_binding(dict(path=str(path.parent/entry['path']),sha256=entry['sha256']),bound)
@@ -230,7 +234,7 @@ def _original_n06_reference(family, bindings, bound, aliases, archives=None):
         if (manifest['document_type']!='n06_reused_reference_grids' or manifest['reference_maxh_m']!=[.005,.0025,.00125] or
                 manifest['component_order']!=list(COMPONENTS) or manifest['normalization_j']!=1. or manifest['beta']!=1. or matrix['status']!='PASS'):
             raise ValueError('rounded requires original N03/N06 whole-grid three-h conventions')
-        for p,h in manifest['bound_inputs'].items():_historical_source(p,h,bound,aliases,archives)
+        for p,h in manifest['bound_inputs'].items():_historical_source(p,h,bound,aliases,archives,relocations)
         if any(ids!=request['initial_ids'] for group in matrix['mode_ids_by_node'] for ids in group):
             raise ValueError('rounded original individual-mode IDs differ')
         anchor=Path(matrix['request']['runs'][2][0]);snapshot={s['directory']:s['sha256'] for s in matrix['sources']}
@@ -340,10 +344,10 @@ def load_curved_rf_goal_efficiency_reference(case_id, *, bindings=None, source_a
         raise ValueError('RF goal reference requires one of the six fixed case ids')
     request,case,scale=_fixed_request(case_id,family)
     bindings,bound,aliases=_bindings(bindings)
-    bound.update(archive_bound)
+    relocations={}
     grids=[]
     if family=='sphere':
-        old,_=_original_n06_reference('sphere',bindings,bound,aliases,source_archives)
+        old,_=_original_n06_reference('sphere',bindings,bound,aliases,source_archives,relocations)
         for original in old['grids']:
             data=build_sphere_rf_goal_reference(case_id,order=original['order'])
             if scale==1:
@@ -359,7 +363,7 @@ def load_curved_rf_goal_efficiency_reference(case_id, *, bindings=None, source_a
                               reference_field_path=original['reference_field_path'],reference_field_sha256=original['reference_field_sha256']))
     else:
         if family=='rounded-two-lobe':
-            old,manifest=_original_n06_reference(family,bindings,bound,aliases,source_archives)
+            old,manifest=_original_n06_reference(family,bindings,bound,aliases,source_archives,relocations)
             originals=[(g,g['all_reference_arrays'],manifest['original_reference_quantities']) for g in old['grids']]
             base_request,base_case,_=_fixed_request(family+'-scale-1',family)
             if base_case!=old['case'] or base_request['initial_mesh']!=old['source_mesh']:
@@ -401,8 +405,10 @@ def load_curved_rf_goal_efficiency_reference(case_id, *, bindings=None, source_a
             a,b=[grid['reference_two_changes'][interval]['relative_changes'] for grid in grids]
             if any(abs(a[key]-b[key])>LIMITS[key] for key in a):
                 raise ValueError('reference Gauss16/24 error differences UNVERIFIED')
+    required_bound=deepcopy(bound);bound.update(archive_bound)
     result=dict(case_id=case_id,request=deepcopy(request),case=case,source_mesh=deepcopy(request['initial_mesh']),
                 initial_ids=deepcopy(request['initial_ids']),grids=grids,bound_inputs=bound,
+                required_bound_inputs=required_bound,source_relocations=relocations,
                 independent_reference_kind='SphereTM' if family=='sphere' else 'N03_modern_three_h_five_modes',
                 historical_source_aliases=deepcopy(aliases),
                 native_id_reference_labels={i:('target' if i=='fundamental' else i) for i in request['initial_ids']},
@@ -411,3 +417,34 @@ def load_curved_rf_goal_efficiency_reference(case_id, *, bindings=None, source_a
                 scope='fixed complete reference data, all modes/points and three-h changes; native source/physical ID/accuracy/efficiency remain separate')
     verify_reference_bytes(result)
     return result
+
+
+def _verify_reference_bindings(original, reference, source_archives=None):
+    """Require every fixed reference input, allowing verified source relocation.
+
+    Relocations come from the pinned reference manifests, never from a journal.
+    Extra archives supplied for implementation provenance remain separately
+    bound; they cannot replace a required grid, manifest, or source entry.
+    """
+    from .adaptive_efficiency_reference import _bound_file
+    if type(original) is not dict:raise ValueError('RF original reference bindings must be a mapping')
+    archives={} if source_archives is None else source_archives
+    if type(archives) is not dict:raise ValueError('RF source archives require a mapping')
+    required=reference['required_bound_inputs'];remaining=set(required);bound={}
+    for path,sha in original.items():
+        if type(path) is not str or not Path(path).is_absolute():
+            raise ValueError('RF original reference binding requires an absolute path')
+        if type(sha) is not str or len(sha)!=64 or any(c not in '0123456789abcdef' for c in sha):
+            raise ValueError('RF original reference binding requires an exact SHA256 string')
+        relocated=reference['source_relocations'].get(path)
+        if relocated is not None:
+            if sha!=relocated['sha256']:raise ValueError('RF relocated original source SHA256 differs')
+            path=relocated['path']
+        if path in required:
+            if sha!=required[path]:raise ValueError('RF original independent reference SHA256 differs')
+            remaining.discard(path)
+        elif sha not in archives:
+            raise ValueError('RF original reference has an undeclared extra binding')
+        _bound_file(path,sha,bound)
+    if remaining:raise ValueError('RF original independent reference omitted required bindings')
+    return bound

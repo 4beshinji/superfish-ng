@@ -20,7 +20,7 @@ from .completion import digest
 from .config import Case, integer, keys
 from .curved_rf_goal_efficiency_metrics import assess_rf_goal_history
 from .curved_rf_goal_efficiency_plan import request_for_curved_rf_goal_efficiency_execution, _same
-from .curved_rf_goal_efficiency_reference import load_curved_rf_goal_efficiency_reference
+from .curved_rf_goal_efficiency_reference import load_curved_rf_goal_efficiency_reference, _verify_reference_bindings
 from .curved_rf_goal_efficiency_worker import _sample_event, _uniform_event, _stop_status, _verify_fixed_request, observation_bindings, _uniform_budget_status, _planning_stop
 from .geometry_surface_numerics import mapped_moments
 from .jobs import _implementation_hashes
@@ -277,7 +277,7 @@ def replay_curved_rf_goal_efficiency(document, *, bindings=None, implementation_
     cost_status=_verify_costs(cost_document)
     bound.update(_implementation_sources(document['implementation_sha256'],implementation_aliases,implementation_archives))
     reference=load_curved_rf_goal_efficiency_reference(document['execution']['case_id'],bindings=bindings,source_archives=implementation_archives)
-    _same_saved(document['reference_bound_inputs'],reference['bound_inputs'],'RF original independent reference bindings')
+    bound.update(_verify_reference_bindings(document['reference_bound_inputs'],reference,implementation_archives))
     bound.update(reference['bound_inputs']);case=Case.from_dict(request['case']);uniform=document['execution']['method']=='uniform'
     recorder=PhaseRecorder();events=[];observations=[];records=[];samples=[];runs=[];initial_identity=False;status='PAUSED'
     public=None;public_count=0 if uniform else len(document['public_checkpoint']['level_runs'])
@@ -339,6 +339,8 @@ def replay_curved_rf_goal_efficiency(document, *, bindings=None, implementation_
     if implementation!=_implementation_hashes():raise RuntimeError('implementation changed during RF journal reconstruction')
     return dict(status='FULL_NATIVE_FIELDS_AND_DECISIONS_REPLAYED',document=document,
                 bound_inputs=bound,cost_verification_status=cost_status,new_eigensolves=0,
+                reference_binding_context=dict(required_bound_inputs=deepcopy(reference['required_bound_inputs']),
+                    source_relocations=deepcopy(reference['source_relocations']),bound_inputs=deepcopy(reference['bound_inputs'])),
                 replay_observed_cost=recorder.finish(),physical_error_bound=None,
                 scope='every declared source/native/sample byte, complete native events and all independent full-grid fields/metrics reconstructed; original elapsed costs retained, not remeasured; process/failure bundle and resume acceptance remain separate')
 

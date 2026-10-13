@@ -70,5 +70,26 @@ class RFGoalResumeInputTests(unittest.TestCase):
             origin['interruption_files'][str(process)]=digest(process)
             with self.assertRaises(ValueError):_verify_interruption(parent,origin,{})
 
+    def test_extended_resume_archives_require_the_parents_independently_verified_reference_context(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);grid=root/'grid.npz';archive=root/'source.py';path=root/'result.json'
+            grid.write_bytes(b'fixed independent reference');archive.write_text('original source')
+            refs={str(grid):digest(grid)};archives={digest(archive):str(archive)}
+            parent=dict(status='PAUSED',execution={},request={},reference_bound_inputs=refs,observed_cost={},
+                events=[{}],level_runs=['/original'],native_sources=[{}],event_records=[{}],observations=[{}])
+            path.write_text(json.dumps(parent));document=deepcopy(parent)
+            for name in ('events','level_runs','native_sources','event_records','observations'):document[name].append({})
+            document['reference_bound_inputs'][str(archive)]=digest(archive)
+            document['resume_origin']=dict(journal_path=str(path),journal_sha256=digest(path),event_count=1,
+                implementation_aliases={},implementation_archives=archives,interruption_files={})
+            result=dict(document=parent,bound_inputs={})
+            with patch('superfish_ng.curved_rf_goal_efficiency_resume.read_curved_rf_goal_efficiency',return_value=result):
+                with self.assertRaises(ValueError):verify_resume_origin(document)
+                result['reference_binding_context']=dict(required_bound_inputs=refs,source_relocations={},bound_inputs=refs)
+                bound=verify_resume_origin(document);self.assertEqual(bound[str(grid)],digest(grid))
+                for bad in ({str(archive):digest(archive)},dict(document['reference_bound_inputs'],**{str(grid):'0'*64})):
+                    changed=deepcopy(document);changed['reference_bound_inputs']=bad
+                    with self.assertRaises(ValueError):verify_resume_origin(changed)
+
 
 if __name__=='__main__':unittest.main()
