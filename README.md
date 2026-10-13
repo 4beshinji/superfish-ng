@@ -97,6 +97,8 @@ CLI/Python と共通の入力・計算機能で扱えます。導線は [GUIガ�
 
 曲線形状Studyでは、[元P2境界を保つ再メッシュ生成と保存復元](docs/CURVED_BOUNDARY_REMESH_GUI.md)を利用できます。
 元Project・生成条件・計画を完全再検証し、メッシュの幾何条件とRF精度を分けて表示します。
+[独立幾何・解析円筒・非アフィン尺度・全保存場の受入](docs/CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)では、
+固定6求解を元の周波数・場・RF基準で確認しています。
 
 ## 入力と出力
 

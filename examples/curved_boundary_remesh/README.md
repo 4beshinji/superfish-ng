@@ -4,7 +4,7 @@
 2026-10-13の[03生成API受入](../../docs/CURVED_BOUNDARY_REMESH_CORE.md)で公開版2を接続した。
 正常二例の生成と拒否二例の予算違反を確認済み。
 [04完全保存再生/CLI](../../docs/CURVED_BOUNDARY_REMESH_SAVED.md)と
-[05 GUI/worker](../../docs/CURVED_BOUNDARY_REMESH_GUI.md)も受入済み。専用6 FEMは06で受入する。
+[05 GUI/worker](../../docs/CURVED_BOUNDARY_REMESH_GUI.md)も受入済み。[06 独立幾何/解析場/RF/専用6 FEM](../../docs/CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)も受入済み。
 
 | Project | 設定 | 期待 |
 |---|---|---|

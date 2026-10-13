@@ -15,6 +15,8 @@
 
 現行追補：[05 Study GUI/実worker](CURVED_BOUNDARY_REMESH_GUI.md)もDONE。実Chrome42操作、HTTP2個別検査と計7実FEM、中止再開/再起動・保存配列保持を受入。次は06の独立全ゲート/専用6 FEM。
 
+現行追補：[06 独立幾何・実場/RF・全6 native](CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)もDONE。全原gateを維持し、境界生成01〜06を受入。親N04のRF版5対照と全goalは継続。
+
 ## 対象と採用する表現
 
 元の解析曲線、材料、SI単位、RF座標、正規化、mode設定を保持し、元の内部接続を捨てて

@@ -36,7 +36,7 @@
 ## ADD-N04-boundary-remesh-01
 
 **親N04、先行N08、種別仕様、状態DONE**。
-[版2仕様](CURVED_BOUNDARY_REMESH_SPEC.md)を2026-10-13受入。元P2制限の表現probe/正常拒否例を確認し、必須02〜06をTSVへ接続した。[02 strict入力](CURVED_BOUNDARY_REMESH_INPUT.md)もDONE。[03生成API](CURVED_BOUNDARY_REMESH_CORE.md)もDONE。[04完全保存再生/CLI](CURVED_BOUNDARY_REMESH_SAVED.md)もDONE。[05 Study GUI/実worker](CURVED_BOUNDARY_REMESH_GUI.md)もDONE。次は06の独立幾何/専用6 FEM。
+[版2仕様](CURVED_BOUNDARY_REMESH_SPEC.md)を2026-10-13受入。元P2制限の表現probe/正常拒否例を確認し、必須02〜06をTSVへ接続した。[02 strict入力](CURVED_BOUNDARY_REMESH_INPUT.md)もDONE。[03生成API](CURVED_BOUNDARY_REMESH_CORE.md)もDONE。[04完全保存再生/CLI](CURVED_BOUNDARY_REMESH_SAVED.md)もDONE。[05 Study GUI/実worker](CURVED_BOUNDARY_REMESH_GUI.md)と[06 独立全ゲート/6 FEM](CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)もDONE。次はADD-N04-rf-goal-01。
 二次境界の分割数を変更できる再メッシュ生成の範囲と表現を固定する。
 現行 `curved_remesh_generation.generate_curved_remesh_plan` / `_boundary_case` /
 `_size_marks` は元二次境界を固定し、境界サイズと競合すると拒否する。
