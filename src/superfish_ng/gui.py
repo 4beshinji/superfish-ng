@@ -94,7 +94,7 @@ def create_server(workspace, port=0):
 
     if find_spec("matplotlib") is None:
         raise ValueError(
-            "GUI plotting requires the plot extra: python -m pip install -e '.[plot]'"
+            "GUI plotting requires the plot extra: uv pip install -e '.[plot]'"
         )
     token = secrets.token_urlsafe(32)
     render_lock = threading.Lock()

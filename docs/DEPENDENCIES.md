@@ -1,5 +1,69 @@
 # 依存関係と配布方針
 
+<a id="current-environments"></a>
+
+## 現行core/GUI環境契約（2026-10-13、RF-02）
+
+依存範囲は `pyproject.toml` のNumPy >=1.24,<3、SciPy >=1.11,<2、
+任意のMatplotlib >=3.7,<4（`plot`）を維持する。Pythonのサポート下限は3.10、
+開発指定は `.python-version` の3.12。新lockやsolver依存は追加していない。
+GUIと全unitを含むfull validatorは`plot`環境で実行する。core-onlyは全GUIテストを
+skipしてfull合格とせず、CLI・説明付きGUI拒否と選択した非GUI契約を別に検査する。
+
+| 実測した独立環境 | Python | NumPy / SciPy | Matplotlib | 確認した範囲 |
+| --- | --- | --- | --- | --- |
+| core 3.10 | 3.10.21 | 2.2.6 / 1.15.3 | 不在 | 同じwheel、CLI、GUI拒否、16資産、既存5unit |
+| core 3.12 | 3.12.3 | 2.5.4 / 1.18.1 | 不在 | 同じwheel、CLI、GUI拒否、16資産、既存5unit |
+| plot 3.10 | 3.10.21 | 2.2.6 / 1.15.3 | 3.10.9 | 同じwheel、F02実HTTP/認証/strict操作と要求サイズの既存3unit |
+| plot 3.12 | 3.12.3 | 2.5.4 / 1.18.1 | 3.11.2 | 同じwheel、F02実HTTP/認証/strict操作と要求サイズの既存3unit |
+| 既存開発環境（変更なし） | 3.12.3 | 2.5.2 / 1.18.1 | 3.11.1 | RF-02のfresh環境と区別。過去専用受入の実行版は各記録で確認 |
+
+範囲からの解決なので、別日/OSで同じ版になる保証はない。3.12の実測版を3.10へ固定していない。
+全パッケージ版・wheel/SHA・各環境の実行記録は `out/rf02-environments-20261013/`。
+coreの5unitはf、独立Bessel場、エネルギー、Q/G/加速器R/Q/TTF、保存と破損拒否の既存gateを使用し、
+許容差を変更しない。1環境につき既存2求解fixtureを使用する。
+F02の不在注入によるERROR 1、空cacheでのoffline導入失敗、Python取得時の既存bin非置換warningも保持する。
+成功したHTTPはlocalhost権限を持つ環境で実行し、skipはない。
+8個別test IDを二Python環境で確認した計16実行であり、全unit/seed/full/実ブラウザー受入ではない。
+依存宣言・FEM/RFを変えていないため、このカードで新fullは実行せず、RF-03の広範統合で行う。
+
+開発・GUI受入用の新規環境:
+
+```sh
+uv venv --python 3.12
+uv pip install --python .venv/bin/python -e '.[plot]'
+OPENBLAS_NUM_THREADS=1 uv run --no-project --python .venv/bin/python python scripts/validate.py --out out/validation-new
+```
+
+core-only契約は別の新規環境で実行する（既存plot環境をcoreと呼ばない）:
+
+```sh
+uv venv --python 3.12 .venv-core
+uv pip install --python .venv-core/bin/python .
+uv run --no-project --python .venv-core/bin/python python scripts/check_core_environment.py --out out/core-new
+```
+
+`.github/workflows/ci.yml` は両Pythonのcore jobと、`plot`付きfull jobに分ける。
+uv 0.12.5を指定し、[公式setup-uv](https://github.com/astral-sh/setup-uv)のv10.3.0 commitを固定した。
+これは環境設定の修正であり、Hosted CIを観測した証拠ではない。CIは未実行。
+wheelの全製品Python源・16資産を現sourceへ照合し、legacy資産を同梱していないことを確認する。
+納品/OS追加/依存binaryの再配布監査はV02以降の独立条件として保持する。
+
+## 過去の納品benchmarkを再現する環境
+
+`requirements-reproduce.txt` は元のPython 3.12.13、NumPy 2.3.5、SciPy 1.17.0の
+core版snapshotを保持する。現開発環境や全サポート版のlockではない。
+元Pythonを別環境へ取得し、同ファイルと製品を同時に解決する:
+
+```sh
+uv venv --python 3.12.13 .venv-benchmark
+uv pip install --python .venv-benchmark/bin/python -r requirements-reproduce.txt .
+uv run --no-project --python .venv-benchmark/bin/python superfish-ng capabilities
+```
+
+この手順の新benchmark再実行はRF-02で行っていない。後続の図/GUIには対応する`plot`も必要で、
+core snapshotだけから過去のMatplotlib版を推測しない。以下は日付付きの依存調査・配布履歴。
+
 ## A01の候補比較環境 — 2026-09-14
 
 ADR-018/[A01比較](A01_BACKEND_COMPARISON.md)のため`/tmp/superfish-a01-reference-20260914`へ隔離導入した。
@@ -40,7 +104,7 @@ Python 3.12.3/Linux、`/tmp/superfish-ng-independent-20260907`、OPENBLAS_NUM_TH
 製品への採用や再配布を決定したものではない。API参照・実測精度/自由度/時間は
 INDEPENDENT_COMPARISON.mdを参照。
 
-## 0.1.0で実際に使用するもの
+## 0.1.0の納品時に使用したもの（履歴）
 
 | 依存 | pyprojectの範囲 | 納品時実行版 | ライセンス/同梱 |
 |---|---|---|---|

@@ -1292,7 +1292,7 @@ def main(argv=None):
             try:
                 from .visualize import plot_mode
             except ImportError as exc:
-                raise ValueError("plotting requires the optional dependencies: pip install -e '.[plot]'") from exc
+                raise ValueError("plotting requires the optional dependencies: uv pip install -e '.[plot]'") from exc
             plot_mode(args.run, args.out, args.mode, args.probe_z_m, args.mesh)
         else:
             if args.out.exists():

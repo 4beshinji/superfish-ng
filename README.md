@@ -45,18 +45,24 @@ D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
 
 Linux を主対象とし、開発環境は Python 3.12（`.python-version`）です。NumPy/SciPy が中核依存、
 Matplotlib は任意（`plot` extra）です。
+環境・依存は[uv](https://docs.astral.sh/uv/)で管理します。
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
+uv venv --python 3.12
+uv pip install --python .venv/bin/python -e .
 ```
 
-図を生成する場合:
+図やGUIを利用する場合:
 
 ```bash
-python -m pip install -e '.[plot]'
+uv pip install --python .venv/bin/python -e '.[plot]'
+uv run --no-project --python .venv/bin/python superfish-ng gui --workspace out/gui-workspace
 ```
+
+coreだけではGUI起動を説明付きで拒否します。GUIを含むfull検証にも`plot`が必要です。
+CLI例は環境を有効にして実行するか、同じ`uv run --no-project --python .venv/bin/python`を先頭に付けます。
+サポートPython 3.10/3.12の解決、現開発環境、過去benchmarkの再現は
+[依存・環境契約](docs/DEPENDENCIES.md#current-environments)を参照してください。
 
 既に NumPy/SciPy がある環境では、インストールせず `PYTHONPATH=src python -m superfish_ng ...` でも動作します。
 

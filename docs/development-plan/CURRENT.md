@@ -18,7 +18,9 @@
 
 RF-11を[求解契約の受入](../AFFINE_SOLUTION_CONTRACT.md)、RF-01を
 [validator前後監査](../VALIDATOR_SOURCE_AUDIT.md)、RF-09を[現行入口と履歴の索引](../ARCHITECTURE.md#current-architecture)で完了した。
-次はRF-02→RF-03。全152は94 DONE/3 IN_PROGRESS/55 PLANNED、RF残8枚はPLANNED。
+RF-02を[core/GUI・Python版別の環境契約](../DEPENDENCIES.md#current-environments)で完了した。
+次はRF-03の入力→JSON→来歴を順次抽出し、広範統合で新validatorの実full前後監査も確認する。
+全152は95 DONE/3 IN_PROGRESS/54 PLANNED、RF残7枚はPLANNED。
 既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
