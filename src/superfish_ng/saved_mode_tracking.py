@@ -7,13 +7,13 @@ from pathlib import Path
 from . import __version__
 from .config import keys
 from .completion import digest
-from .project import parse_json
+from .json_codec import canonical_json, parse_json
 from .saved import read_solution
 from .mode_tracking import track_cylindrical_modes
 
 
 def _canonical(value):
-    return json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False)
+    return canonical_json(value)
 
 
 def _snapshot(directory):

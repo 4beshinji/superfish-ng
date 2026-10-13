@@ -189,7 +189,7 @@ lockを追加する場合は依存更新と分けて差分を審査し、将来�
 
 ### RF-03：入力検査、JSON、来歴を下位へ抽出する
 
-2026-10-14 **IN_PROGRESS**：第一段階の値検査を `input_validation.py` へ抽出。`config` の旧signature/転送関数と同軸専用入力を接続し、元body AST・75旧新/転送結果・直接10unitを確認。bool/NaN/巨大int/型/例外文言を維持する。rawはout/rf03-lower-helpers-20261013/input-acceptance.json。JSON/canonicalと来歴補助、三段階統合fullは未実施で、カード全体は未受入。
+2026-10-14 **IN_PROGRESS**：第一段階の値検査を `input_validation.py` へ抽出。`config` の旧signature/転送関数と同軸専用入力を接続し、元body AST・75旧新/転送結果・直接10unitを確認。bool/NaN/巨大int/型/例外文言を維持する。rawはout/rf03-lower-helpers-20261013/input-acceptance.json。第二段階は `json_codec.py` へ元decoder/canonical bodyを抽出し、Project/旧canonical転送と同軸nativeを接続した。直接17unit・143旧新結果・113例題のcanonical SHA一致を確認（json-acceptance.json）。来歴補助と三段階統合fullは未実施で、カード全体は未受入。
 
 対象：`config.py`の`keys/integer/positive`、`project.py:parse_json`、
 `saved_mode_tracking.py:_canonical`、`jobs.py`のhash/JSON書込補助と直接の利用側。

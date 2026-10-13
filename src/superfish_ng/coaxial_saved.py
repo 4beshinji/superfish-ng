@@ -10,7 +10,7 @@ from zipfile import BadZipFile
 import numpy as np
 from .config import keys, integer
 from .constants import MU0
-from .project import parse_json
+from .json_codec import parse_json
 from .coaxial import CoaxialCase, CoaxialSolution, coaxial_matrices, _restore_coaxial, coaxial_quantities
 
 FILES={'case.json','mesh.npz','fields.npz','results.json'}

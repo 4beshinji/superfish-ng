@@ -7,20 +7,12 @@ import json
 from pathlib import Path
 
 from .config import Case, integer, keys
+from .json_codec import parse_json as _parse_json
 
 
 def parse_json(text):
     """Read JSON while rejecting duplicate keys at every depth."""
-
-    def pairs(items):
-        result = {}
-        for key, value in items:
-            if key in result:
-                raise ValueError(f"duplicate JSON key: {key}")
-            result[key] = value
-        return result
-
-    return json.loads(text, object_pairs_hook=pairs)
+    return _parse_json(text)
 
 
 def load_document(text):
