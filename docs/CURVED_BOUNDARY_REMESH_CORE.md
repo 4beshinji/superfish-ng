@@ -1,5 +1,8 @@
 # 元P2制限による境界再メッシュ生成API
 
+現行追補：[04完全保存再生/CLI](CURVED_BOUNDARY_REMESH_SAVED.md)をDONE。
+以下の保存未実装記述は03受入時点の履歴。次は05のStudy/GUI。
+
 2026-10-13 JST、ADD-N04-boundary-remesh-03 **DONE**。
 先行入力commit `7470986`、[固定仕様](CURVED_BOUNDARY_REMESH_SPEC.md)に従う版2生成を接続した。
 全136カードは85 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。

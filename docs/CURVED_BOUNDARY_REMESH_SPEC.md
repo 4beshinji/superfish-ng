@@ -10,6 +10,9 @@
 現行追補：[03生成API](CURVED_BOUNDARY_REMESH_CORE.md)もDONE。公開版2は接続済み。
 元Caseで確定した初期meshをseedへ明示して元区間を保ち、41個別unitを分割受入。次は04。
 
+現行追補：[04完全保存再生/CLI](CURVED_BOUNDARY_REMESH_SAVED.md)もDONE。七項目文書/九検証値、
+全再構築・改変拒否、20個別検査と実CLI六起動を受入。次は05のStudy/GUI。
+
 ## 対象と採用する表現
 
 元の解析曲線、材料、SI単位、RF座標、正規化、mode設定を保持し、元の内部接続を捨てて
@@ -145,6 +148,7 @@ ignored `out/n04-boundary-remesh-spec-20261013/`に独立試作、元源hash、�
 保存文書のexact keysは`schema_version`(1)、`document_type`(`curved_remesh_generation`)、
 `source_project`、`settings`、`plan`、`validation`、`physical_error_bound`(null)の七項目。
 版1/2設定を保持し、再生は全入力から生成を再実行してplan/validationを型込みで厳密比較する。
+JSON実数欄の1.0→1表記は同値とし、整数ID/個数・bool・nullは区別する。
 未知/重複/欠落、改変、履歴pattern混合、緩めた予算での部分再生を拒否する。
 
 `validation`のexact keysは`status`(`GEOMETRY_VERIFIED`)、`boundary_comparison`（既存全区間report）、

@@ -80,10 +80,14 @@ def main(argv=None):
     deform.add_argument('--rf-coordinates',choices=('fixed','axis_fraction'),required=True)
     deform.add_argument('--minimum-corner-angle-deg',type=float,required=True)
     deform.add_argument('--out',type=Path,required=True)
-    generate_remesh=sub.add_parser('generate-curved-remesh-plan',help='regenerate a curved interior mesh with a fixed quadratic boundary and save a complete replacement plan')
+    generate_remesh=sub.add_parser('generate-curved-remesh-plan',help='regenerate an interior mesh on the same P2 domain, with fixed boundary partitions (v1) or native P2 subdivision (v2)')
     generate_remesh.add_argument('project',type=Path)
     generate_remesh.add_argument('--settings',type=Path,required=True,help='strict chord edge/area, quality, iteration/element budgets and new history')
     generate_remesh.add_argument('--out',type=Path,required=True)
+    generate_remesh.add_argument('--format',choices=('plan','document'),default='plan',help='portable replacement plan, or complete generation inputs and validation for replay')
+    replay_remesh_generation=sub.add_parser('replay-curved-remesh-generation',help='regenerate and verify a complete saved generation document without FEM')
+    replay_remesh_generation.add_argument('document',type=Path)
+    replay_remesh_generation.add_argument('--out',type=Path,help='optionally save the verified portable replacement plan without overwriting')
     transfer_selection=sub.add_parser('transfer-curved-selection',help='transfer a curved selected region using corresponding base meshes (v1) or declared reference charts (v2)')
     transfer_selection.add_argument('previous',type=Path)
     transfer_selection.add_argument('current',type=Path)
@@ -1106,13 +1110,20 @@ def main(argv=None):
             print(f"REPLAYED SELECTION TRANSFER: {args.document}")
             return 0
         elif args.command == 'generate-curved-remesh-plan':
-            from .curved_remesh_generation import generate_curved_remesh_plan
+            from .curved_remesh_generation import generate_curved_remesh_plan,build_curved_remesh_generation,_write_generation_json
             from .project import load_document,parse_json
-            plan=generate_curved_remesh_plan(load_document(args.project.read_text(encoding='utf-8')),
+            build=build_curved_remesh_generation if args.format=='document' else generate_curved_remesh_plan
+            result=build(load_document(args.project.read_text(encoding='utf-8')),
                 parse_json(args.settings.read_text(encoding='utf-8')))
-            with args.out.open('x',encoding='utf-8') as stream:
-                json.dump(plan,stream,indent=2,allow_nan=False);stream.write('\n')
-            print(f"GENERATED REMESH PLAN: {args.out}")
+            _write_generation_json(args.out,result)
+            print(f"GENERATED REMESH {args.format.upper()}: {args.out}")
+            return 0
+        elif args.command == 'replay-curved-remesh-generation':
+            from .curved_remesh_generation import replay_curved_remesh_generation,_write_generation_json
+            from .project import parse_json
+            result=replay_curved_remesh_generation(parse_json(args.document.read_text(encoding='utf-8')))
+            if args.out is not None:_write_generation_json(args.out,result['plan'])
+            print(f"REPLAYED REMESH GENERATION: {args.document}")
             return 0
         elif args.command == 'remesh-curved-project':
             from .curved_project_remesh import remesh_curved_project

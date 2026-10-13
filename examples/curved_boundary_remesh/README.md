@@ -2,7 +2,8 @@
 
 [仕様と受入条件](../../docs/CURVED_BOUNDARY_REMESH_SPEC.md)。
 2026-10-13の[03生成API受入](../../docs/CURVED_BOUNDARY_REMESH_CORE.md)で公開版2を接続した。
-正常二例の生成と拒否二例の予算違反を確認済み。完全保存/CLI・GUI・専用FEMは04〜06。
+正常二例の生成と拒否二例の予算違反を確認済み。
+[04完全保存再生/CLI](../../docs/CURVED_BOUNDARY_REMESH_SAVED.md)も受入済み。GUI/worker・専用FEMは05/06。
 
 | Project | 設定 | 期待 |
 |---|---|---|

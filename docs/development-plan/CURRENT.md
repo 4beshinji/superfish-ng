@@ -1,5 +1,7 @@
 # 現行の作業入口
 
+2026-10-13 ADD-N04-boundary-remesh-04 **DONE**：[生成条件の完全保存再生/CLI](../CURVED_BOUNDARY_REMESH_SAVED.md)。七項目文書・九検証値を全再構築し、元Project/設定/固定plan・全prefix/型/改変/予算/重複を検査。旧版/Study、原子的排他保存/中断/失敗と矩形閉式を計20個別unit（19＋1）で確認。実CLI六起動は終了0、版1/2文書API一致・再生/既定plan全byte一致。元生成bodyと当該入口以外のCLIはAST不変、FEM/RF核不変、新FEM/seed/full/GUI/legacy0。全136は86 DONE/2 IN_PROGRESS/48 PLANNED、原123は76/2/45。次は05のStudy/GUI・実worker、親N04/全goalは継続。
+
 2026-10-13 ADD-N04-boundary-remesh-03 **DONE**：[元P2境界を分割する生成API](../CURVED_BOUNDARY_REMESH_CORE.md)。全区間/三幾何積分・Green/Hφ=r質量・親子K/M・4/8/32尺度、Case全サイズ、512/64→128/32粗化、固定履歴/事前予算/TE両端二タグ×反射を確認。初回41件40 PASS/1 ERRORを保全し、暗黙sourceがseed条件で再生成される不具合を元mesh明示で修正、一件再検査3.705秒PASS。計41個別PASS、旧bodyは版2分岐以外のAST一致、FEM/RF核不変。新FEM/seed/full/GUI/legacy0。全136は85 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。次は04完全保存再生/CLI、親N04/全goalは継続。
 
 2026-10-13 ADD-N04-boundary-remesh-02 **DONE**：[生成版2のstrict入力](../CURVED_BOUNDARY_REMESH_INPUT.md)。九共通項目＋一履歴の型/版/有限/予算/固定pattern/コピー・raw重複と旧版を、新9＋旧生成9の18個別unitで確認、16.186秒・終了0。先行helper未実装ERRORは保全。元1451対象の他1450源byte一致、新helper以外の旧module全AST一致、公開版2はまだ拒否。新FEM/seed/full/GUI/legacy0。全136は84 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-03、親N04/全goalは継続。
@@ -7,7 +9,7 @@
 2026-10-13 ADD-N04-boundary-remesh-01 **DONE**：[元P2境界分割を変更する生成版2仕様](../CURVED_BOUNDARY_REMESH_SPEC.md)。矩形/非アフィンの現行サイズ拒否を先に再現し、既存固定履歴で境界32/28辺・全P2/三幾何積分保存を確認。旧64→32辺の粗化と再投影の体積差2.176e-4/拒否も確認。元1444源byte不変、solve禁止の表現probeのみで新FEM/unit/seed/full/GUI0。九項目＋一履歴・七項目保存・五後続と独立6FEMゲートを固定、公開版2は未実装。全136は83 DONE/2 IN_PROGRESS/51 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-02、親N04/全goalは継続。
 
 更新：2026-10-13、P07/P08/P09/N03全条件受入済み。原123カードは76 DONE/2 IN_PROGRESS（H17、C07-planar）/45 PLANNED。
-N04既存残件の追加13カードを含む全136カードは85 DONE/2 IN_PROGRESS/49 PLANNED。全goalと原互換32要件は継続中。
+N04既存残件の追加13カードを含む全136カードは86 DONE/2 IN_PROGRESS/48 PLANNED。全goalと原互換32要件は継続中。
 このページを現行入口とし、各文書の日付付き追記は履歴として読む。
 
 2026-10-08 ADD-N04-selection-charts-04 **DONE**：[版2の完全保存再生とCLI](../CURVED_SELECTION_CHARTS_SAVED.md)。両Project/元requestから全参照分割・全selection・十項目を再計算して型/改竄/予算/欠落を拒否し、旧版1を維持。新saved6/旧selection8/strict JSON1の15個別PASS、7.502秒・終了0、solve guard全0。実CLI四起動は両policyのtransfer/replay終了0、保存全文書API一致。元round-trip ERRORを保全し、旧selection ASTは新helper/dispatch以外一致・CLIは三helpだけ変更。全1440対象/1227 Python源固定・他1437源byte一致、03の独立幾何/元TM/TE科学証拠を再利用。新FEM/seed/full/GUI/専用validator/legacy0。全131は80 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45、次は05のGUI。親N04/原32要件/全goalは継続。

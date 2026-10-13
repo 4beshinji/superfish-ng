@@ -388,3 +388,105 @@ def _generate_boundary_remesh_plan(project,settings):
     if marked.any() or np.any(areas>area_limit*(1+1e-12)):
         raise ValueError('boundary remesh replay violates final chord sizes')
     return plan
+
+
+_GENERATION_DOCUMENT_FIELDS=('schema_version','document_type','source_project','settings','plan',
+                             'validation','physical_error_bound')
+_GENERATION_VALIDATION_FIELDS=('status','boundary_comparison','seed_triangle_count','prefix_triangle_counts',
+    'prefix_boundary_edge_counts','final_max_chord_edge_m','final_max_chord_triangle_area_m2',
+    'final_minimum_chord_angle_deg','final_minimum_corner_angle_deg')
+
+
+def _generation_validation(project,settings,plan):
+    """Reconstruct every declared prefix and measure the final native geometry.
+
+    Version 1 retains its initial-chord size semantics. Its final measurements
+    are observations, not a new application of version 2 acceptance gates.
+    """
+    from .curved_space import curved_space,case_curved_space
+    from .curved_refinement import refine_curved_space
+    from .curved_marked_refinement import refine_marked_curved_space,_minimum_corner_angle
+    from .curved_same_domain_tracking import compare_quadratic_space_boundaries
+    candidate=remesh_curved_project(project,plan)
+    mesh=mesh_from_dict(candidate.case,candidate.mesh_data)
+    current=curved_space(candidate.case,mesh)
+    triangles=[len(current.geometry.cell_nodes)];boundaries=[len(current.geometry.boundary_nodes)]
+    def steps():
+        for _ in range(candidate.case.curved_refinement_levels):yield None
+        yield from candidate.case.curved_refinement_steps
+    for step in steps():
+        if step is None or step.kind=='uniform':
+            if 4*len(current.geometry.cell_nodes)>settings['max_triangles']:
+                raise ValueError('generation validation uniform prefix exceeds max_triangles')
+            current=refine_curved_space(current).space
+        else:
+            current=refine_marked_curved_space(current,list(step.marked_cells),max_triangles=settings['max_triangles'],
+                    minimum_corner_angle_deg=step.minimum_corner_angle_deg,split_pattern=step.split_pattern).space
+        triangles.append(len(current.geometry.cell_nodes));boundaries.append(len(current.geometry.boundary_nodes))
+    original_mesh=make_mesh(project.case) if project.mesh_data is None else mesh_from_dict(project.case,project.mesh_data)
+    original=case_curved_space(project.case,original_mesh)
+    comparison=compare_quadratic_space_boundaries(project.case,original,candidate.case,current)
+    areas,_,_,_,_,lengths=_measure(_native_chord_mesh(current))
+    p=current.geometry.points_rz_m[current.geometry.cell_nodes[:,:3]]
+    # Endpoint triangle angles are unsigned geometric measurements. The native
+    # P2 maps carry their own positive-Jacobian and whole-boundary validation.
+    angles=[np.arctan2(2*np.abs(areas),np.sum((p[:,(i+1)%3]-p[:,i])*(p[:,(i+2)%3]-p[:,i]),axis=1)) for i in range(3)]
+    return dict(status='GEOMETRY_VERIFIED',boundary_comparison=comparison,seed_triangle_count=triangles[0],
+        prefix_triangle_counts=triangles,prefix_boundary_edge_counts=boundaries,
+        final_max_chord_edge_m=float(lengths.max()),final_max_chord_triangle_area_m2=float(np.abs(areas).max()),
+        final_minimum_chord_angle_deg=float(np.rad2deg(np.min(angles))),
+        final_minimum_corner_angle_deg=_minimum_corner_angle(current.geometry.local_maps))
+
+
+def build_curved_remesh_generation(project,settings):
+    """Build a self-contained, reproducible generation document without FEM."""
+    if not isinstance(project,Project):raise ValueError('curved remesh generation requires a Project')
+    project=Project.from_dict(project.to_dict())
+    settings=validate_generation_settings(settings)
+    plan=generate_curved_remesh_plan(project,settings)
+    return dict(schema_version=1,document_type='curved_remesh_generation',source_project=project.to_dict(),
+                settings=settings,plan=plan,validation=_generation_validation(project,settings,plan),physical_error_bound=None)
+
+
+def _same_generation_values(actual,expected):
+    """Allow JSON real-number spelling changes; integer IDs/bools stay strict."""
+    if type(expected) is dict:
+        return type(actual) is dict and actual.keys()==expected.keys() and all(_same_generation_values(actual[k],v) for k,v in expected.items())
+    if type(expected) is list:
+        return type(actual) is list and len(actual)==len(expected) and all(_same_generation_values(a,b) for a,b in zip(actual,expected))
+    if isinstance(expected,float):
+        return (isinstance(actual,float) or type(actual) is int) and actual==expected
+    return type(actual) is type(expected) and actual==expected
+
+
+def replay_curved_remesh_generation(document):
+    """Regenerate from all saved inputs and compare the complete document.
+
+    There is no budget override or partial replay. This verifies consistency,
+    not the external authenticity of a coherently replaced set of inputs.
+    """
+    keys(document,_GENERATION_DOCUMENT_FIELDS,_GENERATION_DOCUMENT_FIELDS,'curved remesh generation document')
+    if (type(document['schema_version']) is not int or document['schema_version']!=1
+            or type(document['document_type']) is not str or document['document_type']!='curved_remesh_generation'):
+        raise ValueError('curved remesh generation document requires schema_version=1 and its document_type')
+    if document['physical_error_bound'] is not None:
+        raise ValueError('curved remesh generation physical_error_bound must be null')
+    keys(document['validation'],_GENERATION_VALIDATION_FIELDS,_GENERATION_VALIDATION_FIELDS,'curved remesh generation validation')
+    expected=build_curved_remesh_generation(Project.from_dict(document['source_project']),document['settings'])
+    if not _same_generation_values(document,expected):
+        raise ValueError('curved remesh generation document differs from full reconstruction')
+    return expected
+
+
+def _write_generation_json(path,data):
+    """Publish a complete JSON file atomically without replacing any path."""
+    import json
+    import os
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+    path=Path(path)
+    text=json.dumps(data,indent=2,allow_nan=False)+'\n'
+    with TemporaryDirectory(prefix='.curved-remesh-',dir=path.parent) as directory:
+        staged=Path(directory)/'document.json'
+        staged.write_text(text,encoding='utf-8')
+        os.link(staged,path)
