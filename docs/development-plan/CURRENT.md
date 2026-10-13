@@ -1,5 +1,8 @@
 # 現行の作業入口
 
+2026-10-14 ADD-N04-rf-goal-04 **IN_PROGRESS**：[専用CLI/外側終端費用](../CURVED_RF_GOAL_EFFICIENCY_CLI.md)。固定一行の起動・PAUSED再開・全bundle/journal再生を接続。新8を含む51個別unit PASS、球一様2新FEMの29 native/sample配列byte・全mode/RFと元無中断が一致、Ue/Uh最大差1.333e-15。旧参照SHAによる実終了1を保持し、明示52元source archiveで期待SHA/数値不変のまま照合。新規7.018150秒/再開14.691503秒、結果書込も外側時間に包含、再生新固有求解0。三process/1509 source前後UNCHANGED・全handle終端。一般kill再開と統合異常系が04の残件、固定36/GUIは05/06。全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全goal継続。
+
+
 ## 科学レビュー後の挿入工程（2026-10-13）
 
 今回の実装は[科学レビュー](../SCIENTIFIC_REVIEW_2026-10-13.md)を受けたリファクタリング11枚を対象とする。

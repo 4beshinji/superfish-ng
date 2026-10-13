@@ -108,6 +108,20 @@ class CurvedRFGoalReferenceGeometryTests(unittest.TestCase):
 
 
 class CurvedRFGoalReferenceIntegrityTests(unittest.TestCase):
+    def test_explicit_historical_archive_binds_exact_bytes_and_never_executes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);current=root/'current.py';archive=root/'archive.py'
+            current.write_text('changed current source\n')
+            archive.write_text('raise AssertionError("provenance archive must never execute")\n')
+            sha=hashlib.sha256(archive.read_bytes()).hexdigest();bound={}
+            with self.assertRaises(ValueError):_historical_source(current,sha,bound,{})
+            self.assertEqual(_historical_source(current,sha,bound,{}, {sha:str(archive)}),archive)
+            self.assertEqual(bound,{str(archive):sha})
+            for bad in ({sha:'relative.py'},{sha:str(current)},[]):
+                with self.subTest(bad=bad),self.assertRaises(ValueError):_historical_source(current,sha,{}, {},bad)
+            archive.write_text('altered archive\n')
+            with self.assertRaises(ValueError):_historical_source(current,sha,{}, {},{sha:str(archive)})
+
     def arrays(self):
         return dict(analytic_volume_points_rz_m=np.ones((4,2)), volume_weights_m3=np.ones(4),
                     axis_points_rz_m=np.column_stack((np.zeros(2),np.arange(2))),axis_weights_m=np.ones(2),

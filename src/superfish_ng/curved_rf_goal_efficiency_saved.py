@@ -276,7 +276,7 @@ def replay_curved_rf_goal_efficiency(document, *, bindings=None, implementation_
         cost_document=dict(document,event_records=document['event_records'][document['resume_origin']['event_count']:])
     cost_status=_verify_costs(cost_document)
     bound.update(_implementation_sources(document['implementation_sha256'],implementation_aliases,implementation_archives))
-    reference=load_curved_rf_goal_efficiency_reference(document['execution']['case_id'],bindings=bindings)
+    reference=load_curved_rf_goal_efficiency_reference(document['execution']['case_id'],bindings=bindings,source_archives=implementation_archives)
     _same_saved(document['reference_bound_inputs'],reference['bound_inputs'],'RF original independent reference bindings')
     bound.update(reference['bound_inputs']);case=Case.from_dict(request['case']);uniform=document['execution']['method']=='uniform'
     recorder=PhaseRecorder();events=[];observations=[];records=[];samples=[];runs=[];initial_identity=False;status='PAUSED'

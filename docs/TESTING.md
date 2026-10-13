@@ -1,3 +1,5 @@
+2026-10-14 RF版5比較CLI：[限定受入とコマンド](CURVED_RF_GOAL_EFFICIENCY_CLI.md)。新CLI/reference/worker/resume/saved/costs/processの51個別unit（新8含む）が22.098秒PASS。後続変更に関係するarchive integrity5件/strict1件だけ補完した。実CLI2新FEM/二完全再生・新固有求解0、全29配列と元全RF一致。数学核/閾値不変でseed/full/GUI/Hosted CIは今回0。元FAIL/未実装/環境ERRORと限定scopeを保持する。
+
 2026-10-14 全11カードの[最終統合受入](REFACTORING_ACCEPTANCE.md)：製品`237f6cd`の固定1507 sourceでfull validator一回が実終了0/PASS（session3414、8 process）。2698実行枠/530module、3904.661秒、FAIL/ERROR0・元SKIP3、前後source完全一致。2693個別IDと元5重複を含むdiscovery Counterも一致。seed全9modeはf差0/全RF物理量差最大8.882e-16、保存再構築・両R/Q/U不変量を確認。元11条件/下位依存/原141行/索引とwheel17実HTTP資産・core3.10/3.12を結合。NGSolve2件と専用circle/TE root1件の未実行を明記し、過去の部分/失敗証拠は保持。文書/件数訂正のためのfull/FEM再実行はない。
 
 2026-10-14 RF-10 **DONE**：[曲線Hφ再生費用と検証内再利用](OWNED_REPLAY_COST.md)。実1/2/4試行・未確認・実中止prefixを旧新60操作/cold・warm/plain・観測で測定。履歴4のprefixが71.4%を占め、検証内だけの全再生済みreport再利用でplain warm34.482→9.954秒、元場read14→4/行列196→56。追加実装hashによる読取量増/RSSほぼ同等を明記。新6＋worker5＋回復保存2の13個別unit/737.939秒/終了0/PASS、元9native/27mode全配列/全RF/ID/判断・独立尺度/実source変更拒否。候補四ファイルbyte反映、他1503源不変、全2698ID/530moduleの収集で旧2692維持。全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全RF11枚の個別受入を完了。最終全条件監査/固定source fullと全goalは継続。

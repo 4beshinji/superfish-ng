@@ -166,7 +166,7 @@ def _bindings(supplied):
     return deepcopy(supplied), {str(root/_PREPARED_PATH):_PREPARED_SHA256}, registry['historical_source_aliases']
 
 
-def _historical_source(path, expected, bound, aliases):
+def _historical_source(path, expected, bound, aliases, archives=None):
     from .adaptive_efficiency_reference import _bound_file
     from .completion import digest
     path=Path(path)
@@ -174,6 +174,14 @@ def _historical_source(path, expected, bound, aliases):
         raise ValueError('RF reference historical source requires a regular path without symlinks: '+str(path))
     if path.is_file() and digest(path)==expected:
         return _bound_file(path,expected,bound)
+    if archives is not None:
+        if type(archives) is not dict:
+            raise ValueError('RF reference archives require a SHA256-to-absolute-path mapping')
+        archive=archives.get(expected)
+        if archive is not None:
+            if type(archive) is not str or not Path(archive).is_absolute():
+                raise ValueError('RF reference source archive requires an absolute path')
+            return _bound_file(archive,expected,bound)
     alias=aliases.get(str(path))
     if alias is None or alias['sha256']!=expected:
         raise ValueError('RF reference historical source is missing or changed: '+str(path))
@@ -181,7 +189,7 @@ def _historical_source(path, expected, bound, aliases):
     return _bound_file(root/alias['path'],expected,bound)
 
 
-def _original_n06_reference(family, bindings, bound, aliases):
+def _original_n06_reference(family, bindings, bound, aliases, archives=None):
     """Reuse original bytes with explicit same-content historical source paths.
 
     N06's original reader demands its entire old source tree in place. Later UI
@@ -201,7 +209,7 @@ def _original_n06_reference(family, bindings, bound, aliases):
         for relative,h in manifest['source_sha256'].items():
             if Path(relative).is_absolute() or '..' in Path(relative).parts:
                 raise ValueError('invalid historical sphere source path')
-            _historical_source(root/relative,h,bound,aliases)
+            _historical_source(root/relative,h,bound,aliases,archives)
         grids=[]
         for entry in (g for g in manifest['grids'] if g['case_id']=='sphere'):
             _,meta=_read_binding(dict(path=str(path.parent/entry['path']),sha256=entry['sha256']),bound)
@@ -222,7 +230,7 @@ def _original_n06_reference(family, bindings, bound, aliases):
         if (manifest['document_type']!='n06_reused_reference_grids' or manifest['reference_maxh_m']!=[.005,.0025,.00125] or
                 manifest['component_order']!=list(COMPONENTS) or manifest['normalization_j']!=1. or manifest['beta']!=1. or matrix['status']!='PASS'):
             raise ValueError('rounded requires original N03/N06 whole-grid three-h conventions')
-        for p,h in manifest['bound_inputs'].items():_historical_source(p,h,bound,aliases)
+        for p,h in manifest['bound_inputs'].items():_historical_source(p,h,bound,aliases,archives)
         if any(ids!=request['initial_ids'] for group in matrix['mode_ids_by_node'] for ids in group):
             raise ValueError('rounded original individual-mode IDs differ')
         anchor=Path(matrix['request']['runs'][2][0]);snapshot={s['directory']:s['sha256'] for s in matrix['sources']}
@@ -307,7 +315,7 @@ def _scaled_modern_arrays(arrays, scale):
     return result
 
 
-def load_curved_rf_goal_efficiency_reference(case_id, *, bindings=None):
+def load_curved_rf_goal_efficiency_reference(case_id, *, bindings=None, source_archives=None):
     """Read the fixed complete references for one of the six original requests.
 
     Fixed prepared-manifest SHAs prevent replacing fields by recomputing a
@@ -317,15 +325,25 @@ def load_curved_rf_goal_efficiency_reference(case_id, *, bindings=None):
     """
     from .adaptive_efficiency_accuracy import LIMITS
     from .adaptive_efficiency_reference import _read_binding, _bound_file, verify_reference_bytes
+    archive_bound={}
+    if source_archives is not None:
+        if type(source_archives) is not dict:
+            raise ValueError('RF reference archives require a SHA256-to-absolute-path mapping')
+        for sha,path in source_archives.items():
+            if (type(sha) is not str or len(sha)!=64 or any(c not in '0123456789abcdef' for c in sha) or
+                    type(path) is not str or not Path(path).is_absolute()):
+                raise ValueError('RF reference archives require exact SHA256 keys and absolute paths')
+            _bound_file(path,sha,archive_bound)
     family=next((name for name in ('sphere','prolate','rounded-two-lobe')
                  if type(case_id) is str and case_id in (name+'-scale-1',name+'-scale-2')), None)
     if family is None:
         raise ValueError('RF goal reference requires one of the six fixed case ids')
     request,case,scale=_fixed_request(case_id,family)
     bindings,bound,aliases=_bindings(bindings)
+    bound.update(archive_bound)
     grids=[]
     if family=='sphere':
-        old,_=_original_n06_reference('sphere',bindings,bound,aliases)
+        old,_=_original_n06_reference('sphere',bindings,bound,aliases,source_archives)
         for original in old['grids']:
             data=build_sphere_rf_goal_reference(case_id,order=original['order'])
             if scale==1:
@@ -341,7 +359,7 @@ def load_curved_rf_goal_efficiency_reference(case_id, *, bindings=None):
                               reference_field_path=original['reference_field_path'],reference_field_sha256=original['reference_field_sha256']))
     else:
         if family=='rounded-two-lobe':
-            old,manifest=_original_n06_reference(family,bindings,bound,aliases)
+            old,manifest=_original_n06_reference(family,bindings,bound,aliases,source_archives)
             originals=[(g,g['all_reference_arrays'],manifest['original_reference_quantities']) for g in old['grids']]
             base_request,base_case,_=_fixed_request(family+'-scale-1',family)
             if base_case!=old['case'] or base_request['initial_mesh']!=old['source_mesh']:

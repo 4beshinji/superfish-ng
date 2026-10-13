@@ -1,6 +1,6 @@
 # Superfish-NG
 
-[RF版5対照の独立全域参照](docs/CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を六ケース・両Gauss次数で確認した。球の解析場と長球/丸めの全五modeを保持し、22個別unitと全域積分・相似則がPASS。[04の比較指標と採用祖先判定](docs/CURVED_RF_GOAL_EFFICIENCY_WORKER.md)も17個別unitで確認した。[新規workerの12求解](docs/CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)で実分岐と全場を確認した。[全保存再検証](docs/CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)も12event・全24sampleの一致と6改変拒否を確認した。[実中断・二段階再開と追加一様確認](docs/CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も無中断の全場/RFとの一致を確認した。[随伴C-call観測と部分保存/資源停止](docs/CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)も限定受入した。[予算停止の保存整合と追加求解ゼロの再開](docs/CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)も異常系として限定受入した。全process manifest/CLI・一般kill再開・固定36実行・GUIは後続で、親N04と全計画は未完。
+[RF版5対照の独立全域参照](docs/CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を六ケース・両Gauss次数で確認した。球の解析場と長球/丸めの全五modeを保持し、22個別unitと全域積分・相似則がPASS。[04の比較指標と採用祖先判定](docs/CURVED_RF_GOAL_EFFICIENCY_WORKER.md)も17個別unitで確認した。[新規workerの12求解](docs/CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)で実分岐と全場を確認した。[全保存再検証](docs/CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)も12event・全24sampleの一致と6改変拒否を確認した。[実中断・二段階再開と追加一様確認](docs/CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も無中断の全場/RFとの一致を確認した。[随伴C-call観測と部分保存/資源停止](docs/CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)も限定受入した。[予算停止の保存整合と追加求解ゼロの再開](docs/CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)も異常系として限定受入した。[専用CLIとprocess bundle](docs/CURVED_RF_GOAL_EFFICIENCY_CLI.md)は球一様の起動/再開/全保存再生を限定検証した。一般kill再開・固定36実行・GUIは後続で、親N04と全計画は未完。
 
 軸対称RF空洞のための独立実装 FEM ソルバー（`0.1.0` research seed、Python 3.10+ / NumPy・SciPy）。
 canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これを基準に形状・メッシュ・RF量・

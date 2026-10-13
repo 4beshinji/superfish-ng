@@ -114,7 +114,7 @@ def resume_curved_rf_goal_efficiency_worker(path, directory, *, expected_sha256,
                 interruption_files=deepcopy(interruption_files or {}))
     _origin_metadata(origin,n+1);_verify_interruption(parent,origin,bound)
     with recorder.phase('reference_verification'):
-        reference=load_curved_rf_goal_efficiency_reference(parent['execution']['case_id'],bindings=bindings)
+        reference=load_curved_rf_goal_efficiency_reference(parent['execution']['case_id'],bindings=bindings,source_archives=implementation_archives)
     _same_saved(reference['bound_inputs'],parent['reference_bound_inputs'],'RF resumed original independent reference')
     return _execute_worker_events(parent['execution'],parent['request'],directory,reference,recorder,implementation,
                                   max_new_events=max_new_events,submission_origin=submission_origin,prefix=parent,

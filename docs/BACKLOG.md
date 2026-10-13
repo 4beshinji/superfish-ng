@@ -1,3 +1,5 @@
+2026-10-14 ADD-N04-rf-goal-04 **IN_PROGRESS**：[専用CLI/外側終端費用](CURVED_RF_GOAL_EFFICIENCY_CLI.md)。固定一行の起動・PAUSED再開・全bundle/journal再生を接続。新8を含む51個別unit PASS、球一様2新FEMの29 native/sample配列byte・全mode/RFと元無中断が一致、Ue/Uh最大差1.333e-15。旧参照SHAによる実終了1を保持し、明示52元source archiveで期待SHA/数値不変のまま照合。新規7.018150秒/再開14.691503秒、結果書込も外側時間に包含、再生新固有求解0。三process/1509 source前後UNCHANGED・全handle終端。一般kill再開と統合異常系が04の残件、固定36/GUIは05/06。全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全goal継続。
+
 2026-10-14 RF-06 **DONE**：[CLI登録と実行の境界](CLI_COMMAND_BOUNDARIES.md)。曲線Hφ三コマンドを明示登録/実行へ分割し、他170操作/元例外境界と全173 parser/help/順序を維持。直接13 unit/35.770秒/終了0/PASS、13旧新stdout/stderr/code/旧native/実上書き拒否比較。二ファイルbyte一致反映、他1499 source不変。数値核/schema/依存/公開entry point不変、追加full/seed0。全152は100 DONE/3 IN_PROGRESS/49 PLANNED、RF残2枚/最終統合/全goalは継続。
 
 2026-10-14 RF-08 **DONE**：[Hφ調整fixture境界](TEST_FIXTURE_BOUNDARIES.md)。四builder/18 inter-test importを物理別supportへ移し、元21 module body/26生成byte/2689 IDを維持、新入力3 IDを追加。入力/runner9＋実保存15の24個別unitがPASS、独立参照/製品source不変。27 file byte一致反映、他1473 source不変、現行収集2692 ID/529 module。削除/重複FEM削減/性能比較なし。全152は99 DONE/3 IN_PROGRESS/50 PLANNED、残3枚/全goalは継続。

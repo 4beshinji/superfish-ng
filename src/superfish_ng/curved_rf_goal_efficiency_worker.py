@@ -267,7 +267,7 @@ def _resume_report(prefix, origin, implementation, max_new_events):
     return report
 
 
-def execute_curved_rf_goal_efficiency_worker(execution, directory, *, bindings=None, max_new_events=None, submission_origin=None):
+def execute_curved_rf_goal_efficiency_worker(execution, directory, *, bindings=None, max_new_events=None, submission_origin=None, source_archives=None):
     """Execute one immutable fixed row in a new directory; a cap gives PAUSED.
 
     This fresh worker does not resume or accept caller-supplied numerical state.
@@ -284,7 +284,7 @@ def execute_curved_rf_goal_efficiency_worker(execution, directory, *, bindings=N
     if any(p.is_symlink() for p in (directory,*directory.parents)):
         raise ValueError('RF goal output requires a new directory without symlinks')
     recorder=PhaseRecorder();implementation=_implementation_hashes();case=Case.from_dict(request['case'])
-    with recorder.phase('reference_verification'):reference=load_curved_rf_goal_efficiency_reference(execution['case_id'],bindings=bindings)
+    with recorder.phase('reference_verification'):reference=load_curved_rf_goal_efficiency_reference(execution['case_id'],bindings=bindings,source_archives=source_archives)
     return _execute_worker_events(execution,request,directory,reference,recorder,implementation,
                                   max_new_events=max_new_events,submission_origin=submission_origin)
 

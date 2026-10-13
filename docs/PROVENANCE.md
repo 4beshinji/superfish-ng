@@ -1,3 +1,5 @@
+2026-10-14 ADD-N04-rf-goal-04 **IN_PROGRESS**：[専用CLI/外側終端費用](CURVED_RF_GOAL_EFFICIENCY_CLI.md)。固定一行の起動・PAUSED再開・全bundle/journal再生を接続。新8を含む51個別unit PASS、球一様2新FEMの29 native/sample配列byte・全mode/RFと元無中断が一致、Ue/Uh最大差1.333e-15。旧参照SHAによる実終了1を保持し、明示52元source archiveで期待SHA/数値不変のまま照合。新規7.018150秒/再開14.691503秒、結果書込も外側時間に包含、再生新固有求解0。三process/1509 source前後UNCHANGED・全handle終端。一般kill再開と統合異常系が04の残件、固定36/GUIは05/06。全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全goal継続。
+
 2026-10-14：[全11条件別の最終受入](REFACTORING_ACCEPTANCE.md)。元自作source/合成例・既存数学と参照を保持し、各受入commitと現行byte/AST、固定1507 sourceの実full、元seed benchmark全量と保存再構築を結合した。新外部資料・依存・legacy資産の参照/転載はない。元失敗・未確認・SKIP3、旧receiptのID表記と元5重複の集計訂正を各scopeで保持し、物理許容差や製品結果を変えていない。全f差0/全RF差の確認を連続物理誤差上界や実測/配布認証へ拡張しない。
 
 2026-10-14：[RF-10検証内再生](OWNED_REPLAY_COST.md)。既存合成曲線Hφ fixtureの実worker/元所有nativeを旧新で再生測定し、元全係数/f/全RF/ID/判断と独立エネルギー/Q/G/尺度を確認。内部一検証の完全再生済みreportだけを利用し、hashのみの信用/永続cache/schema変更は行わない。source/request/byte/親のguard、実装変更copyと中止prefixを別記。新外部資料/依存/旧資産参照なし。
