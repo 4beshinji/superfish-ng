@@ -2,7 +2,7 @@
 
 作成：2026-09-22。更新：2026-10-14。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04/RF-05/RF-08を受入済み。残3枚は未受入で計画全体は継続中。**
+（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04/RF-05/RF-08/RF-06を受入済み。RF-07/RF-10と最終統合受入は残り、計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
@@ -88,7 +88,7 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 | RF-03 下位共通処理 | F03 | RF-01/02 | 入力、JSON、来歴を別々に抽出 | DONE |
 | RF-04 所有worker | F04 | RF-03 | 直線→曲線→材料の順で移行し、最後に統合確認 | DONE |
 | RF-05 調整決定 | F05 | RF-03 | 決定の抽出→各物理アダプター移行 | DONE |
-| RF-06 CLI分割 | F06 | RF-03 | 一つのコマンド群ずつ。RF-04/05の対象群はその移行後 | PLANNED |
+| RF-06 CLI分割 | F06 | RF-03 | 一つのコマンド群ずつ。RF-04/05の対象群はその移行後 | DONE |
 | RF-07 HTTP/画面分割 | F06 | RF-04、RF-06 | HTTP輸送/操作表→一つの画面状態群ずつ | PLANNED |
 | RF-08 テスト境界 | F07 | RF-03 | 変更する領域のfixture/入力/実FEM操作を分離 | DONE |
 | RF-09 現行構成の索引 | F09/S06 | なし。実行順はRF-01直後 | 現行仕様と履歴を分け、各抽出時に更新 | DONE |
@@ -251,6 +251,8 @@ worker wrapperだけの変更なら数値全validatorを一律追加しないが
 <a id="rf-06"></a>
 
 ### RF-06：CLIの登録と実行をコマンド群ごとに分割する
+
+2026-10-14 **DONE**：[CLI境界の受入](CLI_COMMAND_BOUNDARIES.md)。曲線Hφのrun/replay/resume三コマンドを明示register_arguments/executeへ抽出し、mainの構文/選択/元例外・終了code境界を保持。他170操作はAST不変、全173 parser/option/default/必須条件/整形help/順序が旧新完全一致。直接13 unit/35.770秒/終了0/PASSと13 stdout/stderr/code/実旧native/上書き拒否比較を確認。候補二ファイルをbyte一致反映、他1499 source不変。数値核/schema/依存/公開entry point不変、追加full/seed0。rawはout/rf06-cli-20261014/acceptance.json。
 
 対象：`cli.py`。最初は一つのrun/replay/resume群を移し、他のコマンドはそのまま残す。
 明示した`register_arguments`と`execute`相当の責務を置き、`main`は構文選択、実行、

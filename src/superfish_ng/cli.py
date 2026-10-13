@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from dataclasses import replace
 from . import __version__
+from . import cli_curved_hphi_tuning
 from .analytic import pillbox_tm010
 from .config import Case
 from .io import save_run
@@ -32,6 +33,9 @@ def main(argv=None):
                     'tune-hphi','resume-tune-hphi','replay-tune-hphi',
                     'tune-curved-hphi','resume-tune-curved-hphi','replay-tune-curved-hphi',
                     'tune-material-hphi','resume-tune-material-hphi','replay-tune-material-hphi'):
+        if command in cli_curved_hphi_tuning.COMMANDS:
+            cli_curved_hphi_tuning.register_arguments(sub, command)
+            continue
         tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
         tuning.add_argument('document',type=Path)
         if command not in ('replay-tune','replay-tune-planar','replay-tune-hphi','replay-tune-curved-hphi','replay-tune-material-hphi'):
@@ -1000,17 +1004,8 @@ def main(argv=None):
                     result=execute_material_hphi_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
             print(f"{result['status']}: {args.document if args.command=='replay-tune-material-hphi' else args.out}")
             return 0 if result['status'] in ('TUNED','PAUSED') else 1
-        elif args.command in ('tune-curved-hphi','resume-tune-curved-hphi','replay-tune-curved-hphi'):
-            from .curved_hphi_tuning_saved import execute_curved_hphi_tune,read_curved_hphi_tune
-            from .project import parse_json
-            if args.command=='tune-curved-hphi':
-                result=execute_curved_hphi_tune(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_trials=args.max_new_trials)
-            else:
-                result=read_curved_hphi_tune(args.document)
-                if args.command=='resume-tune-curved-hphi':
-                    result=execute_curved_hphi_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
-            print(f"{result['status']}: {args.document if args.command=='replay-tune-curved-hphi' else args.out}")
-            return 0 if result['status'] in ('TUNED','PAUSED') else 1
+        elif args.command in cli_curved_hphi_tuning.COMMANDS:
+            return cli_curved_hphi_tuning.execute(args)
         elif args.command in ('tune-hphi','resume-tune-hphi','replay-tune-hphi'):
             from .hphi_tuning import execute_hphi_tune,read_hphi_tune
             from .project import parse_json

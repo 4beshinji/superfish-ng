@@ -146,7 +146,7 @@ RF-02	O01 V02	RF-01	環境/検証	DONE	../REFACTORING_PLAN.md#rf-02	coreとGUI�
 RF-03	O01 O02 V02	RF-01 RF-02	リファクタ	DONE	../REFACTORING_PLAN.md#rf-03	入力検査JSON来歴を下位へ抽出する
 RF-04	D02 O02 V02	RF-03	リファクタ	DONE	../REFACTORING_PLAN.md#rf-04	Hφの所有worker機構を共通化する
 RF-05	D02 V02	RF-03	リファクタ	DONE	../REFACTORING_PLAN.md#rf-05	確認済み試行から次動作を決める処理を分離する
-RF-06	O02 V02	RF-03	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-06	CLIの登録と実行をコマンド群ごとに分割する
+RF-06	O02 V02	RF-03	リファクタ	DONE	../REFACTORING_PLAN.md#rf-06	CLIの登録と実行をコマンド群ごとに分割する
 RF-07	O02 V02	RF-04 RF-06	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-07	HTTP輸送と画面状態を業務操作から分離する
 RF-08	V02	RF-03	リファクタ/検証	DONE	../REFACTORING_PLAN.md#rf-08	fixture独立参照入力検査実FEM検査を分ける
 RF-09	V02		文書	DONE	../REFACTORING_PLAN.md#rf-09	現行アーキテクチャと物理入口の索引を更新する
