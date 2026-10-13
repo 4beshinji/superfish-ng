@@ -1,3 +1,5 @@
+2026-10-14：[全11条件別の最終受入](REFACTORING_ACCEPTANCE.md)。元自作source/合成例・既存数学と参照を保持し、各受入commitと現行byte/AST、固定1507 sourceの実full、元seed benchmark全量と保存再構築を結合した。新外部資料・依存・legacy資産の参照/転載はない。元失敗・未確認・SKIP3、旧receiptのID表記と元5重複の集計訂正を各scopeで保持し、物理許容差や製品結果を変えていない。全f差0/全RF差の確認を連続物理誤差上界や実測/配布認証へ拡張しない。
+
 2026-10-14：[RF-10検証内再生](OWNED_REPLAY_COST.md)。既存合成曲線Hφ fixtureの実worker/元所有nativeを旧新で再生測定し、元全係数/f/全RF/ID/判断と独立エネルギー/Q/G/尺度を確認。内部一検証の完全再生済みreportだけを利用し、hashのみの信用/永続cache/schema変更は行わない。source/request/byte/親のguard、実装変更copyと中止prefixを別記。新外部資料/依存/旧資産参照なし。
 
 2026-10-14：[RF-07 HTTP/画面境界](GUI_COMMAND_BOUNDARIES.md)。元自作GUIの認証/制限/操作bodyと曲線変形要求/二次境界描画/状態bodyを抽出し、AST/元byteを照合した。既存合成Projectと実CLI/GUI保存場、独立Green/エネルギー/両R/Qを再利用。新外部資料・依存・旧資産参照なし。旧新実HTTP、実Chrome、最終wheelに検証byteを束縛し、元失敗記録と同値alias整理を区別。RF-10/全11枚の最終fullは後続。

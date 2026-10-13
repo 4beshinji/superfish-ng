@@ -88,3 +88,11 @@ validatorの直接4件を含む58個別unitを隔離した同じ自作sourceで�
 終端後に検証済み5 sourceだけを主ツリーへbyte一致で反映した。
 この58件は主ツリーでの実行記録やfull成功ではなく、修正後の固定source fullとseed f/全RF比較は未受入。
 最初の67 unit/seed受入はその当時のsourceと範囲の履歴として保持する。
+
+## 2026-10-14 最終統合での確認
+
+上の追補は受入前の記録として保持する。RF-03の固定full受入を経て、
+[全11カードの最終受入](REFACTORING_ACCEPTANCE.md)で現行1507 source/2698実行枠/530moduleの
+実full終了0・前後source一致とseed全9modeのf差0/全RF物理量差最大8.882e-16を確認した。
+metadata/拒否順の追補はRF-03受入commitへbyte結合し、元FEM/RFとRF-11の物理契約を保持する。
+過去の未受入や初回失敗の記録を、最終sourceで行った検査として書き換えない。

@@ -43,3 +43,10 @@ TestCase/参照/sourceを束縛した。監査初稿の元geometry namespace不�
 
 主ツリー反映時に候補の全byteと他1473 sourceの不変を確認した。
 `acceptance.json`が元全ID/fixture/参照、24個別unit、反映前後sourceとraw SHAを結合する。
+
+## 最終統合での収集件数の確認（2026-10-14）
+
+[全11カードの最終受入](REFACTORING_ACCEPTANCE.md)は2698 discovery実行枠/530moduleで実終了0。
+異なるIDは2693で、元からあるplanar historyの5 IDの各2回収集を保持する。
+元RF-03の2689枠/2684個別IDから、新入力3＋prefix6を各1回追加した。
+元収集/現行収集/実fullのCounter一致を確認し、件数表記修正のためのテスト削除やFEM再実行はない。

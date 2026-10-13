@@ -1,9 +1,9 @@
 # 全11カードの条件別受入監査
 
 2026-10-14、元計画はコミット`17a21af`の[11カード](REFACTORING_PLAN.md)。
-**全11枚の個別実装・受入・ローカルコミットは完了。最終統合validatorは実行中で、計画全体の完了判断はまだ行わない。**
-最終製品ソースは`237f6cd`、`src/tests/scripts/examples`の1507ファイルを固定する。
-以下は個別受入の条件と証拠であり、最終fullの成功を先取りしない。
+**全11枚の個別実装・受入と、固定ソースの最終統合受入を完了した。**
+最終製品ソースは`237f6cd`、`src/tests/scripts/examples`の1507ファイルを固定して検証した。
+以下は元11カードの条件別証拠と、実終了0のfull・seed全RF照合の記録である。
 
 ## 元条件と個別証拠
 
@@ -28,7 +28,7 @@
 `current-source-bridges.json`では76ファイルを個別受入commitのbyteへ直接照合し、
 RF-04後の曲線完了検証をRF-10へ、RF-11後のmetadata/拒否順追補をRF-03の固定受入へ結合した。
 元計画時の数値核22ファイル・全例題/benchmark/独立参照のbyteも保持する。
-これは実終端待ちのfullを代替する証拠ではない。
+このソース照合と、下記の実終端fullをそれぞれの範囲で結合した。
 
 RF-04の旧`acceptance.json`の20 test IDには、集計時に末尾method名を二重記載した表記誤りがあった。
 元worker14/GUI service6の`... ok`行に実在する20 IDと現行収集を照合し、
@@ -37,9 +37,9 @@ RF-04の旧`acceptance.json`の20 test IDには、集計時に末尾method名を
 原141行は`17a21af`と完全一致し、全152は102 DONE/3 IN_PROGRESS/47 PLANNED。
 V02/V03/V05とADD-N04-rf-goal-05の元依存・循環なしを保持する。
 
-## 最終統合の実行状態
+## 最終統合の受入
 
-`out/validation-refactoring-all11-20261014/`へ次を**一度**開始した。直前の全unittest再実行は行わない。
+`out/validation-refactoring-all11-20261014/`へ次を**一度**実行し、実終了0/full PASSを確認した。直前の全unittest再実行は行わない。
 
 ```sh
 OPENBLAS_NUM_THREADS=1 MPLCONFIGDIR=/tmp/superfish-refactoring-final-mpl \
@@ -50,11 +50,33 @@ uv run --offline --no-sync python scripts/validate.py \
 
 実sessionは`3414`、ログは`out/refactoring-final-acceptance-20261014/full.log`。
 開始時1507源のSHAは同rawの`source-before.json`、実行条件は`start.json`。
-**実際の終端/終了codeとvalidator reportを確認するまでfull PASSとしない。**
-次の作業は同sessionの継続確認であり、観測時間切れだけを理由に再実行しない。
-終了0を観測して`full-session.json`を更新した後、準備済み`audit_final_full.py`で
-全2698 ID/530module、実skipのID/理由、前後source、全seed modeのf/全RF/保存再構築を監査する。
-既存RF-03 fullや単なる収集結果を、この最終fullの証拠へ読み替えない。
+実sessionの終了0と`Validation PASS (full)`を観測した。530/530 module、2698実行枠、
+unittest時間3904.661秒、FAIL/ERROR/expected failure/unexpected successは0、既存SKIP3。
+testsとconvergenceの実子終了codeも0。ソースの前後一覧/1507 SHAは完全一致し、
+変更/追加/削除は空、最終作業ツリーのsourceとも一致する。
+`full-session.json`、元validatorの`validation.json`/`source-audit.json`/`test-run/report.json`と
+`audit_final_full.py`の`full-terminal.json`に観測・来歴・全量照合を結合した。
+
+2698は元runnerのdiscovery実行枠数で、異なるtest IDは2693である。
+元からあるplanar historyの5 IDは各2回収集される。元RF-03の2689枠/2684個別IDの
+全multiplicityを保持し、新入力3＋prefix6の9 IDを各1回追加した。
+`test-id-multiplicity-audit.json`で現在の収集と実行のCounter完全一致を確認した。
+監査初稿の「2698個別ID」という誤ったassertionは、元の重複保持を確認して訂正した。
+初稿logは保存し、製品/unit/数学/許容差を変更せず、件数訂正のためのfull/FEM再実行はない。
+
+既存SKIP3は元RF-03と同じID/理由であり、新しい権限/GUI依存skipはない。
+NGSolve任意参照の2件（`ReferencePhysicsTests.test_pillbox_frequency_rf_and_bessel_field`、
+`test_reference_rejects_unsupported_physics`）と、専用circle/TE native rootが必要な
+`PlanarCurvedOwnedTuningTests.test_actual_accepted_circle_and_recovered_ellipse_import_move_and_replay`である。
+外部参照や当該専用artifactの新受入を、このfullのPASSに含めない。
+
+同fullのpillbox6＋shaped_cell3の全9モードを`benchmarks/validation`へ照合し、
+Case SHA/元規約/全量key/非数値値を保持、周波数差0、RF物理量の最大相対差8.882e-16。
+両R/Q、U=Ue+Uh、全RF/表面量を保存nativeから再構築して確認した。
+物理量比較の元1e-12相対条件と、代数残差/energy balanceの1e-10絶対条件を分離し、
+残差を離散化誤差上界として使わない。再構築の追加trial solveは0。
+RF-11の追加domain規約以外に保存規約差はない。
+過去RF-03 fullや単なる収集結果を、この最終fullの実行証拠へ読み替えていない。
 
 最終ソースから独立実装packageだけを`/tmp/`へコピーしてwheelを隔離ビルドし、
 全製品bytes、RF-10新moduleのimport、17資産の実HTTP GET、entrypoint/依存宣言/LICENSE一致を確認した。

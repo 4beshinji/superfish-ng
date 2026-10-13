@@ -2,7 +2,9 @@
 
 作成：2026-09-22。更新：2026-10-14。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04/RF-05/RF-08/RF-06/RF-07/RF-10の全11枚を個別受入済み。最終統合受入は残り、計画全体は継続中。**
+（基準`4665561`）のS01〜S06を対応させる。**全11枚の個別実装・受入と最終統合受入を完了。**
+元条件別の証拠と固定1507 source full（2698実行枠/530module、既存SKIP3）、seed全f/RF照合は
+[最終受入監査](REFACTORING_ACCEPTANCE.md)。未移行経路と原機能/配布カードの別条件を保持する。
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
