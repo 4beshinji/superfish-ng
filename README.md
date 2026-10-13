@@ -140,6 +140,7 @@ OPENBLAS_NUM_THREADS=1 python scripts/validate.py --skip-tests --out out/validat
 | [docs/PHYSICS.md](docs/PHYSICS.md) | 軸上処理・弱形式・境界条件・RF量の定義 |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | モジュール責務、ADR、将来のバックエンド境界 |
 | [docs/IMPLEMENTATION_REVIEW_2026-09-22.md](docs/IMPLEMENTATION_REVIEW_2026-09-22.md) | 既存実装の横断レビュー、根拠・再現・調査範囲 |
+| [docs/SCIENTIFIC_REVIEW_2026-10-13.md](docs/SCIENTIFIC_REVIEW_2026-10-13.md) | 科学的妥当性レビュー、解析再計算、入力と保存解の不整合の再現 |
 | [docs/REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md) | 責務分離の順序、互換条件、検証と撤回方法（実装未着手） |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 依存順と受入基準を持つ開発計画 |
 | [docs/BACKLOG.md](docs/BACKLOG.md) | 実装タスクと現状 |

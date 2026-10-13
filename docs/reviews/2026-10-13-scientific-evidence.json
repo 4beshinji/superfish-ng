@@ -1,0 +1,845 @@
+{
+  "scope": "bounded scientific review; not full acceptance",
+  "base_commit": "46655618abcde6ff82dbbfd1296fe76bb97fe279",
+  "environment": {
+    "python": "3.12.3",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "platform": "Linux-6.8.0-142-generic-x86_64-with-glibc2.39",
+    "executable": "/home/sin/code/agent/reserch/superfish-ng/.venv/bin/python3",
+    "openblas_num_threads": "1"
+  },
+  "unittest": {
+    "modules": [
+      "test_physics",
+      "test_quadratic_elements",
+      "test_quadratic_rf",
+      "test_curved_fem",
+      "test_curved_solution",
+      "test_curved_rf",
+      "test_te",
+      "test_coaxial",
+      "test_material_hphi",
+      "test_planar_curved_solver",
+      "test_electrostatic",
+      "test_axis_magnetostatic",
+      "test_bh_curve",
+      "test_planar_bh",
+      "test_mode_tracking"
+    ],
+    "command": [
+      "/home/sin/code/agent/reserch/superfish-ng/.venv/bin/python3",
+      "-m",
+      "unittest",
+      "-v",
+      "test_physics",
+      "test_quadratic_elements",
+      "test_quadratic_rf",
+      "test_curved_fem",
+      "test_curved_solution",
+      "test_curved_rf",
+      "test_te",
+      "test_coaxial",
+      "test_material_hphi",
+      "test_planar_curved_solver",
+      "test_electrostatic",
+      "test_axis_magnetostatic",
+      "test_bh_curve",
+      "test_planar_bh",
+      "test_mode_tracking"
+    ],
+    "exit_code": 0,
+    "seconds": 34.963620430091396,
+    "log_tail": [
+      "",
+      "----------------------------------------------------------------------",
+      "Ran 92 tests in 34.674s",
+      "",
+      "OK"
+    ]
+  },
+  "cylinder_series": {
+    "radius_m": 0.1,
+    "length_m": 0.2,
+    "beta": 1.0,
+    "stored_energy_j": 1.0,
+    "conductivity_s_per_m": 58000000.0,
+    "exact": {
+      "frequency_hz": 1147425278.3521004,
+      "geometry_factor_ohm": 301.990228683996,
+      "q0": 34171.56055715705,
+      "r_over_q_accelerator_ohm": 57.77152289188975,
+      "transit_time_factor_abs": 0.2793953149271447,
+      "epk_over_eacc_estimate": 3.5791580838095323,
+      "bpk_over_eacc_estimate_mt_per_mv_per_m": 6.946764555281516,
+      "h_amplitude_a_per_m": 30656.979747252903,
+      "e_amplitude_v_per_m": 11549413.58844884,
+      "radial_wave_number_per_m": 24.04825557695772
+    },
+    "rows": [
+      {
+        "element_order": 1,
+        "nr": 8,
+        "nz": 8,
+        "dofs": 81,
+        "residual": 5.8627144967797335e-15,
+        "rf": {
+          "frequency_hz": 1147498644.5883179,
+          "geometry_factor_ohm": 301.99038815373444,
+          "q0": 34170.486190923984,
+          "r_over_q_accelerator_ohm": 59.55451584094917,
+          "transit_time_factor_abs": 0.2795004806638582,
+          "epk_over_eacc_estimate": 3.608015115722016,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 6.848365890158078
+        },
+        "relative_errors": {
+          "frequency_hz": 6.393988140374063e-05,
+          "geometry_factor_ohm": 5.280625772208225e-07,
+          "q0": 3.144036197200162e-05,
+          "r_over_q_accelerator_ohm": 0.030862834486742097,
+          "transit_time_factor_abs": 0.0003764047966978712,
+          "epk_over_eacc_estimate": 0.008062519519051126,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 0.01416467541693589
+        },
+        "fields": {
+          "h_relative_l2": 0.0014035359515779564,
+          "e_relative_l2": 0.011394795914486068,
+          "common_sign": 1
+        }
+      },
+      {
+        "element_order": 1,
+        "nr": 16,
+        "nz": 16,
+        "dofs": 289,
+        "residual": 1.513575911579284e-14,
+        "rf": {
+          "frequency_hz": 1147444554.9420836,
+          "geometry_factor_ohm": 301.9886270307142,
+          "q0": 34171.09228917618,
+          "r_over_q_accelerator_ohm": 58.32475418533883,
+          "transit_time_factor_abs": 0.2794041313692024,
+          "epk_over_eacc_estimate": 3.590266605978748,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 6.914411211191113
+        },
+        "relative_errors": {
+          "frequency_hz": 1.6799865182326457e-05,
+          "geometry_factor_ohm": 5.303659289856988e-06,
+          "q0": 1.3703441494428148e-05,
+          "r_over_q_accelerator_ohm": 0.009576193698136892,
+          "transit_time_factor_abs": 3.155543986133047e-05,
+          "epk_over_eacc_estimate": 0.0031036690498431607,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 0.004657325555363023
+        },
+        "fields": {
+          "h_relative_l2": 0.0003692254299504547,
+          "e_relative_l2": 0.005808226151956059,
+          "common_sign": 1
+        }
+      },
+      {
+        "element_order": 1,
+        "nr": 32,
+        "nz": 32,
+        "dofs": 1089,
+        "residual": 8.173378993858926e-14,
+        "rf": {
+          "frequency_hz": 1147430164.0853355,
+          "geometry_factor_ohm": 301.9897071562837,
+          "q0": 34171.428793096195,
+          "r_over_q_accelerator_ohm": 57.93709992820614,
+          "transit_time_factor_abs": 0.27939451600473514,
+          "epk_over_eacc_estimate": 3.582871329344466,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 6.936786260722689
+        },
+        "relative_errors": {
+          "frequency_hz": 4.257996862433444e-06,
+          "geometry_factor_ohm": 1.7269688312726572e-06,
+          "q0": 3.855956787091053e-06,
+          "r_over_q_accelerator_ohm": 0.0028660666713986593,
+          "transit_time_factor_abs": 2.859469600546838e-06,
+          "epk_over_eacc_estimate": 0.0010374634056344867,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 0.0014363945228631492
+        },
+        "fields": {
+          "h_relative_l2": 9.355449393152431e-05,
+          "e_relative_l2": 0.002919710580166337,
+          "common_sign": 1
+        }
+      },
+      {
+        "element_order": 2,
+        "nr": 8,
+        "nz": 8,
+        "dofs": 289,
+        "residual": 1.7347364568472052e-14,
+        "rf": {
+          "frequency_hz": 1147425658.738742,
+          "geometry_factor_ohm": 301.98926923315196,
+          "q0": 34171.44632681103,
+          "r_over_q_accelerator_ohm": 57.778881644137925,
+          "transit_time_factor_abs": 0.27939649836759384,
+          "epk_over_eacc_estimate": 3.579340982228317,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 6.946170334341686
+        },
+        "relative_errors": {
+          "frequency_hz": 3.3151321399138567e-07,
+          "geometry_factor_ohm": 3.177092345763022e-06,
+          "q0": 3.34284838499066e-06,
+          "r_over_q_accelerator_ohm": 0.0001273768091927252,
+          "transit_time_factor_abs": 4.235720450163072e-06,
+          "epk_over_eacc_estimate": 5.1100961315997395e-05,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 8.553923702192545e-05
+        },
+        "fields": {
+          "h_relative_l2": 3.823915634960074e-05,
+          "e_relative_l2": 0.0008151616053343777,
+          "common_sign": 1
+        }
+      },
+      {
+        "element_order": 2,
+        "nr": 16,
+        "nz": 16,
+        "dofs": 1089,
+        "residual": 7.08431273763101e-14,
+        "rf": {
+          "frequency_hz": 1147425303.0150352,
+          "geometry_factor_ohm": 301.99016428461965,
+          "q0": 34171.55290283198,
+          "r_over_q_accelerator_ohm": 57.77206246897632,
+          "transit_time_factor_abs": 0.27939535654161246,
+          "epk_over_eacc_estimate": 3.579173576794103,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 6.946694404353719
+        },
+        "relative_errors": {
+          "frequency_hz": 2.1494153346068856e-08,
+          "geometry_factor_ohm": 2.132498678752981e-07,
+          "q0": 2.2399694199481957e-07,
+          "r_over_q_accelerator_ohm": 9.339845300271321e-06,
+          "transit_time_factor_abs": 1.4894475874882573e-07,
+          "epk_over_eacc_estimate": 4.328667303266087e-06,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 1.0098359781496313e-05
+        },
+        "fields": {
+          "h_relative_l2": 4.8304967167599835e-06,
+          "e_relative_l2": 0.00020739246982672265,
+          "common_sign": 1
+        }
+      },
+      {
+        "element_order": 2,
+        "nr": 32,
+        "nz": 32,
+        "dofs": 4225,
+        "residual": 3.414094922660175e-13,
+        "rf": {
+          "frequency_hz": 1147425279.9178271,
+          "geometry_factor_ohm": 301.99022452631493,
+          "q0": 34171.56006338211,
+          "r_over_q_accelerator_ohm": 57.77156156786589,
+          "transit_time_factor_abs": 0.2793953159673626,
+          "epk_over_eacc_estimate": 3.5791593077492303,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 6.946765096908043
+        },
+        "relative_errors": {
+          "frequency_hz": 1.3645566898645711e-09,
+          "geometry_factor_ohm": 1.3767601281244879e-08,
+          "q0": 1.4449879737199467e-08,
+          "r_over_q_accelerator_ohm": 6.694643692739533e-07,
+          "transit_time_factor_abs": 3.723104269326427e-09,
+          "epk_over_eacc_estimate": 3.4196301745836877e-07,
+          "bpk_over_eacc_estimate_mt_per_mv_per_m": 7.796817103056242e-08
+        },
+        "fields": {
+          "h_relative_l2": 6.06828486585987e-07,
+          "e_relative_l2": 5.2244143618990686e-05,
+          "common_sign": 1
+        }
+      }
+    ]
+  },
+  "mismatched_case": [
+    {
+      "element_order": 1,
+      "mutation": "radius",
+      "input": {
+        "schema_version": 1,
+        "name": "cavity",
+        "geometry": {
+          "type": "profile",
+          "points_zr_m": [
+            [
+              0.0,
+              0.2
+            ],
+            [
+              0.2,
+              0.2
+            ]
+          ]
+        },
+        "mesh": {
+          "nr": 8,
+          "nz": 8
+        },
+        "solver": {
+          "modes": 1
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        }
+      },
+      "quantities_accepted": true,
+      "frequency_hz": 1147498644.5883179,
+      "stored_energy_j": 0.9999999999999998,
+      "eacc_ratio_to_original": 1.0,
+      "save_accepted": true,
+      "completion_marker": true,
+      "read_accepted": true,
+      "declared_length_m": 0.2,
+      "actual_mesh_z_max_m": 0.2,
+      "declared_radius_m": 0.2,
+      "actual_mesh_r_max_m": 0.1
+    },
+    {
+      "element_order": 1,
+      "mutation": "length",
+      "input": {
+        "schema_version": 1,
+        "name": "cavity",
+        "geometry": {
+          "type": "profile",
+          "points_zr_m": [
+            [
+              0.0,
+              0.1
+            ],
+            [
+              0.4,
+              0.1
+            ]
+          ]
+        },
+        "mesh": {
+          "nr": 8,
+          "nz": 8
+        },
+        "solver": {
+          "modes": 1
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        }
+      },
+      "quantities_accepted": true,
+      "frequency_hz": 1147498644.5883179,
+      "stored_energy_j": 0.9999999999999998,
+      "eacc_ratio_to_original": 0.5,
+      "save_accepted": true,
+      "completion_marker": true,
+      "read_accepted": true,
+      "declared_length_m": 0.4,
+      "actual_mesh_z_max_m": 0.2,
+      "declared_radius_m": 0.1,
+      "actual_mesh_r_max_m": 0.1
+    },
+    {
+      "element_order": 1,
+      "mutation": "normalization",
+      "input": {
+        "schema_version": 1,
+        "name": "cavity",
+        "geometry": {
+          "type": "profile",
+          "points_zr_m": [
+            [
+              0.0,
+              0.1
+            ],
+            [
+              0.2,
+              0.1
+            ]
+          ]
+        },
+        "mesh": {
+          "nr": 8,
+          "nz": 8
+        },
+        "solver": {
+          "modes": 1
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 9.0
+        }
+      },
+      "quantities_accepted": true,
+      "frequency_hz": 1147498644.5883179,
+      "stored_energy_j": 0.9999999999999998,
+      "eacc_ratio_to_original": 1.0,
+      "save_accepted": true,
+      "completion_marker": true,
+      "read_accepted": true,
+      "declared_length_m": 0.2,
+      "actual_mesh_z_max_m": 0.2,
+      "declared_radius_m": 0.1,
+      "actual_mesh_r_max_m": 0.1
+    },
+    {
+      "element_order": 2,
+      "mutation": "radius",
+      "input": {
+        "schema_version": 3,
+        "name": "cavity",
+        "geometry": {
+          "type": "profile",
+          "points_zr_m": [
+            [
+              0.0,
+              0.2
+            ],
+            [
+              0.2,
+              0.2
+            ]
+          ]
+        },
+        "mesh": {
+          "nr": 8,
+          "nz": 8
+        },
+        "solver": {
+          "modes": 1,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "quantities_accepted": true,
+      "frequency_hz": 1147425658.738742,
+      "stored_energy_j": 0.9999999999999987,
+      "eacc_ratio_to_original": 1.0,
+      "save_accepted": true,
+      "completion_marker": true,
+      "read_accepted": true,
+      "declared_length_m": 0.2,
+      "actual_mesh_z_max_m": 0.2,
+      "declared_radius_m": 0.2,
+      "actual_mesh_r_max_m": 0.1
+    },
+    {
+      "element_order": 2,
+      "mutation": "length",
+      "input": {
+        "schema_version": 3,
+        "name": "cavity",
+        "geometry": {
+          "type": "profile",
+          "points_zr_m": [
+            [
+              0.0,
+              0.1
+            ],
+            [
+              0.4,
+              0.1
+            ]
+          ]
+        },
+        "mesh": {
+          "nr": 8,
+          "nz": 8
+        },
+        "solver": {
+          "modes": 1,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 1.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "quantities_accepted": false,
+      "quantities_error": "voltage interval must lie within the quadratic axis",
+      "save_accepted": false,
+      "save_error": "voltage interval must lie within the quadratic axis"
+    },
+    {
+      "element_order": 2,
+      "mutation": "normalization",
+      "input": {
+        "schema_version": 3,
+        "name": "cavity",
+        "geometry": {
+          "type": "profile",
+          "points_zr_m": [
+            [
+              0.0,
+              0.1
+            ],
+            [
+              0.2,
+              0.1
+            ]
+          ]
+        },
+        "mesh": {
+          "nr": 8,
+          "nz": 8
+        },
+        "solver": {
+          "modes": 1,
+          "element_order": 2
+        },
+        "rf": {
+          "beta": 1.0,
+          "conductivity_s_per_m": 58000000.0,
+          "normalization_j": 9.0
+        },
+        "model": {
+          "physics": "rf_eigenmode",
+          "coordinates": "axisymmetric",
+          "polarization": "tm",
+          "azimuthal_index": 0,
+          "materials": [
+            {
+              "id": "vacuum",
+              "type": "vacuum"
+            }
+          ],
+          "regions": [
+            {
+              "id": "cavity",
+              "material": "vacuum",
+              "domain": "interior"
+            }
+          ]
+        }
+      },
+      "quantities_accepted": true,
+      "frequency_hz": 1147425658.738742,
+      "stored_energy_j": 0.9999999999999987,
+      "eacc_ratio_to_original": 1.0,
+      "save_accepted": true,
+      "completion_marker": true,
+      "read_accepted": true,
+      "declared_length_m": 0.2,
+      "actual_mesh_z_max_m": 0.2,
+      "declared_radius_m": 0.1,
+      "actual_mesh_r_max_m": 0.1
+    }
+  ],
+  "historical_evidence_presence": {
+    "out/independent-ngsolve-20260907-first/comparison.json": {
+      "exists": true,
+      "bytes": 32715,
+      "sha256": "f7aa37f5b6d67062775fe3805c11e3156fda3ee7ac0ccabe585ab0a2a14c114a"
+    },
+    "out/n03-native-surface-series-20261007/n03-card-acceptance.json": {
+      "exists": true,
+      "bytes": 6946,
+      "sha256": "5cfea497a58f2256269f544b616b30573a03ba54ab3c37c155d9498cac2ea751"
+    },
+    "out/p07-planar-exact-reference-20261007/final-p07-acceptance.json": {
+      "exists": true,
+      "bytes": 29807,
+      "sha256": "8c00df34688891cef18f76fe6b6c2ba60eda3e002c33861f7b4be38126c86e0c"
+    },
+    "out/validation-n03-milestone-localhost-20261007/validation.json": {
+      "exists": true,
+      "bytes": 161020,
+      "sha256": "68efe97eef36ad28ca7e19c4a7d6b5f9df318971798a09ff90cbb55f703254b2"
+    },
+    "benchmarks/cavsim2d/a01-20260914.json": {
+      "exists": true,
+      "bytes": 84186,
+      "sha256": "174982f637856f7fa39d37ebb4745151128f814be2192ef99664bd9b760e7e42"
+    },
+    "benchmarks/validation/validation.json": {
+      "exists": true,
+      "bytes": 2948,
+      "sha256": "e791e25e9b9e263d3ee095142f05a7b7937490e5e3bf94eec19dbadb8e0676b0"
+    }
+  },
+  "source_file_count": 1436,
+  "source_changes": [],
+  "seconds": 36.127539803041145,
+  "not_performed": [
+    "full suite",
+    "full/seed validate.py",
+    "new external solver comparison",
+    "legacy execution or inspection",
+    "measurement validation",
+    "GUI review"
+  ],
+  "review_artifact_sha256": {
+    "review.json": "69595fd4c6f145c1856836dcc1c85c163299c75efecdb349b9c0db6fc9420267",
+    "unittest.log": "497d4ac2b9d4a4b9d9cfa79e161f45dad8de38605ca0645489d2c4cc4058f20d",
+    "source-before.json": "13e34a12bcbce53df9b00ca6bf5cb97ffbd0509f69c011cc04095fefa2674271",
+    "source-after.json": "13e34a12bcbce53df9b00ca6bf5cb97ffbd0509f69c011cc04095fefa2674271"
+  },
+  "historical_records_read": {
+    "N03": {
+      "status": "N03_CARD_ACCEPTED",
+      "card_status": "DONE",
+      "physical_series": [
+        {
+          "case_id": "N01-ellipse-archive",
+          "native_status": "PASS",
+          "native_numerical_status": "PASS",
+          "independent_status": "PASS",
+          "finite_peak_required": true,
+          "uniform_fem_levels": [
+            0,
+            1,
+            2
+          ],
+          "source_report": "independent-saved-comparison/batch-v5-polar-N01-ellipse-archive__N01-prolate-new/report.json",
+          "final_native_reference_relative_differences": {
+            "frequency_hz": 6.410381669930132e-09,
+            "r_over_q_accelerator_ohm": 9.679950734309273e-07,
+            "r_over_q_circuit_ohm": 9.679950734309273e-07,
+            "geometry_factor_ohm": 0.0001368257272438278,
+            "epk_over_eacc": 3.275378383016392e-05,
+            "bpk_over_eacc_mt_per_mv_per_m": 5.176861695965762e-05
+          },
+          "physical_error_bound": null,
+          "physical_peak_error_bound": null
+        },
+        {
+          "case_id": "N01-prolate-new",
+          "native_status": "PASS",
+          "native_numerical_status": "PASS",
+          "independent_status": "PASS",
+          "finite_peak_required": true,
+          "uniform_fem_levels": [
+            2,
+            3,
+            4
+          ],
+          "source_report": "independent-saved-comparison/batch-v6-appended-polar-N01-prolate-new/report.json",
+          "final_native_reference_relative_differences": {
+            "frequency_hz": 2.4406588194914036e-08,
+            "r_over_q_accelerator_ohm": 2.0333410796880003e-05,
+            "r_over_q_circuit_ohm": 2.0333410796880003e-05,
+            "geometry_factor_ohm": 0.00014322555284085325,
+            "epk_over_eacc": 3.8030838069413875e-05,
+            "bpk_over_eacc_mt_per_mv_per_m": 7.257249559944334e-05
+          },
+          "physical_error_bound": null,
+          "physical_peak_error_bound": null
+        },
+        {
+          "case_id": "N01-rounded-two-lobe",
+          "native_status": "PASS",
+          "native_numerical_status": "PASS",
+          "independent_status": "PASS",
+          "finite_peak_required": true,
+          "uniform_fem_levels": [
+            0,
+            1,
+            2
+          ],
+          "source_report": "independent-saved-comparison/batch-v4-N01-ellipse-archive__N01-prolate-new__N01-rounded-two-lobe/report.json",
+          "final_native_reference_relative_differences": {
+            "frequency_hz": 1.4772893575099033e-08,
+            "r_over_q_accelerator_ohm": 2.2535446406735105e-06,
+            "r_over_q_circuit_ohm": 2.2535446406735105e-06,
+            "geometry_factor_ohm": 0.00022839669478846858,
+            "epk_over_eacc": 8.737257908020268e-05,
+            "bpk_over_eacc_mt_per_mv_per_m": 0.00018545954251902863
+          },
+          "physical_error_bound": null,
+          "physical_peak_error_bound": null
+        },
+        {
+          "case_id": "N01-sharp-two-lobe",
+          "native_status": "SINGULAR_GEOMETRY",
+          "native_numerical_status": "PASS",
+          "independent_status": "SINGULAR_GEOMETRY",
+          "finite_peak_required": false,
+          "uniform_fem_levels": [
+            0,
+            1,
+            2
+          ],
+          "source_report": "independent-saved-comparison/batch-v4-N01-sharp-two-lobe/report.json",
+          "final_native_reference_relative_differences": {
+            "frequency_hz": 5.3709991343353636e-08,
+            "r_over_q_accelerator_ohm": 1.613374904785303e-06,
+            "r_over_q_circuit_ohm": 1.613374904785303e-06,
+            "geometry_factor_ohm": 0.0002483572400890921
+          },
+          "physical_error_bound": null,
+          "physical_peak_error_bound": null
+        },
+        {
+          "case_id": "N01-sphere-control",
+          "native_status": "PASS",
+          "native_numerical_status": "PASS",
+          "independent_status": "PASS",
+          "finite_peak_required": true,
+          "uniform_fem_levels": [
+            0,
+            1,
+            2
+          ],
+          "source_report": "independent-saved-comparison/batch-v4-N01-sphere-control/report.json",
+          "final_native_reference_relative_differences": {
+            "frequency_hz": 1.7769040749904264e-07,
+            "r_over_q_accelerator_ohm": 3.978680909511034e-06,
+            "r_over_q_circuit_ohm": 3.978680909511034e-06,
+            "geometry_factor_ohm": 0.00013356868825797896,
+            "epk_over_eacc": 0.0001638850307823514,
+            "bpk_over_eacc_mt_per_mv_per_m": 4.6606502220436496e-05
+          },
+          "physical_error_bound": null,
+          "physical_peak_error_bound": null
+        }
+      ],
+      "completed_physical_receipt_sha256": "51a7cbbe6641e9689ca3c4fb66428702fd609211af84598ecaf88300e622df5d",
+      "full_terminal_sha256": "55abcd12c7b1d6a413802f0ba65e7e76516ca7641d6598d1ea68ba98a762b914",
+      "seed_regression_sha256": "d3629dc5386c5da10b477b597b2ed9aadc4a40a25e44414ad8cebbf5c70a685c",
+      "full_seconds": 4772.018831853988,
+      "tests_run": 2485,
+      "modules": 499,
+      "test_counts": {
+        "failures": 0,
+        "errors": 0,
+        "skipped": 3,
+        "expected_failures": 0,
+        "unexpected_successes": 0
+      },
+      "skipped": [
+        {
+          "id": "test_independent_comparison.ReferencePhysicsTests.test_pillbox_frequency_rf_and_bessel_field",
+          "reason": "optional NGSolve reference environment"
+        },
+        {
+          "id": "test_independent_comparison.ReferencePhysicsTests.test_reference_rejects_unsupported_physics",
+          "reason": "optional NGSolve reference environment"
+        },
+        {
+          "id": "test_planar_curved_tuning_saved.PlanarCurvedOwnedTuningTests.test_actual_accepted_circle_and_recovered_ellipse_import_move_and_replay",
+          "reason": "dedicated accepted circle/TE native evidence root required"
+        }
+      ],
+      "full_source_files": 1405,
+      "full_source_unchanged": true,
+      "physical_product_sources": 1199,
+      "physical_bound_inputs": 523,
+      "explicit_old_source_aliases": {
+        "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/curved_same_domain_tracking.py": "/home/sin/code/agent/reserch/superfish-ng/out/n03-native-surface-series-20261007/before-appended-main-integration/src/superfish_ng/curved_same_domain_tracking.py",
+        "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/geometry_surface_fields.py": "/home/sin/code/agent/reserch/superfish-ng/out/n03-native-surface-series-20261007/before-appended-main-integration/src/superfish_ng/geometry_surface_fields.py",
+        "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/geometry_surface_matrix.py": "/home/sin/code/agent/reserch/superfish-ng/out/n03-native-surface-series-20261007/before-appended-main-integration/src/superfish_ng/geometry_surface_matrix.py"
+      },
+      "seed_modes": 9,
+      "seed_frequency_rf_quantities": 207,
+      "seed_relative_limit": 1e-10,
+      "max_frequency_relative_difference": 0.0,
+      "max_rf_relative_difference": 8.881784197001248e-16,
+      "retained_failed_first_full_exit_code": 130,
+      "retained_original_prolate_failed_levels": [
+        0,
+        1,
+        2
+      ],
+      "new_fem_solves": 0,
+      "new_field_samples": 0,
+      "physical_error_bound": null,
+      "physical_peak_error_bound": null,
+      "scope": "N03 fixed synthetic five-shape physical series and pre-N06 milestone full/seed; empirical fields/peaks, no general PDE bound; parent G03/N04, original 32 compatibility requirements and whole goal remain pending"
+    },
+    "P07": {
+      "passed": true,
+      "card": "P07",
+      "P07_complete": true,
+      "main_commit": "fe25aadc6fe44a46ebc92608c397428953630e11",
+      "final_product_files": 401,
+      "changed_product_files": [
+        "planar_curved_geometry.py",
+        "planar_curved_location.py",
+        "planar_curved_refinement.py",
+        "planar_curved_solver.py"
+      ],
+      "scope": "P07 original condition acceptance after exact main integration; reuse source-bound successful physics/tests; no P08 native or whole-goal completion"
+    },
+    "interpretation": "Historical acceptance summaries read; no new external-solver execution or complete raw-field revalidation in this review."
+  },
+  "post_run_editorial_verification": {
+    "local_report_links_checked": 32,
+    "missing_links": [],
+    "tests_by_module": {
+      "test_physics": 14,
+      "test_quadratic_elements": 7,
+      "test_quadratic_rf": 7,
+      "test_curved_fem": 3,
+      "test_curved_solution": 2,
+      "test_curved_rf": 3,
+      "test_te": 7,
+      "test_coaxial": 4,
+      "test_material_hphi": 6,
+      "test_planar_curved_solver": 7,
+      "test_electrostatic": 6,
+      "test_axis_magnetostatic": 6,
+      "test_bh_curve": 5,
+      "test_planar_bh": 6,
+      "test_mode_tracking": 9
+    },
+    "product_python_changed_since_run": [],
+    "executed_review_script_sha256": "fe04105b655a8da69292062d93a1e0e58d5f98aafdda120b8274e6c015b21bb6",
+    "delivered_review_script_sha256": "46a1ab8d67150fe3e526c055b20d91a291c6b052895dfab7c7bb9fb4b02acaa4",
+    "script_ast_unchanged": true,
+    "script_change": "Comment corrected from degree-8 to 8-by-8 product Gauss; executed source preserved under raw root; no numerical rerun.",
+    "head_at_editorial_check": "b8be3ce457d6c6d2637fb94ff244ee8421911278"
+  }
+}

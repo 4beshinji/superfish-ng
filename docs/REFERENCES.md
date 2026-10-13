@@ -15,6 +15,10 @@
 [CERN公開原稿](https://cds.cern.ch/record/1982429/files/405-429%20Jensen.pdf)
 — 閲覧: 論文冒頭とRF量の節。R/Qとエネルギーの定義を比較する資料。特に係数2の規約を式から確認する。
 
+2026-10-13の科学レビューでは、CERN掲載PDFの取得制約のため、同題の
+[著者公開原稿 arXiv:1601.05230](https://arxiv.org/pdf/1601.05230)の§3.7.1・3.8・3.9.1を確認した。
+R/Qの係数2、摂動壁損失、Q/Gの定義の照合に使用。製品コードへの再利用や本文・図の転載はない。
+
 **R3. S. Udongwo and U. van Rienen, “An open-source Python tool for the Maxwell eigenvalue problem and multipacting analysis in axisymmetric elliptical cavity structures.”** IPAC2024, MOPS27, pp.771–774 (2024)。DOI: 10.18429/JACoW-IPAC2024-MOPS27。
 [JACoW書誌](https://proceedings.jacow.org/ipac2024/doi_per_institute/mops27/index.html) · [公開論文](https://inspirehep.net/files/0a80007ba7602a4038a4802675dc00e5)
 — 閲覧: 書誌・概要・Maxwell問題の冒頭。PyMultipact/NGSolveの先行例。今回の粒子追跡実装を意味しない。
@@ -211,6 +215,9 @@ m=0の正のJ1零点とp≥1を使い、零点0をTE共振へ含めない。製�
 TEのJ′0の零点0を正モードに含めず、本仕様のsは正根だけの序数とした。
 単位長規格化と側壁GはMaxwell/面積・境界積分から独立導出し、数値積分で照合した。
 本文・図・コードの転載なし。解析式をFEM solverの代用にしない。
+
+2026-10-13の科学レビューで§10.21を再確認し、円筒TM010のJ0正根とJ1導関数根の定義へ参照した。
+独立の検証式だけに使用し、製品FEMの補正・置換には用いない。
 
 **R40. Richard Fitzpatrick, Waveguides (2014).**
 [著者の大学公開講義](https://farside.ph.utexas.edu/teaching/jk1/Electromagnetism/node117.html)

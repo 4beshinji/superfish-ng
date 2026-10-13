@@ -4417,3 +4417,13 @@ TEのEφ/r係数を磁気対称で偶、電気対称で奇として幾何反射�
 2026-10-07 P09 [全二次節点shape law](PLANAR_CURVED_SHAPE_LAW.md)：自作の中立Fraction多項式/全closed interval det root検査を共有し、専用曲線Projectから全midを一回丸め生成。非一様面積・実円TE/TMのf/energy/subspace/G/Q尺度、strict/退化/丸め反例、新4＋関連4PASS。元408製品不変、新外部資料/依存/legacy参照なし。任意曲線変位law/実調整/所有操作の受入ではない。
 
 2026-10-07 P09 [元chart付き試行生成](PLANAR_CURVED_TUNING_TRIALS.md)：自作全P2 shape law/制限/有理chart/完全比較を共有し、元referenceへの累積全係数/PEC検証を追加。独立二次閉式/実TE-TM energy/全RF、全予算preflight/後段改変拒否、新4＋関連11PASS。元409製品不変、新外部資料/依存/legacy参照なし。実検索controller/両gate/所有操作は未受入。
+
+
+## 科学的妥当性レビュー 2026年10月13日
+
+[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)で既存の独立実装と保存済み受入集約を照合した。
+追加参照はR2の著者公開arXiv原稿のRF規約とR39のNIST DLMF正根の定義だけ。
+円筒解析式・独立体積求積をレビュー専用scriptへ記述し、製品analytic helperを期待値に使用しない。
+NumPy/SciPy/物理定数は共有するため完全独立スタックとは呼ばない。文献本文/図/外部コードの転載、
+旧ソース/旧実行物/ユーザー所有旧資産の読取、新Wine実行はない。製品の式・許容差・依存は不変。
+入力と解の差替え実験は正しいFEM解から作った不整合の負例であり、基準解として再利用しない。
