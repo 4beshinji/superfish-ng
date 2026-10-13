@@ -1,5 +1,8 @@
 # 未完課題のコミット単位開発計画
 
+2026-10-13 ADD-N04-selection-charts-05 **DONE**：[異なる初期接続への選択移送GUI](../CURVED_SELECTION_CHARTS_GUI.md)。引継ぎ差分を完成し、新版43/無変更旧版18実Chrome操作とHTTP2＋直接mesh4の6個別unitを分割受入。raw/予算/途中応答/保存/版1復元/履歴を確認、元native全10配列・全mode/RF完全一致。int/float表記によるCase SHA/CSVとkernel metadata差を別記。元1440の他1437源byte一致、専用FEM0/旧GUI回帰1、全server/worker/browser終端。初回fixture/比較器ERRORを保全し数値核/許容差不変、新seed/full/legacy0。別作業review scriptを変更/コミットしない。全131は81 DONE/2 IN_PROGRESS/48 PLANNED、原123は76/2/45。次は06の専用独立幾何/行列/6求解、親N04/原32要件/全goalは継続。
+
+
 2026-09-22：P02を回復核a・所有履歴b・調整c・GUI監査dへ分割。原90カードを維持、TSVは115行。親P02は全子条件受入まで未完。[分割仕様](03-planar.md#p02-a)。
 
 2026-10-07 N02 **DONE**：[保存3×3行列の別量評価・原条件受入](../N02_GEOMETRY_SURFACE_MATRIX.md)。厳密な全Case九点・元source mesh/個別ID・completion全byteを保持し、幾何/FEM/求積12・16・24/元場/離散peak上下界を別判定。新10＋直接7の17個別unitを分割受入。新粗い三モード九点は7新FEM＋2再利用、243.639秒・終了0、全ID/場/求積成立でも初回RQ/磁場peak未達で正しくFAIL。元楕円9 nativeは391.579秒・終了0、原五量/全変化/場/求積/全ゲート完全一致PASS、新FEM0。CLI検査側参照ディレクトリFAILとreceipt SHAキー誤記を保全し必要分だけ修正、数値再実行なし。元1194源の変更はCLI一つ、旧helper/数値body AST同一・新3源込み1197前後固定。全handle終端、新seed/full/legacy0。独立物理/物理peak誤差は未確認/nullを維持。原123は70 DONE/2 IN_PROGRESS（H17/C07-planar）/51 PLANNED、親G03/N03/互換32要件/全goalは継続。次はN03各滑らかな実精度系列・両側細分。rawは out/n02-surface-matrix-20261007/acceptance.json。

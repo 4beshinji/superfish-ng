@@ -239,13 +239,20 @@
           </div>
           <details id="curved-transfer-controls">
             <summary>別の細分履歴から選択領域を移す</summary>
-            <p class="hint">対象段階のメッシュを図上表示し、変更前のProjectとその最終メッシュの選択番号を指定します。対応する初期分割を持つ曲線P2のTM領域を扱います。旧番号の代わりに領域の交差を調べ、新しい選択を図へ反映します。</p>
+            <p class="hint">対象段階のメッシュを図上表示し、変更前のProjectとその最終メッシュの選択番号を指定します。曲線P2のTM領域で、初期分割が異なる場合は両メッシュの共通参照座標を明示します。旧番号の代わりに領域の交差を調べ、新しい選択を図へ反映します。</p>
             <label class="file">変更前のProjectを読み込む<input id="curved-transfer-source-file" type="file" accept=".json" /></label>
             <label>変更前のProject JSON<textarea id="curved-transfer-source" rows="5" spellcheck="false"></textarea></label>
             <label>変更前の選択要素番号（0始まりJSON配列）<textarea id="curved-transfer-cells" rows="2" spellcheck="false">[0]</textarea></label>
-            <label>境界の対応<select id="curved-transfer-boundary"><option value="same_curve_fractions">同じ曲線分率</option><option value="ordered_curve_vertices">曲線上の節点順</option></select></label>
+            <label>境界の対応<select id="curved-transfer-boundary"><option value="same_curve_fractions">同じ曲線分率</option><option value="ordered_curve_vertices">曲線上の節点順</option><option value="declared_reference_polylines">共通参照座標を明示（異なる初期分割）</option></select></label>
+            <fieldset id="curved-transfer-charts" hidden>
+              <legend>両初期メッシュの共通参照座標</legend>
+              <p class="hint">各Projectの初期メッシュの頂点順に、無次元二座標のJSON配列を指定します。両側の参照境界・タグと全要素の被覆を検証します。</p>
+              <label>変更前の参照座標<textarea id="curved-transfer-previous-chart" rows="3" spellcheck="false"></textarea></label>
+              <label>現在の参照座標<textarea id="curved-transfer-current-chart" rows="3" spellcheck="false"></textarea></label>
+              <label>初期・最終・共通三角形の上限<input id="curved-transfer-triangles" type="number" min="1" step="1" value="10000" /></label>
+            </fieldset>
             <label>移送先の選び方<select id="curved-transfer-policy"><option value="intersects">面積を持って重なる要素を全て選ぶ</option><option value="contained">全体が元領域に含まれる要素だけ選ぶ</option></select></label>
-            <label>同じ初期要素内で調べる要素対の上限<input id="curved-transfer-budget" type="number" min="1" step="1" value="100000" /></label>
+            <label>調べる要素対の上限（参照座標を明示する場合は全辺の検査も含む）<input id="curved-transfer-budget" type="number" min="1" step="1" value="100000" /></label>
             <button id="curved-transfer-run" type="button">領域の移送を検査して図上選択へ反映</button>
             <button id="curved-transfer-save" type="button" disabled>最後の移送記録を保存</button>
             <label class="file">移送記録を再検証して元選択と条件を復元<input id="curved-transfer-open" type="file" accept=".json" /></label>

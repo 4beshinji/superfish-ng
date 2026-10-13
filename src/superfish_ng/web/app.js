@@ -381,8 +381,12 @@ let curvedSelection = null;
 let curvedCanvasPicker = null;
 let curvedTransferResult = null;
 function curvedTransferFormSignature() {
-  return JSON.stringify(['source','cells','boundary','policy','budget'].map(name=>$( `curved-transfer-${name}` ).value));
+  return JSON.stringify(['source','cells','boundary','policy','budget','previous-chart','current-chart','triangles'].map(name=>$( `curved-transfer-${name}` ).value));
 }
+function updateCurvedTransferCharts() {
+  $("curved-transfer-charts").hidden=$("curved-transfer-boundary").value!=="declared_reference_polylines";
+}
+$("curved-transfer-boundary").onchange=updateCurvedTransferCharts;
 $("curved-transfer-source-file").onchange=async event=>{
   try {
     $("error").hidden=true;
@@ -397,9 +401,13 @@ bind('curved-transfer-run',async()=>{
   if(!selection || !curvedSelectionMatches(selection.signature))throw Error('対象段階のメッシュを現在の入力で図上表示してください。');
   const form=curvedTransferFormSignature(),{project}=curvedSelectionInput();
   const selectedBefore=JSON.stringify([...selection.cells].sort((a,b)=>a-b));
-  const request=JSON.stringify({schema_version:1,selected_cells:null,boundary_pairing:$("curved-transfer-boundary").value,
-    coverage_policy:$("curved-transfer-policy").value,max_pair_tests:number('curved-transfer-budget')})
-    .replace('"selected_cells":null','"selected_cells":'+$("curved-transfer-cells").value);
+  const charts=$("curved-transfer-boundary").value==="declared_reference_polylines";
+  const settings={schema_version:charts?2:1,boundary_pairing:$("curved-transfer-boundary").value,
+    coverage_policy:$("curved-transfer-policy").value,max_pair_tests:number('curved-transfer-budget')};
+  if(charts)settings.max_triangles=number('curved-transfer-triangles');
+  // Raw declarations reach the strict server reader without browser JSON coercion.
+  const request=JSON.stringify(settings).slice(0,-1)+',"selected_cells":'+$("curved-transfer-cells").value+
+    (charts?',"reference_vertices":['+$("curved-transfer-previous-chart").value+','+$("curved-transfer-current-chart").value+']':'')+'}';
   $("curved-transfer-run").disabled=true;
   try {
     const result=await api('transfer-curved-selection',{previous_document:$("curved-transfer-source").value,
@@ -428,6 +436,10 @@ $("curved-transfer-open").onchange=async event=>{
     $("curved-transfer-boundary").value=result.request.boundary_pairing;
     $("curved-transfer-policy").value=result.request.coverage_policy;
     $("curved-transfer-budget").value=result.request.max_pair_tests;
+    $("curved-transfer-previous-chart").value=result.schema_version===2?JSON.stringify(result.request.reference_vertices[0]):'';
+    $("curved-transfer-current-chart").value=result.schema_version===2?JSON.stringify(result.request.reference_vertices[1]):'';
+    $("curved-transfer-triangles").value=result.schema_version===2?result.request.max_triangles:'';
+    updateCurvedTransferCharts();
     curvedTransferResult=result;$("curved-transfer-save").disabled=false;
     $("curved-transfer-status").textContent='保存移送を再検証し、元選択と条件を復元しました。移送先の対象段階を図上表示して再計算してください。';
   } catch(error) {failure(error);} finally {event.target.value='';}
