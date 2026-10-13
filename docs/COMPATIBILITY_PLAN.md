@@ -1,5 +1,7 @@
 # 互換開発の作業分割 v0
 
+2026-10-13：[RF版5対照の独立参照03](CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を受入。六ケース/12全域gridの元場・三h・全mode・RF・相似を確認、22個別unitがPASS。新native精度はNOT_RUN、実worker/全費用/36行と保存GUIは04〜06、親N04と原32互換要件は継続。
+
 2026-10-13：[RF版5対照の固定入力02](CURVED_RF_GOAL_EFFICIENCY_INPUT.md)を受入。新12＋旧関連6の18個別unitがPASS、元全要求/公開選択/停止とN05計画は不変。次は03の全領域独立参照package、実36行の物理精度/全費用/保存GUIと親N04は未受入。
 
 2026-10-13：[RF版5対照仕様01](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)を受入。元branch/棄却event・表面方針と全費用、三形状二尺度の独立全場/RF条件を固定し、必須02〜06を追加した。選択移送/境界生成01〜06は受入済みだが、RF対照の実装/36実行/保存GUIは未完。親N04はIN_PROGRESSを維持する。

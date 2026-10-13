@@ -1,8 +1,6 @@
 # Superfish-NG
 
-[RF版5比較の固定入力検査](docs/CURVED_RF_GOAL_EFFICIENCY_INPUT.md)を実装した。全36要求・元Case/mesh/IDと厳密な改変拒否を18個別unitで確認。独立参照・実比較・保存GUIは後続03〜06、親N04と全計画は未完。
-
-[RF版5の一般形状対照仕様](docs/CURVED_RF_GOAL_EFFICIENCY_SPEC.md)を固定した。三形状・二尺度・三方式・二反復の36実行、全event費用と独立場/RFゲートを定めた段階で、実比較/親N04/全計画は未完。次は固定計画のstrict入力実装（ADD-N04-rf-goal-02）。
+[RF版5対照の独立全域参照](docs/CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を六ケース・両Gauss次数で確認した。球の解析場と長球/丸めの全五modeを保持し、22個別unitと全域積分・相似則がPASS。固定36要求の実worker/費用比較/保存GUIは後続04〜06、親N04と全計画は未完。
 
 軸対称RF空洞のための独立実装 FEM ソルバー（`0.1.0` research seed、Python 3.10+ / NumPy・SciPy）。
 canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これを基準に形状・メッシュ・RF量・

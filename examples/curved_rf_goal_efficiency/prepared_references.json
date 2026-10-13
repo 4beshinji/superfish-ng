@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "document_type": "curved_rf_goal_prepared_reference_bindings",
+  "status": "REFERENCE_INPUTS_PREPARED",
+  "bindings": {
+    "analytic_manifest": {
+      "path": "out/n06-cost-recording-20261007/analytic-reference-grids/manifest.json",
+      "sha256": "b7b0a6687542547772186de5d7cd3e2acfa2483519f2c6c812dbecec5f733599"
+    },
+    "rounded_manifest": {
+      "path": "out/n06-cost-recording-20261007/rounded-reference-grid/manifest.json",
+      "sha256": "d78b0dba44156c468b99a672b0cb39e74924dca5cb9b6c4d18c726d31c4de3a8"
+    },
+    "rounded_matrix": {
+      "path": "out/n03-native-surface-series-20261007/explicit-resource-matrices/N01-rounded-two-lobe/matrix.json",
+      "sha256": "ba9b5064cbb5a7bff3d27a50f7f3fa8a7fcc8ea1f296202b09d9d1847d9770fb"
+    },
+    "prolate_manifest": {
+      "path": "out/n04-rf-goal-reference-20261013/prolate-reference-cache/manifest.json",
+      "sha256": "a83866d17cb278fa036fb36507cc6b5d7f49ab1671a1b76a0d320351970e790a"
+    }
+  },
+  "scope": "Fixed prepared reference inputs; native accuracy and benchmark runs remain unverified.",
+  "historical_source_aliases": {
+    "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/cli.py": {
+      "path": "out/n04-rf-goal-reference-20261013/historical-sources/src/superfish_ng/cli.py",
+      "sha256": "c09f9d392694b4fda8155cb9d9c028959ff1b14c076a923f53d8a74ff8494308"
+    },
+    "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/curved_reference_partition.py": {
+      "path": "out/n04-rf-goal-reference-20261013/historical-sources/src/superfish_ng/curved_reference_partition.py",
+      "sha256": "2da4e39e35390407221f87901baeb9bfddb68a8c1a75f63de41192ff28ca37b9"
+    },
+    "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/curved_remesh_generation.py": {
+      "path": "out/n04-rf-goal-reference-20261013/historical-sources/src/superfish_ng/curved_remesh_generation.py",
+      "sha256": "f96637e52e6ae91f2dadc451bc922dbad7e9a088db1fb03f2e09bcb4cb70fa00"
+    },
+    "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/curved_selection_transfer.py": {
+      "path": "out/n04-rf-goal-reference-20261013/historical-sources/src/superfish_ng/curved_selection_transfer.py",
+      "sha256": "9cc0cc18787f1b0a59ba46642fa2be3b3b4374cdad44d512af979efe1430ef5c"
+    },
+    "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/gui.py": {
+      "path": "out/n04-rf-goal-reference-20261013/historical-sources/src/superfish_ng/gui.py",
+      "sha256": "c1a38e21bbba60cd43771c98f069e3a1204f4ff6711a3ae28c31be80faf92507"
+    },
+    "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/web/app.js": {
+      "path": "out/n04-rf-goal-reference-20261013/historical-sources/src/superfish_ng/web/app.js",
+      "sha256": "d2ae4539025d134f7aef30dcb3e976a46ee454df4af17020b2f4da7e08ea07f3"
+    },
+    "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/web/index.html": {
+      "path": "out/n04-rf-goal-reference-20261013/historical-sources/src/superfish_ng/web/index.html",
+      "sha256": "c5bcc61180382da23bb736a70f4cf00ad9bd1f96eb2fa1b7e4f2ccd4465d1b59"
+    },
+    "/home/sin/code/agent/reserch/superfish-ng/src/superfish_ng/web/style.css": {
+      "path": "out/n04-rf-goal-reference-20261013/historical-sources/src/superfish_ng/web/style.css",
+      "sha256": "cf19df244cd153087c28a7c054d242972a54200f1d03c4d73430b70fcc641279"
+    }
+  }
+}
