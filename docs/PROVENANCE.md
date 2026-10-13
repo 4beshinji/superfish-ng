@@ -1,3 +1,5 @@
+2026-10-13：[RF版5の全保存再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)。前工程の受入SHAに束縛された四journal/12nativeを元係数から再構築し、全24sample・5,007,024成分が一致。元実装449源のうちworkerだけを同一byte archiveへ明示aliasし、archiveを実行しない。新7＋直接1unitと6再hash反例を確認、型比較ERROR/費用guard先行FAILを保全。新FEM/外部取得/依存/legacy0、過去費用の再測定・物理精度・固定36実行の受入とは区別。rawは out/n04-rf-goal-replay-20261013/。
+
 2026-10-13：[RF版5の新規native実行接続](CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)。固定球三方式/長球rf_goalの開発12FEMは元solver・元公開分岐・03の全独立場を使用し、4process終了0。旧peak scalar名との結合FAILを先に保存して両端区間で修正し、閾値/旧科学kernelは不変。新/直接8個別unitと元例外/部分費用を確認。新取得/依存/legacy0、固定36行の受入へ数えない。rawは out/n04-rf-goal-worker-native-20261013/。
 
 2026-10-13：[RF版5の独立全域参照03](CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)。既存MIT cavsim2d固定79源・N03全場/係数、N06元packageを再結合。旧N06が要求する過去八sourceはcommit bacabc6の同一byteを別outへ保存し、明示aliasで参照する（実行/現行巻戻しなし）。全六ケース/12gridと22個別unitを受入、元1470源byte不変。新固有求解/外部取得/依存/legacy0。初回inventory/旧SHA停止を保全、rawは out/n04-rf-goal-reference-20261013/。native精度・実比較は後続。

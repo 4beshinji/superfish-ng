@@ -151,7 +151,11 @@ def _uniform_event(request, run, events, runs, *, origin):
     return event,current
 
 
-def _sample_event(request, reference, current, event, directory, previous_records, parent_event, initial_identity_passed, recorder):
+def _sample_event(request, reference, current, event, directory, previous_records, parent_event, initial_identity_passed, recorder, *, verify_samples=None):
+    if verify_samples is not None and (type(verify_samples) is not list or
+            len(verify_samples)!=len(reference['grids']) or
+            [r.get('order') for r in verify_samples]!=[g['order'] for g in reference['grids']]):
+        raise ValueError('saved RF samples require every original quadrature order')
     index=event['index'];mode=event['mode_index'];sampler=EfficiencyFieldSampler(current)
     records=[];reference_orders=[];changes=[];identity=[]
     for grid in reference['grids']:
@@ -182,11 +186,27 @@ def _sample_event(request, reference, current, event, directory, previous_record
                 change=assess_rf_goal_pair(a,b)
             changes.append(dict(order=order,accuracy=change))
         path=directory/f'samples-event-{index+1:03d}-gauss-{order}.npz'
-        with recorder.phase('full_native_sample_save'):
-            with path.open('xb') as stream:np.savez_compressed(stream,fields=sampled,mode_ids_json=np.array(json.dumps(event['current_mode_ids'])))
+        if verify_samples is None:
+            with recorder.phase('full_native_sample_save'):
+                with path.open('xb') as stream:np.savez_compressed(stream,fields=sampled,mode_ids_json=np.array(json.dumps(event['current_mode_ids'])))
+        else:
+            from .adaptive_efficiency_reference import _bound_file
+            saved=verify_samples[len(records)]
+            if str(path)!=saved['sample_path']:
+                raise ValueError('saved RF sample path differs from its original native event')
+            with recorder.phase('full_native_sample_verification'):
+                _bound_file(path,saved['sample_sha256'],{})
+                with np.load(path,allow_pickle=False) as data:
+                    if (set(data.files)!={'fields','mode_ids_json'} or data['fields'].dtype!=sampled.dtype or
+                            not np.array_equal(data['fields'],sampled) or data['mode_ids_json'].shape!=() or
+                            data['mode_ids_json'].dtype.kind!='U' or
+                            parse_json(str(data['mode_ids_json']))!=event['current_mode_ids']):
+                        raise ValueError('saved RF full fields or individual IDs differ from original native coefficients')
+                _bound_file(path,saved['sample_sha256'],{})
         records.append(dict(order=order,sample_path=str(path),sample_sha256=digest(path),volume_sample_count=n,
                             axis_sample_count=len(grid['axis_weights']),native_mode_count=sampled.shape[1],
                             reference_path=grid['reference_field_path'],reference_sha256=grid['reference_field_sha256']))
+    if verify_samples is not None:_same(records,verify_samples,'saved RF full sample records')
     if index==0:initial_identity_passed=all(row['passed'] for row in identity)
     observation=dict(index=index,source_domain_identity_status='PASS' if initial_identity_passed and mode is not None else 'UNVERIFIED',
                      reference_orders=reference_orders,parent_change=None if event['parent_event_index'] is None else
