@@ -1,3 +1,5 @@
+2026-10-14：[RF-10検証内再生](OWNED_REPLAY_COST.md)。既存合成曲線Hφ fixtureの実worker/元所有nativeを旧新で再生測定し、元全係数/f/全RF/ID/判断と独立エネルギー/Q/G/尺度を確認。内部一検証の完全再生済みreportだけを利用し、hashのみの信用/永続cache/schema変更は行わない。source/request/byte/親のguard、実装変更copyと中止prefixを別記。新外部資料/依存/旧資産参照なし。
+
 2026-10-14：[RF-07 HTTP/画面境界](GUI_COMMAND_BOUNDARIES.md)。元自作GUIの認証/制限/操作bodyと曲線変形要求/二次境界描画/状態bodyを抽出し、AST/元byteを照合した。既存合成Projectと実CLI/GUI保存場、独立Green/エネルギー/両R/Qを再利用。新外部資料・依存・旧資産参照なし。旧新実HTTP、実Chrome、最終wheelに検証byteを束縛し、元失敗記録と同値alias整理を区別。RF-10/全11枚の最終fullは後続。
 
 2026-10-13：[RF-01前後監査](VALIDATOR_SOURCE_AUDIT.md)。既存seminar runnerの前後照合を設計参考に、validateの元対象を前後で再列挙し追加/削除も検査する。一時fixtureの実子プロセスと数値stubで制御契約を検証し、物理full/seed受入へ数えない。元seed数値bodyとCLI登録を維持、製品FEM/RF source不変、新外部資料・依存・legacy参照なし。

@@ -150,4 +150,4 @@ RF-06	O02 V02	RF-03	リファクタ	DONE	../REFACTORING_PLAN.md#rf-06	CLIの登�
 RF-07	O02 V02	RF-04 RF-06	リファクタ	DONE	../REFACTORING_PLAN.md#rf-07	HTTP輸送と画面状態を業務操作から分離する
 RF-08	V02	RF-03	リファクタ/検証	DONE	../REFACTORING_PLAN.md#rf-08	fixture独立参照入力検査実FEM検査を分ける
 RF-09	V02		文書	DONE	../REFACTORING_PLAN.md#rf-09	現行アーキテクチャと物理入口の索引を更新する
-RF-10	V02	RF-04 RF-05 RF-08	測定/改善	PLANNED	../REFACTORING_PLAN.md#rf-10	履歴再生の費用を測り根拠がある箇所だけ改善する
+RF-10	V02	RF-04 RF-05 RF-08	測定/改善	DONE	../REFACTORING_PLAN.md#rf-10	履歴再生の費用を測り根拠がある箇所だけ改善する

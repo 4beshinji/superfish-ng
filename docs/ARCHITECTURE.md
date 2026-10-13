@@ -30,7 +30,8 @@ mainは解析/選択/元例外・終了codeを担当する。`gui.py` は管理�
 [tuning_decision.py](../src/superfish_ng/tuning_decision.py)は正規化済み要求/確認済み試行から
 元のbracket停止/次試行dictを返す。標準mathだけに依存し、物理検査/回復/予算停止/親は
 入口側に残す。[RF-05受入](TUNING_DECISION.md)を完了し、[RF-08](TEST_FIXTURE_BOUNDARIES.md)でHφ調整の共有fixtureを物理別tests/supportへ移した。
-独立参照はscriptに保持し、入力専用検査と実保存/全量比較を別に選べる。[RF-06 CLI境界](CLI_COMMAND_BOUNDARIES.md)を受入し、[RF-07 HTTP/画面境界](GUI_COMMAND_BOUNDARIES.md)も受入した。RF-10と最終統合は未受入。
+独立参照はscriptに保持し、入力専用検査と実保存/全量比較を別に選べる。[RF-06 CLI境界](CLI_COMMAND_BOUNDARIES.md)を受入し、[RF-07 HTTP/画面境界](GUI_COMMAND_BOUNDARIES.md)も受入した。[RF-10](OWNED_REPLAY_COST.md)は曲線worker完了検証一回の全再生済みreportをprefixに利用する。
+[curved_hphi_tuning_prefix_replay.py](../src/superfish_ng/curved_hphi_tuning_prefix_replay.py)がowned byte/request/親/実装を束縛し、終了/失敗/新readで破棄する。public reader/他adapterの全再生は保持。最終統合は未受入。
 Case・FEM・場・量・native readerは以下の物理別経路に分かれており、任意のCaseを
 canonical `solve` や `save_run` へ渡せる統一APIではない。
 

@@ -1,3 +1,5 @@
+2026-10-14 RF-10 **DONE**：[曲線Hφ再生費用と検証内再利用](OWNED_REPLAY_COST.md)。実1/2/4試行・未確認・実中止prefixを旧新60操作/cold・warm/plain・観測で測定。履歴4のprefixが71.4%を占め、検証内だけの全再生済みreport再利用でplain warm34.482→9.954秒、元場read14→4/行列196→56。追加実装hashによる読取量増/RSSほぼ同等を明記。新6＋worker5＋回復保存2の13個別unit/737.939秒/終了0/PASS、元9native/27mode全配列/全RF/ID/判断・独立尺度/実source変更拒否。候補四ファイルbyte反映、他1503源不変、全2698ID/530moduleの収集で旧2692維持。全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全RF11枚の個別受入を完了。最終全条件監査/固定source fullと全goalは継続。
+
 2026-10-14 RF-07 **DONE**：[HTTP/曲線変形画面の境界](GUI_COMMAND_BOUNDARIES.md)。HTTP認証/制限/応答と172操作表を分離し、一JS workflowの状態/DOM/要求を抽出。20個別unitを分割PASS、実Chrome21＋6＋既存9項目PASS、GUI/CLIの全係数/周波数一致と全RF/独立Green確認。最終wheel展開/17資産/172 strict操作/認証等13条件/未許可path5条件の旧新実HTTP一致。七ファイルbyte一致反映、他1497 source不変、同値alias整理/初回誤指定を保全。新依存/科学核/schema変更なし。全152は101 DONE/3 IN_PROGRESS/48 PLANNED、RF残1枚と最終統合/全goalは継続。
 
 2026-10-14 RF-06 **DONE**：[CLI登録と実行の境界](CLI_COMMAND_BOUNDARIES.md)。曲線Hφ三コマンドを明示登録/実行へ分割し、他170操作/元例外境界と全173 parser/help/順序を維持。直接13 unit/35.770秒/終了0/PASS、13旧新stdout/stderr/code/旧native/実上書き拒否比較。二ファイルbyte一致反映、他1499 source不変。数値核/schema/依存/公開entry point不変、追加full/seed0。全152は100 DONE/3 IN_PROGRESS/49 PLANNED、RF残2枚/最終統合/全goalは継続。

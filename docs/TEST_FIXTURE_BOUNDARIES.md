@@ -19,7 +19,7 @@
 生成関数のsignature/default/bodyは改名以外AST一致、21 moduleの全元関数/TestCase bodyは
 完全一致。26組の旧新要求/形状canonical byteも一致した。元の期待値、拒否条件、形式、
 状態/場/ID/RFの検査と2689個別test IDを全て維持し、新しい入力専用3 IDを追加した。
-現在のrunner収集は2692 ID/529 module。テスト削除や重複FEM実行の削減は行っていない。
+RF-08受入時のrunner収集は2692 ID/529 module。現行は[RF-10](OWNED_REPLAY_COST.md)のguard6 IDを追加し2698 ID/530 module、旧IDを保持する。テスト削除や重複FEM実行の削減は行っていない。
 
 検証の選択を次のように分ける。環境は既存uv runner/Python3.12、BLAS thread1。
 

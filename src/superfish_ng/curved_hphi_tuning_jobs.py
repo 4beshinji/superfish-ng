@@ -139,7 +139,16 @@ def _validate_checkpoint_files(directory, result, expected_files, start_index):
 
 def verify_curved_hphi_tune_job(directory, state, manifest):
     """Replay an Hphi worker and verify its state, ancestry, budget, and files."""
-    return _worker.verify_tuning_worker(directory, state, manifest, contract=_contract(), validate_owned_submission=_owned_input, read_result=read_curved_hphi_tune, snapshot_trial=_snapshot_trial, validate_checkpoints=_verify_checkpoint_files)
+    from .curved_hphi_tuning_prefix_replay import _VerifiedCurvedTuningPrefixes
+    with _VerifiedCurvedTuningPrefixes(directory, RESULT) as prefixes:
+        def validate_prefixes(directory, result, expected_files, offset):
+            return _worker.validate_checkpoint_prefixes(
+                directory, result, expected_files, start_index=offset,
+                replay_checkpoint=prefixes.replay_prefix, policy=_checkpoint_policy())
+        return _worker.verify_tuning_worker(
+            directory, state, manifest, contract=_contract(),
+            validate_owned_submission=_owned_input, read_result=prefixes.read_result,
+            snapshot_trial=_snapshot_trial, validate_checkpoints=validate_prefixes)
 
 
 def start_curved_hphi_tune(manager, request, *, max_new_trials=None, checkpoint=None):
