@@ -80,6 +80,18 @@ def quantities(case, solution, mode=0):
     order = getattr(solution, 'element_order', 1)
     if order not in (1, 2):
         raise ValueError('unsupported element order for RF integrals')
+    from .affine_solution_contract import verify_affine_solution
+    verify_affine_solution(case,solution)
+    return _affine_quantities(case,solution,mode)
+
+
+def _affine_quantities(case, solution, mode=0):
+    """Integrate straight trial fields; caller establishes their solve contract.
+
+    Manufactured fields may exercise this mathematical kernel directly. Public
+    eigenmode RF evaluation uses quantities and verifies the bound solve first.
+    """
+    order=getattr(solution,'element_order',1)
     mesh, u = solution.mesh, solution.u[:, mode]
     omega = float(TAU*solution.frequencies_hz[mode])
     h2_volume = TAU*float(u @ (solution.mass @ u))

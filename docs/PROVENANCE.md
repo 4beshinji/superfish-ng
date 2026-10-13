@@ -1,3 +1,5 @@
+2026-10-13：[RF-11求解契約](AFFINE_SOLUTION_CONTRACT.md)。改修前の自作solver/RF/保存/reader四sourceをSHA固定して別名実行し、レビューの入力差替えを再現。制限された旧SUPERFISH sourceではない。元メッシュ交換・FEM組立・鏡映法則を再利用し、規格化/物理許容差とRF積分ASTを維持。旧2正常nativeと5不整合を別判定、seed source前後不変とmetadata後の元場再構築を記録。新外部資料・依存・legacy参照なし。
+
 2026-10-13：[RF版5の予算停止と追加求解ゼロの再開](CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)。既存4T参照細分guardと既存計測/元全保存再検証を再利用。検証時の低上限と追跡制御例外の注入を明示し、固定36/実資源上限の受入には数えない。新3FEMの元全配列/RF一致とUe/Uhを確認、原1484中他1481源byte不変、元FAIL/fixture ERRORを保全。新外部資料・依存・legacy参照なし。
 
 2026-10-13：[RF版5のC-call観測/部分保存/資源停止](CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元随伴sourceは最終byte不変。初稿helperの変更は独立参照のSHA検査でFEM前に拒否され、その失敗と源を保全して実alias/C-callの外部観測へ切替えた。初稿の数値bodyもhelper展開ASTで元式一致を確認。長球元branchのC実計測、実SIGINT/wall/RSSによる部分保存と再開を限定受入。7worker＋5unitの新FEMを別計上、観測負荷の大きい初稿の費用を最終版の性能値としない。新取得/依存/legacy0。rawは out/n04-rf-goal-cost-failures-20261013/。

@@ -2,7 +2,7 @@
 
 作成：2026-09-22。更新：2026-10-13。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**計画の組込みまで完了し、実装修正は全件未着手。**
+（基準`4665561`）のS01〜S06を対応させる。**RF-11を受入済み。RF-01〜RF-10は未着手で、計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
@@ -82,7 +82,7 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 
 | カード | 対応所見 | 先行条件 | 変更単位の目安 | 状態 |
 | --- | --- | --- | --- | --- |
-| RF-11 入力・解の対応 | S01/S03 | なし | 求解契約と後処理条件を分離し、RF/保存/読込へ接続 | PLANNED |
+| RF-11 入力・解の対応 | S01/S03 | なし | 求解契約と後処理条件を分離し、RF/保存/読込へ接続 | DONE |
 | RF-01 検証来歴 | F01/S02 | RF-11 | validatorの来歴とその失敗検査 | PLANNED |
 | RF-02 環境/任意依存 | F02/F08 | RF-01 | core/GUI条件、導入手順、環境証拠 | PLANNED |
 | RF-03 下位共通処理 | F03 | RF-01/02 | 入力、JSON、来歴を別々に抽出 | PLANNED |
@@ -104,6 +104,8 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 <a id="rf-11"></a>
 
 ### RF-11：求解契約と後処理条件を分け、入力と実解の対応を検証する
+
+2026-10-13 **DONE**：[受入と保存版の扱い](AFFINE_SOLUTION_CONTRACT.md)。67個別unit・seed前後監査とf/全RF比較を記録。新runtime契約だけを追加し、結果schema 1/完了protocol 1は維持する。
 
 親課題：O01/V02。対象：`solver.py:Solution/_solve`、`rf.py:quantities`、
 `io.py:save_run`、`saved.py:read_solution`、`symmetry.py:reflect_solution`と直接消費者。

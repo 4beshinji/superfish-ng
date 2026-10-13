@@ -24,6 +24,7 @@ class Solution:
     mesh_input: dict | None = None
     element_order: int = 1
     space: object | None = None
+    solve_contract: object | None = None
 
 
 def solve(case, *, mesh_data=None):
@@ -99,4 +100,6 @@ def _solve(case, *, mesh_data=None, element_order=1):
         from .mesh_input import mesh_to_dict
         result.mesh_input = mesh_to_dict(mesh)
         result.construction = 'direct eigensolve on validated external tagged mesh; mode indices within specified boundary conditions'
+    from .affine_solution_contract import bind_affine_solution
+    bind_affine_solution(case,result,origin='generated' if mesh_data is None else 'external')
     return result

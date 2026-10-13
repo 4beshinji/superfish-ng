@@ -16,8 +16,9 @@
 4. V02/V03/V05の追加先行条件でこの工程を確認する。S03/S04の量別・限定保証と、
    S05の実測/不確かさ不足は従来の検証/L06/L07から省かない。
 
-計画変更だけを受入し、RF全11枚の実装は未着手。文書のリンク・依存・差分を確認し、
-FEM/unittest/seed/full/GUIは実行しない。従来の完了prefix・失敗・未確認の証拠を保持する。
+RF-11を[求解契約の受入](../AFFINE_SOLUTION_CONTRACT.md)で完了した。
+次はRF-01のvalidator前後監査、続いてRF-09→RF-02→RF-03。
+RF残10枚はPLANNED、既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
 

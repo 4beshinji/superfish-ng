@@ -140,7 +140,7 @@ ADD-N04-rf-goal-03	N04	ADD-N04-rf-goal-02	参照	DONE	../CURVED_RF_GOAL_EFFICIEN
 ADD-N04-rf-goal-04	N04	ADD-N04-rf-goal-03	実装/保存	IN_PROGRESS	../CURVED_RF_GOAL_EFFICIENCY_WORKER.md	版5branchと全event費用の実workerと完全再生を接続する
 ADD-N04-rf-goal-05	N04	ADD-N04-rf-goal-04 RF-11 RF-01	検証	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	固定36実行の独立精度と全費用と未達を記録する
 ADD-N04-rf-goal-06	N04	ADD-N04-rf-goal-05	操作/監査	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	全保存場と版5GUIと親N04の全原条件を監査する
-RF-11	O01 V02		修正	PLANNED	../REFACTORING_PLAN.md#rf-11	求解契約と後処理条件を分け入力と実解の対応を検証する
+RF-11	O01 V02		修正	DONE	../REFACTORING_PLAN.md#rf-11	求解契約と後処理条件を分け入力と実解の対応を検証する
 RF-01	V02	RF-11	修正/検証	PLANNED	../REFACTORING_PLAN.md#rf-01	総合validatorのソース固定を検査する
 RF-02	O01 V02	RF-01	環境/検証	PLANNED	../REFACTORING_PLAN.md#rf-02	coreとGUIの検証環境を明示する
 RF-03	O01 O02 V02	RF-01 RF-02	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-03	入力検査JSON来歴を下位へ抽出する

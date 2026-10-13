@@ -99,6 +99,7 @@ def read_solution(directory, *, allow_quadratic=True):
         raise ValueError("invalid saved field dimensions, topology, or frequencies")
     mesh = SimpleNamespace(points=p, triangles=t)
     element_geometry(mesh)
+    mesh_data=None
     if 'input_sha256' in results['mesh']:
         from .mesh_input import mesh_digest, mesh_from_dict
         from .project import parse_json
@@ -158,6 +159,15 @@ def read_solution(directory, *, allow_quadratic=True):
         if len(space.dof_points) != declaration['dofs']:
             raise ValueError('saved quadratic DOF count differs')
         axis_points, field_axis = space.dof_points, space.axis_dofs
+    from .affine_solution_contract import verify_affine_saved_domain,verify_affine_energy
+    origin=verify_affine_saved_domain(case,mesh,results)
+    if space is None:
+        from .fem import assemble
+        stiffness,mass=assemble(mesh)
+    else:
+        from .high_order import assemble_p2
+        stiffness,mass=assemble_p2(space)
+    verify_affine_energy(case,u,f,stiffness,mass)
     for i, q in enumerate(results["modes"]):
         axis_csv = np.loadtxt(
             directory / f"axis_{i + 1:03d}.csv", delimiter=",", skiprows=1
@@ -173,7 +183,7 @@ def read_solution(directory, *, allow_quadratic=True):
             raise ValueError("saved axis CSV, modes, and fields disagree")
     return SimpleNamespace(
         case=case, results=results, mesh=mesh, u=u, frequencies_hz=f, arrays=arrays,
-        element_order=order, space=space
+        element_order=order, space=space,stiffness=stiffness,mass=mass,mesh_origin=origin,source_mesh_data=mesh_data
     )
 
 

@@ -92,13 +92,15 @@ class PhysicsTests(unittest.TestCase):
         self.assertEqual(q['frequency_hz'], self.q['frequency_hz'])
 
     def test_voltage_cancellation_returns_null_peak_ratios(self):
-        from superfish_ng.solver import Solution
+        from superfish_ng.rf import _affine_quantities
         c = Case(((0., .1), (.2, .1)), nr=4, nz=4, modes=1)
         s = solve(c)
         # Exact constant-axis trial field and phase 2*pi across length.
         s.u[:, 0] = 1.
         s.frequencies_hz[0] = C0/.2
-        q = quantities(c, s)
+        # This deliberately is not the normalized eigenmode produced by solve.
+        # Exercise its trial-field integral, rather than the public solve API.
+        q = _affine_quantities(c, s)
         self.assertLess(q['transit_time_factor_abs'], 1e-14)
         self.assertIsNone(q['epk_over_eacc_estimate'])
 

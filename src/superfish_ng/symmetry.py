@@ -7,6 +7,29 @@ from .mesh import Mesh, element_geometry
 from .solver import Solution
 
 
+def reflected_case(case):
+    """Derive the full declaration from the explicit half-domain symmetry."""
+    sides=[side for side in ('z_min','z_max') if getattr(case,side)!='pec']
+    if len(sides)!=1:raise ValueError('reflection requires exactly one symmetry end and one PEC end')
+    side=sides[0];acceleration=case.reflected_acceleration_parameters(side)
+    if side=='z_min':
+        profile=tuple((case.length-z,r) for z,r in reversed(case.profile))
+        profile+=tuple((case.length+z,r) for z,r in case.profile[1:])
+        count=len(case.profile)
+        arcs=tuple((count-i,radius,direction) for i,radius,direction in case.arcs)
+        arcs+=tuple((count-1+i,radius,direction) for i,radius,direction in case.arcs)
+    else:
+        profile=case.profile+tuple((2*case.length-z,r) for z,r in reversed(case.profile[:-1]))
+        arcs=case.arcs+tuple((2*len(case.profile)-1-i,radius,direction) for i,radius,direction in case.arcs)
+    contour=case.contour.reflected() if case.contour is not None else None
+    curved=case.curved_contour.reflected() if case.curved_contour is not None else None
+    if curved is not None:contour=None
+    from .curve_partitions import reflected_segments_per_curve
+    return replace(case,profile=profile,arcs=arcs,contour=contour,z_min='pec',z_max='pec',nz=2*case.nz,
+                   curve_segments_per_curve=reflected_segments_per_curve(case),curved_contour=curved,
+                   normalization_j=2*case.normalization_j,name=case.name+' [reflected full cavity]',**acceleration)
+
+
 def reflect_solution(case, solution):
     """Return the mirrored full cavity and its parity-filtered FEM fields.
 
@@ -24,11 +47,12 @@ def reflect_solution(case, solution):
         return reflect_curved_solution(case, solution)
     if order not in (1, 2):
         raise ValueError('unsupported element order for reflection')
+    from .affine_solution_contract import verify_affine_solution,bind_affine_solution
+    verify_affine_solution(case,solution)
     sides = [side for side in ('z_min', 'z_max') if getattr(case, side) != 'pec']
     if len(sides) != 1:
         raise ValueError('reflection requires exactly one symmetry end and one PEC end')
     side = sides[0]
-    acceleration = case.reflected_acceleration_parameters(side)
     tag = getattr(case, side)
     parity = 1 if tag == 'electric_symmetry' else -1
     mesh = solution.mesh
@@ -44,14 +68,6 @@ def reflect_solution(case, solution):
     if side == 'z_min':
         original[:, 1] += case.length
         mirrored[:, 1] += case.length
-        profile = tuple((case.length-z, r) for z, r in reversed(case.profile))
-        profile += tuple((case.length+z, r) for z, r in case.profile[1:])
-        count = len(case.profile)
-        arcs = tuple((count-i, radius, direction) for i, radius, direction in case.arcs)
-        arcs += tuple((count-1+i, radius, direction) for i, radius, direction in case.arcs)
-    else:
-        profile = case.profile + tuple((2*case.length-z, r) for z, r in reversed(case.profile[:-1]))
-        arcs = case.arcs+tuple((2*len(case.profile)-1-i, radius, direction) for i, radius, direction in case.arcs)
     mapping = np.arange(len(original))
     mapping[~on_plane] = np.arange(len(original), len(original)+np.count_nonzero(~on_plane))
     points = np.vstack((original, mirrored[~on_plane]))
@@ -87,14 +103,7 @@ def reflect_solution(case, solution):
     orthogonality = float(np.max(np.abs(gram/np.outer(norms, norms)-np.eye(case.modes))))
     # Reflection reverses orientation, as does traversing the mirrored wall in
     # increasing z; together they preserve each minor arc's cw/ccw direction.
-    contour = case.contour.reflected() if case.contour is not None else None
-    curved = case.curved_contour.reflected() if case.curved_contour is not None else None
-    if curved is not None:
-        contour = None  # Derive the full polygon from retained full analytic curves.
-    from .curve_partitions import reflected_segments_per_curve
-    full = replace(case, profile=profile, arcs=arcs, contour=contour, z_min='pec', z_max='pec', nz=2*case.nz,
-                   curve_segments_per_curve=reflected_segments_per_curve(case),
-                   curved_contour=curved,normalization_j=2*case.normalization_j, name=case.name+' [reflected full cavity]', **acceleration)
+    full = reflected_case(case)
     result = Solution(reflected, k, m, solution.eigenvalues.copy(), solution.frequencies_hz.copy(),
                       u, residuals, orthogonality,
                       f'{tag} reflection at {side}; parity-filtered spectrum, indices are NOT full-spectrum ranks',
@@ -102,4 +111,5 @@ def reflect_solution(case, solution):
     if solution.mesh_input is not None:
         from .mesh_input import mesh_to_dict
         result.mesh_input = mesh_to_dict(reflected)
+    bind_affine_solution(full,result,origin='reflection')
     return full, result
