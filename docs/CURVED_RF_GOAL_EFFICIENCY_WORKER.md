@@ -5,7 +5,8 @@
 新`curved_rf_goal_efficiency_metrics.py`は純粋な数値/記録集約で、FEMを実行しない。
 [新規native実行](CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)も接続し、12新FEMの公開分岐/全場を確認した。
 [全比較journalの保存再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)は12event/全24sampleと6改変拒否を確認した。
-専用CLI、別uniform continuationの実証、全観測/実中止再開は未完であり、
+[実SIGINT/二段階再開と比較用uniform continuation](CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も限定受入。
+専用CLI、全観測/manifest、資源停止/部分書込は未完であり、
 04の完了条件は保留する。
 36実行05・GUI/全条件06・親N04と全goalは継続。
 

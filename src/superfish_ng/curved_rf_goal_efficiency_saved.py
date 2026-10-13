@@ -131,7 +131,7 @@ def _verify_costs(document):
     return 'STRUCTURE_VERIFIED_NOT_REMEASURED'
 
 
-def _implementation_sources(sources, aliases=None):
+def _implementation_sources(sources, aliases=None, archives=None):
     if type(sources) is not dict or not sources:
         raise ValueError('RF journal requires its declared original implementation SHA256 map')
     required={'solver.py','curved_solution.py','curved_rf.py','curved_rf_adaptive_refinement.py',
@@ -141,13 +141,20 @@ def _implementation_sources(sources, aliases=None):
     aliases={} if aliases is None else aliases
     if type(aliases) is not dict or not set(aliases)<=set(sources):
         raise ValueError('implementation aliases must name only declared original sources')
-    root=Path(__file__).parent;bound={}
+    root=Path(__file__).parent;bound={};archives={} if archives is None else archives
+    if type(archives) is not dict:raise ValueError('implementation archives require a SHA256-to-absolute-path mapping')
+    for sha,path in archives.items():
+        if (type(sha) is not str or len(sha)!=64 or any(c not in '0123456789abcdef' for c in sha) or
+                type(path) is not str or not Path(path).is_absolute()):
+            raise ValueError('implementation archives require exact SHA256 keys and absolute paths')
+        _bound_file(path,sha,bound)
     for name,sha in sources.items():
         if (type(name) is not str or not name or PurePosixPath(name).is_absolute() or '..' in PurePosixPath(name).parts or
                 PurePosixPath(name).as_posix()!=name or '\\' in name):
             raise ValueError('implementation source requires an original package-relative path')
         path=root/name
-        if name in aliases:
+        if sha in archives:path=Path(archives[sha])
+        elif name in aliases:
             if type(aliases[name]) is not str or not Path(aliases[name]).is_absolute():
                 raise ValueError('implementation alias requires an explicit absolute archive path')
             path=Path(aliases[name])
@@ -156,20 +163,26 @@ def _implementation_sources(sources, aliases=None):
 
 
 def _preflight(document):
-    keys(document,_REQUIRED+('observed_cost','observed_bindings','stop_reason'),_REQUIRED,'RF goal worker journal')
+    if type(document) is not dict:raise ValueError('RF goal worker journal requires a JSON object')
+    resumed=type(document.get('schema_version')) is int and document['schema_version']==2
+    required=_REQUIRED+('resume_origin',) if resumed else _REQUIRED
+    keys(document,required+('observed_cost','observed_bindings','stop_reason'),required,'RF goal worker journal')
     try:_canonical(document)
     except (TypeError,ValueError,RecursionError,OverflowError) as error:
         raise ValueError('RF journal must contain finite JSON values') from error
-    if (type(document['schema_version']) is not int or document['schema_version']!=1 or
+    from .curved_rf_goal_efficiency_resume import RESUME_SCOPE,_origin_metadata
+    if (type(document['schema_version']) is not int or document['schema_version'] not in (1,2) or
             document['document_type']!='curved_rf_goal_efficiency_worker_checkpoint' or document['physical_error_bound'] is not None or
-            document['scope']!=_SCOPE):raise ValueError('RF replay requires the original complete version-one worker journal')
+            document['scope']!=(RESUME_SCOPE if resumed else _SCOPE)):raise ValueError('RF replay requires the complete original worker journal schema and scope')
     request=request_for_curved_rf_goal_efficiency_execution(document['execution'])
     _same_saved(document['request'],request,'saved RF original request')
     names=('events','level_runs','native_sources','event_records','observations')
     if any(type(document[k]) is not list for k in names):raise ValueError('RF journal requires every original event list')
     n=len(document['events']);limit=document['development_event_limit']
     if limit is not None:integer(limit,'development_event_limit')
-    if not 1<=n<=request['max_levels'] or any(len(document[k])!=n for k in names) or (limit is not None and n>limit):
+    if resumed:_origin_metadata(document['resume_origin'],n)
+    total_limit=None if limit is None else limit+(document['resume_origin']['event_count'] if resumed else 0)
+    if not 1<=n<=request['max_levels'] or any(len(document[k])!=n for k in names) or (total_limit is not None and n>total_limit):
         raise ValueError('RF journal omitted events or exceeds the original event/development budget')
     for key in ('native_solves_attempted','native_solves_completed'):
         if type(document[key]) is not int or document[key]!=n:raise ValueError('completed RF prefix must retain every attempted/completed solve')
@@ -214,12 +227,12 @@ def _preflight(document):
     if 'observed_bindings' in document:
         expected=[dict(module=m.__name__,attribute=a,phase=p) for m,a,p in observation_bindings()]
         _same_saved(document['observed_bindings'],expected,'RF original observation boundaries')
-    if 'observed_cost' in document and document['status']=='PAUSED' and (limit is None or n!=min(limit,request['max_levels'])):
+    if 'observed_cost' in document and document['status']=='PAUSED' and (total_limit is None or n!=min(total_limit,request['max_levels'])):
         raise ValueError('completed PAUSED worker must retain its actual development event limit')
     return request,bound
 
 
-def replay_curved_rf_goal_efficiency(document, *, bindings=None, implementation_aliases=None):
+def replay_curved_rf_goal_efficiency(document, *, bindings=None, implementation_aliases=None, implementation_archives=None):
     """Recompute all native events, original mode fields and nine scalar gates.
 
     Exact original implementation bytes may be provided at explicit archive
@@ -227,8 +240,14 @@ def replay_curved_rf_goal_efficiency(document, *, bindings=None, implementation_
     needs the caller's original journal SHA; this API checks its arithmetic.
     """
     document=deepcopy(document);implementation=_implementation_hashes()
-    request,bound=_preflight(document);cost_status=_verify_costs(document)
-    bound.update(_implementation_sources(document['implementation_sha256'],implementation_aliases))
+    request,bound=_preflight(document)
+    cost_document=document
+    if document['schema_version']==2:
+        from .curved_rf_goal_efficiency_resume import verify_resume_origin
+        bound.update(verify_resume_origin(document,bindings=bindings,implementation_archives=implementation_archives))
+        cost_document=dict(document,event_records=document['event_records'][document['resume_origin']['event_count']:])
+    cost_status=_verify_costs(cost_document)
+    bound.update(_implementation_sources(document['implementation_sha256'],implementation_aliases,implementation_archives))
     reference=load_curved_rf_goal_efficiency_reference(document['execution']['case_id'],bindings=bindings)
     _same_saved(document['reference_bound_inputs'],reference['bound_inputs'],'RF original independent reference bindings')
     bound.update(reference['bound_inputs']);case=Case.from_dict(request['case']);uniform=document['execution']['method']=='uniform'
@@ -296,11 +315,12 @@ def replay_curved_rf_goal_efficiency(document, *, bindings=None, implementation_
                 scope='every declared source/native/sample byte, complete native events and all independent full-grid fields/metrics reconstructed; original elapsed costs retained, not remeasured; process/failure bundle and resume acceptance remain separate')
 
 
-def read_curved_rf_goal_efficiency(path, *, expected_sha256, bindings=None, implementation_aliases=None):
+def read_curved_rf_goal_efficiency(path, *, expected_sha256, bindings=None, implementation_aliases=None, implementation_archives=None):
     """Bind the original raw journal bytes, including duplicate-key rejection."""
     bound={};path=_bound_file(path,expected_sha256,bound)
     document=parse_json(path.read_text(encoding='utf-8'));_bound_file(path,expected_sha256,{})
-    result=replay_curved_rf_goal_efficiency(document,bindings=bindings,implementation_aliases=implementation_aliases)
+    result=replay_curved_rf_goal_efficiency(document,bindings=bindings,implementation_aliases=implementation_aliases,
+                                          implementation_archives=implementation_archives)
     _bound_file(path,expected_sha256,{})
     result['bound_inputs'].update(bound)
     return result

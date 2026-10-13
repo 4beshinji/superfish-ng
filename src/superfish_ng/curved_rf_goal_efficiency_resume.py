@@ -1,0 +1,113 @@
+# SPDX-License-Identifier: Apache-2.0
+"""Verified RF-goal continuation in a new directory, retaining all prior costs."""
+from copy import deepcopy
+import math
+from pathlib import Path
+import time
+
+from .adaptive_efficiency_reference import _bound_file
+from .adaptive_efficiency_timing import PhaseRecorder
+from .config import integer, keys
+from .curved_rf_goal_efficiency_saved import read_curved_rf_goal_efficiency, _same_saved
+from .curved_rf_goal_efficiency_worker import _execute_worker_events
+from .curved_rf_goal_efficiency_reference import load_curved_rf_goal_efficiency_reference
+from .jobs import _implementation_hashes
+from .project import parse_json
+
+
+RESUME_SCOPE='resumed fixed RF-goal branch; immutable original prefix and separate measured continuation segment'
+ORIGIN_FIELDS=('journal_path','journal_sha256','event_count','implementation_aliases','interruption_files')
+
+
+def _origin_metadata(origin, total_events):
+    keys(origin,ORIGIN_FIELDS+('implementation_archives',),ORIGIN_FIELDS,'RF resume origin')
+    integer(origin['event_count'],'resume original event_count')
+    if origin['event_count']>=total_events:raise ValueError('RF resumed journal must add events after its original prefix')
+    if type(origin['implementation_aliases']) is not dict or type(origin['interruption_files']) is not dict:
+        raise ValueError('RF resume origin requires explicit source aliases and interruption file bindings')
+    if type(origin.get('implementation_archives',{})) is not dict:
+        raise ValueError('RF resume source archives require a SHA256-to-path mapping')
+    if any(type(p) is not str or not Path(p).is_absolute() for p in origin['interruption_files']):
+        raise ValueError('RF interruption file bindings require absolute path strings')
+
+
+def _verify_interruption(parent, origin, bound):
+    files=origin['interruption_files']
+    if 'observed_cost' in parent:
+        if files:raise ValueError('completed development pause must not invent interruption files')
+        return
+    if len(files)!=2 or {Path(p).name for p in files}!={'failure.json','process.json'}:
+        raise ValueError('interrupted RF checkpoint requires original failure.json and terminal process.json bindings')
+    parsed={}
+    for path,sha in files.items():
+        path=_bound_file(path,sha,bound);parsed[path.name]=parse_json(path.read_text())
+        if path.name=='failure.json' and path.parent!=Path(origin['journal_path']).parent:
+            raise ValueError('RF interruption must retain the original worker failure directory')
+    failure=parsed['failure.json'];process=parsed['process.json'];n=origin['event_count']
+    if (failure.get('status')!='FAILED' or failure.get('error_type')!='KeyboardInterrupt' or
+            failure.get('preceding_level_runs')!=parent['level_runs'] or
+            type(failure.get('native_solves_attempted')) is not int or
+            type(failure.get('native_solves_completed')) is not int or
+            not n<=failure['native_solves_completed']<=failure['native_solves_attempted']<=n+1 or
+            type(failure.get('observed_cost')) is not dict):
+        raise ValueError('RF interrupted prefix requires its actual KeyboardInterrupt, attempted/completed counts and partial costs')
+    if (process.get('document_type')!='adaptive_efficiency_process_cost' or process.get('status')!='PROCESS_FAILED' or
+            type(process.get('exit_code')) is not int or process['exit_code']==0):
+        raise ValueError('RF interrupted prefix requires its measured terminal failed process')
+
+
+def verify_resume_origin(document, *, bindings=None, implementation_archives=None):
+    """Reconstruct the original journal and require byte-for-byte prefix values."""
+    origin=document['resume_origin'];_origin_metadata(origin,len(document['events']));bound={}
+    path=_bound_file(origin['journal_path'],origin['journal_sha256'],bound)
+    raw=parse_json(path.read_text())
+    if type(raw.get('events')) is not list or len(raw['events'])!=origin['event_count']:
+        raise ValueError('RF resume origin changed its original prefix length')
+    archives=deepcopy(origin.get('implementation_archives',{}))
+    if implementation_archives is not None:
+        if type(implementation_archives) is not dict:raise ValueError('RF implementation archives require a mapping')
+        archives.update(implementation_archives)
+    result=read_curved_rf_goal_efficiency(path,expected_sha256=origin['journal_sha256'],bindings=bindings,
+                                        implementation_aliases=origin['implementation_aliases'],implementation_archives=archives)
+    parent=result['document'];bound.update(result['bound_inputs'])
+    if parent['status']!='PAUSED':raise ValueError('only an independently verified PAUSED benchmark prefix can continue')
+    for name in ('execution','request','reference_bound_inputs'):_same_saved(document[name],parent[name],'RF resume original '+name)
+    for name in ('events','level_runs','native_sources','event_records','observations'):
+        _same_saved(document[name][:origin['event_count']],parent[name],'RF immutable original '+name)
+    _verify_interruption(parent,origin,bound)
+    return bound
+
+
+def resume_curved_rf_goal_efficiency_worker(path, directory, *, expected_sha256, bindings=None,
+                                          implementation_aliases=None, implementation_archives=None, interruption_files=None,
+                                          max_new_events=None, submission_origin=None):
+    """Continue a verified pause or a measured KeyboardInterrupt; never overwrite.
+
+    Historical costs stay in the original bound journal. New prefixes measure
+    only this invocation, including the full original journal verification.
+    """
+    if max_new_events is not None:integer(max_new_events,'max_new_events')
+    if submission_origin is not None and (type(submission_origin) not in (int,float) or not math.isfinite(submission_origin) or
+                                         not 0<submission_origin<=time.perf_counter()):
+        raise ValueError('submission_origin requires a finite past shared monotonic timestamp')
+    directory=Path(directory).absolute()
+    if directory.exists():raise FileExistsError(directory)
+    if any(p.is_symlink() for p in (directory,*directory.parents)):
+        raise ValueError('RF resume output requires a new directory without symlinks')
+    recorder=PhaseRecorder();implementation=_implementation_hashes()
+    with recorder.phase('original_prefix_full_replay'):
+        verified=read_curved_rf_goal_efficiency(path,expected_sha256=expected_sha256,bindings=bindings,
+                                               implementation_aliases=implementation_aliases,implementation_archives=implementation_archives)
+    parent=verified['document'];n=len(parent['events']);bound=verified['bound_inputs']
+    if parent['status']!='PAUSED' or n>=parent['request']['max_levels']:
+        raise ValueError('RF continuation requires a PAUSED benchmark prefix within its original event budget')
+    origin=dict(journal_path=str(Path(path).absolute()),journal_sha256=expected_sha256,event_count=n,
+                implementation_aliases=deepcopy(implementation_aliases or {}),implementation_archives=deepcopy(implementation_archives or {}),
+                interruption_files=deepcopy(interruption_files or {}))
+    _origin_metadata(origin,n+1);_verify_interruption(parent,origin,bound)
+    with recorder.phase('reference_verification'):
+        reference=load_curved_rf_goal_efficiency_reference(parent['execution']['case_id'],bindings=bindings)
+    _same_saved(reference['bound_inputs'],parent['reference_bound_inputs'],'RF resumed original independent reference')
+    return _execute_worker_events(parent['execution'],parent['request'],directory,reference,recorder,implementation,
+                                  max_new_events=max_new_events,submission_origin=submission_origin,prefix=parent,
+                                  resume_origin=origin,retained_inputs=bound)

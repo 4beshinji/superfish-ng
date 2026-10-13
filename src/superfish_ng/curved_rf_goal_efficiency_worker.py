@@ -261,18 +261,36 @@ def execute_curved_rf_goal_efficiency_worker(execution, directory, *, bindings=N
         raise ValueError('RF goal output requires a new directory without symlinks')
     recorder=PhaseRecorder();implementation=_implementation_hashes();case=Case.from_dict(request['case'])
     with recorder.phase('reference_verification'):reference=load_curved_rf_goal_efficiency_reference(execution['case_id'],bindings=bindings)
+    return _execute_worker_events(execution,request,directory,reference,recorder,implementation,
+                                  max_new_events=max_new_events,submission_origin=submission_origin)
+
+
+def _execute_worker_events(execution, request, directory, reference, recorder, implementation, *,
+                           max_new_events=None, submission_origin=None, prefix=None, resume_origin=None, retained_inputs=None):
+    """Shared numerical loop; callers must fully validate any original prefix."""
+    case=Case.from_dict(request['case'])
     selected=observation_bindings();directory.mkdir(parents=True,exist_ok=False)
     events=[];runs=[];observations=[];samples=[];records=[];sources=[];public=None;native_runs=[]
     status='PAUSED';initial_identity=False;solves_attempted=0;solves_completed=0;index=0;report=None
     is_uniform=execution['method']=='uniform';cache=None if is_uniform else native._VerifiedRFPrefix()
+    if prefix is not None:
+        events=deepcopy(prefix['events']);runs=list(prefix['level_runs']);observations=deepcopy(prefix['observations'])
+        records=deepcopy(prefix['event_records']);samples=[r['samples'] for r in records];sources=deepcopy(prefix['native_sources'])
+        public=deepcopy(prefix['public_checkpoint']);native_runs=[] if public is None else list(public['level_runs'])
+        initial_identity=all(r['passed'] for r in records[0]['initial_independent_identity'])
+        solves_attempted=solves_completed=len(events)
+    start=len(events)
     try:
         with observe_selected_calls(recorder,selected):
             with recorder.phase('initial_plan'):
-                if is_uniform:
+                if prefix is not None and (is_uniform or public['status']=='TARGETS_MET'):
+                    current=read_solution(runs[-1]);next_case,source,_=_uniform_plan(case,request,current)
+                    plan=curved.Plan(next_case,source,None)
+                elif is_uniform:
                     _,plan=curved.next_plan(case,request,[],None)
-                else:public,plan=native.assemble(request,[],_cache=cache)
-            limit=min(request['max_levels'],max_new_events or request['max_levels'])
-            for index in range(limit):
+                else:public,plan=native.assemble(request,native_runs,_cache=cache)
+            limit=min(request['max_levels'],start+(max_new_events or request['max_levels']))
+            for index in range(start,limit):
                 run=directory/f'event-{index+1:03d}';continuation=not is_uniform and public['status']=='TARGETS_MET'
                 with recorder.phase('native_event'):
                     solves_attempted+=1
@@ -313,6 +331,9 @@ def execute_curved_rf_goal_efficiency_worker(execution, directory, *, bindings=N
                             native_solves_attempted=solves_attempted,native_solves_completed=solves_completed,
                             physical_error_bound=None,development_event_limit=max_new_events,
                             scope='fresh fixed RF-goal native branch and full-grid finite metrics; public checkpoint frozen before benchmark continuation; full journal replay/resume remains required')
+                if prefix is not None:
+                    report.update(schema_version=2,resume_origin=deepcopy(resume_origin),
+                                  scope='resumed fixed RF-goal branch; immutable original prefix and separate measured continuation segment')
                 _write(directory/f'checkpoint-{index+1:03d}.json',report)
                 if status!='PAUSED' or index+1==limit:break
                 if is_uniform or public['status']=='TARGETS_MET':
@@ -331,6 +352,9 @@ def execute_curved_rf_goal_efficiency_worker(execution, directory, *, bindings=N
                 replayed=replay_adaptive_refinement(public)
                 if replayed!=public:raise ValueError('original public RF checkpoint differs after complete replay')
             with recorder.phase('final_source_verification'):
+                if retained_inputs is not None:
+                    from .adaptive_efficiency_reference import _bound_file
+                    for path,sha in retained_inputs.items():_bound_file(path,sha,{})
                 _verify_fixed_request(execution,request)
                 verify_reference_bytes(reference)
                 if implementation!=_implementation_hashes():raise RuntimeError('RF goal worker implementation changed')

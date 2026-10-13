@@ -7,7 +7,8 @@
 開発検証は球三方式と長球rf_goalの各3event、計12新FEM。全36実行の受入ではない。
 
 [全journalの保存再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)は全12event/両次数全場の一致、6改変拒否を確認した。
-04の残件は専用CLI、実中止再開、別uniform continuationの実証、
+[実SIGINT/二段階再開・別uniform continuation](CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も無中断の全場/RF一致を確認した。
+04の残件は専用CLI、資源停止/部分書込の範囲、
 随伴のC線形solve境界を含む全費用の最終確認である。05/06・親N04・全goalは未完。
 
 ## 実行の意味
