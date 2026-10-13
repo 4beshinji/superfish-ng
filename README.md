@@ -95,6 +95,9 @@ superfish-ng gui --workspace out/gui-workspace
 CLI/Python と共通の入力・計算機能で扱えます。導線は [GUIガイド](docs/GUI_GUIDE.md)、
 範囲と基準は [GUI開発計画](docs/GUI_IO_PLAN.md)・[受入記録](docs/GUI_ACCEPTANCE.md) を参照。
 
+曲線形状Studyでは、[元P2境界を保つ再メッシュ生成と保存復元](docs/CURVED_BOUNDARY_REMESH_GUI.md)を利用できます。
+元Project・生成条件・計画を完全再検証し、メッシュの幾何条件とRF精度を分けて表示します。
+
 ## 入力と出力
 
 - v3 入力は物理・座標・材料・領域を明示します。旧 v1/v2 の hash と数値結果は維持し、

@@ -13,6 +13,8 @@
 現行追補：[04完全保存再生/CLI](CURVED_BOUNDARY_REMESH_SAVED.md)もDONE。七項目文書/九検証値、
 全再構築・改変拒否、20個別検査と実CLI六起動を受入。次は05のStudy/GUI。
 
+現行追補：[05 Study GUI/実worker](CURVED_BOUNDARY_REMESH_GUI.md)もDONE。実Chrome42操作、HTTP2個別検査と計7実FEM、中止再開/再起動・保存配列保持を受入。次は06の独立全ゲート/専用6 FEM。
+
 ## 対象と採用する表現
 
 元の解析曲線、材料、SI単位、RF座標、正規化、mode設定を保持し、元の内部接続を捨てて

@@ -216,7 +216,8 @@ def create_server(workspace, port=0):
                     "replace-mesh": ["document", "mesh_document"],
                     "curved-selection-mesh": ["document"],
                     "freeze-curved-refinement": ["document"],
-                    "generate-curved-remesh-plan": ["document", "settings_document"],
+                    "generate-curved-remesh-plan": ["document", "settings_document", "format"],
+                    "replay-curved-remesh-generation": ["document"],
                     "transfer-curved-selection": ["previous_document", "current_document", "request_document"],
                     "replay-curved-selection-transfer": ["document"],
                     "preview-curved-deformation": ["document", "geometry_document", "rf_coordinates", "minimum_corner_angle_deg"],
@@ -339,10 +340,19 @@ def create_server(workspace, port=0):
                     keys(data,('action','document'),('action','document'),'curved selection transfer replay')
                     return self.reply(replay_curved_selection_transfer(parse_json(data['document'])))
                 elif action == "generate-curved-remesh-plan":
-                    from .curved_remesh_generation import generate_curved_remesh_plan
+                    from .curved_remesh_generation import generate_curved_remesh_plan,build_curved_remesh_generation
 
-                    keys(data,('action','document','settings_document'),('action','document','settings_document'),'curved remesh generation request')
-                    return self.reply(generate_curved_remesh_plan(load_document(data['document']),parse_json(data['settings_document'])))
+                    keys(data,('action','document','settings_document','format'),('action','document','settings_document'),'curved remesh generation request')
+                    form=data.get('format','plan')
+                    if type(form) is not str or form not in ('plan','document'):
+                        raise ValueError('curved remesh generation format must be plan or document')
+                    build=build_curved_remesh_generation if form=='document' else generate_curved_remesh_plan
+                    return self.reply(build(load_document(data['document']),parse_json(data['settings_document'])))
+                elif action == "replay-curved-remesh-generation":
+                    from .curved_remesh_generation import replay_curved_remesh_generation
+
+                    keys(data,('action','document'),('action','document'),'curved remesh generation replay')
+                    return self.reply(replay_curved_remesh_generation(parse_json(data['document'])))
                 elif action == "normalize-study":
                     from .studies import Study
 

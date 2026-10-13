@@ -740,10 +740,17 @@
             <legend>値の区間ごとの初期メッシュ</legend>
             <label>切替値（上の変数単位）<input id="study-remesh-cutover" type="number" step="any" value="0.75" /></label>
             <label class="file">置換メッシュ計画を読み込む<input id="study-remesh-import" type="file" accept=".json" /></label>
-            <details><summary>元の二次境界を保って内部メッシュを自動生成</summary>
+            <details><summary>元の二次形状を保ってメッシュを自動生成</summary>
+              <label>生成条件の設定例<select id="study-remesh-generation-template-version"><option value="1">版1：境界分割を維持</option><option value="2">版2：元P2境界を分割</option></select></label>
+              <button id="study-remesh-generation-template">選んだ設定例を入力</button>
               <label>生成条件（長さm・弦三角形面積m²・角度deg）<textarea id="study-remesh-generation-settings" rows="7" spellcheck="false">{"schema_version":1,"max_chord_edge_m":0.08,"max_chord_triangle_area_m2":0.0006,"minimum_corner_angle_deg":1,"max_triangles":10000,"max_rounds":20,"curved_refinement_levels":1}</textarea></label>
-              <p class="hint">元の内部メッシュを使わず、境界節点・辺・タグを保持して再生成します。辺長・面積は初期の弦メッシュへ、要素数予算・角度は新しい細分履歴へも適用します。元Caseの大きさ・品質条件も保持します。固定境界と両立しない指定や品質未達は拒否します。</p>
+              <p class="hint">版1は境界分割を維持し、辺長・面積を初期の弦メッシュに適用します。版2は元P2形状のまま境界も細分し、最終メッシュの端点弦の長さ・面積を検査します。元Caseのサイズ・角度と全段階の予算を守り、品質未達は拒否します。弦長・弦面積は曲線の弧長・実面積とは異なります。</p>
+              <p class="hint">版2の max_boundary_edges は軸と対称面を含む境界辺数の上限、max_seed_rounds は初期内部メッシュ生成、max_rounds は自動追加細分の上限です。旧履歴より粗くすることはできますが、元P2区間の併合や解析曲線への再投影は行いません。設定例の入力は現在の生成条件を置き換えます。</p>
               <button id="study-remesh-generate">元Projectから置換計画を生成</button>
+              <button id="study-remesh-generation-save" disabled>元Project・生成条件・結果を保存</button>
+              <label class="file">生成文書を再検証して元Project・条件を復元<input id="study-remesh-generation-open" type="file" accept=".json" /></label>
+              <p id="study-remesh-generation-status" class="hint" role="status" aria-live="polite">生成結果はまだありません。</p>
+              <p class="hint">保存対象は最後に検証した元Projectと生成条件です。編集後の結果が必要な場合は再生成してください。復元した計画は現在の切替値で区間定義へ入ります。Studyの形状法則は別途確認してください。</p>
               <p class="hint">生成に成功すると、切替値以降に使う完全な計画を下の区間定義へ入れます。元Projectは保持します。新しい局所細分番号を与える場合は、再生成後の各段階の番号を指定してください。</p>
             </details>
             <label>メッシュ計画の区間定義<textarea id="study-remesh-schedule" rows="9" spellcheck="false">{"schema_version":1,"breakpoints":[],"plans":[{"kind":"replace","plan":{}}]}</textarea></label>

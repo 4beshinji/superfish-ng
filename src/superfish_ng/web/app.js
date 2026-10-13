@@ -1596,14 +1596,62 @@ async function studyDefinition() {
     values: values.map((v) => v * studyParameterUnits.get(parameter)),
   };
 }
-bind("study-remesh-generate",async()=>{
-  const signature=curvedStudySignature(),cutover=number("study-remesh-cutover");
-  const settings=$("study-remesh-generation-settings").value,project=await preview();
-  if(signature!==curvedStudySignature())throw Error("メッシュ生成の準備中に入力が変わりました。現在の入力でやり直してください。");
-  const plan=await api('generate-curved-remesh-plan',{document:JSON.stringify(project),settings_document:settings});
-  if(signature!==curvedStudySignature())throw Error("メッシュ生成中に入力が変わりました。現在の入力でやり直してください。");
-  $("study-remesh-schedule").value=JSON.stringify({schema_version:1,breakpoints:[cutover],plans:[{kind:'original'},{kind:'replace',plan}]},null,2);
+let remeshGenerationResult=null,remeshGenerationBusy=false;
+function remeshGenerationControls(busy) {
+  remeshGenerationBusy=busy;
+  $("study-remesh-generate").disabled=busy;
+  $("study-remesh-generation-open").disabled=busy;
+  $("study-remesh-generation-save").disabled=busy || !remeshGenerationResult;
+}
+function showRemeshGeneration(result,cutover) {
+  remeshGenerationResult=result;
+  $("study-remesh-schedule").value=JSON.stringify({schema_version:1,breakpoints:[cutover],plans:[{kind:'original'},{kind:'replace',plan:result.plan}]},null,2);
+  const v=result.validation,ends=v.prefix_boundary_edge_counts;
+  $("study-remesh-generation-status").textContent=`最後に検証した生成：設定版${result.settings.schema_version}、要素 ${v.seed_triangle_count} → ${v.prefix_triangle_counts.at(-1)}、境界辺 ${ends[0]} → ${ends.at(-1)}。最終最大弦長 ${v.final_max_chord_edge_m.toPrecision(6)} m、弦面積 ${v.final_max_chord_triangle_area_m2.toPrecision(6)} m²、最小弦角 ${v.final_minimum_chord_angle_deg.toPrecision(6)}°、P2隅角 ${v.final_minimum_corner_angle_deg.toPrecision(6)}°。元P2境界の一致を検証済み。固有値・RF精度は未検証です。`;
+}
+bind("study-remesh-generation-template",()=>{
+  const version=Number($("study-remesh-generation-template-version").value);
+  const settings={schema_version:version,max_chord_edge_m:version===2?.04:.08,
+    max_chord_triangle_area_m2:version===2?.0005:.0006,minimum_corner_angle_deg:1,max_triangles:10000,
+    max_rounds:20,curved_refinement_levels:version===2?0:1};
+  if(version===2)Object.assign(settings,{boundary_policy:'restrict_native_p2',max_boundary_edges:1000,max_seed_rounds:20});
+  $("study-remesh-generation-settings").value=JSON.stringify(settings,null,2);
 });
+bind("study-remesh-generate",async()=>{
+  if(remeshGenerationBusy)throw Error("メッシュ生成の検査が進行中です。");
+  remeshGenerationControls(true);
+  try {
+    const signature=curvedStudySignature(),cutover=number("study-remesh-cutover");
+    const settings=$("study-remesh-generation-settings").value,project=await preview();
+    if(signature!==curvedStudySignature())throw Error("メッシュ生成の準備中に入力が変わりました。現在の入力でやり直してください。");
+    const result=await api('generate-curved-remesh-plan',{document:JSON.stringify(project),settings_document:settings,format:'document'});
+    if(signature!==curvedStudySignature())throw Error("メッシュ生成中に入力が変わりました。現在の入力でやり直してください。");
+    showRemeshGeneration(result,cutover);
+  } finally {remeshGenerationControls(false);}
+});
+bind("study-remesh-generation-save",()=>{
+  if(!remeshGenerationResult || remeshGenerationBusy)throw Error("保存できる検証済み生成結果がありません。");
+  download('curved-remesh-generation.json',JSON.stringify(remeshGenerationResult,null,2));
+});
+$("study-remesh-generation-open").onchange=async event=>{
+  if(remeshGenerationBusy)return;
+  remeshGenerationControls(true);
+  try {
+    $("error").hidden=true;
+    const file=event.target.files[0];if(!file)return;
+    const signature=curvedStudySignature(),cutover=number("study-remesh-cutover"),text=await file.text();
+    if(signature!==curvedStudySignature())throw Error("生成文書の読込中に入力が変わりました。読み直してください。");
+    const result=await api('replay-curved-remesh-generation',{document:text});
+    if(signature!==curvedStudySignature())throw Error("生成文書の再検証中に入力が変わりました。読み直してください。");
+    const normalized=await api('normalize',{document:result.source_project});
+    if(signature!==curvedStudySignature())throw Error("生成文書の復元中に入力が変わりました。読み直してください。");
+    applyProject(normalized.project);
+    drawOutline(normalized.outline_zr_m,normalized.outline_closed,normalized.geometry_approximation);
+    $("study-remesh-generation-settings").value=JSON.stringify(result.settings,null,2);
+    $("study-remesh-generation-template-version").value=String(result.settings.schema_version);
+    showRemeshGeneration(result,cutover);
+  } catch(error) {failure(error);} finally {event.target.value='';remeshGenerationControls(false);}
+};
 $("study-remesh-import").onchange=async(event)=>{
   try {
     const file=event.target.files[0];if(!file)return;
