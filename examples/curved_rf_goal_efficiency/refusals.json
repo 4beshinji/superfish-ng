@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "document_type": "curved_rf_goal_efficiency_refusal_examples",
+  "status": "REQUIRED_FOR_FOLLOWUP_ACCEPTANCE",
+  "examples": [
+    {"id": "duplicate-key", "stage": "raw", "raw_json": "{\"schema_version\":1,\"schema_version\":1}", "expected": "ValueError before FEM"},
+    {"id": "unknown-field", "stage": "plan", "pointer": "/silently_skip_failed_runs", "replacement": true, "expected": "ValueError before FEM"},
+    {"id": "bool-count", "stage": "plan", "pointer": "/expected_native_executions", "replacement": true, "expected": "ValueError before FEM"},
+    {"id": "relaxed-rq", "stage": "plan", "pointer": "/limits/r_over_q_accelerator_ohm", "replacement": 0.05, "expected": "ValueError before FEM"},
+    {"id": "missing-row", "stage": "plan", "operation": "remove executions[35]", "expected": "ValueError before FEM"},
+    {"id": "reordered-row", "stage": "plan", "operation": "swap executions[0] and executions[1]", "expected": "ValueError before FEM"},
+    {"id": "path-escape", "stage": "plan", "pointer": "/cases/0/request/path", "replacement": "../sphere.json", "expected": "ValueError before external read or FEM"},
+    {"id": "request-mutated", "stage": "plan", "operation": "change one initial_mesh point and rehash request binding", "expected": "ValueError against fixed source derivation before FEM"},
+    {"id": "nonfinite-budget", "stage": "raw", "raw_json": "{\"wall_limit_seconds\":NaN}", "expected": "ValueError before FEM"},
+    {"id": "unknown-policy", "stage": "request", "pointer": "/surface_refinement_policy", "replacement": "residual_fallback", "expected": "ValueError before FEM"},
+    {"id": "missing-id", "stage": "request", "pointer": "/initial_ids", "replacement": [], "expected": "ValueError before FEM"},
+    {"id": "wrong-p2-domain", "stage": "reference", "operation": "bind N03 prolate geometry-2 grid as the original coarse RF prolate grid", "expected": "ValueError before native work; no domain crop"},
+    {"id": "missing-reference-point", "stage": "reference", "operation": "remove one volume point and its weight", "expected": "UNVERIFIED; original full grid retained"},
+    {"id": "missing-reference-mode", "stage": "reference", "operation": "remove one of five original reference modes", "expected": "UNVERIFIED; no rank substitution"},
+    {"id": "missing-reference-file", "stage": "reference", "operation": "remove bound field coefficient file", "expected": "UNVERIFIED; no native reference substitution"},
+    {"id": "wrong-parent", "stage": "replay", "operation": "make rf_local descend from rejected probe instead of original parent and rehash journal", "expected": "ValueError from reconstructed Case/mesh ancestry"},
+    {"id": "discarded-probe-removed", "stage": "replay", "operation": "remove rejected uniform_probe and its cost", "expected": "ValueError from event continuity and public replay"},
+    {"id": "false-surface-confirmation", "stage": "replay", "operation": "count RF-only surface-failed progress as one successful confirmation", "expected": "ValueError from original five-quantity comparison"},
+    {"id": "continuation-as-public", "stage": "replay", "operation": "append benchmark_confirmation to terminal public checkpoint", "expected": "ValueError; separate continuation journal required"},
+    {"id": "interrupted-cost-missing", "stage": "measurement", "operation": "interrupt during rejected-probe verification or RF adjoint", "expected": "non-success with original prefix, partial phase cost, exit signal and process reap"}
+  ]
+}

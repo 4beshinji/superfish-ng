@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "document_type": "curved_rf_goal_efficiency_reference_anchors",
+  "status": "PREPARATION_REQUIRED",
+  "independent_modern_commit": "48741ff46ca44463281a5ab5945328615881b502",
+  "inputs": [
+    {
+      "path": "out/n06-cost-recording-20261007/analytic-reference-grids/manifest.json",
+      "exists": true,
+      "sha256": "b7b0a6687542547772186de5d7cd3e2acfa2483519f2c6c812dbecec5f733599",
+      "bytes": 167088
+    },
+    {
+      "path": "out/n06-cost-recording-20261007/rounded-reference-grid/manifest.json",
+      "exists": true,
+      "sha256": "d78b0dba44156c468b99a672b0cb39e74924dca5cb9b6c4d18c726d31c4de3a8",
+      "bytes": 459172
+    },
+    {
+      "path": "out/n03-native-surface-series-20261007/explicit-resource-matrices/N01-rounded-two-lobe/matrix.json",
+      "exists": true,
+      "sha256": "ba9b5064cbb5a7bff3d27a50f7f3fa8a7fcc8ea1f296202b09d9d1847d9770fb",
+      "bytes": 24526042
+    },
+    {
+      "path": "out/n03-native-surface-series-20261007/prolate-appended-matrix-v4/matrix.json",
+      "exists": true,
+      "sha256": "af36c6eb5540c932e00a26f26703cbe1171ebed5914c54fc66e75250a003897b",
+      "bytes": 39718056
+    },
+    {
+      "path": "out/n03-native-surface-series-20261007/completed-physical-series-acceptance.json",
+      "exists": true,
+      "sha256": "51a7cbbe6641e9689ca3c4fb66428702fd609211af84598ecaf88300e622df5d",
+      "bytes": 304282
+    },
+    {
+      "path": "out/n03-native-surface-series-20261007/reference-source-manifest.json",
+      "exists": true,
+      "sha256": "f5dd68589fbc5ca74ef336de8e33b7e32be6f9d7393119086880eccc5f2f4e74",
+      "bytes": 8765
+    },
+    {
+      "path": "out/n03-native-surface-series-20261007/compare-appended-prolate-independent.py",
+      "exists": true,
+      "sha256": "3c7e81afb2c97a195bc3f61a67603af1fb0995723cc0e05750a553fa3a54703f",
+      "bytes": 23536
+    },
+    {
+      "path": "out/n03-native-surface-series-20261007/conic_polar_fans.py",
+      "exists": true,
+      "sha256": "20456cf5ba0284aa7a4b74ed903e1e94e06e6d03be736a87dd75c8d3272fce2f",
+      "bytes": 6974
+    },
+    {
+      "path": "out/n03-native-surface-series-20261007/independent-reference/N01-prolate-new/series.json",
+      "exists": true,
+      "sha256": "cd382776f4a8b5012dcda2744e72a13519d9024b360e051ffa427e53c7f1b932",
+      "bytes": 29591
+    },
+    {
+      "path": "out/n03-native-surface-series-20261007/independent-reference-finer/N01-prolate-new/series.json",
+      "exists": true,
+      "sha256": "7b913da7b90c2254851aeb408bc141c57ddacd9aeb5731f86c6b3522a551510d",
+      "bytes": 19880
+    },
+    {
+      "path": "out/curved-rf-nonsphere-initial-20260909/validation.json",
+      "exists": true,
+      "sha256": "af22fe67aa3e6b6d573fc1b30d8df305a633002cee671c15fb60207392bf0a78",
+      "bytes": 84558
+    },
+    {
+      "path": "out/curved-rf-nonsphere-expanded-20260909/interruption.json",
+      "exists": true,
+      "sha256": "7157668c171e2cdec48d948a63a49730f2bdb84c18793571f7a809ae69cea126",
+      "bytes": 747
+    },
+    {
+      "path": "out/rf-surface-nonsphere-accepted-20260909/validation.json",
+      "exists": true,
+      "sha256": "eecedce957036ef93fe1dec07e5995e482d4a33a4b27a3a1cd0b5078ceb94f65",
+      "bytes": 65114
+    }
+  ],
+  "scope": "Existing preparation anchors and historical failures only; full original-P2 reference packages and new accuracy remain unverified."
+}

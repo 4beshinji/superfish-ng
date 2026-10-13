@@ -1,0 +1,467 @@
+{
+  "schema_version": 5,
+  "case": {
+    "schema_version": 3,
+    "name": "synthetic_sphere_adaptive",
+    "geometry": {
+      "type": "curved_contour",
+      "curves": [
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.0,
+            0.0
+          ],
+          "end_zr_m": [
+            0.32,
+            0.0
+          ]
+        },
+        {
+          "type": "ellipse_arc",
+          "center_zr_m": [
+            0.16,
+            0.0
+          ],
+          "semiaxes_m": [
+            0.16,
+            0.16
+          ],
+          "start_rad": 0.0,
+          "sweep_rad": 3.141592653589793,
+          "rotation_rad": 0.0
+        }
+      ],
+      "edge_tags": [
+        "axis",
+        "pec"
+      ],
+      "join_tolerance_m": 2e-14,
+      "minimum_gap_m": 0.0,
+      "chord_tolerance_m": 0.0032,
+      "chord_max_segments": 20000
+    },
+    "mesh": {
+      "nr": 24,
+      "nz": 32,
+      "geometry_order": 2,
+      "contour_mesh": {
+        "max_edge_m": 0.128,
+        "min_angle_deg": 5.0,
+        "max_triangles": 250000,
+        "max_rounds": 12
+      }
+    },
+    "solver": {
+      "modes": 1,
+      "quadrature_order": 12,
+      "element_order": 2
+    },
+    "rf": {
+      "beta": 1.0,
+      "conductivity_s_per_m": 58000000.0,
+      "normalization_j": 4.0
+    },
+    "model": {
+      "physics": "rf_eigenmode",
+      "coordinates": "axisymmetric",
+      "polarization": "tm",
+      "azimuthal_index": 0,
+      "materials": [
+        {
+          "id": "vacuum",
+          "type": "vacuum"
+        }
+      ],
+      "regions": [
+        {
+          "id": "cavity",
+          "material": "vacuum",
+          "domain": "interior"
+        }
+      ]
+    }
+  },
+  "initial_mesh": {
+    "schema_version": 1,
+    "length_unit": "m",
+    "coordinate_order": "rz",
+    "index_base": 0,
+    "points": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.32
+      ],
+      [
+        0.06122934917841437,
+        0.3078207252018059
+      ],
+      [
+        0.11313708498984759,
+        0.2731370849898476
+      ],
+      [
+        0.1478207252018059,
+        0.2212293491784144
+      ],
+      [
+        0.16,
+        0.16
+      ],
+      [
+        0.1478207252018059,
+        0.09877065082158565
+      ],
+      [
+        0.11313708498984762,
+        0.04686291501015241
+      ],
+      [
+        0.06122934917841438,
+        0.012179274798194112
+      ],
+      [
+        0.0,
+        0.16
+      ],
+      [
+        0.03720272010656019,
+        0.18673022171194203
+      ],
+      [
+        0.0744267994743112,
+        0.1716347558678742
+      ],
+      [
+        0.09840042691162065,
+        0.13805085863713293
+      ],
+      [
+        0.1089218063419582,
+        0.1066024286619587
+      ],
+      [
+        0.11470116162823173,
+        0.08001496916467499
+      ],
+      [
+        0.0,
+        0.08
+      ],
+      [
+        0.0,
+        0.24
+      ],
+      [
+        0.025839411181211403,
+        0.25488176421928443
+      ],
+      [
+        0.047817332636692716,
+        0.2433092694161177
+      ],
+      [
+        0.07376854939516884,
+        0.23002087992840592
+      ],
+      [
+        0.10879800998518699,
+        0.19749322238284828
+      ],
+      [
+        0.02575208130665334,
+        0.0910404827385891
+      ],
+      [
+        0.056080418554945465,
+        0.10733339992139841
+      ],
+      [
+        0.08217552711332203,
+        0.08524134498871799
+      ],
+      [
+        0.09603298585035479,
+        0.06618018652473964
+      ]
+    ],
+    "triangles": [
+      [
+        16,
+        17,
+        1
+      ],
+      [
+        9,
+        10,
+        16
+      ],
+      [
+        10,
+        17,
+        16
+      ],
+      [
+        15,
+        21,
+        9
+      ],
+      [
+        0,
+        8,
+        21
+      ],
+      [
+        0,
+        21,
+        15
+      ],
+      [
+        22,
+        21,
+        8
+      ],
+      [
+        10,
+        9,
+        21
+      ],
+      [
+        10,
+        21,
+        22
+      ],
+      [
+        23,
+        22,
+        8
+      ],
+      [
+        11,
+        10,
+        22
+      ],
+      [
+        22,
+        12,
+        11
+      ],
+      [
+        18,
+        17,
+        10
+      ],
+      [
+        2,
+        1,
+        17
+      ],
+      [
+        2,
+        17,
+        18
+      ],
+      [
+        18,
+        19,
+        2
+      ],
+      [
+        10,
+        11,
+        19
+      ],
+      [
+        10,
+        19,
+        18
+      ],
+      [
+        24,
+        23,
+        8
+      ],
+      [
+        12,
+        22,
+        23
+      ],
+      [
+        23,
+        13,
+        12
+      ],
+      [
+        2,
+        19,
+        3
+      ],
+      [
+        19,
+        20,
+        3
+      ],
+      [
+        12,
+        20,
+        11
+      ],
+      [
+        20,
+        19,
+        11
+      ],
+      [
+        13,
+        23,
+        24
+      ],
+      [
+        24,
+        14,
+        13
+      ],
+      [
+        3,
+        20,
+        4
+      ],
+      [
+        20,
+        5,
+        4
+      ],
+      [
+        5,
+        20,
+        12
+      ],
+      [
+        24,
+        7,
+        14
+      ],
+      [
+        5,
+        12,
+        13
+      ],
+      [
+        13,
+        6,
+        5
+      ],
+      [
+        6,
+        13,
+        14
+      ],
+      [
+        14,
+        7,
+        6
+      ],
+      [
+        7,
+        24,
+        8
+      ]
+    ],
+    "boundary_edges": [
+      [
+        0,
+        15
+      ],
+      [
+        15,
+        9
+      ],
+      [
+        9,
+        16
+      ],
+      [
+        16,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        7,
+        8
+      ],
+      [
+        8,
+        0
+      ]
+    ],
+    "boundary_tags": [
+      "axis",
+      "axis",
+      "axis",
+      "axis",
+      "pec",
+      "pec",
+      "pec",
+      "pec",
+      "pec",
+      "pec",
+      "pec",
+      "pec"
+    ]
+  },
+  "initial_ids": [
+    "fundamental"
+  ],
+  "mode_id": "fundamental",
+  "controls": {
+    "mapping": "nested_curved",
+    "minimum_overlap": 0.95,
+    "minimum_assignment_margin": 0.05,
+    "relative_cluster_gap": 1e-06,
+    "minimum_relative_singular_value": 1e-08
+  },
+  "bulk_fraction": 0.5,
+  "max_levels": 8,
+  "max_triangles": 250000,
+  "minimum_corner_angle_deg": 5.0,
+  "relative_tolerances": {
+    "frequency_hz": 0.0001,
+    "r_over_q_accelerator_ohm": 0.005,
+    "geometry_factor_ohm": 0.005
+  },
+  "confirmation": "uniform_two_steps",
+  "surface_relative_tolerances": {
+    "epk_over_eacc": 0.01,
+    "bpk_over_eacc_mt_per_mv_per_m": 0.01
+  },
+  "quadrature_check_order": 24,
+  "quadrature_relative_tolerance": 1e-06,
+  "surface_refinement_policy": "rf_goal"
+}

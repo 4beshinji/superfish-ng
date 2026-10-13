@@ -1,5 +1,7 @@
 # Superfish-NG
 
+[RF版5の一般形状対照仕様](docs/CURVED_RF_GOAL_EFFICIENCY_SPEC.md)を固定した。三形状・二尺度・三方式・二反復の36実行、全event費用と独立場/RFゲートを定めた段階で、実比較/親N04/全計画は未完。次は固定計画のstrict入力実装（ADD-N04-rf-goal-02）。
+
 軸対称RF空洞のための独立実装 FEM ソルバー（`0.1.0` research seed、Python 3.10+ / NumPy・SciPy）。
 canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これを基準に形状・メッシュ・RF量・
 モード追跡・専用物理（平面 / 同軸 / 材料 Hφ / TE / 静磁・静電）を拡張しています。

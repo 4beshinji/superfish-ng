@@ -41,6 +41,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## V03
 
+追加先行条件は[選択移送06](../CURVED_SELECTION_CHARTS_ACCEPTANCE.md)、[境界生成06](../CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)、[RF版5対照06](../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程)。仕様01だけで統合検証/最終監査の依存を満たしたとは扱わない。
+
 ### 節目の全体検証を一度実行する
 
 - **親課題**：V02。**種別**：検証。初期状態：未着手。
@@ -68,6 +70,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## V05
+
+追加先行条件は[選択移送06](../CURVED_SELECTION_CHARTS_ACCEPTANCE.md)、[境界生成06](../CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)、[RF版5対照06](../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程)。仕様01だけで統合検証/最終監査の依存を満たしたとは扱わない。
 
 ### 全計画の完了監査と引継ぎを行う
 
