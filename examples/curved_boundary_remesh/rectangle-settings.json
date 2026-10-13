@@ -1,0 +1,12 @@
+{
+  "schema_version": 2,
+  "max_chord_edge_m": 0.045,
+  "max_chord_triangle_area_m2": 0.0005,
+  "minimum_corner_angle_deg": 1.0,
+  "max_triangles": 10000,
+  "max_rounds": 20,
+  "curved_refinement_levels": 0,
+  "boundary_policy": "restrict_native_p2",
+  "max_boundary_edges": 1000,
+  "max_seed_rounds": 20
+}
