@@ -18,7 +18,11 @@
 ファイルSHAと可変metadataのJSON置換は [artifact_provenance.py](../src/superfish_ng/artifact_provenance.py) へ抽出し、
 `jobs._digest` / `jobs._write_json` / `completion.digest` は旧APIを転送する。Hφ所有ファイルhashも
 下位SHAを利用する。リンク/正確なfile集合/所有scope/最後の完了公開は各呼出側が保持し、
-この置換writerをnative完了の排他公開へ流用しない。[RF-03の固定full受入](LOWER_SHARED_HELPERS.md)を完了し、RF-04以降は未受入。
+この置換writerをnative完了の排他公開へ流用しない。[RF-03の固定full受入](LOWER_SHARED_HELPERS.md)を完了し、[RF-04の所有worker共通化](OWNED_TUNING_WORKER.md)も受入した。
+[owned_tuning_worker.py](../src/superfish_ng/owned_tuning_worker.py)は三系の明示contract/callbackで
+投入/状態/所有snapshot/manifest/完全再生/prefixを扱う。各adapterの厳密物理検査、native再生、
+試行実行とcheckpoint番号/保存pathの差は維持し、JobManagerと数値核は変更していない。
+RF-05以降は未受入。
 Case・FEM・場・量・native readerは以下の物理別経路に分かれており、任意のCaseを
 canonical `solve` や `save_run` へ渡せる統一APIではない。
 

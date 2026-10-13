@@ -2,7 +2,7 @@
 
 作成：2026-09-22。更新：2026-10-14。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03を受入済み。残6枚は未受入で、計画全体は継続中。**
+（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02/RF-03/RF-04を受入済み。RF-05を隔離sourceで実施中、残5枚は未受入で計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
@@ -86,8 +86,8 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 | RF-01 検証来歴 | F01/S02 | RF-11 | validatorの来歴とその失敗検査 | DONE |
 | RF-02 環境/任意依存 | F02/F08 | RF-01 | core/GUI条件、導入手順、環境証拠 | DONE |
 | RF-03 下位共通処理 | F03 | RF-01/02 | 入力、JSON、来歴を別々に抽出 | DONE |
-| RF-04 所有worker | F04 | RF-03 | 直線→曲線→材料の順で移行し、最後に統合確認 | PLANNED |
-| RF-05 調整決定 | F05 | RF-03 | 決定の抽出→各物理アダプター移行 | PLANNED |
+| RF-04 所有worker | F04 | RF-03 | 直線→曲線→材料の順で移行し、最後に統合確認 | DONE |
+| RF-05 調整決定 | F05 | RF-03 | 決定の抽出→各物理アダプター移行 | IN_PROGRESS |
 | RF-06 CLI分割 | F06 | RF-03 | 一つのコマンド群ずつ。RF-04/05の対象群はその移行後 | PLANNED |
 | RF-07 HTTP/画面分割 | F06 | RF-04、RF-06 | HTTP輸送/操作表→一つの画面状態群ずつ | PLANNED |
 | RF-08 テスト境界 | F07 | RF-03 | 変更する領域のfixture/入力/実FEM操作を分離 | PLANNED |
@@ -211,6 +211,8 @@ NaN/Infinityの扱い、boolとint、重複キー、キー順、`-0.0`、文字e
 
 ### RF-04：Hφの所有worker機構を共通化する
 
+2026-10-14 **DONE**：[所有worker共通契約の受入](OWNED_TUNING_WORKER.md)。三系の旧差を先に固定し、明示contract/callbackによるlifecycle/snapshot/manifest/完全検証/prefixを下位へ抽出。三系worker14＋GUI service6の20個別unit、旧新12 FEMのnative/Project byteと全RF/判断一致、元六成果物の追加求解なし再生、旧body AST/prefix policy/九つの物理入力body/旧signatureを確認。最終候補四ファイルは主ツリーへbyte一致で反映、他1489 source不変。JobManager/FEM/RF/schemaは不変、実ブラウザー/追加fullは対象外。rawはout/rf04-owned-workers-20261014/main-applied.json。
+
 対象：`hphi_tuning_jobs.py`、`curved_hphi_tuning_jobs.py`、`material_hphi_tuning_jobs.py`を最初の範囲とする。
 tracking/history/GUIの同形処理はこの3経路の成立後に別コミットで検討する。
 
@@ -230,6 +232,8 @@ worker wrapperだけの変更なら数値全validatorを一律追加しないが
 <a id="rf-05"></a>
 
 ### RF-05：確認済み試行から次動作を決める処理を分離する
+
+2026-10-14 **IN_PROGRESS**：隔離コピーで元decision bodyを標準mathだけのtuning_decisionへ抽出。旧tuning._decisionを転送し、planar/直線Hφ/曲線Hφ/材料Hφとplanar所有prefixの正規化を呼出側へ移した。114旧/純粋/転送判断・174専用adapter比較、元数学bodyと正規化以外の全関数ASTはPASS。10直接tuning/回復moduleの実FEM unitは実行中、主ツリーへ未反映/未受入。rawはout/rf05-tuning-decision-20261014。
 
 対象：`tuning.py:_decision`と、planar/直線Hφ/曲線Hφ/材料Hφの呼出元。
 要求の物理別正規化と`base_request`は入口側に置き、共通決定はファイル/solverへ依存させない。

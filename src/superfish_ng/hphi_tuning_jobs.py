@@ -14,6 +14,7 @@ import time
 import traceback
 import uuid
 
+from . import owned_tuning_worker as _worker
 from .config import integer, keys
 from .hphi_tuning import validate_hphi_tune
 from .hphi_tuning_saved import (
@@ -34,11 +35,26 @@ RESULT = "hphi-tune-results.json"
 PHYSICS = "axisymmetric_hphi_rf"
 
 
+def _contract():
+    return _worker.OwnedTuningContract(kind=KIND, input_file=INPUT, result_file=RESULT, physics=PHYSICS, worker_module='superfish_ng.hphi_tuning_jobs')
+
+
+
+
+def _checkpoint_policy():
+    return _worker.CheckpointPolicy(minimum_number=1, canonical_names=False, complete_prefix=False, missing_prefix_message='')
+
+
+def _verify_checkpoint_files(directory, result, expected_files, offset):
+    return _validate_checkpoint_files(directory, result, expected_files)
+
+
+def _result_document(result):
+    return result
+
+
 def _load(path):
-    path = Path(path)
-    if path.is_symlink() or not path.is_file():
-        raise ValueError("Hphi tune worker metadata must be regular files, not links")
-    return parse_json(path.read_text(encoding="utf-8"))
+    return _worker.load_metadata(path)
 
 
 def _checkpoint(value):
@@ -96,276 +112,36 @@ def _owned_input(data, execution):
 
 
 def is_hphi_tune(directory, state, manifest):
-    return (
-        KIND in (state.get("kind"), manifest.get("kind"))
-        or (directory / INPUT).is_file()
-        or (directory / RESULT).is_file()
-    )
+    return _worker.is_owned_tuning_job(directory, state, manifest, _contract())
 
 
 def _snapshot(directory):
     """Hash the owned worker files while rejecting links and undeclared roots."""
-    directory = Path(directory)
-    if directory.is_symlink() or not directory.is_dir():
-        raise ValueError("Hphi tune job directory must be regular")
-    result = {}
-    for name in (INPUT, RESULT, "job.json", "manifest.json"):
-        result[name] = _digest(directory / name)
-        _load(directory / name)
-    claim = directory / "worker.claim"
-    if claim.is_symlink() or not claim.is_file():
-        raise ValueError("Hphi tune worker claim must be a regular file")
-    result["worker.claim"] = _digest(claim)
-    execution = directory / "execution"
-    if execution.is_symlink() or not execution.is_dir():
-        raise ValueError("Hphi tune execution must be a regular directory")
-    for path in execution.rglob("*"):
-        if path.is_symlink():
-            raise ValueError("Hphi tune execution files must not be linked")
-        if path.is_file():
-            result[path.relative_to(directory).as_posix()] = _digest(path)
-    return result
+    return _worker.snapshot_owned_files(directory, _contract())
 
 
 def _check_manifest_shape(manifest):
-    names = (
-        "manifest_version",
-        "kind",
-        "files",
-        "implementation_sha256",
-        "source_changed_during_run",
-    )
-    keys(manifest, names, names, "Hphi tune manifest")
-    if type(manifest["manifest_version"]) is not int or manifest["manifest_version"] != 1:
-        raise ValueError("Hphi tune manifest_version must be 1")
-    implementation = manifest["implementation_sha256"]
-    if (
-        not isinstance(implementation, dict)
-        or not implementation
-        or any(
-            type(key) is not str
-            or type(value) is not str
-            or len(value) != 64
-            or any(char not in "0123456789abcdef" for char in value)
-            for key, value in implementation.items()
-        )
-        or manifest["source_changed_during_run"] is not False
-    ):
-        raise ValueError("Hphi tune requires stable implementation provenance")
+    return _worker.check_manifest_shape(manifest)
 
 
 def _validate_checkpoint_files(directory, result, expected_files):
     """Validate every checkpoint that the worker published, including prefixes."""
-    execution = Path(directory) / "execution"
-    request_copy = execution / "request.json"
-    if request_copy.is_symlink() or not request_copy.is_file():
-        raise ValueError("Hphi tune completion requires its owned request copy")
-    expected_files.add(request_copy.relative_to(directory).as_posix())
-    checkpoint_paths = sorted(execution.glob("checkpoint-*.json"))
-    if not checkpoint_paths:
-        raise ValueError("Hphi tune completion requires at least one checkpoint")
-    trial_count = len(result["trials"])
-    checkpoint_numbers = []
-    for path in checkpoint_paths:
-        try:
-            number = int(path.stem.rsplit("-", 1)[1])
-        except (IndexError, ValueError) as exc:
-            raise ValueError("Hphi tune checkpoint has an invalid ordered name") from exc
-        if number < 1 or number > trial_count:
-            raise ValueError("Hphi tune checkpoint number is outside the verified trial prefix")
-        checkpoint_numbers.append(number)
-        prefix = replay_hphi_tune(_load(path), base_directory=execution)
-        if len(prefix["trials"]) != number:
-            raise ValueError("Hphi tune checkpoint prefix length differs from its name")
-        expected = {key: value for key, value in result.items()}
-        for key in ("trial_runs", "trial_sources_sha256", "trials"):
-            expected[key] = expected[key][:number]
-        expected["decision"] = prefix["decision"]
-        expected["status"] = prefix["status"]
-        expected["can_resume"] = prefix["can_resume"]
-        if _canonical(prefix) != _canonical(expected):
-            raise ValueError("Hphi tune saved checkpoint differs from its verified prefix")
-    if checkpoint_numbers != sorted(set(checkpoint_numbers)):
-        raise ValueError("Hphi tune checkpoint names must be distinct and ordered")
-    if trial_count not in checkpoint_numbers:
-        raise ValueError("Hphi tune completion is missing its final checkpoint")
-    # Every declared file is accounted for below; this also prevents a hidden
-    # linked or unbound checkpoint from being ignored by the manifest.
-    expected_files.update(
-        path.relative_to(directory).as_posix() for path in checkpoint_paths
-    )
+    return _worker.validate_checkpoint_prefixes(directory, result, expected_files, start_index=0, replay_checkpoint=replay_hphi_tune, policy=_checkpoint_policy())
 
 
 def verify_hphi_tune_job(directory, state, manifest):
     """Replay an Hphi worker and verify its state, ancestry, budget, and files."""
-    directory = Path(directory).resolve()
-    before = _snapshot(directory)
-    if state.get("status") != "complete" or state.get("kind") != KIND or manifest.get("kind") != KIND:
-        raise ValueError("Hphi tune state and manifest require complete kind=hphi_tune")
-    _check_manifest_shape(manifest)
-    expected_files = {key: value for key, value in before.items() if key not in ("job.json", "manifest.json")}
-    if manifest["files"] != expected_files:
-        raise ValueError("Hphi tune manifest must bind all request, checkpoint, and native files exactly")
-
-    data = _owned_input(_load(directory / INPUT), directory / "execution")
-    result = read_hphi_tune(directory / RESULT)
-    if (
-        _canonical(data["request"]) != _canonical(result["request"])
-        or state.get("tuning_status") != result["status"]
-        or state.get("can_resume") is not result["can_resume"]
-        or type(state.get("computed_trials")) is not int
-        or state["computed_trials"] != len(result["trials"])
-        or state.get("numerical_validation") != "not_checked"
-        or state.get("physics") != PHYSICS
-        or state.get("scope") != result["scope"]
-        or state.get("input_sha256") != {INPUT: before[INPUT]}
-    ):
-        raise ValueError("Hphi tune job summary differs from its verified checkpoint")
-
-    previous = data["checkpoint"]
-    offset = 0 if previous is None else len(previous["trial_runs"])
-    if previous is not None:
-        if (
-            _canonical(result["trial_sources_sha256"][:offset])
-            != _canonical(previous["trial_sources_sha256"])
-            or _canonical(result["trials"][:offset]) != _canonical(previous["trials"])
-        ):
-            raise ValueError("Hphi tune resume ancestry differs from submitted checkpoint")
-    count = len(result["trials"]) - offset
-    limit = data["max_new_trials"]
-    if (
-        count < 1
-        or (limit is not None and count > limit)
-        or (result["can_resume"] and (limit is None or count != limit))
-    ):
-        raise ValueError("Hphi tune trial budget differs from the verified result")
-
-    expected = {INPUT, RESULT, "worker.claim"}
-    for index, run in enumerate(result["trial_runs"]):
-        relative = f"execution/trial-{index + 1:03d}"
-        if run != str(directory / relative):
-            raise ValueError("Hphi tune trial is outside its owned execution directory")
-        trial_hashes = _snapshot_trial(directory / relative)
-        if trial_hashes != result["trial_sources_sha256"][index]:
-            raise ValueError("Hphi tune trial native hash differs from its checkpoint")
-        expected.update(relative + "/" + name for name in trial_hashes)
-    _validate_checkpoint_files(directory, result, expected)
-    if set(expected_files) != expected:
-        raise ValueError("Hphi tune execution contains missing or undeclared trial files")
-    if (
-        _load(directory / "job.json") != state
-        or _load(directory / "manifest.json") != manifest
-        or before != _snapshot(directory)
-    ):
-        raise ValueError("Hphi tune files changed during verification")
-    return result
+    return _worker.verify_tuning_worker(directory, state, manifest, contract=_contract(), validate_owned_submission=_owned_input, read_result=read_hphi_tune, snapshot_trial=_snapshot_trial, validate_checkpoints=_verify_checkpoint_files)
 
 
 def start_hphi_tune(manager, request, *, max_new_trials=None, checkpoint=None):
     """Submit a dedicated Hphi tuning worker after strict preflight."""
-    with manager.lock:
-        if manager.closed:
-            raise ValueError("job manager is closed")
-        data = _input(
-            deepcopy(
-                dict(
-                    request=request,
-                    max_new_trials=max_new_trials,
-                    checkpoint=checkpoint,
-                )
-            )
-        )
-        identifier = time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:10]
-        directory = manager.directory(identifier)
-        directory.mkdir()
-        _write_json(directory / INPUT, data)
-        submitted = {INPUT: _digest(directory / INPUT)}
-        _state(directory, "queued", kind=KIND, input_sha256=submitted)
-        try:
-            with (directory / "log.txt").open("x") as log:
-                process = subprocess.Popen(
-                    [sys.executable, "-m", "superfish_ng.hphi_tuning_jobs", str(directory)],
-                    stdout=log,
-                    stderr=subprocess.STDOUT,
-                    env={**os.environ, "OPENBLAS_NUM_THREADS": "1"},
-                )
-            manager.processes[identifier] = process
-        except Exception as exc:
-            _state(directory, "failed", kind=KIND, error=str(exc))
-            raise
-        return identifier
+    return _worker.start_tuning_worker(manager, request, max_new_trials=max_new_trials, checkpoint=checkpoint, contract=_contract(), validate_submission=_input, write_state=_state)
 
 
 def execute_prepared_hphi_tune(directory):
     """Run one queued Hphi tune directory in a separate worker process."""
-    directory = Path(directory)
-    state = _load(directory / "job.json")
-    if state.get("status") != "queued" or state.get("kind") != KIND:
-        raise ValueError("Hphi tune worker requires a fresh queued hphi_tune job")
-    with (directory / "worker.claim").open("x", encoding="utf-8") as stream:
-        stream.write(str(os.getpid()) + "\n")
-    started = time.monotonic()
-    try:
-        implementation = _implementation_hashes()
-        submitted = {INPUT: _digest(directory / INPUT)}
-        if state.get("input_sha256") != submitted:
-            raise ValueError("queued Hphi tune input changed before execution")
-        data = _input(_load(directory / INPUT))
-        _state(directory, "running", kind=KIND, input_sha256=submitted,
-               stage="Hphi FEM frequency tuning and final mesh refinement")
-        result = execute_hphi_tune(
-            data["request"],
-            directory / "execution",
-            max_new_trials=data["max_new_trials"],
-            checkpoint=data["checkpoint"],
-        )
-        if implementation != _implementation_hashes() or submitted != {INPUT: _digest(directory / INPUT)}:
-            raise RuntimeError("implementation or Hphi tune input changed during run")
-        _write_json(directory / RESULT, result)
-        files = {
-            name: _digest(directory / name)
-            for name in (INPUT, RESULT, "worker.claim")
-        }
-        files.update(
-            {
-                path.relative_to(directory).as_posix(): _digest(path)
-                for path in sorted((directory / "execution").rglob("*"))
-                if path.is_file()
-            }
-        )
-        _write_json(
-            directory / "manifest.json",
-            dict(
-                manifest_version=1,
-                kind=KIND,
-                files=files,
-                implementation_sha256=implementation,
-                source_changed_during_run=False,
-            ),
-        )
-        _state(
-            directory,
-            "complete",
-            kind=KIND,
-            physics=PHYSICS,
-            scope=result["scope"],
-            tuning_status=result["status"],
-            can_resume=result["can_resume"],
-            computed_trials=len(result["trials"]),
-            numerical_validation="not_checked",
-            input_sha256=submitted,
-            elapsed_seconds=time.monotonic() - started,
-        )
-        return result
-    except Exception as exc:
-        _state(
-            directory,
-            "failed",
-            kind=KIND,
-            error=str(exc),
-            elapsed_seconds=time.monotonic() - started,
-        )
-        raise
+    return _worker.execute_tuning_worker(directory, contract=_contract(), validate_submission=_input, execute_trials=execute_hphi_tune, prepare_result_document=_result_document, write_state=_state, implementation_hashes=_implementation_hashes)
 
 
 if __name__ == "__main__":

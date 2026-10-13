@@ -1,3 +1,5 @@
+2026-10-14 RF-04 **DONE**：[Hφ所有workerの共通契約](OWNED_TUNING_WORKER.md)。三系の旧差を維持し明示callbackでlifecycle/所有検証/prefixを共通化。worker14＋GUI service6の20個別unit、旧新12 FEMのnative/Project byte・全RF/判断一致、六成果物の追加求解なし再生とAST/signature確認。検証済み四ファイルをbyte一致反映、他1489 source不変。JobManager/数値核/schema不変、追加full/seed/実ブラウザー0。全152は97 DONE/4 IN_PROGRESS/51 PLANNED、RF-05は隔離sourceで実行中、残5枚/全goalは継続。
+
 2026-10-14 RF-03 **DONE**：[下位共通処理の受入](LOWER_SHARED_HELPERS.md)。値検査/JSON/来歴を三段階で抽出し旧APIを維持。修正後の実fullは2689 test/528 module、3910.941秒、終了0/PASS、FAIL/ERROR0/既存SKIP3、前後1492 sourceはUNCHANGED。同fullのseed全RF/保存再構築を照合しf差ゼロ・物理量相対差最大8.882e-16。初回full失敗と修正58件の分割証拠を保持。全152は96 DONE/3 IN_PROGRESS/53 PLANNED、後続6枚と全goalは継続。
 
 RF-02の環境選択：[core/GUI環境契約](DEPENDENCIES.md#current-environments)。GUIを含むfull validatorには`plot`を導入する。core-onlyは `scripts/check_core_environment.py` とCIの既存5非GUIunitを選び、全GUIをskipしたfullとして報告しない。Python 3.10/3.12の解決版・過去benchmarkは別に記録する。RF-02の8個別ID/二版16実行・wheel資産監査はout/rf02-environments-20261013/acceptance.json、full/seed/ブラウザー/Hosted CIは未実行。次の着手順は[CURRENT](development-plan/CURRENT.md)。
