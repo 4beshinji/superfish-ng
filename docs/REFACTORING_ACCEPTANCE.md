@@ -24,6 +24,16 @@
 各rawの`acceptance.json`は`commit.json`のSHAとローカル祖先commitへ結び付く。
 `out/refactoring-final-acceptance-20261014/original-requirements-audit.json`では元11節の条件が順序を保って残ること、
 全カードのSHA付き証拠、現行の下位import方向、索引の実在symbol/local linkを確認した。
+221個の元証拠fileを各受入receiptのSHAへ照合した。
+`current-source-bridges.json`では76ファイルを個別受入commitのbyteへ直接照合し、
+RF-04後の曲線完了検証をRF-10へ、RF-11後のmetadata/拒否順追補をRF-03の固定受入へ結合した。
+元計画時の数値核22ファイル・全例題/benchmark/独立参照のbyteも保持する。
+これは実終端待ちのfullを代替する証拠ではない。
+
+RF-04の旧`acceptance.json`の20 test IDには、集計時に末尾method名を二重記載した表記誤りがあった。
+元worker14/GUI service6の`... ok`行に実在する20 IDと現行収集を照合し、
+`rf04-historical-id-label-audit.json`に一対一の対応を保存した。元receipt/commitのSHA、
+試験結果・件数・ソースを変更せず、表記修正のためのFEM/unit再実行は行わない。
 原141行は`17a21af`と完全一致し、全152は102 DONE/3 IN_PROGRESS/47 PLANNED。
 V02/V03/V05とADD-N04-rf-goal-05の元依存・循環なしを保持する。
 
