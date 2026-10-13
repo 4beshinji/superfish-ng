@@ -22,8 +22,12 @@ RF-02を[core/GUI・Python版別の環境契約](../DEPENDENCIES.md#current-envi
 RF-03は値検査の元bodyを抽出し、config転送/同軸入口と直接10unit・75互換probeを確認した。
 JSON/canonicalも元bodyを抽出し、Project/旧canonical転送・同軸native、直接17unit/143互換probe/113例題hash一致を確認した。
 来歴も元SHA/JSON置換bodyを抽出し、jobs/completion転送・Hφ所有hash、直接25unitとbyte/例外/失敗保存保持を確認した。
-三段階の広範統合fullは固定1492 source/8 processで実行中（out/validation-rf03-integration-20261014）。
-計測alias・反射検査順・独立比較fixtureのCase差分を検出した。実行中のsourceを変えず、終端の前後監査/失敗記録を保持した後に修正し、fullとseedのf/全RFを確認する。RF-03は未受入。
+三段階の初回広範統合fullは固定1492 source/8 processで終了1（out/validation-rf03-integration-20261014）。
+2689 test/528 moduleを収集し、8 moduleの2 FAIL/18 ERRORと3 SKIPを保持した。実validatorの前後監査はUNCHANGEDで、失敗reportを残してseed計算へ進まなかった。
+計測alias・反射の拒否順・独立比較のCase・保存場fixtureの求解契約・失敗reportの旧期待値という5点を修正した。
+隔離した自作sourceで58個別unitを分割PASSし、実P2の一回組立計測と行列/場/全RF一致、独立Bessel f/H/E/壁loss/RQ、3形状54 FEMのpause/resume/完全再生を確認した。
+終端後に検証した5ファイルだけを主ツリーへbyte一致で反映。他1487 sourceは不変。rawはout/rf03-lower-helpers-20261013/integration-followup-applied.json。
+次はこのsourceを固定したfull再検証とseedのf/全RF benchmark比較。RF-03は未受入で、58件を主ツリーのfull成功へ読み替えない。
 全152は95 DONE/4 IN_PROGRESS/53 PLANNED、RF-03はIN_PROGRESS、RF残6枚はPLANNED。
 既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 

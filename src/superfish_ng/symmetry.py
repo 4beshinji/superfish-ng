@@ -53,6 +53,7 @@ def reflect_solution(case, solution):
     if len(sides) != 1:
         raise ValueError('reflection requires exactly one symmetry end and one PEC end')
     side = sides[0]
+    full = reflected_case(case)
     tag = getattr(case, side)
     parity = 1 if tag == 'electric_symmetry' else -1
     mesh = solution.mesh
@@ -103,7 +104,6 @@ def reflect_solution(case, solution):
     orthogonality = float(np.max(np.abs(gram/np.outer(norms, norms)-np.eye(case.modes))))
     # Reflection reverses orientation, as does traversing the mirrored wall in
     # increasing z; together they preserve each minor arc's cw/ccw direction.
-    full = reflected_case(case)
     result = Solution(reflected, k, m, solution.eigenvalues.copy(), solution.frequencies_hz.copy(),
                       u, residuals, orthogonality,
                       f'{tag} reflection at {side}; parity-filtered spectrum, indices are NOT full-spectrum ranks',

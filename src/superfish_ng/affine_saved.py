@@ -5,6 +5,11 @@ from .constants import C0,MU0,TAU
 from .saved import read_solution
 from .solver import Solution
 from .rf import quantities
+# Compatibility aliases used by the fixed-P2 efficiency observation catalogue.
+# Reconstruction assembles in saved.read_solution; its P2 calls are observed
+# through high_order. Do not manufacture work for these retained aliases.
+from .fem import assemble
+from .high_order import assemble_p2
 
 
 def read_verified_affine_solution(directory):

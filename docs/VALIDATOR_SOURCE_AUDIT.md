@@ -44,3 +44,19 @@ RF-11のソース前後監査済みseed証拠はその時のvalidator/sourceと�
 
 計画11枚のうちRF-11/RF-01の2枚を完了。残9枚、配布/統合・既存機能受入と全goalは継続中。
 次はRF-09の現行仕様と履歴の整理、その後RF-02→RF-03。
+
+## 2026-10-14 実fullの失敗終端監査
+
+RF-03の初回full（`out/validation-rf03-integration-20261014/`）で、新validatorの実前後監査を確認した。
+1492 sourceのbefore/afterは一致し、statusはUNCHANGED、changed/added/deletedはすべて空。
+子runnerは2689 test/528 moduleを収集し、8 moduleで2 FAIL/18 ERROR、参照環境/専用native rootによる3 SKIPを記録した。
+validatorは元の子終了コード1を返し、passed=false/tests=FAILの終端reportを残した。convergenceとseed求解へ進まなかった。
+SKIPはoptional NGSolve参照の2件と、専用の受入済みcircle/TE native rootを要する1件で、追加の機能受入へ数えない。
+rawの終端receiptは`out/rf03-lower-helpers-20261013/full-initial-terminal.json`。
+これは実ソース監査と失敗伝播の証拠であり、full数値受入ではない。
+
+`test_validation_workflow`の旧「子失敗ならreportなし」という期待値は、RF-01の失敗report保持要件と矛盾していた。
+元終了7・seed未実行の検査を保ち、passed=false、full/seedの実scope、FAIL/NOT_RUN、子終了コードとUNCHANGED監査を確認する期待値へ更新した。
+隔離した同じ自作sourceで当該4 unitはPASS。製品validatorは変更していない。
+58個別の統合追補検査へ束縛した5 sourceを終端後に主ツリーへbyte一致で反映し、成功fullの再検証を次工程に置く。
+旧7 unitの受入とstubのfull/seed表示を、新しい実fullの数値成功へ読み替えない。

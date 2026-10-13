@@ -16,7 +16,7 @@ from superfish_ng.contour_mesh import triangulate_contour
 from superfish_ng.mesh_input import mesh_to_dict
 from superfish_ng.sampling import FieldSampler
 from superfish_ng.rf import quantities
-from superfish_ng.saved import read_solution as read_saved_fields
+from superfish_ng.affine_saved import read_verified_affine_solution
 from superfish_ng.tuning import execute_tune,read_tune,replay_tune,_project
 from test_straight_tuning_geometry import request,boundary
 
@@ -34,7 +34,7 @@ def cylinder_request(modes=1):
 
 def read_solution(directory):
     """Reassemble the saved original basis; no new eigensolve or field fitting."""
-    solution=read_saved_fields(directory)
+    solution=read_verified_affine_solution(directory)
     if solution.element_order==2:
         from superfish_ng.high_order import assemble_p2
         solution.stiffness,solution.mass=assemble_p2(solution.space)

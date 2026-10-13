@@ -70,3 +70,21 @@ RF積分bodyの元AST一致も確認し、初回seedを最終sourceで再実行�
 新契約module/test二つで最終1487。`acceptance.json`へ元/最終source・全raw SHA・67unit・
 seed前後監査とその後のmetadata限定差分を記録し、`commit.json`へコミットを結合する。
 新規依存/外部資料/legacy参照はない。次はRF-01のvalidator本体の前後監査。
+
+## 2026-10-14 広範統合での追補
+
+RF-03の初回fullで、RF-11の直接検査だけでは捉えなかった計測・反射・テストfixtureの接続を検出した。
+初回fullは終了1のまま保持し、1492 sourceの実前後監査がUNCHANGEDであることを確認してから修正した。
+
+- `affine_saved.assemble/assemble_p2`の旧計測名を復元した。実保存解のP2組立は既存`high_order`経由で1回だけ計測され、旧名の呼出は0回。余分な組立や人工的な費用を加えない。
+- `reflected_case`の宣言/加速座標検査を場のparity検査より前へ戻した。混在端・非連結電圧区間の元の拒否順を保ち、反射の数値計算bodyは変えない。
+- hyperbolaの独立比較は4 modeで求解したCaseをRF評価にも渡す。元のf/RQ/G比較許容差と、入力/解の照合を維持する。
+- 共用直線調整fixtureは検証済みaffine readerから復元する。実保存P2で元の行列/場/残差/全RFとの完全一致を確認し、fixtureの独立行列再組立と全Bessel参照/検査class bodyはAST不変。
+
+追補のrawは`out/rf03-lower-helpers-20261013/integration-fix/`。
+validatorの直接4件を含む58個別unitを隔離した同じ自作sourceで分割PASSした。
+直線探索3形状の各18 FEM試行はpause/resumeと完全再生を通過し、元のFINAL_UNVERIFIEDを保持する。
+隔離コピーの試験用JSON欠落で起きた初回ERRORは保全し、元fixtureをbyte一致で追加して再検証した。
+終端後に検証済み5 sourceだけを主ツリーへbyte一致で反映した。
+この58件は主ツリーでの実行記録やfull成功ではなく、修正後の固定source fullとseed f/全RF比較は未受入。
+最初の67 unit/seed受入はその当時のsourceと範囲の履歴として保持する。

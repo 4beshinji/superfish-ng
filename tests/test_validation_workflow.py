@@ -63,7 +63,14 @@ class ValidationWorkflowTests(unittest.TestCase):
                 self.assertEqual(code, 7)
                 self.assertEqual(process.call_count, 1)
                 solve.assert_not_called()
-                self.assertFalse((out / 'validation.json').exists())
+                report = json.loads((out / 'validation.json').read_text())
+                self.assertFalse(report['passed'])
+                self.assertEqual(report['scope'], 'full' if name == 'full' else 'seed-numerics')
+                self.assertEqual(report['tests']['status'], 'FAIL' if name == 'full' else 'NOT_RUN')
+                self.assertEqual(report['commands'][0]['exit_code'], 7)
+                self.assertEqual(report['source_audit']['status'], 'UNCHANGED')
+                self.assertEqual(report['source_audit']['before'], report['source_audit']['after'])
+                self.assertTrue((out / 'source-audit.json').is_file())
 
     def test_existing_output_is_preserved(self):
         with tempfile.TemporaryDirectory() as temporary:

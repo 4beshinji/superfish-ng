@@ -1,6 +1,6 @@
 # 既存実装のリファクタリング計画
 
-作成：2026-09-22。更新：2026-10-13。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
+作成：2026-09-22。更新：2026-10-14。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
 （基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02を受入済み。RF-03を実施中、残6枚は未着手で、計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
@@ -189,7 +189,7 @@ lockを追加する場合は依存更新と分けて差分を審査し、将来�
 
 ### RF-03：入力検査、JSON、来歴を下位へ抽出する
 
-2026-10-14 **IN_PROGRESS**：第一段階の値検査を `input_validation.py` へ抽出。`config` の旧signature/転送関数と同軸専用入力を接続し、元body AST・75旧新/転送結果・直接10unitを確認。bool/NaN/巨大int/型/例外文言を維持する。rawはout/rf03-lower-helpers-20261013/input-acceptance.json。第二段階は `json_codec.py` へ元decoder/canonical bodyを抽出し、Project/旧canonical転送と同軸nativeを接続した。直接17unit・143旧新結果・113例題のcanonical SHA一致を確認（json-acceptance.json）。第三段階は `artifact_provenance.py` へ元SHA/JSON置換bodyを抽出し、jobs/completion転送とHφ所有hashを接続。直接25unit、2 MiB超の分割hash・旧新例外・JSON byte/失敗時旧保存保持を確認（artifact-acceptance.json）。三段階統合の初回fullを固定1492 source/8 processで実行中（out/validation-rf03-integration-20261014）。計測alias・反射検査順・独立比較fixtureのCase差分を検出し、終了後に修正/再検証する。初回をPASSに読み替えず、カード全体は未受入。
+2026-10-14 **IN_PROGRESS**：第一段階の値検査を `input_validation.py` へ抽出。`config` の旧signature/転送関数と同軸専用入力を接続し、元body AST・75旧新/転送結果・直接10unitを確認。bool/NaN/巨大int/型/例外文言を維持する。rawはout/rf03-lower-helpers-20261013/input-acceptance.json。第二段階は `json_codec.py` へ元decoder/canonical bodyを抽出し、Project/旧canonical転送と同軸nativeを接続した。直接17unit・143旧新結果・113例題のcanonical SHA一致を確認（json-acceptance.json）。第三段階は `artifact_provenance.py` へ元SHA/JSON置換bodyを抽出し、jobs/completion転送とHφ所有hashを接続。直接25unit、2 MiB超の分割hash・旧新例外・JSON byte/失敗時旧保存保持を確認（artifact-acceptance.json）。初回fullは固定1492 source/8 process、2689 test/528 moduleを収集し終了1（out/validation-rf03-integration-20261014）。8 moduleの2 FAIL/18 ERROR・参照環境/専用native rootによる3 SKIPを保持し、実前後監査はUNCHANGED。計測alias・反射拒否順・独立比較Case・保存場fixtureの契約・失敗report旧期待値の5点を隔離sourceで修正し、58個別unitと実P2組立/全場RF一致・3形状54 FEMのpause/resume/完全再生を分割PASS。終端後に検証済み5ファイルだけを主ツリーへbyte一致で反映した。修正後の固定fullとseed f/全RF比較が残り、カード全体は未受入。
 
 対象：`config.py`の`keys/integer/positive`、`project.py:parse_json`、
 `saved_mode_tracking.py:_canonical`、`jobs.py`のhash/JSON書込補助と直接の利用側。
