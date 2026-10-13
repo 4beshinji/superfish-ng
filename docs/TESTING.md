@@ -1,3 +1,5 @@
+2026-10-14 全11カードの[条件別監査と最終統合](REFACTORING_ACCEPTANCE.md)：製品`237f6cd`の1507 sourceを固定したfull validatorを一度実行中（実session3414、8 module process）。原11条件と元141行/依存方向/索引、最終wheel全bytes/17実HTTP資産、core3.10/3.12はPASS。fullの実終端と全seed f/RF/保存再構築は未確認であり、収集2698/530や過去fullを最終PASSへ読み替えない。同handleを継続確認する。
+
 2026-10-14 RF-10 **DONE**：[曲線Hφ再生費用と検証内再利用](OWNED_REPLAY_COST.md)。実1/2/4試行・未確認・実中止prefixを旧新60操作/cold・warm/plain・観測で測定。履歴4のprefixが71.4%を占め、検証内だけの全再生済みreport再利用でplain warm34.482→9.954秒、元場read14→4/行列196→56。追加実装hashによる読取量増/RSSほぼ同等を明記。新6＋worker5＋回復保存2の13個別unit/737.939秒/終了0/PASS、元9native/27mode全配列/全RF/ID/判断・独立尺度/実source変更拒否。候補四ファイルbyte反映、他1503源不変、全2698ID/530moduleの収集で旧2692維持。全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全RF11枚の個別受入を完了。最終全条件監査/固定source fullと全goalは継続。
 
 2026-10-14 RF-07 **DONE**：[HTTP/曲線変形画面の境界](GUI_COMMAND_BOUNDARIES.md)。HTTP認証/制限/応答と172操作表を分離し、一JS workflowの状態/DOM/要求を抽出。20個別unitを分割PASS、実Chrome21＋6＋既存9項目PASS、GUI/CLIの全係数/周波数一致と全RF/独立Green確認。最終wheel展開/17資産/172 strict操作/認証等13条件/未許可path5条件の旧新実HTTP一致。七ファイルbyte一致反映、他1497 source不変、同値alias整理/初回誤指定を保全。新依存/科学核/schema変更なし。全152は101 DONE/3 IN_PROGRESS/48 PLANNED、RF残1枚と最終統合/全goalは継続。

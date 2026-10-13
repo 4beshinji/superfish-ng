@@ -39,7 +39,7 @@ JSON/canonicalも元bodyを抽出し、Project/旧canonical転送・同軸native
 直接13 unit/35.770秒/終了0/PASS、13旧新出力/終了code/旧native/実上書き拒否比較。候補二ファイルをbyte一致反映、他1499 source不変。
 [RF-07 HTTP/画面境界](../GUI_COMMAND_BOUNDARIES.md)もDONE。20個別unitを分割PASS、実Chrome36項目、GUI/CLI全係数/f/全RF/独立Green、最終wheel17資産と旧新実HTTP172 strict操作/認証等13条件/未許可5pathを確認。七ファイルbyte反映、他1497 source不変、初回誤指定と同値alias整理を区別。
 [RF-10曲線Hφ再生費用](../OWNED_REPLAY_COST.md)もDONE。三履歴長/未確認/実中止prefixの60測定操作と13個別unit/737.939秒がPASS、元9native/27mode/全量/ID/判断/独立尺度保持。履歴4でplain warm34.482→9.954秒/read14→4/組立196→56、実装hashの追加読取/RSSも記録。候補四ファイルbyte反映、他1503 source不変。
-全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全11枚を個別受入済み。次は元11枚の条件別証拠監査と固定source full。全2698 ID/530 moduleを収集し、旧2692 IDは維持する。最終統合受入/全goalと元の未受入機能カードは継続。
+全152は102 DONE/3 IN_PROGRESS/47 PLANNED、全11枚を個別受入済み。元11枚の条件別証拠・依存方向・原141行保持の監査と最終wheel/core3.10/3.12確認はPASS。[最終統合の記録](../REFACTORING_ACCEPTANCE.md)の固定1507 source fullは実session3414で実行中。次は同handleの実終端確認と全seed f/RF/保存再構築監査、完了記録。全2698 ID/530 moduleの収集を最終fullのPASSに読み替えない。最終統合受入/全goalと元の未受入機能カードは継続。
 既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
