@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Local jobs with exclusive destinations and verified completion manifests."""
 
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -12,27 +11,18 @@ import time
 import traceback
 import uuid
 
+from .artifact_provenance import atomic_write_json, sha256_file
 from .project import Project
 from .solver import solve
 from .io import save_run
 
 
 def _write_json(path, data):
-    temporary = path.with_name(path.name + "." + uuid.uuid4().hex + ".tmp")
-    with temporary.open("x", encoding="utf-8") as stream:
-        json.dump(data, stream, ensure_ascii=False, indent=2, allow_nan=False)
-        stream.write("\n")
-        stream.flush()
-        os.fsync(stream.fileno())
-    temporary.replace(path)
+    return atomic_write_json(path, data)
 
 
 def _digest(path):
-    h = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            h.update(block)
-    return h.hexdigest()
+    return sha256_file(path)
 
 
 def _state(directory, status, **extra):

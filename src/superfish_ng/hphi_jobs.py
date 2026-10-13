@@ -11,6 +11,7 @@ import uuid
 from .config import keys
 from .project import parse_json
 from .hphi_project import HphiProject
+from .artifact_provenance import sha256_file as _digest
 from .hphi_native import solve_hphi, FILES, read_hphi_run, save_hphi_run
 
 KIND='hphi_solve'
@@ -19,7 +20,6 @@ REQUIRED={'project.json',*(f'solution/{name}' for name in NATIVE)}
 
 
 def _native_hashes(directory):
-    from .jobs import _digest
     if directory.is_symlink() or not directory.is_dir() or {p.name for p in directory.iterdir()}!=NATIVE:
         raise ValueError('hphi job requires exactly five native files in a regular solution directory')
     if any((directory/name).is_symlink() or not (directory/name).is_file() for name in NATIVE):
@@ -28,7 +28,6 @@ def _native_hashes(directory):
 
 
 def _job_hashes(directory):
-    from .jobs import _digest
     native=_native_hashes(directory/'solution')
     names=('project.json','manifest.json','job.json')
     if any((directory/name).is_symlink() or not (directory/name).is_file() for name in names):

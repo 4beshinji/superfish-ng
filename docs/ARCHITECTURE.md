@@ -15,7 +15,10 @@
 重複キー拒否JSON/canonical文字列は [json_codec.py](../src/superfish_ng/json_codec.py) へ抽出し、
 `project.parse_json` / `saved_mode_tracking._canonical` は旧APIを転送する。同軸native readerも
 下位JSONを利用する。decoderの非有限定数の扱いは元のままで、物理parserが受理可否を決める。
-ファイル来歴は `jobs.py` 等に残り、RF-03の来歴とRF-04以降の抽出は未実装。
+ファイルSHAと可変metadataのJSON置換は [artifact_provenance.py](../src/superfish_ng/artifact_provenance.py) へ抽出し、
+`jobs._digest` / `jobs._write_json` / `completion.digest` は旧APIを転送する。Hφ所有ファイルhashも
+下位SHAを利用する。リンク/正確なfile集合/所有scope/最後の完了公開は各呼出側が保持し、
+この置換writerをnative完了の排他公開へ流用しない。RF-03の統合fullとRF-04以降は未受入。
 Case・FEM・場・量・native readerは以下の物理別経路に分かれており、任意のCaseを
 canonical `solve` や `save_run` へ渡せる統一APIではない。
 
