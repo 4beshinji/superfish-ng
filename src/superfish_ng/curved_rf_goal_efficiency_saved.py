@@ -21,7 +21,7 @@ from .config import Case, integer, keys
 from .curved_rf_goal_efficiency_metrics import assess_rf_goal_history
 from .curved_rf_goal_efficiency_plan import request_for_curved_rf_goal_efficiency_execution, _same
 from .curved_rf_goal_efficiency_reference import load_curved_rf_goal_efficiency_reference
-from .curved_rf_goal_efficiency_worker import _sample_event, _uniform_event, _stop_status, _verify_fixed_request, observation_bindings
+from .curved_rf_goal_efficiency_worker import _sample_event, _uniform_event, _stop_status, _verify_fixed_request, observation_bindings, _uniform_budget_status, _planning_stop
 from .geometry_surface_numerics import mapped_moments
 from .jobs import _implementation_hashes
 from .mesh_input import mesh_digest
@@ -81,7 +81,8 @@ def _verify_costs(document):
     phases=cost['phases']
     if type(cost['schema_version']) is not int or cost['schema_version']!=1 or cost['document_type']!='adaptive_efficiency_observed_cost':
         raise ValueError('historical RF observed cost schema differs')
-    if cost.get('status')!='COMPLETE' or type(phases) is not list or cost.get('timing_errors')!=[]:
+    budget=document.get('status') in ('REFINEMENT_LIMIT','TRACKING_BUDGET')
+    if cost.get('status') not in (('COMPLETE','FAILED') if budget else ('COMPLETE',)) or type(phases) is not list or cost.get('timing_errors')!=[]:
         raise ValueError('completed RF journal requires complete finite original phase records')
     if cost['memory_status']=='RECORDED':
         if type(cost['peak_rss_bytes']) is not int or cost['peak_rss_bytes']<=0 or cost['memory_reason'] is not None:
@@ -94,12 +95,20 @@ def _verify_costs(document):
         fields=('index','name','parent_index','status','exception_type','inclusive_seconds','exclusive_seconds')
         keys(p,fields,fields,'historical RF phase')
         if type(p['name']) is not str or not p['name']:raise ValueError('historical RF phase requires its actual name')
-        if type(p['index']) is not int or p['index']!=i or p['status']!='COMPLETED' or p['exception_type'] is not None:
+        failed=budget and p['status']=='FAILED' and p['exception_type']=='ValueError' and p['name'] in ('initial_plan','next_uniform_plan','refinement_and_quality','mesh_quality')
+        if type(p['index']) is not int or p['index']!=i or not (failed or (p['status']=='COMPLETED' and p['exception_type'] is None)):
             raise ValueError('historical phase indices/status differ')
         parent=p['parent_index']
         if parent is not None and (type(parent) is not int or not 0<=parent<i):
             raise ValueError('historical phase parent must precede its child')
         for k in ('inclusive_seconds','exclusive_seconds'):_number(p[k],k)
+    failures=[p for p in phases if p['status']=='FAILED']
+    if (cost['status']=='FAILED')!=bool(failures):raise ValueError('historical overall cost status must retain its actual failed phases')
+    for p in failures:
+        ancestor=p
+        while ancestor['parent_index'] is not None:ancestor=phases[ancestor['parent_index']]
+        if ancestor['name'] not in ('initial_plan','next_uniform_plan','native_event','complete_public_replay'):
+            raise ValueError('caught RF budget failure must remain within its actual native planning/replay root')
     # A completed subtree cannot be re-entered later in chronological order.
     stack=[];closed=set()
     for i,p in enumerate(phases):
@@ -133,7 +142,7 @@ def _verify_costs(document):
         if (not _close(measured,prefix['native_path_cumulative_seconds']) or
                 prefix['recorder_prefix_wall_seconds']+1e-12<elapsed or prefix['recorder_prefix_wall_seconds']>cost['wall_seconds']):
             raise ValueError('historical event prefix omits or changes observed work')
-    return 'STRUCTURE_VERIFIED_NOT_REMEASURED'
+    return 'STRUCTURE_VERIFIED_WITH_CAUGHT_BUDGET_FAILURE_NOT_REMEASURED' if failures else 'STRUCTURE_VERIFIED_NOT_REMEASURED'
 
 
 def _implementation_sources(sources, aliases=None, archives=None):
@@ -171,7 +180,7 @@ def _preflight(document):
     if type(document) is not dict:raise ValueError('RF goal worker journal requires a JSON object')
     resumed=type(document.get('schema_version')) is int and document['schema_version']==2
     required=_REQUIRED+('resume_origin',) if resumed else _REQUIRED
-    keys(document,required+('observed_cost','observed_bindings','stop_reason','observation_schema_version','observed_c_calls'),required,'RF goal worker journal')
+    keys(document,required+('observed_cost','observed_bindings','stop_reason','planning_stop','observation_schema_version','observed_c_calls'),required,'RF goal worker journal')
     observation_version=document.get('observation_schema_version',1)
     if type(observation_version) is not int or observation_version not in (1,2):
         raise ValueError('RF observation schema must be original version 1 or linear-solve-aware version 2')
@@ -192,7 +201,9 @@ def _preflight(document):
     if any(type(document[k]) is not list for k in names):raise ValueError('RF journal requires every original event list')
     n=len(document['events']);limit=document['development_event_limit']
     if limit is not None:integer(limit,'development_event_limit')
-    if resumed:_origin_metadata(document['resume_origin'],n)
+    no_new=(resumed and document.get('status') in ('REFINEMENT_LIMIT','TRACKING_BUDGET') and
+            type(document.get('planning_stop')) is dict and document['planning_stop'].get('stage')=='initial_resume_plan')
+    if resumed:_origin_metadata(document['resume_origin'],n,terminal_without_new_events=no_new)
     total_limit=None if limit is None else limit+(document['resume_origin']['event_count'] if resumed else 0)
     if not 1<=n<=request['max_levels'] or any(len(document[k])!=n for k in names) or (total_limit is not None and n>total_limit):
         raise ValueError('RF journal omitted events or exceeds the original event/development budget')
@@ -234,6 +245,11 @@ def _preflight(document):
     _same_saved(document['events'][0].get('current_mode_ids'),request['initial_ids'],'RF initial declared IDs')
     metadata_assessment=assess_rf_goal_history(document['events'],document['observations'])
     _same_saved(document['assessment'],metadata_assessment,'RF saved scalar/ancestry assessment')
+    if 'planning_stop' in document:
+        if type(document.get('stop_reason')) is not str or _uniform_budget_status(ValueError(document['stop_reason']))!=document['status']:
+            raise ValueError('RF planning stop requires its original non-success budget reason and status')
+        stage='initial_resume_plan' if resumed and document['resume_origin']['event_count']==n else 'next_uniform_plan'
+        _same_saved(document['planning_stop'],_planning_stop(stage,document['events'],ValueError(document['stop_reason'])),'RF complete planning stop')
     if ('observed_cost' in document)!=('observed_bindings' in document):
         raise ValueError('completed RF cost and observed bindings must both be retained')
     if 'observed_bindings' in document:
@@ -313,9 +329,9 @@ def replay_curved_rf_goal_efficiency(document, *, bindings=None, implementation_
             raise ValueError('RF uniform budget stop is not reachable from the original final prefix')
         try:_uniform_plan(case,request,current)
         except ValueError as error:
-            if not any(word in str(error) for word in ('max_triangles','minimum_corner_angle_deg','TRACKING_BUDGET')):raise
+            if _uniform_budget_status(error) is None:raise
             _same_saved(document['stop_reason'],str(error),'RF original uniform budget reason')
-            status='TRACKING_BUDGET' if 'TRACKING_BUDGET' in str(error) else 'REFINEMENT_LIMIT'
+            status=_uniform_budget_status(error)
         else:raise ValueError('RF journal claims a uniform budget stop that does not occur')
     _same_saved(document['status'],status,'RF benchmark stop')
     _verify_fixed_request(document['execution'],request);verify_reference_bytes(reference)

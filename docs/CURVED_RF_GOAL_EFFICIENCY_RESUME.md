@@ -6,7 +6,8 @@
 公開RF成功後の比較専用一様確認も、元checkpointを凍結して実行する。
 固定36実行の無中断計測とは別の開発検証である。
 [C-call計測/部分保存/実wall・RSS停止](CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)も後続で限定受入した。
-04の全process/failure manifest・専用CLI・予算停止の保存整合・一般kill再開と、05/06・親N04は未完。
+[予算停止の保存整合と追加求解ゼロの再開](CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)も後続で限定受入した。
+04の全process/failure manifest・専用CLI・一般kill再開と、05/06・親N04は未完。
 
 ## 入口と不変条件
 

@@ -19,10 +19,11 @@ RESUME_SCOPE='resumed fixed RF-goal branch; immutable original prefix and separa
 ORIGIN_FIELDS=('journal_path','journal_sha256','event_count','implementation_aliases','interruption_files')
 
 
-def _origin_metadata(origin, total_events):
+def _origin_metadata(origin, total_events, *, terminal_without_new_events=False):
     keys(origin,ORIGIN_FIELDS+('implementation_archives',),ORIGIN_FIELDS,'RF resume origin')
     integer(origin['event_count'],'resume original event_count')
-    if origin['event_count']>=total_events:raise ValueError('RF resumed journal must add events after its original prefix')
+    if origin['event_count']>total_events or (origin['event_count']==total_events and not terminal_without_new_events):
+        raise ValueError('RF resumed journal must add events or retain its explicit initial terminal budget stop')
     if type(origin['implementation_aliases']) is not dict or type(origin['interruption_files']) is not dict:
         raise ValueError('RF resume origin requires explicit source aliases and interruption file bindings')
     if type(origin.get('implementation_archives',{})) is not dict:
@@ -61,11 +62,15 @@ def _verify_interruption(parent, origin, bound):
 
 def verify_resume_origin(document, *, bindings=None, implementation_archives=None):
     """Reconstruct the original journal and require byte-for-byte prefix values."""
-    origin=document['resume_origin'];_origin_metadata(origin,len(document['events']));bound={}
+    origin=document['resume_origin']
+    no_new=(document.get('status') in ('REFINEMENT_LIMIT','TRACKING_BUDGET') and
+            type(document.get('planning_stop')) is dict and document['planning_stop'].get('stage')=='initial_resume_plan')
+    _origin_metadata(origin,len(document['events']),terminal_without_new_events=no_new);bound={}
     path=_bound_file(origin['journal_path'],origin['journal_sha256'],bound)
     raw=parse_json(path.read_text())
     if type(raw.get('events')) is not list or len(raw['events'])!=origin['event_count']:
         raise ValueError('RF resume origin changed its original prefix length')
+    if raw.get('status')!='PAUSED':raise ValueError('RF resume origin must be PAUSED before recursive reconstruction')
     archives=deepcopy(origin.get('implementation_archives',{}))
     if implementation_archives is not None:
         if type(implementation_archives) is not dict:raise ValueError('RF implementation archives require a mapping')

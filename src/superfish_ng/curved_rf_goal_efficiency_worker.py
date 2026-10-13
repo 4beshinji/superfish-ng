@@ -244,6 +244,29 @@ def _verify_fixed_request(execution, request):
     _same(request_for_curved_rf_goal_efficiency_execution(execution),request,'RF goal original request')
 
 
+def _uniform_budget_status(error):
+    if not isinstance(error,ValueError):return None
+    message=str(error)
+    if 'TRACKING_BUDGET' in message:return 'TRACKING_BUDGET'
+    if any(word in message for word in ('max_triangles','minimum_corner_angle_deg')):return 'REFINEMENT_LIMIT'
+    return None
+
+
+def _planning_stop(stage, events, error):
+    status=_uniform_budget_status(error)
+    if status is None:raise error
+    return dict(stage=stage,parent_event_index=events[-1]['index'],next_event_index=len(events),status=status,reason=str(error))
+
+
+def _resume_report(prefix, origin, implementation, max_new_events):
+    report=deepcopy(prefix)
+    for name in ('observed_cost','observed_bindings','stop_reason','planning_stop'):report.pop(name,None)
+    report.update(schema_version=2,resume_origin=deepcopy(origin),implementation_sha256=implementation,
+                  development_event_limit=max_new_events,observation_schema_version=2,observed_c_calls=deepcopy(C_CALLS),
+                  scope='resumed fixed RF-goal branch; immutable original prefix and separate measured continuation segment')
+    return report
+
+
 def execute_curved_rf_goal_efficiency_worker(execution, directory, *, bindings=None, max_new_events=None, submission_origin=None):
     """Execute one immutable fixed row in a new directory; a cap gives PAUSED.
 
@@ -280,20 +303,26 @@ def _execute_worker_events(execution, request, directory, reference, recorder, i
         public=deepcopy(prefix['public_checkpoint']);native_runs=[] if public is None else list(public['level_runs'])
         initial_identity=all(r['passed'] for r in records[0]['initial_independent_identity'])
         solves_attempted=solves_completed=len(events)
+        report=_resume_report(prefix,resume_origin,implementation,max_new_events)
     start=len(events);index=start;active_stage='initial_plan'
     last_checkpoint=None if prefix is None else dict(path=resume_origin['journal_path'],sha256=resume_origin['journal_sha256'])
     checkpoint_runs=list(runs)
     try:
         with observe_adjoint_linear_solves(recorder),observe_selected_calls(recorder,selected):
-            with recorder.phase('initial_plan'):
-                if prefix is not None and (is_uniform or public['status']=='TARGETS_MET'):
-                    current=read_solution(runs[-1]);next_case,source,_=_uniform_plan(case,request,current)
-                    plan=curved.Plan(next_case,source,None)
-                elif is_uniform:
-                    _,plan=curved.next_plan(case,request,[],None)
-                else:public,plan=native.assemble(request,native_runs,_cache=cache)
+            try:
+                with recorder.phase('initial_plan'):
+                    if prefix is not None and (is_uniform or public['status']=='TARGETS_MET'):
+                        current=read_solution(runs[-1]);next_case,source,_=_uniform_plan(case,request,current)
+                        plan=curved.Plan(next_case,source,None)
+                    elif is_uniform:
+                        _,plan=curved.next_plan(case,request,[],None)
+                    else:public,plan=native.assemble(request,native_runs,_cache=cache)
+            except ValueError as error:
+                if prefix is None or (not is_uniform and public['status']!='TARGETS_MET') or _uniform_budget_status(error) is None:raise
+                report['planning_stop']=_planning_stop('initial_resume_plan',events,error)
+                report['stop_reason']=str(error);status=report['planning_stop']['status'];plan=None
             limit=min(request['max_levels'],start+(max_new_events or request['max_levels']))
-            for index in range(start,limit):
+            for index in range(start,limit if status=='PAUSED' else start):
                 run=directory/f'event-{index+1:03d}';continuation=not is_uniform and public['status']=='TARGETS_MET'
                 with recorder.phase('native_event'):
                     active_stage='native_solve'
@@ -354,9 +383,8 @@ def _execute_worker_events(execution, request, directory, reference, recorder, i
                             next_case,source,_=_uniform_plan(case,request,current)
                             plan=curved.Plan(next_case,source,None)
                     except ValueError as error:
-                        if not any(word in str(error) for word in ('max_triangles','minimum_corner_angle_deg','TRACKING_BUDGET')):raise
-                        status='TRACKING_BUDGET' if 'TRACKING_BUDGET' in str(error) else 'REFINEMENT_LIMIT'
-                        report['stop_reason']=str(error);break
+                        report['planning_stop']=_planning_stop('next_uniform_plan',events,error)
+                        status=report['planning_stop']['status'];report['stop_reason']=str(error);break
                 else:plan=following
             if public is not None:
                 active_stage='complete_public_replay'

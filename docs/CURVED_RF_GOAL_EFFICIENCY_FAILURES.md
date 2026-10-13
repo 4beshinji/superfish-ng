@@ -92,6 +92,8 @@ fixtureは実関数の制御例外へ直し、成功済みのFEMや資源停止�
 
 全process/failure manifest、最終result書込を含む外側費用境界、専用CLIが残る。
 幾何/追跡予算の非成功停止では、失敗phaseと保存readerの整合、
-再開直後に追加eventなしで停止する場合の表現を別途完成させる必要がある。
+再開直後に追加eventなしで停止する場合の表現を、
+[予算停止の後続検証](CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)で限定受入した。
+固定予算での全36実行は後続05であり、異常系注入をその受入へ数えない。
 SIGTERM/強制killの一般的な再開は未受入であり、今回の資源停止から自動再開したとは記さない。
 全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45を維持する。
