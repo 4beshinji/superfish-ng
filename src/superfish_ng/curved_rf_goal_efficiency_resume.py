@@ -45,12 +45,15 @@ def _verify_interruption(parent, origin, bound):
             raise ValueError('RF interruption must retain the original worker failure directory')
     failure=parsed['failure.json'];process=parsed['process.json'];n=origin['event_count']
     if (failure.get('status')!='FAILED' or failure.get('error_type')!='KeyboardInterrupt' or
-            failure.get('preceding_level_runs')!=parent['level_runs'] or
+            failure.get('checkpoint_level_runs',failure.get('preceding_level_runs'))!=parent['level_runs'] or
             type(failure.get('native_solves_attempted')) is not int or
             type(failure.get('native_solves_completed')) is not int or
             not n<=failure['native_solves_completed']<=failure['native_solves_attempted']<=n+1 or
             type(failure.get('observed_cost')) is not dict):
         raise ValueError('RF interrupted prefix requires its actual KeyboardInterrupt, attempted/completed counts and partial costs')
+    if 'last_complete_checkpoint' in failure:
+        _same_saved(failure['last_complete_checkpoint'],dict(path=origin['journal_path'],sha256=origin['journal_sha256']),
+                    'RF last fully published checkpoint')
     if (process.get('document_type')!='adaptive_efficiency_process_cost' or process.get('status')!='PROCESS_FAILED' or
             type(process.get('exit_code')) is not int or process['exit_code']==0):
         raise ValueError('RF interrupted prefix requires its measured terminal failed process')

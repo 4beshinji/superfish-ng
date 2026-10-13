@@ -6,7 +6,8 @@
 [新規native実行](CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)も接続し、12新FEMの公開分岐/全場を確認した。
 [全比較journalの保存再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)は12event/全24sampleと6改変拒否を確認した。
 [実SIGINT/二段階再開と比較用uniform continuation](CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も限定受入。
-専用CLI、全観測/manifest、資源停止/部分書込は未完であり、
+[C-call観測/部分保存/実資源停止](CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)も限定受入。
+専用CLI、全process manifest/最終書込費用、幾何/追跡予算停止と一般kill再開は未完であり、
 04の完了条件は保留する。
 36実行05・GUI/全条件06・親N04と全goalは継続。
 

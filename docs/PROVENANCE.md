@@ -1,3 +1,5 @@
+2026-10-13：[RF版5のC-call観測/部分保存/資源停止](CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元随伴sourceは最終byte不変。初稿helperの変更は独立参照のSHA検査でFEM前に拒否され、その失敗と源を保全して実alias/C-callの外部観測へ切替えた。初稿の数値bodyもhelper展開ASTで元式一致を確認。長球元branchのC実計測、実SIGINT/wall/RSSによる部分保存と再開を限定受入。7worker＋5unitの新FEMを別計上、観測負荷の大きい初稿の費用を最終版の性能値としない。新取得/依存/legacy0。rawは out/n04-rf-goal-cost-failures-20261013/。
+
 2026-10-13：[RF版5の実中断/再開と比較用一様確認](CURVED_RF_GOAL_EFFICIENCY_RESUME.md)。元prefixの全保存再検証を必須にし、全11完了nativeと実SIGINTの未完1試行/旧費用を保持。二段階再開・三方式継続と無中断の全係数/全sample/RFが一致、長球の元親からの局所計画は新FEM0で照合。SHA別の同一byte実装archiveを親連鎖へ伝播し、archiveを実行しない。新取得/依存/legacy0、固定36実行とprocess manifest全体の受入は後続。rawは out/n04-rf-goal-resume-20261013/。
 
 2026-10-13：[RF版5の全保存再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)。前工程の受入SHAに束縛された四journal/12nativeを元係数から再構築し、全24sample・5,007,024成分が一致。元実装449源のうちworkerだけを同一byte archiveへ明示aliasし、archiveを実行しない。新7＋直接1unitと6再hash反例を確認、型比較ERROR/費用guard先行FAILを保全。新FEM/外部取得/依存/legacy0、過去費用の再測定・物理精度・固定36実行の受入とは区別。rawは out/n04-rf-goal-replay-20261013/。

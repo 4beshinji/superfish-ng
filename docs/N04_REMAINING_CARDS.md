@@ -5,7 +5,7 @@
 原123カードを保持し、追加3仕様カードと各仕様の必須五後続カードをTSVに登録する。
 2026-10-13時点で選択移送01〜06、境界生成01〜06、RF仕様01はDONE。
 RF対照02/03もDONE、04はIN_PROGRESS、05/06はPLANNED。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45。
-RF対照04は[実workerの12新FEM](CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)と[全journalの12event/全場再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)まで確認し、[実中断/二段階再開・追加一様確認](CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も限定受入。全費用/CLI・資源停止/部分書込へ接続中。未確定の入力/数値ゲートを持つ実装カードをreadyとしない。
+RF対照04は[実workerの12新FEM](CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)と[全journalの12event/全場再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)まで確認し、[実中断/二段階再開・追加一様確認](CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も限定受入。[C-call/部分保存/実資源停止](CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)も限定受入。全process manifest/CLI、幾何/追跡予算停止の保存整合と一般kill再開へ接続中。未確定の入力/数値ゲートを持つ実装カードをreadyとしない。
 仕様の受入後、[L05の具体カード化手順](development-plan/08-external.md#条件付き要件から追加カードを作る手順)
 に沿って必要な入力/計算/保存/操作/独立受入を接続し、親N04の依存へ追加する。
 

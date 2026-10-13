@@ -31,6 +31,8 @@ from .curved_rf import quantities_curved
 from .curved_rf_goal_efficiency_metrics import assess_rf_goal_history, assess_rf_goal_pair
 from .curved_rf_goal_efficiency_plan import request_for_curved_rf_goal_efficiency_execution, _same
 from .curved_rf_goal_efficiency_reference import load_curved_rf_goal_efficiency_reference
+from .curved_rf_goal_efficiency_io import publish_rf_goal_json
+from .curved_rf_goal_efficiency_observation import observe_adjoint_linear_solves, C_CALLS
 from .geometry_surface_numerics import mapped_moments
 from .jobs import _implementation_hashes
 from .project import parse_json
@@ -39,8 +41,7 @@ from .saved_mode_tracking import build_saved_mode_tracking
 
 
 def _write(path, value):
-    with Path(path).open('x',encoding='utf-8') as stream:
-        json.dump(value,stream,indent=2,allow_nan=False);stream.write('\n')
+    publish_rf_goal_json(path,value)
 
 
 def observation_bindings():
@@ -279,9 +280,11 @@ def _execute_worker_events(execution, request, directory, reference, recorder, i
         public=deepcopy(prefix['public_checkpoint']);native_runs=[] if public is None else list(public['level_runs'])
         initial_identity=all(r['passed'] for r in records[0]['initial_independent_identity'])
         solves_attempted=solves_completed=len(events)
-    start=len(events)
+    start=len(events);index=start;active_stage='initial_plan'
+    last_checkpoint=None if prefix is None else dict(path=resume_origin['journal_path'],sha256=resume_origin['journal_sha256'])
+    checkpoint_runs=list(runs)
     try:
-        with observe_selected_calls(recorder,selected):
+        with observe_adjoint_linear_solves(recorder),observe_selected_calls(recorder,selected):
             with recorder.phase('initial_plan'):
                 if prefix is not None and (is_uniform or public['status']=='TARGETS_MET'):
                     current=read_solution(runs[-1]);next_case,source,_=_uniform_plan(case,request,current)
@@ -293,9 +296,12 @@ def _execute_worker_events(execution, request, directory, reference, recorder, i
             for index in range(start,limit):
                 run=directory/f'event-{index+1:03d}';continuation=not is_uniform and public['status']=='TARGETS_MET'
                 with recorder.phase('native_event'):
+                    active_stage='native_solve'
                     solves_attempted+=1
                     solution=native.solve(plan.case,mesh_data=plan.source_mesh);solves_completed+=1
+                    active_stage='native_save'
                     native.save_run(plan.case,solution,run)
+                    active_stage='native_event_reconstruction'
                     if not is_uniform and not continuation:
                         native_runs.append(str(run));public,following=native.assemble(request,native_runs,_cache=cache)
                         event=deepcopy(public['levels'][-1]);current=cache.solution[-1]
@@ -311,6 +317,7 @@ def _execute_worker_events(execution, request, directory, reference, recorder, i
                     all_quantities=parse_json((run/'results.json').read_text())['modes']
                 events.append(event);runs.append(str(run));sources.append(_native_files(run))
                 with recorder.phase('independent_accuracy_and_parent_changes'):
+                    active_stage='full_fields_and_accuracy'
                     observation,sample_rows,identity,initial_identity=_sample_event(request,reference,current,event,directory,
                         [] if parent is None else samples[parent],None if parent is None else events[parent],initial_identity,recorder)
                     if not same_moments or not ritz:observation['source_domain_identity_status']='UNVERIFIED'
@@ -330,13 +337,18 @@ def _execute_worker_events(execution, request, directory, reference, recorder, i
                             assessment=assessment,reference_bound_inputs=reference['bound_inputs'],implementation_sha256=implementation,
                             native_solves_attempted=solves_attempted,native_solves_completed=solves_completed,
                             physical_error_bound=None,development_event_limit=max_new_events,
+                            observation_schema_version=2,
+                            observed_c_calls=deepcopy(C_CALLS),
                             scope='fresh fixed RF-goal native branch and full-grid finite metrics; public checkpoint frozen before benchmark continuation; full journal replay/resume remains required')
                 if prefix is not None:
                     report.update(schema_version=2,resume_origin=deepcopy(resume_origin),
                                   scope='resumed fixed RF-goal branch; immutable original prefix and separate measured continuation segment')
-                _write(directory/f'checkpoint-{index+1:03d}.json',report)
+                active_stage='checkpoint_publication';checkpoint=directory/f'checkpoint-{index+1:03d}.json'
+                _write(checkpoint,report)
+                last_checkpoint=dict(path=str(checkpoint),sha256=digest(checkpoint));checkpoint_runs=list(runs)
                 if status!='PAUSED' or index+1==limit:break
                 if is_uniform or public['status']=='TARGETS_MET':
+                    active_stage='next_uniform_plan'
                     try:
                         with recorder.phase('next_uniform_plan'):
                             next_case,source,_=_uniform_plan(case,request,current)
@@ -347,11 +359,13 @@ def _execute_worker_events(execution, request, directory, reference, recorder, i
                         report['stop_reason']=str(error);break
                 else:plan=following
             if public is not None:
+                active_stage='complete_public_replay'
                 # A full public reconstruction does not use the execution-local
                 # prefix cache. It verifies all accepted/rejected native events.
                 replayed=replay_adaptive_refinement(public)
                 if replayed!=public:raise ValueError('original public RF checkpoint differs after complete replay')
             with recorder.phase('final_source_verification'):
+                active_stage='final_source_verification'
                 if retained_inputs is not None:
                     from .adaptive_efficiency_reference import _bound_file
                     for path,sha in retained_inputs.items():_bound_file(path,sha,{})
@@ -362,13 +376,18 @@ def _execute_worker_events(execution, request, directory, reference, recorder, i
                 for group in samples:
                     for row in group:
                         if digest(Path(row['sample_path']))!=row['sample_sha256']:raise ValueError('RF goal full field samples changed')
+        active_stage='result_publication'
+        report['status']=status;report['observed_cost']=recorder.finish()
+        report['observed_bindings']=[dict(module=m.__name__,attribute=a,phase=p) for m,a,p in selected]
+        _write(directory/'result.json',report)
     except BaseException as error:
-        failure=dict(status='FAILED',error_type=type(error).__name__,error=str(error),event_index=index,
-                     preceding_level_runs=runs,native_solves_attempted=solves_attempted,native_solves_completed=solves_completed,
-                     public_checkpoint=public,observed_cost=recorder.finish())
-        _write(directory/'failure.json',failure)
+        try:
+            failure=dict(status='FAILED',error_type=type(error).__name__,error=str(error),event_index=index,active_stage=active_stage,
+                         preceding_level_runs=runs,checkpoint_level_runs=checkpoint_runs,last_complete_checkpoint=last_checkpoint,
+                         native_solves_attempted=solves_attempted,native_solves_completed=solves_completed,
+                         public_checkpoint=public,observation_schema_version=2,observed_cost=recorder.finish())
+            _write(directory/'failure.json',failure)
+        except BaseException as recording_error:
+            if hasattr(error,'add_note'):error.add_note('RF failure recording also failed: '+type(recording_error).__name__+': '+str(recording_error))
         raise
-    report['status']=status;report['observed_cost']=recorder.finish()
-    report['observed_bindings']=[dict(module=m.__name__,attribute=a,phase=p) for m,a,p in selected]
-    _write(directory/'result.json',report)
     return report

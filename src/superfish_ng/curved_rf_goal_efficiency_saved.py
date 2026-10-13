@@ -113,6 +113,11 @@ def _verify_costs(document):
         if not _close(p['inclusive_seconds']-children,p['exclusive_seconds']):
             raise ValueError('historical exclusive phase cost differs from inclusive minus children')
     roots=[(i,p) for i,p in enumerate(phases) if p['parent_index'] is None]
+    if document.get('observation_schema_version',1)==2:
+        factors=[p for p in phases if p['name']=='adjoint_factorization']
+        solves=[p for p in phases if p['name']=='adjoint_linear_solve']
+        if len(factors)!=len(solves) or any(a['index']>=b['index'] or a['parent_index']!=b['parent_index'] for a,b in zip(factors,solves)):
+            raise ValueError('RF observation version 2 requires each actual adjoint factorization and following C solve in the same parent')
     for k in ('wall_seconds','recorded_phase_seconds','unattributed_seconds'):_number(cost[k],k)
     total=math.fsum(p['inclusive_seconds'] for _,p in roots)
     if (not _close(total,cost['recorded_phase_seconds']) or
@@ -166,7 +171,14 @@ def _preflight(document):
     if type(document) is not dict:raise ValueError('RF goal worker journal requires a JSON object')
     resumed=type(document.get('schema_version')) is int and document['schema_version']==2
     required=_REQUIRED+('resume_origin',) if resumed else _REQUIRED
-    keys(document,required+('observed_cost','observed_bindings','stop_reason'),required,'RF goal worker journal')
+    keys(document,required+('observed_cost','observed_bindings','stop_reason','observation_schema_version','observed_c_calls'),required,'RF goal worker journal')
+    observation_version=document.get('observation_schema_version',1)
+    if type(observation_version) is not int or observation_version not in (1,2):
+        raise ValueError('RF observation schema must be original version 1 or linear-solve-aware version 2')
+    if observation_version==2:
+        from .curved_rf_goal_efficiency_observation import C_CALLS
+        _same_saved(document.get('observed_c_calls'),C_CALLS,'RF original C-call observation scope')
+    elif 'observed_c_calls' in document:raise ValueError('original observation version 1 cannot claim C-call coverage')
     try:_canonical(document)
     except (TypeError,ValueError,RecursionError,OverflowError) as error:
         raise ValueError('RF journal must contain finite JSON values') from error
