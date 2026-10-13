@@ -1,5 +1,8 @@
 # 未完課題のコミット単位開発計画
 
+2026-10-13 ADD-N04-selection-charts-06 **DONE**：[独立幾何/行列/6native・全保存場GUIの受入](../CURVED_SELECTION_CHARTS_ACCEPTANCE.md)。全有理被覆/別P2三積分・Green/非アフィン4・8・32尺度、親子K/M最大2.617e-17・Ritz非増加、f/RF尺度最大5.329e-15・全物理体積重み元E/H尺度最大1.191e-11を原gate内で確認。6新求解は1＋5に分割し既存完了nativeを再利用、全科学ゲート後のCLI stdout解析ERRORは元reportを保全しCLIだけ修正。六API/CLI probe一致、実Chrome55操作・全6保存場の9file/10配列byte完全一致・元Project/全RF一致、GUI新FEM0。元源固定と科学helper AST不変、別レビュー源変更は区別、全handle/server/browser終端。新unit/seed/full/legacy0、連続物理精度/peakはUNVERIFIED・上界null。全131は82 DONE/2 IN_PROGRESS/47 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-01、親N04/原32要件/全goalは継続。
+
+
 2026-10-13 ADD-N04-selection-charts-05 **DONE**：[異なる初期接続への選択移送GUI](../CURVED_SELECTION_CHARTS_GUI.md)。引継ぎ差分を完成し、新版43/無変更旧版18実Chrome操作とHTTP2＋直接mesh4の6個別unitを分割受入。raw/予算/途中応答/保存/版1復元/履歴を確認、元native全10配列・全mode/RF完全一致。int/float表記によるCase SHA/CSVとkernel metadata差を別記。元1440の他1437源byte一致、専用FEM0/旧GUI回帰1、全server/worker/browser終端。初回fixture/比較器ERRORを保全し数値核/許容差不変、新seed/full/legacy0。別作業review scriptを変更/コミットしない。全131は81 DONE/2 IN_PROGRESS/48 PLANNED、原123は76/2/45。次は06の専用独立幾何/行列/6求解、親N04/原32要件/全goalは継続。
 
 

@@ -323,6 +323,25 @@ try {
   await writeFile(out+'/selection-charts.png',Buffer.from(shot.data,'base64'));
   await check('no solver jobs were created by geometry operations','document.querySelectorAll("#jobs .job").length===0');
   report.new_fem_solves=0;
+  if(args['--native-sources']){
+    const nativeRoot=resolve(args['--native-sources']);
+    report.saved_native_imports=[];
+    await ev('$("import-path").closest("details").open=true');
+    for(const scale of [1,2])for(const name of ['previous','current','refined']){
+      const path=`${nativeRoot}/scale-${scale}-${name}`;
+      const expectedResult=JSON.parse(await readFile(path+'/results.json','utf8'));
+      const expectedProject=JSON.parse(await readFile(`${nativeRoot}/scale-${scale}-${name}-project.json`,'utf8'));
+      await ev('window.__lastResult=currentResult');
+      await fill('#import-path',`${nativeRoot}/managed/scale-${scale}-${name}`);await click('#import-result');
+      await wait('currentResult!==__lastResult && $("field-image").naturalWidth>0',120000);
+      await same(`saved native ${scale}/${name} retains every RF quantity and metadata`,'currentResult.result',expectedResult);
+      await same(`saved native ${scale}/${name} retains the original Project`,'currentResult.project',expectedProject);
+      report.saved_native_imports.push({scale,stage:name,path});
+      await writeFile(out+`/native-${scale}-${name}-view.json`,JSON.stringify(await ev('currentResult'),null,2));
+    }
+    const fieldShot=await call('Page.captureScreenshot',{},sessionId);
+    await writeFile(out+'/saved-native-field.png',Buffer.from(fieldShot.data,'base64'));
+  }
 
   report.source_changed_during_run=!isDeepStrictEqual(report.source_sha256,await sourceHashes());
   report.passed=!report.source_changed_during_run && report.external_requests.length===0 && report.checks.every(c=>c.passed);

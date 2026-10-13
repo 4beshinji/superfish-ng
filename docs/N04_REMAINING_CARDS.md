@@ -3,7 +3,7 @@
 2026-10-08 JST、[N08受入監査](N08_ACCEPTANCE.md)で既存残件を再照合した。
 新しい物理やユーザー範囲の追加ではなく、[N04の既存残件4](N04_ACCEPTANCE.md)を分割する。
 原123カードを保持し、追加3仕様カードと選択移送の必須五後続カードをTSVに登録する。
-選択移送01/02/03/04/05はDONE、他3カードはPLANNED。全131は81/2/48。
+選択移送01〜06はDONE、他2カードはPLANNED。全131は82/2/47。
 仕様カードは着手可能。未確定の入力/数値ゲートを持つ実装カードをreadyとしない。
 仕様の受入後、[L05の具体カード化手順](development-plan/08-external.md#条件付き要件から追加カードを作る手順)
 に沿って必要な入力/計算/保存/操作/独立受入を接続し、親N04の依存へ追加する。
@@ -14,7 +14,8 @@
 [版2七項目/保存/全被覆/対称/実装五工程の固定仕様](CURVED_SELECTION_CHARTS_SPEC.md)を2026-10-08受入。
 六例/既存幾何の読取検証に続き、[strict入力02](CURVED_SELECTION_CHARTS_INPUT.md)もDONE。
 [03計算API](CURVED_SELECTION_CHARTS_CORE.md)もDONE。GUI・専用FEMは05/06。
-[04完全再生/CLI](CURVED_SELECTION_CHARTS_SAVED.md)と[05 GUI](CURVED_SELECTION_CHARTS_GUI.md)もDONE。次はADD-N04-selection-charts-06。
+[04完全再生/CLI](CURVED_SELECTION_CHARTS_SAVED.md)・[05 GUI](CURVED_SELECTION_CHARTS_GUI.md)・
+[06独立受入](CURVED_SELECTION_CHARTS_ACCEPTANCE.md)もDONE。次はADD-N04-boundary-remesh-01。
 異なる初期接続・頂点数・境界分割を持つ二Project間の選択領域移送を仕様化する。
 仕様01受入時点の `curved_selection_transfer.transfer_curved_cell_selection` / `_validate_request` /
 `replay_curved_selection_transfer` は版1で、初期一対一対応を必須とした。

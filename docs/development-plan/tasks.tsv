@@ -129,4 +129,4 @@ ADD-N04-selection-charts-02	N04 O02	ADD-N04-selection-charts-01	入力	DONE	../C
 ADD-N04-selection-charts-03	N04 O02	ADD-N04-selection-charts-02	実装	DONE	../CURVED_SELECTION_CHARTS_CORE.md	全参照分割から選択領域の移送を計算する
 ADD-N04-selection-charts-04	N04 O02	ADD-N04-selection-charts-03	保存/CLI	DONE	../CURVED_SELECTION_CHARTS_SAVED.md	選択移送版2の完全再生とCLIを接続する
 ADD-N04-selection-charts-05	N04 O02	ADD-N04-selection-charts-04	操作	DONE	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2を図上選択と履歴GUIへ接続する
-ADD-N04-selection-charts-06	N04 O02	ADD-N04-selection-charts-05	検証	PLANNED	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2の独立幾何と実FEMを受入する
+ADD-N04-selection-charts-06	N04 O02	ADD-N04-selection-charts-05	検証	DONE	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2の独立幾何と実FEMを受入する
