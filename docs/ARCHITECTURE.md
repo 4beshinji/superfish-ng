@@ -10,8 +10,10 @@
 
 `cli.py` は構文登録と操作実行を同じモジュールに持ち、`gui.py` はHTTP輸送と
 業務操作のdispatchを持つ。`jobs.py` のJobManagerから物理別workerへ渡す。
-共通入力検査は現在 `config.py`、strict JSONは `project.py`、保存canonical化は
-`saved_mode_tracking.py`、ファイル来歴は `jobs.py` 等にある。RF-03以降の抽出は未実装。
+共通値検査は [input_validation.py](../src/superfish_ng/input_validation.py) へ抽出し、
+`config.py` の旧APIは転送する。同軸専用入力も下位検査を直接利用する。strict JSONは `project.py`、
+保存canonical化は `saved_mode_tracking.py`、ファイル来歴は `jobs.py` 等に残る。
+RF-03のJSON/来歴とRF-04以降の抽出は未実装。
 Case・FEM・場・量・native readerは以下の物理別経路に分かれており、任意のCaseを
 canonical `solve` や `save_run` へ渡せる統一APIではない。
 

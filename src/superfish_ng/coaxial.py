@@ -11,7 +11,7 @@ import numpy as np
 from scipy.linalg import eigh
 from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import eigsh
-from .config import keys, positive, integer
+from .input_validation import keys, positive, integer
 from .constants import C0, EPS0, MU0, TAU
 from .fem import triangle_quadrature
 from .high_order import basis_p2, quadratic_space

@@ -2,7 +2,7 @@
 
 作成：2026-09-22。更新：2026-10-13。[横断レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)
 （基準`a191b4e`）のF01〜F10と、[科学レビュー](SCIENTIFIC_REVIEW_2026-10-13.md)
-（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02を受入済み。残7枚は未着手で、計画全体は継続中。**
+（基準`4665561`）のS01〜S06を対応させる。**RF-11/RF-01/RF-09/RF-02を受入済み。RF-03を実施中、残6枚は未着手で、計画全体は継続中。**
 既存IDを保つ`RF-01`〜`RF-10`と、新規不具合対応`RF-11`を
 [開発計画](development-plan/README.md)・[tasks.tsv](development-plan/tasks.tsv)へ登録する。
 原141カードの状態を維持し、11枚をPLANNEDで追加した全152カードを実行対象とする。
@@ -85,7 +85,7 @@ V03はRF-07/08/09/10を待つ（その依存を含め全11枚を網羅）、V05�
 | RF-11 入力・解の対応 | S01/S03 | なし | 求解契約と後処理条件を分離し、RF/保存/読込へ接続 | DONE |
 | RF-01 検証来歴 | F01/S02 | RF-11 | validatorの来歴とその失敗検査 | DONE |
 | RF-02 環境/任意依存 | F02/F08 | RF-01 | core/GUI条件、導入手順、環境証拠 | DONE |
-| RF-03 下位共通処理 | F03 | RF-01/02 | 入力、JSON、来歴を別々に抽出 | PLANNED |
+| RF-03 下位共通処理 | F03 | RF-01/02 | 入力、JSON、来歴を別々に抽出 | IN_PROGRESS |
 | RF-04 所有worker | F04 | RF-03 | 直線→曲線→材料の順で移行し、最後に統合確認 | PLANNED |
 | RF-05 調整決定 | F05 | RF-03 | 決定の抽出→各物理アダプター移行 | PLANNED |
 | RF-06 CLI分割 | F06 | RF-03 | 一つのコマンド群ずつ。RF-04/05の対象群はその移行後 | PLANNED |
@@ -188,6 +188,8 @@ lockを追加する場合は依存更新と分けて差分を審査し、将来�
 <a id="rf-03"></a>
 
 ### RF-03：入力検査、JSON、来歴を下位へ抽出する
+
+2026-10-14 **IN_PROGRESS**：第一段階の値検査を `input_validation.py` へ抽出。`config` の旧signature/転送関数と同軸専用入力を接続し、元body AST・75旧新/転送結果・直接10unitを確認。bool/NaN/巨大int/型/例外文言を維持する。rawはout/rf03-lower-helpers-20261013/input-acceptance.json。JSON/canonicalと来歴補助、三段階統合fullは未実施で、カード全体は未受入。
 
 対象：`config.py`の`keys/integer/positive`、`project.py:parse_json`、
 `saved_mode_tracking.py:_canonical`、`jobs.py`のhash/JSON書込補助と直接の利用側。

@@ -5,23 +5,18 @@ import json
 import math
 from pathlib import Path
 from typing import TYPE_CHECKING
+from .input_validation import positive as _positive, integer as _integer, keys as _keys
 
 if TYPE_CHECKING:
     from .model import Model
 
 
 def positive(value, name):
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ValueError(f"{name} must be a finite positive number")
-    if not math.isfinite(value) or value <= 0:
-        raise ValueError(f"{name} must be a finite positive number")
-    return float(value)
+    return _positive(value, name)
 
 
 def integer(value, name, minimum=1):
-    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
-        raise ValueError(f"{name} must be an integer >= {minimum}")
-    return value
+    return _integer(value, name, minimum)
 
 
 def acceleration_parameters(length, active_length=None, interval=None, phase_origin=None):
@@ -42,11 +37,7 @@ def acceleration_parameters(length, active_length=None, interval=None, phase_ori
 
 
 def keys(data, allowed, required, label):
-    if not isinstance(data, dict):
-        raise ValueError(f"{label} must be an object")
-    unknown, missing = set(data) - set(allowed), set(required) - set(data)
-    if unknown or missing:
-        raise ValueError(f"{label}: unknown keys {sorted(unknown)}, missing keys {sorted(missing)}")
+    return _keys(data, allowed, required, label)
 
 
 @dataclass(frozen=True)

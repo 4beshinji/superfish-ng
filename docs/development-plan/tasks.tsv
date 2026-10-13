@@ -143,7 +143,7 @@ ADD-N04-rf-goal-06	N04	ADD-N04-rf-goal-05	操作/監査	PLANNED	../CURVED_RF_GOA
 RF-11	O01 V02		修正	DONE	../REFACTORING_PLAN.md#rf-11	求解契約と後処理条件を分け入力と実解の対応を検証する
 RF-01	V02	RF-11	修正/検証	DONE	../REFACTORING_PLAN.md#rf-01	総合validatorのソース固定を検査する
 RF-02	O01 V02	RF-01	環境/検証	DONE	../REFACTORING_PLAN.md#rf-02	coreとGUIの検証環境を明示する
-RF-03	O01 O02 V02	RF-01 RF-02	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-03	入力検査JSON来歴を下位へ抽出する
+RF-03	O01 O02 V02	RF-01 RF-02	リファクタ	IN_PROGRESS	../REFACTORING_PLAN.md#rf-03	入力検査JSON来歴を下位へ抽出する
 RF-04	D02 O02 V02	RF-03	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-04	Hφの所有worker機構を共通化する
 RF-05	D02 V02	RF-03	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-05	確認済み試行から次動作を決める処理を分離する
 RF-06	O02 V02	RF-03	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-06	CLIの登録と実行をコマンド群ごとに分割する
