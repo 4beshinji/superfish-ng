@@ -1,5 +1,7 @@
 # N04の要件・証拠・残件の照合
 
+2026-10-13 ADD-N04-boundary-remesh-02 **DONE**：[生成版2のstrict入力](CURVED_BOUNDARY_REMESH_INPUT.md)。九共通項目＋一履歴の型/版/有限/予算/固定pattern/コピー・raw重複と旧版を、新9＋旧生成9の18個別unitで確認、16.186秒・終了0。先行helper未実装ERRORは保全。元1451対象の他1450源byte一致、新helper以外の旧module全AST一致、公開版2はまだ拒否。新FEM/seed/full/GUI/legacy0。全136は84 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-03、親N04/全goalは継続。
+
 2026-10-13 ADD-N04-boundary-remesh-01 **DONE**：[元P2境界分割を変更する生成版2仕様](CURVED_BOUNDARY_REMESH_SPEC.md)。矩形/非アフィンの現行サイズ拒否を先に再現し、既存固定履歴で境界32/28辺・全P2/三幾何積分保存を確認。旧64→32辺の粗化と再投影の体積差2.176e-4/拒否も確認。元1444源byte不変、solve禁止の表現probeのみで新FEM/unit/seed/full/GUI0。九項目＋一履歴・七項目保存・五後続と独立6FEMゲートを固定、公開版2は未実装。全136は83 DONE/2 IN_PROGRESS/51 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-02、親N04/全goalは継続。
 
 2026-10-08 ADD-N04-selection-charts-04 **DONE**：[版2の完全保存再生とCLI](CURVED_SELECTION_CHARTS_SAVED.md)。両Project/元requestから全参照分割・全selection・十項目を再計算して型/改竄/予算/欠落を拒否し、旧版1を維持。新saved6/旧selection8/strict JSON1の15個別PASS、7.502秒・終了0、solve guard全0。実CLI四起動は両policyのtransfer/replay終了0、保存全文書API一致。元round-trip ERRORを保全し、旧selection ASTは新helper/dispatch以外一致・CLIは三helpだけ変更。全1440対象/1227 Python源固定・他1437源byte一致、03の独立幾何/元TM/TE科学証拠を再利用。新FEM/seed/full/GUI/専用validator/legacy0。全131は80 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45、次は05のGUI。親N04/原32要件/全goalは継続。
@@ -20,11 +22,11 @@ N08はDONE、親N04はIN_PROGRESS。原四群の現行照合は次表、以降�
 | 1 非球形両尺度/追加一様対照 | 旧回転楕円体両尺度PASSは維持。N03五合成系列とN05/N06/N07三形状・独立全場/九量/二反復の条件別対照を追加 | 旧測定時間を新実行へ読み替えない。有限例の比較で普遍的優位を要求しない |
 | 2 RF重み付き選択と一般対照 | 旧版5の感度/随伴/明示表面方針両尺度・保存/GUI/費用は維持。新残差版3/4は六adaptive公開保存/30水準完全再生と現行30 GUI操作を確認 | 新残差版3/4を版5固有の一般対照へ代用しない。R/Q単独の旧未達/非優位を保ち、ADD-N04-rf-goal-01で全branch/event費用と独立精度の固定対照を具体化 |
 | 3 対称/一般曲線の表面と幾何 | 単一対称/磁気対称の旧最終対照、N03の球/長楕円体/丸め/鋭角の独立幾何・元場/RF/ピーク評価を維持 | 版4のsmooth閉PEC受理範囲は不変。旧NT=2/3入力とG03全体は原カードC03/幾何監査N04の後続。適応親N04と幾何監査カードN04は異なるID空間 |
-| 4 履歴/変形/初期再メッシュ/番号/選択/共通比較 | 固定/混在履歴、途中挿入、宣言/調和変形とStudy、内部生成、独立番号は実装済み。元N03全1405源byte一致、関連66unit証拠を再利用。250000表示は元合成描画の記録。共通比較版5は明示全参照座標で異なる初期接続/境界分割を実装済み | 版2選択は01〜06のAPI/完全再生/CLI/実GUI/独立6FEMを受入済み。境界生成版2仕様01を受入、公開生成の02〜06とRF版5一般対照は残る |
+| 4 履歴/変形/初期再メッシュ/番号/選択/共通比較 | 固定/混在履歴、途中挿入、宣言/調和変形とStudy、内部生成、独立番号は実装済み。元N03全1405源byte一致、関連66unit証拠を再利用。250000表示は元合成描画の記録。共通比較版5は明示全参照座標で異なる初期接続/境界分割を実装済み | 版2選択は01〜06のAPI/完全再生/CLI/実GUI/独立6FEMを受入済み。境界生成版2仕様01/strict入力02を受入、公開生成の03〜06とRF版5一般対照は残る |
 
 [三つの具体仕様カード](N04_REMAINING_CARDS.md)を親の必須後続として登録した。
 新版共通比較の完了を選択移送の完了へ代用せず、既存残件を削除しない。
-新しい誤差上界/一般保証を完走条件へ追加しない。次はADD-N04-boundary-remesh-02。
+新しい誤差上界/一般保証を完走条件へ追加しない。次はADD-N04-boundary-remesh-03。
 
 ---
 

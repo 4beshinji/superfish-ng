@@ -13,6 +13,40 @@ from .contour_mesh import (triangulate_contour,contour_mesh_quality,improve_cont
 from .curved_project_remesh import validate_remesh_plan,remesh_curved_project
 
 
+def validate_generation_settings(data):
+    """Return an independent copy of strict version 1 or 2 metadata.
+
+    Version 2 declares final-native chord sizes and bounded P2 restrictions.
+    This does not establish geometry, pattern ownership or mesh feasibility;
+    the generation entry point must implement and check those separately.
+    """
+    required=('schema_version','max_chord_edge_m','max_chord_triangle_area_m2',
+              'minimum_corner_angle_deg','max_triangles','max_rounds')
+    history=('curved_refinement_levels','curved_refinement_steps')
+    boundary=('boundary_policy','max_boundary_edges','max_seed_rounds')
+    label='curved remesh generation settings'
+    keys(data,required+history+boundary,('schema_version',),label)
+    version=data['schema_version']
+    if type(version) is not int or version not in (1,2):
+        raise ValueError(f'{label} schema_version must be 1 or 2')
+    if version==1:
+        legacy=data
+    else:
+        keys(data,required+history+boundary,required+boundary,label)
+        if data['boundary_policy']!='restrict_native_p2':
+            raise ValueError('boundary_policy must be restrict_native_p2')
+        for name in ('max_boundary_edges','max_seed_rounds'):
+            integer(data[name],name)
+        # The portable plan still uses its original schema and history grammar.
+        legacy={key:value for key,value in data.items() if key not in boundary}
+        legacy['schema_version']=1
+    try:
+        _settings(legacy)
+    except OverflowError as exc:
+        raise ValueError(f'{label}: numeric history value is not representable as finite float') from exc
+    return deepcopy(data)
+
+
 def _settings(data):
     required=('schema_version','max_chord_edge_m','max_chord_triangle_area_m2',
               'minimum_corner_angle_deg','max_triangles','max_rounds')

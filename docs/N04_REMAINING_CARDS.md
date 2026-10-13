@@ -3,7 +3,7 @@
 2026-10-08 JST、[N08受入監査](N08_ACCEPTANCE.md)で既存残件を再照合した。
 新しい物理やユーザー範囲の追加ではなく、[N04の既存残件4](N04_ACCEPTANCE.md)を分割する。
 原123カードを保持し、追加3仕様カードと選択移送/境界生成それぞれの必須五後続カードをTSVに登録する。
-選択移送01〜06と境界生成仕様01はDONE。境界生成02〜06とRF仕様01はPLANNED。全136は83/2/51。
+選択移送01〜06と境界生成01/02はDONE。境界生成03〜06とRF仕様01はPLANNED。全136は84/2/50。
 仕様カードは着手可能。未確定の入力/数値ゲートを持つ実装カードをreadyとしない。
 仕様の受入後、[L05の具体カード化手順](development-plan/08-external.md#条件付き要件から追加カードを作る手順)
 に沿って必要な入力/計算/保存/操作/独立受入を接続し、親N04の依存へ追加する。
@@ -36,7 +36,7 @@
 ## ADD-N04-boundary-remesh-01
 
 **親N04、先行N08、種別仕様、状態DONE**。
-[版2仕様](CURVED_BOUNDARY_REMESH_SPEC.md)を2026-10-13受入。元P2制限の表現probe/正常拒否例を確認し、必須02〜06をTSVへ接続した。公開版2は後続、次は02。
+[版2仕様](CURVED_BOUNDARY_REMESH_SPEC.md)を2026-10-13受入。元P2制限の表現probe/正常拒否例を確認し、必須02〜06をTSVへ接続した。[02 strict入力](CURVED_BOUNDARY_REMESH_INPUT.md)もDONE。公開版2計算は後続、次は03。
 二次境界の分割数を変更できる再メッシュ生成の範囲と表現を固定する。
 現行 `curved_remesh_generation.generate_curved_remesh_plan` / `_boundary_case` /
 `_size_marks` は元二次境界を固定し、境界サイズと競合すると拒否する。

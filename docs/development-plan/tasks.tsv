@@ -130,7 +130,7 @@ ADD-N04-selection-charts-03	N04 O02	ADD-N04-selection-charts-02	実装	DONE	../C
 ADD-N04-selection-charts-04	N04 O02	ADD-N04-selection-charts-03	保存/CLI	DONE	../CURVED_SELECTION_CHARTS_SAVED.md	選択移送版2の完全再生とCLIを接続する
 ADD-N04-selection-charts-05	N04 O02	ADD-N04-selection-charts-04	操作	DONE	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2を図上選択と履歴GUIへ接続する
 ADD-N04-selection-charts-06	N04 O02	ADD-N04-selection-charts-05	検証	DONE	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2の独立幾何と実FEMを受入する
-ADD-N04-boundary-remesh-02	N04	ADD-N04-boundary-remesh-01	入力	PLANNED	../CURVED_BOUNDARY_REMESH_SPEC.md#必須五工程と独立受入ゲート	境界再メッシュ生成版2のstrict設定を検査する
+ADD-N04-boundary-remesh-02	N04	ADD-N04-boundary-remesh-01	入力	DONE	../CURVED_BOUNDARY_REMESH_INPUT.md	境界再メッシュ生成版2のstrict設定を検査する
 ADD-N04-boundary-remesh-03	N04	ADD-N04-boundary-remesh-02	実装	PLANNED	../CURVED_BOUNDARY_REMESH_SPEC.md#必須五工程と独立受入ゲート	元P2制限で境界分割を変更する計画を生成する
 ADD-N04-boundary-remesh-04	N04	ADD-N04-boundary-remesh-03	保存/CLI	PLANNED	../CURVED_BOUNDARY_REMESH_SPEC.md#必須五工程と独立受入ゲート	境界再メッシュ生成の完全再生とCLIを接続する
 ADD-N04-boundary-remesh-05	N04	ADD-N04-boundary-remesh-04	操作	PLANNED	../CURVED_BOUNDARY_REMESH_SPEC.md#必須五工程と独立受入ゲート	境界再メッシュをStudy GUIとworkerへ接続する

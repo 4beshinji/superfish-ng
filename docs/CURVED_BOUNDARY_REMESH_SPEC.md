@@ -4,6 +4,9 @@
 [親N04残件4](N04_REMAINING_CARDS.md#add-n04-boundary-remesh-01)を実装可能な五工程へ展開する。
 本カードは入力・表現・ゲートの決定まで。公開生成器の版2、保存、GUI、専用FEMは後続02〜06で受入する。
 
+現行追補：[02 strict入力](CURVED_BOUNDARY_REMESH_INPUT.md)をDONE。以下の未実装は仕様受入時点の記録。
+公開版2計算はまだ未接続で、次は03。
+
 ## 対象と採用する表現
 
 元の解析曲線、材料、SI単位、RF座標、正規化、mode設定を保持し、元の内部接続を捨てて
@@ -40,7 +43,7 @@ TE拘束を既存のnative検査で全履歴prefixごとに確認する。
 ## 版2入力とサイズの意味
 
 `curved_remesh_generation.validate_generation_settings`をstrict入口として追加する。
-JSONでは重複キー/NaN/Infinityを`project.parse_json`/`load_document`で拒否する。
+JSONの重複キーは`project.parse_json`で、NaN/Infinityは読取後の数値欄検査で拒否する。
 辞書APIも未知・欠落・不正型・非有限・巨大整数変換を拒否し、入力を変更しない。
 全九共通項目と、下表の履歴指定のちょうど一方を必須とする。隠れた既定値を設けない。
 

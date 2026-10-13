@@ -1,5 +1,7 @@
 # 未完課題のコミット単位開発計画
 
+2026-10-13 ADD-N04-boundary-remesh-02 **DONE**：[生成版2のstrict入力](../CURVED_BOUNDARY_REMESH_INPUT.md)。九共通項目＋一履歴の型/版/有限/予算/固定pattern/コピー・raw重複と旧版を、新9＋旧生成9の18個別unitで確認、16.186秒・終了0。先行helper未実装ERRORは保全。元1451対象の他1450源byte一致、新helper以外の旧module全AST一致、公開版2はまだ拒否。新FEM/seed/full/GUI/legacy0。全136は84 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-03、親N04/全goalは継続。
+
 2026-10-13 ADD-N04-boundary-remesh-01 **DONE**：[元P2境界分割を変更する生成版2仕様](../CURVED_BOUNDARY_REMESH_SPEC.md)。矩形/非アフィンの現行サイズ拒否を先に再現し、既存固定履歴で境界32/28辺・全P2/三幾何積分保存を確認。旧64→32辺の粗化と再投影の体積差2.176e-4/拒否も確認。元1444源byte不変、solve禁止の表現probeのみで新FEM/unit/seed/full/GUI0。九項目＋一履歴・七項目保存・五後続と独立6FEMゲートを固定、公開版2は未実装。全136は83 DONE/2 IN_PROGRESS/51 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-02、親N04/全goalは継続。
 
 2026-10-13 ADD-N04-selection-charts-06 **DONE**：[独立幾何/行列/6native・全保存場GUIの受入](../CURVED_SELECTION_CHARTS_ACCEPTANCE.md)。全有理被覆/別P2三積分・Green/非アフィン4・8・32尺度、親子K/M最大2.617e-17・Ritz非増加、f/RF尺度最大5.329e-15・全物理体積重み元E/H尺度最大1.191e-11を原gate内で確認。6新求解は1＋5に分割し既存完了nativeを再利用、全科学ゲート後のCLI stdout解析ERRORは元reportを保全しCLIだけ修正。六API/CLI probe一致、実Chrome55操作・全6保存場の9file/10配列byte完全一致・元Project/全RF一致、GUI新FEM0。元源固定と科学helper AST不変、別レビュー源変更は区別、全handle/server/browser終端。新unit/seed/full/legacy0、連続物理精度/peakはUNVERIFIED・上界null。全131は82 DONE/2 IN_PROGRESS/47 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-01、親N04/原32要件/全goalは継続。
