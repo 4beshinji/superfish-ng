@@ -1,5 +1,89 @@
 # アーキテクチャと拡張判断
 
+<a id="current-architecture"></a>
+
+## 現行の入口と責務（2026-10-13、RF-09）
+
+以下は現存する実装の索引。[リファクタリング計画](REFACTORING_PLAN.md)の目標図とは
+区別する。進捗の正本は[CURRENT](development-plan/CURRENT.md)。下の日付付きADRや
+受入追記の「現時点」「未接続」は、その記録時点の判断として読む。
+
+`cli.py` は構文登録と操作実行を同じモジュールに持ち、`gui.py` はHTTP輸送と
+業務操作のdispatchを持つ。`jobs.py` のJobManagerから物理別workerへ渡す。
+共通入力検査は現在 `config.py`、strict JSONは `project.py`、保存canonical化は
+`saved_mode_tracking.py`、ファイル来歴は `jobs.py` 等にある。RF-03以降の抽出は未実装。
+Case・FEM・場・量・native readerは以下の物理別経路に分かれており、任意のCaseを
+canonical `solve` や `save_run` へ渡せる統一APIではない。
+
+### RF固有問題
+
+表のソースリンク先がCase/FEM/場/量の入口。`Solution` の場評価と量関数は別に保持する。
+SI、peak `exp(+iωt)`、軸対称のU [J]、E [V/m]、H [A/m]、B [T]を使用する。
+平面は単位長当たりU′ [J/m]・損失 [W/m]で、軸上加速量と両R/QはN/A。
+TEも加速量・両R/QはN/A。専用Hφは明示した真空軸経路がある場合だけ加速量を評価する。
+
+| 物理・入力範囲 | Case / solve / 場・量 | native | 操作・専用仕様と受入 |
+| --- | --- | --- | --- |
+| canonical真空・閉PEC・軸接続m=0 TM、直線P1/P2 | [config.py](../src/superfish_ng/config.py) `Case` → [solver.py](../src/superfish_ng/solver.py) `solve` / [rf.py](../src/superfish_ng/rf.py) `cell_fields`, `quantities` | [io.py](../src/superfish_ng/io.py) `save_run` / [saved.py](../src/superfish_ng/saved.py) `read_solution` / [affine_saved.py](../src/superfish_ng/affine_saved.py) `read_verified_affine_solution` | `solve`、Project/Study、GUI。 [P2](QUADRATIC_ELEMENTS.md)、[高次場](HIGH_ORDER_FIELDS.md)、[入力と実解](AFFINE_SOLUTION_CONTRACT.md) |
+| 同じCaseの曲線P2 TM | [curved_solution.py](../src/superfish_ng/curved_solution.py) / [curved_rf.py](../src/superfish_ng/curved_rf.py) `quantities_curved` | 同じ `save_run` / `read_solution` の [curved_saved.py](../src/superfish_ng/curved_saved.py) 分岐 | 同じ操作入口、[曲線要素](CURVED_ELEMENTS.md)、[N03限定受入](N03_ACCEPTANCE.md) |
+| 明示modelの軸対称TE、直線P1/P2・曲線P2 | 同じ `Case` / `solve` → [te.py](../src/superfish_ng/te.py) `solve_te`, `te_quantities` / [te_curved.py](../src/superfish_ng/te_curved.py) | [te_saved.py](../src/superfish_ng/te_saved.py) `save_te_run`, `read_te_run`（直線版2・曲線版3） | TE専用Job/Project処理、[TE](AXISYMMETRIC_TE.md)、[曲線TE](CURVED_TE_PLAN.md)、[直線調整受入](STRAIGHT_TE_TUNING_ACCEPTANCE.md) |
+| 閉じた同軸真空 | [coaxial.py](../src/superfish_ng/coaxial.py) `CoaxialCase`, `solve_coaxial`, `coaxial_quantities` / `CoaxialSolution` の場 | [coaxial_saved.py](../src/superfish_ng/coaxial_saved.py) | `solve/replay/probe-coaxial`、[専用RF](COAXIAL_RF.md) |
+| 正半径の直線真空、PEC穴を許す | [hphi_mesh.py](../src/superfish_ng/hphi_mesh.py) `HphiMeshCase`, `solve_hphi_mesh`, `hphi_mesh_quantities` / `HphiMeshSolution` | [hphi_mesh_saved.py](../src/superfish_ng/hphi_mesh_saved.py) | `solve/replay/probe-hphi-mesh`、[専用メッシュ](COAXIAL_GENERAL_MESH_PLAN.md) |
+| 軸接続の直線真空、PEC穴を許す | [axis_hphi.py](../src/superfish_ng/axis_hphi.py) `AxisHphiCase`, `solve_axis_hphi`, `axis_hphi_quantities` / `AxisHphiSolution` | [axis_hphi_saved.py](../src/superfish_ng/axis_hphi_saved.py) | `solve/replay/probe-axis-hphi`、[専用RF](AXIS_HPHI_RF.md) |
+| 明示全P2写像の真空Hφ、軸の有無・PEC穴を宣言 | [curved_hphi.py](../src/superfish_ng/curved_hphi.py) `CurvedHphiCase`, `solve_curved_hphi` / `CurvedHphiSolution` / [curved_hphi_rf.py](../src/superfish_ng/curved_hphi_rf.py) `curved_hphi_quantities` | [curved_hphi_saved.py](../src/superfish_ng/curved_hphi_saved.py) | `solve/replay/probe-curved-hphi`、[RF](CURVED_HPHI_RF.md)、[限定受入](CURVED_HPHI_ACCEPTANCE.md) |
+| 区分一様・lossless材料Hφ | [material_hphi.py](../src/superfish_ng/material_hphi.py) `MaterialHphiCase`, `solve_material_hphi` / `MaterialHphiSolution` / [material_hphi_rf.py](../src/superfish_ng/material_hphi_rf.py) `material_hphi_quantities` | [material_hphi_saved.py](../src/superfish_ng/material_hphi_saved.py) | `solve/replay/probe-material-hphi`、[RF](MATERIAL_HPHI_RF.md)、[限定受入](MATERIAL_HPHI_ACCEPTANCE.md) |
+| Cartesian真空TE/TM、矩形版1・直線多角形版2 | [planar.py](../src/superfish_ng/planar.py) `PlanarCase`, `solve_planar`, `planar_quantities` / `PlanarSolution` | [planar_saved.py](../src/superfish_ng/planar_saved.py) | `solve/replay/probe-planar`、[矩形](PLANAR_RF.md)、[多角形](PLANAR_POLYGON_RF.md) |
+| Cartesian真空TE/TM、全P2 Domain版3 | [planar_curved.py](../src/superfish_ng/planar_curved.py) `PlanarCurvedCase` → [planar_curved_solver.py](../src/superfish_ng/planar_curved_solver.py) `solve_planar_curved`, `planar_curved_quantities` / `PlanarCurvedSolution` | [planar_curved_saved.py](../src/superfish_ng/planar_curved_saved.py)（版3） | 同じplanar CLIの版dispatch、[P05契約](PLANAR_CURVED_RF.md)、[P07限定受入](PLANAR_CURVED_ACCEPTANCE.md)、[native](PLANAR_CURVED_NATIVE.md) |
+
+専用HφのProject/worker/GUI範囲は [hphi_project.py](../src/superfish_ng/hphi_project.py)、
+[hphi_jobs.py](../src/superfish_ng/hphi_jobs.py)、[gui_hphi.py](../src/superfish_ng/gui_hphi.py)、
+Cartesianは [planar_project.py](../src/superfish_ng/planar_project.py)、
+[planar_jobs.py](../src/superfish_ng/planar_jobs.py)、[gui_planar.py](../src/superfish_ng/gui_planar.py)へ接続する。
+操作別の対応は [capability_inventory.py](../src/superfish_ng/capability_inventory.py) の
+物理別capability関数 と専用仕様で確認する。入力parserが受理可否の正本であり、
+この一覧は対応を追加する設定ではない。追跡・Study・調整にはそれぞれ独立した要求版とreaderがある。
+
+### 静的場の11経路
+
+各行の最初のモジュールに専用Case、`solve_*`、Solutionの `fields_in_cells`、
+`*_quantities` があり、nativeモジュールが専用保存/再検証を行う。
+静電は電位 [V]・E [V/m]、磁静はB [T]・H [A/m]、軸対称積分は3D、平面積分は単位長当たり。
+RF周波数・Q・加速量・R/Qを静的結果へ付与しない。
+線形/反跳はP1/P2、B-HはP1の限定範囲で、実際の非線形失敗は成功と別に保存する。
+
+| 物理・座標 | Case / FEM / 場・量 | nativeと専用仕様 |
+| --- | --- | --- |
+| 軸対称静電 | [electrostatic.py](../src/superfish_ng/electrostatic.py) | [electrostatic_saved.py](../src/superfish_ng/electrostatic_saved.py)、[契約・受入](ELECTROSTATIC_NATIVE.md) |
+| Cartesian静電 | [planar_electrostatic.py](../src/superfish_ng/planar_electrostatic.py) | [planar_electrostatic_saved.py](../src/superfish_ng/planar_electrostatic_saved.py)、[契約・受入](PLANAR_ELECTROSTATIC_NATIVE.md) |
+| 軸接続線形磁静 | [axis_magnetostatic.py](../src/superfish_ng/axis_magnetostatic.py) | [axis_magnetostatic_saved.py](../src/superfish_ng/axis_magnetostatic_saved.py)、[契約・受入](AXIS_MAGNETOSTATIC_NATIVE.md) |
+| 正半径線形磁静 | [off_axis_magnetostatic.py](../src/superfish_ng/off_axis_magnetostatic.py) | [off_axis_magnetostatic_saved.py](../src/superfish_ng/off_axis_magnetostatic_saved.py)、[契約・受入](OFF_AXIS_MAGNETOSTATIC_NATIVE.md) |
+| Cartesian線形磁静 | [planar_magnetostatic.py](../src/superfish_ng/planar_magnetostatic.py) | [planar_magnetostatic_saved.py](../src/superfish_ng/planar_magnetostatic_saved.py)、[契約・受入](PLANAR_MAGNETOSTATIC_NATIVE.md) |
+| 軸接続B-H | [axis_bh.py](../src/superfish_ng/axis_bh.py) | [axis_bh_saved.py](../src/superfish_ng/axis_bh_saved.py)、[契約・受入](AXIS_BH_NATIVE.md) |
+| 正半径B-H | [off_axis_bh.py](../src/superfish_ng/off_axis_bh.py) | [off_axis_bh_saved.py](../src/superfish_ng/off_axis_bh_saved.py)、[契約・受入](OFF_AXIS_BH_NATIVE.md) |
+| CartesianB-H | [planar_bh.py](../src/superfish_ng/planar_bh.py) | [planar_bh_saved.py](../src/superfish_ng/planar_bh_saved.py)、[契約・受入](PLANAR_BH_NATIVE.md) |
+| 軸接続反跳tensor/残留磁束 | [axis_recoil.py](../src/superfish_ng/axis_recoil.py) | [axis_recoil_saved.py](../src/superfish_ng/axis_recoil_saved.py)、[契約・受入](AXIS_RECOIL_NATIVE.md) |
+| 正半径反跳tensor/残留磁束 | [off_axis_recoil.py](../src/superfish_ng/off_axis_recoil.py) | [off_axis_recoil_saved.py](../src/superfish_ng/off_axis_recoil_saved.py)、[契約・受入](OFF_AXIS_RECOIL_NATIVE.md) |
+| Cartesian反跳tensor/残留磁束 | [planar_recoil.py](../src/superfish_ng/planar_recoil.py) | [planar_recoil_saved.py](../src/superfish_ng/planar_recoil_saved.py)、[契約・受入](PLANAR_RECOIL_NATIVE.md) |
+
+11種は [static_field_project.py](../src/superfish_ng/static_field_project.py) の専用Project版1と
+[static_field_jobs.py](../src/superfish_ng/static_field_jobs.py) を通して `solve/replay-static-project`、
+`normalize-static-project`、[静的GUI](STATIC_FIELD_GUI.md)へ接続する。
+独立点Studyは [static_field_study.py](../src/superfish_ng/static_field_study.py)、
+[static_field_study_jobs.py](../src/superfish_ng/static_field_study_jobs.py)、
+[専用GUI](STATIC_FIELD_STUDY_GUI.md)を使う。[入力仕様](STATIC_FIELD_PROJECT.md)の
+「入力契約だけ」の旧受入と、後続の[実worker受入](STATIC_FIELD_JOBS.md)を区別する。
+専用の境界・材料・電流・求解失敗条件をcanonical RF Caseへ移植しない。
+
+### 量別の受入と履歴
+
+[PHYSICS](PHYSICS.md#現行の範囲と読み方)からN08の公開適応と、直線/曲線の離散ピーク、
+N03/P07の有限系列受入へ進める。代数残差、固定P2領域の差、解析境界との差、
+連続物理誤差、実測との照合は別の判定であり、この索引更新による数値受入はない。
+RF-09の確認はリンク/実在入口・版/単位/限定範囲・履歴保持とsource不変に限定する。
+証拠は `out/rf09-current-index-20261013/acceptance.json`。新FEM/unit/seed/full/GUI実行は0。
+
+## 日付付き設計判断・実装履歴
+
 ## ADR-018: A01の候補比較を隔離した参照環境で行う
 
 2026-09-14、A01/P0-04。cavsim2d 0.1.0のcommit
@@ -92,7 +176,7 @@ Project/Studyの幾何再生成で版を下げず、GUIの読込・編集でもm
 既存Case/FEM/RFと出力場形式を継続使用し、新規外部依存は追加しない。
 仕様・再現・受入は [MODEL_CONTRACT.md](MODEL_CONTRACT.md)。
 
-## 現在の責務
+## 2026-09-22時点のseed責務表
 
 以下はseedを中心とする主要経路の表。2026-09-22時点の専用物理・保存/worker・CLI/GUIを含む
 横断的な現状と依存の所見は[既存実装レビュー](IMPLEMENTATION_REVIEW_2026-09-22.md)、
@@ -118,7 +202,7 @@ Project/Studyの幾何再生成で版を下げず、GUIの読込・編集でもm
 Caseの点列は `(z,r)`、内部Mesh.pointsは `(r,z)`。
 出力とモジュール名で区別し、将来のCADアダプターで入れ替え事故を防ぐ。
 
-## 現在のPython API
+## seedのPython API例（旧記録）
 
 ```python
 from superfish_ng import Case, solve

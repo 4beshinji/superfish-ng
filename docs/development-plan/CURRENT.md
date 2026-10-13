@@ -2,7 +2,7 @@
 
 ## 科学レビュー後の挿入工程（2026-10-13）
 
-今回の依頼は[科学レビュー](../SCIENTIFIC_REVIEW_2026-10-13.md)を受けた実装計画の変更。
+今回の実装は[科学レビュー](../SCIENTIFIC_REVIEW_2026-10-13.md)を受けたリファクタリング11枚を対象とする。
 [RF-01〜RF-11](../REFACTORING_PLAN.md#順序と区切り)をTSVへPLANNEDで登録し、
 現行141枚に11枚を追加した全152枚を対象とする。既存カードの受入状態は変更しない。
 以下の先頭追記と「次は」は従来工程の履歴であり、次の着手順はこの節を優先する。
@@ -17,8 +17,9 @@
    S05の実測/不確かさ不足は従来の検証/L06/L07から省かない。
 
 RF-11を[求解契約の受入](../AFFINE_SOLUTION_CONTRACT.md)、RF-01を
-[validator前後監査](../VALIDATOR_SOURCE_AUDIT.md)で完了した。次はRF-09→RF-02→RF-03。
-RF残9枚はPLANNED、既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
+[validator前後監査](../VALIDATOR_SOURCE_AUDIT.md)、RF-09を[現行入口と履歴の索引](../ARCHITECTURE.md#current-architecture)で完了した。
+次はRF-02→RF-03。全152は94 DONE/3 IN_PROGRESS/55 PLANNED、RF残8枚はPLANNED。
+既存prefix・失敗・未確認の証拠と配布/統合依存を保持する。
 
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
 

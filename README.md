@@ -37,8 +37,9 @@ D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
 | 出力 | 単位と規約を含む JSON、CSV、NPZ、ParaView 向け ASCII VTK |
 | GUI | ローカルブラウザー GUI（`plot` extra 必須）。編集・計算・中止・保存結果表示・掃引・収束比較 |
 
-対応状況の詳細は [物理仕様](docs/PHYSICS.md)、[モデル契約](docs/MODEL_CONTRACT.md)、
-[互換対応表](docs/COMPATIBILITY_MATRIX.md) を参照してください。
+対応状況の詳細は [現行の物理入口と構成](docs/ARCHITECTURE.md#current-architecture)、
+[物理仕様と限定受入](docs/PHYSICS.md#現行の範囲と読み方)、[モデル契約](docs/MODEL_CONTRACT.md)、
+[互換対応表](docs/COMPATIBILITY_MATRIX.md) を参照してください。専用Case・保存版・操作範囲を入口別に確認できます。
 
 ## インストール
 

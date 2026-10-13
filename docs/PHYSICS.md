@@ -1,3 +1,28 @@
+# 物理・数値仕様 — canonical specification v28（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
+
+## 現行の範囲と読み方
+
+2026-10-13、RF-09。以下の番号付き本文は `config.Case` / `solver.solve` の
+**真空・閉PEC・軸接続m=0 TM** を基準とする。本文の穴・内導体・別材料等の対象外は
+このcanonical入口の制限であり、専用Caseへの一律の未対応宣言ではない。
+TE・同軸・穴付きHφ・lossless材料・Cartesian RF・11種の静的場の
+Case/FEM/場/量/native/操作と専用仕様は[現行の物理入口](ARCHITECTURE.md#rf固有問題)を参照する。
+専用物理の単位、N/A、保存版、境界条件をcanonicalの式から推測しない。
+
+| 現行経路 | 版・入口と限定受入 | 保持する限界 |
+| --- | --- | --- |
+| 公開適応 | [直線](ADAPTIVE_REFINEMENT.md)版1/2、[表面停止](ADAPTIVE_SURFACE_STOPPING.md)版3、[曲線](CURVED_RF_ADAPTIVE_REFINEMENT.md)版5（旧版4も保持）。`adaptive_refinement.execute_adaptive_refinement` / `read_adaptive_refinement`、CLI/worker/GUI。 [N08](N08_ACCEPTANCE.md)は三形状・六系列・公開schema3/4の30水準と操作を監査 | N08の有限系列を全request版・任意形状の保証へ広げない。親N04残件、幾何差、求積、量別未達・ID未確認、旧非優位を保持 |
+| 直線離散表面ピーク | [囲い込み版1](AFFINE_SURFACE_EXTREMA.md)、`affine_extrema.py`、専用保存/CLI。通常の `rf.quantities` は従来評価を維持 | 直線P1/P2離散場の連続境界極値の上下界であり、連続物理場の誤差上界ではない |
+| 曲線離散表面ピーク | [曲線P2契約](CURVED_ELEMENTS.md)、片側場・極値囲い込み・角診断。固定P2領域/元場を使用 | 解析曲線との差、FEM/求積誤差、物理peak精度を別判定する |
+| 軸対称の幾何/FEM/場/RF系列 | [N03限定受入](N03_ACCEPTANCE.md)、[元五合成系列と独立参照](N03_PHYSICAL_SERIES.md) | 元長楕円体のFAILと追加水準、鋭角SINGULAR、量別gate・両側細分を保持。任意形状/実測/一般誤差上界の受入ではない |
+| Cartesian全P2 Domain | [P05仕様](PLANAR_CURVED_RF.md)、[P07最終受入](PLANAR_CURVED_ACCEPTANCE.md)、Case/native版3。J/m、加速量と両R/QはN/A | 円・合成楕円の幾何/固定Domain FEM/guard/全場RFの条件別受入。有限長空洞、曲線材料、一般物理誤差上界、実測へ拡張しない |
+
+下の「日付付き受入履歴」は記録時点の進捗であり、最新状態は[CURRENT](development-plan/CURRENT.md)。
+旧失敗・未確認を保存し、番号付き本文と専用の版付き契約を現行仕様として読む。
+索引更新は新しい科学的受入や式・許容差の変更を含まない。
+
+## 日付付き受入履歴
+
 [曲線Hφのnative細分](CURVED_HPHI_REFINEMENT.md)は元P2写像の参照4分割であり、解析曲線へ再投影しない。旧比較版1の厳密係数一致を維持し、明示版2だけbinary64係数差を有理数で測定してBernstein上限を外向き表示する。局所要素幅に対して未分解なら停止する。M/K転送不変量やこの丸め上限を固有解・物理誤差上界とは扱わない。
 
 [曲線Hφ三水準診断](CURVED_HPHI_CONVERGENCE.md)は同一の完全P2領域で、元E/H直接差・f・RF・全参照境界損失・複素軸電圧を別判定する。正スペクトルguard不足と近縮退は未確認に保つ。幾何の解析曲線への誤差、連続問題の誤差上界、表面peak精度、永続IDの保証にはしない。
@@ -12,7 +37,6 @@
 
 2026-09-21：[非一様直線Hφ比較](HPHI_MAPPED_TRACKING.md)は固定円筒成分を体積倍率の平方根で補正する比較規約を追加する。元E/H自己内積と正逆比較を保持し、Maxwell場の変形則・固有解生成・連続枝の保証とは区別する。有限比較空間と静的核は各元物理領域で扱い、周波数倍率を推測しない。
 
-# 物理・数値仕様 — canonical specification v28（軸対称v1/v2/v3・平面専用v1/v2・同軸専用v1・正半径メッシュ専用v1・軸接続穴付き専用v1・曲線Hφ専用v1・材料Hφ専用v1入力）
 
 2026-09-15 JST：[明示参照座標による曲線比較版5](CURVED_REFERENCE_PARTITION.md)を実装・限定受入。
 旧新の初期接続と境界分割が異なる場合に、各実P2写像と全親被覆を確認して保存場を比較する。
@@ -424,9 +448,13 @@ P1が許されるのはこのスカラーTM縮約だからで、一般3Dベク�
 - M内積の直交性と電気/磁気エネルギー差を記録する。
 
 残差やエネルギー整合は離散方程式内の検査であり、メッシュ誤差やモデル誤差の保証ではない。
-全モード検索は未実装。明示対応を用いる[部分空間追跡](MODE_TRACKING.md)と、
-固定直線領域の[残差指標・適応細分](ADAPTIVE_REFINEMENT.md)を部分実装している。
-残差指標や細分差は物理誤差上界ではなく、一般形状の精度/効率、曲線局所細分、表面量停止は未受入。
+全モードの網羅検索は未実装。明示対応を用いる[部分空間追跡](MODE_TRACKING.md)と、
+[直線の残差指標・適応細分](ADAPTIVE_REFINEMENT.md)、[表面量停止版3](ADAPTIVE_SURFACE_STOPPING.md)、
+固定P2領域の[曲線RF適応版5](CURVED_RF_ADAPTIVE_REFINEMENT.md)を公開している。
+[公開適応のN08受入](N08_ACCEPTANCE.md)は限定した三形状・六系列と版3/4保存・GUIの監査であり、
+全版・任意形状の精度/効率や親N04残件の受入とはしない。
+残差指標、細分差、全域確認は連続物理の誤差上界ではない。幾何・求積・f・元E/H・RF・表面量・
+個別IDを別々に確認し、未達/未確認や実行上限を成功へ読み替えない。
 
 ## 5. 電磁場復元
 
@@ -498,7 +526,8 @@ U、Q0、G、壁損失、表面ピーク自体は入力領域全体の値を保�
 | `r_shunt_circuit_ohm` | V²/(2P) |
 
 R/Qには分野や文献で係数2の違いがある [R2]。比較時には名称だけでなく式・phasor・Uを照合する。
-EpkはPEC境界に接する要素の片側微分で計算した表面最大値。
+通常RFのEpkはPEC境界に接する要素の片側微分から得る離散場の表面評価値。
+通常のRF評価と、別要求・保存文書による極値の上下界/収束判定は区別する。
 直線P1のBpkは各境界上の二次式 `μ0 r u` の端点と停留点で最大化。
 直線P2の場/RF評価は[高次場](HIGH_ORDER_FIELDS.md)、曲線P2の片側場・
 連続離散極値の囲い込み・角診断は[曲線要素](CURVED_ELEMENTS.md)の版付き契約に従う。
