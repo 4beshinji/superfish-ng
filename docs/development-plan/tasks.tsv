@@ -118,10 +118,10 @@ L05	C00	B01	作業規則	PLANNED	08-external.md#l05	新たに確定した必須�
 L06	V01	B01	調査	PLANNED	08-external.md#l06	実機参照の来歴と再現条件を揃える
 L07	V01	L06 N03	条件付き検証	PLANNED	08-external.md#l07	実機の入力と比較を作る
 V01	V02	B03	仕様	DONE	09-release.md#v01	統合受入の対象と必要証拠を固定する
-V02	V02	V01 S07 C08	検証	PLANNED	09-release.md#v02	配布と旧保存移行を検証する
-V03	V02	V02 D04 D11 N04 N08 H18 P10 ADD-N04-selection-charts-06 ADD-N04-boundary-remesh-06 ADD-N04-rf-goal-06	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
+V02	V02	V01 S07 C08 RF-11 RF-02 RF-06 RF-07 RF-09	検証	PLANNED	09-release.md#v02	配布と旧保存移行を検証する
+V03	V02	V02 D04 D11 N04 N08 H18 P10 ADD-N04-selection-charts-06 ADD-N04-boundary-remesh-06 ADD-N04-rf-goal-06 RF-07 RF-08 RF-09 RF-10	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
 V04	V02	V02 D11	検証	PLANNED	09-release.md#v04	実業務手順を利用者視点で受入する
-V05	V02	V03 V04 L07 C08 S07 ADD-N04-selection-charts-06 ADD-N04-boundary-remesh-01 ADD-N04-rf-goal-01 ADD-N04-boundary-remesh-06 ADD-N04-rf-goal-06	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
+V05	V02	V03 V04 L07 C08 S07 ADD-N04-selection-charts-06 ADD-N04-boundary-remesh-01 ADD-N04-rf-goal-01 ADD-N04-boundary-remesh-06 ADD-N04-rf-goal-06 RF-01 RF-02 RF-03 RF-04 RF-05 RF-06 RF-07 RF-08 RF-09 RF-10 RF-11	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
 ADD-N04-selection-charts-01	N04	N08	仕様	DONE	../N04_REMAINING_CARDS.md#add-n04-selection-charts-01	異なる初期接続の選択領域移送を仕様化する
 ADD-N04-boundary-remesh-01	N04	N08	仕様	DONE	../N04_REMAINING_CARDS.md#add-n04-boundary-remesh-01	二次境界分割を変更する再メッシュ生成を仕様化する
 ADD-N04-rf-goal-01	N04	N08	仕様	DONE	../N04_REMAINING_CARDS.md#add-n04-rf-goal-01	RF重み付き版5の一般ケース対照を仕様化する
@@ -138,5 +138,16 @@ ADD-N04-boundary-remesh-06	N04	ADD-N04-boundary-remesh-05	検証	DONE	../CURVED_
 ADD-N04-rf-goal-02	N04	ADD-N04-rf-goal-01	入力	DONE	../CURVED_RF_GOAL_EFFICIENCY_INPUT.md	RF版5の固定36行と元全要求を厳密に検査する
 ADD-N04-rf-goal-03	N04	ADD-N04-rf-goal-02	参照	DONE	../CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md	元P2全領域へ独立参照場と両尺度を結合する
 ADD-N04-rf-goal-04	N04	ADD-N04-rf-goal-03	実装/保存	IN_PROGRESS	../CURVED_RF_GOAL_EFFICIENCY_WORKER.md	版5branchと全event費用の実workerと完全再生を接続する
-ADD-N04-rf-goal-05	N04	ADD-N04-rf-goal-04	検証	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	固定36実行の独立精度と全費用と未達を記録する
+ADD-N04-rf-goal-05	N04	ADD-N04-rf-goal-04 RF-11 RF-01	検証	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	固定36実行の独立精度と全費用と未達を記録する
 ADD-N04-rf-goal-06	N04	ADD-N04-rf-goal-05	操作/監査	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	全保存場と版5GUIと親N04の全原条件を監査する
+RF-11	O01 V02		修正	PLANNED	../REFACTORING_PLAN.md#rf-11	求解契約と後処理条件を分け入力と実解の対応を検証する
+RF-01	V02	RF-11	修正/検証	PLANNED	../REFACTORING_PLAN.md#rf-01	総合validatorのソース固定を検査する
+RF-02	O01 V02	RF-01	環境/検証	PLANNED	../REFACTORING_PLAN.md#rf-02	coreとGUIの検証環境を明示する
+RF-03	O01 O02 V02	RF-01 RF-02	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-03	入力検査JSON来歴を下位へ抽出する
+RF-04	D02 O02 V02	RF-03	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-04	Hφの所有worker機構を共通化する
+RF-05	D02 V02	RF-03	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-05	確認済み試行から次動作を決める処理を分離する
+RF-06	O02 V02	RF-03	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-06	CLIの登録と実行をコマンド群ごとに分割する
+RF-07	O02 V02	RF-04 RF-06	リファクタ	PLANNED	../REFACTORING_PLAN.md#rf-07	HTTP輸送と画面状態を業務操作から分離する
+RF-08	V02	RF-03	リファクタ/検証	PLANNED	../REFACTORING_PLAN.md#rf-08	fixture独立参照入力検査実FEM検査を分ける
+RF-09	V02		文書	PLANNED	../REFACTORING_PLAN.md#rf-09	現行アーキテクチャと物理入口の索引を更新する
+RF-10	V02	RF-04 RF-05 RF-08	測定/改善	PLANNED	../REFACTORING_PLAN.md#rf-10	履歴再生の費用を測り根拠がある箇所だけ改善する

@@ -1,5 +1,24 @@
 # 現行の作業入口
 
+## 科学レビュー後の挿入工程（2026-10-13）
+
+今回の依頼は[科学レビュー](../SCIENTIFIC_REVIEW_2026-10-13.md)を受けた実装計画の変更。
+[RF-01〜RF-11](../REFACTORING_PLAN.md#順序と区切り)をTSVへPLANNEDで登録し、
+現行141枚に11枚を追加した全152枚を対象とする。既存カードの受入状態は変更しない。
+以下の先頭追記と「次は」は従来工程の履歴であり、次の着手順はこの節を優先する。
+
+1. 進行中ADD-N04-rf-goal-04の現在の変更単位を完了保存し、実行中処理の終端とソース固定解除を確認する。
+   全04完了までは待たず、そのコミット境界でRF-11（入力と実解の対応）→RF-01（validator前後監査）を行う。
+   ADD-N04-rf-goal-05の固定36実行や新しい長時間受入は両カードの受入後に進める。
+2. RF-09で現行仕様と履歴を整理し、RF-02→RF-03で環境と下位共通処理の境界を固定する。
+3. RF-04/05/08を次に触るworker/調整経路ごとに進め、RF-06/07のCLI/HTTP/画面分離を操作受入へ接続する。
+   RF-10は移行後に測定し、効果のある箇所だけ改善する。
+4. V02/V03/V05の追加先行条件でこの工程を確認する。S03/S04の量別・限定保証と、
+   S05の実測/不確かさ不足は従来の検証/L06/L07から省かない。
+
+計画変更だけを受入し、RF全11枚の実装は未着手。文書のリンク・依存・差分を確認し、
+FEM/unittest/seed/full/GUIは実行しない。従来の完了prefix・失敗・未確認の証拠を保持する。
+
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
 
 2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[実SIGINT・二段階再開・追加一様確認](../CURVED_RF_GOAL_EFFICIENCY_RESUME.md)。新11native完了＋実中断1試行を保持。球の元checkpointから1＋2event再開と三方式各1event継続、無中断4eventを比較し、164 native配列/64 sample配列・全RF/独立誤差が完全一致。初回達成1/確認3、公開3eventは凍結。Ue/Uh最大差3.442e-15、長球棄却320から元親80→113局所の再開計画も新FEM0で一致。新4＋直接7の11個別unit、元/新版archiveの親連鎖再生を確認。元1479中他1477源byte不変、新resume/test込み1481。旧費用・失敗/終了-2と全束縛を保持し、新固定36/seed/full/GUI/legacy0。C線形solve/全process manifest・CLI・資源停止/部分書込が残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
@@ -384,6 +403,8 @@ P09直前全検証と今回の限定検査を重複集計しない。現行処�
 C07-planar全条件と全goalは継続し、未確認をPASSへ変えない。
 
 ## 横断レビューと計画（2026-09-22）
+
+この節は作成時の履歴。2026-10-13の組込みと現行着手順は冒頭の「科学レビュー後の挿入工程」を参照する。
 
 ユーザー依頼のREVIEW-01として、`a191b4e`基準の[既存実装レビュー](../IMPLEMENTATION_REVIEW_2026-09-22.md)と
 [リファクタリング計画](../REFACTORING_PLAN.md)を作成した。所見10件とRF-01〜RF-10の依存・受入・検証・撤回方法を記録。
