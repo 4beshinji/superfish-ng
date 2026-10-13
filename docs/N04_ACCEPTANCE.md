@@ -1,5 +1,7 @@
 # N04の要件・証拠・残件の照合
 
+2026-10-13 ADD-N04-rf-goal-02 **DONE**：[固定計画と全36要求のstrict検査](CURVED_RF_GOAL_EFFICIENCY_INPUT.md)。13項目/全行/元Case・明示mesh/全ID/二方針・一様版4変換、厳密型/重複/未知/再hash改変/コピー隔離を確認。全11fileの読取前後SHAとsymlink/FIFO・検査中変更拒否、新12＋旧N05/版5関連6の18個別unitが10.751秒・終了0/PASS。先行未実装ImportErrorを保全、元1468源byte不変、新module/testの2源だけ追加。新FEM/seed/full/GUI/legacy0、handle60298終端。全141は90 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。次はADD-N04-rf-goal-03の独立全域参照、親N04/原32要件/全goalは継続。
+
 2026-10-13 ADD-N04-rf-goal-01 **DONE**：[版5の固定36実行/独立精度/全event費用仕様](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)。球/長球/丸め×二尺度×三方式×二反復、六元要求と全ID/壁/両R/Q/peak/全E/H/物理軸を固定。初期幾何のGreen/別P2積分差最大6.662e-16、4/8/32尺度・現行六拒否をFEM0で確認。初回probeの戻り値取扱いERRORを保全し修正。元1458源byte不変、独立候補79源と参照anchorの現存を確認。新比較器/参照package/実36行/GUIは後続02〜06、新unit/seed/full/GUI/legacy0。全141は89 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-rf-goal-02、親N04/原32要件/全goalは継続。
 
 2026-10-13 ADD-N04-boundary-remesh-06 **DONE**：[独立幾何・解析場/RF・6 nativeの受入](CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)。固定6新FEMは58.057秒・終了0/PASS。全254区間/三Green積分/4・8・32尺度、親子K/M最大1.436e-15、円筒f最大3.316e-7/両R/Q1.274e-4/E場8.152e-4を原gate内で確認。非アフィンRF尺度3.855e-14/各場成分1.402e-14、全6×10配列/54file・元Project/全RF/規約保持。追加境界/旧履歴6反例はFEM0でPASS、元数値関数AST不変。03/04のunitと05の42 GUI操作/7 FEMをsource・SHAに再結合、新unit/seed/full/legacy0、全handle終端。全136は88 DONE/2 IN_PROGRESS/46 PLANNED、原123は76/2/45。次はADD-N04-rf-goal-01、親N04/原32要件/全goalは継続。

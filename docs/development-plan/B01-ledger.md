@@ -118,7 +118,7 @@
 | N01 | 受入済 | [QUADRATIC_ELEMENTS.md](../QUADRATIC_ELEMENTS.md) | なし（維持） | P2固有値コア。再実装しない |
 | N02 | 受入済 | 直線P2 | なし（維持） | 再実装しない |
 | N03 | 進行 | [RF_DISCRETE_PEAKS.md](../RF_DISCRETE_PEAKS.md)、[AFFINE_SURFACE_EXTREMA.md](../AFFINE_SURFACE_EXTREMA.md)、[SURFACE_CONVERGENCE.md](../SURFACE_CONVERGENCE.md) | N01〜N04 | 一般例/幾何差/独立物理の検証 |
-| N04 | 進行 | [N08受入](../N08_ACCEPTANCE.md)、[原四群の現行照合](../N04_ACCEPTANCE.md)、曲線適応群 | N05〜N08、ADD-N04-selection-charts-01〜06、ADD-N04-boundary-remesh-01〜06、ADD-N04-rf-goal-01〜06 | 選択移送/境界生成とRF版5仕様01まで受入。RF版5の全領域独立精度/全event費用/36実行と保存GUIは[02〜06](../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程) |
+| N04 | 進行 | [N08受入](../N08_ACCEPTANCE.md)、[原四群の現行照合](../N04_ACCEPTANCE.md)、曲線適応群 | N05〜N08、ADD-N04-selection-charts-01〜06、ADD-N04-boundary-remesh-01〜06、ADD-N04-rf-goal-01〜06 | 選択移送/境界生成とRF版5仕様01・[固定入力02](../CURVED_RF_GOAL_EFFICIENCY_INPUT.md)まで受入。RF版5の全領域独立精度/全event費用/36実行と保存GUIは03〜06 |
 | D01 | 受入済 | [D01_ACCEPTANCE.md](../D01_ACCEPTANCE.md) | なし（維持） | 元要件・一般写像・個別ID回復・全利用先 |
 | D02 | 進行 | [TUNING.md](../TUNING.md)、[CURVED_HARMONIC_TUNING.md](../CURVED_HARMONIC_TUNING.md)、[GUI_PLANAR_TUNING.md](../GUI_PLANAR_TUNING.md)、[D02_PHYSICS_ROUTING.md](../D02_PHYSICS_ROUTING.md) | H01〜H18,P01〜P04,D01〜D04 | Hφ/平面一般形状・回復・TM/TE残要件 |
 | D03 | 進行 | [RF_OPTIMIZATION.md](../RF_OPTIMIZATION.md)、[RF_OPTIMIZATION_GEOMETRY.md](../RF_OPTIMIZATION_GEOMETRY.md)、[RF_DESIGN_CRITERIA.md](../RF_DESIGN_CRITERIA.md) | D05〜D11 | 一般形状/追加物理/最終制約検証 |

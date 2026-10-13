@@ -135,7 +135,7 @@ ADD-N04-boundary-remesh-03	N04	ADD-N04-boundary-remesh-02	実装	DONE	../CURVED_
 ADD-N04-boundary-remesh-04	N04	ADD-N04-boundary-remesh-03	保存/CLI	DONE	../CURVED_BOUNDARY_REMESH_SAVED.md	境界再メッシュ生成の完全再生とCLIを接続する
 ADD-N04-boundary-remesh-05	N04	ADD-N04-boundary-remesh-04	操作	DONE	../CURVED_BOUNDARY_REMESH_SPEC.md#必須五工程と独立受入ゲート	境界再メッシュをStudy GUIとworkerへ接続する
 ADD-N04-boundary-remesh-06	N04	ADD-N04-boundary-remesh-05	検証	DONE	../CURVED_BOUNDARY_REMESH_SPEC.md#必須五工程と独立受入ゲート	境界再メッシュの独立幾何と実FEMを受入する
-ADD-N04-rf-goal-02	N04	ADD-N04-rf-goal-01	入力	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	RF版5の固定36行と元全要求を厳密に検査する
+ADD-N04-rf-goal-02	N04	ADD-N04-rf-goal-01	入力	DONE	../CURVED_RF_GOAL_EFFICIENCY_INPUT.md	RF版5の固定36行と元全要求を厳密に検査する
 ADD-N04-rf-goal-03	N04	ADD-N04-rf-goal-02	参照	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	元P2全領域へ独立参照場と両尺度を結合する
 ADD-N04-rf-goal-04	N04	ADD-N04-rf-goal-03	実装/保存	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	版5branchと全event費用の実workerと完全再生を接続する
 ADD-N04-rf-goal-05	N04	ADD-N04-rf-goal-04	検証	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	固定36実行の独立精度と全費用と未達を記録する

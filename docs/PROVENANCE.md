@@ -1,3 +1,5 @@
+2026-10-13：[RF版5対照のstrict入力02](CURVED_RF_GOAL_EFFICIENCY_INPUT.md)。元1468対象源と固定計画/原入力を保持し、新module/testの2源だけを追加。18個別unitは終了0、仕様01の独立幾何証拠を再利用し、先行未実装ImportErrorは保全した。新FEM/外部取得/依存/legacy0、全領域独立参照は後続03。rawは out/n04-rf-goal-input-20261013/。
+
 2026-10-13：[RF版5固定対照の仕様受入](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)。原N03/N05/A01・既存MIT候補の79 source SHAと参照anchorを確認し、原六要求/旧未達reportを保持した。新しい外部取得/依存/legacy実行はない。六初期幾何と現行拒否のprobeのみで新FEM0、独立参照packageと物理精度/費用は後続02〜06。rawは out/n04-rf-goal-spec-20261013/。
 
 2026-10-08 N06元TM場lookupの限定受入：[全供給点/元逆写像と独立物理微分](N06_NATIVE_FIELD_LOOKUP.md)。新6個別unitを共有入口強化後0.583秒・終了0/PASS、開発FEM4回。元1419源は全byte不変、新1421対象/1214 Python源、N06計47個別unit。元の全候補box/全点全mode場、保存球/円筒、欠測/不正物理/未確認/元中断を確認。N05の12benchmark/seed/full/legacyは0、独立参照/元領域/実ID束縛と実費用は後続。N06・N04・親G03・原32要件/全goalは継続。

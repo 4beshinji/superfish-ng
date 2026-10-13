@@ -6,6 +6,9 @@
 新しい比較器・独立参照package・36実行の受入は後続02〜06である。
 全計画と親N04は未完。普遍的効率、収束定理、連続誤差上界はこの有限比較の受入条件ではない。
 
+2026-10-13：[02のstrict固定計画/全36要求検査](CURVED_RF_GOAL_EFFICIENCY_INPUT.md)を受入。
+新12＋直接利用先6の18個別unitがPASS、元固定入力/公開停止は不変。次は03の独立参照準備。
+
 ## 現行経路と今回の不足
 
 公開`curved_rf_adaptive_refinement.validate_request`は版5と二つの明示表面方針を受理する。

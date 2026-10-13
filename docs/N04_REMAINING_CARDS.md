@@ -4,8 +4,8 @@
 新しい物理やユーザー範囲の追加ではなく、[N04の既存残件4](N04_ACCEPTANCE.md)を分割する。
 原123カードを保持し、追加3仕様カードと各仕様の必須五後続カードをTSVに登録する。
 2026-10-13時点で選択移送01〜06、境界生成01〜06、RF仕様01はDONE。
-RF対照02〜06はPLANNED。全141は89 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。
-次はRF対照02。未確定の入力/数値ゲートを持つ実装カードをreadyとしない。
+RF対照02もDONE、03〜06はPLANNED。全141は90 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。
+次はRF対照03。未確定の入力/数値ゲートを持つ実装カードをreadyとしない。
 仕様の受入後、[L05の具体カード化手順](development-plan/08-external.md#条件付き要件から追加カードを作る手順)
 に沿って必要な入力/計算/保存/操作/独立受入を接続し、親N04の依存へ追加する。
 
@@ -62,7 +62,9 @@ RF対照02〜06はPLANNED。全141は89 DONE/2 IN_PROGRESS/50 PLANNED、原123�
 [版5の固定36実行/独立精度/全event費用仕様](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)を2026-10-13受入。
 六要求・元全P2幾何/二尺度/六拒否例をFEM0で確認し、必須02〜06をTSVとV03/V05へ接続した。
 元N06の版3/4worker/参照が版5/長球を拒否する差を再現、旧未達を保全。
-新参照package・worker・36新実行・GUI/全条件受入はまだ未実装で、次は02。
+新参照package・worker・36新実行・GUI/全条件受入は後続工程である。
+[02の固定計画/36要求検査](CURVED_RF_GOAL_EFFICIENCY_INPUT.md)も2026-10-13受入。
+18個別unitでstrict型/改変/元要求/コピー隔離を確認、次は03の独立全域参照package。
 残件2に残したRF重み付き版5の一般ケース対照を、有限な実行・独立精度/費用条件へ展開する。
 N05/N06の残差版3/4対照は版5の確認branch/全event費用を検査したものではない。
 `curved_rf_adaptive_refinement.validate_request` / `next_plan` と
