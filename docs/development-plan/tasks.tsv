@@ -138,7 +138,7 @@ ADD-N04-boundary-remesh-06	N04	ADD-N04-boundary-remesh-05	検証	DONE	../CURVED_
 ADD-N04-rf-goal-02	N04	ADD-N04-rf-goal-01	入力	DONE	../CURVED_RF_GOAL_EFFICIENCY_INPUT.md	RF版5の固定36行と元全要求を厳密に検査する
 ADD-N04-rf-goal-03	N04	ADD-N04-rf-goal-02	参照	DONE	../CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md	元P2全領域へ独立参照場と両尺度を結合する
 ADD-N04-rf-goal-04	N04	ADD-N04-rf-goal-03	実装/保存	DONE	../CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md	版5branchと全event費用の実workerと完全再生を接続する
-ADD-N04-rf-goal-05	N04	ADD-N04-rf-goal-04 RF-11 RF-01	検証	IN_PROGRESS	../CURVED_RF_GOAL_EFFICIENCY_FIXED_RUNNER.md	固定36実行の独立精度と全費用と未達を記録する
+ADD-N04-rf-goal-05	N04	ADD-N04-rf-goal-04 RF-11 RF-01	検証	IN_PROGRESS	../CURVED_RF_GOAL_EFFICIENCY_FIXED_RUNNER.md	固定36実行の独立精度と全費用と未達を記録する（31行終端で中断・別outへ保存集計済、全36受入は未完）
 ADD-N04-rf-goal-06	N04	ADD-N04-rf-goal-05	操作/監査	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	全保存場と版5GUIと親N04の全原条件を監査する
 RF-11	O01 V02		修正	DONE	../REFACTORING_PLAN.md#rf-11	求解契約と後処理条件を分け入力と実解の対応を検証する
 RF-01	V02	RF-11	修正/検証	DONE	../REFACTORING_PLAN.md#rf-01	総合validatorのソース固定を検査する

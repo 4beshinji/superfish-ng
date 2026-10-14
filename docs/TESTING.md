@@ -1,3 +1,5 @@
+2026-10-14 RF版5中断後集計：[範囲・証拠](CURVED_RF_GOAL_INTERRUPTED_MEASUREMENTS.md)。新 `test_curved_rf_goal_measurement_recovery.py` 4件（3.324秒）、直接 `test_curved_rf_goal_efficiency_benchmark.py` 5件（7.922秒）/`test_curved_rf_goal_efficiency_summary.py` 6件（0.033秒）がPASS。`uv run --no-project --python .venv/bin/python python -m unittest discover -s tests -p <対象ファイル名> -v`、BLAS1/UV_CACHE_DIR=/tmp/superfish-uv-cacheで実行。31終端行/161 eventのnative/sample全SHAと元判定/費用を別outへ回収。新FEM0、係数からの全場再構築/全36/seed/full/GUI/Hosted CIの受入ではない。
+
 2026-10-14 RF版5固定36 runner：[範囲とコマンド](CURVED_RF_GOAL_EFFICIENCY_FIXED_RUNNER.md)。新summary6/runner5＋元metrics9の20個別unitが7.204秒PASS。36 control mock/新FEM0、実保存PAUSED集計は新求解なし。数値核不変、fixed36/seed/full/GUI/Hosted CIの受入を代行しない。
 
 2026-10-14 RF版5worker04：[実TERM/KILLと参照contextの検証](CURVED_RF_GOAL_EFFICIENCY_TERMINATION.md)。新9を含む52個別unitを変更別に分割PASS、最後のSHA型拒否はintegrity6件のみ補完。新実process20 FEM/unit内1別、全187配列/全RF・六ケースのMaxwell尺度則と原12 eventの全保存再生を確認。scope/log/再利用は同書と[条件別受入](CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)。数値body/閾値不変、固定36/GUI/seed/full/Hosted CIは今回未実行。

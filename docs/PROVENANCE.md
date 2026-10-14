@@ -1,3 +1,5 @@
+2026-10-14 ADD-N04-rf-goal-05 **IN_PROGRESS**：[中断測定の保存と集計](CURVED_RF_GOAL_INTERRUPTED_MEASUREMENTS.md)。goal解除で測定停止、31行/161 eventが終端（27確認達成・長球rf_goalの4未達）、32行目はcheckpointのみ、33〜36未実行。別outへの回収で全2,013束縛/483 NPZ・元費用/実採用祖先と2,898誤差行を照合、新4＋直接11の15 unit PASS、新FEM0。元source不変、追加は回収script/testのみ。05/06/親N04は未完、測定の自動継続は停止。
+
 2026-10-14 ADD-N04-rf-goal-05 **IN_PROGRESS**：[固定36実行器/費用集計](CURVED_RF_GOAL_EFFICIENCY_FIXED_RUNNER.md)。全36順・fresh/非再開・終端失敗継続・source停止・集計例外attemptを保持する専用runner、実採用祖先/両反復・null比/量別CSV/実親の図を接続。新11＋元metrics9の20個別unitが7.204秒PASS、新FEM0。実保存長球PAUSEDの集計も求解なしに確認。数学/原36計画/閾値不変、実36の受入は未判定、source固定して新outへ逐次実行する。全152は103 DONE/3 IN_PROGRESS/46 PLANNED、親N04/全goalは継続。
 
 2026-10-14 ADD-N04-rf-goal-04 **DONE**：[worker条件別受入](CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)。実TERM/KILL五再開・新checkpoint前/後と元prefix保持、参照source移設/追加archiveの全必須SHAを接続。新9を含む52個別unit分割PASS、実process新20FEM（unit内1別）、元187配列byte/全RF一致。六初回PAUSED/Maxwell尺度則、原12event/全24sampleを現行数値bodyで完全再生、新固有求解0。16 bundle/各1511 source前後UNCHANGED、実wait4/tool終端。数学body/閾値/保存版は不変、失敗と完成数値を保全、seed/full/GUI/固定36は今回0。全152は103 DONE/2 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goal継続。次はADD-N04-rf-goal-05。

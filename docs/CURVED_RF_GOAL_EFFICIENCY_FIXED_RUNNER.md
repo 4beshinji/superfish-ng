@@ -4,6 +4,10 @@
 04は[条件別監査](CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)でDONE。
 本書の実装/対象unitは実36行の数値受入を意味しない。06/親N04/全計画は未完。
 
+実測はgoal解除により31行の終端と32行目のcheckpointで停止した。
+[中断測定の別out集計](CURVED_RF_GOAL_INTERRUPTED_MEASUREMENTS.md)で元byte/費用/判定を確認済み。
+以下は実行器の仕様・先行unit証拠であり、現在の測定が稼働中という意味ではない。
+
 `scripts/validate_curved_rf_goal_efficiency.py` は固定計画の全36行だけを、元順序で
 別プロセスへ逐次起動する。開発上限、過去native再利用、行の絞り込み、予算拡大は持たない。
 既存の04専用CLI/supervisorを使用し、各行に3600秒/32 GiB、BLAS1、CPUのみを適用する。
