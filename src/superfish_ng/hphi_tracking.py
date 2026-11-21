@@ -10,6 +10,7 @@ from .axis_connected_mesh import AxisConnectedMesh
 from .meridional_mesh import MeridionalMesh
 from .hphi_field_overlap import _verified_solution,hphi_field_grams
 from .hphi_spectral_resolution import hphi_spectral_resolution
+from .hphi_geometry_mapping import HphiGeometryMapping
 from .mode_tracking import _control,_identity_groups,track_sampled_mode_subspaces
 from .planar_tracking_fields import electric_gram_features
 
@@ -59,8 +60,13 @@ class HphiTrackingRequest:
     previous_comparison_order: int=2
     current_comparison_order: int=2
     controls: HphiTrackingControls=field(default_factory=HphiTrackingControls)
+    geometry_mapping: object=None
 
     def __post_init__(self):
+        if self.geometry_mapping is not None:
+            if type(self.geometry_mapping) is not HphiGeometryMapping:
+                raise ValueError('geometry_mapping must be an explicit HphiGeometryMapping')
+            object.__setattr__(self,'geometry_mapping',HphiGeometryMapping.from_dict(self.geometry_mapping.to_dict()))
         for name in ('previous_mode_count','current_mode_count','previous_comparison_order','current_comparison_order'):
             integer(getattr(self,name),name)
         if self.previous_comparison_order not in (1,2) or self.current_comparison_order not in (1,2):
@@ -81,21 +87,37 @@ class HphiTrackingRequest:
             object.__setattr__(self,'previous_mode_ids',tuple(ids))
 
     def to_dict(self):
-        return dict(format='superfish_ng_hphi_tracking_request',tracking_version=1,mapping='same_vacuum',
+        data=dict(format='superfish_ng_hphi_tracking_request',tracking_version=1,mapping='same_vacuum',
             previous_comparison_mesh=self.previous_comparison_mesh.to_dict(),current_comparison_mesh=self.current_comparison_mesh.to_dict(),
             previous_mode_count=self.previous_mode_count,current_mode_count=self.current_mode_count,
             previous_mode_ids=None if self.previous_mode_ids is None else list(self.previous_mode_ids),
             previous_identity_groups=json.loads(json.dumps(self.previous_identity_groups)),
             previous_comparison_order=self.previous_comparison_order,current_comparison_order=self.current_comparison_order,controls=self.controls.to_dict())
+        if self.geometry_mapping is not None:
+            data.update(tracking_version=2,mapping=self.geometry_mapping.to_dict(),transport='unitary_fixed_cylindrical_components')
+        return data
 
     @classmethod
     def from_dict(cls,data):
-        names=['format','tracking_version','mapping',*cls.__dataclass_fields__];keys(data,names,names,'Hphi tracking request')
-        if data['format']!='superfish_ng_hphi_tracking_request' or type(data['tracking_version']) is not int or data['tracking_version']!=1 or data['mapping']!='same_vacuum':
-            raise ValueError('expected Hphi tracking_version 1 with explicit same_vacuum mapping')
+        if not isinstance(data,dict):raise ValueError('Hphi tracking request must be an object')
+        version=data.get('tracking_version')
+        if type(version) is not int or version not in (1,2):
+            raise ValueError('expected Hphi tracking_version 1 or 2')
+        fields=[name for name in cls.__dataclass_fields__ if name!='geometry_mapping']
+        names=['format','tracking_version','mapping',*fields]+(['transport'] if version==2 else [])
+        keys(data,names,names,'Hphi tracking request')
+        if data['format']!='superfish_ng_hphi_tracking_request':
+            raise ValueError('expected superfish_ng_hphi_tracking_request')
+        mapping=None
+        if version==1:
+            if data['mapping']!='same_vacuum':raise ValueError('tracking_version 1 requires same_vacuum mapping')
+        else:
+            if data['transport']!='unitary_fixed_cylindrical_components':
+                raise ValueError('tracking_version 2 requires unitary_fixed_cylindrical_components transport')
+            mapping=HphiGeometryMapping.from_dict(data['mapping'])
         if data['previous_mode_ids'] is not None and type(data['previous_mode_ids']) is not list:
             raise ValueError('previous_mode_ids must be a JSON list or null')
-        return cls(**{name:(_mesh(data[name]) if name.endswith('_mesh') else HphiTrackingControls.from_dict(data[name]) if name=='controls' else data[name]) for name in cls.__dataclass_fields__})
+        return cls(**{name:(_mesh(data[name]) if name.endswith('_mesh') else HphiTrackingControls.from_dict(data[name]) if name=='controls' else data[name]) for name in fields},geometry_mapping=mapping)
 
     @classmethod
     def load(cls,path):return cls.from_dict(parse_json(Path(path).read_text(encoding='utf-8')))
@@ -136,17 +158,41 @@ def track_hphi_modes(previous,current,request):
     return _track_hphi_modes(previous,current,request)
 
 
-def _track_hphi_modes(previous,current,request,*,previous_scale=None):
+def track_mapped_hphi_modes(previous,current,request,mapping):
+    """Track with explicit unitary component comparison under a geometry map.
+
+    The finite spectral diagnostics stay in each original physical domain.
+    No nonuniform frequency scaling is inferred. The version-1 same-vacuum
+    request supplies bands, IDs, controls and each original comparison mesh;
+    the returned declaration replaces its mapping with the complete geometry.
+    """
+    if type(mapping) is not HphiGeometryMapping:
+        raise ValueError('expected HphiGeometryMapping')
+    return _track_hphi_modes(previous,current,request,geometry_mapping=mapping)
+
+
+def _track_hphi_modes(previous,current,request,*,previous_scale=None,geometry_mapping=None):
     """Shared Hphi assessment; the tune caller explicitly supplies its scale.
 
     Spectral resolution is computed in each original SI domain. Only the
     previous frequencies passed to correspondence use the current length scale.
     The public version-1 reader and same-vacuum entry point remain unchanged.
     """
+    if not isinstance(request,HphiTrackingRequest):raise ValueError('expected HphiTrackingRequest')
+    request=HphiTrackingRequest.from_dict(request.to_dict())
+    if request.geometry_mapping is not None:
+        if geometry_mapping is not None or previous_scale is not None:
+            raise ValueError('declare geometry transport once, in the request or in the explicit argument')
+        geometry_mapping=request.geometry_mapping
+    if geometry_mapping is not None:
+        if previous_scale is not None:
+            raise ValueError('supply geometry_mapping or previous_scale, never both')
+        if type(geometry_mapping) is not HphiGeometryMapping:
+            raise ValueError('expected HphiGeometryMapping')
+        geometry_mapping=HphiGeometryMapping.from_dict(geometry_mapping.to_dict())
     scaled = previous_scale is not None
     scale = positive(previous_scale, 'previous_scale') if scaled else 1.
-    if not isinstance(request,HphiTrackingRequest):raise ValueError('expected HphiTrackingRequest')
-    request=HphiTrackingRequest.from_dict(request.to_dict());controls=request.controls
+    controls=request.controls
     if any(not hasattr(s,'case') or s.case.modes>controls.max_gram_modes for s in (previous,current)):
         raise ValueError('Hphi tracking requires dedicated FEM spectra within max_gram_modes')
     previous,current=map(_verified_solution,(previous,current));solutions=previous,current
@@ -154,7 +200,7 @@ def _track_hphi_modes(previous,current,request,*,previous_scale=None):
     if any(count>=solution.case.modes for count,solution in zip(counts,solutions)):
         raise ValueError('each tracked positive prefix requires at least one computed upper guard mode')
     grams=hphi_field_grams(previous,current,max_candidate_tests=controls.max_candidate_tests,
-        max_overlay_triangles=controls.max_overlay_triangles,max_gram_modes=controls.max_gram_modes,previous_scale=scale)
+        max_overlay_triangles=controls.max_overlay_triangles,max_gram_modes=controls.max_gram_modes,previous_scale=scale,geometry_mapping=geometry_mapping)
     resolutions=[hphi_spectral_resolution(solution,mesh,comparison_order=order,quadrature_order=controls.quadrature_order,
         maximum_relative_projection_error=controls.maximum_relative_projection_error,max_candidate_tests=controls.max_candidate_tests,
         max_overlay_triangles=controls.max_overlay_triangles,max_dofs=controls.max_dofs)
@@ -166,7 +212,8 @@ def _track_hphi_modes(previous,current,request,*,previous_scale=None):
     for name,family in (('electric',grams.electric),('magnetic',grams.magnetic)):
         features=electric_gram_features(family[0][:na,:na],family[1][:na,:nb],family[2][:nb,:nb])
         reports.append(track_sampled_mode_subspaces(*features,np.ones(len(features[0])),previous.frequencies_hz[:na]/scale,current.frequencies_hz[:nb],None,
-            comparison_description=(f'all original peak {name} components with declared uniform-scale pull-forward; current 2*pi*r dr dz' if scaled
+            comparison_description=(f'original peak {name} in fixed cylindrical components with unitary L2 transport; current 2*pi*r dr dz' if geometry_mapping is not None
+                                    else f'all original peak {name} components with declared uniform-scale pull-forward; current 2*pi*r dr dz' if scaled
                                     else f'all original peak {name} components on exactly the same vacuum; 2*pi*r dr dz'),
             minimum_overlap=controls.minimum_overlap,minimum_assignment_margin=max(controls.minimum_assignment_margin,numerical_margin),
             relative_cluster_gap=controls.relative_cluster_gap,minimum_relative_singular_value=controls.minimum_relative_singular_value,
@@ -209,4 +256,13 @@ def _track_hphi_modes(previous,current,request,*,previous_scale=None):
         electric['physical_mapping']['name']='uniform_scale'
         electric['physical_mapping']['previous_frequency_scale']=1/scale
         electric['physical_mapping']['previous_original_frequencies_hz']=previous.frequencies_hz.tolist()
+    if geometry_mapping is not None:
+        declaration=request.to_dict()
+        declaration.pop('tracking_version')
+        declaration.update(format='superfish_ng_hphi_mapped_comparison',comparison_version=1,
+            mapping=geometry_mapping.to_dict(),transport='unitary_fixed_cylindrical_components')
+        electric.update(format='superfish_ng_hphi_mapped_tracking_result',request=declaration,
+            scope='explicit nonuniform geometry comparison of original E/H; unitary fixed components; original-domain finite spectral diagnostics; no continuous-path identity or continuum error bound')
+        electric['physical_mapping'].update(name='piecewise_affine',previous_frequency_scale=1.,
+            previous_original_frequencies_hz=previous.frequencies_hz.tolist())
     return electric

@@ -15,6 +15,10 @@
 [CERN公開原稿](https://cds.cern.ch/record/1982429/files/405-429%20Jensen.pdf)
 — 閲覧: 論文冒頭とRF量の節。R/Qとエネルギーの定義を比較する資料。特に係数2の規約を式から確認する。
 
+2026-10-13の科学レビューでは、CERN掲載PDFの取得制約のため、同題の
+[著者公開原稿 arXiv:1601.05230](https://arxiv.org/pdf/1601.05230)の§3.7.1・3.8・3.9.1を確認した。
+R/Qの係数2、摂動壁損失、Q/Gの定義の照合に使用。製品コードへの再利用や本文・図の転載はない。
+
 **R3. S. Udongwo and U. van Rienen, “An open-source Python tool for the Maxwell eigenvalue problem and multipacting analysis in axisymmetric elliptical cavity structures.”** IPAC2024, MOPS27, pp.771–774 (2024)。DOI: 10.18429/JACoW-IPAC2024-MOPS27。
 [JACoW書誌](https://proceedings.jacow.org/ipac2024/doi_per_institute/mops27/index.html) · [公開論文](https://inspirehep.net/files/0a80007ba7602a4038a4802675dc00e5)
 — 閲覧: 書誌・概要・Maxwell問題の冒頭。PyMultipact/NGSolveの先行例。今回の粒子追跡実装を意味しない。
@@ -203,6 +207,23 @@ m=0の正のJ1零点とp≥1を使い、零点0をTE共振へ含めない。製�
 — 2026-09-12閲覧。円筒関数の方程式とd[x C1(x)]/dx=x C0(x)を、環状円筒TMの独立解析に参照。
 内外PECの零点条件・軸方向分離・場規格化は独立導出。根検索と場比較は検証器だけに置き、FEMへ解析値を注入しない。
 資料やライブラリーの実装コードは転載していない。
+
+**R39. NIST Digital Library of Mathematical Functions, §§10.7, 10.21, 10.22.**
+[原点極限](https://dlmf.nist.gov/10.7)、[正根と導関数根](https://dlmf.nist.gov/10.21)、
+[積分式10.22.5](https://dlmf.nist.gov/10.22.E5)
+— 2026-10-02閲覧。P05の円形Cartesian cutoffの独立解析対照に、正根/原点極限/Bessel二乗積分を参照。
+TEのJ′0の零点0を正モードに含めず、本仕様のsは正根だけの序数とした。
+単位長規格化と側壁GはMaxwell/面積・境界積分から独立導出し、数値積分で照合した。
+本文・図・コードの転載なし。解析式をFEM solverの代用にしない。
+
+2026-10-13の科学レビューで§10.21を再確認し、円筒TM010のJ0正根とJ1導関数根の定義へ参照した。
+独立の検証式だけに使用し、製品FEMの補正・置換には用いない。
+
+**R40. Richard Fitzpatrick, Waveguides (2014).**
+[著者の大学公開講義](https://farside.ph.utexas.edu/teaching/jk1/Electromagnetism/node117.html)
+— 2026-10-02閲覧。式1354–1356の伝搬定数/横断固有値/cutoffの区別、側壁の単位長損失を確認。
+講義の負時間phasorとは区別し、本PJのpeak exp(+iωt)、βz=0のCartesian場とRFを独立に導出。
+本文・図・コードの転載なし。伝搬・有限長端板を平面cutoffへ追加していない。
 
 ## 参照の推奨順序
 

@@ -1,0 +1,162 @@
+{
+  "project_version": 2,
+  "case": {
+    "schema_version": 3,
+    "name": "cavity",
+    "geometry": {
+      "type": "curved_contour",
+      "curves": [
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.0,
+            0.0
+          ],
+          "end_zr_m": [
+            0.2,
+            0.0
+          ]
+        },
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.2,
+            0.0
+          ],
+          "end_zr_m": [
+            0.2,
+            0.1
+          ]
+        },
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.2,
+            0.1
+          ],
+          "end_zr_m": [
+            0.0,
+            0.1
+          ]
+        },
+        {
+          "type": "line",
+          "start_zr_m": [
+            0.0,
+            0.1
+          ],
+          "end_zr_m": [
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "edge_tags": [
+        "axis",
+        "pec",
+        "pec",
+        "pec"
+      ],
+      "join_tolerance_m": 1e-14,
+      "minimum_gap_m": 0.0,
+      "chord_tolerance_m": 0.001,
+      "chord_max_segments": 20000
+    },
+    "mesh": {
+      "nr": 24,
+      "nz": 32,
+      "geometry_order": 2
+    },
+    "solver": {
+      "modes": 1,
+      "quadrature_order": 8,
+      "element_order": 2
+    },
+    "rf": {
+      "beta": 1.0,
+      "conductivity_s_per_m": 58000000.0,
+      "normalization_j": 1.0
+    },
+    "model": {
+      "physics": "rf_eigenmode",
+      "coordinates": "axisymmetric",
+      "polarization": "tm",
+      "azimuthal_index": 0,
+      "materials": [
+        {
+          "id": "vacuum",
+          "type": "vacuum"
+        }
+      ],
+      "regions": [
+        {
+          "id": "cavity",
+          "material": "vacuum",
+          "domain": "interior"
+        }
+      ]
+    }
+  },
+  "reflect_full": false,
+  "display_length_unit": "mm",
+  "mesh_data": {
+    "schema_version": 1,
+    "length_unit": "m",
+    "coordinate_order": "rz",
+    "index_base": 0,
+    "points": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.1,
+        0.0
+      ],
+      [
+        0.1,
+        0.2
+      ],
+      [
+        0.0,
+        0.2
+      ]
+    ],
+    "triangles": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        2,
+        3
+      ]
+    ],
+    "boundary_edges": [
+      [
+        0,
+        3
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "boundary_tags": [
+      "axis",
+      "pec",
+      "pec",
+      "pec"
+    ]
+  }
+}

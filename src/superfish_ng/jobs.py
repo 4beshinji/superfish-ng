@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Local jobs with exclusive destinations and verified completion manifests."""
 
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -12,27 +11,18 @@ import time
 import traceback
 import uuid
 
+from .artifact_provenance import atomic_write_json, sha256_file
 from .project import Project
 from .solver import solve
 from .io import save_run
 
 
 def _write_json(path, data):
-    temporary = path.with_name(path.name + "." + uuid.uuid4().hex + ".tmp")
-    with temporary.open("x", encoding="utf-8") as stream:
-        json.dump(data, stream, ensure_ascii=False, indent=2, allow_nan=False)
-        stream.write("\n")
-        stream.flush()
-        os.fsync(stream.fileno())
-    temporary.replace(path)
+    return atomic_write_json(path, data)
 
 
 def _digest(path):
-    h = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            h.update(block)
-    return h.hexdigest()
+    return sha256_file(path)
 
 
 def _state(directory, status, **extra):
@@ -68,9 +58,29 @@ def read_job(directory, verify=True):
             return state
     if state.get("status") == "complete" and verify:
         manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        from .planar_curved_tuning_jobs import is_planar_curved_tune, verify_planar_curved_tune_job
+        if is_planar_curved_tune(directory, state, manifest):
+            verify_planar_curved_tune_job(directory, state, manifest)
+            return state
+        from .planar_curved_tracking_history_jobs import is_planar_curved_history, verify_planar_curved_history
+        if is_planar_curved_history(directory, state, manifest):
+            verify_planar_curved_history(directory, state, manifest)
+            return state
+        from .planar_curved_tracking_jobs import is_planar_curved_tracking, verify_planar_curved_tracking
+        if is_planar_curved_tracking(directory, state, manifest):
+            verify_planar_curved_tracking(directory, state, manifest)
+            return state
         from .magnetic_report_jobs import is_magnetic_report_job, verify_magnetic_report_job
         if is_magnetic_report_job(directory, state, manifest):
             verify_magnetic_report_job(directory, state, manifest)
+            return state
+        from .material_hphi_tracking_history_saved import is_material_hphi_history, verify_material_hphi_history
+        if is_material_hphi_history(directory, state, manifest):
+            verify_material_hphi_history(directory, state, manifest)
+            return state
+        from .curved_hphi_tracking_history_saved import is_curved_hphi_history, verify_curved_hphi_history
+        if is_curved_hphi_history(directory, state, manifest):
+            verify_curved_hphi_history(directory, state, manifest)
             return state
         from .hphi_tracking_history_saved import is_hphi_history, verify_hphi_history
         if is_hphi_history(directory, state, manifest):
@@ -107,6 +117,22 @@ def read_job(directory, verify=True):
         from .planar_tuning_jobs import is_planar_tune, verify_planar_tune_job
         if is_planar_tune(directory, state, manifest):
             verify_planar_tune_job(directory, state, manifest)
+            return state
+        from .material_hphi_tuning_jobs import is_material_hphi_tune, verify_material_hphi_tune_job
+        if is_material_hphi_tune(directory, state, manifest):
+            verify_material_hphi_tune_job(directory, state, manifest)
+            return state
+        from .curved_hphi_tuning_jobs import is_curved_hphi_tune, verify_curved_hphi_tune_job
+        if is_curved_hphi_tune(directory, state, manifest):
+            verify_curved_hphi_tune_job(directory, state, manifest)
+            return state
+        from .material_hphi_tracking_jobs import is_material_hphi_tracking, verify_material_hphi_tracking
+        if is_material_hphi_tracking(directory, state, manifest):
+            verify_material_hphi_tracking(directory, state, manifest)
+            return state
+        from .curved_hphi_tracking_jobs import is_curved_hphi_tracking, verify_curved_hphi_tracking
+        if is_curved_hphi_tracking(directory, state, manifest):
+            verify_curved_hphi_tracking(directory, state, manifest)
             return state
         from .hphi_tuning_jobs import is_hphi_tune, verify_hphi_tune_job
         if is_hphi_tune(directory, state, manifest):
@@ -389,10 +415,10 @@ class JobManager:
         from .hphi_jobs import start_hphi
         return start_hphi(self,project)
 
-    def import_hphi_result(self, source):
+    def import_hphi_result(self, source, *, project=None):
         """Import verified coaxial or Hphi mesh native bytes without changing geometry."""
         from .hphi_jobs import import_hphi_result
-        return import_hphi_result(self,source)
+        return import_hphi_result(self,source,project=project)
 
     def start_planar(self, project):
         """Execute a dedicated Cartesian cutoff Project in a local worker."""
@@ -423,10 +449,40 @@ class JobManager:
         from .planar_tracking_history_saved import start_planar_history
         return start_planar_history(self, paths, request)
 
+    def recover_planar_history(self, history, request):
+        """Reidentify an owned planar history into a new local worker job."""
+        from .planar_tracking_history_saved import start_recovered_planar_history
+        return start_recovered_planar_history(self, history, request)
+
     def start_planar_tracking(self, previous, current, request):
         """Track two verified planar native spectra in a dedicated worker."""
         from .planar_tracking_jobs import start_planar_tracking
         return start_planar_tracking(self, previous, current, request)
+
+    def start_planar_curved_tracking(self, previous, current, request):
+        """Own complete Cartesian P2 operands and compare their original E/H in a worker."""
+        from .planar_curved_tracking_jobs import start_planar_curved_tracking
+        return start_planar_curved_tracking(self, previous, current, request)
+
+    def start_planar_curved_history(self, paths, request):
+        """Own original Cartesian P2 pairs and replay their chain in a worker."""
+        from .planar_curved_tracking_history_jobs import start_planar_curved_history
+        return start_planar_curved_history(self, paths, request)
+
+    def start_planar_curved_tune(self, request, *, max_new_trials=None, checkpoint=None):
+        """Run owned Cartesian P2 tuning and resume only a verified paused prefix."""
+        from .planar_curved_tuning_jobs import start_planar_curved_tune
+        return start_planar_curved_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+    def extend_planar_curved_history(self, history, next_pair, *, recovery=None):
+        """Extend a fully replayed curved history into a new immutable job."""
+        from .planar_curved_tracking_history_jobs import start_extended_planar_curved_history
+        return start_extended_planar_curved_history(self, history, next_pair, recovery=recovery)
+
+    def recover_planar_curved_history(self, history, recovery):
+        """Recover an unresolved curved ID set from a bound earlier snapshot."""
+        from .planar_curved_tracking_history_jobs import start_recovered_planar_curved_history
+        return start_recovered_planar_curved_history(self, history, recovery)
 
     def import_planar_result(self, source):
         """Import verified planar native bytes, preserving their explicit mesh."""
@@ -452,6 +508,42 @@ class JobManager:
         """Run Cartesian cutoff tuning with dedicated native field identities."""
         from .planar_tuning_jobs import start_planar_tune
         return start_planar_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+    def start_material_hphi_history(self, paths, request):
+        from .material_hphi_tracking_history_saved import start_material_hphi_history
+        return start_material_hphi_history(self, paths, request)
+
+    def extend_material_hphi_history(self, history, next_pair):
+        from .material_hphi_tracking_history_saved import start_extended_material_hphi_history
+        return start_extended_material_hphi_history(self, history, next_pair)
+
+    def start_curved_hphi_history(self, paths, request):
+        from .curved_hphi_tracking_history_saved import start_curved_hphi_history
+        return start_curved_hphi_history(self, paths, request)
+
+    def extend_curved_hphi_history(self, history, next_pair):
+        from .curved_hphi_tracking_history_saved import start_extended_curved_hphi_history
+        return start_extended_curved_hphi_history(self, history, next_pair)
+
+    def start_material_hphi_tracking(self, previous, current, request):
+        """Own and compare fixed-material straight Hphi native spectra."""
+        from .material_hphi_tracking_jobs import start_material_hphi_tracking
+        return start_material_hphi_tracking(self, previous, current, request)
+
+    def start_curved_hphi_tracking(self, previous, current, request):
+        """Own and compare full-quadratic curved Hphi native spectra."""
+        from .curved_hphi_tracking_jobs import start_curved_hphi_tracking
+        return start_curved_hphi_tracking(self, previous, current, request)
+
+    def start_material_hphi_tune(self, request, *, max_new_trials=None, checkpoint=None):
+        """Run an owned fixed-material straight Hphi tuning worker."""
+        from .material_hphi_tuning_jobs import start_material_hphi_tune
+        return start_material_hphi_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
+
+    def start_curved_hphi_tune(self, request, *, max_new_trials=None, checkpoint=None):
+        """Run an owned full-quadratic curved Hphi tuning worker."""
+        from .curved_hphi_tuning_jobs import start_curved_hphi_tune
+        return start_curved_hphi_tune(self, request, max_new_trials=max_new_trials, checkpoint=checkpoint)
 
     def start_hphi_tune(self, request, *, max_new_trials=None, checkpoint=None):
         """Run owned vacuum Hphi tuning in an isolated local worker."""

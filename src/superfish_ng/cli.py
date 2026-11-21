@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from dataclasses import replace
 from . import __version__
+from . import cli_curved_hphi_tuning
 from .analytic import pillbox_tm010
 from .config import Case
 from .io import save_run
@@ -29,12 +30,23 @@ def main(argv=None):
             optimization.add_argument('--out',type=Path,required=True)
             optimization.add_argument('--max-new-trials',type=int)
     for command in ('tune','resume-tune','replay-tune','tune-planar','resume-tune-planar','replay-tune-planar',
-                    'tune-hphi','resume-tune-hphi','replay-tune-hphi'):
+                    'tune-hphi','resume-tune-hphi','replay-tune-hphi',
+                    'tune-curved-hphi','resume-tune-curved-hphi','replay-tune-curved-hphi',
+                    'tune-material-hphi','resume-tune-material-hphi','replay-tune-material-hphi'):
+        if command in cli_curved_hphi_tuning.COMMANDS:
+            cli_curved_hphi_tuning.register_arguments(sub, command)
+            continue
         tuning=sub.add_parser(command,help='execute or verify bracketed FEM frequency tuning with identity and refinement checks')
         tuning.add_argument('document',type=Path)
-        if command not in ('replay-tune','replay-tune-planar','replay-tune-hphi'):
+        if command not in ('replay-tune','replay-tune-planar','replay-tune-hphi','replay-tune-curved-hphi','replay-tune-material-hphi'):
             tuning.add_argument('--out',type=Path,required=True)
             tuning.add_argument('--max-new-trials',type=int)
+    for command in ('tune-planar-curved','resume-tune-planar-curved','replay-tune-planar-curved'):
+        curved_tuning=sub.add_parser(command,help='execute or fully replay owned Cartesian P2 tuning with original fields and both frequency gates')
+        curved_tuning.add_argument('document',type=Path)
+        if command!='tune-planar-curved':curved_tuning.add_argument('--checkpoint-index',type=int,help='select a verified checkpoint from a stopped tuning job')
+        if command!='replay-tune-planar-curved':
+            curved_tuning.add_argument('--out',type=Path,required=True);curved_tuning.add_argument('--max-new-trials',type=int)
     for command in ('execute-adaptive-study','resume-adaptive-study','replay-adaptive-study'):
         adaptive=sub.add_parser(command,help='bisect unverified geometry sweep intervals with explicit limits, or replay all decisions')
         adaptive.add_argument('document',type=Path)
@@ -72,16 +84,20 @@ def main(argv=None):
     deform.add_argument('--rf-coordinates',choices=('fixed','axis_fraction'),required=True)
     deform.add_argument('--minimum-corner-angle-deg',type=float,required=True)
     deform.add_argument('--out',type=Path,required=True)
-    generate_remesh=sub.add_parser('generate-curved-remesh-plan',help='regenerate a curved interior mesh with a fixed quadratic boundary and save a complete replacement plan')
+    generate_remesh=sub.add_parser('generate-curved-remesh-plan',help='regenerate an interior mesh on the same P2 domain, with fixed boundary partitions (v1) or native P2 subdivision (v2)')
     generate_remesh.add_argument('project',type=Path)
     generate_remesh.add_argument('--settings',type=Path,required=True,help='strict chord edge/area, quality, iteration/element budgets and new history')
     generate_remesh.add_argument('--out',type=Path,required=True)
-    transfer_selection=sub.add_parser('transfer-curved-selection',help='transfer a selected region between corresponding base meshes with independent curved refinement histories')
+    generate_remesh.add_argument('--format',choices=('plan','document'),default='plan',help='portable replacement plan, or complete generation inputs and validation for replay')
+    replay_remesh_generation=sub.add_parser('replay-curved-remesh-generation',help='regenerate and verify a complete saved generation document without FEM')
+    replay_remesh_generation.add_argument('document',type=Path)
+    replay_remesh_generation.add_argument('--out',type=Path,help='optionally save the verified portable replacement plan without overwriting')
+    transfer_selection=sub.add_parser('transfer-curved-selection',help='transfer a curved selected region using corresponding base meshes (v1) or declared reference charts (v2)')
     transfer_selection.add_argument('previous',type=Path)
     transfer_selection.add_argument('current',type=Path)
-    transfer_selection.add_argument('--request',type=Path,required=True)
+    transfer_selection.add_argument('--request',type=Path,required=True,help='strict v1 request or v2 request with two initial vertex charts and pair/triangle budgets')
     transfer_selection.add_argument('--out',type=Path,required=True)
-    replay_selection=sub.add_parser('replay-curved-selection-transfer',help='reconstruct and verify a saved exact reference-region selection transfer')
+    replay_selection=sub.add_parser('replay-curved-selection-transfer',help='fully reconstruct and verify a saved v1 or v2 exact reference-region selection transfer')
     replay_selection.add_argument('document',type=Path)
     remesh=sub.add_parser('remesh-curved-project',help='replace an initial curved mesh and explicitly redeclare/freeze its history on the same quadratic domain')
     remesh.add_argument('project',type=Path)
@@ -144,7 +160,17 @@ def main(argv=None):
     migrate = sub.add_parser('migrate-case', help='explicitly migrate a validated case to v3')
     migrate.add_argument('case', type=Path)
     migrate.add_argument('--out', required=True, type=Path, help='new JSON file; must not exist')
-    hphi_tracking=sub.add_parser('execute-hphi-tracking',help='compare original Hphi E/H subspaces on the same vacuum with explicit comparison meshes')
+    material_hphi_tracking=sub.add_parser('execute-material-hphi-tracking',help='compare original Hphi E/H subspaces with explicit fixed-material or geometry-mapping requests')
+    material_hphi_tracking.add_argument('previous',type=Path);material_hphi_tracking.add_argument('current',type=Path)
+    material_hphi_tracking.add_argument('request',type=Path);material_hphi_tracking.add_argument('--out',type=Path,required=True)
+    material_hphi_tracking_replay=sub.add_parser('replay-material-hphi-tracking',help='fully replay both owned Hphi spectra and their subspace correspondence')
+    material_hphi_tracking_replay.add_argument('run',type=Path)
+    curved_hphi_tracking=sub.add_parser('execute-curved-hphi-tracking',help='compare original Hphi E/H subspaces with explicit same-vacuum or geometry-mapping requests')
+    curved_hphi_tracking.add_argument('previous',type=Path);curved_hphi_tracking.add_argument('current',type=Path)
+    curved_hphi_tracking.add_argument('request',type=Path);curved_hphi_tracking.add_argument('--out',type=Path,required=True)
+    curved_hphi_tracking_replay=sub.add_parser('replay-curved-hphi-tracking',help='fully replay both owned Hphi spectra and their subspace correspondence')
+    curved_hphi_tracking_replay.add_argument('run',type=Path)
+    hphi_tracking=sub.add_parser('execute-hphi-tracking',help='compare original Hphi E/H subspaces with explicit same-vacuum or geometry-mapping requests')
     hphi_tracking.add_argument('previous',type=Path);hphi_tracking.add_argument('current',type=Path)
     hphi_tracking.add_argument('request',type=Path);hphi_tracking.add_argument('--out',type=Path,required=True)
     hphi_tracking_replay=sub.add_parser('replay-hphi-tracking',help='fully replay both owned Hphi spectra and their subspace correspondence')
@@ -167,6 +193,17 @@ def main(argv=None):
     planar_convergence.add_argument('--out',required=True,type=Path)
     planar_convergence_replay=sub.add_parser('replay-planar-convergence',help='recompute all saved planar refinement diagnostics')
     planar_convergence_replay.add_argument('run',type=Path)
+    curved_planar_history=sub.add_parser('execute-planar-curved-history',help='own curved pairs or comparison jobs and fully replay their ordered ancestry')
+    curved_planar_history.add_argument('request',type=Path);curved_planar_history.add_argument('--steps',type=Path,nargs='+',required=True)
+    curved_planar_history.add_argument('--out',type=Path,required=True)
+    curved_planar_extend=sub.add_parser('extend-planar-curved-history',help='append a pair to a fully verified curved history in a new job')
+    curved_planar_extend.add_argument('history',type=Path);curved_planar_extend.add_argument('next_pair',type=Path)
+    curved_planar_extend.add_argument('--recovery',type=Path);curved_planar_extend.add_argument('--out',type=Path,required=True)
+    curved_planar_recover=sub.add_parser('recover-planar-curved-history',help='recover an unresolved ID set using an actual earlier owned curved snapshot')
+    curved_planar_recover.add_argument('history',type=Path);curved_planar_recover.add_argument('request',type=Path)
+    curved_planar_recover.add_argument('--out',type=Path,required=True)
+    curved_planar_history_replay=sub.add_parser('replay-planar-curved-history',help='recompute all original curved native fields, ID continuity and anchor recovery')
+    curved_planar_history_replay.add_argument('run',type=Path)
     planar_history=sub.add_parser('execute-planar-history',help='copy and fully replay an ordered planar tracking history')
     planar_history.add_argument('request',type=Path)
     planar_history.add_argument('--steps',type=Path,nargs='+',required=True)
@@ -177,6 +214,30 @@ def main(argv=None):
     planar_history_extend.add_argument('--out',type=Path,required=True)
     planar_history_replay=sub.add_parser('replay-planar-history',help='recompute the full owned planar ancestry and identity chain')
     planar_history_replay.add_argument('run',type=Path)
+    planar_history_recover=sub.add_parser('recover-planar-history',help='reidentify an unresolved planar ID set from an earlier owned snapshot into a new history')
+    planar_history_recover.add_argument('history',type=Path)
+    planar_history_recover.add_argument('request',type=Path)
+    planar_history_recover.add_argument('--out',type=Path,required=True)
+    material_hphi_history=sub.add_parser('execute-material-hphi-history',help='copy and fully replay an ordered hphi tracking history')
+    material_hphi_history.add_argument('request',type=Path)
+    material_hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
+    material_hphi_history.add_argument('--out',type=Path,required=True)
+    material_hphi_history_extend=sub.add_parser('extend-material-hphi-history',help='append a saved pair into a new owned hphi history')
+    material_hphi_history_extend.add_argument('history',type=Path)
+    material_hphi_history_extend.add_argument('next_pair',type=Path)
+    material_hphi_history_extend.add_argument('--out',type=Path,required=True)
+    material_hphi_history_replay=sub.add_parser('replay-material-hphi-history',help='recompute the full owned hphi ancestry and identity chain')
+    material_hphi_history_replay.add_argument('run',type=Path)
+    curved_hphi_history=sub.add_parser('execute-curved-hphi-history',help='copy and fully replay an ordered hphi tracking history')
+    curved_hphi_history.add_argument('request',type=Path)
+    curved_hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
+    curved_hphi_history.add_argument('--out',type=Path,required=True)
+    curved_hphi_history_extend=sub.add_parser('extend-curved-hphi-history',help='append a saved pair into a new owned hphi history')
+    curved_hphi_history_extend.add_argument('history',type=Path)
+    curved_hphi_history_extend.add_argument('next_pair',type=Path)
+    curved_hphi_history_extend.add_argument('--out',type=Path,required=True)
+    curved_hphi_history_replay=sub.add_parser('replay-curved-hphi-history',help='recompute the full owned hphi ancestry and identity chain')
+    curved_hphi_history_replay.add_argument('run',type=Path)
     hphi_history=sub.add_parser('execute-hphi-history',help='copy and fully replay an ordered hphi tracking history')
     hphi_history.add_argument('request',type=Path)
     hphi_history.add_argument('--steps',type=Path,nargs='+',required=True)
@@ -187,6 +248,11 @@ def main(argv=None):
     hphi_history_extend.add_argument('--out',type=Path,required=True)
     hphi_history_replay=sub.add_parser('replay-hphi-history',help='recompute the full owned hphi ancestry and identity chain')
     hphi_history_replay.add_argument('run',type=Path)
+    curved_planar_tracking=sub.add_parser('execute-planar-curved-tracking',help='own and compare original Cartesian P2 E/H fields with finite guards')
+    curved_planar_tracking.add_argument('previous',type=Path);curved_planar_tracking.add_argument('current',type=Path)
+    curved_planar_tracking.add_argument('request',type=Path);curved_planar_tracking.add_argument('--out',required=True,type=Path)
+    curved_planar_replay=sub.add_parser('replay-planar-curved-tracking',help='fully replay both owned curved native operands and their correspondence')
+    curved_planar_replay.add_argument('run',type=Path)
     planar_tracking=sub.add_parser('execute-planar-tracking',help='track physical electric subspaces under a declared rectangle or polygon mapping')
     planar_tracking.add_argument('previous',type=Path)
     planar_tracking.add_argument('current',type=Path)
@@ -447,16 +513,95 @@ def main(argv=None):
             project.save(args.out)
             sys.stdout.write(project.dumps())
             return 0
-        if args.command in ('execute-planar-history','extend-planar-history','replay-planar-history'):
+        if args.command in ('tune-planar-curved','resume-tune-planar-curved','replay-tune-planar-curved'):
+            from .planar_curved_tuning_jobs import execute_planar_curved_tune_job,read_planar_curved_tune_job,read_planar_curved_tune_job_checkpoint
+            from .planar_curved_tuning_saved import read_owned_planar_curved_tune
+            from .planar_curved_tuning_saved import CHECKPOINT_KEYS
+            from .config import keys
+            from .planar_curved_tracking_saved import _load
+            if args.command=='tune-planar-curved':result=execute_planar_curved_tune_job(_load(args.document),args.out,max_new_trials=args.max_new_trials)
+            else:
+                index=args.checkpoint_index
+                if args.document.is_dir():
+                    if index is None:
+                        if args.command=='resume-tune-planar-curved':raise ValueError('resume from a stopped curved job requires --checkpoint-index')
+                        result=read_planar_curved_tune_job(args.document)
+                    else:
+                        result=read_planar_curved_tune_job_checkpoint(args.document,index)
+                        checkpoint=args.document/'execution'/f'checkpoint-{index:03d}.json'
+                else:
+                    if index is not None:raise ValueError('--checkpoint-index applies only to a stopped curved tuning job directory')
+                    checkpoint=args.document;result=None
+                    if args.command=='replay-tune-planar-curved':result=read_owned_planar_curved_tune(checkpoint)
+                if args.command=='resume-tune-planar-curved':
+                    if result is None:
+                        document=_load(checkpoint);keys(document,CHECKPOINT_KEYS,CHECKPOINT_KEYS,'owned curved tune checkpoint');request=document['request']
+                    else:request=result['request']
+                    result=execute_planar_curved_tune_job(request,args.out,max_new_trials=args.max_new_trials,checkpoint=checkpoint)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0 if result['status'] in ('TUNED','PAUSED') else 1
+        if args.command in ('execute-planar-curved-history','extend-planar-curved-history','recover-planar-curved-history','replay-planar-curved-history'):
+            from .planar_curved_tracking_history import PlanarCurvedTrackingHistoryRequest
+            from .planar_curved_tracking_history_jobs import (execute_planar_curved_history,extend_planar_curved_history,
+                recover_planar_curved_history,read_planar_curved_history)
+            from .planar_curved_tracking_saved import _load
+            from .planar_curved_identity_recovery import PlanarCurvedIdentityRecoveryRequest
+            if args.command=='execute-planar-curved-history':
+                result=execute_planar_curved_history(args.steps,PlanarCurvedTrackingHistoryRequest.load(args.request),args.out)
+            elif args.command=='extend-planar-curved-history':
+                recovery=None if args.recovery is None else PlanarCurvedIdentityRecoveryRequest.from_dict(_load(args.recovery))
+                result=extend_planar_curved_history(args.history,args.next_pair,args.out,recovery=recovery)
+            elif args.command=='recover-planar-curved-history':
+                result=recover_planar_curved_history(args.history,PlanarCurvedIdentityRecoveryRequest.from_dict(_load(args.request)),args.out)
+            else:result=read_planar_curved_history(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0 if result['status']=='PASS' else 1
+        if args.command in ('execute-planar-history','extend-planar-history','replay-planar-history','recover-planar-history'):
             from .planar_tracking_history import PlanarTrackingHistoryRequest
             from .planar_tracking_history_saved import execute_planar_history,extend_planar_history,read_planar_history
             if args.command=='execute-planar-history':
                 result=execute_planar_history(args.steps,PlanarTrackingHistoryRequest.load(args.request),args.out)
             elif args.command=='extend-planar-history':
                 result=extend_planar_history(args.history,args.next_pair,args.out)
+            elif args.command=='recover-planar-history':
+                from .planar_identity_recovery import PlanarIdentityRecoveryRequest
+                from .planar_tracking_history_saved import recover_planar_history
+                from .project import parse_json
+                result=recover_planar_history(args.history,
+                    PlanarIdentityRecoveryRequest.from_dict(parse_json(args.request.read_text(encoding='utf-8'))),args.out)
             else:
                 result=read_planar_history(args.run)
             print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-material-hphi-history','extend-material-hphi-history','replay-material-hphi-history'):
+            from .material_hphi_tracking_history import MaterialHphiTrackingHistoryRequest
+            from .material_hphi_tracking_history_saved import execute_material_hphi_history,extend_material_hphi_history,read_material_hphi_history
+            if args.command=='execute-material-hphi-history':
+                result=execute_material_hphi_history(args.steps,MaterialHphiTrackingHistoryRequest.load(args.request),args.out)
+            elif args.command=='extend-material-hphi-history':
+                result=extend_material_hphi_history(args.history,args.next_pair,args.out)
+            else:
+                result=read_material_hphi_history(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-curved-hphi-history','extend-curved-hphi-history','replay-curved-hphi-history'):
+            from .curved_hphi_tracking_history import CurvedHphiTrackingHistoryRequest
+            from .curved_hphi_tracking_history_saved import execute_curved_hphi_history,extend_curved_hphi_history,read_curved_hphi_history
+            if args.command=='execute-curved-hphi-history':
+                result=execute_curved_hphi_history(args.steps,CurvedHphiTrackingHistoryRequest.load(args.request),args.out)
+            elif args.command=='extend-curved-hphi-history':
+                result=extend_curved_hphi_history(args.history,args.next_pair,args.out)
+            else:
+                result=read_curved_hphi_history(args.run)
+            print(json.dumps(result,indent=2,allow_nan=False));return 0
+        if args.command in ('execute-material-hphi-tracking','replay-material-hphi-tracking'):
+            from .material_hphi_tracking import MaterialHphiTrackingRequest
+            from .material_hphi_tracking_jobs import execute_material_hphi_tracking,read_material_hphi_tracking
+            result=(execute_material_hphi_tracking(args.previous,args.current,MaterialHphiTrackingRequest.load(args.request),args.out)
+                    if args.command=='execute-material-hphi-tracking' else read_material_hphi_tracking(args.run))
+            print(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False));return 0
+        if args.command in ('execute-curved-hphi-tracking','replay-curved-hphi-tracking'):
+            from .curved_hphi_tracking import CurvedHphiTrackingRequest
+            from .curved_hphi_tracking_jobs import execute_curved_hphi_tracking,read_curved_hphi_tracking
+            result=(execute_curved_hphi_tracking(args.previous,args.current,CurvedHphiTrackingRequest.load(args.request),args.out)
+                    if args.command=='execute-curved-hphi-tracking' else read_curved_hphi_tracking(args.run))
+            print(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False));return 0
         if args.command in ('execute-hphi-history','extend-hphi-history','replay-hphi-history'):
             from .hphi_tracking_history import HphiTrackingHistoryRequest
             from .hphi_tracking_history_saved import execute_hphi_history,extend_hphi_history,read_hphi_history
@@ -473,6 +618,12 @@ def main(argv=None):
             result=(execute_hphi_tracking(args.previous,args.current,HphiTrackingRequest.load(args.request),args.out)
                     if args.command=='execute-hphi-tracking' else read_hphi_tracking(args.run))
             print(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False));return 0
+        if args.command in ('execute-planar-curved-tracking','replay-planar-curved-tracking'):
+            from .planar_curved_tracking import PlanarCurvedTrackingRequest
+            from .planar_curved_tracking_jobs import execute_planar_curved_tracking,read_planar_curved_tracking
+            result=(execute_planar_curved_tracking(args.previous,args.current,PlanarCurvedTrackingRequest.load(args.request),args.out)
+                    if args.command=='execute-planar-curved-tracking' else read_planar_curved_tracking(args.run))
+            print(json.dumps(result,indent=2,allow_nan=False));return 0 if result['status']=='PASS' else 1
         if args.command in ('execute-planar-tracking','replay-planar-tracking'):
             from .planar_tracking import PlanarTrackingRequest
             from .planar_tracking_jobs import execute_planar_tracking, read_planar_tracking
@@ -780,7 +931,7 @@ def main(argv=None):
                 print(f'WROTE: {args.out}')
             return 0
         if args.command in ('solve-planar','replay-planar','probe-planar'):
-            from .planar import PlanarCase,solve_planar,PlanarFieldSampler
+            from .planar_solve import solve_planar_case as solve_planar
             from .planar_saved import save_planar_run,read_planar_run
             if args.command=='solve-planar':
                 from .planar_polygon import load_planar_case
@@ -842,6 +993,19 @@ def main(argv=None):
                     result=execute_planar_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
             print(f"{result['status']}: {args.document if args.command=='replay-tune-planar' else args.out}")
             return 0 if result['status'] in ('TUNED','PAUSED') else 1
+        elif args.command in ('tune-material-hphi','resume-tune-material-hphi','replay-tune-material-hphi'):
+            from .material_hphi_tuning_saved import execute_material_hphi_tune,read_material_hphi_tune
+            from .project import parse_json
+            if args.command=='tune-material-hphi':
+                result=execute_material_hphi_tune(parse_json(args.document.read_text(encoding='utf-8')),args.out,max_new_trials=args.max_new_trials)
+            else:
+                result=read_material_hphi_tune(args.document)
+                if args.command=='resume-tune-material-hphi':
+                    result=execute_material_hphi_tune(result['request'],args.out,max_new_trials=args.max_new_trials,checkpoint=result)
+            print(f"{result['status']}: {args.document if args.command=='replay-tune-material-hphi' else args.out}")
+            return 0 if result['status'] in ('TUNED','PAUSED') else 1
+        elif args.command in cli_curved_hphi_tuning.COMMANDS:
+            return cli_curved_hphi_tuning.execute(args)
         elif args.command in ('tune-hphi','resume-tune-hphi','replay-tune-hphi'):
             from .hphi_tuning import execute_hphi_tune,read_hphi_tune
             from .project import parse_json
@@ -941,13 +1105,20 @@ def main(argv=None):
             print(f"REPLAYED SELECTION TRANSFER: {args.document}")
             return 0
         elif args.command == 'generate-curved-remesh-plan':
-            from .curved_remesh_generation import generate_curved_remesh_plan
+            from .curved_remesh_generation import generate_curved_remesh_plan,build_curved_remesh_generation,_write_generation_json
             from .project import load_document,parse_json
-            plan=generate_curved_remesh_plan(load_document(args.project.read_text(encoding='utf-8')),
+            build=build_curved_remesh_generation if args.format=='document' else generate_curved_remesh_plan
+            result=build(load_document(args.project.read_text(encoding='utf-8')),
                 parse_json(args.settings.read_text(encoding='utf-8')))
-            with args.out.open('x',encoding='utf-8') as stream:
-                json.dump(plan,stream,indent=2,allow_nan=False);stream.write('\n')
-            print(f"GENERATED REMESH PLAN: {args.out}")
+            _write_generation_json(args.out,result)
+            print(f"GENERATED REMESH {args.format.upper()}: {args.out}")
+            return 0
+        elif args.command == 'replay-curved-remesh-generation':
+            from .curved_remesh_generation import replay_curved_remesh_generation,_write_generation_json
+            from .project import parse_json
+            result=replay_curved_remesh_generation(parse_json(args.document.read_text(encoding='utf-8')))
+            if args.out is not None:_write_generation_json(args.out,result['plan'])
+            print(f"REPLAYED REMESH GENERATION: {args.document}")
             return 0
         elif args.command == 'remesh-curved-project':
             from .curved_project_remesh import remesh_curved_project
@@ -1116,7 +1287,7 @@ def main(argv=None):
             try:
                 from .visualize import plot_mode
             except ImportError as exc:
-                raise ValueError("plotting requires the optional dependencies: pip install -e '.[plot]'") from exc
+                raise ValueError("plotting requires the optional dependencies: uv pip install -e '.[plot]'") from exc
             plot_mode(args.run, args.out, args.mode, args.probe_z_m, args.mesh)
         else:
             if args.out.exists():

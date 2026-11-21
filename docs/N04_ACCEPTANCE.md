@@ -1,5 +1,59 @@
 # N04の要件・証拠・残件の照合
 
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[実SIGINT・二段階再開・追加一様確認](CURVED_RF_GOAL_EFFICIENCY_RESUME.md)。新11native完了＋実中断1試行を保持。球の元checkpointから1＋2event再開と三方式各1event継続、無中断4eventを比較し、164 native配列/64 sample配列・全RF/独立誤差が完全一致。初回達成1/確認3、公開3eventは凍結。Ue/Uh最大差3.442e-15、長球棄却320から元親80→113局所の再開計画も新FEM0で一致。新4＋直接7の11個別unit、元/新版archiveの親連鎖再生を確認。元1479中他1477源byte不変、新resume/test込み1481。旧費用・失敗/終了-2と全束縛を保持し、新固定36/seed/full/GUI/legacy0。C線形solve/全process manifest・CLI・資源停止/部分書込が残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[全native・全場・停止判断の保存再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)。球三方式/長球rf_goalの全12event・24sample・5,007,024成分が一致、4process終了0・新FEM0。親/棄却probe/確認/初回達成/初期ID/実Erの6再hash改変を拒否し、新7＋直接1の8個別unitを分割PASS。元費用を保持しRSS/投入時計/phase算術を検査、初回JSON型ERRORと費用guard先行FAILを保全。元1477中他1476源byte不変、新reader/test込み1479、既定writer/科学再構築ASTと全1,756束縛を監査。全handle終端、seed/full/CLI/GUI/固定36実行0。実中止再開・追加一様確認・C線形solve/全process費用・CLIが残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[実native分岐/全域場/費用記録の接続](CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)。球三方式と長球rf_goalの各3event、計12新FEM・四process終了0。長球80→320棄却→元親80から113局所の全分岐と公開完全再構築が一致、全場/実ID/両次数と未達を保持。球native TARGETS_METも比較側PAUSEDを維持。新/直接8個別unitを分割PASS、制御例外の元object/部分費用/alias復元も確認。元1475中他1474源byte不変、metric結合一源修正と新worker/testで1477。成功12native後の二記録guardはASTと元12状態へ再結合し新FEM0。全handle終端、seed/full/CLI/GUI/36benchmark0。実workerのfresh APIまで接続、全journal再生/実中止再開/追加一様確認/全観測とCLIは未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[比較指標と採用祖先の停止判定](CURVED_RF_GOAL_EFFICIENCY_WORKER.md)。同じ全域gridの元場/単一符号/前場ノルム・両R/Q/peak区間、両Gauss次数、三採用祖先と二一様辺を検査。棄却probe/local・native TARGETS_METの誤昇格を拒否、新9＋旧accuracy8の17個別unitを分割PASS。実追跡のnull IDによる初稿ERRORを保全し、非採用UNVERIFIEDとして保持する修正後branch5件0.011秒・終了0。元1473源byte不変、新2源込み1475、新FEM/seed/full/CLI/GUI/36benchmark0。実worker/全event費用/保存完全再生/中止再開は未実装で04は未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-03 **DONE**：[独立全域参照の六ケース受入](CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)。球の独立解析式と長球/丸めの三h・全五modeをGauss16/24へ結合。全12grid・体積1181440/軸56800点、Green三積分差最大5.885e-15・全E/H/軸/両R/Q/G/peakと二尺度を確認。新9＋旧関連13の22個別unitを分割PASS、長球準備38.833秒/最大RSS6.121 GB・終了0。旧source SHAの停止は元八fileの同一byte archiveで解消し、旧reader/現行源/閾値は不変。元1470源byte不変、新3源込み1473、全handle終端、新FEM/seed/full/GUI/36benchmark0。全141は91 DONE/2 IN_PROGRESS/48 PLANNED、原123は76/2/45。次は04の実worker/全event費用/保存完全再生、native精度/親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-02 **DONE**：[固定計画と全36要求のstrict検査](CURVED_RF_GOAL_EFFICIENCY_INPUT.md)。13項目/全行/元Case・明示mesh/全ID/二方針・一様版4変換、厳密型/重複/未知/再hash改変/コピー隔離を確認。全11fileの読取前後SHAとsymlink/FIFO・検査中変更拒否、新12＋旧N05/版5関連6の18個別unitが10.751秒・終了0/PASS。先行未実装ImportErrorを保全、元1468源byte不変、新module/testの2源だけ追加。新FEM/seed/full/GUI/legacy0、handle60298終端。全141は90 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。次はADD-N04-rf-goal-03の独立全域参照、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-01 **DONE**：[版5の固定36実行/独立精度/全event費用仕様](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)。球/長球/丸め×二尺度×三方式×二反復、六元要求と全ID/壁/両R/Q/peak/全E/H/物理軸を固定。初期幾何のGreen/別P2積分差最大6.662e-16、4/8/32尺度・現行六拒否をFEM0で確認。初回probeの戻り値取扱いERRORを保全し修正。元1458源byte不変、独立候補79源と参照anchorの現存を確認。新比較器/参照package/実36行/GUIは後続02〜06、新unit/seed/full/GUI/legacy0。全141は89 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-rf-goal-02、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-06 **DONE**：[独立幾何・解析場/RF・6 nativeの受入](CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)。固定6新FEMは58.057秒・終了0/PASS。全254区間/三Green積分/4・8・32尺度、親子K/M最大1.436e-15、円筒f最大3.316e-7/両R/Q1.274e-4/E場8.152e-4を原gate内で確認。非アフィンRF尺度3.855e-14/各場成分1.402e-14、全6×10配列/54file・元Project/全RF/規約保持。追加境界/旧履歴6反例はFEM0でPASS、元数値関数AST不変。03/04のunitと05の42 GUI操作/7 FEMをsource・SHAに再結合、新unit/seed/full/legacy0、全handle終端。全136は88 DONE/2 IN_PROGRESS/46 PLANNED、原123は76/2/45。次はADD-N04-rf-goal-01、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-05 **DONE**：[生成文書のStudy GUI/実worker受入](CURVED_BOUNDARY_REMESH_GUI.md)。新版20・無変更旧版21・再起動復元1の計42実Chrome操作、HTTP2個別unitがPASS。queued worker中止/管理器再生成/元checkpoint再開・全保存再生を確認、元24file/各10配列保持。GUI対workerも2点の全配列/全RF一致、JSON表記とSHA差は別記。パス誤記/並行領域ロック拒否を保全し完了2点を再利用、全工程7新FEM、後続worker361.139秒・終了0。科学核/閾値不変、全handle終端、新seed/full/legacy0。全136は87 DONE/2 IN_PROGRESS/47 PLANNED、原123は76/2/45。次は06の独立幾何/専用6FEM、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-04 **DONE**：[生成条件の完全保存再生/CLI](CURVED_BOUNDARY_REMESH_SAVED.md)。七項目文書・九検証値を全再構築し、元Project/設定/固定plan・全prefix/型/改変/予算/重複を検査。旧版/Study、原子的排他保存/中断/失敗と矩形閉式を計20個別unit（19＋1）で確認。実CLI六起動は終了0、版1/2文書API一致・再生/既定plan全byte一致。元生成bodyと当該入口以外のCLIはAST不変、FEM/RF核不変、新FEM/seed/full/GUI/legacy0。全136は86 DONE/2 IN_PROGRESS/48 PLANNED、原123は76/2/45。次は05のStudy/GUI・実worker、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-03 **DONE**：[元P2境界を分割する生成API](CURVED_BOUNDARY_REMESH_CORE.md)。全区間/三幾何積分・Green/Hφ=r質量・親子K/M・4/8/32尺度、Case全サイズ、512/64→128/32粗化、固定履歴/事前予算/TE両端二タグ×反射を確認。初回41件40 PASS/1 ERRORを保全し、暗黙sourceがseed条件で再生成される不具合を元mesh明示で修正、一件再検査3.705秒PASS。計41個別PASS、旧bodyは版2分岐以外のAST一致、FEM/RF核不変。新FEM/seed/full/GUI/legacy0。全136は85 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。次は04完全保存再生/CLI、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-02 **DONE**：[生成版2のstrict入力](CURVED_BOUNDARY_REMESH_INPUT.md)。九共通項目＋一履歴の型/版/有限/予算/固定pattern/コピー・raw重複と旧版を、新9＋旧生成9の18個別unitで確認、16.186秒・終了0。先行helper未実装ERRORは保全。元1451対象の他1450源byte一致、新helper以外の旧module全AST一致、公開版2はまだ拒否。新FEM/seed/full/GUI/legacy0。全136は84 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-03、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-01 **DONE**：[元P2境界分割を変更する生成版2仕様](CURVED_BOUNDARY_REMESH_SPEC.md)。矩形/非アフィンの現行サイズ拒否を先に再現し、既存固定履歴で境界32/28辺・全P2/三幾何積分保存を確認。旧64→32辺の粗化と再投影の体積差2.176e-4/拒否も確認。元1444源byte不変、solve禁止の表現probeのみで新FEM/unit/seed/full/GUI0。九項目＋一履歴・七項目保存・五後続と独立6FEMゲートを固定、公開版2は未実装。全136は83 DONE/2 IN_PROGRESS/51 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-02、親N04/全goalは継続。
+
+2026-10-08 ADD-N04-selection-charts-04 **DONE**：[版2の完全保存再生とCLI](CURVED_SELECTION_CHARTS_SAVED.md)。両Project/元requestから全参照分割・全selection・十項目を再計算して型/改竄/予算/欠落を拒否し、旧版1を維持。新saved6/旧selection8/strict JSON1の15個別PASS、7.502秒・終了0、solve guard全0。実CLI四起動は両policyのtransfer/replay終了0、保存全文書API一致。元round-trip ERRORを保全し、旧selection ASTは新helper/dispatch以外一致・CLIは三helpだけ変更。全1440対象/1227 Python源固定・他1437源byte一致、03の独立幾何/元TM/TE科学証拠を再利用。新FEM/seed/full/GUI/専用validator/legacy0。全131は80 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45、次は05のGUI。親N04/原32要件/全goalは継続。
+
+2026-10-08 ADD-N04-selection-charts-03 **DONE**：[独立初期接続の版2選択移送API](CURVED_SELECTION_CHARTS_CORE.md)。全有理親被覆と旧選択各要素の面積保存、二policy、独立番号/逆方向/非nested/frozen/非アフィンと尺度4/8/32則・原TM対称/予算拒否を確認。初回38件は35 PASS/3 import ERROR、補完初回のsibling import ERRORを保全し、新test読み込み修正後3件10.443秒・終了0。38個別PASSを分割受入、成功35件を重複実行しない。旧selection ASTと元default builderの全report/評価配列一致、元1439中他1437源byte一致・新1440対象/1227 Python源。新幾何FEM0、旧TM実6求解を観測（TE経路はwrapper未計測）、full/seed/GUI/専用validator0。全131は79 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45、次は04の完全再生/CLI。親N04/原32要件/全goalは継続。
+
+2026-10-08追補：[選択移送strict入力02](CURVED_SELECTION_CHARTS_INPUT.md)をDONE。新7/旧8個別PASS、15件1.761秒・終了0。公開版2計算は未実装、03の全被覆/二policy/対称opt-inへ進む。全131は78/2/51、親N04/原四群/全goalは継続。
+
+2026-10-08追補：[異なる初期接続への選択移送仕様01](CURVED_SELECTION_CHARTS_SPEC.md)をDONE。元1432源不変、六入力例/有理被覆と閉式三積分、対称受理差を確認。公開版2は未実装、02〜06を必須後続として追加、全131は77/2/52。親N04/原四群/全goalは継続。次は02。
+
+
+2026-10-08 JST：[N08の公開保存/現行GUI受入](N08_ACCEPTANCE.md)を追加。
+N08はDONE、親N04はIN_PROGRESS。原四群の現行照合は次表、以降の全歴史記録は保持する。
+原123は76/2/45、既存残件の追加3仕様カードを含む全126は76/2/48。全goal/原32要件は継続。
+
+| 元残件群 | 現行の証拠・成立範囲 | 残件と次工程 |
+|---|---|---|
+| 1 非球形両尺度/追加一様対照 | 旧回転楕円体両尺度PASSは維持。N03五合成系列とN05/N06/N07三形状・独立全場/九量/二反復の条件別対照を追加 | 旧測定時間を新実行へ読み替えない。有限例の比較で普遍的優位を要求しない |
+| 2 RF重み付き選択と一般対照 | 旧版5の感度/随伴/明示表面方針両尺度・保存/GUI/費用は維持。新残差版3/4は六adaptive公開保存/30水準完全再生と現行30 GUI操作を確認 | 新残差版3/4を版5固有の一般対照へ代用しない。R/Q単独の旧未達/非優位を保ち、ADD-N04-rf-goal-01で全branch/event費用と独立精度の固定対照を具体化 |
+| 3 対称/一般曲線の表面と幾何 | 単一対称/磁気対称の旧最終対照、N03の球/長楕円体/丸め/鋭角の独立幾何・元場/RF/ピーク評価を維持 | 版4のsmooth閉PEC受理範囲は不変。旧NT=2/3入力とG03全体は原カードC03/幾何監査N04の後続。適応親N04と幾何監査カードN04は異なるID空間 |
+| 4 履歴/変形/初期再メッシュ/番号/選択/共通比較 | 固定/混在履歴、途中挿入、宣言/調和変形とStudy、内部生成、独立番号は実装済み。元N03全1405源byte一致、関連66unit証拠を再利用。250000表示は元合成描画の記録。共通比較版5は明示全参照座標で異なる初期接続/境界分割を実装済み | 版2選択は01〜06のAPI/完全再生/CLI/実GUI/独立6FEMを受入済み。境界生成版2は01〜06の仕様/API/完全保存/GUI・worker/独立6FEMを受入。RF版5一般対照は残る |
+
+[三つの具体仕様カード](N04_REMAINING_CARDS.md)を親の必須後続として登録した。
+新版共通比較の完了を選択移送の完了へ代用せず、既存残件を削除しない。
+新しい誤差上界/一般保証を完走条件へ追加しない。次はADD-N04-rf-goal-01。
+
+---
+
 2026-09-14追記：残件2の[共通履歴再構築共有](NESTED_RECONSTRUCTION_REUSE.md)を追加。
 両入力の厳密検証を保ち、3形状の転送/追跡/RF指標完全一致とRF指標約1.50〜1.53倍を観測した。
 独立質量保存・18既存native場の12組追跡・円筒解析五量/尺度則もPASS。一般適応効率と親N04全体は未受入。

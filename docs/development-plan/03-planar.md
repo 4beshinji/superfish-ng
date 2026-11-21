@@ -23,7 +23,13 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
+- **進捗（2026-09-22）**：[多項式アフィン形状法則](../PLANAR_AFFINE_SHAPE.md)の基盤と独立3件を分割検証。調整要求/比較/保存への接続は未完、P01はIN_PROGRESS。
+
+- **受入（2026-09-22）**：[平面アフィン調整・版8比較・保存再生](../PLANAR_AFFINE_TUNING.md)。条件別検査・関連29件と別元場/strict検査を分割PASS。P01 DONE、次はP02。
+
 ## P02
+
+2026-09-22受入：[全子条件の監査](../PLANAR_IDENTITY_RECOVERY_ACCEPTANCE.md)。原カードP02をDONE。後続P03/P04と親互換課題は継続。
 
 ### 平面の個別ID回復を履歴・調整へ追加する
 
@@ -42,7 +48,53 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
+## P02-a
+
+### 元平面場による明示ID回復核
+
+- 親カードP02、先行P01。`planar_identity_recovery.py`にanchor位置と完全なPlanarTrackingRequestを持つstrict回復要求を追加する。
+- 継承比較とanchor比較を元FEMから再計算し、全継承ID集合との一致を確認する。未確認では回復周波数null、候補・継承集合を別保存する。
+- 独立対照：TE矩形のcos場/解析遮断周波数、正方形の真縮退、.18→.20→.22 mの順位交換、guard未確認と集合越境拒否。元場/周波数不変、要求往復。
+- 受入は専用APIまで。所有履歴のanchor位置実体への束縛はP02-bで必須。
+
+- 受入記録：[P02-aの明示ID回復核](../PLANAR_IDENTITY_RECOVERY.md)。実矩形/正方形、独立周波数/場、guard/集合拒否と後続継承を分割4件PASS。
+
+## P02-b
+
+### 回復付き平面所有履歴とCLI/worker
+
+- 親カードP02、先行P02-a。`planar_tracking_history.py`と`planar_tracking_history_saved.py`に回復位置/完全要求/元anchor所有コピーを追加する。
+- 各隣接nativeの全hashと回復後ID継承、明示anchorが過去の解決済みsnapshotであることを再検証する。従来履歴版を保持する。
+- 受入：実矩形→正方形→矩形→延長、保存移動/再生、誤anchor/置換ID/改変拒否、CLI/workerで元全native不変。未確認回復後に延長しない。
+
+- 受入記録：[回復付き所有履歴](../PLANAR_RECOVERED_HISTORY.md)。API/CLI/worker・移動再生・回復後継承・改変拒否、版8保存入口補完を新3＋新2/既存7の分割検査で確認。
+
+## P02-c
+
+2026-09-22受入：[調整回復・保存・実操作の条件別証拠](../PLANAR_TUNING_RECOVERY.md)。新5件と関連14件が分割PASS。親P02/GUIは未完。
+
+### 平面調整の回復・最終細分・再開
+
+- 親カードP02、先行P02-b。`planar_tuning.py`と`planar_tuning_jobs.py`に完全比較/過去anchor方針を持つ新版要求を接続し、版1/2を保持する。
+- 検索と最終細分の両方で継承集合と個別回復を検証する。失敗は周波数nullで停止し、過去checkpointを保持する。
+- 受入：実矩形順位交換、正方形未確認、回復後の実最終細分、別job再開、worker取消し/再起動。独立遮断周波数と元E場、両gateと全U′/RF不変。
+
+## P02-d
+
+2026-09-22受入：[実Chrome履歴15・調整14・新サーバー5項目](../PLANAR_RECOVERY_GUI.md)。API/CLIと同じ回復ID、元native/Project bytes一致を確認。
+
+### 回復操作GUIとP02条件別監査
+
+- 親カードP02、先行P02-c。`gui_planar_tuning.py`と平面履歴GUIへ回復要求・候補/採用ID・anchor・null周波数の区別を接続する。
+- 実ブラウザーで履歴回復→延長、調整回復→最終細分、中止/再開、サーバー再起動後の元場表示を確認する。API/CLI/GUIで同じ順位/ID、元native/Project全bytesを照合する。
+- 全P02条件と子a〜cの証拠を監査してから親P02をDONEにする。部分APIだけで親を閉じない。
+
 ## P03
+
+2026-10-02受入：[明示区分写像・全領域検査](../PLANAR_PIECEWISE_MAPPING.md)。
+新7件＋既存25件、計32件PASS。連続区分アフィンによる全域非アフィン変形を対象とし、
+解析面積/多項式積分・curl変換・独立native被覆・不正分割拒否を確認。P03 DONE、次はP04。
+滑らかな非線形/曲線写像と場比較/調整の接続は今回の受入に含めない。
 
 ### 平面非線形写像の契約と幾何検査を追加する
 
@@ -63,6 +115,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## P04
 
+2026-10-02受入：[元条件別監査](../PLANAR_PIECEWISE_ACCEPTANCE.md)。P04-a/b/c全子の元場/実調整/所有保存/GUIを確認。滑らかな曲線は後続P05〜P09、原互換親P02/D02は未完了。
+
 ### 平面非線形比較と調整を接続する
 
 - **親課題**：P02 / D02。**種別**：実装。初期状態：未着手。
@@ -80,7 +134,101 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
+## P04-a
+
+2026-10-02受入：[新版9の元場比較・追跡・所有再生](../PLANAR_PIECEWISE_TRACKING.md)。
+新7件と直接消費先、計57件を分割PASS。主選択54PASS/誤メソッド名1ERROR、正しいstrict1件と独立物理2件を別確認。
+実worker中止/管理器再起動・元全native不変、391製品ファイル固定、全handle終端。次はP04-b、親P04は継続。
+
+### 区分写像による元場比較と追跡・所有再生
+
+- 親P04、先行P03。比較セルと両側の独立nativeセルを有理数で交差し、各元セルの厳密被覆と元場の重心座標を保持する。前側SI面積で元TE/TM場を積分し、セル別adjugateを使用する。
+- 追跡新版9を追加し旧版1〜8を保持。元領域の有限スペクトル・guard・ID集合・未確認停止を維持する。所有pair/履歴/CLI-workerの既存再生に接続する。
+- 独立対照：既知区分座標写像の多項式場/curl積分、アフィン極限、実TE/TMの相似f/元場/U′/RF、非アフィン合成形状の独立細分。正逆・位相・全元セル面積・1 ULP/予算拒否・guard未確認・保存移動/改変拒否を検査する。
+- 対象：新`planar_piecewise_overlap.py`、`planar_tracking.py`、`planar_tracking_jobs.py`、関連場/履歴テスト。形状法則と調整はP04-b。
+
+## P04-b
+
+受入：2026-10-02、[子a/b/cの条件別監査](../PLANAR_PIECEWISE_TUNING_WORKER.md#p04-b監査と来歴)。形状/実調整/所有保存/workerの全条件を受入。GUIと親P04は子c（P04-c）で継続。
+
+### 区分形状法則と実調整・保存再開
+
+- 親P04、先行P04-a。元Projectの明示比較分割と頂点の有限多項式変位法則を保存し、全試行を元形状から生成する。閉区間の正Jacobianを検査し、非局所接触/丸め不正は各試行FEM前に拒否する。
+- 新調整要求で法則と回復方針を保存し、検索/最終細分の全個別ID確認、目標gate/粗細gateの分離、失敗prefixと新出力への再開を保持する。既存版1〜3を保持する。
+- 独立対照：相似極限の解析周波数/元場/RF、不均一変形の実独立細分と実調整、元Project/native不変、未確認周波数null、移動後完全再生、worker中止/管理器再起動。
+- 対象：新形状法則/API、`planar_tuning.py`、`planar_tuning_jobs.py`と直接消費先。GUI受入はP04-c。
+
+## P04-c
+
+2026-10-02受入：子aの調整GUI/API全50配列、子bの追跡/履歴GUI/API全70配列、新サーバー・最終表示と資源回収を確認。[親監査](../PLANAR_PIECEWISE_ACCEPTANCE.md)。
+
+後続の前提はP04-bの全子工程受入。2026-10-02に調整操作aと単独追跡/履歴・親監査bへ分割。元P04の全条件は維持する。
+
+### 区分調整GUIと操作・P04全条件監査
+
+- 親P04、先行P04-b。新版要求編集/読込、比較/回復宣言、実調整/最終細分、保存地点選択/別job再開/元場表示をGUIへ接続する。
+- 実ブラウザーで成功と未確認停止、中止/再開、新サーバー保存再生を確認し、APIとの全native/Project/要求/判断/RF一致と旧アフィン操作を確認する。
+- 元P04と子a/bの全条件を専用文書で監査してから親P04をDONEにする。部分的なAPI合格で親を閉じない。
+
+## P04-c-a
+
+2026-10-02受入：[実操作/独立API全元場照合](../PLANAR_PIECEWISE_TUNING_GUI.md)。Python6件、Chrome20項目の分割PASS、全50配列/Project/要求/判断/RF一致。395製品hash不変、全handle終端。単独追跡/履歴と親監査は子b。
+
+### 区分調整GUIの実操作と独立API全元場照合
+
+- 親P04-c、先行P04-b。要求4の法則・回復方針・SI Projectを保存/再読込し、実成功/最終細分と未確認null、中止/所有地点選択/別job再開を操作する。
+- 新サーバーで保存結果/元場を復元し、独立API実調整との全native配列/Project/要求/判断/RF一致を確認する。旧アフィン操作、製品hash固定、検証資源回収も確認する。
+- 証拠は[区分調整GUI](../PLANAR_PIECEWISE_TUNING_GUI.md)。単独追跡/履歴と親監査は子b。
+
+## P04-c-b
+
+2026-10-02受入：[版9/10比較・所有履歴GUI](../PLANAR_PIECEWISE_TRACKING_GUI.md)。全版フォーム、Python10、Chromeの分割9/7/5/3項目、独立API3pair/全70配列を確認。検証器の初回失敗と表示修正を区別。全handle終端、数値ソース不変。
+
+### 新版比較・追跡履歴GUIとP04全条件監査
+
+- 親P04-c、先行P04-c-a。追跡版9の明示区分写像と版10の元Project/多項式区分法則をGUIで保持・編集・保存し、厳密JSONをサーバーへ渡す。
+- 実元場のpair/ID集合引継ぎと所有履歴をGUIで開き、次段要求/回復の写像を維持する。旧追跡版を保持する。独立APIとの保存要求・判断・元場/RF不変を確認する。
+- P04-a、P04-b全子、P04-c-aと本操作を原P04条件ごとに監査してからP04-c/P04をDONEにする。曲線/滑らかな非線形の後続P05〜P09は本カードへ数えない。
+
+## P04-b-a
+
+受入：2026-10-02、[元区分形状と参照比較](../PLANAR_PIECEWISE_SHAPE.md)。区間内重根/全域交差の独立反例、実相似TE/TM場・RF、共通参照/strict要求を確認。初回29件28PASS/1FAILは検証順序を修正し、影響17件再確認PASS、非影響12件成功を保持。394製品hash不変、全handle終端。P04-bは継続。
+
+### 元区分形状法則と検索・最終細分の比較要求
+
+- 親P04-b、先行P04-a。元明示meshの各頂点にxy変位の有限多項式（昇冪・最大8次・m）を宣言する。元Projectと完全な元meshを束縛し、閉区間の全セルJacobianを厳密多項式で検査する。
+- 変形時の全境界節点をpolygonへ保持し、境界接触/交差・丸め不正を試行FEM前に拒否する。前試行から累積生成しない。
+- 新追跡版10で両試行の実丸めmeshと検索/最終細分を元参照から完全再生成・照合する。元場を共通参照分割で比較し、P04-aの厳密overlayと二進対照で一致する。
+- 新調整要求版4でこの法則と明示回復方針をstrict検査し、旧版1〜3を保持する。
+- 独立不変量：偶数重根/端点/負Jacobian拒否、微小正対照、既知非アフィン変形の面積、全域/全外周保持、実FEMの相似f/E/H/U′/RF、親子の各元セル面積とadjugate、1 ULP/予算拒否。
+- 受入は形状/比較/要求基盤まで。可搬保存と実runnerはP04-b-b、所有worker操作はP04-b-c。
+
+## P04-b-b
+
+受入：2026-10-02、[実区分調整と所有保存](../PLANAR_PIECEWISE_TUNING_SAVED.md)。非アフィンTE/TM解析/独立mesh、相似RF、実回復/guard/null、全prefix所有コピー・移動後CLI再開/再生、失敗prefix・再hash改変拒否を確認。分割22件PASS（新8/旧14）。初回粗格子/工場丸め・CLI60秒期限の失敗を保持し、数値許容差は維持。395製品hash不変、全handle終端。新版worker接続と親監査は子c。
+
+### 実区分調整と可搬な全試行所有保存・再開
+
+- 親P04-b、先行P04-b-a。実非アフィンFEM調整と相似解析対照、初回guard/個別ID・回復/未確認null、検索/最終gate別判定を確認する。
+- 全元Project/native/要求/判断を所有コピーし、相対path宣言から移動後に全試行を物理再生する。再開は新出力へ書き、元checkpointと全nativeを保持する。結果/法則/親/係数の再hash改変を拒否する。
+- 独立対照：非一様伸長と独立細分、解析相似目標、true縮退/guard拒否、実最終細分、未確認/失敗prefix、CLI所有再生、元出力移動後の再開。
+
+## P04-b-c
+
+受入：2026-10-02、[所有workerと親P04-b監査](../PLANAR_PIECEWISE_TUNING_WORKER.md)。新5/旧直接消費先12の分割17種類PASS、395製品hash不変、全handle終端。元移動・実中止/保存地点・別job・管理器再生成・実最終回復/解析cutoff・未確認null・改変拒否を確認。初回のテスト後処理2ERRORと1件再確認を保持。次はP04-c。
+
+### 区分調整workerの所有中止・再開とP04-b監査
+
+- 親P04-b、先行P04-b-b。queued入力に全先行trialを所有し、元出力移動後も実workerの再開・管理器再起動で再生する。中止時の確認済みprefixを保持し別jobへ再開する。
+- 受入：実中止/保存地点選択/元移動/新job最終細分・回復と未確認null、全native/Project/判断/RF一致、コピー改変拒否。旧worker互換も確認する。
+- 元P04-bと子a/bの全条件を監査して親P04-bをDONEにする。GUIはP04-c。
+
 ## P05
+
+2026-10-02受入：[平面曲線P2仕様と条件別gate](../PLANAR_CURVED_RF.md)。
+円二尺度/両偏波の解析f/E/H/G、楕円/再入角、固定Domainと幾何近似の別細分、
+strict版3と保存/後続操作契約を定め、独立解析16組とpatch/JSON/依存/395製品hashを監査。
+文書受入であり、曲線製品FEM/保存/GUIは未実装。P05 DONE、次はP06。
 
 ### 平面曲線P2の幾何・弱形式を設計する
 
@@ -95,6 +243,11 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## P06
+
+2026-10-02受入：[専用xy曲線Domain/面積P2 FEMと独立不変量](../PLANAR_CURVED_FEM.md)。
+全Jacobian/閉外周・全edge/strict版3/面積K,M、二尺度patch/楕円/直線矩形・L字、TE核/TM正値を確認。
+新9/既存5の14件と追加拒否の限定検査、四ring円6形状の専用validatorをPASS。
+元395製品不変、実solve/元場/RF/native/操作は後続。P06 DONE、次はP07。
 
 ### 平面曲線幾何とP2空間を実装する
 
@@ -114,6 +267,24 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## P07
+
+2026-10-07最終受入：[全原条件と主source/元artifact監査](../PLANAR_CURVED_ACCEPTANCE.md)。
+元円独立38783の全四caseも実終端0となり、五source bridge/三補足を受入、限定kernelを主sourceへ統合した。
+元401源/15validatorを別保全、最終401は受入版と完全一致、元主源から四変更/397不変。
+P07 DONE、次はP08。以下の日付付き段落は当時の状態。全123カードgoal/原互換親は継続する。
+
+2026-10-02進行：[実solve/元12場/曲線壁RF・厳密点所属と同Domain細分](../PLANAR_CURVED_SOLVER.md)。
+新10/旧物理2種類を分割確認。固定二次円二尺度・両偏波の元12解を保持し、TMだけ追加2細分で
+解析f/E/H/Gの全対象群がPASS。その後の[最終二水準比較](../PLANAR_CURVED_CONVERGENCE.md)は新5unitを確認し、
+未達TE/TMを追加4FEMして計18元解を保持。TE L2→L3/TM L3→L4で二尺度のf/E/H/全RF差PASS。
+独立内部mesh/増次数/幾何近似系列/楕円・再入角は未確認。
+P07はIN_PROGRESS、P08/native/GUIと原互換親は未完。
+
+2026-10-07追記：[有限N16/32/64の八幾何系列と元FEMの条件別監査](../PLANAR_CURVED_GEOMETRY_SERIES.md)は受入。
+円/楕円の両偏波・二尺度で、真幾何と固定FEM f/E/H/全RFを別判定する。
+楕円と角TEの固定A/B二尺度も受入。角TM二尺度・元円独立A/B半径.02・source統合は継続中。
+[strict閉参照](../PLANAR_CURVED_EXACT_REFERENCE.md)と[元場point grouping](../PLANAR_CURVED_FIELD_GROUPING.md)は分離branchで限定受入。
+P07はIN_PROGRESS、P08/P09と全原要件・全goalは未完了。過去の日付付き段落は当時の記録である。
 
 ### 平面曲線の実解と元場・RFを実装する
 
@@ -136,6 +307,11 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### 平面曲線native・Project・GUIを接続する
 
+- **現状（2026-10-07）**：DONE。[版3専用native](../PLANAR_CURVED_NATIVE.md)の
+  元配列/全RF再構築・改変拒否を実装、新7件＋旧版直接利用5件は1.684秒PASS。
+  [共通Case/Project/CLI-worker/Study/表示](../PLANAR_CURVED_OPERATIONS.md)も新9件分割受入、関連48件PASS。
+  [全条件受入](../PLANAR_CURVED_OPERATION_ACCEPTANCE.md)：実Chrome15＋旧13＋別server7、計35項目PASS。
+  全元native/全RF/12場・中止/新job/別server再生、全hash/元FAIL保全、全handle終端/Chrome回収を確認。
 - **親課題**：P02 / O02。**種別**：実装。初期状態：未着手。
 - **先行条件**：[P07](03-planar.md#p07)
 - **コミット件名案**：`feat: 平面曲線native・Project・GUIを接続する`
@@ -152,6 +328,40 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## P09
+
+- **全条件受入（2026-10-07、DONE）**：[元14条件＋共有公開修正](../PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)。修正後全validateは2359検査/479モジュール、3215.343秒、0FAIL/0ERROR/3skipで実終了0。全1366源固定、seed9モード/207量の別照合PASS（f最大差0、RF最大差8.881784197001248e-16、相対gate1e-10不変）。元失敗/skip/metadata監査修正と歴史的証拠を区別。全123カードと全goalは継続、次はC07-planar。以下leaf記録は受入までの履歴。
+
+- **大容量GUI leaf（2026-10-07）**：[円TM/非円形TEの完全checkpoint](../PLANAR_CURVED_GUI_LARGE_CHECKPOINT.md)。円5＋不足2/TE8の分割15項目PASS、実TE body95,690,800/102,474,277 byteでHTTP200、全保存/両gate/anchor0/実順位2と元五byte download一致。全420源/元7trial九byte/全123カード不変、全browser/server終端。元FAIL/ERRORと歴史的creatorを保全。[全条件監査](../PLANAR_CURVED_TRACKING_TUNING_ACCEPTANCE.md)を継続し、節目の全validate handle60083は実行中。P09/全goal未完。
+
+- **実GUI履歴 leaf（2026-10-07）**：[実Chrome比較・履歴回復/延長・取消しと診断表示](../PLANAR_CURVED_GUI_HISTORY.md)。元TE四nativeから実順位交換/真doublet/null、順序付き履歴/過去anchor回復/後続延長/max停止、全元五byte/親不変と場画像を確認。13項目＋null表示1の分割14項目PASS。検証器の期待式/非同期待ちERRORと実Page is too largeを保全し、診断の全文scroll/null明示の表示2件だけ修正。7完了job/510 entry/全420 creator監査PASS、元420源中418科学/その他源と全123カード不変。実取消し−15/他7worker0、全3server/Chrome終端、外部要求0/slot 0。次は受入円/非円形TEの大容量調整checkpoint実GUIとP09全条件監査。全goal継続。
+
+- **専用GUI leaf（2026-10-07）**：[専用曲線GUI・元E/H/ID履歴・停止checkpoint選択/実再開](../PLANAR_CURVED_GUI.md)。19 strict操作/専用ページを接続し、新API8種類＋関連6種類を分割受入。実Chrome調整6＋再開1項目、表示修正後render-only1項目PASS。socket権限ERROR/検証器readiness・scope ERROR/監査器path・heading誤りと元rawを保持し、不足だけ補完。16完了job/768 entry/全420 creator源・元五byte import/九byte prefix監査PASS、元417源中412/全123カード不変。全handle/両server終端、Chrome slot 0/外部要求0。次は実Chrome比較・履歴回復/延長・取消し、受入円/TE大容量checkpointとP09全条件監査。全goal継続。
+
+- **所有調整操作leaf（2026-10-07）**：[所有調整CLI-worker・停止checkpoint・実取消し/再開・移動再生](../PLANAR_CURVED_TUNING_JOBS.md)。元九byte/creator/claimと投入要求を保持し、ゼロ/途中失敗prefix、再hash/kind/claim拒否、円TMの実最終細分・両gate・独立Bessel絶対差を確認。新8＋関連5を分割受入、実running取消し−15/再開worker0、元source生存中移動・管理器再起動、CLI PAUSED=0/真doublet UNVERIFIED=1もPASS。試験の管理器後片付けERROR/関連相対path FAILを保持し不足各1件だけ補完。9完了job/15trial snapshot監査PASS、元416源中414不変・jobs/cli入口追加のみ、全123カード不変。全handle/worker実終端。次は実GUIとP09全条件監査。全goal継続。
+
+- **独立履歴操作leaf（2026-10-07）**：[CLI-worker・過去anchor回復/延長・実取消し/再起動・移動再生](../PLANAR_CURVED_TRACKING_HISTORY_JOBS.md)。新8＋関連5分割PASS。元二点/比較job全byte、native/ID連鎖と実anchor、親不変、true doublet/guard/max停止、再hash回復f拒否を確認。実worker取消し−15/新履歴・回復・延長0、CLI全経路/移動再生もPASS。生存中元source移動の強化1件115.147秒も追加PASS。17完了job/73二点snapshot監査PASS、元415源中413と全123カード不変。調整worker/checkpoint/実GUIと全条件監査は継続。
+
+- **所有比較操作leaf（2026-10-07）**：[CLI-worker・実running取消し/新job/管理器再起動・移動再生](../PLANAR_CURVED_TRACKING_JOBS.md)。新6種類＋関連10分割PASS。元五/九byte・creator、kind降格/再hash拒否、実CLI PASS=0/guard=1を確認。関連指定名ERRORを保持し不足1件補完。元414源の変更はjobs/cli入口追加だけ、412不変、全123カード不変。履歴/調整CLI-worker・実GUIと全条件監査は継続。
+
+- **独立履歴leaf（2026-10-07）**：[所有二点・元native連鎖・過去anchor/移動再生](../PLANAR_CURVED_TRACKING_HISTORY.md)。新13種類＋関連10を分割受入。元五/八/九byteと実反射parity、回復→後続、誤anchor/断絶/guard/max停止を確認。遅いsource変異の検出漏れを再現・修正し元FAILを保全。元412製品/全123カード不変、全handle実終端。CLI-worker/取消し/再起動・実GUIとP09全条件監査は継続。
+
+- **所有調整leaf（2026-10-07）**：[元九byte/相対prefix・完全移動再生](../PLANAR_CURVED_TUNING_SAVED.md)。新7種類＋関連3を分割受入。円TM/回復付きTE全取込・移動再生1件865.527秒PASS。元411製品/全123カード不変。独立履歴・CLI-worker/取消し/実GUIは継続。
+
+- **実調整leaf（2026-10-07）**：[元E/H/二gate/完全native replay](../PLANAR_CURVED_TUNING.md)。新8種類＋関連11を分割受入。円TM絶対f、非円形TEの実rank/反射parity・検索/最終anchor回復、null/失敗保全を確認。元410製品/全123カード不変。所有prefix/移動・履歴・CLI-worker/実GUIは継続。
+
+- **試行生成leaf（2026-10-07）**：[検索/最終細分と元chart](../PLANAR_CURVED_TUNING_TRIALS.md)。新4＋関連11の15件PASS、元409製品不変。次は実FEM調整/二gate/replay、所有再開/GUI。
+
+- **形状生成leaf（2026-10-07）**：[元全二次節点のproper affine則](../PLANAR_CURVED_SHAPE_LAW.md)。新4＋関連4の8件PASS、元408製品不変。実調整/最終細分・所有再開/GUIは継続。
+
+- **個別回復leaf（2026-10-07）**：[完全元場による過去anchor回復核](../PLANAR_CURVED_IDENTITY_RECOVERY.md)。新4＋関連6の10件PASS、元407製品不変。所有snapshotへのanchor束縛と調整/再開/GUIは継続。
+
+- **追跡核leaf（2026-10-07）**：[元E/H/有限guardの専用二状態API](../PLANAR_CURVED_TRACKING.md)。新8＋旧14の分割22件PASS、実rank交換/反射parity・真doublet/全RF確認、元406製品不変。回復/実調整/所有再開/GUIを残しIN_PROGRESS。
+
+- **有限guard leaf（2026-10-07）**：[固定二次境界の細分スペクトル](../PLANAR_CURVED_SPECTRAL_RESOLUTION.md)。新4＋関連6の10件PASS、元405製品不変。rank/identityの受入は後続。
+
+- **元場leaf（2026-10-07）**：[E/H自己・交差Gram](../PLANAR_CURVED_FIELD_COMPARISON.md)。新8＋関連10の分割18件PASS、元404製品不変。元場内積だけでidentity/周波数gate/調整を受入済みとしない。
+
+- **進行（2026-10-07）**：[元二次写像の比較分割](../PLANAR_CURVED_COMPARISON.md)。新7＋関連12の19件PASS、元403製品不変。幾何leafのみ受入、元E/H・個別ID/実調整/最終細分・所有再開/GUIを残しIN_PROGRESS。
 
 ### 平面曲線の比較・調整を接続する
 

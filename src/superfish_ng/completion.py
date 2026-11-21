@@ -1,16 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 """Completion and byte-integrity checks for saved solution directories."""
-import hashlib
 import json
 from pathlib import Path
+from .artifact_provenance import sha256_file
 
 
 def digest(path):
-    h = hashlib.sha256()
-    with Path(path).open('rb') as stream:
-        for block in iter(lambda: stream.read(1024*1024), b''):
-            h.update(block)
-    return h.hexdigest()
+    return sha256_file(Path(path))
 
 
 def required_files(case, results):

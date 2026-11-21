@@ -23,7 +23,8 @@ function loadProject(p){
  project=structuredClone(p);const c=p.case;unit=p.display_length_unit;$('unit').value=unit;
  $('name').value=c.name;$('polarization').value=c.model.polarization;$('order').value=c.mesh.element_order;$('modes').value=c.modes;
  $('energy').value=c.rf.stored_energy_j_per_m;$('conductivity').value=c.rf.conductivity_s_per_m;
- $('rectangle').hidden=c.schema_version!==1;$('polygon-note').hidden=c.schema_version===1;
+ $('rectangle').hidden=c.schema_version!==1;$('polygon-note').hidden=c.schema_version!==2;
+ $('curved-note').hidden=c.schema_version!==3;$('order').disabled=c.schema_version===3;
  if(c.schema_version===1){const scale=unit==='mm'?1000:1;$('width').value=c.geometry.width_m*scale;$('height').value=c.geometry.height_m*scale;$('nx').value=c.mesh.nx;$('ny').value=c.mesh.ny;}
  document.querySelectorAll('.length-unit').forEach(el=>el.textContent=unit);
  $('document').value=JSON.stringify(p,null,2);$('dirty').textContent='入力を復元済み';
@@ -64,7 +65,7 @@ $('save-image').onclick=()=>{if(imageBlob)download(imageBlob,'planar-fields.png'
 for(const [id,action,name] of [['probe','planar-probe','planar-probe.csv'],['probe-meta','planar-probe-metadata','planar-probe.csv.json']])$(id).onclick=run(async()=>{if(!selected)throw Error('結果を選択してください');const data={id:selected,mode:Number($('mode').value),points_xy_m:JSON.parse($('points').value)};if(id==='probe')download(await api(action,data,true),name);else download(new Blob([JSON.stringify(await api(action,data),null,2)+'\n'],{type:'application/json'}),name);});
 for(const input of document.querySelectorAll('.editor input,.editor select,.editor textarea'))input.addEventListener('input',()=>{$('dirty').textContent='未保存の編集';});
 window.addEventListener('beforeunload',()=>{if(imageURL)URL.revokeObjectURL(imageURL);});
-run(async()=>{loadProject(await api('planar-normalize',{document:fresh()}));await refresh();const id=new URLSearchParams(location.search).get('job');if(id)await openResult(id);})();
+run(async()=>{loadProject(await api('planar-normalize',{document:fresh()}));await refresh();const query=new URLSearchParams(location.search),id=query.get('job');if(id)await openResult(id);if(query.has('mode')){const mode=Number(query.get('mode'));if(!result||!Number.isInteger(mode)||mode<1||mode>result.modes.length)throw Error('表示モードは保存帯の有効な順位を指定してください');$('mode').value=mode;showQuantities();}})();
 let refreshing=false;setInterval(async()=>{if(refreshing)return;refreshing=true;try{await refresh();}catch(error){failure(error);}finally{refreshing=false;}},1500);
 
 let selectedStudy=null,currentStudy=null;
@@ -109,21 +110,28 @@ for(const id of ['convergence-levels','convergence-ranks','convergence-budget','
 
  let currentTracking=null,selectedTracking=null,trackingJobs=[];
  function refreshTrackingSources(jobs){
-  trackingJobs=jobs;const kind=$('tracking-mapping').value,polygon=kind!=='normalized_rectangle',similarity=kind==='polygon_similarity',remesh=kind==='polygon_same_domain',composed=kind==='polygon_similarity_remesh',exactAffine=kind==='polygon_exact_affine_remesh',affine=kind==='polygon_affine_remesh'||exactAffine;$('tracking-polygon-options').hidden=!polygon||remesh;$('tracking-remesh-options').hidden=!(remesh||composed||affine);$('tracking-origin-note').hidden=similarity||composed||affine;$('tracking-similarity-options').hidden=!(similarity||composed||affine);$('tracking-angle-row').hidden=affine;$('tracking-scale-row').hidden=affine;$('tracking-similarity-note').hidden=affine;$('tracking-affine-options').hidden=!affine;$('tracking-refinement-options').hidden=composed||affine;$('tracking-remesh-note').textContent=exactAffine?'境界と内部の分割数・接続を独立に選べます。境界全体が宣言アフィン写像の厳密な像である必要があり、丸めで境界がずれた場合は受け付けません。':remesh?'同じ多角形の元要素どうしを比較します。節点番号や分割は異なって構いません。形状の変更は受け付けません。':'宣言変換で前の境界節点列を厳密に写し、内部の節点・対角線・接続は独立に選べます。境界節点の列は変換後の値と完全一致させる必要があります。';
+  trackingJobs=jobs;const kind=$('tracking-mapping').value,polygon=kind!=='normalized_rectangle',similarity=kind==='polygon_similarity',remesh=kind==='polygon_same_domain',composed=kind==='polygon_similarity_remesh',exactAffine=kind==='polygon_exact_affine_remesh',affine=kind==='polygon_affine_remesh'||exactAffine;const declared=['polynomial_affine_xy_reference','planar_piecewise_affine','polynomial_piecewise_xy_reference'].includes(kind);$('tracking-polynomial-options').hidden=!declared;$('tracking-polygon-options').hidden=!polygon||remesh||declared;$('tracking-remesh-options').hidden=!(remesh||composed||affine);$('tracking-origin-note').hidden=similarity||composed||affine;$('tracking-similarity-options').hidden=!(similarity||composed||affine);$('tracking-angle-row').hidden=affine;$('tracking-scale-row').hidden=affine;$('tracking-similarity-note').hidden=affine;$('tracking-affine-options').hidden=!affine;$('tracking-refinement-options').hidden=composed||affine;$('tracking-remesh-note').textContent=exactAffine?'境界と内部の分割数・接続を独立に選べます。境界全体が宣言アフィン写像の厳密な像である必要があり、丸めで境界がずれた場合は受け付けません。':remesh?'同じ多角形の元要素どうしを比較します。節点番号や分割は異なって構いません。形状の変更は受け付けません。':'宣言変換で前の境界節点列を厳密に写し、内部の節点・対角線・接続は独立に選べます。境界節点の列は変換後の値と完全一致させる必要があります。';
   const candidates=jobs.filter(job=>job.kind==='planar_solve'&&job.status==='complete'&&job.case_schema_version===(polygon?2:1));
   for(const id of ['tracking-previous','tracking-current']){const select=$(id),old=select.value;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent=polygon?'保存済みの明示多角形を選択':'保存済みの矩形を選択';select.append(empty);for(const job of candidates){const option=document.createElement('option');option.value=job.id;option.textContent=`${job.id} / ${job.modes}モード`;select.append(option);}if(candidates.some(job=>job.id===old))select.value=old;}
  }
- function trackingFromForm(){
+ function trackingFromForm(){return JSON.parse(trackingRequestText());}
+ function trackingRequestText(){
   const kind=$('tracking-mapping').value,polygon=kind!=='normalized_rectangle',similarity=kind==='polygon_similarity',remesh=kind==='polygon_same_domain',composed=kind==='polygon_similarity_remesh',exactAffine=kind==='polygon_exact_affine_remesh',affine=kind==='polygon_affine_remesh'||exactAffine;
-  const mapping=remesh?{name:kind,max_candidate_tests:numeric('tracking-candidate-tests')}
+  const declared=['polynomial_affine_xy_reference','planar_piecewise_affine','polynomial_piecewise_xy_reference'].includes(kind);
+  const mapping=declared?null:remesh?{name:kind,max_candidate_tests:numeric('tracking-candidate-tests')}
    :affine?{name:kind,linear_xy:[[numeric('tracking-linear-a'),numeric('tracking-linear-b')],[numeric('tracking-linear-c'),numeric('tracking-linear-d')]],translation_xy_m:[numeric('tracking-translation-x'),numeric('tracking-translation-y')],inverse:$('tracking-inverse').checked,max_candidate_tests:numeric('tracking-candidate-tests')}
    :composed?{name:kind,scale:numeric('tracking-scale'),rotation_radians:numeric('tracking-angle'),translation_xy_m:[numeric('tracking-translation-x'),numeric('tracking-translation-y')],inverse:$('tracking-inverse').checked,max_candidate_tests:numeric('tracking-candidate-tests')}
    :polygon?{name:kind,scale:numeric('tracking-scale'),previous_refinements:numeric('tracking-previous-refinements'),current_refinements:numeric('tracking-current-refinements')}:'normalized_rectangle';
   if(similarity)Object.assign(mapping,{rotation_radians:numeric('tracking-angle'),translation_xy_m:[numeric('tracking-translation-x'),numeric('tracking-translation-y')],inverse:$('tracking-inverse').checked});
-  return {format:'superfish_ng_planar_tracking_request',tracking_version:exactAffine?7:affine?6:composed?5:remesh?4:similarity?3:polygon?2:1,mapping,previous_mode_count:numeric('tracking-previous-count'),current_mode_count:numeric('tracking-current-count'),previous_mode_ids:JSON.parse($('tracking-ids').value),previous_identity_groups:JSON.parse($('tracking-groups').value),controls:JSON.parse($('tracking-controls').value)};
+  const value={format:'superfish_ng_planar_tracking_request',tracking_version:kind==='polynomial_piecewise_xy_reference'?10:kind==='planar_piecewise_affine'?9:kind==='polynomial_affine_xy_reference'?8:exactAffine?7:affine?6:composed?5:remesh?4:similarity?3:polygon?2:1,previous_mode_count:numeric('tracking-previous-count'),current_mode_count:numeric('tracking-current-count')};
+  const fields=Object.entries(value).map(([key,data])=>JSON.stringify(key)+':'+JSON.stringify(data));
+  fields.push('"mapping":'+(declared?$('tracking-polynomial-mapping').value:JSON.stringify(mapping)));
+  for(const [key,id] of [['previous_mode_ids','tracking-ids'],['previous_identity_groups','tracking-groups'],['controls','tracking-controls']])fields.push(JSON.stringify(key)+':'+$(id).value);
+  return '{'+fields.join(',')+'}';
  }
  function loadTracking(request){
-  const polygon=[2,3,4,5,6,7].includes(request.tracking_version);$('tracking-mapping').value=polygon?request.mapping.name:'normalized_rectangle';
+  const polygon=[2,3,4,5,6,7,8,9,10].includes(request.tracking_version);$('tracking-mapping').value=polygon?request.mapping.name:'normalized_rectangle';
+  if([8,9,10].includes(request.tracking_version))$('tracking-polynomial-mapping').value=JSON.stringify(request.mapping,null,2);
   if(request.tracking_version===2||request.tracking_version===3){$('tracking-scale').value=request.mapping.scale;$('tracking-previous-refinements').value=request.mapping.previous_refinements??0;$('tracking-current-refinements').value=request.mapping.current_refinements??0;}
   if([4,5,6,7].includes(request.tracking_version))$('tracking-candidate-tests').value=request.mapping.max_candidate_tests;
   if(request.tracking_version===3||request.tracking_version===5){$('tracking-angle').value=request.mapping.rotation_radians;$('tracking-translation-x').value=request.mapping.translation_xy_m[0];$('tracking-translation-y').value=request.mapping.translation_xy_m[1];$('tracking-inverse').checked=request.mapping.inverse;}
@@ -139,8 +147,8 @@ async function openTracking(id){
  $('tracking-use-groups').disabled=data.result.status!=='PASS';
 }
 for(const side of ['previous','current'])$(`tracking-select-${side}`).onclick=run(async()=>{if(!selected||![1,2].includes(result?.case.schema_version))throw Error('平面の保存結果を選択してください');if(result.case.schema_version===1)$('tracking-mapping').value='normalized_rectangle';else if($('tracking-mapping').value==='normalized_rectangle')$('tracking-mapping').value='polygon_uniform_scale';await refresh();refreshTrackingSources(trackingJobs);$(`tracking-${side}`).value=selected;$(`tracking-${side}`).scrollIntoView({block:'center'});});
-$('tracking-start').onclick=run(async()=>{const previous_id=$('tracking-previous').value,current_id=$('tracking-current').value;if(!previous_id||!current_id)throw Error('前と次の保存場を選択してください');const data=await api('planar-start-tracking',{previous_id,current_id,document:trackingFromForm()});$('dirty').textContent=`追跡投入済み: ${data.id}`;await refresh();});
-$('tracking-save').onclick=run(async()=>{const request=await api('planar-normalize-tracking',{document:trackingFromForm()});loadTracking(request);download(new Blob([JSON.stringify(request,null,2)+'\n'],{type:'application/json'}),'planar-tracking-request.json');});
+$('tracking-start').onclick=run(async()=>{const previous_id=$('tracking-previous').value,current_id=$('tracking-current').value;if(!previous_id||!current_id)throw Error('前と次の保存場を選択してください');const data=await api('planar-start-tracking',{previous_id,current_id,document:trackingRequestText()});$('dirty').textContent=`追跡投入済み: ${data.id}`;await refresh();});
+$('tracking-save').onclick=run(async()=>{const request=await api('planar-normalize-tracking',{document:trackingRequestText()});loadTracking(request);download(new Blob([JSON.stringify(request,null,2)+'\n'],{type:'application/json'}),'planar-tracking-request.json');});
 $('tracking-open').onchange=run(async()=>{const file=$('tracking-open').files[0];if(file)loadTracking(await api('planar-normalize-tracking',{document:await file.text()}));});
 $('tracking-result-save').onclick=()=>{if(currentTracking)download(new Blob([JSON.stringify(currentTracking.result,null,2)+'\n'],{type:'application/json'}),'planar-tracking-results.json');};
 for(const side of ['previous','current'])$(`tracking-${side}-import`).onclick=run(async()=>{if(!selectedTracking)throw Error('追跡結果を選択してください');const value=await api('planar-tracking-source',{id:selectedTracking,side});await refresh();await openResult(value.id);});
@@ -148,41 +156,67 @@ $('tracking-use-groups').onclick=run(async()=>{if(currentTracking?.result.status
 for(const id of ['tracking-previous-count','tracking-current-count','tracking-ids','tracking-groups','tracking-controls'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の追跡要求';});
 
 $('tracking-mapping').onchange=()=>{refreshTrackingSources(trackingJobs);$('dirty').textContent='未保存の追跡写像';};
-for(const id of ['tracking-candidate-tests','tracking-scale','tracking-previous-refinements','tracking-current-refinements','tracking-angle','tracking-translation-x','tracking-translation-y','tracking-inverse','tracking-linear-a','tracking-linear-b','tracking-linear-c','tracking-linear-d'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の追跡写像';});
+for(const id of ['tracking-polynomial-mapping','tracking-candidate-tests','tracking-scale','tracking-previous-refinements','tracking-current-refinements','tracking-angle','tracking-translation-x','tracking-translation-y','tracking-inverse','tracking-linear-a','tracking-linear-b','tracking-linear-c','tracking-linear-d'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の追跡写像';});
 
 let currentHistory=null,selectedHistory=null;
-function historyFromForm(){const ids=JSON.parse($('history-step-ids').value);if(!Array.isArray(ids))throw Error('追跡結果IDは配列で指定してください');return {format:'superfish_ng_planar_tracking_history_request',history_version:1,step_count:ids.length,max_steps:numeric('history-budget')};}
+function historyFromForm(){const ids=JSON.parse($('history-step-ids').value);if(!Array.isArray(ids))throw Error('追跡結果IDは配列で指定してください');const events=JSON.parse($('history-recoveries').value);if(!Array.isArray(events))throw Error('明示回復は配列で指定してください');return {format:'superfish_ng_planar_tracking_history_request',history_version:events.length?2:1,step_count:ids.length,max_steps:numeric('history-budget'),...(events.length?{identity_recoveries:events}:{})};}
 function refreshHistorySources(jobs){const select=$('history-next'),old=select.value;select.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='完了した追跡結果を選択';select.append(empty);for(const job of jobs.filter(job=>job.kind==='planar_tracking'&&job.status==='complete')){const option=document.createElement('option');option.value=job.id;option.textContent=job.id;select.append(option);}if(Array.from(select.options).some(option=>option.value===old))select.value=old;}
 async function openHistory(id){
  const data=await api('planar-history-result',{id});currentHistory=data;selectedHistory=id;$('history-result').hidden=false;$('history-selection').textContent=`${data.result.status} / ${id}`;
  $('history-notes').textContent=data.result.stop_reason||(data.result.individual_ids_complete?'個別IDを保持しています。':'部分空間のID集合を保持しています。個別IDは未確定です。');
- $('history-identities').textContent=JSON.stringify({current_mode_ids:data.result.current_mode_ids,current_identity_groups:data.result.current_identity_groups},null,2);
+ $('history-identities').textContent=JSON.stringify({current_mode_ids:data.result.current_mode_ids,current_identity_groups:data.result.current_identity_groups,identity_recoveries:data.result.identity_recoveries??[]},null,2);
  const table=document.createElement('table'),head=document.createElement('tr');for(const label of ['段階','対応','写像','個別ID']){const th=document.createElement('th');th.textContent=label;head.append(th);}table.append(head);
- data.result.steps.forEach((step,index)=>{const row=document.createElement('tr');for(const value of [index+1,step.status,JSON.stringify(step.request.mapping),step.individual_ids_complete?'確定':'未確定']){const td=document.createElement('td');td.textContent=value;row.append(td);}table.append(row);});$('history-steps').replaceChildren(table);
+ data.result.steps.forEach((step,index)=>{
+  const row=document.createElement('tr');
+  for(const value of [index+1,step.status]){const td=document.createElement('td');td.textContent=value;row.append(td);}
+  const cell=document.createElement('td'),mapping=step.request.mapping;
+  if([9,10].includes(step.request.tracking_version)){
+   const details=document.createElement('details'),summary=document.createElement('summary'),declaration=document.createElement('pre');
+   summary.textContent=step.request.tracking_version===9?`連続アフィン写像（${mapping.previous_partition.triangles.length}三角形）`:`頂点多項式変位：${mapping.previous_value} → ${mapping.current_value}（細分 ${mapping.previous_refinements} → ${mapping.current_refinements}）`;
+   declaration.className='planar-history-declaration';declaration.textContent=JSON.stringify(mapping,null,2);details.append(summary,declaration);cell.append(details);
+  }else cell.textContent=JSON.stringify(mapping);
+  row.append(cell);const identity=document.createElement('td');identity.textContent=step.individual_ids_complete?'確定':'未確定';row.append(identity);table.append(row);
+ });$('history-steps').replaceChildren(table);
+ $('history-recover').disabled=data.result.status!=='PASS'||data.result.individual_ids_complete;
  $('history-extend').disabled=!data.result.can_extend||data.request.step_count>=data.request.max_steps;$('history-use-groups').disabled=data.result.status!=='PASS';
 }
 $('history-select-tracking').onclick=run(async()=>{if(!selectedTracking)throw Error('追跡結果を選択してください');$('history-step-ids').value=JSON.stringify([selectedTracking]);});
 $('history-start').onclick=run(async()=>{const document=historyFromForm(),step_ids=JSON.parse($('history-step-ids').value);const data=await api('planar-start-history',{document,step_ids});$('dirty').textContent=`追跡履歴投入済み: ${data.id}`;await refresh();});
 $('history-save').onclick=run(async()=>{const value=await api('planar-normalize-history',{document:historyFromForm()});download(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}),'planar-history-request.json');});
-$('history-open').onchange=run(async()=>{const file=$('history-open').files[0];if(!file)return;const value=await api('planar-normalize-history',{document:await file.text()});$('history-budget').value=value.max_steps;$('history-step-ids').value=JSON.stringify(Array(value.step_count).fill(''));$('dirty').textContent='履歴条件を復元済み。各段階の追跡結果IDを指定してください。';});
+$('history-open').onchange=run(async()=>{const file=$('history-open').files[0];if(!file)return;const value=await api('planar-normalize-history',{document:await file.text()});$('history-recoveries').value=JSON.stringify(value.identity_recoveries??[],null,2);$('history-budget').value=value.max_steps;$('history-step-ids').value=JSON.stringify(Array(value.step_count).fill(''));$('dirty').textContent='履歴条件を復元済み。各段階の追跡結果IDを指定してください。';});
 $('history-extend').onclick=run(async()=>{if(!selectedHistory||!$('history-next').value)throw Error('履歴と次の追跡結果を選択してください');const value=await api('planar-extend-history',{id:selectedHistory,next_id:$('history-next').value});$('dirty').textContent=`拡張した追跡履歴投入済み: ${value.id}`;await refresh();});
 $('history-result-save').onclick=()=>{if(currentHistory)download(new Blob([JSON.stringify(currentHistory.result,null,2)+'\n'],{type:'application/json'}),'planar-history-results.json');};
 $('history-source').onclick=run(async()=>{if(!selectedHistory)throw Error('追跡履歴を選択してください');const value=await api('planar-history-source',{id:selectedHistory});await refresh();await openResult(value.id);});
 $('history-use-groups').onclick=run(async()=>{if(currentHistory?.result.status!=='PASS')throw Error('対応が確認できた追跡履歴を選択してください');const value=await api('planar-history-source',{id:selectedHistory});loadTracking(currentHistory.result.steps.at(-1).request);await refresh();refreshTrackingSources(trackingJobs);$('tracking-previous').value=value.id;$('tracking-current').value='';$('tracking-previous-count').value=currentHistory.result.current_mode_count;$('tracking-ids').value='null';$('tracking-groups').value=JSON.stringify(currentHistory.result.current_identity_groups);$('dirty').textContent='履歴のID集合を引継ぎ済み。次の保存場と写像を指定してください。';});
-for(const id of ['history-step-ids','history-budget'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の履歴条件';});
+$('history-recovery-from-tracking').onclick=run(async()=>{const comparison=await api('planar-normalize-tracking',{document:trackingRequestText()});const request={format:'superfish_ng_planar_identity_recovery_request',recovery_version:1,anchor_snapshot_index:numeric('history-recovery-anchor'),comparison};const value=await api('planar-normalize-recovery',{request});$('history-recovery-request').value=JSON.stringify(value,null,2);});
+$('history-recovery-save').onclick=run(async()=>{const value=await api('planar-normalize-recovery',{request:$('history-recovery-request').value});download(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}),'planar-identity-recovery.json');});
+$('history-recovery-open').onchange=run(async()=>{const file=$('history-recovery-open').files[0];if(!file)return;const value=await api('planar-normalize-recovery',{request:await file.text()});$('history-recovery-request').value=JSON.stringify(value,null,2);$('history-recovery-anchor').value=value.anchor_snapshot_index;});
+$('history-recover').onclick=run(async()=>{if(!selectedHistory)throw Error('履歴を選択してください');const value=await api('planar-recover-history',{id:selectedHistory,request:$('history-recovery-request').value});$('dirty').textContent=`回復履歴投入済み: ${value.id}`;await refresh();});
+for(const id of ['history-step-ids','history-budget','history-recoveries','history-recovery-request','history-recovery-anchor'])$(id).addEventListener('input',()=>{$('dirty').textContent='未保存の履歴条件';});
 
 let currentTune=null,tuneSelection='',tuneInputVersion=0;
 document.addEventListener('input',()=>{tuneInputVersion++;});
 const tuneFields={target_hz:'tune-target',frequency_tolerance_hz:'tune-frequency-tolerance',mesh_frequency_tolerance_hz:'tune-mesh-tolerance',parameter_tolerance:'tune-parameter-tolerance',max_trials:'tune-max-trials',refinement_levels:'tune-refinements',max_triangles:'tune-max-triangles'};
 function tuneRequestText(){
  const value={format:'superfish_ng_planar_tune',schema_version:1,project:documentFromForm(),parameter:$('tune-parameter').value,mode_id:$('tune-mode-id').value};
+ const recovery=$('tune-recovery-selection').value;
+ const piecewise=value.parameter==='deformation'&&$('tune-shape-kind').value==='piecewise';
+ if(piecewise&&recovery==='none')throw Error('区分変形では個別IDの回復方法を指定してください。');
+ value.schema_version=piecewise?4:recovery!=='none'?3:value.parameter==='deformation'?2:1;
  for(const [key,id] of Object.entries(tuneFields))value[key]=numeric(id);
  const fields=Object.entries(value).map(([key,data])=>JSON.stringify(key)+':'+JSON.stringify(data));
  for(const [key,id] of [['bounds','tune-bounds'],['initial_ids','tune-ids'],['controls','tune-controls']])fields.push(JSON.stringify(key)+':'+$(id).value);
+ if(value.parameter==='deformation')fields.push('"shape_law":'+$('tune-shape-law').value);
+ if(recovery!=='none'){const anchor=recovery==='fixed_trial'?',"anchor_trial_index":'+JSON.stringify(numeric('tune-recovery-anchor')):'';fields.push('"identity_recovery":{"anchor_selection":'+JSON.stringify(recovery)+',"controls":'+$('tune-recovery-controls').value+anchor+'}');}
  return '{'+fields.join(',')+'}';
 }
 function tuneLimit(){return $('tune-new-trials').value.trim()?numeric('tune-new-trials'):null;}
 function loadTune(value){
+ $('tune-shape-kind').value=value.schema_version===4?'piecewise':'affine';
+ $('tune-shape-law').value=JSON.stringify(value.shape_law??null,null,2);
+ $('tune-recovery-selection').value=value.identity_recovery?.anchor_selection??'none';
+ $('tune-recovery-anchor').value=value.identity_recovery?.anchor_trial_index??0;
+ $('tune-recovery-controls').value=JSON.stringify(value.identity_recovery?.controls??value.controls,null,2);
  loadProject(value.project);$('tune-parameter').value=value.parameter;$('tune-mode-id').value=value.mode_id;
  for(const [key,id] of Object.entries(tuneFields))$(id).value=value[key];
  $('tune-bounds').value=JSON.stringify(value.bounds);$('tune-ids').value=JSON.stringify(value.initial_ids);$('tune-controls').value=JSON.stringify(value.controls,null,2);tuneInputVersion++;
@@ -197,6 +231,7 @@ function showTune(data,label){
  const cell=document.createElement('td'),button=document.createElement('button');button.textContent='対象モードの場を開く';button.disabled=!rank;button.dataset.tuneTrial=trial.index+1;
  button.onclick=run(async()=>{const imported=await api('planar-tune-trial',{document:data.serialized,index:trial.index+1});await refresh();await openResult(imported.id);$('mode').value=imported.mode;showQuantities();});cell.append(button);row.append(cell);table.append(row);}
  $('tune-trials').append(table);
+ $('tune-identities').textContent=JSON.stringify(d.trials.map(trial=>({trial_index:trial.index,phase:trial.phase,inherited_mode_ids:trial.tracking?.current_mode_ids??null,adopted_mode_ids:trial.current_mode_ids,frequency_hz:trial.frequency_hz,initial_tracking:trial.initial_tracking??null,identity_recovery:trial.identity_recovery??null})),null,2);
 }
 async function openTune(id){showTune(await api('planar-tune-result',{id}),id);}
 $('tune-start').onclick=run(async()=>{const data=await api('planar-start-tune',{request:tuneRequestText(),max_new_trials:tuneLimit()});$('dirty').textContent=`調整投入済み: ${data.id}`;await refresh();});

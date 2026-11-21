@@ -6,6 +6,7 @@
     <title>Superfish-NG — 空洞ワークスペース</title>
     <link rel="stylesheet" href="/style.css" />
     <script defer src="/curved-mesh-canvas.js"></script>
+    <script defer src="/curved-deformation-workflow.js"></script>
     <script defer src="/app.js"></script>
   </head>
   <body>
@@ -239,13 +240,20 @@
           </div>
           <details id="curved-transfer-controls">
             <summary>別の細分履歴から選択領域を移す</summary>
-            <p class="hint">対象段階のメッシュを図上表示し、変更前のProjectとその最終メッシュの選択番号を指定します。対応する初期分割を持つ曲線P2のTM領域を扱います。旧番号の代わりに領域の交差を調べ、新しい選択を図へ反映します。</p>
+            <p class="hint">対象段階のメッシュを図上表示し、変更前のProjectとその最終メッシュの選択番号を指定します。曲線P2のTM領域で、初期分割が異なる場合は両メッシュの共通参照座標を明示します。旧番号の代わりに領域の交差を調べ、新しい選択を図へ反映します。</p>
             <label class="file">変更前のProjectを読み込む<input id="curved-transfer-source-file" type="file" accept=".json" /></label>
             <label>変更前のProject JSON<textarea id="curved-transfer-source" rows="5" spellcheck="false"></textarea></label>
             <label>変更前の選択要素番号（0始まりJSON配列）<textarea id="curved-transfer-cells" rows="2" spellcheck="false">[0]</textarea></label>
-            <label>境界の対応<select id="curved-transfer-boundary"><option value="same_curve_fractions">同じ曲線分率</option><option value="ordered_curve_vertices">曲線上の節点順</option></select></label>
+            <label>境界の対応<select id="curved-transfer-boundary"><option value="same_curve_fractions">同じ曲線分率</option><option value="ordered_curve_vertices">曲線上の節点順</option><option value="declared_reference_polylines">共通参照座標を明示（異なる初期分割）</option></select></label>
+            <fieldset id="curved-transfer-charts" hidden>
+              <legend>両初期メッシュの共通参照座標</legend>
+              <p class="hint">各Projectの初期メッシュの頂点順に、無次元二座標のJSON配列を指定します。両側の参照境界・タグと全要素の被覆を検証します。</p>
+              <label>変更前の参照座標<textarea id="curved-transfer-previous-chart" rows="3" spellcheck="false"></textarea></label>
+              <label>現在の参照座標<textarea id="curved-transfer-current-chart" rows="3" spellcheck="false"></textarea></label>
+              <label>初期・最終・共通三角形の上限<input id="curved-transfer-triangles" type="number" min="1" step="1" value="10000" /></label>
+            </fieldset>
             <label>移送先の選び方<select id="curved-transfer-policy"><option value="intersects">面積を持って重なる要素を全て選ぶ</option><option value="contained">全体が元領域に含まれる要素だけ選ぶ</option></select></label>
-            <label>同じ初期要素内で調べる要素対の上限<input id="curved-transfer-budget" type="number" min="1" step="1" value="100000" /></label>
+            <label>調べる要素対の上限（参照座標を明示する場合は全辺の検査も含む）<input id="curved-transfer-budget" type="number" min="1" step="1" value="100000" /></label>
             <button id="curved-transfer-run" type="button">領域の移送を検査して図上選択へ反映</button>
             <button id="curved-transfer-save" type="button" disabled>最後の移送記録を保存</button>
             <label class="file">移送記録を再検証して元選択と条件を復元<input id="curved-transfer-open" type="file" accept=".json" /></label>
@@ -577,15 +585,20 @@
         </section>
         <section id="tuning">
           <h2>同じモードの周波数を調整する</h2>
-          <p class="hint">profileの頂点座標、二次曲線形状のアフィン変形、または曲線寸法を調整します。上の形状と追跡の判定条件から入力を作成します。曲線変形の追跡写像は各試行から導出します。</p>
+          <p class="hint">profile・段差・直線輪郭の境界、二次曲線形状のアフィン変形、または曲線寸法を調整します。上の形状と追跡の判定条件から入力を作成します。曲線変形の追跡写像は各試行から導出します。</p>
           <label><input id="tune-coupled" type="checkbox" /> 一つの設計変数から形状を変更する</label>
           <div id="tune-binding-settings" hidden>
             <label>設計変数の名前<input id="tune-parameter-name" type="text" value="radius" /></label>
             <label>設計変数の単位<select id="tune-parameter-unit"><option value="m">m（長さ）</option><option value="1">無次元</option></select></label>
-            <label>形状の変更方法<select id="tune-binding-law"><option value="linear">座標の一次式</option><option value="polynomial">座標の多項式</option><option value="affine">曲線のアフィン変形</option><option value="harmonic">曲線寸法の変更（調和変位）</option><option value="expression-profile">profile座標の単位付き式</option><option value="expression-curved">曲線寸法の単位付き式</option></select></label>
+            <label>形状の変更方法<select id="tune-binding-law"><option value="linear">座標の一次式</option><option value="polynomial">座標の多項式</option><option value="affine">曲線のアフィン変形</option><option value="harmonic">曲線寸法の変更（調和変位）</option><option value="expression-profile">profile座標の単位付き式</option><option value="expression-curved">曲線寸法の単位付き式</option><option value="straight-piecewise">直線境界の局所変形</option></select></label>
             <p id="tune-linear-help">各座標[m] = multiplier × 設計変数 + offset_m。multiplierは設計変数の1単位あたりの長さです。座標はすべて同時に更新します。</p>
             <p id="tune-polynomial-help" hidden>各座標[m] = c₀ + c₁x + c₂x² + …。coefficientsを定数項から順に指定します（例: [0,0,0.1] は0.1x²）。係数cₖの単位はm/(設計変数の単位)ᵏです。途中の形状が不正なら停止し、前の保存を保持します。</p>
             <label id="tune-profile-bindings">連動する座標と係数（JSON配列）<textarea id="tune-bindings" rows="4">[{"path":"/case/geometry/points_zr_m/0/1","multiplier":1,"offset_m":0},{"path":"/case/geometry/points_zr_m/1/1","multiplier":1,"offset_m":0}]</textarea></label>
+            <div id="tune-straight-settings" hidden>
+              <p>直線profile・段差・単一輪郭の元境界と比較用メッシュを指定します。各元座標を単位付きの式で同時に変更します。境界の対応と壁条件を保持し、途中で無効な形状になれば直前の保存を保持して停止します。</p>
+              <label>元境界の対応・比較用メッシュ・座標式（JSON）<textarea id="tune-straight-law" rows="10">{}</textarea></label>
+              <p class="hint">真空の軸対称TMは閉PEC、TEは同じ対称セクターを保持します。TEの加速量は適用外です。追跡の判定条件は上の設定を使い、各試行間の比較メッシュはこの法則から導出します。</p>
+            </div>
             <div id="tune-affine-settings" hidden>
               <p>r′=a(x)r、z′=b(x)r+c(x)z。radial_scale、axial_scale、axial_shearの係数を定数項から順に指定します。係数cₖの単位は1/(設計変数の単位)ᵏです。元メッシュの対応を保持し、最終細分の倍率には2の累乗を指定します。不正形状や細分対応の変化では停止します。</p>
               <label>変形係数（JSONオブジェクト）<textarea id="tune-affine-coefficients" rows="4">{"radial_scale":[0,1],"axial_scale":[0,1],"axial_shear":[0]}</textarea></label>
@@ -728,10 +741,17 @@
             <legend>値の区間ごとの初期メッシュ</legend>
             <label>切替値（上の変数単位）<input id="study-remesh-cutover" type="number" step="any" value="0.75" /></label>
             <label class="file">置換メッシュ計画を読み込む<input id="study-remesh-import" type="file" accept=".json" /></label>
-            <details><summary>元の二次境界を保って内部メッシュを自動生成</summary>
+            <details><summary>元の二次形状を保ってメッシュを自動生成</summary>
+              <label>生成条件の設定例<select id="study-remesh-generation-template-version"><option value="1">版1：境界分割を維持</option><option value="2">版2：元P2境界を分割</option></select></label>
+              <button id="study-remesh-generation-template">選んだ設定例を入力</button>
               <label>生成条件（長さm・弦三角形面積m²・角度deg）<textarea id="study-remesh-generation-settings" rows="7" spellcheck="false">{"schema_version":1,"max_chord_edge_m":0.08,"max_chord_triangle_area_m2":0.0006,"minimum_corner_angle_deg":1,"max_triangles":10000,"max_rounds":20,"curved_refinement_levels":1}</textarea></label>
-              <p class="hint">元の内部メッシュを使わず、境界節点・辺・タグを保持して再生成します。辺長・面積は初期の弦メッシュへ、要素数予算・角度は新しい細分履歴へも適用します。元Caseの大きさ・品質条件も保持します。固定境界と両立しない指定や品質未達は拒否します。</p>
+              <p class="hint">版1は境界分割を維持し、辺長・面積を初期の弦メッシュに適用します。版2は元P2形状のまま境界も細分し、最終メッシュの端点弦の長さ・面積を検査します。元Caseのサイズ・角度と全段階の予算を守り、品質未達は拒否します。弦長・弦面積は曲線の弧長・実面積とは異なります。</p>
+              <p class="hint">版2の max_boundary_edges は軸と対称面を含む境界辺数の上限、max_seed_rounds は初期内部メッシュ生成、max_rounds は自動追加細分の上限です。旧履歴より粗くすることはできますが、元P2区間の併合や解析曲線への再投影は行いません。設定例の入力は現在の生成条件を置き換えます。</p>
               <button id="study-remesh-generate">元Projectから置換計画を生成</button>
+              <button id="study-remesh-generation-save" disabled>元Project・生成条件・結果を保存</button>
+              <label class="file">生成文書を再検証して元Project・条件を復元<input id="study-remesh-generation-open" type="file" accept=".json" /></label>
+              <p id="study-remesh-generation-status" class="hint" role="status" aria-live="polite">生成結果はまだありません。</p>
+              <p class="hint">保存対象は最後に検証した元Projectと生成条件です。編集後の結果が必要な場合は再生成してください。復元した計画は現在の切替値で区間定義へ入ります。Studyの形状法則は別途確認してください。</p>
               <p class="hint">生成に成功すると、切替値以降に使う完全な計画を下の区間定義へ入れます。元Projectは保持します。新しい局所細分番号を与える場合は、再生成後の各段階の番号を指定してください。</p>
             </details>
             <label>メッシュ計画の区間定義<textarea id="study-remesh-schedule" rows="9" spellcheck="false">{"schema_version":1,"breakpoints":[],"plans":[{"kind":"replace","plan":{}}]}</textarea></label>

@@ -1,0 +1,437 @@
+# P07：真形状の幾何系列と固定DomainのFEM差
+
+2026-10-07、P07 IN_PROGRESS。[P05契約](PLANAR_CURVED_RF.md)の一部を検査する。
+この記録は全P07・P08操作・全123カードの完走受入ではない。
+
+## 判定と実装
+
+`validate_planar_curved_geometry_series.py` は円/合成楕円のN16/32/64を個別に生成し、
+各元P2 Domainのuniform細分をL0から別々の実FEMで解く。
+真面積・周長・保守的境界距離上限は1e−4、各Domainの最終二水準はf 1e−4、
+E/H各1%、全RF各0.5%。円はさらにBessel解析f/E/H/Gと完全guard群を検査する。
+楕円に未提供の解析固有値を仮定しない。独立面積/全vector壁積分と全元chartも検査する。
+
+円解析参照 `planar_curved_circle_reference.py` は既存P05のBessel零点/原点極限/
+peak-phasor規格化を再利用し、各セル二回積分で単一scalar群回転と元E/H差を評価する。
+全Domainの標本配列を一度に保持する旧参照に対し、セル単位の配列だけを保持する。
+製品FEM、場配列、周波数、RF式、許容値は変更しない。
+uniform比較は既存 `compare_pair` に明示的vector化adapterを渡す。
+元Domain・保存係数・周波数・規格化を保持し、一般A/B比較とは別に確認した。
+
+## 分割unit検査
+
+Python 3.12.3 / NumPy 2.5.2 / SciPy 1.18.1、uvの既存環境で実行。
+共通prefixは `OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python`。
+
+| unittest module | 件数 / 時間 / 終了 | 独立対照 |
+| --- | --- | --- |
+| `test_planar_curved_circle_reference` | 4 / 6.853秒 / 0 | 原点・二尺度・両偏波の既存解析全成分、規格化、旧全標本比較、完全群回転、guard拒否 |
+| `test_planar_curved_geometry_series_reference` | 3 / 2.511秒 / 0 | 円の三N/二尺度真幾何、完全guard、実patchの元場/全RF比較 |
+| `test_planar_curved_shape_extension` | 4 / 1.721秒 / 0 | 実保存解の物理再構築、全chart/RF/bytes不変、再hashした偽固有値とchart改変拒否 |
+| `test_planar_curved_shape_recovery` | 4 / 0.515秒 / 0 | 終端観測必須、timeout/成功/別出力拒否、連続かつ順序付きprefix、全元artifact/製品/検証器hash |
+
+新15件は上記四回の分割結果。後続mixed経路の新3件は1.115秒/終了0で別確認した。先行検査を再実行して数を増やさない。
+raw/logは `out/p07-planar-curved-geometry-20261007/`。
+製品401ファイル・seed/shared core/依存不変の検証専用追加なので、全validate/seed/GUIは実行していない。
+
+## 終端を確認した八例の幾何/FEM受入
+
+各ケースL0/L1/L2の新3実FEM、L1→L2で全ゲートPASS、製品401hash不変。
+円は解析絶対gate、楕円は完全band gateもPASS。
+下表の値は対象の最初3完全群についての相対差最大で、E/H/RFを別判定する。
+
+| 元形状・偏波・尺度・N | 秒 / 終了 | f差 | E差 | H差 | 全RF差 |
+| --- | --- | --- | --- | --- | --- |
+| circle TE s1 N32 | 155.690 / 0 | 2.1121e−5 | 0.006515 | 0.0004438 | 8.742e−5 |
+| circle TE s1 N64 | 431.778 / 0 | 1.6084e−5 | 0.005687 | 0.0004142 | 7.284e−5 |
+| circle TE s2 N32 | 198.150 / 0 | 2.1121e−5 | 0.006515 | 0.0004438 | 8.742e−5 |
+| circle TE s2 N64 | 273.594 / 0 | 1.6084e−5 | 0.005687 | 0.0004142 | 7.284e−5 |
+| ellipse TE s1 N32 | 125.726 / 0 | 1.8103e−5 | 0.006024 | 0.0002712 | 6.218e−5 |
+| ellipse TE s1 N64 | 353.458 / 0 | 1.2282e−5 | 0.004962 | 0.0002309 | 4.160e−5 |
+| ellipse TE s2 N32 | 157.514 / 0 | 1.8103e−5 | 0.006024 | 0.0002712 | 6.218e−5 |
+| ellipse TE s2 N64 | 226.226 / 0 | 1.2282e−5 | 0.004962 | 0.0002309 | 4.160e−5 |
+
+真幾何の相対面積/周長/距離上限はN32で3.0931e−6 / 1.5436e−6 / 2.8984e−6、
+N64で1.9348e−7 / 9.6694e−8 / 1.8137e−7。楕円は独立周長求積と保守的アフィン距離上限を用いる。
+当初六例126ファイルのsnapshotを保持し、追加二例を含む八例168ファイルは
+`accepted-eight-artifact-hashes.json`。八例計24新FEM。
+N16の先行受入は再solveせず物理再構築/全hash付きで系列へ統合する予定。
+TMはこの八例の受入に含めない。
+
+`checkpoint-audit-final.json` は八例168artifact、製品401、各受入検証器のhash、
+文書のローカルリンクを読取監査した。15生存handleの製品/使用検証器hashも現行と一致する。
+これは新しいFEM solveやunit再実行ではなく、上記の成功証拠と実行中ソース固定の監査である。
+
+## TEの三N・二尺度系列の監査（2026-10-07）
+
+終端handle25430は13.845秒PASS/終了0。
+`out/p07-planar-curved-geometry-20261007/te-geometry-series-audit-rf-schema/` に
+円/楕円×二尺度の四系列、各N16/32/64を集約した。
+N16の元円物理再構築監査/数値raw全hashと、元楕円TE二尺度の完了report/全8検証器/製品hashを確認し、
+新N32/64は既存八例168artifact snapshot/10検証器/製品hashに照合した。
+11証拠Directory/239ファイルの完全snapshotを保持し、原thresholdで数値判定を再監査した。
+全対象/guardの完全群、f/E/H/全RF別差、独立energy/壁、peak U′=1 J/mとaccelerating nullを確認した。
+元初期Domainの真幾何を別計算し、細かい元RFの面積と1e−12以内で一致することも確認した。
+
+四系列ともN16の固定FEMはL2→L3、N32/N64はL1→L2で受入済み。
+真形状の面積/周長/距離上限は各系列でN16>N32>N64、最終≤1e−4。
+N16の誤差は4.9318e−5 / 2.4477e−5 / 4.6152e−5、N64の値は上表と同じ。
+この有限FEM証拠集約で新FEM0/unit再実行0、新しい元場の物理再構築0。
+既成功した元場比較をhash/source付きで利用したもので、連続誤差上界やTM/全P07受入ではない。
+
+初回監査handle50608は楕円scaleのkeyword-only引数を位置指定して終了1。
+次のhandle10976は一般比較のfine側保存名 `second_RF` とuniform比較の `fine_RF` の違いで終了1。
+両失敗driver/log/終端auditを保持し、入力/保存schemaの参照だけを修正した。
+原FEM/物理許容値/製品401は不変。修正後は一つの明確なfine側schemaだけを認め、数値RFを独立に監査する。
+
+## 非円形の未達を保持した追加細分と復旧
+
+`extend_planar_curved_shapes.py` は終端した失敗reportだけを入力とし、元rawを変更せず、
+完全製品/元8検証器hash・元Domain/chart・実固有対/RFを再確認する。
+既存FEMを繰り返さず、必要な追加A/B L5だけを解く。
+実装/物理許容値/元二次境界を固定する。
+
+先行 `out/p07-planar-curved-independent-20261007/` の終端失敗：
+
+| ケース | 終了 / 秒 | 保存実FEM | 未達 |
+| --- | --- | --- | --- |
+| ellipse TM s1 | 1 / 2173.778 | 6、A L4受入/B L4未達 | B L3→L4全RF最大0.684177%、規定0.5% |
+| corner TE s1 | 1 / 1047.787 | 6、A L3受入/B L4未達 | 第三完全群f差1.163565e−4、E差1.401941% |
+| corner TE s2 | 1 / 1114.458 | 6、A L3受入/B L4未達 | 同じf/E gate、独立滑らか二重群周波数はPASS |
+| corner TM s1 | 1 / 845.450 | 4、A L4未達 | 全RF最大0.703815%、f/E/HはPASS |
+| corner TM s2 | 1 / 863.615 | 4、A L4未達 | 全RF最大0.703815%、f/E/HはPASS |
+
+角TM s1の追加handle15560も終了1。L5 Domain生成で `max_geometry_boxes=100000000`
+を使い切り、FEM実行前に明示的UNVERIFIEDとなった。物理未達やFEM成功とは数えない。
+失敗log/failed-evidenceは `corner-tm-s1-L5/` と同名logに保持する。
+角TE s1追加handle53536は継続観測中。
+
+楕円TM s2はhandle92077に対する `write_stdin` が終了143を返した。
+原因は未確定。終端audit `ellipse-tm-s2-termination.json` を別の新出力に保存し、
+元A L1〜L4/B L3の五保存解・元製品/8検証器hashを保持する。
+`recover_planar_curved_shapes.py` は全prefixを物理的に再構築してA/B判断をやり直し、
+存在しない次のBだけを実solveする。timeoutを理由に処理を再起動しない。
+部分出力が存在する未記録trialも拒否する。復旧handle70467の出力は `ellipse-tm-s2-recovery/`。
+
+## 再入角TMの混合細分（検証中）
+
+一様L5の幾何予算切れを実測したため、`extend_planar_curved_mixed_refinement.py` を別追加。
+元A L1〜L4の完全失敗prefixと、完了新FEM0の予算切れ証拠だけを受け付ける。
+元A L4を二分して `A-uniform4-bisection` を生成し、一般共通parent比較器でA L4との差を評価する。
+uniform専用比較器を混合細分へ流用しない。元二次境界/予算上限1e8/全物理gateを保持する。
+Aが通った場合だけ、別初期二分割Bのuniform3/4を実solveし、Bの二水準差とA/B差を別判定する。
+両native Domainが同じ場合は独立mesh受入を拒否する。
+
+新 `test_planar_curved_mixed_refinement` 3件は1.115秒PASS/終了0。
+異なる順序の細分meshで既知線形scalarから元E/H・全RFの不変量を確認し、
+不完全prefix/異なる物理/既に新FEMがある失敗の再実行を拒否する。
+製品401ファイル不変、独立解析場は比較器対照だけで、実FEM固有値を置換しない。
+尺度1/2の実検証handle50414/27391、出力 `corner-tm-s1-mixed/` / `corner-tm-s2-mixed/`。
+これはまだ物理受入ではない。失敗時も許容値を維持してrawを保持する。
+
+## 実行入口と残件
+
+```sh
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/validate_planar_curved_geometry_series.py --shape circle --polarization te --scale 1 --angular-segments 32 --out out/<new-unused-name>
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/extend_planar_curved_shapes.py --from-evidence out/<terminal-failed-shape> --out out/<new-unused-name>
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/extend_planar_curved_mixed_refinement.py --from-evidence out/<failed-corner-TM-A4> --budget-failure out/<zero-FEM-geometry-budget-failure> --out out/<new-unused-name>
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/recover_planar_curved_shapes.py --from-evidence out/<terminal-interrupted-prefix> --terminal-audit out/<observed-terminal-audit.json> --shape ellipse --polarization tm --scale 2 --out out/<new-unused-name>
+```
+
+独立円A/Bと非円形の残gate、N16/32/64の全尺度/偏波を確認してからP07条件別監査を行う。
+増求積・独立共変性の既成功は再利用し、今回の部分受入を全P07へ拡張しない。
+P08 native/CLI/Project/worker/GUI、P09比較/調整と原計画の他カードは継続する。
+新外部資料/依存/legacy参照なし。R39/R40と既存独立数学を検証参照に使用し、製品固有値を置換しない。
+
+## 幾何予算切れに対する分離作業ツリー（未統合）
+
+mainの15検証handleが401製品を固定しているため、branch `p07-geometry-bvh` / commit `a1def65` を
+`/tmp/superfish-ng-p07-geometry-bvh` に作成した。Cartesian全辺検査の候補探索だけを閉AABB二分木へ変更。
+全閉箱/全辺対の被覆、接触/未解像gap、同じ総予算を保ち、全detJ/Green/元写像やFEM/RF式は不変。
+独立に分離する三乗間隔水平1024辺の旧実装は32768予算で終了1、新探索は同予算以内PASS。
+新4＋直接利用先19、計23unitは5.964秒PASS。旧/新の2048辺比較は2096128/7423回、2.337/0.121秒。
+これは探索だけの実測で、FEM全体の速度比ではない。
+
+条件/失敗/実測の全記録は同branch `docs/PLANAR_CURVED_EDGE_SEARCH.md`。
+実検査handle27869、main側の新出力 `out/p07-planar-geometry-bvh-20261007/`。
+元corner TM A L4の全場/周波数/全RFを物理再構築して確認し、同じ1e8予算で全98304cellのL5 Domainを検査中。
+変更した分離製品はgeometry一ファイルだけ、mainの全401製品は不変。
+現在mainへ未統合であり、L5のf/E/H/RF受入を先取りしない。最後の利用handle終端までmainのsource固定を維持する。
+
+## 楕円TM B系列の最終一様細分の丸め未達と追加二分（2026-10-07）
+
+尺度1の追加handle49794は1739.032秒/終了1を観測した。
+元A L3/A L4/B L4の物理再構築とA再受入後、B一様L5の最終元親chartで
+`cumulative original-map roundoff exceeds local resolution` が生じた。
+規定上限512ε/局所extentを維持してUNVERIFIEDとし、追加新FEMは0、progressは空。
+元失敗出力を変更せず、別の `ellipse-tm-s1-L5-termination.json` に終端観測を保存した。
+
+`scripts/extend_planar_curved_ellipse_bisection.py` は、この終端観測・累積丸め失敗・新FEM0と
+完全元A L1〜L4/B L3〜L4の失敗prefix・製品401/元8検証器/失敗側9検証器hashを必須とする。
+元A L3/A L4/B L4を物理再構築し、accepted Aの実f/E/H/RF差を再確認した後、
+B L4を二分した `B-bisection-uniform3-bisection` を新実FEMで解く。
+元P2 boundaryを再投影せず、同じ512ε上限と1e8検査予算、原f/E/H/全RF許容差を維持する。
+一般共通parent比較でB二水準差と独立A/B差を別判定し、同一native meshは独立受入を拒否する。
+これは一様L5の成功を装う代替ラベルではなく、明示的に異なる細分履歴である。
+
+新 `test_planar_curved_ellipse_bisection` 2件は3.101秒PASS/終了0（handle61068）。
+完了prefix/終端/全artifactの読取不変と、timeout/成功/別case/完了FEMの繰返し/不完全hash拒否を確認する。
+比較積分/元場不変量の既成功 `test_planar_curved_mixed_refinement` を unchanged integration の証拠として利用する。
+新driverは実検証handle72293、出力 `ellipse-tm-s1-extra-bisection/` と同名log。
+製品401と使用10検証器を終端まで固定する。現時点では検証中、楕円TMやP07を受入とはしない。
+
+```sh
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -m unittest -v test_planar_curved_ellipse_bisection
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=src UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python scripts/extend_planar_curved_ellipse_bisection.py --from-evidence out/<completed-failed-ellipse-TM> --uniform-failure out/<terminal-zero-FEM-uniform-map-failure> --terminal-audit out/<observed-terminal.json> --out out/<new-unused-name>
+```
+
+分離BVH実検査27869は、元corner TM A L4の24576cell/37120edgeを物理再構築し、
+全係数/周波数のbitwise一致と全RF/metadataの完全一致を確認した。
+独立面積energy/全vector壁積分の差最大6.968e−12もPASS。
+geometryは1848997 box検査/予算1e8、全detJ/GreenもPASS。
+これはA4のRF収束未達を改善する数値補正ではなく、元の値を保存する証拠である。
+新L5 Domain検査へ進行したが、f/E/H/RFや全P07受入は未達のまま。
+新外部資料・依存・legacy参照なし、shared radial/seed形式を変更しない。
+
+## 分離geometry変更の実L5受入と次の物理検証（2026-10-07）
+
+実検査27869は終了0/PASS。L5の98304cell/197633node/147968edgeで全geometry検査を確認。
+総box検査7452020回/同じ1e8予算、全Green/正detJと面積3e−4 m²/周長0.08 mはPASS。
+最終元親map丸め上限1.875377e−14、規定512εを維持する。
+生成全体456.170秒。旧L5は予算切れで未完了なので、両L5の全体速度比は算出しない。
+元A4全係数/周波数/全RF一致と合わせて幾何探索のbounded四条件を確認した。
+branch `p07-geometry-bvh` の実装はmainへ未統合、main401製品も不変。
+
+新実FEM検査34914を開始、driver `out/p07-planar-geometry-bvh-20261007/solve-corner-A5.py`、
+出力同親 `corner-tm-s1-uniform-A5/`、logは `solve-corner-A5.log`。
+完了geometry全artifactと元A4全artifact、400旧製品不変/geometry一ファイル変更を照合し、
+前回FEM前に失敗したuniform A5だけを新実solveする。
+元A4の物理再構築/実uniform親制限/元f/E/H/全RF/完全band/独立積分を別検査する。
+この検査中はbranchの401製品・使用検証器を固定する。
+実FEMの終端は未確認、独立B/尺度2/P07全体をこのgeometry成功から受入とはしない。
+
+## 追加終端：TM幾何系列と保存済み再入角TE（2026-10-07）
+
+楕円TM尺度1 N32/handle99546は2457.414秒PASS/終了0、L0〜L4の5新実FEM、
+L3→L4でf差最大1.006227e−7、E差7.806907e−6、H差4.486728e−4、全RF差1.579029e−3。
+完全band/真幾何もPASS、独立energy/壁差最大8.014e−13、元親map丸め上限8.471751e−14。
+原許容差/512εを維持した。製品401/使用10検証器hash不変、31全artifactのsnapshotは
+`accepted-ellipse-tm-s1-N32-artifacts.json`。他TM/N16-N64全系列をこの一例から受入とはしない。
+
+| 元N64 TMケース | 終端handle / 秒 / 終了 | 保存済み |
+| --- | --- | --- |
+| circle s1 | 25663 / 2379.295 / 1 | L0〜L3の4実FEM、L4 Domain前の1e8予算切れ |
+| ellipse s1 | 5330 / 2219.239 / 1 | 同じ4実FEM、L4の1e8予算切れ |
+| ellipse s2 | 19527 / 2365.696 / 1 | 同じ4実FEM、L4の1e8予算切れ |
+
+三失敗のraw/logを保持し、別の `<label>-termination.json` にwrite_stdinの終端観測を保存した。
+予算の緩和や失敗ケースの削除はしない。分離閉AABB改善の実L5証拠は幾何探索の対応根拠だが、
+N64のf/E/H/RFを受入とはしない。これらの完了解を再solveせず後続へ再利用する。
+
+corner TE尺度2追加handle35422は終了143、原因未確定。
+元A3再受入後にB5のcase/全係数・周波数/全親chart/patternsは保存済みで、report/最終gateは未保存だった。
+元失敗フォルダを変更せず、別終端audit `corner-te-s2-L5-termination.json` を保持した。
+新 `out/p07-planar-geometry-bvh-20261007/recover-corner-te-s2.py` / handle43214は、
+元6実FEMと中断前に保存された追加1実FEMを全hash/source/実終端に結び付け、
+A3/B4/B5を物理再構築する。旧A3/B4の全RFは元値と完全一致を必須とし、
+元係数/周波数はbitwise保持、完全guard/独立energy/壁/元親chartを検査する。
+B4→B5とA3対B5の元E/H/全RFを再比較し、新FEM0のまま完了判断を行う。
+
+400旧製品不変/geometry一ファイル変更の検証済みsource遷移を明示する。
+出力同親 `corner-te-s2-saved-B5-recovery/`、log `recover-corner-te-s2.log`。
+新codeとbranch401製品を終端まで固定、現時点では実検証中でP07/全goalは未完了。
+新外部資料・依存・legacy参照なし。これらの追加証拠監査のために既成功unit/全validateを繰り返さない。
+
+
+## N32 TM全四例・角TE尺度1の終端受入（2026-10-07）
+
+以下はwrite_stdinで終了0を観測した元source固定の実検証であり、追加監査のための再FEMはしない。
+
+| ケース / handle | 秒 / 新実FEM | 最終対象群 f差 / E差 / H差 / 全RF差 |
+| --- | --- | --- |
+| circle TM s1 N32 / 1671 | 3138.791 / 5 | 7.731108e−8 / 7.080504e−6 / 3.932834e−4 / 1.634852e−3 |
+| circle TM s2 N32 / 23517 | 3239.403 / 5 | 同じ精度範囲 |
+| ellipse TM s2 N32 / 65048 | 2625.031 / 5 | 1.006226e−7 / 7.806907e−6 / 4.486728e−4 / 1.579029e−3 |
+| corner TE s1 A3/B5 / 53536 | 3811.488 / 1追加 | B4→B5: 1.101088e−5 / 4.222931e−3 / 1.208029e−4 / 3.629551e−5 |
+
+各N32はL3→L4で真幾何/固定FEM差/完全band/独立energy・壁積分がPASS。
+円二尺度の解析G最大差5.447048e−4、他の解析f/E/H対象全群もPASS。
+楕円TM尺度1N32の既成功と合わせ、TM N32四例が受入。N64/全P07をこの証拠から受入とはしない。
+角TE尺度1は独立A3対B5もf差4.469167e−6、E差3.003093e−3、H差5.478315e−5、全RF差3.721749e−6でPASS。
+元六FEMは読取保持、追加一実B5のみ。独立energy/壁差最大7.148e−12、元親丸め1.875377e−14。
+
+監査driver `audit-new-terminal-acceptance.py` / handle31961は終了0。
+全401製品、全使用9/10validator、terminal/progress/checks、対象/guard分割、f/E/H/全八RFの実数値、
+U′=1 J/m・peak規約・四加速量nullと全元artifact一致を照合した。
+新FEM0、unit再実行0、新物理再構築0。成功した元固定source実検証を再利用する限定監査である。
+出力 `accepted-new-terminal-audit.json` / `accepted-new-terminal-artifacts.json` は四例の105全ファイルを保持する。
+uv cache未指定の読取集計はread-only cache作成で終了2だった。既定の `/tmp/superfish-ng-uv-cache` を指定し、
+この補助集計だけを実施した。既成功solver/検証器を再実行していない。
+
+## N64 TMの未実行L4を分離branchで継続（2026-10-07）
+
+円TM尺度2/66415も2501.715秒/終了1、L0〜L3の四実FEM保存後、L4 Domainの1e8予算切れ。
+これでN64 TM四例の元失敗は全て終端確認済み。元raw/progress/logを保持し別termination auditへ結び付けた。
+楕円TM尺度1の追加B二分/72293は1642.629秒/終了1、累積元親map丸めが512εを超え、新FEM0。
+一様L5の同種失敗と共に保持する。探索改善だけで丸め失敗を解消したとは扱わない。
+
+新 `out/p07-planar-geometry-bvh-20261007/continue-N64-TM.py` は、
+観測済み終端1/幾何予算失敗/完全L0〜L3 prefix/未保存L4を必須とする。
+旧全401hashと変更後400旧製品不変・geometry一ファイル変更、元10validatorの完全一致、
+分離geometry実L5受入reportを確認し、保存L3を全元親chart/nativeから物理再構築する。
+全係数/周波数bitwise保持と全RF/metadataの元fine_RFとの完全一致、独立energy/壁積分が必須。
+同じN64元Domainを再生成し、1e8予算/512εを保つL4だけを一回の新実FEMで解く。
+L3→L4元E/H/全RF、完全guard、円解析全対象群または楕円完全band、独立積分を別判定する。
+
+構文検査はPASS、数値受入は新実runで判定する。
+円s1/s2 handle92778/3796、楕円s1/s2 handle86568/16110、出力同親
+`<shape>-tm-s<scale>-N64-L4-continuation/` と同名log。現時点では四例とも物理再構築中。
+既存34914/43214と共にbranch401/使用validator/driverを固定する。mainは残る旧四handleまで401を固定する。
+この追加は元完了解の再solve・予算緩和・失敗raw上書きではない。
+新外部資料・依存・legacy参照なし、seed/full validate/GUI/hosted CI未実行、全goal ACTIVE。
+
+```sh
+OPENBLAS_NUM_THREADS=1 PYTHONPATH=/tmp/superfish-ng-p07-geometry-bvh/src:/tmp/superfish-ng-p07-geometry-bvh/scripts UV_CACHE_DIR=/tmp/superfish-ng-uv-cache uv run --no-sync python -u out/p07-planar-geometry-bvh-20261007/continue-N64-TM.py --shape circle --scale 1
+```
+
+
+丸め終端への次のbounded対応は別branchの[適合境界細分](PLANAR_CURVED_BOUNDARY_REFINEMENT.md)。
+新 `boundary` patternの元map/全有理被覆・粗K/M保存・内部cell保持を新3/旧直接利用10unitで確認し、
+13件8.048秒PASS/59598終了0。main/BVH branchの生存中401源を変更せず、別checkoutで進める。
+元399製品不変・geometry/refinement二変更を明示した実検査99269は、A3/A4/B4物理再構築と
+全係数/周波数bitwise・全RF完全一致、元A受入再確認の後、一回の新境界Bを解く。
+最大予算/512ε/全gateは不変、現時点では実検証中。成功を先取りせず、尺度2/全P07も残す。
+
+
+P07条件照合で、[既存strict参照所属の反例](PLANAR_CURVED_REFERENCE_CACHE.md#p07完了前に是正するstrict参照所属)を発見。
+0.5とその隣の0.5より大きいbinary64の正確な和は1超だが、float和1で元APIが受理する。
+新FEM0の元実装reproducerを保持し、P07完了前の修正条件に追加する。
+独立cache branchは参照表だけの重複計算を省き、全mapped/K/M bitwise保存と単要素14〜17倍を確認した。
+25種類の分割unit成功と保存済みA4の物理再構築78576を分けて記録する。
+新branchは既存三checkoutの生存ソースを変更せず、main未統合/P07未受入。
+
+
+## 実uniform角TM A5と参照表再利用の終端（2026-10-07）
+
+分離A5/34914は3011.913秒PASS/終了0、新実FEM1。A4→A5対象三群でf差1.277928e−6、
+E差1.662977e−5、H差1.598729e−3、全RF差3.813018e−3。
+旧A4の全RF差0.703815%未達を保持し、新実A5で0.381302%へ減少して原0.5%gateを満たした。
+完全band/独立energy・壁差最大2.570e−11、元map丸め1.875377e−14もPASS。
+400旧製品不変・geometry一変更、前後401分離製品/使用9validatorと準備/元A4全artifactは不変。
+全11artifactのsnapshotと別終端auditを同親に保存。独立B/尺度2/全P07の受入へ拡張しない。
+
+参照表再利用/78576も288.568秒PASS/終了0、新FEM0。元楕円TM A4の全chart/native/K/M/lowest spectrumを
+物理再構築し、全係数/周波数bitwiseと全RF/metadata完全一致、独立積分最大1.037e−13を確認した。
+全7artifact snapshotと終端auditを保持。性能条件と旧399製品不変・geometry/refinement二変更を別記する。
+cache branch単独のsource固定を解除し、次のP07修正は既存のstrict参照所属。
+この完了を元一ULP外参照受理の解消や全P07完了とはしない。他三checkoutの生存源は変更しない。
+
+
+strict閉参照の不備を別cache branchで実装修正し、[正確なFraction反例/閉壁/全元API/実TM PEC zero](PLANAR_CURVED_EXACT_REFERENCE.md)を確認した。
+新4/旧直接利用24の28種類を分割成功。元数値gateは不変、旧probe二つの閉壁表現だけを整合した。
+保存済みTE/TMの実物理再構築74571、新FEM0、旧397製品不変・四変更/全metadata保持を明示する。
+実行中のbranch401/使用7codeを固定。mainは未統合、全P07受入は未達のまま。
+
+
+## 楕円TM尺度2とstrict参照所属の終端受入（2026-10-07）
+
+復旧70467は6484.605秒PASS/終了0。元終了143/原因未確定の五保存解とrawを保持した。
+元五解を全chart/native/係数から物理再構築し、未保存だったB4/B5だけ二実FEMを追加。
+A4/B5を受入、B4→B5対象全RF差最大1.767055e−3、独立A4対B5最大1.213063e−4、
+f/E/H/完全guard/独立energy・壁も原gateでPASS。前後401製品/使用10validatorと元23artifact不変。
+別terminal auditと全15artifact snapshotを保存し、完了FEMを再solveしない。
+楕円TM尺度1・角TM・円独立mesh・N64・P07全体は別条件として継続する。
+
+strict参照修正の保存TE/TM物理再構築74571は230.797秒PASS/終了0、新FEM0。
+元係数/周波数bitwiseと全RF metadata完全一致。正しい閉壁parameter化によるRF数値差は
+TE0、TM最大2.221e−16。独立energy/壁最大1.037e−13、前後401branch製品/使用7code/元artifact不変。
+別terminal audit/全7artifact snapshotを保持し、bounded strict条件を受入した。
+branch単独のsource固定を解除するがmain/BVH/boundary生存源は変更しない。mainへ未統合、全P07/goalは未完了。
+
+
+## 楕円TM境界B・角TE尺度2の終端と角TM残件（2026-10-07）
+
+99269は2464.466秒PASS/終了0。元A3/A4/B4を物理再構築し、新境界Bの実FEMだけ一回追加した。
+21760cell（旧B4は20480）、最終元map丸め7.028348e−14。B4→境界Bの対象f差最大2.1547e−8、
+E差4.0985e−6、H差2.076318e−4、全RF差1.701740e−3。独立A4対BのRF差最大5.874163e−5。
+完全band/独立energy・実壁積分も原gateでPASSし、楕円TM尺度1 A4/境界Bを受入した。
+元399製品不変・geometry/refinement二変更、前後401分離製品/使用10validator/全元artifact不変。
+別終端auditと全12artifact snapshotを保持。楕円二尺度の両偏波は各固定FEM条件を満たした。
+
+角TE尺度2の保存済みB5復旧43214も3891.121秒PASS/終了0、新FEM0。
+元終了143の原因は依然未確定。A3/B4/B5を全元chart/nativeから再構築し、全係数/周波数bitwiseと
+元A3/B4全RF完全一致を確認した。対象B4→B5のf差1.101088e−5、E差4.222931e−3、
+H差1.208029e−4、RF差3.629551e−5、独立A3対B5 RF差3.721745e−6。
+完全band/独立積分もPASSしA3/B5を受入、角TE両尺度の固定FEM条件を満たした。
+400旧製品不変・geometry一変更、前後401分離製品/使用10validatorと元39artifact不変。
+復旧出力全8artifactのsnapshot/終端auditを保持し、保存済みFEMを再solveしない。
+
+角TM混合細分50414/27391は終了1、7130.991/7129.920秒。各新3実FEMでAの混合細分は受入したが、
+Bの第3対象群は最後二水準RF差5.514924e−3（0.551492%）で0.5%gate未達。
+対象第1/2群RF差4.502693e−3/4.409091e−3、全f/E/Hと独立A/B（RF最大2.182286e−3）はPASS。
+全401製品/使用10validator/元22artifact不変、各全21artifact snapshotと実終端auditを保持する。
+B/角TM/P07を受入せず、既存境界patternで各尺度の保存Bへ局所細分を一回だけ追加する。
+新driver `extend_planar_curved_corner_boundary.py` の全source/終端/raw preflightは二尺度PASS。
+元accepted Aと最終Bを全chart/native/RFから物理再構築し、再FEMせず、新境界Bだけ各一実FEMを検証する。
+boundary branch401製品/使用10validatorをhandle37232/67404の終端まで固定する。
+出力 `out/p07-planar-boundary-refinement-20261007/corner-tm-s{1,2}-boundary/` と同名log。
+1e8 geometry予算・512ε元map丸め・f/E/H/RF許容値・完全guard・独立積分は全て維持する。
+
+上記終端四件の限定監査は新FEM/unit/物理再構築0。全前後hashと数値gateを照合し、受入を
+証明済み形状/偏波/尺度に限定する。元円独立mesh38783、N64 TM四件、全P07とP08/P09は継続する。
+
+
+## 楕円TM N64両尺度のL4終端受入（2026-10-07）
+
+分離継続86568/16110は終了0、3918.479/3921.632秒PASS。元L0〜L3四保存解と予算切れ終端を保持した。
+保存L3の全元chart/native/K/M/係数・周波数・RFを再構築し、未実行L4だけ各一新実FEM。
+各114688cellのL4で、対象L3→L4最大f差8.281288e−8、E差7.256088e−6、H差4.070364e−4、
+全RF差1.435390e−3。真面積/周長/境界距離、全band、独立energy・壁も原gateでPASS。
+最終元map丸め尺度1/2は9.256923e−14/5.064288e−14、512ε以下。
+400旧製品不変・geometry一変更、前後401分離製品/使用12code/元各25artifact不変。
+各全13artifact snapshotと観測終端auditを同親に保持。限定監査は新FEM/unit/物理再構築0。
+楕円TMのN16/32/64二尺度の条件別実証拠が揃った。TEの先行四系列受入と分けて記録する。
+元円独立全尺度、円TM N64二尺度92778/3796、角TM境界B二尺度37232/67404、grouping実測42739は継続中。
+P07全条件監査・source統合は未完了、P08/P09と全123カードgoal ACTIVEを維持する。
+BVH branch401/使用12codeは残る円N64二handle終端まで固定する。
+
+
+## 楕円TMの有限幾何系列監査（2026-10-07）
+
+楕円TM二尺度のN16/32/64を限定監査36705で受入、4.167秒/終了0。
+元source版をmain旧401、geometry一変更のBVH401、geometry/refinement二変更のboundary401へ明示分離し、
+全accepted artifact snapshot/前後source/元validatorを照合した。各完全6モードと三対象群のf/E/H/全8RF差、
+完全guard gap、U′=1・peak +iωt・J/m/W/m、両R/Qと加速量の理由付きnull、独立energy/壁を数値で検査する。
+各元Domainのareaとfine RF areaも照合した。真面積/周長/境界距離は元N16/32/64を小規模再生成して別検査し、
+三誤差が単調減少しN64で各1e−4以下を確認した。異なる幾何Domain間の場差は計算していない。
+六証拠Directory/計115artifactを保持、新FEM/unit/物理再構築0。
+出力 `out/p07-planar-curved-geometry-20261007/ellipse-tm-geometry-series-audit/`、全7audit artifact snapshot/終端も保存。
+先行TE四系列とは別のTM楕円二系列受入。残る円TM N64/角TM/元円独立全尺度/source統合/P07全条件を維持する。
+
+
+## 円TM N64の二尺度L4終端（2026-10-07）
+
+92778/3796は4279.750/4256.249秒PASS/終了0。元L0〜L3四保存解と1e8幾何予算切れ終端を保持し、
+元L3の全chart/native/係数・周波数・RFを物理再構築した後、未実行L4だけ各一新実FEMを追加した。
+対象L3→L4のf差最大6.739720e−8、E差6.676226e−6、H差3.672057e−4、全RF差1.492751e−3。
+完全Bessel f/E/H/G、真幾何、独立energy/実壁、512ε元map上限もPASS。
+最終元map丸め両尺度2.545328e−14。前後401branch/使用12code/元各25artifact不変、
+400旧製品不変・geometry一変更。各全13artifact snapshotと実終端auditを保持する。
+N64 TM四例は全てL4受入、BVH branchの数値handleは全終了しsource固定を解除する。
+円/楕円、両偏波、二尺度のN16/32/64各FEM証拠が揃った。有限系列の監査を受入してからP07条件へ数える。
+角TM境界B二尺度と元円独立半径.02/source統合を維持する。全P07/goalは未完了。
+
+
+## 円TM有限系列・全幾何系列の条件別監査（2026-10-07）
+
+円TM二尺度のN16/32/64限定監査86826は2.114秒PASS/終了0。
+元18円解の物理audit/全raw/hash/元validatorと、新N32/N64の全accepted snapshot・前後sourceを照合した。
+完全6モード（対象群[1,2]とguard群[2,1]）のlast-two f/E/H/全8RF、独立Bessel絶対f/E/H/G、
+独立energy・壁、全正RFとU′/phasor/SI/null理由、元Domain areaとfine RF areaを数値検査する。
+N16/32/64の真面積/周長/境界距離は元Domain小規模再生成で別判断し、三誤差の単調減少と最終各1e−4以下を確認。
+五Directory/計109artifactを保持、新FEM/unit/物理再構築0。全7audit artifact snapshot/観測終端も保存。
+main旧401とgeometry一変更のBVH401を明示区別する。異なる幾何Domain間の場差は比較していない。
+
+先行TE四系列/239artifact監査、TM楕円二系列/115artifact監査と本円TM二系列を合わせ、
+円/楕円・両偏波・両尺度の有限N16/32/64八系列にそれぞれ元P05 gateの証拠がある。
+この受入は全P07ではない。角TM二尺度、元円独立A/B半径.02、source統合と全条件照合を継続する。

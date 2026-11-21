@@ -79,7 +79,7 @@ class CurvedHphiWorkspaceTests(unittest.TestCase):
                         np.testing.assert_allclose((v[a]+2*v[c]+v[b])/4,nodes[index][[1,0]],rtol=0,atol=2e-16)
                 with self.assertRaisesRegex(ValueError,'curved Hphi'):hphi_field_grams(solution,solution)
                 with self.assertRaisesRegex(ValueError,'curved Hphi'):_declared_mesh(solution)
-                with self.assertRaisesRegex(ValueError,'curved Hphi convergence'):HphiConvergence([example(axis,order)]*3)
+                with self.assertRaisesRegex(ValueError,'curved Hphi requires CurvedHphiConvergence.*complete quadratic reference geometry and native charts'):HphiConvergence([example(axis,order)]*3)
 
     def test_real_worker_owned_import_cancel_and_restart(self):
         with tempfile.TemporaryDirectory() as temp,ExitStack() as cleanup:

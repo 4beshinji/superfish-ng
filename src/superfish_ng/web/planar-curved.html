@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Superfish-NG — 曲線の比較・調整</title><link rel="stylesheet" href="/style.css"><script defer src="/planar-curved.js"></script></head>
+<body><header><div><span class="eyebrow">CARTESIAN CURVED RF</span><h1>曲線の比較・調整</h1></div><p>元の二次境界と電場・磁場を比較<br><small>真空・閉じたPEC断面 / TE・TM / 遮断問題</small></p></header>
+<nav><a href="/planar.html">平面RFの入力・元場表示</a><a href="/">軸対称ワークスペース</a><span id="dirty" role="status"></span></nav><div id="error" role="alert" hidden></div>
+<main id="planar-curved-workspace"><div class="editor">
+<section><h2>元場を比較する</h2><p>曲線断面の保存結果を選び、全二次写像の対応と比較予算を指定します。電場・磁場を別々に照合し、周波数順位とモードIDを区別します。</p>
+<label>前の保存場<select id="previous"></select></label><label>次の保存場<select id="current"></select></label>
+<label>比較条件 JSON<textarea id="comparison" rows="12" spellcheck="false">{}</textarea></label><p>比較領域・元セルの参照分割、両側の対象帯、IDまたはID集合、求積と有限guardの予算を明示します。座標はmです。</p>
+<button id="comparison-start">比較を開始</button><button id="comparison-save">比較条件を保存</button><label class="file">比較条件を開く<input id="comparison-open" type="file" accept=".json"></label>
+<div id="comparison-result" hidden><h3 id="comparison-selection"></h3><p id="comparison-summary"></p><div id="comparison-matches"></div><details><summary>電場・磁場とguardの診断</summary><pre id="comparison-details"></pre></details><button id="previous-field">前の元場を取り込む</button><button id="current-field">次の元場を取り込む</button><button id="comparison-to-history">この比較を履歴へ指定</button><button id="comparison-result-save">比較結果を保存</button></div></section>
+<section><h2>独立した追跡履歴</h2><p>元nativeがつながる比較結果を順に指定します。未確定の個別IDを回復する場合は、実際の過去の保存点との比較を明示します。</p>
+<label>比較ジョブIDの順序付き配列<textarea id="history-ids" rows="3">[]</textarea></label>
+<label>履歴条件 JSON<textarea id="history-request" rows="6">{"format":"superfish_ng_planar_curved_tracking_history_request","history_version":1,"step_count":1,"max_steps":100,"identity_recoveries":[]}</textarea></label>
+<button id="history-start">履歴を作成</button><button id="history-save">履歴条件を保存</button><label class="file">履歴条件を開く<input id="history-open" type="file" accept=".json"></label>
+<div id="history-result" hidden><h3 id="history-selection"></h3><p id="history-summary"></p><div id="history-steps"></div><details><summary>個別IDと過去anchorの判定</summary><pre id="history-details"></pre></details>
+<label>回復条件 JSON<textarea id="recovery" rows="10">null</textarea></label><button id="recovery-save">回復条件を保存</button><label class="file">回復条件を開く<input id="recovery-open" type="file" accept=".json"></label><button id="history-recover">個別IDの回復を実行</button>
+<label>次の比較結果<select id="next-pair"></select></label><label><input id="extension-recovery" type="checkbox">追加段階で上の回復条件を使う</label><button id="history-extend">次の段階を追加</button><button id="history-field">最後の元場を取り込む</button><button id="history-result-save">履歴結果を保存</button></div></section>
+</div><div>
+<section><h2>曲線の周波数を調整する</h2><p>元の全二次節点へ多項式アフィン形状法則を適用し、実FEMで検索します。個別IDを確認できない試行の周波数は採用しません。</p>
+<label>調整条件 JSON<textarea id="tune-request" rows="14" spellcheck="false">{}</textarea></label><p>元Project・形状法則・探索範囲・対象ID・追跡/回復予算・最終細分を指定します。座標はm、周波数と許容差はHz、変形パラメーターは無次元です。</p>
+<label>今回追加する試行数（空欄で停止条件まで）<input id="tune-limit" type="number" min="1" step="1" value="1"></label>
+<button id="tune-start">調整を開始</button><button id="tune-save">調整条件を保存</button><label class="file">調整条件を開く<input id="tune-open" type="file" accept=".json"></label><label class="file">保存地点を開いて再検証<input id="checkpoint-open" type="file" accept=".json"></label>
+<div id="tune-result" hidden><h3 id="tune-selection"></h3><p id="tune-summary"></p><div id="tune-trials"></div><details><summary>継承・回復と最終細分の判定</summary><pre id="tune-details"></pre></details><button id="checkpoint-save">保存地点を保存</button><button id="tune-resume">選択した保存地点から再開</button><p>保存地点はこのPCの所有元場を参照します。元場を保持して再読込してください。ゼロ試行も停止ジョブへ束縛して再開します。</p></div></section>
+<section><h2>計算履歴</h2><div id="jobs"></div></section>
+<section><h2>結果の扱い</h2><p>目標周波数との差と最終粗細差は別の判定です。対応のPASSや小さい残差を連続問題の誤差保証へ読み替えません。単位長のpeak phasor・元の全場/RFを保持し、二つのR/Qは遮断断面ではN/Aです。</p><a id="field-link" href="/planar.html">平面RFで元場を表示する</a></section>
+</div></main></body></html>

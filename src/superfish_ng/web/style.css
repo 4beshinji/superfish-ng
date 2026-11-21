@@ -315,8 +315,9 @@ input[aria-invalid="true"] {
 #tangent-diagnostics { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow: auto; }
 #tangent-table { font-size: 0.8rem; }
 
-#mode-tracking textarea, #tracked-execution textarea, #tuning textarea, #rf-optimization textarea, #adaptive-refinement textarea, #studies textarea { display: block; width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid #b8cbe0; border-radius: 4px; font: inherit; }
+#mode-tracking textarea, #tracked-execution textarea, #tuning textarea, #rf-optimization textarea, #adaptive-refinement textarea, #studies textarea, #planar-curved-workspace textarea, #curved-transfer-controls textarea { display: block; width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid #b8cbe0; border-radius: 4px; font: inherit; }
 #tracking-origin, #tracking-diagnostics { overflow-wrap: anywhere; white-space: pre-wrap; }
+#planar-curved-workspace pre { max-height: 24rem; overflow: auto; overflow-wrap: anywhere; white-space: pre-wrap; }
 .surface-table { overflow-x: auto; }
 #surface-diagnostics { white-space: pre-wrap; overflow-wrap: anywhere; }
 
@@ -325,3 +326,11 @@ input[aria-invalid="true"] {
 #image { display: block; max-width: 100%; height: auto; }
 #image[hidden] { display: none; }
 #document, #points { display: block; width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid #b8cbe0; border-radius: 4px; }
+
+/* Long explicit planar charts retain full declarations without widening rows. */
+.planar-history-steps table { table-layout: fixed; }
+.planar-history-steps th:nth-child(1) { width: 7%; }
+.planar-history-steps th:nth-child(2) { width: 10%; }
+.planar-history-steps th:nth-child(4) { width: 12%; }
+.planar-history-steps td { vertical-align: top; overflow-wrap: anywhere; }
+.planar-history-declaration { max-height: 20rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }

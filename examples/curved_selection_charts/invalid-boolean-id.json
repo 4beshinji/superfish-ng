@@ -1,0 +1,52 @@
+{
+  "schema_version": 2,
+  "selected_cells": [
+    true
+  ],
+  "boundary_pairing": "declared_reference_polylines",
+  "coverage_policy": "intersects",
+  "max_pair_tests": 100000,
+  "max_triangles": 1000,
+  "reference_vertices": [
+    [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        0.5
+      ]
+    ]
+  ]
+}

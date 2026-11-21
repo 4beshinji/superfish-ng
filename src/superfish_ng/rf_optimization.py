@@ -14,6 +14,13 @@ from .saved_mode_tracking import build_saved_mode_tracking, validate_tracking_co
 from .mode_tracking_history import start_mode_history, extend_mode_history
 from .tracked_study import _point_sources
 from .jobs import execute_project, _implementation_hashes, _digest
+from .hphi_rf_design import (observe_hphi_rf_design, save_hphi_rf_design,
+                             read_hphi_rf_design, validate_hphi_rf_criteria,
+                             assess_material_hphi_rf_design, save_material_hphi_rf_design,
+                             read_material_hphi_rf_design, assess_vacuum_hphi_rf_design,
+                             save_vacuum_hphi_rf_design, read_vacuum_hphi_rf_design,
+                             assess_curved_hphi_rf_design, save_curved_hphi_rf_design,
+                             read_curved_hphi_rf_design)
 
 
 def validate_optimization_request(request):

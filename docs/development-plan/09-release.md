@@ -8,6 +8,8 @@
 
 ### 統合受入の対象と必要証拠を固定する
 
+2026-10-07 V01仕様 **DONE**：[統合受入の環境/原32行F・I・O・N・W/業務/移行/配布境界](../V01_INTEGRATED_ACCEPTANCE_SCOPE.md)。現行Linux実機＋Python3.12.3/NumPy2.5.2/SciPy1.18.1を候補とし、追加OS/実業務の未決には具体的選択肢を示す。原32行を全保持し、製品の専用validator/元受入と旧対象版の未確認を対応付け、V02の新規環境/各公開保存reader、V03の固定源full＋別seed f/RF、V04の本人評価/自動UIの区別、配布allowlist/依存ライセンス/旧資産非同梱を固定。文書のみ、リンク/実在入口/32行網羅とB03依存を確認、1405全検証対象源不変、新unit/FEM/seed/full/配布0。V02〜V05/原互換32要件/全goalは未受入。原123は72 DONE/3 IN_PROGRESS（H17/C07-planar/N03）/48 PLANNED、N03 full handle72074は継続。
+
 - **親課題**：V02。**種別**：仕様。初期状態：未着手。
 - **先行条件**：[B03](01-baseline.md#b03)
 - **コミット件名案**：`docs: 統合受入の対象と必要証拠を固定する`
@@ -19,6 +21,9 @@
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## V02
+
+追加先行条件：[RF-11](../REFACTORING_PLAN.md#rf-11)、
+RF-02/06/07/09。新環境の配布受入前に入力・実解の対応、環境、公開操作と現行仕様を固定する。
 
 ### 配布と旧保存移行を検証する
 
@@ -38,6 +43,12 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## V03
+
+追加先行条件：RF-07/08/09/10（[依存表](../REFACTORING_PLAN.md#順序と区切り)を含め全RFカード）。
+最終候補の総合validatorはRF-01の開始/終了一覧・hash一致をPASS条件に含める。
+責務移行中の関連検査と最終fullを区別し、単一のseedや残差でS03/S04の量別精度を代用しない。
+
+追加先行条件は[選択移送06](../CURVED_SELECTION_CHARTS_ACCEPTANCE.md)、[境界生成06](../CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)、[RF版5対照06](../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程)。仕様01だけで統合検証/最終監査の依存を満たしたとは扱わない。
 
 ### 節目の全体検証を一度実行する
 
@@ -66,6 +77,12 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## V05
+
+追加先行条件：RF-01〜RF-11全件。各カードの互換/拒否条件、移行範囲、検証証拠と未確認を監査する。
+RF-10は測定結果による改善見送りも可。S05の実測/不確かさはL06/L07で確認し、
+リファクタリング完了を実機予測の妥当性確認へ読み替えない。
+
+追加先行条件は[選択移送06](../CURVED_SELECTION_CHARTS_ACCEPTANCE.md)、[境界生成06](../CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)、[RF版5対照06](../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程)。仕様01だけで統合検証/最終監査の依存を満たしたとは扱わない。
 
 ### 全計画の完了監査と引継ぎを行う
 

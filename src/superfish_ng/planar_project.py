@@ -7,15 +7,22 @@ from .config import keys
 from .project import parse_json
 from .planar import PlanarCase
 from .planar_polygon import PlanarPolygonCase, planar_case_from_dict
+from .planar_curved import PlanarCurvedCase
+
+
+def require_straight_planar_case(case, operation):
+    """Reject a curved case before entering an unimplemented straight pathway."""
+    if isinstance(case, PlanarCurvedCase):
+        raise ValueError(f'{operation} does not yet support curved planar cases; use a rectangle or straight polygon')
 
 
 @dataclass(frozen=True)
 class PlanarProject:
-    case: PlanarCase | PlanarPolygonCase
+    case: PlanarCase | PlanarPolygonCase | PlanarCurvedCase
     display_length_unit: str = 'mm'
 
     def __post_init__(self):
-        if not isinstance(self.case,(PlanarCase,PlanarPolygonCase)):
+        if not isinstance(self.case,(PlanarCase,PlanarPolygonCase,PlanarCurvedCase)):
             raise ValueError('PlanarProject requires a dedicated Cartesian cutoff case')
         object.__setattr__(self,'case',planar_case_from_dict(self.case.to_dict()))
         if self.display_length_unit not in ('m','mm'):

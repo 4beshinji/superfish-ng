@@ -69,6 +69,12 @@ class PlanarTuningGuiTests(unittest.TestCase):
         tampered=deepcopy(result['document']);tampered['trials'][-1]['frequency_hz']=1.
         with self.assertRaises(ValueError):self.call('planar-replay-tune',document=tampered)
 
+    def test_recovery_checkpoint_resume_and_actual_native_import(self):
+        from test_planar_tuning_recovery import recovery_request
+        self.raw=recovery_request()
+        self.assertEqual(self.call('planar-normalize-tune',request=json.dumps(self.raw)),self.raw)
+        self.test_checkpoint_resume_and_actual_target_rank_native_import()
+
     def test_stopped_checkpoint_rejects_changed_submitted_envelope(self):
         ident=self.call('planar-start-tune',request=self.raw,max_new_trials=1)['id'];self.wait(ident)
         path=self.manager.directory(ident)/'planar-tune-request.json'

@@ -15,28 +15,7 @@ from superfish_ng.coaxial import CoaxialCase
 from superfish_ng.jobs import JobManager, read_job
 
 
-def request(*, modes=2, nr=2, nz=4):
-    return dict(
-        format="superfish_ng_hphi_tune",
-        schema_version=1,
-        project=HphiProject(
-            CoaxialCase(0.01, 0.02, 0.04, nr=nr, nz=nz, modes=modes)
-        ).to_dict(),
-        parameter="uniform_scale",
-        mapping=dict(kind="uniform_scale"),
-        bounds=[1.0, 2.0],
-        target_hz=C0 / (2 * 0.04 * 1.5),
-        frequency_tolerance_hz=1.0e6,
-        parameter_tolerance=1.0e-6,
-        max_trials=20,
-        initial_ids=["fundamental"],
-        mode_id="fundamental",
-        controls=HphiTrackingControls().to_dict(),
-        refinement_levels=1,
-        max_triangles=10000,
-        max_dofs=10000,
-        mesh_frequency_tolerance_hz=1.0e6,
-    )
+from support.hphi_tuning_fixtures import straight_worker_request as request
 
 
 class HphiTuningJobTests(unittest.TestCase):
@@ -76,9 +55,63 @@ class HphiTuningJobTests(unittest.TestCase):
         self.assertEqual(len(result["trial_runs"]), 2)
         self.assertTrue((self.root / second / "execution/trial-001").is_dir())
         self.manager.close()
+        # The resumed worker owns the whole prefix. Its original job may be
+        # archived after completion without invalidating the new job.
+        (self.root / first).rename(self.root / "original-moved")
         self.manager = JobManager(self.root)
         self.addCleanup(self.manager.close)
+        self.assertEqual(read_hphi_tune(self.root / second / "hphi-tune-results.json"), result)
         self.assertEqual(self.manager.status(second, verify=True)["tuning_status"], "PAUSED")
+
+        from superfish_ng.hphi_tuning_jobs import INPUT, _owned_input
+        directory = self.root / second
+        input_path = directory / INPUT
+        original_input = input_path.read_bytes()
+        submitted = json.loads(original_input)
+        before = deepcopy(submitted)
+        owned = _owned_input(submitted, directory / "execution")
+        self.assertEqual(submitted, before)
+        self.assertEqual(input_path.read_bytes(), original_input)
+        self.assertEqual(owned["checkpoint"]["trial_runs"], result["trial_runs"][:1])
+        for field in ("hash", "frequency", "decision", "path", "request"):
+            changed = deepcopy(submitted)
+            checkpoint = changed["checkpoint"]
+            if field == "hash":
+                checkpoint["trial_sources_sha256"][0]["project.json"] = "0" * 64
+            elif field == "frequency":
+                checkpoint["trials"][0]["frequency_hz"] += 1
+            elif field == "decision":
+                checkpoint["decision"]["next_trial"]["parent_index"] = 1
+            elif field == "path":
+                checkpoint["trial_runs"][0] = "trial-001"
+            else:
+                checkpoint["request"]["target_hz"] += 1
+            with self.subTest(tampering=field), self.assertRaises(ValueError):
+                _owned_input(changed, directory / "execution")
+
+        # Native copies must still match the submitted hashes; a missing copy
+        # or a link to the original must never be accepted as owned evidence.
+        project_path = directory / "execution/trial-001/project.json"
+        original_project = project_path.read_bytes()
+        project_path.write_bytes(original_project + b"\n")
+        try:
+            with self.assertRaises(ValueError):
+                _owned_input(submitted, directory / "execution")
+        finally:
+            project_path.write_bytes(original_project)
+        trial = directory / "execution/trial-001"
+        backup = directory / "execution/trial-backup"
+        trial.rename(backup)
+        try:
+            with self.assertRaises(ValueError):
+                _owned_input(submitted, directory / "execution")
+            trial.symlink_to(self.root / "original-moved/execution/trial-001", target_is_directory=True)
+            with self.assertRaises(ValueError):
+                _owned_input(submitted, directory / "execution")
+        finally:
+            if trial.is_symlink():
+                trial.unlink()
+            backup.rename(trial)
 
     def test_invalid_submission_allocates_no_job(self):
         invalid = deepcopy(self.request)

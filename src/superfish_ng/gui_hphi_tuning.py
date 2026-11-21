@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .config import integer, keys
 from .hphi_tuning import validate_hphi_tune
-from .hphi_tuning_jobs import _input
+from .hphi_tuning_jobs import _owned_input
 from .hphi_tuning_saved import _snapshot_trial, read_hphi_tune, replay_hphi_tune
 from .jobs import read_job
 from .project import parse_json
@@ -36,7 +36,7 @@ def _submitted_data(directory):
     if request_path.is_symlink() or not request_path.is_file():
         raise ValueError("Hphi tune submitted request must be a regular file")
     submitted = request_path.read_bytes()
-    data = _input(parse_json(submitted.decode("utf-8")))
+    data = _owned_input(parse_json(submitted.decode("utf-8")), directory / "execution")
     return request_path, submitted, data
 
 
@@ -70,14 +70,16 @@ def _saved_checkpoint(manager, identifier, index):
         raise ValueError("checkpoint request differs from selected Hphi tune job")
     previous = data["checkpoint"]
     offset = 0 if previous is None else len(previous["trial_runs"])
-    if len(result["trial_runs"]) != index or index <= offset:
+    if len(result["trial_runs"]) != index or index < offset:
         raise ValueError("checkpoint trial count differs from selected Hphi tune job")
+    # Resume copies the inherited trials into this job. Their contents and
+    # decisions must agree, while every path must name the new owned copy.
     if previous is not None and any(
         _canonical(result[key][:offset]) != _canonical(previous[key])
-        for key in ("trial_runs", "trial_sources_sha256", "trials")
+        for key in ("trial_sources_sha256", "trials")
     ):
         raise ValueError("checkpoint ancestry differs from selected Hphi tune job")
-    for trial_index in range(offset, index):
+    for trial_index in range(index):
         expected = str((execution / f"trial-{trial_index + 1:03d}").resolve())
         if result["trial_runs"][trial_index] != expected:
             raise ValueError("checkpoint trial belongs to another Hphi tune job")
@@ -117,6 +119,24 @@ def hphi_tuning_response(manager, action, data):
         raise ValueError("unknown Hphi tuning operation")
     allowed, required = fields[action]
     keys(data, allowed, required, "GUI Hphi tuning")
+
+    declaration = data.get("request", data.get("document"))
+    if isinstance(declaration, str):
+        declaration = parse_json(declaration)
+    material = (isinstance(declaration, dict) and declaration.get("format") in (
+        "superfish_ng_material_hphi_tune", "superfish_ng_material_hphi_tune_checkpoint"))
+    if "id" in data:
+        material = manager.status(data["id"], verify=False).get("kind") == "material_hphi_tune"
+    if material:
+        from .gui_material_hphi_tuning import material_hphi_tuning_response
+        return material_hphi_tuning_response(manager, action, data)
+    curved = (isinstance(declaration, dict) and declaration.get("format") in (
+        "superfish_ng_curved_hphi_tune", "superfish_ng_curved_hphi_tune_checkpoint"))
+    if "id" in data:
+        curved = manager.status(data["id"], verify=False).get("kind") == "curved_hphi_tune"
+    if curved:
+        from .gui_curved_hphi_tuning import curved_hphi_tuning_response
+        return curved_hphi_tuning_response(manager, action, data)
 
     if action in ("hphi-normalize-tune", "hphi-start-tune"):
         request = data["request"]

@@ -1,5 +1,7 @@
 # RF制約付き2変数探索 — D03
 
+[D05の物理別能力・未確認条件](RF_OPTIMIZATION_SCOPE.md)を固定した。現行六量の入力/判定は維持し、追加物理の評価器・探索運用は後続カードで実装する。
+
 [要求版3の単位付き多変数曲線寸法](RF_OPTIMIZATION_GEOMETRY.md)を追加。
 有限な多変数多項式と調和変位で候補を構成し、既存の制約/予算/3水準と最終確認を使う。版1/2の倍率入力は維持する。
 
@@ -14,6 +16,8 @@
 曲線Projectのradial_scale/axial_scaleを有限範囲で探索し、各候補を実FEMと
 [RF設計評価](RF_DESIGN_CRITERIA.md)で検証する。探索に解析式や補間したRFを使用しない。
 元のProjectから毎回変形し、親候補との相対写像から保存個別IDを追跡する。
+
+[D09の五native RF観測入口](HPHI_RF_DESIGN.md)を追加。単一場はUNVERIFIEDで採用値null。既存版1〜3の探索物理/入力は維持し、追加Hφ探索の接続はD10-hphiで続行する。
 
 ## 探索と停止
 

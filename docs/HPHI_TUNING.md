@@ -1,3 +1,5 @@
+2026-09-21：要求版2の[非一様直線Hφ調整](HPHI_SHAPE_TUNING.md)で同軸3寸法・明示頂点変位とAPI/所有保存/CLIを追加。以下の版1契約は維持する。新写像のworker/GUI操作受入はH09-d。
+
 # Hφ周波数調整の専用契約
 
 作業カード [H01](development-plan/02-hphi.md#h01)（親D02/P03/P04）の成果物。
@@ -239,6 +241,39 @@ N/Aの量には尺度比較を行わない。
 専用`scripts/validate_hphi_tuning.py`（API/CLI/native/二尺度と失敗例）。
 H02は`test_hphi_tracking`等へ独立尺度検査を追加する。H05の専用検証は実FEMと
 `scripts/validate_hphi_tuning.py`で行い、worker以降の検査は後続カードで行う。
+
+## 2026-09-21 レビュー修正
+
+H07：再開時にコピーしたtrialの絶対パスを投入元パスと比較していたため、GUIの
+保存地点選択が失敗していた。継承prefixはnative/RFを含む全ファイルhashと判断履歴で
+照合し、全trialパスは再開先ジョブへの所属を検査する。コピー直後のcheckpointも選択できる。
+追加回帰では修正前に継承地点/追加地点の2エラーを再現した。
+
+`UV_CACHE_DIR=/tmp/superfish-review-uv-cache OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests
+uv run --no-sync python -m unittest test_gui_hphi_tuning -v`：2件PASS、74.370秒。
+実workerで両地点の再生・元場取込・全native/RFのhashと判断履歴保持、別ジョブ差替えと
+改変拒否を確認した。ブラウザーのクリック列は未実行。数値核の変更はなくseed/fullは未実行。
+新規外部資料・依存・legacy資産は使用していない。
+
+H06：投入時の元source検証と、保存後の所有コピーによる検証を分離した。
+`_input`は投入/worker開始時に元sourceを検査する。`_owned_input`は保存済み投入記録の
+深いコピーだけを`execution/trial-NNN`へ対応付け、通常の完全replayで要求・全native/RFのhash・
+判断履歴を再検証する。元パスは記録として保持し、保存した投入ファイルは書き換えない。
+完了worker検証とGUIの停止checkpoint検証がこの経路を共有する。コピーが欠落/改変した場合や
+リンクへ差し替えられた場合は拒否し、元sourceで代用しない。
+
+修正前の追加回帰は、元ジョブ移動後の管理器再作成で`Hphi tune trial must be a regular directory`
+を再現した。修正後の実行コマンド：
+
+```sh
+UV_CACHE_DIR=/tmp/superfish-review-uv-cache OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests uv run --no-sync python -m unittest test_hphi_tuning_jobs test_gui_hphi_tuning -v
+```
+
+6件PASS、185.788秒、終了0。元出力移動後の管理器再作成・GUI結果表示・継承/追加checkpoint、
+投入記録不変、hash/周波数/判断/パス/要求の改変、コピー改変/欠落/リンク差替え拒否を確認。
+既存の実worker中止/再開、失敗時checkpoint保持とmanifest非公開、別ジョブ差替え拒否もPASS。
+数値核・保存schemaは変更していないため、専用数値validator・seed/fullは未実行。
+ブラウザーのクリック列は未実行。新規外部資料・依存・legacy資産は使用していない。
 
 ## 実装記録
 

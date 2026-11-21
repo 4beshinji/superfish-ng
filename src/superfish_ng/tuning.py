@@ -13,6 +13,7 @@ from .te_tuning import trial_sources as _point_sources,read_trial_solution
 from .saved_mode_tracking import build_saved_mode_tracking,validate_tracking_controls,_canonical
 from .mode_tracking import tracked_frequency_hz
 from .tuning_identity_recovery import base_request,recover_trial
+from .tuning_decision import decide_next_trial
 
 
 def _request(request):
@@ -28,8 +29,9 @@ def _request(request):
         fields+=('geometry_kind','bindings','parameter_unit')
         if request.get('geometry_kind')=='curved_harmonic':fields+=('rf_coordinates','minimum_corner_angle_deg')
     if isinstance(request,dict) and request.get('schema_version')==8:fields+=('mesh_schedule',)
+    if isinstance(request,dict) and request.get('schema_version')==9:fields+=('shape_law','parameter_unit')
     keys(request,fields,fields,'tune request');_canonical(request)
-    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3,4,5,7,8):raise ValueError('tune requires geometry schema_version 1, 2, 3, 4, 5, 7 or 8')
+    if type(request['schema_version']) is not int or request['schema_version'] not in (1,2,3,4,5,7,8,9):raise ValueError('tune requires geometry schema_version 1, 2, 3, 4, 5, 7, 8 or 9')
     for name in ('target_hz','frequency_tolerance_hz','parameter_tolerance','mesh_frequency_tolerance_hz'):positive(request[name],name)
     integer(request['max_trials'],'max_trials',2);integer(request['refinement_scale'],'refinement_scale',2)
     bounds=request['bounds']
@@ -60,16 +62,19 @@ def _request(request):
     elif request['schema_version']==8:
         from .partition_tuning import validate_request
         validate_request(request,project)
+    if request['schema_version']==9:
+        from .straight_tuning import validate_request
+        validate_request(request,project)
     if not curved and project.mesh_data is not None:
         raise ValueError('tuning an explicit project mesh requires a declared per-trial mesh transformation')
-    if not curved and (project.sections is not None or (project.reflect_full and not te) or case.geometry_type!='profile' or (not te and (case.z_min!='pec' or case.z_max!='pec'))):
+    if not curved and request['schema_version']!=9 and (project.sections is not None or (project.reflect_full and not te) or case.geometry_type!='profile' or (not te and (case.z_min!='pec' or case.z_max!='pec'))):
         raise ValueError('tune requires an unassembled continuous positive-radius profile with closed PEC ends')
     ids=request['initial_ids']
     if type(ids) is not list or len(ids)!=case.modes or any(type(x) is not str or not x.strip() for x in ids) or len(set(ids))!=len(ids):
         raise ValueError('initial_ids requires one distinct nonempty string per initial frequency rank')
     if type(request['mode_id']) is not str or request['mode_id'] not in ids:raise ValueError('mode_id must occur in initial_ids')
-    if not curved:validate_tracking_controls(request['controls'])
-    if not curved and request['controls']['mapping'] not in ('normalized_cylinder','normalized_profile'):
+    if not curved and request['schema_version']!=9:validate_tracking_controls(request['controls'])
+    if not curved and request['schema_version']!=9 and request['controls']['mapping'] not in ('normalized_cylinder','normalized_profile'):
         raise ValueError('tune requires normalized_cylinder or normalized_profile; other geometry mappings need explicit per-trial support')
     endpoint_geometries=[]
     for value in bounds:
@@ -77,8 +82,9 @@ def _request(request):
         if request['controls']['mapping']=='normalized_cylinder' and any(r!=p.case.profile[0][1] for _,r in p.case.profile):
             raise ValueError('normalized_cylinder tune bounds must retain constant radius')
         _project(request,value,'refinement')
-        endpoint_geometries.append(p.case.curved_contour if curved else p.case.profile)
-    if request['schema_version'] in (2,3,4,5,7,8) and endpoint_geometries[0]==endpoint_geometries[1]:
+        endpoint_geometries.append(p.case.contour if request['schema_version']==9 and p.case.contour is not None
+                                   else p.case.curved_contour if curved else p.case.profile)
+    if request['schema_version'] in (2,3,4,5,7,8,9) and endpoint_geometries[0]==endpoint_geometries[1]:
         raise ValueError('bindings do not change representable geometry across bounds')
     return project
 
@@ -95,6 +101,9 @@ def _project(request,value,phase):
 def _geometry_project(request,value,phase):
     request=base_request(request)
     project=Project.from_dict(request['project'])
+    if request['schema_version']==9:
+        from .straight_tuning import trial_project
+        return trial_project(request,project,value,phase)
     if request['schema_version']==4:
         from .curved_tuning import trial_project
         return trial_project(request,project,value,phase)
@@ -145,44 +154,16 @@ def _geometry_project(request,value,phase):
 
 
 def _decision(request,trials):
-    request=base_request(request)
-    def stop(status,**data):return dict(status=status,next_trial=None,**data)
-    def next_trial(value,phase='search',parent=None):
-        return dict(status='PAUSED',next_trial=dict(value=value,phase=phase,parent_index=parent))
-    if not trials:return next_trial(request['bounds'][0])
-    if trials[-1]['status']=='UNVERIFIED':
-        reason=('explicit individual identity recovery is unverified' if trials[-1].get('identity_recovery')
-                else 'sampled correspondence does not resolve all individual identities')
-        return stop('UNVERIFIED',reason=reason)
-    if len(trials)==1:return next_trial(request['bounds'][1],parent=0)
-    last=trials[-1]
-    if last['phase']=='refinement':
-        difference=abs(last['frequency_hz']-trials[last['parent_index']]['frequency_hz'])
-        target=abs(last['target_error_hz'])<=request['frequency_tolerance_hz']
-        mesh=difference<=request['mesh_frequency_tolerance_hz']
-        return stop('TUNED' if target and mesh else 'REFINEMENT_FAILED',value=last['value'],
-            refined_target_met=target,mesh_difference_met=mesh,mesh_frequency_difference_hz=difference,
-            reason='two-mesh frequency difference is a diagnostic, not a discretization-error bound')
-    best=min(range(len(trials)),key=lambda i:abs(trials[i]['target_error_hz']))
-    if abs(trials[best]['target_error_hz'])<=request['frequency_tolerance_hz']:
-        return next_trial(trials[best]['value'],'refinement',best)
-    lower,upper=0,1
-    if math.copysign(1.,trials[0]['target_error_hz'])==math.copysign(1.,trials[1]['target_error_hz']):
-        return stop('UNBRACKETED',reason='endpoint frequencies do not bracket the target on the sampled identified mode')
-    for i in range(2,len(trials)):
-        if math.copysign(1.,trials[i]['target_error_hz'])==math.copysign(1.,trials[lower]['target_error_hz']):lower=i
-        else:upper=i
-    bracket=[trials[lower]['value'],trials[upper]['value']]
-    if len(trials)>=request['max_trials']:return stop('ITERATION_LIMIT',bracket=bracket)
-    middle=bracket[0]/2+bracket[1]/2
-    if bracket[1]-bracket[0]<=request['parameter_tolerance'] or not bracket[0]<middle<bracket[1]:
-        return stop('PARAMETER_LIMIT',bracket=bracket,reason='parameter interval exhausted without frequency tolerance acceptance')
-    return next_trial(middle,parent=len(trials)-1)
+    """Compatibility entry: unwrap identity-recovery requests before deciding."""
+    return decide_next_trial(base_request(request), trials)
 
 
 def pair_controls(request,previous_value,current_value,previous_project,current_project):
     """Derive a comparison from its actual two trials, including refinement."""
     request=base_request(request)
+    if request['schema_version']==9:
+        from .straight_tuning import pair_controls as straight_controls
+        return straight_controls(request,previous_value,current_value,previous_project,current_project)
     if request['schema_version']==4:
         from .curved_tuning import pair_controls as affine_controls
         return affine_controls(request,previous_value,current_value)

@@ -10,6 +10,7 @@ import tempfile
 import numpy as np
 from .constants import MU0
 from .planar import PlanarFieldSampler
+from .planar_curved_solver import PlanarCurvedSolution, PlanarCurvedFieldSampler
 from .planar_saved import read_planar_run, planar_result
 from .planar_jobs import _native_hashes
 
@@ -22,19 +23,31 @@ def display_planar_fields(solution, mode=0):
     Display samples do not estimate RF integrals or continuous field peaks.
     """
     space = solution.space
+    curved = isinstance(solution, PlanarCurvedSolution)
     reference = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1],
                           [.5, .5, 0], [0, .5, .5], [.5, 0, .5]])
     split = (np.array([[0, 1, 2]]) if solution.case.element_order == 1 else
              np.array([[0, 3, 5], [3, 1, 4], [5, 4, 2], [3, 4, 5]]))
-    cells = np.repeat(np.arange(len(space.triangles)), len(split))
-    barycentric = np.tile(reference[split].mean(axis=1), (len(space.triangles), 1))
+    count = len(space.cell_nodes) if curved else len(space.triangles)
+    cells = np.repeat(np.arange(count), len(split))
+    barycentric = np.tile(reference[split].mean(axis=1), (count, 1))
     fields = solution.fields_in_cells(cells, barycentric, mode)
     for axis in 'xyz':
         for phase in ('real', 'quadrature'):
             fields[f'B{axis}_{phase}_T'] = MU0 * fields[f'H{axis}_{phase}_A_per_m']
-    return dict(points_xy_m=space.dof_points_xy_m,
-                triangles=space.cell_dofs[:, split].reshape(-1, 3),
+    return dict(points_xy_m=space.points_xy_m if curved else space.dof_points_xy_m,
+                triangles=(space.cell_nodes if curved else space.cell_dofs)[:, split].reshape(-1, 3),
                 parent_cells=cells, barycentric=barycentric, fields=fields)
+
+
+def planar_boundary_segments(solution):
+    """Sample the original quadratic PEC walls for display only."""
+    if isinstance(solution, PlanarCurvedSolution):
+        parameters = np.linspace(0., 1., 33)
+        edges = [solution.case.domain.boundary_evaluate(edge, parameters)['points_xy_m']
+                 for edge in range(len(solution.space.boundary_nodes))]
+        return np.concatenate([np.stack((points[:-1], points[1:]), axis=1) for points in edges])
+    return solution.space.points_xy_m[solution.space.boundary_edges]
 
 
 def verified_planar_view(run, mode):
@@ -85,7 +98,8 @@ def publish_planar_view(run, out, data, metadata):
 def export_planar_probe(run, out, points_xy_m, mode=1):
     """Export all real/quadrature E/H components in SI, retaining CSV columns."""
     solution, metadata = verified_planar_view(run, mode)
-    fields = PlanarFieldSampler(solution).evaluate(points_xy_m, mode-1)
+    sampler = PlanarCurvedFieldSampler(solution) if isinstance(solution, PlanarCurvedSolution) else PlanarFieldSampler(solution)
+    fields = sampler.evaluate(points_xy_m, mode-1)
     points = np.asarray(points_xy_m, dtype=float)
     stream = io.StringIO(newline='')
     writer = csv.writer(stream)

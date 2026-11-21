@@ -47,12 +47,14 @@ def _chart(points, base, max_pair_tests):
     return values, tests
 
 
-def _boundary(case, base, chart):
+def _boundary(case, base, chart, *, allow_tm_symmetry=False):
     from .te import is_te
     allowed={'axis','pec'}
     if is_te(case):
         from .curved_same_domain_tracking import _te_end_conditions
         _te_end_conditions([case,case])
+        allowed.update(('electric_symmetry','magnetic_symmetry'))
+    elif allow_tm_symmetry:
         allowed.update(('electric_symmetry','magnetic_symmetry'))
     result = []
     for entries in _boundary_partitions(case, base, 512*np.finfo(float).eps):
@@ -101,25 +103,36 @@ class CurvedReferencePartition:
         return data
 
 
-def build_curved_reference_partition(previous, current, *, reference_vertices, max_pair_tests, max_triangles):
+def build_curved_reference_partition(previous, current, *, reference_vertices, max_pair_tests, max_triangles,
+                                    allow_tm_symmetry=False):
     """Bind declared vertex charts to actual P2 maps and fixed native histories.
 
     Each ordered physical curve has the same oriented reference polyline and
     tag on both sides. Additional collinear boundary vertices are permitted.
     Physical curve fractions need not agree: the vertex charts declare their
     correspondence. No physical curve is reprojected during subdivision.
+    The explicit TM-symmetry opt-in is for original-domain selection transfer;
+    default field-comparison callers retain their existing boundary contract.
     """
     integer(max_pair_tests, 'max_pair_tests'); integer(max_triangles, 'max_triangles')
+    if type(allow_tm_symmetry) is not bool:
+        raise ValueError('allow_tm_symmetry must be a boolean')
     if type(reference_vertices) is not list or len(reference_vertices) != 2:
         raise ValueError('reference_vertices must contain previous and current charts')
-    prepared = [_prepare(p, allow_te=True) for p in (previous, current)]
+    prepared = [_prepare(p, allow_te=not allow_tm_symmetry) for p in (previous, current)]
+    if allow_tm_symmetry:
+        conditions=[(p.case.z_min,p.case.z_max) for p,_,_ in prepared]
+        if conditions[0]!=conditions[1]:
+            raise ValueError('selection reference charts require the same original TM symmetry sector')
     reference = []; boundaries = []; maps = []; counts = []; edge_tests = 0
     for (project, base, limit), points in zip(prepared, reference_vertices):
         if project.mesh_data is None:
             raise ValueError('explicit reference charts require an explicit initial source mesh')
+        if allow_tm_symmetry and len(base.geometry.cell_nodes)>max_triangles:
+            raise ValueError('selection reference chart initial mesh exceeds max_triangles')
         chart, tested = _chart(points, base, max_pair_tests-edge_tests)
         edge_tests += tested
-        boundaries.append(_boundary(project.case, base, chart))
+        boundaries.append(_boundary(project.case, base, chart, allow_tm_symmetry=allow_tm_symmetry))
         lineage = _lineage(project, base, min(limit, max_triangles), [(i, UNIT) for i in range(len(base.geometry.cell_nodes))])
         triangles = []
         for owner, vertices in lineage:

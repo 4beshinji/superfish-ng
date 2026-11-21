@@ -1,0 +1,86 @@
+# 親N04残件4の具体的な仕様工程
+
+2026-10-08 JST、[N08受入監査](N08_ACCEPTANCE.md)で既存残件を再照合した。
+新しい物理やユーザー範囲の追加ではなく、[N04の既存残件4](N04_ACCEPTANCE.md)を分割する。
+原123カードを保持し、追加3仕様カードと各仕様の必須五後続カードをTSVに登録する。
+2026-10-13時点で選択移送01〜06、境界生成01〜06、RF仕様01はDONE。
+RF対照02/03もDONE、04はIN_PROGRESS、05/06はPLANNED。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45。
+RF対照04は[実workerの12新FEM](CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)と[全journalの12event/全場再検証](CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)まで確認し、[実中断/二段階再開・追加一様確認](CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も限定受入。[C-call/部分保存/実資源停止](CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)も限定受入。[予算停止の保存整合](CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)と[専用CLI/process bundle](CURVED_RF_GOAL_EFFICIENCY_CLI.md)を限定受入。[TERM/KILLと原04の条件別監査](CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)を完了。次は固定36実行05、GUI/原条件監査06。未確定の入力/数値ゲートを持つ実装カードをreadyとしない。
+仕様の受入後、[L05の具体カード化手順](development-plan/08-external.md#条件付き要件から追加カードを作る手順)
+に沿って必要な入力/計算/保存/操作/独立受入を接続し、親N04の依存へ追加する。
+
+## ADD-N04-selection-charts-01
+
+**親N04、先行N08、種別仕様、状態DONE**。
+[版2七項目/保存/全被覆/対称/実装五工程の固定仕様](CURVED_SELECTION_CHARTS_SPEC.md)を2026-10-08受入。
+六例/既存幾何の読取検証に続き、[strict入力02](CURVED_SELECTION_CHARTS_INPUT.md)もDONE。
+[03計算API](CURVED_SELECTION_CHARTS_CORE.md)もDONE。GUI・専用FEMは05/06。
+[04完全再生/CLI](CURVED_SELECTION_CHARTS_SAVED.md)・[05 GUI](CURVED_SELECTION_CHARTS_GUI.md)・
+[06独立受入](CURVED_SELECTION_CHARTS_ACCEPTANCE.md)もDONE。次はADD-N04-boundary-remesh-01。
+異なる初期接続・頂点数・境界分割を持つ二Project間の選択領域移送を仕様化する。
+仕様01受入時点の `curved_selection_transfer.transfer_curved_cell_selection` / `_validate_request` /
+`replay_curved_selection_transfer` は版1で、初期一対一対応を必須とした。
+既存 `curved_reference_partition` の版5明示参照座標・境界折線と
+`planar_tracking_overlap` の有理数交差を再利用できるか、実入力/拒否例で評価する。
+
+納品は `docs/CURVED_SELECTION_CHARTS_SPEC.md`、厳密な正常/拒否要求例、実装・利用先の子カード。
+共通参照三角形の旧選択領域Sと新要素Tについて、`intersects`はarea(S∩T)>0、
+`contained`はarea(S∩T)=area(T)と定義し、全旧選択の被覆総和を有理数で厳密に照合する。
+異なる物理領域を座標の近さで推測せず、利用者の全参照宣言・P2物理写像を保持する。
+同じ宣言の変更/改竄、重複/未知キー、不正型、向き/被覆/タグ不一致、求積/組数予算、
+元版1とGUI選択の互換、保存再生と途中応答拒否を仕様で固定する。
+独立矩形の面積・Green回転体積・Hφ=r幾何質量、非アフィンP2/尺度/逆方向と
+新選択markedを使う実FEM/RFを分け、精度ゲートと新求解数を実行前に定める。
+仕様段階の確認は入力・独立幾何・差分で十分で、仕様だけのための全FEM/fullは不要。
+版5比較があることだけを新選択移送の実装受入に使わない。
+
+## ADD-N04-boundary-remesh-01
+
+**親N04、先行N08、種別仕様、状態DONE**。
+[版2仕様](CURVED_BOUNDARY_REMESH_SPEC.md)を2026-10-13受入。元P2制限の表現probe/正常拒否例を確認し、必須02〜06をTSVへ接続した。[02 strict入力](CURVED_BOUNDARY_REMESH_INPUT.md)もDONE。[03生成API](CURVED_BOUNDARY_REMESH_CORE.md)もDONE。[04完全保存再生/CLI](CURVED_BOUNDARY_REMESH_SAVED.md)もDONE。[05 Study GUI/実worker](CURVED_BOUNDARY_REMESH_GUI.md)と[06 独立全ゲート/6 FEM](CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)もDONE。次はADD-N04-rf-goal-01。
+二次境界の分割数を変更できる再メッシュ生成の範囲と表現を固定する。
+現行 `curved_remesh_generation.generate_curved_remesh_plan` / `_boundary_case` /
+`_size_marks` は元二次境界を固定し、境界サイズと競合すると拒否する。
+既存 `curved_project_remesh` の新履歴・全二次境界一致検査と、
+`curved_refinement` / `curved_marked_refinement` の元P2制限写像を入口とする。
+
+納品は `docs/CURVED_BOUNDARY_REMESH_SPEC.md`、元境界を細分する正常例と不可能な粗化/サイズ拒否例、
+実装・保存/CLI/Study GUI・独立受入の子カード。
+元P2パラメトリック辺x(t)の区間制限x(a+(b-a)s)を保持する分割と、
+解析曲線へ再投影して幾何誤差が変わる処理を仕様上で分離する。
+外部メッシュ/Caseがこの制限写像を保持できるか実装入口から確認し、必要な専用表現を決める。
+表現できない操作を成功扱いしない。元幾何/材料/対称tag、軸接続・正Jacobian、
+全境界の所有/向き、要素/辺長/面積/角度予算とunknown/重複/改変の拒否を固定する。
+独立Green面積/体積・Hφ=r質量、元P2境界の全区間一致、尺度則、親子Galerkin保存、
+実円筒解析f/RFと非アフィン曲線の全場保存再生を別ゲートで計画する。
+元幾何を保たない方法を採用する場合はN03の幾何/FEM誤差分離と独立比較を先行条件へ追加する。
+仕様の通常判断は自走し、旧資産・新依存・外部サービスを必要条件にしない。
+
+## ADD-N04-rf-goal-01
+
+**親N04、先行N08、種別仕様、状態DONE**。
+[版5の固定36実行/独立精度/全event費用仕様](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)を2026-10-13受入。
+六要求・元全P2幾何/二尺度/六拒否例をFEM0で確認し、必須02〜06をTSVとV03/V05へ接続した。
+元N06の版3/4worker/参照が版5/長球を拒否する差を再現、旧未達を保全。
+新参照package・worker・36新実行・GUI/全条件受入は後続工程である。
+[02の固定計画/36要求検査](CURVED_RF_GOAL_EFFICIENCY_INPUT.md)も2026-10-13受入。
+18個別unitでstrict型/改変/元要求/コピー隔離を確認。
+[03の独立全域参照](CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)も受入、六ケース/12gridと22個別unitがPASS。
+次は04の版5branch/全event費用/保存完全再生worker。
+残件2に残したRF重み付き版5の一般ケース対照を、有限な実行・独立精度/費用条件へ展開する。
+N05/N06の残差版3/4対照は版5の確認branch/全event費用を検査したものではない。
+`curved_rf_adaptive_refinement.validate_request` / `next_plan` と
+`curved_rf_goal_indicator.curved_rf_goal_indicator`、元版5保存/GUI、
+`adaptive_efficiency_timing` を入口とする。
+納品は `docs/CURVED_RF_GOAL_EFFICIENCY_SPEC.md` と固定要求/独立参照・後続検証カード。
+N03/N05の球・丸めと既存回転楕円体から正常/未達の対照を選び、元全ID・全壁・両R/Q/G・
+表面peak両端・全E/H/物理軸場を保持する。元版5の親branch、棄却確認event、表面方針、
+全event求解/検証/保存費用を片側だけ除外せず、方式/反復/目標/予算を実行前に固定する。
+既存の球/楕円の適応非優位とR/Q単独でsurface未達だった結果を残す。
+独立参照が欠ける量はUNVERIFIED、成功しない停止も費用を保存する。
+仕様はゲート・入力・実装関数・拒否例を全て埋めてから受入し、優位がなければ実測された
+非優位を結果として受入する。普遍的収束/効率や誤差上界の証明を要求に加えない。
+
+三カードとその必須実装/独立受入が終わるまで、親N04はIN_PROGRESS。
+原一般形状/効率はN03/N05/N06/N07の条件別実測へ対応済みで、普遍的優位や
+連続問題の数学的誤差証明を新たな完走条件として発明しない。

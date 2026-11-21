@@ -1,0 +1,115 @@
+{
+  "audit_date": "2026-09-22",
+  "start_commit": "0145bab",
+  "card": "B02",
+  "compatibility_status": "UNVERIFIED",
+  "new_legacy_execution": false,
+  "legacy_source_or_binary_inspection": false,
+  "records": [
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTAUT.TXT",
+      "exists": true,
+      "bytes": 75124,
+      "sha256": "7ca5c2e5c8ba9054135d1d067fee19ccd6f7c4acce5ad1805f833361e410404f",
+      "inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTFIS.TXT",
+      "exists": true,
+      "bytes": 17955,
+      "sha256": "0a7c7f0cc84d276dd6fabc498b5c2ef82789a4440f85c81dbc5f58074134f259",
+      "inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/CAVITY.SFO",
+      "exists": true,
+      "bytes": 145337,
+      "sha256": "444a22f6cf0272f9c3b26113b49e69cbca3842274b3317396d83f0e4a386718d",
+      "inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/OUTSF7.TXT",
+      "exists": true,
+      "bytes": 34630,
+      "sha256": "49c98bfabee3da99c5555bdfb3d0a1dbf6a02ab3a5a52e9380739b2abc245e7f",
+      "inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/cavity.af",
+      "exists": true,
+      "bytes": 404,
+      "sha256": "68220d7c79c7aca6daad61305a60dd352b29e0b161e986f8d07679e72ec090b7",
+      "inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/SF.INI",
+      "exists": true,
+      "bytes": 80,
+      "sha256": "fc2016add84e9568117fd15c79f048bd6d3eb6b07dee282750e96d349c32c54b",
+      "inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "out/surface-wine-inset-20260906/sharp-dx0.05/cavity.in7",
+      "exists": true,
+      "bytes": 944,
+      "sha256": "081a13bcc15d476d0a4ea710268bd822de133b45d9795fa608c667518fd79dc5",
+      "inventory_match": true,
+      "version_lines_match": true
+    },
+    {
+      "path": "/tmp/superfish-wine-runtime/input-spec/SFCODES.txt",
+      "exists": false
+    }
+  ],
+  "document_revision": null,
+  "official_catalog": {
+    "url": "https://www.oecd-nea.org/tools/abstract/detail/ests0428/",
+    "revision": "2001-05-03",
+    "sections": [
+      "3",
+      "10"
+    ],
+    "target_7_17_input_authority": false
+  },
+  "osti_catalog_retry": "Internal Error",
+  "k_rows": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16",
+    "K17",
+    "K18",
+    "K19",
+    "K20",
+    "K21",
+    "K22",
+    "K23",
+    "K24",
+    "K25",
+    "K26",
+    "K27",
+    "K28",
+    "K29",
+    "K30",
+    "K31",
+    "K32"
+  ]
+}

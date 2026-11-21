@@ -101,7 +101,7 @@ def is_hphi_tracking(directory, state, manifest):
     for name in ('tracking.json', 'tracking-results.json'):
         if (directory/name).is_file():
             data = _load(directory/name)
-            if isinstance(data, dict) and data.get('format') in ('superfish_ng_hphi_tracking_request', 'superfish_ng_hphi_tracking_result'):
+            if isinstance(data, dict) and data.get('format') in ('superfish_ng_hphi_tracking_request', 'superfish_ng_hphi_tracking_result', 'superfish_ng_hphi_mapped_tracking_result'):
                 return True
     return False
 
@@ -166,7 +166,12 @@ def _prepare(previous, current, request, directory):
             if p==2:dofs+=len(np.unique(np.sort(declared.triangles[:,[[0,1],[1,2],[2,0]]].reshape(-1,2),axis=1),axis=0))
             if dofs>controls.max_dofs:raise ValueError('Hphi tracking comparison exceeds max_dofs')
         meridional_overlay(old,fine,max_candidate_tests=controls.max_candidate_tests,max_overlay_triangles=controls.max_overlay_triangles)
-    meridional_overlay(*original,max_candidate_tests=controls.max_candidate_tests,max_overlay_triangles=controls.max_overlay_triangles)
+    if request.geometry_mapping is None:
+        meridional_overlay(*original,max_candidate_tests=controls.max_candidate_tests,max_overlay_triangles=controls.max_overlay_triangles)
+    else:
+        from .hphi_mapped_overlap import mapped_hphi_overlay
+        mapped_hphi_overlay(*original,request.geometry_mapping,
+            max_candidate_tests=controls.max_candidate_tests,max_overlay_triangles=controls.max_overlay_triangles)
     source_document = dict(format='superfish_ng_hphi_tracking_sources', sources_version=1,
                            previous=sources[0][3], current=sources[1][3])
     raw = json.dumps(request.to_dict(), ensure_ascii=False, indent=2, allow_nan=False)+'\n'

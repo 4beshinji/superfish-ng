@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Real local browser input and computation. Requires a running GUI and Chrome.
-import { spawn } from "node:child_process";
-import { mkdtemp, readFile, writeFile, mkdir, readdir, rename } from "node:fs/promises";
+import { launchBrowser } from "./browser-session.mjs";
+import { readFile, writeFile, mkdir, readdir, rename } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
@@ -29,21 +29,13 @@ if (!args["--url"] || !args["--out"])
   );
 const out = resolve(args["--out"]);
 await mkdir(out, { recursive: false });
-const profile = await mkdtemp("/tmp/ng-gui-chrome-");
-const browser = spawn("/usr/bin/google-chrome", [
-  "--headless",
-  "--remote-debugging-port=0",
-  `--user-data-dir=${profile}`,
-  "--disable-background-networking",
-  "--no-first-run",
-  "about:blank",
-]);
+const { profile, browser, dispose } = await launchBrowser();
 let stderr = "",
   ws,
   id = 0;
 const pending = new Map(),
   sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-browser.stderr.on("data", (b) => (stderr += b));
+browser.stderr.on("data", (b) => (stderr = (stderr + b).slice(-65536)));
 const report = {
   passed: false,
   node: process.version,
@@ -236,7 +228,7 @@ try {
   await click('#new');await wait('project.case.schema_version===1 && document.querySelector("#nx").value==="16"');await fill('#nx',300);await fill('#ny',300);await click('#start');await wait('document.querySelector("#jobs .job button")?.textContent==="中止"');
   report.cancelled_job=await ev('document.querySelector("#jobs .job").dataset.job');await click('#jobs .job button');await wait('document.querySelector("#jobs .job strong")?.textContent.startsWith("cancelled")',30000);
   report.checks.push({operation:'actual planar worker cancellation',passed:true});
-  await click('nav a');await wait('document.querySelector("#shape polygon")');
+  await click('nav a[href="/"]');await wait('document.querySelector("#shape polygon")');
   await check('planar jobs excluded from axisymmetric tracking selectors','[...document.querySelectorAll("#tracking-previous option,#tracking-current option")].every(o=>!'+JSON.stringify([report.rectangle_job,report.polygon_job])+'.includes(o.value))');
   await click('a[href="/planar.html"]');await wait('document.querySelector("#width")?.value==="310"');
   await call('Page.navigate',{url:launch.origin+'/planar.html?job='+report.polygon_job},sessionId);await wait(`typeof selected!=="undefined" && selected===${JSON.stringify(report.polygon_job)}`);
@@ -246,4 +238,11 @@ try {
   if(!report.passed)throw Error('source/external request check failed');
   console.log(JSON.stringify({passed:report.passed,checks:report.checks}));
 } catch(e){report.error=String(e);process.exitCode=1;console.error(e);}
-finally{await writeFile(out+'/report.json',JSON.stringify(report,null,2));ws?.close();if(browser.exitCode===null){browser.kill();await new Promise(resolve=>browser.once('exit',resolve));}}
+finally {
+  try {
+    await writeFile(out + "/report.json", JSON.stringify(report, null, 2));
+  } finally {
+    for (const entry of pending.values()) clearTimeout(entry.timer);
+    try { ws?.close(); } finally { await dispose(); }
+  }
+}

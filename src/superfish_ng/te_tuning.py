@@ -25,6 +25,16 @@ def validate_te_affine_sector(project,laws):
 def validate_te_request(request,project):
     case=project.case
     mapping=request['controls'].get('mapping') if isinstance(request['controls'],dict) else None
+    if request['schema_version']==9:
+        from .te import validate_te_case
+        validate_te_case(case)
+        ends=(case.z_min,case.z_max);symmetry=sum(tag!='pec' for tag in ends)
+        if (project.sections is not None or project.mesh_data is not None or case.geometry_order!=1
+                or case.geometry_type not in ('profile','stepped_profile','contour') or mapping!='piecewise_remesh'
+                or any(tag not in ('pec','electric_symmetry','magnetic_symmetry') for tag in ends)
+                or symmetry>1 or (project.reflect_full and symmetry!=1)):
+            raise ValueError('TE straight tune requires an unassembled native profile, stepped_profile or contour, piecewise_remesh and one complete source symmetry plane at most; reflection requires exactly one')
+        return
     curved=request['schema_version'] in (4,5,8) or (request['schema_version']==7 and request.get('geometry_kind')=='curved_harmonic')
     if curved:
         affine=request['schema_version']==4

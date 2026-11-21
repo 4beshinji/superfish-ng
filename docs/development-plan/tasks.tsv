@@ -1,8 +1,8 @@
 task_id	parent_ids	depends_on	kind	status	document	title
 B01	C00		監査	DONE	01-baseline.md#b01	残要件と証拠を一行ずつ固定する
-B02	C00	B01	調査	PLANNED	01-baseline.md#b02	対象版の機能と入力資料を確認する
-B03	C00	B02	仕様	PLANNED	01-baseline.md#b03	必須範囲と不足仕様を確定する
-B04	C00	B01	文書	PLANNED	01-baseline.md#b04	全体状態の更新手順を短い入口へ集約する
+B02	C00	B01	調査	DONE	01-baseline.md#b02	対象版の機能と入力資料を確認する
+B03	C00	B02	仕様	DONE	01-baseline.md#b03	必須範囲と不足仕様を確定する
+B04	C00	B01	文書	DONE	01-baseline.md#b04	全体状態の更新手順を短い入口へ集約する
 H01	D02 P03 P04	B01	仕様	DONE	02-hphi.md#h01	Hφ調整と比較写像の専用契約を決める
 H02	P03 D02	H01	実装	DONE	02-hphi.md#h02	真空Hφの一様尺度比較を追加する
 H03	D02	H02	実装	DONE	02-hphi.md#h03	Hφ調整のstrict要求と試行Project生成を実装する
@@ -10,36 +10,69 @@ H04	D02	H03	実装	DONE	02-hphi.md#h04	Hφの実FEM二分調整を実装する
 H05	D02 O02	H04	実装	DONE	02-hphi.md#h05	Hφ調整の所有保存とCLI再開を実装する
 H06	D02 O02	H05	実装	DONE	02-hphi.md#h06	Hφ調整workerの中止と再起動を接続する
 H07	D02 O02	H06	実装	DONE	02-hphi.md#h07	Hφ調整GUIを接続する
-H08	P03 D02	H07	実装	PLANNED	02-hphi.md#h08	同軸寸法と直線一般形状の写像契約を追加する
-H09	P03 D02	H08	実装	PLANNED	02-hphi.md#h09	直線一般写像を追跡と調整へ接続する
-H10	P03 P04 D02	H09	実装	PLANNED	02-hphi.md#h10	Hφの個別ID回復を専用履歴へ追加する
-H11	P03	H08	実装	PLANNED	02-hphi.md#h11	曲線Hφの比較領域を構成する
-H12	P03	H11	実装	PLANNED	02-hphi.md#h12	曲線Hφの場比較と細分診断を実装する
-H13	P03 D02 O02	H10 H12	実装	PLANNED	02-hphi.md#h13	曲線Hφの履歴と調整を保存・操作へ接続する
-H14	P04 D02	H08	仕様	PLANNED	02-hphi.md#h14	材料界面を保つ比較契約を定義する
-H15	P04	H14	実装	PLANNED	02-hphi.md#h15	材料Hφの領域比較とID追跡を実装する
-H16	P04 D02 O02	H10 H15	実装	PLANNED	02-hphi.md#h16	材料Hφ調整と保存・GUIを接続する
-H17	P04	B03 H16	条件付き仕様	PLANNED	02-hphi.md#h17	P04の損失モデルの必要範囲を確定する
+H08	P03 D02	H07	実装	DONE	02-hphi.md#h08	同軸寸法と直線一般形状の写像契約を追加する
+H09	P03 D02	H08 H09-d	実装	DONE	02-hphi.md#h09	直線一般写像を追跡と調整へ接続する
+H09-a	P03 D02	H08	実装	DONE	02-hphi.md#h09-a	明示写像と独立FEM分割を厳密に交差させる
+H09-b	P03 D02	H09-a	実装	DONE	02-hphi.md#h09-b	非一様写像の場移送と質量射影を追跡へ接続する
+H09-c	P03 D02	H09-b	実装	DONE	02-hphi.md#h09-c	非一様形状調整と所有保存・CLIを接続する
+H09-d	P03 D02	H09-c	実装	DONE	02-hphi.md#h09-d	非一様形状調整worker・GUIとH09統合監査
+H10	P03 P04 D02	H09 H10-c	実装	DONE	02-hphi.md#h10	Hφの個別ID回復を専用履歴へ追加する
+H10-a	P03 P04 D02	H09	実装	DONE	02-hphi.md#h10-a	Hφ個別ID回復核と独立順位交換を検査する
+H10-b	P03 P04 D02	H10-a	実装	DONE	02-hphi.md#h10-b	専用履歴の所有回復eventと後続継承を接続する
+H10-c	P03 P04 D02	H10-b	実装	DONE	02-hphi.md#h10-c	検索試行・最終細分のID回復を調整へ接続する
+H11	P03	H08	実装	DONE	02-hphi.md#h11	曲線Hφの比較領域を構成する
+H12	P03	H11 H12-b	実装	DONE	02-hphi.md#h12	曲線Hφの場比較と細分診断を実装する
+H12-a	P03	H11	実装	DONE	02-hphi.md#h12-a	曲線Hφ元E/Hの体積比較核を検証する
+H12-b	P03	H12-a	実装	DONE	02-hphi.md#h12-b	曲線Hφ三水準のf・場・RF診断を接続する
+H13	P03 D02 O02	H10 H12 H13-e	実装	DONE	02-hphi.md#h13	曲線Hφの履歴と調整を保存・操作へ接続する
+H13-a	P03 D02 O02	H12	実装	DONE	02-hphi.md#h13-a	曲線Hφの同二次領域細分と丸め検証を実装する
+H13-b	P03 D02 O02	H13-a	実装	DONE	02-hphi.md#h13-b	曲線Hφの質量射影・有限スペクトル・追跡核を接続する
+H13-c	P03 D02 O02	H13-b H10	実装	DONE	02-hphi.md#h13-c	曲線Hφの形状調整と明示ID回復を接続する
+H13-d	P03 D02 O02	H13-c	実装	DONE	02-hphi.md#h13-d	曲線Hφ履歴・調整の所有保存とCLI/workerを接続する
+H13-e	P03 D02 O02	H13-d	実装	DONE	02-hphi.md#h13-e	曲線HφのGUI操作と親受入を検証する
+H14	P04 D02	H08	仕様	DONE	02-hphi.md#h14	材料界面を保つ比較契約を定義する
+H15	P04	H14 H15-c	実装	DONE	02-hphi.md#h15	材料Hφの領域比較とID追跡を実装する
+H15-a	P04	H14	実装	DONE	02-hphi.md#h15-a	材料領域と全界面を保つ比較分割を実装する
+H15-b	P04	H15-a	実装	DONE	02-hphi.md#h15-b	材料重み付き元場比較とscalar射影を実装する
+H15-c	P04	H15-b	実装	DONE	02-hphi.md#h15-c	材料有限スペクトルとID追跡を接続して親受入を監査する
+H16	P04 D02 O02	H10 H15 H16-d	実装	DONE	02-hphi.md#h16	材料Hφ調整と保存・GUIを接続する
+H16-a	P04 D02 O02	H15	実装	DONE	02-hphi.md#h16-a	材料形状則・領域細分と試行比較を接続する
+H16-b	P04 D02 O02	H16-a H10	実装	DONE	02-hphi.md#h16-b	材料調整runnerと明示ID回復を接続する
+H16-c	P04 D02 O02	H16-b	実装	DONE	02-hphi.md#h16-c	材料調整・履歴の所有保存とCLI/workerを接続する
+H16-d	P04 D02 O02	H16-c	実装	DONE	02-hphi.md#h16-d	材料GUI操作と親受入を検証する
+H17	P04	B03 H16	条件付き仕様	IN_PROGRESS	02-hphi.md#h17	P04の損失モデルの必要範囲を確定する
 H18	P03 P04	H13 H16 H17 C07-hphi C07-material	監査	PLANNED	02-hphi.md#h18	P03/P04の要件受入を監査する
-P01	P02 D02	B01	実装	PLANNED	03-planar.md#p01	平面アフィン形状法則を調整要求へ追加する
-P02	P02 D02	P01	実装	PLANNED	03-planar.md#p02	平面の個別ID回復を履歴・調整へ追加する
-P03	P02	P02	実装	PLANNED	03-planar.md#p03	平面非線形写像の契約と幾何検査を追加する
-P04	P02 D02	P03	実装	PLANNED	03-planar.md#p04	平面非線形比較と調整を接続する
-P05	P02	P03	仕様	PLANNED	03-planar.md#p05	平面曲線P2の幾何・弱形式を設計する
-P06	P02	P05	実装	PLANNED	03-planar.md#p06	平面曲線幾何とP2空間を実装する
-P07	P02	P06	実装	PLANNED	03-planar.md#p07	平面曲線の実解と元場・RFを実装する
-P08	P02 O02	P07	実装	PLANNED	03-planar.md#p08	平面曲線native・Project・GUIを接続する
-P09	P02 D02	P04 P08	実装	PLANNED	03-planar.md#p09	平面曲線の比較・調整を接続する
+P01	P02 D02	B01	実装	DONE	03-planar.md#p01	平面アフィン形状法則を調整要求へ追加する
+P02	P02 D02	P01	実装	DONE	03-planar.md#p02	平面の個別ID回復を履歴・調整へ追加する
+P02-a	P02 D02	P01	実装/検証	DONE	03-planar.md#p02-a	元平面場による明示ID回復核
+P02-b	P02 D02	P02-a	実装/検証	DONE	03-planar.md#p02-b	回復付き平面所有履歴とCLI/worker
+P02-c	P02 D02	P02-b	実装/検証	DONE	03-planar.md#p02-c	平面調整の回復・最終細分・再開
+P02-d	P02 D02	P02-c	実装/検証	DONE	03-planar.md#p02-d	回復操作GUIとP02条件別監査
+P03	P02	P02	実装	DONE	03-planar.md#p03	平面非線形写像の契約と幾何検査を追加する
+P04	P02 D02	P03 P04-c	実装	DONE	03-planar.md#p04	平面非線形比較と調整を接続する
+P04-a	P02 D02	P03	実装/検証	DONE	03-planar.md#p04-a	区分写像による元場比較と追跡・所有再生
+P04-b	P02 D02	P04-a P04-b-c	実装/検証	DONE	03-planar.md#p04-b	区分形状法則と実調整・保存再開
+P04-b-a	P02 D02	P04-a	実装/検証	DONE	03-planar.md#p04-b-a	元区分形状法則と検索・最終細分の比較要求
+P04-b-b	P02 D02	P04-b-a	実装/検証	DONE	03-planar.md#p04-b-b	実区分調整と可搬な全試行所有保存・再開
+P04-b-c	P02 D02 O02	P04-b-b	実装/検証	DONE	03-planar.md#p04-b-c	区分調整workerの所有中止・再開とP04-b監査
+P04-c	P02 D02 O02	P04-b P04-c-b	実装/検証	DONE	03-planar.md#p04-c	区分調整GUIと操作・P04全条件監査
+P04-c-a	P02 D02 O02	P04-b	実装/検証	DONE	03-planar.md#p04-c-a	区分調整GUIの実操作と独立API全元場照合
+P04-c-b	P02 D02 O02	P04-c-a	実装/検証	DONE	03-planar.md#p04-c-b	新版比較・追跡履歴GUIとP04全条件監査
+P05	P02	P03	仕様	DONE	03-planar.md#p05	平面曲線P2の幾何・弱形式を設計する
+P06	P02	P05	実装	DONE	03-planar.md#p06	平面曲線幾何とP2空間を実装する
+P07	P02	P06	実装	DONE	03-planar.md#p07	平面曲線の実解と元場・RFを実装する
+P08	P02 O02	P07	実装	DONE	03-planar.md#p08	平面曲線native・Project・GUIを接続する
+P09	P02 D02	P04 P08	実装	DONE	03-planar.md#p09	平面曲線の比較・調整を接続する
 P10	P02	P09 C07-planar	監査	PLANNED	03-planar.md#p10	P02の物理範囲と残要件を受入監査する
-D01	D02 P01	B01	仕様	PLANNED	04-design.md#d01	非曲線TM/TE調整の形状対応を確定する
-D02	D02	D01	実装	PLANNED	04-design.md#d02	TMの階段・一般輪郭調整を接続する
-D03	P01 D02	D01	実装	PLANNED	04-design.md#d03	TEの階段・一般輪郭調整を接続する
+D01	D02 P01	B01	仕様	DONE	04-design.md#d01	非曲線TM/TE調整の形状対応を確定する
+D02	D02	D01	実装	DONE	04-design.md#d02	TMの階段・一般輪郭調整を接続する
+D03	P01 D02	D01	実装	DONE	04-design.md#d03	TEの階段・一般輪郭調整を接続する
 D04	P01 D02	D02 D03 H18 P10 C07-TE	監査	PLANNED	04-design.md#d04	P01とD02の原要件を最終照合する
-D05	D03	B01	仕様	PLANNED	04-design.md#d05	D03の目的量と制約の残要件を固定する
-D06	D03	D02 D05	実装	PLANNED	04-design.md#d06	一般TM形状のRF探索候補を生成する
+D05	D03	B01	仕様	DONE	04-design.md#d05	D03の目的量と制約の残要件を固定する
+D06	D03	D02 D05	実装	DONE	04-design.md#d06	一般TM形状のRF探索候補を生成する
 D07	D03 N03	D06 N03	実装	PLANNED	04-design.md#d07	RF制約の収束と独立最終評価を拡張する
 D08	D03	D05 D03 P09	実装	PLANNED	04-design.md#d08	TEと平面RFの制約評価を追加する
-D09	D03	D05 H16	実装	PLANNED	04-design.md#d09	HφのRF制約評価を追加する
+D09	D03	D05 H16	実装	DONE	04-design.md#d09	HφのRF制約評価を追加する
 D10-TE	D03 O02	D07 D08	実装	PLANNED	04-design.md#d10-te	追加RFの探索実行と保存再開を接続する：軸対称TE
 D10-planar	D03 O02	D07 D08	実装	PLANNED	04-design.md#d10-planar	追加RFの探索実行と保存再開を接続する：平面RF
 D10-hphi	D03 O02	D07 D09	実装	PLANNED	04-design.md#d10-hphi	追加RFの探索実行と保存再開を接続する：Hφ
@@ -48,14 +81,14 @@ D11-TE	D03 O02	D10-TE	実装	PLANNED	04-design.md#d11-te	追加RF探索のGUIと
 D11-planar	D03 O02	D10-planar	実装	PLANNED	04-design.md#d11-planar	追加RF探索のGUIとD03受入を仕上げる：平面のGUI
 D11-hphi	D03 O02	D10-hphi	実装	PLANNED	04-design.md#d11-hphi	追加RF探索のGUIとD03受入を仕上げる：HφのGUI
 D11	D03 O02	D11-TE D11-planar D11-hphi	監査	PLANNED	04-design.md#d11	追加RF探索のGUIとD03受入を仕上げる（統合照合）
-N01	G03 N03	B01	仕様	PLANNED	05-accuracy.md#n01	幾何・表面場の受入ケースを固定する
-N02	G03 N03	N01	実装	PLANNED	05-accuracy.md#n02	幾何と表面場の独立比較器を拡充する
-N03	G03 N03	N02	検証	PLANNED	05-accuracy.md#n03	非球形と丸め形状の物理精度を検証する
+N01	G03 N03	B01	仕様	DONE	05-accuracy.md#n01	幾何・表面場の受入ケースを固定する
+N02	G03 N03	N01	実装	DONE	05-accuracy.md#n02	幾何と表面場の独立比較器を拡充する
+N03	G03 N03	N02	検証	DONE	05-accuracy.md#n03	非球形と丸め形状の物理精度を検証する
 N04	N03 G03	N03 C03	監査	PLANNED	05-accuracy.md#n04	N03とG03の受入範囲を確定する
-N05	N04	N01	仕様	PLANNED	05-accuracy.md#n05	適応細分の精度対費用の比較条件を固定する
-N06	N04	N05	実装	PLANNED	05-accuracy.md#n06	適応と一様細分の比較を実行する
-N07	N04	N06	条件付き実装	PLANNED	05-accuracy.md#n07	測定された適応処理の不足を修正する
-N08	N04 O02	N07	実装	PLANNED	05-accuracy.md#n08	適応の一般ケース・保存・N04受入を確認する
+N05	N04	N01	仕様	DONE	05-accuracy.md#n05	適応細分の精度対費用の比較条件を固定する
+N06	N04	N05	実装	DONE	05-accuracy.md#n06	適応と一様細分の比較を実行する
+N07	N04	N06	条件付き実装	DONE	05-accuracy.md#n07	測定された適応処理の不足を修正する
+N08	N04 O02	N07	実装	DONE	05-accuracy.md#n08	適応の一般ケース・保存・N04受入を確認する
 C01	C00 C02 G03	B02	条件付き仕様	PLANNED	06-compatibility.md#c01	旧曲線入力の変換仕様を確定する
 C02	C02 G03	C01	条件付き実装	PLANNED	06-compatibility.md#c02	NT=2/3のstrict読込と変換記録を追加する
 C03	C02 G03	C02	検証	PLANNED	06-compatibility.md#c03	旧曲線変換の等価計算を検証する
@@ -64,7 +97,7 @@ C05	C03	C04	条件付き実装	PLANNED	06-compatibility.md#c05	必要なプロ�
 C06	C03	C05	検証	PLANNED	06-compatibility.md#c06	旧後処理への受渡しを実証する
 C07-TM	C04 C00	B03 C03	検証	PLANNED	06-compatibility.md#c07-tm	機能別ブラックボックス比較を整備する：既存真空TMと曲線変換
 C07-TE	C04 C00	B03 D03	検証	PLANNED	06-compatibility.md#c07-te	機能別ブラックボックス比較を整備する：軸対称TE
-C07-planar	C04 C00	B03 P09	検証	PLANNED	06-compatibility.md#c07-planar	機能別ブラックボックス比較を整備する：平面TE/TM
+C07-planar	C04 C00	B03 P09	検証	IN_PROGRESS	06-compatibility.md#c07-planar	機能別ブラックボックス比較を整備する：平面TE/TM
 C07-hphi	C04 C00	B03 H13	検証	PLANNED	06-compatibility.md#c07-hphi	機能別ブラックボックス比較を整備する：真空/内導体Hφ
 C07-material	C04 C00	B03 H16	検証	PLANNED	06-compatibility.md#c07-material	機能別ブラックボックス比較を整備する：材料Hφ
 C07-static	C04 C00	B03 S01 S02 S03 S04 S05	検証	PLANNED	06-compatibility.md#c07-static	機能別ブラックボックス比較を整備する：静的S01〜S05の確認済み範囲
@@ -84,8 +117,37 @@ L04	L01 L02	B03 L01 L02 L03	監査	PLANNED	08-external.md#l04	周辺機能の採
 L05	C00	B01	作業規則	PLANNED	08-external.md#l05	新たに確定した必須仕様をコミットへ展開する
 L06	V01	B01	調査	PLANNED	08-external.md#l06	実機参照の来歴と再現条件を揃える
 L07	V01	L06 N03	条件付き検証	PLANNED	08-external.md#l07	実機の入力と比較を作る
-V01	V02	B03	仕様	PLANNED	09-release.md#v01	統合受入の対象と必要証拠を固定する
-V02	V02	V01 S07 C08	検証	PLANNED	09-release.md#v02	配布と旧保存移行を検証する
-V03	V02	V02 D04 D11 N04 N08 H18 P10	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
+V01	V02	B03	仕様	DONE	09-release.md#v01	統合受入の対象と必要証拠を固定する
+V02	V02	V01 S07 C08 RF-11 RF-02 RF-06 RF-07 RF-09	検証	PLANNED	09-release.md#v02	配布と旧保存移行を検証する
+V03	V02	V02 D04 D11 N04 N08 H18 P10 ADD-N04-selection-charts-06 ADD-N04-boundary-remesh-06 ADD-N04-rf-goal-06 RF-07 RF-08 RF-09 RF-10	検証	PLANNED	09-release.md#v03	節目の全体検証を一度実行する
 V04	V02	V02 D11	検証	PLANNED	09-release.md#v04	実業務手順を利用者視点で受入する
-V05	V02	V03 V04 L07 C08 S07	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
+V05	V02	V03 V04 L07 C08 S07 ADD-N04-selection-charts-06 ADD-N04-boundary-remesh-01 ADD-N04-rf-goal-01 ADD-N04-boundary-remesh-06 ADD-N04-rf-goal-06 RF-01 RF-02 RF-03 RF-04 RF-05 RF-06 RF-07 RF-08 RF-09 RF-10 RF-11	監査	PLANNED	09-release.md#v05	全計画の完了監査と引継ぎを行う
+ADD-N04-selection-charts-01	N04	N08	仕様	DONE	../N04_REMAINING_CARDS.md#add-n04-selection-charts-01	異なる初期接続の選択領域移送を仕様化する
+ADD-N04-boundary-remesh-01	N04	N08	仕様	DONE	../N04_REMAINING_CARDS.md#add-n04-boundary-remesh-01	二次境界分割を変更する再メッシュ生成を仕様化する
+ADD-N04-rf-goal-01	N04	N08	仕様	DONE	../N04_REMAINING_CARDS.md#add-n04-rf-goal-01	RF重み付き版5の一般ケース対照を仕様化する
+ADD-N04-selection-charts-02	N04 O02	ADD-N04-selection-charts-01	入力	DONE	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	要求版2と明示参照座標のstrict検査を追加する
+ADD-N04-selection-charts-03	N04 O02	ADD-N04-selection-charts-02	実装	DONE	../CURVED_SELECTION_CHARTS_CORE.md	全参照分割から選択領域の移送を計算する
+ADD-N04-selection-charts-04	N04 O02	ADD-N04-selection-charts-03	保存/CLI	DONE	../CURVED_SELECTION_CHARTS_SAVED.md	選択移送版2の完全再生とCLIを接続する
+ADD-N04-selection-charts-05	N04 O02	ADD-N04-selection-charts-04	操作	DONE	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2を図上選択と履歴GUIへ接続する
+ADD-N04-selection-charts-06	N04 O02	ADD-N04-selection-charts-05	検証	DONE	../CURVED_SELECTION_CHARTS_SPEC.md#必須五工程と独立受入ゲート	選択移送版2の独立幾何と実FEMを受入する
+ADD-N04-boundary-remesh-02	N04	ADD-N04-boundary-remesh-01	入力	DONE	../CURVED_BOUNDARY_REMESH_INPUT.md	境界再メッシュ生成版2のstrict設定を検査する
+ADD-N04-boundary-remesh-03	N04	ADD-N04-boundary-remesh-02	実装	DONE	../CURVED_BOUNDARY_REMESH_CORE.md	元P2制限で境界分割を変更する計画を生成する
+ADD-N04-boundary-remesh-04	N04	ADD-N04-boundary-remesh-03	保存/CLI	DONE	../CURVED_BOUNDARY_REMESH_SAVED.md	境界再メッシュ生成の完全再生とCLIを接続する
+ADD-N04-boundary-remesh-05	N04	ADD-N04-boundary-remesh-04	操作	DONE	../CURVED_BOUNDARY_REMESH_SPEC.md#必須五工程と独立受入ゲート	境界再メッシュをStudy GUIとworkerへ接続する
+ADD-N04-boundary-remesh-06	N04	ADD-N04-boundary-remesh-05	検証	DONE	../CURVED_BOUNDARY_REMESH_SPEC.md#必須五工程と独立受入ゲート	境界再メッシュの独立幾何と実FEMを受入する
+ADD-N04-rf-goal-02	N04	ADD-N04-rf-goal-01	入力	DONE	../CURVED_RF_GOAL_EFFICIENCY_INPUT.md	RF版5の固定36行と元全要求を厳密に検査する
+ADD-N04-rf-goal-03	N04	ADD-N04-rf-goal-02	参照	DONE	../CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md	元P2全領域へ独立参照場と両尺度を結合する
+ADD-N04-rf-goal-04	N04	ADD-N04-rf-goal-03	実装/保存	DONE	../CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md	版5branchと全event費用の実workerと完全再生を接続する
+ADD-N04-rf-goal-05	N04	ADD-N04-rf-goal-04 RF-11 RF-01	検証	IN_PROGRESS	../CURVED_RF_GOAL_EFFICIENCY_FIXED_RUNNER.md	固定36実行の独立精度と全費用と未達を記録する（31行終端で中断・別outへ保存集計済、全36受入は未完）
+ADD-N04-rf-goal-06	N04	ADD-N04-rf-goal-05	操作/監査	PLANNED	../CURVED_RF_GOAL_EFFICIENCY_SPEC.md#必須五工程	全保存場と版5GUIと親N04の全原条件を監査する
+RF-11	O01 V02		修正	DONE	../REFACTORING_PLAN.md#rf-11	求解契約と後処理条件を分け入力と実解の対応を検証する
+RF-01	V02	RF-11	修正/検証	DONE	../REFACTORING_PLAN.md#rf-01	総合validatorのソース固定を検査する
+RF-02	O01 V02	RF-01	環境/検証	DONE	../REFACTORING_PLAN.md#rf-02	coreとGUIの検証環境を明示する
+RF-03	O01 O02 V02	RF-01 RF-02	リファクタ	DONE	../REFACTORING_PLAN.md#rf-03	入力検査JSON来歴を下位へ抽出する
+RF-04	D02 O02 V02	RF-03	リファクタ	DONE	../REFACTORING_PLAN.md#rf-04	Hφの所有worker機構を共通化する
+RF-05	D02 V02	RF-03	リファクタ	DONE	../REFACTORING_PLAN.md#rf-05	確認済み試行から次動作を決める処理を分離する
+RF-06	O02 V02	RF-03	リファクタ	DONE	../REFACTORING_PLAN.md#rf-06	CLIの登録と実行をコマンド群ごとに分割する
+RF-07	O02 V02	RF-04 RF-06	リファクタ	DONE	../REFACTORING_PLAN.md#rf-07	HTTP輸送と画面状態を業務操作から分離する
+RF-08	V02	RF-03	リファクタ/検証	DONE	../REFACTORING_PLAN.md#rf-08	fixture独立参照入力検査実FEM検査を分ける
+RF-09	V02		文書	DONE	../REFACTORING_PLAN.md#rf-09	現行アーキテクチャと物理入口の索引を更新する
+RF-10	V02	RF-04 RF-05 RF-08	測定/改善	DONE	../REFACTORING_PLAN.md#rf-10	履歴再生の費用を測り根拠がある箇所だけ改善する

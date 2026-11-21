@@ -6,6 +6,8 @@
 
 ## D01
 
+2026-10-07 D01仕様 **DONE**：[非曲線TM/TEの形状・区分写像・対称/最終細分](../NONCURVED_TUNING_SCOPE.md)。profile/階段/単一一般輪郭の六正常/拒否要求と元追跡先を固定。現行profile正常2、未対応4、不正6、将来六領域の両bounds/面積・体積尺度と不正拒否、未実装版9拒否、TE異セクター事前拒否をmetadataだけで確認。136式は既存SI parserに適合し、初稿leaf拒否/runner引数順ERRORを保全して修正。製品/テスト/script1179源不変、新FEM/unit/seed/full/legacy0。現在の区分TM追跡と不足するTM調整/TE直線区分追跡を分離し、既存曲線TEを再実装へ戻さない。原123台帳はD01状態だけ変更、65 DONE/2 IN_PROGRESS/56 PLANNED。D02/D03実装・親D02/P01/全goal/原互換32要件は継続、次はD02。
+
 ### 非曲線TM/TE調整の形状対応を確定する
 
 - **親課題**：D02 / P01。**種別**：仕様。初期状態：未着手。
@@ -19,6 +21,12 @@
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## D02
+
+2026-10-07 D02原カード **DONE**：[直線TM調整の条件別監査](../STRAIGHT_TM_TUNING_ACCEPTANCE.md)。D01法則からの試行/追跡/独立細分/保存再開、独立円筒f/H/E/壁loss/両R/Q、実段差の元境界/体積/個別ID、無効中間形状の求解前停止、API/CLI/実Chromeの元要求/最終場/両R/Q一致を原6条件群で照合。52個別unit＋実Chrome7項目を源/元logへ再結合し、監査内の新FEM/unit/full/seed/legacy0。一般折返し輪郭は正しい未達停止/完全再生を受入し、追加二系列の差71.166/31.378 kHzをTUNEDへ変更しない。初稿監査の「折返し輪郭成功」は原カードを超える追加条件だったため、原文との照合記録を残し、原条件へ戻した。全1275源固定・全handle/server/browser終端、slot 0。原123はD02だけDONEへ変更、66 DONE/2 IN_PROGRESS（H17/C07-planar）/55 PLANNED。親D02/P01/全goal/原互換32要件は継続、次はD03（TE階段/一般輪郭）。rawは out/d02-whole-acceptance-20261007/acceptance.json。
+
+2026-10-07 D02操作限定受入：[版9直線TMのGUI/入口一致](../STRAIGHT_TM_TUNING.md#guiと入口一致)。実Chromeで版9法則がlinearへ誤復元される不具合を終了1で再現し、専用法則入力・元Project/追跡条件復元・raw法則のstrict parser渡しを修正。既存checkpointから追加検索/細分へ再開し、完全要求再構築、重複キー求解前拒否、保存/改竄拒否、二周波数gate、追跡順位の最終場表示の7項目PASS（終了0/外部通信0）。独立API/CLIの元要求・decision・元最終H/E・9 RF量/両R/QはGUIと相対差0、表示importの元6科学ファイルもbyte一致。比較runnerのファイル名誤りを終了1で保全し、原nativeを読み直すだけで終了0に修正（追加求解0）。全1275源固定、Python科学核/52個別検査の源不変。全browser/server終端、slot 0、新full/seed/legacy0。D02全条件/一般輪郭成功系列は後続、全123/原互換32要件/全goal継続。rawは out/d02-straight-gui-20261007/leaf-audit.json。
+
+2026-10-07 D02コア限定受入：[直線TM形状法則](../STRAIGHT_TM_TUNING.md)。版9の元全境界owner/SI式/まとめた座標更新・実区分比較を通常tune、最終細分、保存再開、版6回復wrapperへ接続した。新metadata6＋実物理6＋直接消費40の52個別検査を分割受入。独立円筒Bessel f/H/E/全壁loss/両R/Q、実段差の元場尺度則・完全再生、無効中間形状の求解前拒否、曖昧ID停止を確認。粗段差83.248 kHzは失敗を保持し、角局所細分の別系列は元10 kHz条件内6.240 kHzでTUNED。一般折返し輪郭は元1 Hz細分条件未達を保持。検査側ERRORと粗系列FAILの元logを保全し、成功済みケースは繰り返さず不足分を補った。1182源の固定、旧製品変更2ファイルの4関数に限定、科学核/RF定義/許容差不変。全handle実終端、新full/seed/legacy0。D02はIN_PROGRESS（実GUI/API/CLI一致と全条件監査が残る）、全123は65 DONE/3 IN_PROGRESS/55 PLANNED、原互換32要件/全goal継続。rawは out/d02-straight-tuning-20261007/bounded-audit-pre-docs.json。
 
 ### TMの階段・一般輪郭調整を接続する
 
@@ -38,6 +46,10 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## D03
+
+2026-10-07 D03原カード **DONE**：[直線TE調整の原条件監査](../STRAIGHT_TE_TUNING_ACCEPTANCE.md)。元版9法則をTE Eφ/対称半領域/鏡映・固定RF/N/Aへ接続し、独立Bessel f/Eφ/Hr/Hz/全PEC壁loss、実段差/独立細分/両端二偶奇、未確認/無効形状停止・所有保存再開を照合。追跡39＋調整35の74個別unitを源/元logに結合し、実Chromeは分割9項目PASS。API/CLI/GUIの元要求/decision/最終Eφ/Hr/Hzと7 RF量は相対差0、両R/Q N/A、表示importの元6科学ファイルbyte一致。磁気対称段差は通常/鏡映とも元10 kHz条件内8.974 kHz、閉PEC/電気対称25.043 kHzと粗折返し輪郭1.348 MHzの未達は保持。混在端がsampleへ進む反例を先に再現して拒否を追加。検査のcontour boundaries、独立peak振幅係数、RF表の行/列selector ERROR/FAILを保全し、不足分を修正して再検査した。1279源固定・全handle/server/browser終端、slot 0、新full/seed/legacy0。D03だけDONEへ変更、原123は67 DONE/2 IN_PROGRESS/54 PLANNED。親P01/D02/全goal/原互換32要件は継続。次は依存成立のD06、D04はH18/P10/C07-TEを待つ。rawは out/d03-whole-acceptance-20261007/acceptance.json。
+
+2026-10-07 D03第一実装：[直線TEの元Eφ/回転体積・鏡映追跡](../STRAIGHT_TE_TRACKING.md)。独立非一様体積積分で現行Hφ読取KeyErrorを先に再現し、schema1の元Eφ専用比較を接続。元セクター/通常・鏡映混在/全境界をsample前に拒否し、元半meshを全鏡映領域へ導出する。新10＋直接消費29の39個別検査を分割受入、実段差/折返し/保存完全再生・両端/二偶奇/P1/P2・真の二ローブsample・G/QとEφ/Hr/Hz尺度則（最大4.637e-15）/両R/Q N/Aを確認。低overlapのmatches空配列を参照した検査ERRORを保全し、元overlap_matrixの検査へ修正。1184 Python源固定、旧製品変更2ファイル/3関数、科学核/RF閾値不変。新full/seed/legacy0・全handle終端。D03だけIN_PROGRESS、全123は66 DONE/3 IN_PROGRESS/54 PLANNED。版9TE調整/独立細分/操作接続とD03全監査、全goal/原互換32要件は未完。rawは out/d03-te-straight-tracking-20261007/acceptance.json。
 
 ### TEの階段・一般輪郭調整を接続する
 
@@ -72,6 +84,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ## D05
 
+2026-10-07 **DONE**。[目的量/制約仕様](../RF_OPTIMIZATION_SCOPE.md)の全原条件を読取監査で受入。現行六量/追加能力/N/A・全体未収束predicate・独立三水準・L02/L03分離を照合。製品420源不変、既存full関連結果を再利用し新数値実行0。rawは `out/d05-rf-optimization-scope-20261007/acceptance.json`。次はD09、親D03/全goalは継続。
+
 ### D03の目的量と制約の残要件を固定する
 
 - **親課題**：D03。**種別**：仕様。初期状態：未着手。
@@ -87,6 +101,10 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ## D06
 
 ### 一般TM形状のRF探索候補を生成する
+
+2026-10-07 D06 **DONE**：[元直線TM候補の実座標探索/三水準個別ID/所有保存再開](../STRAIGHT_RF_CANDIDATE_SEARCH.md)。3形状で両変数6候補/18 FEM、独立Bessel f/H/E/全壁loss/両R/Q、実順位交換ID、invalid候補FEM0・曖昧2モード即停止・予算/祖先保全を確認。先行33＋新8の41個別unitを分割受入。曲線版1〜3の10元試行/30 native水準を完全再生（新FEM0）。検査側mass/contour条件・端点1 ulp ERRORを保全し不足分だけ再検査。全RF assessment null、例の18 FEM成果物もFINAL_UNVERIFIEDを保持。旧数値AST/許容差不変、1190源の検査修正以外固定・全handle終端、新full/seed/legacy0。原123は68 DONE/2 IN_PROGRESS/53 PLANNED、親D03/原互換32要件/全goalは継続。次はN01（N02/N03→D07の依存準備）。rawは out/d06-straight-native-search-20261007/acceptance.json。
+
+2026-10-07 D06第一工程：[直線TMの多変数候補台帳](../STRAIGHT_RF_CANDIDATES.md)。元Project/全境界owner/SI式から3形状を独立生成し、変数/候補順・分割再開の実形状一致、invalid候補と上限・null assessment/IDを保存。新6＋直接25＋単変数物理2の33個別unitを分割受入、実段差2 FEMのH/E尺度差最大4.498e-14。TE selector誤記loader ERRORは元logを保全し正しい1件だけ追加。旧RF全関数AST/5入口源byte不変、1188 Python snapshot以後不変、全handle終端、新full/seed/legacy0。既存RF入口の能力規約は維持。D06はIN_PROGRESS、探索器/実候補ID・所有solve checkpointと全条件監査が残る。原123は67 DONE/3 IN_PROGRESS/53 PLANNED、全goal/原互換32要件を維持。rawは out/d06-straight-candidates-20261007/acceptance.json。
 
 - **親課題**：D03。**種別**：実装。初期状態：未着手。
 - **先行条件**：[D02](04-design.md#d02)、[D05](04-design.md#d05)
@@ -142,6 +160,16 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 - **納品物**：該当差分、カード受入条件ごとの結果と未確認理由、実施したコマンド/終了状態、次の着手ID。数値実行のrawは未使用の`out/`以下に保存し、短い結果と来歴を該当仕様書へ記録する。
 
 ## D09
+
+2026-10-07 D09全原条件 **DONE**：[Hφ RF評価の条件別監査](../HPHI_RF_DESIGN_ACCEPTANCE.md)。単一/材料/直線真空/曲線P2の四受入receipt、独立同軸TEM/TM・一様/二層・全PEC壁・有効/不正軸経路、実個別E/H・有限guard・量別二変化/全包絡採用・保存完全再生を照合。過去76個別test IDの源/元log hashを再結合した読取監査で、新FEM/unit/seed/full/legacy0。粗曲線の数値未達はUNVERIFIEDを維持、peak/連続誤差は保証しない。過去真空receiptのコマンド表記5件（二重method suffix）は元記録を保全して訂正版を別保存。原123台帳はD09状態だけ変更、64 DONE/2 IN_PROGRESS/57 PLANNED。H17追加損失判断・D10-hphi探索運用・親D03/原互換32要件/全goalは未完。次は依存が揃ったD01の非曲線TM/TE形状対応仕様。
+
+2026-10-07 **IN_PROGRESS**。[五nativeの全RF量取得/strict能力・保存再生](../HPHI_RF_DESIGN.md)を第一実装。新6件9.674秒＋直接利用18件51.316秒は終了0。独立同軸TEM/尺度・一様/二層材料のf/場/壁lossを確認。単一場の制約/採用は全UNVERIFIED/null。元三水準・個別ID/guard・量別収束/全体採用の接続は続行し、D09全受入へ数えない。rawは `out/d09-hphi-rf-observation-20261007/acceptance.json`。
+
+[材料三水準/有限個別ID・RF制約](../MATERIAL_HPHI_RF_CONVERGENCE.md)を限定受入。新1件103.018秒＋新5件1168.208秒＋直接消費15件61.074秒、数値終端後のregion対応拒否1件7.140秒（FEM0）は実終了0。正常数値源/旧テストはarchive AST同一、拒否Ifのみ追加。台帳/全原条件は維持、真空/曲線三水準とD09全条件監査は続く。全handle終端、D09 IN_PROGRESS。
+
+[直線真空三水準/実個別ID・全壁RF制約](../VACUUM_HPHI_RF_CONVERGENCE.md)も限定受入。新8＋直接消費17の全25件を分割PASS/実終了0。独立TEM/Besselと粗い一般穴の数値未達、二ID順序継承・保存移動/型偽装拒否を確認。元422製品ファイル中420不変、旧定義/核/許容差・全123台帳不変。曲線側と全条件監査は後続、D09 IN_PROGRESS。
+
+2026-10-07 D09曲線三水準の限定受入：[完全P2参照・元chart/実個別E/H/全PEC壁RF](../CURVED_HPHI_RF_CONVERGENCE.md)。新8＋直接消費8＋独立同軸TM追加1の17件は分割PASS・全実終了0。解析TEMとTMのf/H/E/壁loss誤差減少、真正曲線穴の全領域/壁・尺度則と粗系列UNVERIFIED、strict能力・guard/予算/phase・保存移動/型偽装/元変異拒否を確認。等価な有理chart表記のFEM0反例を修正し、元数値AST/正常chartを保持。初期1177/修正後1178源の固定と元423製品源中421不変を監査。最後の保存完全再生1件1925.090秒も終了0。原同軸TM三nativeを保存後、NumPy scalar拒否のrunner ERRORを保全し、float入力で元場を再利用した1件49.705秒を受入。専用validatorは成功数値core/元creatorとsource結合し、CLI help/既存出力拒否を別確認、全数値CLIの重複求解は実施しない。rawは out/d09-curved-rf-convergence-20261007/acceptance.json。D09全条件監査は後続、全123台帳・原互換32要件・全goalを維持。科学核/旧RF定義/許容差不変、新full/seed/legacy0、全handle終端。
 
 ### HφのRF制約評価を追加する
 

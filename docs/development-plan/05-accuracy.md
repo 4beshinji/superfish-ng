@@ -8,6 +8,8 @@
 
 ### 幾何・表面場の受入ケースを固定する
 
+2026-10-07 N01仕様 **DONE**：[幾何3×FEM3・元場/RF/ピーク/独立参照の五合成ケース](../N01_GEOMETRY_SURFACE_CASES.md)。球/楕円の旧成功と元五量閾値を保持し、長楕円体・接線連続丸め二ローブ・鋭い導体先端を固定。五Case/15幾何入力のstrict解析、独立面積/体積とsmooth/singularをmetadataだけで確認。初稿端点projection UNVERIFIEDを保全し別明示寸法を選択、製品/閾値は変更せず1190 Python源不変。独立非球形Maxwell/物理peak参照はnull/未確認のままA01固定隔離環境と許可済みblack-boxの経路/両側細分を指定。図を目視確認、新FEM/unit/seed/full/legacy0。原123は69 DONE/2 IN_PROGRESS/52 PLANNED、親G03/N03/原互換32要件/全goalは継続、次はN02。rawは out/n01-geometry-surface-cases-20261007/。
+
 - **親課題**：G03 / N03。**種別**：仕様。初期状態：未着手。
 - **先行条件**：[B01](01-baseline.md#b01)
 - **コミット件名案**：`docs: 幾何・表面場の受入ケースを固定する`
@@ -21,6 +23,17 @@
 ## N02
 
 ### 幾何と表面場の独立比較器を拡充する
+
+2026-10-07：**N02 DONE**。[入力・元場・3×3数値集約の原条件受入](../N02_GEOMETRY_SURFACE_MATRIX.md)。
+新17個別unit、実三モード九点の正しいFAIL、元楕円九点全量/元ゲート完全一致PASSを確認。
+独立物理参照は未確認、全goal/親G03/N03は継続。次はN03。
+
+2026-10-07：場対応工程を限定受入。[新10/直接4unit・旧楕円9保存解/8区間の完全一致](../N02_GEOMETRY_SURFACE_FIELDS.md)。
+3×3の五量/幾何/求積/peak集約・反例が残りN02はIN_PROGRESSを維持。
+
+2026-10-07：N01はDONE。入力・来歴工程を限定受入しN02はIN_PROGRESS。
+[14個別unit/実CLI入力計画と元条件の残件](../N02_GEOMETRY_SURFACE_PLAN.md)。
+実保存場の比較/反例/楕円の新判定再生が残る。FEM/seed/fullは0。
 
 - **親課題**：G03 / N03。**種別**：実装。初期状態：未着手。
 - **先行条件**：[N01](05-accuracy.md#n01)
@@ -40,6 +53,16 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ## N03
 
 ### 非球形と丸め形状の物理精度を検証する
+
+2026-10-08 JST：N03 **DONE**。五合成系列の元場/RF・両側二区間と失敗保全を受入。修正環境の全validate handle64569は2485検査/499モジュール、4772.019秒・終了0/PASS。0FAIL/0ERROR、skipは3件で未実行物理へ数えない。全1405対象源は開始/終端/監査時一致。seed9モードの周波数・RF207量を元相対1e-10で別照合し、最大相対差f=0/RF=8.88178e-16。既知の入力domain/scope注記だけを厳密に確認し、元Case/mesh/両PEC端・旧規約は不変。元1199源は明示した変更前三源archiveで解決し、全523bound入力を再hash。初回HTTP環境FAIL/244モジュールの終了130と元長楕円体R/Q FAILは保全。原123は73 DONE/3 IN_PROGRESS（H17/C07-planar/N06）/47 PLANNED。N04/親G03・原互換32要件・全goalは継続。詳細は[N03の条件別受入](../N03_ACCEPTANCE.md)。
+
+2026-10-07 N03全validate実行条件の修正：[独立五系列の受入と節目検証](../N03_PHYSICAL_SERIES.md)。初回handle72074は244/499モジュール完了時に停止、1919.016秒・終了130・全1405源不変。HTTP一件はsocket作成でPermissionError（sandboxのOperation not permitted）、同じsource/元HTTP条件をlocalhost可の環境で再検査し1件2.792秒・終了0/PASS。数値修正/閾値変更はなく、元FAILと中断/費用を保全。原初回をfull受入へ数えず、正しい環境の全validate handle64569を新out/validation-n03-milestone-localhost-20261007で再実行中。前後開始snapshot1405は完全一致、src/tests/scripts/examplesを固定。N03はIN_PROGRESS、原123は72 DONE/3 IN_PROGRESS/48 PLANNED、N05/V01仕様DONEと親G03/原互換32要件/全goalの未完を維持。
+
+2026-10-07 N03五系列の元条件監査PASS、節目の全検証中：[全域の独立場/RF・両側二区間](../N03_PHYSICAL_SERIES.md)。楕円PASS、元長楕円体のFAILは保存し追加2/3/4＋最終FEM4独立比較PASS（全1017.615秒・終了0）。元45＋追加六native、五形状の実三ID/元場/量別gate・全参照byteと1199源を終端後に再hash、監査は新FEM/標本0。版4は検証済みtemp commit81bce60と全1200源byte一致で本体へ統合、commit a907036。新7＋直接3unitの証拠を再利用し、独立比較handle22395/64791を含む旧ジョブはすべて終端。主公開は版1/2/3/4、元FEM/RF核・閾値不変。全validate handle72074を新out/validation-n03-milestone-20261007で一度実行中（2485検査/499モジュール・8 process）。主src/tests/scripts/examplesを固定し、完了前にfull受入とは呼ばない。N03はIN_PROGRESS、原123は70 DONE/3 IN_PROGRESS/50 PLANNED、親G03/互換32要件/全goalは継続。rawは out/n03-native-surface-series-20261007/completed-physical-series-acceptance.json と appended-main-integration.json。
+
+2026-10-07 N03後続 **IN_PROGRESS**：[版3全行列と独立球](../N03_CURVED_TRACKING_RESOURCES.md)。保存45点の再評価は1025.114秒・終了0・新FEM0・1199源不変。球/楕円/丸め形状は全条件PASS、鋭角はSINGULAR_GEOMETRYとnumerical PASSを別表示、長楕円体はR/Qの二変化未達をFAILで保持。同じ元メッシュ/P2幾何にFEM3/4を六点明示追加中。独立球の全領域対応/Gauss16・24/三個別ID/両側二変化/元場RFは44.191秒・終了0でPASS。解析領域外点、未分割fan体積、参照root誤記の検査側失敗を保全し、曲線partitionと単位的体積密度規約を明示した。非球形/鋭角の独立比較と追加長楕円体は続行中、実行中は1199源を固定。原123は70 DONE/3 IN_PROGRESS/50 PLANNED、原互換32要件/親G03/N03/全goalを維持。rawは out/n03-native-surface-series-20261007/matrix-and-sphere-checkpoint.json。
+
+2026-10-07 N03 **IN_PROGRESS**：[元45点終端と曲線親子比較の明示資源](../N03_CURVED_TRACKING_RESOURCES.md)。SHA固定N01五形状の45/45 nativeは2995.296秒・終了0、元1197源/catalog不変。追跡予算停止を保存し、版3の宣言資源と全P2子写像検査で元場・全求積点/個別IDを評価する拡張を統合。新/直接13個別unitを分割受入、球312000点の元比較は全三ID/元場PASS・3.479秒・新FEM0。既定逆写像/262144上限・科学核/RF/閾値は不変。独立MIT固定源79を隔離uv環境へ復元、参照15＋追加10求解は終端、球粗二水準のG等FAILは保持。rawは out/n03-native-surface-series-20261007/。全行列・元場/RF/ピーク二区間・両側独立精度の受入は後続、物理上界null。原123は70 DONE/3 IN_PROGRESS（H17/C07-planar/N03）/50 PLANNED、親G03/N03/互換32要件/全goalを維持。
 
 - **親課題**：G03 / N03。**種別**：検証。初期状態：未着手。
 - **先行条件**：[N02](05-accuracy.md#n02)
@@ -69,6 +92,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### 適応細分の精度対費用の比較条件を固定する
 
+2026-10-07 N05仕様 **DONE**：[三対照の同一初期領域・量別精度・固定費用比較](../N05_ADAPTIVE_EFFICIENCY_PLAN.md)。円筒/球とN01丸め二ローブ幾何2を選び、元Case/source/P2・両側同じ初期求解/全壁/個別ID、元五量・独立元場と二回全域確認を固定。各方式2回・順序交替の計12実行、8水準/250000要素/3600秒/32GiB・BLAS1、段階/全体時間・RSSと共有参照費用の計測境界を実行前に指定。旧球の適応非優位を保持し、精度達成と効率改善を別条件にする。文書だけの受入、新unit/FEM/seed/full0、主1200源不変。N06/N07/N08/N04と全goalは後続。原123は71 DONE/3 IN_PROGRESS（H17/C07-planar/N03）/49 PLANNED。別実行のN03全validate handle72074は継続し、src/tests/scripts/examplesを固定中。
+
 - **親課題**：N04。**種別**：仕様。初期状態：未着手。
 - **先行条件**：[N01](05-accuracy.md#n01)
 - **コミット件名案**：`docs: 適応細分の精度対費用の比較条件を固定する`
@@ -82,6 +107,11 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ## N06
 
 ### 適応と一様細分の比較を実行する
+
+2026-10-08 N06 **DONE**：[固定12実行の独立精度/費用と終端監査](../N06_ACCEPTANCE.md)。12/12 TARGETS_MET・50新FEM水準・全900量別誤差の保存配列再計算PASS。全1430源、546 native file/100全場NPZ/1747束縛入力/795元出力を監査。円筒/丸めは一様、球は適応が確認DOF・時間で有利な範囲を二反復で報告し、一般優位を主張しない。plotだけの視覚修正は旧script/CSV/図を保全してAST同一を確認、新FEM/seed/full0。原123は74 DONE/2 IN_PROGRESS（H17/C07-planar）/47 PLANNED。次はN07の同じ高次組立の重複一原因の修正採否、N04/原32要件/全goalは継続。
+
+
+2026-10-07 N06費用記録器 **IN_PROGRESS**：[serial stageのinclusive/exclusive・失敗/欠測](../N06_EFFICIENCY_TIMING.md)。主N03全validate handle64569の1405対象源を固定し、別ツリーで新二源だけを追加。独立18秒配分/未配賦、元失敗/中断・非有限/逆行時計・未知RSS・未完了/完成後・foreign threadを新7unit0.002秒・終了0で確認。元1200 Python源のbyte一致/temp1202固定、主統合/物理系列/予算執行/12benchmark実行は後続。N06全受入へ数えず新FEM/seed/full/benchmark0、原123は72 DONE/4 IN_PROGRESS（H17/C07-planar/N03/N06）/47 PLANNED、原互換32要件/全goalは継続。
 
 - **親課題**：N04。**種別**：実装。初期状態：未着手。
 - **先行条件**：[N05](05-accuracy.md#n05)
@@ -102,6 +132,8 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 
 ### 測定された適応処理の不足を修正する
 
+2026-10-08 N07 **DONE**：[同じ高次native組立の実測と採用](../N07_ACCEPTANCE.md)。固定12/12 TARGETS_MET・50新FEM水準、900量別誤差を全保存配列から再計算PASS。全1432源を固定し、前後546 native file/100全場NPZは全byte・全配列・全modeで完全一致。選択/実ID/元停止/RF/求積・N06元795出力を保持し、次数24の重複組立34回を省いた。曲線8行の全体時間は同じ反復で6.2–9.2%短縮、円筒の微増とRSS増加も保持。共有は専用診断区間だけに採用し、公開適応全体の加速とは呼ばない。新9個別unit/元marked massの証拠を再利用、開発FEM6とbenchmark50を分離、新監査FEM/標本/seed/full/legacy0。全handle終端、六図視覚確認。原123は75 DONE/2 IN_PROGRESS（H17/C07-planar）/46 PLANNED、次はN08。親N04/原32要件/全goalは継続。
+
 - **親課題**：N04。**種別**：条件付き実装。初期状態：未着手。
 - **先行条件**：[N06](05-accuracy.md#n06)
 - **コミット件名案**：`fix: 測定された適応処理の不足を修正する`
@@ -120,6 +152,10 @@ OPENBLAS_NUM_THREADS=1 PYTHONPATH=src:tests .venv/bin/python -m unittest -v test
 ## N08
 
 ### 適応の一般ケース・保存・N04受入を確認する
+
+2026-10-08 N08 **DONE**：[公開適応六系列/30保存水準と現行GUI30操作の受入](../N08_ACCEPTANCE.md)。公開選択/停止・RF/表面/求積とcheckpoint全文書が完全一致、保存監査の新FEM0。実GUI中止再開/上限/積分未達を確認し、直線初回の説明文FAILは保全して11+8操作で補完、曲線11操作PASS。全1432源固定、元N03全1405源byte一致と66個別PASSを再利用、1747入力/795出力再hash、全handle/12 GUIジョブ/server/browser終端。親N04は既存残件を保持してIN_PROGRESS、追加3仕様カードを[具体化](../N04_REMAINING_CARDS.md)。原123は76 DONE/2 IN_PROGRESS（H17/C07-planar）/45 PLANNED、追加3 PLANNED込み全126は76/2/48。次はADD-N04-selection-charts-01、原32要件/全goalは継続。
+
+2026-10-08 N08 **IN_PROGRESS**：[公開適応/保存/GUIと原N04四群の受入監査](../N08_ACCEPTANCE_PLAN.md)。N07はa860099でDONE。N06/N07の三形状・固定12行/全場/費用を再利用し、六adaptive nativeを公開engine自身で再構築・保存replay照合する。元選択/停止・公開保存/再開は無変更、solve禁止・新FEM0で検査する。N03全検証の実中止再開/上限/GUIと現行関連源の一致は確認済み、原N04_ACCEPTANCEの四群を保持して監査する。原123は75 DONE/3 IN_PROGRESS（H17/C07-planar/N08）/45 PLANNED。未達が残る場合は親を閉じず、全goal/原32要件は継続。
 
 - **親課題**：N04 / O02。**種別**：実装。初期状態：未着手。
 - **先行条件**：[N07](05-accuracy.md#n07)

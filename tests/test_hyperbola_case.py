@@ -93,9 +93,10 @@ class HyperbolaCaseTests(unittest.TestCase):
                 self.assertAlmostEqual(full.curved_contour.area_m2/half.curved_contour.area_m2,2)
                 self.assertAlmostEqual(quantities(full,mirrored)['stored_energy_j']/
                                        quantities(half,sol)['stored_energy_j'],2)
-                independent = solve(replace(full,modes=4),mesh_data=mesh_to_dict(mirrored.mesh))
+                independent_case = replace(full,modes=4)
+                independent = solve(independent_case,mesh_data=mesh_to_dict(mirrored.mesh))
                 index = int(np.argmin(abs(independent.frequencies_hz-mirrored.frequencies_hz[0])))
-                actual,reference = quantities(full,mirrored),quantities(full,independent,index)
+                actual,reference = quantities(full,mirrored),quantities(independent_case,independent,index)
                 for key in ('frequency_hz','r_over_q_accelerator_ohm','geometry_factor_ohm'):
                     self.assertAlmostEqual(actual[key]/reference[key],1,places=8)
                 with tempfile.TemporaryDirectory() as tmp:

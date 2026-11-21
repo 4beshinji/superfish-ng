@@ -63,6 +63,9 @@ def save_run(case, solution, directory):
             case = replace(case, element_order=2)
         else:
             raise ValueError('case and solution element orders disagree')
+    if not isinstance(solution,CurvedSolution):
+        from .affine_solution_contract import verify_affine_solution
+        verify_affine_solution(case,solution)
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     from .completion import digest, required_files

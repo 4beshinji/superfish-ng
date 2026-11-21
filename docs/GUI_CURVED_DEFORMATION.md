@@ -1,5 +1,7 @@
 # 元メッシュと細分履歴を保持する形状変形GUI
 
+現行配置（2026-10-14）：[RF-07 HTTP/画面境界](GUI_COMMAND_BOUNDARIES.md)で状態/DOM/要求を専用JSへ抽出し、実Chrome/保存場の元条件を確認した。下の2026-09-14記録は当時の受入履歴。
+
 2026-09-14 JST、N04残件4の単独Project操作を接続した。
 既存の[調和変位API/CLI](CURVED_HARMONIC_DEFORMATION.md)を使い、
 目標形状の準備、変形プレビュー、別ファイル保存、適用、Undoを行う。

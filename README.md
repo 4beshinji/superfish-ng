@@ -1,11 +1,27 @@
 # Superfish-NG
 
+[固定36測定の中断後集計](docs/CURVED_RF_GOAL_INTERRUPTED_MEASUREMENTS.md)を保存しました。31行が終端（27確認達成・4未達）、32行目は途中保存、残る4行は未実行です。元出力のSHA・費用・判定を照合し、全計画の完了とは区別しています。測定の自動継続は停止しています。
+
+[RF版5対照の独立全域参照](docs/CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を六ケース・両Gauss次数で確認した。球の解析場と長球/丸めの全五modeを保持し、22個別unitと全域積分・相似則がPASS。[04の比較指標と採用祖先判定](docs/CURVED_RF_GOAL_EFFICIENCY_WORKER.md)も17個別unitで確認した。[新規workerの12求解](docs/CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)で実分岐と全場を確認した。[全保存再検証](docs/CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)も12event・全24sampleの一致と6改変拒否を確認した。[実中断・二段階再開と追加一様確認](docs/CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も無中断の全場/RFとの一致を確認した。[随伴C-call観測と部分保存/資源停止](docs/CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)も限定受入した。[予算停止の保存整合と追加求解ゼロの再開](docs/CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)も異常系として限定受入した。[専用CLIとprocess bundle](docs/CURVED_RF_GOAL_EFFICIENCY_CLI.md)は球一様の起動/再開/全保存再生を限定検証した。[一般kill再開とworker原条件](docs/CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)も受入した。固定36実行・GUIは後続で、親N04と全計画は未完。
+
 軸対称RF空洞のための独立実装 FEM ソルバー（`0.1.0` research seed、Python 3.10+ / NumPy・SciPy）。
 canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これを基準に形状・メッシュ・RF量・
 モード追跡・専用物理（平面 / 同軸 / 材料 Hφ / TE / 静磁・静電）を拡張しています。
 
 現在の受入範囲・証拠の現存/欠落は [B01対応台帳](docs/development-plan/B01-ledger.md)、
 日付ごとの実装履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md) を参照してください。
+
+D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
+[直線真空](docs/VACUUM_HPHI_RF_CONVERGENCE.md)、[曲線P2](docs/CURVED_HPHI_RF_CONVERGENCE.md)の
+三水準を受入しています。元個別E/H・有限guard・量別収束が成立する場合だけ制約/採用を判定します。
+[評価の原条件監査](docs/HPHI_RF_DESIGN_ACCEPTANCE.md)は完了し、探索運用と全開発計画は継続中です。
+
+直線TMのprofile・段差・単一輪郭を元境界法則から調整する
+[版9の実装と原条件監査](docs/STRAIGHT_TM_TUNING_ACCEPTANCE.md)を受入しました。
+独立細分が未達なら停止し、個別ID・元要求・最終場・両R/Qを保存/CLI/GUIで保持します。
+
+直線TEも [版9調整の原条件監査](docs/STRAIGHT_TE_TUNING_ACCEPTANCE.md) を受入しました。
+元Eφと対称セクター/鏡映の順位を保ち、加速量と両R/QはN/Aで表示します。
 
 ## 主な機能
 
@@ -23,25 +39,32 @@ canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これ�
 | 出力 | 単位と規約を含む JSON、CSV、NPZ、ParaView 向け ASCII VTK |
 | GUI | ローカルブラウザー GUI（`plot` extra 必須）。編集・計算・中止・保存結果表示・掃引・収束比較 |
 
-対応状況の詳細は [物理仕様](docs/PHYSICS.md)、[モデル契約](docs/MODEL_CONTRACT.md)、
-[互換対応表](docs/COMPATIBILITY_MATRIX.md) を参照してください。
+対応状況の詳細は [現行の物理入口と構成](docs/ARCHITECTURE.md#current-architecture)、
+[物理仕様と限定受入](docs/PHYSICS.md#現行の範囲と読み方)、[モデル契約](docs/MODEL_CONTRACT.md)、
+[互換対応表](docs/COMPATIBILITY_MATRIX.md) を参照してください。専用Case・保存版・操作範囲を入口別に確認できます。
 
 ## インストール
 
 Linux を主対象とし、開発環境は Python 3.12（`.python-version`）です。NumPy/SciPy が中核依存、
 Matplotlib は任意（`plot` extra）です。
+環境・依存は[uv](https://docs.astral.sh/uv/)で管理します。
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
+uv venv --python 3.12
+uv pip install --python .venv/bin/python -e .
 ```
 
-図を生成する場合:
+図やGUIを利用する場合:
 
 ```bash
-python -m pip install -e '.[plot]'
+uv pip install --python .venv/bin/python -e '.[plot]'
+uv run --no-project --python .venv/bin/python superfish-ng gui --workspace out/gui-workspace
 ```
+
+coreだけではGUI起動を説明付きで拒否します。GUIを含むfull検証にも`plot`が必要です。
+CLI例は環境を有効にして実行するか、同じ`uv run --no-project --python .venv/bin/python`を先頭に付けます。
+サポートPython 3.10/3.12の解決、現開発環境、過去benchmarkの再現は
+[依存・環境契約](docs/DEPENDENCIES.md#current-environments)を参照してください。
 
 既に NumPy/SciPy がある環境では、インストールせず `PYTHONPATH=src python -m superfish_ng ...` でも動作します。
 
@@ -82,6 +105,11 @@ superfish-ng gui --workspace out/gui-workspace
 形状・円弧・繰り返し部分の編集、計算と中止、保存場・RF量の表示、寸法掃引・収束比較を
 CLI/Python と共通の入力・計算機能で扱えます。導線は [GUIガイド](docs/GUI_GUIDE.md)、
 範囲と基準は [GUI開発計画](docs/GUI_IO_PLAN.md)・[受入記録](docs/GUI_ACCEPTANCE.md) を参照。
+
+曲線形状Studyでは、[元P2境界を保つ再メッシュ生成と保存復元](docs/CURVED_BOUNDARY_REMESH_GUI.md)を利用できます。
+元Project・生成条件・計画を完全再検証し、メッシュの幾何条件とRF精度を分けて表示します。
+[独立幾何・解析円筒・非アフィン尺度・全保存場の受入](docs/CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)では、
+固定6求解を元の周波数・場・RF基準で確認しています。
 
 ## 入力と出力
 
@@ -127,6 +155,9 @@ OPENBLAS_NUM_THREADS=1 python scripts/validate.py --skip-tests --out out/validat
 |---|---|
 | [docs/PHYSICS.md](docs/PHYSICS.md) | 軸上処理・弱形式・境界条件・RF量の定義 |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | モジュール責務、ADR、将来のバックエンド境界 |
+| [docs/IMPLEMENTATION_REVIEW_2026-09-22.md](docs/IMPLEMENTATION_REVIEW_2026-09-22.md) | 既存実装の横断レビュー、根拠・再現・調査範囲 |
+| [docs/SCIENTIFIC_REVIEW_2026-10-13.md](docs/SCIENTIFIC_REVIEW_2026-10-13.md) | 科学的妥当性レビュー、解析再計算、入力と保存解の不整合の再現 |
+| [docs/REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md) | 科学レビュー後の修正・責務分離11カード。受入状態は計画とCURRENTを参照 |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 依存順と受入基準を持つ開発計画 |
 | [docs/BACKLOG.md](docs/BACKLOG.md) | 実装タスクと現状 |
 | [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) | 受入範囲と日付ごとの実装履歴 |
@@ -150,3 +181,7 @@ OPENBLAS_NUM_THREADS=1 python scripts/validate.py --skip-tests --out out/validat
 
 作業前に [AGENTS.md](AGENTS.md)、[CONTRIBUTING.md](CONTRIBUTING.md)、[CODEX_HANDOFF.md](docs/CODEX_HANDOFF.md) を読んでください。
 `docs/BACKLOG.md` から件を選び、受け入れ基準・変更対象テスト・証拠を記録してから実装します。
+
+[N02の幾何・表面診断器](docs/N02_GEOMETRY_SURFACE_MATRIX.md)は保存3×3行列の
+幾何/FEM/求積/元場/離散ピークを別判定し、原楕円の判定一致を確認した。
+新非球形・丸め形状の実精度受入は次のN03で継続する。

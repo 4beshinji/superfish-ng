@@ -11,7 +11,7 @@ import uuid
 from .config import keys
 from .project import parse_json
 from .planar_project import PlanarProject
-from .planar import solve_planar
+from .planar_solve import solve_planar_case as solve_planar
 from .planar_saved import FILES, read_planar_run, save_planar_run
 
 KIND='planar_solve'

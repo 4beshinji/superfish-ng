@@ -1,0 +1,403 @@
+{
+  "schema_version": 1,
+  "document_type": "curved_rf_goal_efficiency_plan",
+  "status": "PLANNED",
+  "input_sources": [
+    {
+      "path": "examples/adaptive_refinement/curved_sphere_confirmed.json",
+      "sha256": "48bb3d48e9d75061af7041bf8f482c1d9f9aa710a7b77ef576ea4db81f329f1b",
+      "bytes": 2446
+    },
+    {
+      "path": "examples/adaptive_refinement/curved_prolate_rf_surface.json",
+      "sha256": "38a8a3a7ac6ea1fd6ca4e13a40638291cf9e1dfc9eab079188fec1b9ce9b425b",
+      "bytes": 2506
+    },
+    {
+      "path": "examples/adaptive_efficiency/rounded_two_lobe_case.json",
+      "sha256": "2b426b617de7f1c36a9f63f340817abf81322781b0a8882299372ccaa3d9ac90",
+      "bytes": 2139
+    },
+    {
+      "path": "examples/adaptive_efficiency/rounded_two_lobe_mesh.json",
+      "sha256": "959c056225acbeb7dcc860a4260f1d0fbe00caabc9413331197e903b63319fe7",
+      "bytes": 100939
+    }
+  ],
+  "cases": [
+    {
+      "id": "sphere-scale-1",
+      "family": "sphere",
+      "scale": 1,
+      "request": {
+        "path": "examples/curved_rf_goal_efficiency/sphere-scale-1.json",
+        "sha256": "24e38068095ebaeffd505a811566f27464c23a1009dd45e587b5492950efc6d4",
+        "bytes": 6830
+      },
+      "reference_kind": "SphereTM",
+      "reference_status": "PREPARATION_REQUIRED",
+      "max_events": 8,
+      "max_triangles": 250000
+    },
+    {
+      "id": "sphere-scale-2",
+      "family": "sphere",
+      "scale": 2,
+      "request": {
+        "path": "examples/curved_rf_goal_efficiency/sphere-scale-2.json",
+        "sha256": "282bbab5a8affae716e987dbfaf9d5e3ac705b232ddb3302f1fdccb957f5d157",
+        "bytes": 6813
+      },
+      "reference_kind": "SphereTM",
+      "reference_status": "PREPARATION_REQUIRED",
+      "max_events": 8,
+      "max_triangles": 250000
+    },
+    {
+      "id": "prolate-scale-1",
+      "family": "prolate",
+      "scale": 1,
+      "request": {
+        "path": "examples/curved_rf_goal_efficiency/prolate-scale-1.json",
+        "sha256": "f2bdae8521323e90780c73b62c7116630fb86d857bd31c08cb5306238141c408",
+        "bytes": 11346
+      },
+      "reference_kind": "N03_modern_three_h_five_modes",
+      "reference_status": "PREPARATION_REQUIRED",
+      "max_events": 12,
+      "max_triangles": 100000
+    },
+    {
+      "id": "prolate-scale-2",
+      "family": "prolate",
+      "scale": 2,
+      "request": {
+        "path": "examples/curved_rf_goal_efficiency/prolate-scale-2.json",
+        "sha256": "f0b341e6cf389a5eec33db81542d5336106e6d22eeaafbb4eefe13d0bf962fc1",
+        "bytes": 11314
+      },
+      "reference_kind": "N03_modern_three_h_five_modes",
+      "reference_status": "PREPARATION_REQUIRED",
+      "max_events": 12,
+      "max_triangles": 100000
+    },
+    {
+      "id": "rounded-two-lobe-scale-1",
+      "family": "rounded-two-lobe",
+      "scale": 1,
+      "request": {
+        "path": "examples/curved_rf_goal_efficiency/rounded-two-lobe-scale-1.json",
+        "sha256": "7a72d4193b001af19f9895779dd6bb27b521867a024d58e35f5222891a7f7e8e",
+        "bytes": 122382
+      },
+      "reference_kind": "N03_modern_three_h_five_modes",
+      "reference_status": "PREPARATION_REQUIRED",
+      "max_events": 8,
+      "max_triangles": 250000
+    },
+    {
+      "id": "rounded-two-lobe-scale-2",
+      "family": "rounded-two-lobe",
+      "scale": 2,
+      "request": {
+        "path": "examples/curved_rf_goal_efficiency/rounded-two-lobe-scale-2.json",
+        "sha256": "cd783f76752a47a4192b6c4b1df697de86d6bc65c803787b254d4e1afca7288d",
+        "bytes": 121950
+      },
+      "reference_kind": "N03_modern_three_h_five_modes",
+      "reference_status": "PREPARATION_REQUIRED",
+      "max_events": 8,
+      "max_triangles": 250000
+    }
+  ],
+  "executions": [
+    {
+      "id": "sphere-scale-1-repetition-1-uniform",
+      "case_id": "sphere-scale-1",
+      "repetition": 1,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-1-repetition-1-rf_goal",
+      "case_id": "sphere-scale-1",
+      "repetition": 1,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-1-repetition-1-uniform_when_rf_passes",
+      "case_id": "sphere-scale-1",
+      "repetition": 1,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-1-repetition-2-uniform_when_rf_passes",
+      "case_id": "sphere-scale-1",
+      "repetition": 2,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-1-repetition-2-rf_goal",
+      "case_id": "sphere-scale-1",
+      "repetition": 2,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-1-repetition-2-uniform",
+      "case_id": "sphere-scale-1",
+      "repetition": 2,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-2-repetition-1-uniform",
+      "case_id": "sphere-scale-2",
+      "repetition": 1,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-2-repetition-1-rf_goal",
+      "case_id": "sphere-scale-2",
+      "repetition": 1,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-2-repetition-1-uniform_when_rf_passes",
+      "case_id": "sphere-scale-2",
+      "repetition": 1,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-2-repetition-2-uniform_when_rf_passes",
+      "case_id": "sphere-scale-2",
+      "repetition": 2,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-2-repetition-2-rf_goal",
+      "case_id": "sphere-scale-2",
+      "repetition": 2,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "sphere-scale-2-repetition-2-uniform",
+      "case_id": "sphere-scale-2",
+      "repetition": 2,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-1-repetition-1-uniform",
+      "case_id": "prolate-scale-1",
+      "repetition": 1,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-1-repetition-1-rf_goal",
+      "case_id": "prolate-scale-1",
+      "repetition": 1,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-1-repetition-1-uniform_when_rf_passes",
+      "case_id": "prolate-scale-1",
+      "repetition": 1,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-1-repetition-2-uniform_when_rf_passes",
+      "case_id": "prolate-scale-1",
+      "repetition": 2,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-1-repetition-2-rf_goal",
+      "case_id": "prolate-scale-1",
+      "repetition": 2,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-1-repetition-2-uniform",
+      "case_id": "prolate-scale-1",
+      "repetition": 2,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-2-repetition-1-uniform",
+      "case_id": "prolate-scale-2",
+      "repetition": 1,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-2-repetition-1-rf_goal",
+      "case_id": "prolate-scale-2",
+      "repetition": 1,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-2-repetition-1-uniform_when_rf_passes",
+      "case_id": "prolate-scale-2",
+      "repetition": 1,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-2-repetition-2-uniform_when_rf_passes",
+      "case_id": "prolate-scale-2",
+      "repetition": 2,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-2-repetition-2-rf_goal",
+      "case_id": "prolate-scale-2",
+      "repetition": 2,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "prolate-scale-2-repetition-2-uniform",
+      "case_id": "prolate-scale-2",
+      "repetition": 2,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-1-repetition-1-uniform",
+      "case_id": "rounded-two-lobe-scale-1",
+      "repetition": 1,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-1-repetition-1-rf_goal",
+      "case_id": "rounded-two-lobe-scale-1",
+      "repetition": 1,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-1-repetition-1-uniform_when_rf_passes",
+      "case_id": "rounded-two-lobe-scale-1",
+      "repetition": 1,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-1-repetition-2-uniform_when_rf_passes",
+      "case_id": "rounded-two-lobe-scale-1",
+      "repetition": 2,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-1-repetition-2-rf_goal",
+      "case_id": "rounded-two-lobe-scale-1",
+      "repetition": 2,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-1-repetition-2-uniform",
+      "case_id": "rounded-two-lobe-scale-1",
+      "repetition": 2,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-2-repetition-1-uniform",
+      "case_id": "rounded-two-lobe-scale-2",
+      "repetition": 1,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-2-repetition-1-rf_goal",
+      "case_id": "rounded-two-lobe-scale-2",
+      "repetition": 1,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-2-repetition-1-uniform_when_rf_passes",
+      "case_id": "rounded-two-lobe-scale-2",
+      "repetition": 1,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-2-repetition-2-uniform_when_rf_passes",
+      "case_id": "rounded-two-lobe-scale-2",
+      "repetition": 2,
+      "method": "uniform_when_rf_passes",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-2-repetition-2-rf_goal",
+      "case_id": "rounded-two-lobe-scale-2",
+      "repetition": 2,
+      "method": "rf_goal",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "rounded-two-lobe-scale-2-repetition-2-uniform",
+      "case_id": "rounded-two-lobe-scale-2",
+      "repetition": 2,
+      "method": "uniform",
+      "status": "NOT_RUN"
+    }
+  ],
+  "expected_native_executions": 36,
+  "limits": {
+    "frequency_hz": 0.0001,
+    "r_over_q_accelerator_ohm": 0.005,
+    "r_over_q_circuit_ohm": 0.005,
+    "geometry_factor_ohm": 0.005,
+    "epk_over_eacc": 0.01,
+    "bpk_over_eacc_mt_per_mv_per_m": 0.01,
+    "electric_relative_l2": 0.005,
+    "magnetic_relative_l2": 0.005,
+    "axis_ez_relative_l2": 0.01
+  },
+  "resources": {
+    "wall_limit_seconds": 3600,
+    "memory_limit_bytes": 34359738368,
+    "blas_threads": 1,
+    "concurrency": 1,
+    "reference_grid_orders": [
+      16,
+      24
+    ],
+    "reference_h_m": [
+      0.005,
+      0.0025,
+      0.00125
+    ]
+  },
+  "normalization": {
+    "energy_j": "scale**2",
+    "beta": 1.0,
+    "conductivity_s_per_m": 58000000.0,
+    "phasor": "peak"
+  },
+  "physical_error_bound": null,
+  "physical_acceptance_status": "NOT_RUN",
+  "new_fem_solves": 0
+}

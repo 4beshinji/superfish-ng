@@ -1,5 +1,13 @@
 # 互換開発の作業分割 v0
 
+2026-10-13：[RF版5対照の独立参照03](CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を受入。六ケース/12全域gridの元場・三h・全mode・RF・相似を確認、22個別unitがPASS。新native精度はNOT_RUN、実worker/全費用/36行と保存GUIは04〜06、親N04と原32互換要件は継続。
+
+2026-10-13：[RF版5対照の固定入力02](CURVED_RF_GOAL_EFFICIENCY_INPUT.md)を受入。新12＋旧関連6の18個別unitがPASS、元全要求/公開選択/停止とN05計画は不変。次は03の全領域独立参照package、実36行の物理精度/全費用/保存GUIと親N04は未受入。
+
+2026-10-13：[RF版5対照仕様01](CURVED_RF_GOAL_EFFICIENCY_SPEC.md)を受入。元branch/棄却event・表面方針と全費用、三形状二尺度の独立全場/RF条件を固定し、必須02〜06を追加した。選択移送/境界生成01〜06は受入済みだが、RF対照の実装/36実行/保存GUIは未完。親N04はIN_PROGRESSを維持する。
+
+2026-09-22：[B03必須範囲と不足仕様](development-plan/B03-required-scope.md)で全32行の既存要件を維持し、限定入力/期待量/単位/比較方法を対応付けた。未知仕様の採否とC00.Vは未確認。TM旧集約の欠落とTE集約hash一致を区別する。
+
 現行の受入範囲・担当親・担当カード・証拠の現存/欠落は[B01対応台帳](development-plan/B01-ledger.md)を参照する。以下の日付付き記録は履歴である。
 
 2026-09-16 JST：本書の残要件を[実行用の90作業カード](development-plan/README.md)へ分解した。現在の受入範囲を維持し、対象版未確認による条件付き追加も別管理する。本書は親要件、リンク先は実行順とコミット境界を示す。

@@ -1,5 +1,45 @@
 # 未完課題のコミット単位開発計画
 
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[随伴C-call計測と部分保存/資源停止](../CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)。元数学sourceをbyte維持し、随伴関数内だけのC観測で長球の元全branch一致・factorization/C solve各2回・新FEM0を確認。書込中の実SIGINT/45秒wall/192MiB RSS上限で完全prefixと部分stagingを分離保持、SIGINT後の再開もPASS。新worker7 FEMの全73配列/全RFが元と一致、Ue/Uh最大差1.333e-15。unit内5 FEMは別計上、新8＋直接11の19個別unit分割PASS。旧観測版1の四prefixも維持。元1481中他1478源byte不変、新IO/観測/test込み1484。初稿源SHA停止/Mock ERRORと観測負荷の大きい初稿を保全、全handle終端。新固定36/seed/full/GUI/legacy0。全process manifest/最終書込費用・CLI・幾何/追跡予算停止のreader整合と一般kill再開は残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[実SIGINT・二段階再開・追加一様確認](../CURVED_RF_GOAL_EFFICIENCY_RESUME.md)。新11native完了＋実中断1試行を保持。球の元checkpointから1＋2event再開と三方式各1event継続、無中断4eventを比較し、164 native配列/64 sample配列・全RF/独立誤差が完全一致。初回達成1/確認3、公開3eventは凍結。Ue/Uh最大差3.442e-15、長球棄却320から元親80→113局所の再開計画も新FEM0で一致。新4＋直接7の11個別unit、元/新版archiveの親連鎖再生を確認。元1479中他1477源byte不変、新resume/test込み1481。旧費用・失敗/終了-2と全束縛を保持し、新固定36/seed/full/GUI/legacy0。C線形solve/全process manifest・CLI・資源停止/部分書込が残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[全native・全場・停止判断の保存再検証](../CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)。球三方式/長球rf_goalの全12event・24sample・5,007,024成分が一致、4process終了0・新FEM0。親/棄却probe/確認/初回達成/初期ID/実Erの6再hash改変を拒否し、新7＋直接1の8個別unitを分割PASS。元費用を保持しRSS/投入時計/phase算術を検査、初回JSON型ERRORと費用guard先行FAILを保全。元1477中他1476源byte不変、新reader/test込み1479、既定writer/科学再構築ASTと全1,756束縛を監査。全handle終端、seed/full/CLI/GUI/固定36実行0。実中止再開・追加一様確認・C線形solve/全process費用・CLIが残り04未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[実native分岐/全域場/費用記録の接続](../CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)。球三方式と長球rf_goalの各3event、計12新FEM・四process終了0。長球80→320棄却→元親80から113局所の全分岐と公開完全再構築が一致、全場/実ID/両次数と未達を保持。球native TARGETS_METも比較側PAUSEDを維持。新/直接8個別unitを分割PASS、制御例外の元object/部分費用/alias復元も確認。元1475中他1474源byte不変、metric結合一源修正と新worker/testで1477。成功12native後の二記録guardはASTと元12状態へ再結合し新FEM0。全handle終端、seed/full/CLI/GUI/36benchmark0。実workerのfresh APIまで接続、全journal再生/実中止再開/追加一様確認/全観測とCLIは未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-04 **IN_PROGRESS**：[比較指標と採用祖先の停止判定](../CURVED_RF_GOAL_EFFICIENCY_WORKER.md)。同じ全域gridの元場/単一符号/前場ノルム・両R/Q/peak区間、両Gauss次数、三採用祖先と二一様辺を検査。棄却probe/local・native TARGETS_METの誤昇格を拒否、新9＋旧accuracy8の17個別unitを分割PASS。実追跡のnull IDによる初稿ERRORを保全し、非採用UNVERIFIEDとして保持する修正後branch5件0.011秒・終了0。元1473源byte不変、新2源込み1475、新FEM/seed/full/CLI/GUI/36benchmark0。実worker/全event費用/保存完全再生/中止再開は未実装で04は未完。全141は91 DONE/3 IN_PROGRESS/47 PLANNED、原123は76/2/45、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-03 **DONE**：[独立全域参照の六ケース受入](../CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)。球の独立解析式と長球/丸めの三h・全五modeをGauss16/24へ結合。全12grid・体積1181440/軸56800点、Green三積分差最大5.885e-15・全E/H/軸/両R/Q/G/peakと二尺度を確認。新9＋旧関連13の22個別unitを分割PASS、長球準備38.833秒/最大RSS6.121 GB・終了0。旧source SHAの停止は元八fileの同一byte archiveで解消し、旧reader/現行源/閾値は不変。元1470源byte不変、新3源込み1473、全handle終端、新FEM/seed/full/GUI/36benchmark0。全141は91 DONE/2 IN_PROGRESS/48 PLANNED、原123は76/2/45。次は04の実worker/全event費用/保存完全再生、native精度/親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-02 **DONE**：[固定計画と全36要求のstrict検査](../CURVED_RF_GOAL_EFFICIENCY_INPUT.md)。13項目/全行/元Case・明示mesh/全ID/二方針・一様版4変換、厳密型/重複/未知/再hash改変/コピー隔離を確認。全11fileの読取前後SHAとsymlink/FIFO・検査中変更拒否、新12＋旧N05/版5関連6の18個別unitが10.751秒・終了0/PASS。先行未実装ImportErrorを保全、元1468源byte不変、新module/testの2源だけ追加。新FEM/seed/full/GUI/legacy0、handle60298終端。全141は90 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。次はADD-N04-rf-goal-03の独立全域参照、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-rf-goal-01 **DONE**：[版5の固定36実行/独立精度/全event費用仕様](../CURVED_RF_GOAL_EFFICIENCY_SPEC.md)。球/長球/丸め×二尺度×三方式×二反復、六元要求と全ID/壁/両R/Q/peak/全E/H/物理軸を固定。初期幾何のGreen/別P2積分差最大6.662e-16、4/8/32尺度・現行六拒否をFEM0で確認。初回probeの戻り値取扱いERRORを保全し修正。元1458源byte不変、独立候補79源と参照anchorの現存を確認。新比較器/参照package/実36行/GUIは後続02〜06、新unit/seed/full/GUI/legacy0。全141は89 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-rf-goal-02、親N04/原32要件/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-04 **DONE**：[生成条件の完全保存再生/CLI](../CURVED_BOUNDARY_REMESH_SAVED.md)。七項目文書・九検証値を全再構築し、元Project/設定/固定plan・全prefix/型/改変/予算/重複を検査。旧版/Study、原子的排他保存/中断/失敗と矩形閉式を計20個別unit（19＋1）で確認。実CLI六起動は終了0、版1/2文書API一致・再生/既定plan全byte一致。元生成bodyと当該入口以外のCLIはAST不変、FEM/RF核不変、新FEM/seed/full/GUI/legacy0。全136は86 DONE/2 IN_PROGRESS/48 PLANNED、原123は76/2/45。次は05のStudy/GUI・実worker、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-03 **DONE**：[元P2境界を分割する生成API](../CURVED_BOUNDARY_REMESH_CORE.md)。全区間/三幾何積分・Green/Hφ=r質量・親子K/M・4/8/32尺度、Case全サイズ、512/64→128/32粗化、固定履歴/事前予算/TE両端二タグ×反射を確認。初回41件40 PASS/1 ERRORを保全し、暗黙sourceがseed条件で再生成される不具合を元mesh明示で修正、一件再検査3.705秒PASS。計41個別PASS、旧bodyは版2分岐以外のAST一致、FEM/RF核不変。新FEM/seed/full/GUI/legacy0。全136は85 DONE/2 IN_PROGRESS/49 PLANNED、原123は76/2/45。次は04完全保存再生/CLI、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-02 **DONE**：[生成版2のstrict入力](../CURVED_BOUNDARY_REMESH_INPUT.md)。九共通項目＋一履歴の型/版/有限/予算/固定pattern/コピー・raw重複と旧版を、新9＋旧生成9の18個別unitで確認、16.186秒・終了0。先行helper未実装ERRORは保全。元1451対象の他1450源byte一致、新helper以外の旧module全AST一致、公開版2はまだ拒否。新FEM/seed/full/GUI/legacy0。全136は84 DONE/2 IN_PROGRESS/50 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-03、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-boundary-remesh-01 **DONE**：[元P2境界分割を変更する生成版2仕様](../CURVED_BOUNDARY_REMESH_SPEC.md)。矩形/非アフィンの現行サイズ拒否を先に再現し、既存固定履歴で境界32/28辺・全P2/三幾何積分保存を確認。旧64→32辺の粗化と再投影の体積差2.176e-4/拒否も確認。元1444源byte不変、solve禁止の表現probeのみで新FEM/unit/seed/full/GUI0。九項目＋一履歴・七項目保存・五後続と独立6FEMゲートを固定、公開版2は未実装。全136は83 DONE/2 IN_PROGRESS/51 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-02、親N04/全goalは継続。
+
+2026-10-13 ADD-N04-selection-charts-06 **DONE**：[独立幾何/行列/6native・全保存場GUIの受入](../CURVED_SELECTION_CHARTS_ACCEPTANCE.md)。全有理被覆/別P2三積分・Green/非アフィン4・8・32尺度、親子K/M最大2.617e-17・Ritz非増加、f/RF尺度最大5.329e-15・全物理体積重み元E/H尺度最大1.191e-11を原gate内で確認。6新求解は1＋5に分割し既存完了nativeを再利用、全科学ゲート後のCLI stdout解析ERRORは元reportを保全しCLIだけ修正。六API/CLI probe一致、実Chrome55操作・全6保存場の9file/10配列byte完全一致・元Project/全RF一致、GUI新FEM0。元源固定と科学helper AST不変、別レビュー源変更は区別、全handle/server/browser終端。新unit/seed/full/legacy0、連続物理精度/peakはUNVERIFIED・上界null。全131は82 DONE/2 IN_PROGRESS/47 PLANNED、原123は76/2/45。次はADD-N04-boundary-remesh-01、親N04/原32要件/全goalは継続。
+
+
+2026-10-13 ADD-N04-selection-charts-05 **DONE**：[異なる初期接続への選択移送GUI](../CURVED_SELECTION_CHARTS_GUI.md)。引継ぎ差分を完成し、新版43/無変更旧版18実Chrome操作とHTTP2＋直接mesh4の6個別unitを分割受入。raw/予算/途中応答/保存/版1復元/履歴を確認、元native全10配列・全mode/RF完全一致。int/float表記によるCase SHA/CSVとkernel metadata差を別記。元1440の他1437源byte一致、専用FEM0/旧GUI回帰1、全server/worker/browser終端。初回fixture/比較器ERRORを保全し数値核/許容差不変、新seed/full/legacy0。別作業review scriptを変更/コミットしない。全131は81 DONE/2 IN_PROGRESS/48 PLANNED、原123は76/2/45。次は06の専用独立幾何/行列/6求解、親N04/原32要件/全goalは継続。
+
+
+2026-09-22：P02を回復核a・所有履歴b・調整c・GUI監査dへ分割。原90カードを維持、TSVは115行。親P02は全子条件受入まで未完。[分割仕様](03-planar.md#p02-a)。
+
+2026-10-07 N02 **DONE**：[保存3×3行列の別量評価・原条件受入](../N02_GEOMETRY_SURFACE_MATRIX.md)。厳密な全Case九点・元source mesh/個別ID・completion全byteを保持し、幾何/FEM/求積12・16・24/元場/離散peak上下界を別判定。新10＋直接7の17個別unitを分割受入。新粗い三モード九点は7新FEM＋2再利用、243.639秒・終了0、全ID/場/求積成立でも初回RQ/磁場peak未達で正しくFAIL。元楕円9 nativeは391.579秒・終了0、原五量/全変化/場/求積/全ゲート完全一致PASS、新FEM0。CLI検査側参照ディレクトリFAILとreceipt SHAキー誤記を保全し必要分だけ修正、数値再実行なし。元1194源の変更はCLI一つ、旧helper/数値body AST同一・新3源込み1197前後固定。全handle終端、新seed/full/legacy0。独立物理/物理peak誤差は未確認/nullを維持。原123は70 DONE/2 IN_PROGRESS（H17/C07-planar）/51 PLANNED、親G03/N03/互換32要件/全goalは継続。次はN03各滑らかな実精度系列・両側細分。rawは out/n02-surface-matrix-20261007/acceptance.json。
+
+**[現行入口：次の着手・依存待ち・受入証拠・実行中処理](CURRENT.md)**。以下の日付付き追記は履歴。現行入口の更新手順に従い、古い進捗を新しい開始命令にしない。
+
+H16-d/親H16受入（2026-09-22）：[材料調整・保存・GUI全条件監査](../MATERIAL_HPHI_TUNING_ACCEPTANCE.md)。最後の実Chromeは調整回復/最終細分4、中止/再開5、新サーバー軸RF再生2、不正物理拒否5項目が分割PASS。全native/Project取込一致、回復元24ファイル・全385実装hash不変、外部要求0、全handle終端。既存数値ログと実装差分を照合し、材料核の無変更を確認。次は依存が満たされたB02の対象版・入力資料調査。H17はB03を待つ。原90カードと全goalは継続。
+
+H16-c受入（2026-09-22）：[所有保存・履歴・CLI/worker条件別監査](../MATERIAL_HPHI_OPERATION_ACCEPTANCE.md)。最後の実CLI回復検索→worker最終細分・元移動/管理器再起動と、真空軸/材料/穴ProjectのRF・再importを新2件601.458秒PASSで確認。解析TEM、元18ファイルのbyteコピー、全24ファイル不変、両R/Q/N/A・非真空区間/未対応損失拒否まで成立。全handle終端。次はH16-dのGUI操作と親H16監査。原90カードと全goalは継続。
+
 2026-09-16 JST。作業者への引渡し用。基準は `6484e309785b218d4e950efb579b3ad8c38c327e`（平面調整GUI接続後）。
 
 **対象は未受入の22親課題全てと、受入済みC02の追加互換部分集合。90枚の作業カードを9工程に分けた。**
@@ -9,7 +49,41 @@
 そのため90枚は確定した最終コミット数ではない。仕様確定で追加が生じる箇所と、追加を誰がどう具体化するかも本計画の対象とする。
 現在確認できない仕様の実装方式を確定済みとは扱わない。各カードの検証は今後の作業であり、本計画作成時には実行していない。
 
+2026-09-21：実装時の分割規則に従いH09-a〜dの4子カードを追加した。原計画90カードは維持し、現在のTSVは子カードを含む94行。H09親は全子工程受入まで未完了。
+
+2026-09-21追記：H09は全子工程を受入済み。H10-a〜cの3子カードを追加し、TSVは97行。H10-a〜cと親H10は[検索/最終細分への回復接続と条件別監査](../HPHI_TUNING_IDENTITY_RECOVERY.md)まで受入済み。次はH11。全計画は未完了。
+
+2026-09-21追記：H11受入済み。H12を元場比較a/三水準診断bに分割し、TSVは99行（原計画90カードを維持）。[H12-a](../CURVED_HPHI_FIELDS.md)と[H12-b/親H12の監査](../CURVED_HPHI_CONVERGENCE.md)を受入済み、次はH13。全goalは未完了。
+
+2026-09-21追記：H13を細分a/追跡核b/調整回復c/所有CLI-worker d/実GUI監査eに分割し、TSVは104行（原計画90カードを維持）。[H13-a](../CURVED_HPHI_REFINEMENT.md)は受入済み、次はH13-b。親H13は全子工程の受入まで未完了。
+
+2026-09-22追記：H13-a〜c受入済み。H13-dの[所有調整API](../CURVED_HPHI_TUNING_SAVED.md)第一段階を実装・検証。独立追跡履歴とCLI/worker、中止/管理器再起動、H13-e GUI監査は残る。H13-d/親H13/全goalは未完了。
+
+2026-09-22追記：H13-dの[全元native所有・CLI/worker・回復操作](../CURVED_HPHI_TUNING_RECOVERY_SAVED.md)を受入。次はH13-e実GUI/親監査。H08依存のH14仕様も待機中に[固定材料界面比較契約](../MATERIAL_HPHI_TRACKING.md)として受入済み。原計画90カードと全goalを維持し、親H13/材料実装H15以降は未完了。
+
+2026-09-22追記：H13-eの[曲線調整GUI第一段階](../CURVED_HPHI_GUI.md)を接続。API/worker分割検査とChrome5項目を確認。実中止/サーバー再起動後表示、曲線追跡/履歴/回復の実GUIと親監査は残り、H13-e/親H13/全goalは未完了。
+
+2026-09-22追記：H15を材料領域/界面a・物理重みの場/射影b・有限スペクトル/追跡監査cに分割。元90カードを維持し、TSVは107行。全子カードはPLANNED、H15/H16は未実装。H13-eのHTTP修正後の長時間操作検査中に、srcを変更せず次工程の依存と独立検査を具体化した。
+
+2026-09-22追記：H13-eと親H13を[全条件監査](../CURVED_HPHI_ACCEPTANCE.md)まで受入。大きいcheckpointのHTTP不備を実Chromeで再現・修正し、穴付き中止/再開/新サーバー元場復元、調整/履歴の明示回復を分割検証。全handle終端。次はH15-a、全goalは未完了。
+
+H16-b受入（2026-09-22）：[材料実調整・明示ID回復](../MATERIAL_HPHI_TUNING.md)。二層uniform/異率伸長の独立解析目標、実最終細分、非真空一様材料の実TEM回復/真縮退拒否、初回guardと別粗細gateを確認。新8件は分割PASS、全handle終端。粗いn=4の区間重なりによる未確認を保持し、n=6は190.411秒PASS。次はH16-cの所有保存/履歴/CLI-worker。親H16/全goalは継続。
+
+H16-a受入（2026-09-22）：[材料候補・最終細分・比較空間](../MATERIAL_HPHI_TUNE_TRIALS.md)を接続。二段材料K/M移送、検索→実最終細分、穴付き軸の非一様変形/全加速座標、実E/H個別IDを検証。新4件＋関連6件は分割PASS、全handle終端。次はH16-bの実調整runnerと明示ID回復。親H16/全goalは継続。
+
+H16-a進行中（2026-09-22）：[材料領域を保つ直線細分](../MATERIAL_HPHI_REFINEMENT.md)を実装。領域体積/全界面、P1/P2材料K/M移送、多項式/定数、予算を検査。次は固定材料形状則と試行比較。H16をa〜dへ分割し、原90カードを維持、TSVは111行。親H16/全goalは未完了。
+
+H15-c/親H15受入（2026-09-22）：[全条件監査](../MATERIAL_HPHI_ACCEPTANCE.md)。独立再メッシュ/非一様正逆、P1/P2真空追跡極限、実材料順位交換/縮退、E/H/B尺度・片側界面を確認。新5件＋関連1件は分割PASS、専用validator32例96モードPASS、全handle終端。次はH16の材料調整/保存/CLI-worker/GUI。原計画と全goalは継続。
+
+H15-b受入（2026-09-22）：[材料元E/H比較](../MATERIAL_HPHI_FIELDS.md)と[mu_r質量射影](../MATERIAL_HPHI_PROJECTION.md)を実装。独立積分/材料別質量/射影保存と損失/正逆写像/真空極限/元RF不変を検証。射影新6件＋関連場5件は分割証拠でPASS、全handle終端。次はH15-cの材料有限スペクトルとID追跡。親H15/全goalは未完了。
+
+2026-09-22追記：H15-aの[固定材料領域/全界面比較](../MATERIAL_HPHI_COMPARISON.md)を受入。独立積分と全片側セル対応、微小界面ずれ拒否を検査。次はH15-b、親H15/全goalは継続。
+
 ## 文書構成
+
+2026-10-13：科学レビューを受け、[リファクタリング11カード](../REFACTORING_PLAN.md)を
+本計画へ組み込んだ。RF-11→RF-01を次の長時間受入前に置き、以後の抽出工程を配布/統合監査へ接続する。
+現行141枚に11枚をPLANNEDで追加し全152枚。原カードの状態と過去の件数記録は保持する。
 
 | 文書 | カード | 内容 |
 |---|---|---|
@@ -23,14 +97,15 @@
 | [07 静的場と操作](07-static-and-integration.md) | S01〜S07 | 実装済み専用範囲の版照合、必要差分、O02 |
 | [08 外部依存](08-external.md) | L01〜L07 | 専用ツール、磁石設計、熱、実機、追加作業票 |
 | [09 統合と配布](09-release.md) | V01〜V05 | 対象環境、パッケージ、全体検証、実業務、完了監査 |
-| [作業一覧TSV](tasks.tsv) | 全90カード | 表計算/タスク管理への転記用。ID・親・依存・種別・状態・文書 |
+| [リファクタリング工程](../REFACTORING_PLAN.md) | RF-01〜RF-11 | 科学的整合性修正、検証来歴、責務分離、互換検査と撤回 |
+| [作業一覧TSV](tasks.tsv) | 現行152カード | 表計算/タスク管理への転記用。ID・親・依存・種別・状態・文書 |
 
 **カードIDと親課題IDは別物。** 例えばカード`P01`の親は`P02/D02`である。
 依存欄のリンクはカードIDを指す。TSVの`task_id`と`parent_ids`も分けている。
 
 ## 根拠と適用順
 
-1. 現在のユーザー指示と[AGENTS.md](../../AGENTS.md)。本依頼は全残件の計画作成であり、実装/外部公開の実行依頼ではない。
+1. 現在のユーザー指示と[AGENTS.md](../../AGENTS.md)。2026-09-21にユーザーが全計画の実装・検証を自走するgoalを指定した。外部公開の依頼は含まない。
 2. [物理仕様](../PHYSICS.md)、[来歴](../PROVENANCE.md)、[現行引継ぎ](../CODEX_HANDOFF.md)。
 3. [親課題の要件](../COMPATIBILITY_PLAN.md)、[対応表](../COMPATIBILITY_MATRIX.md)、[バックログ](../BACKLOG.md)、[実装状況](../IMPLEMENTATION_STATUS.md)。
 4. 最新の専用受入文書とソース。古い日付付きの「未接続」「次は」より、同要件の新しい受入証拠を優先する。
@@ -52,7 +127,7 @@ AGENTS.mdの原配置 `/home/sin/code/superfish` と、CODEX_HANDOFF.mdが記録
 | C04 | 個別比較はあるが全必須機能の回帰は未受入 | C07の6分割、C08 |
 | G03 | 構築10/診断13は接続済み。旧曲線入力と物理精度の確認 | C01〜C03、N01〜N04 |
 | N03 | 離散ピーク/固定領域収束は実装済み。一般例/幾何差/独立物理の検証 | N01〜N04 |
-| N04 | 適応停止/保存/GUIは実装済み。一般ケースの精度対費用 | N05〜N08 |
+| N04 | [N08の公開保存/現行GUIと三形状の精度対費用](../N08_ACCEPTANCE.md)を受入。初期接続が異なる選択移送・境界分割変更生成・RF版5固有対照は継続 | N05〜N08、[ADD-N04三仕様カード](../N04_REMAINING_CARDS.md) |
 | D02 | 平面GUIまで接続。Hφ、平面一般形状/回復、TM/TE残要件 | H01〜H18、P01〜P09、D01〜D04 |
 | D03 | 曲線RF探索版1〜3は実装済み。一般形状/追加物理/最終制約検証 | D05〜D11 |
 | P01 | TE solver/保存/曲線対称workflowは接続済み。直線形状/親要件照合 | D01/D03/D04、C07-TE |
@@ -78,6 +153,11 @@ X01（m>0/3D/開放ポート等）は元計画どおり必須集合外。本依�
 
 一人の作業者が上から進めることを想定する。工程が独立であることは並列エージェント起動の指示ではない。
 日付や工数の確約は置かず、各カードの先行条件が揃った時点で着手する。
+
+2026-10-13の挿入工程は[CURRENT](CURRENT.md)と[詳細計画](../REFACTORING_PLAN.md#順序と区切り)を優先する。
+進行中作業のコミット境界でRF-11→RF-01→RF-09→RF-02→RF-03を進める。
+RF-04〜RF-08は利用経路ごとの移行へ、RF-10はその費用監査へ置く。
+下の機能開発順は維持し、既にDONEのカードをやり直さない。
 
 1. **B01**で基準を固定し、B04とL05の運用を確認する。
 2. **H01〜H07**で真空Hφの最小調整workflowを完成させる。最初の具体的な実装区切りであり、Hφ全体/D02全体の完了ではない。
@@ -199,7 +279,8 @@ OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/validate.py \
 ```text
 このcheckoutのAGENTS.mdとREADME.md、docs/PHYSICS.md、docs/PROVENANCE.md、
 docs/CODEX_HANDOFF.mdを読み、docs/development-plan/README.mdの計画を実行する。
-まずB01を1コミットで完了し、次はH01〜H07を最初の実装区切りとする。
+現行の開始順はCURRENT.mdとtasks.tsvを確認する。DONEのB01/H01〜H07をやり直さない。
+科学レビュー後は進行中作業のコミット境界でRF-11→RF-01から始め、登録したRF全11枚を完了判定に含める。
 各カードの先行条件を確認し、仕様・独立不変量・strict拒否を先に具体化してから実装する。
 親課題とカードID、既存受入と新しい部分受入を混同しない。
 未確定の対象版/実機/周辺ツールはB/C/S/Lカードで調査し、推測実装しない。
@@ -217,3 +298,15 @@ docs/TESTING.mdに従って関連チェックを選び、通常の着手時に�
 全90カードのID・参照先・既存ファイル/テストモジュール・依存グラフを静的確認した。
 全計画への対応は資料に基づく計画監査であり、全製品コードの独立再レビューではない。
 新規外部資料/依存/旧版実行・FEM・unittest・GUI/hosted CIの実行はない。
+
+2026-09-21追記：H13-bは進行中。[曲線scalar質量射影](../CURVED_HPHI_PROJECTION.md)の段階検証を実施。有限比較スペクトル・追跡核を未完了のまま保持し、原90カード/TSV104行と親H13の受入条件を維持する。
+
+2026-09-21追記：H13-bの[曲線有限比較スペクトル](../CURVED_HPHI_SPECTRA.md)を段階検証。E/H追跡とguard接続が残り、H13-b/親H13を未完了に保持する。
+
+2026-09-21追記：H13-bは[曲線E/H追跡・条件別監査](../CURVED_HPHI_TRACKING.md)まで受入済み。次はH13-c。原90カード/TSV104行と親H13の保存/操作受入条件は維持する。
+
+2026-09-21追記：H13-cを開始。[元全P2形状変数・加速座標](../CURVED_HPHI_SHAPE.md)を段階検証済み。曲線調整探索・同P2最終細分・明示ID回復の接続が残る。原90カード/親H13の受入条件を維持する。
+
+2026-09-21追記：H13-cの[元候補/最終細分/追跡比較空間](../CURVED_HPHI_TUNE_TRIALS.md)を接続。調整runnerの目標・粗細差判定と明示ID回復は継続実装する。
+
+2026-09-22追記：H13-cの[曲線調整・明示ID回復の条件別監査](../CURVED_HPHI_TUNING.md)を完了。次はH13-dの所有履歴/調整保存とCLI-worker。原90カード/TSV104行と親H13のGUI全量一致・旧版互換性の受入条件を維持する。

@@ -10,7 +10,7 @@ import unittest
 
 from superfish_ng.gui_hphi import hphi_response
 from superfish_ng.jobs import JobManager
-from test_hphi_tuning_jobs import request
+from support.hphi_tuning_fixtures import straight_worker_request as request
 
 
 class HphiTuningGuiTests(unittest.TestCase):
@@ -68,6 +68,29 @@ class HphiTuningGuiTests(unittest.TestCase):
         self.assertEqual(
             self.call("hphi-replay-tune", document=final["serialized"]), final
         )
+        indices = self.call("hphi-tune-checkpoints", id=resumed)["indices"]
+        self.assertEqual(indices, [1, 2])
+        for index in indices:
+            with self.subTest(checkpoint=index):
+                opened = self.call("hphi-open-tune-checkpoint", id=resumed, index=index)
+                for key in ("trial_runs", "trial_sources_sha256", "trials"):
+                    self.assertEqual(opened["document"][key], final["document"][key][:index])
+        self.assertNotEqual(
+            checkpoint["document"]["trial_runs"], final["document"]["trial_runs"][:1]
+        )
+        for key in ("trial_sources_sha256", "trials"):
+            self.assertEqual(checkpoint["document"][key], final["document"][key][:1])
+        source = self.manager.directory(first)
+        moved = self.root / "original-moved"
+        source.rename(moved)
+        try:
+            self.assertEqual(self.call("hphi-tune-result", id=resumed), final)
+            for index in indices:
+                with self.subTest(moved_source_checkpoint=index):
+                    opened = self.call("hphi-open-tune-checkpoint", id=resumed, index=index)
+                    self.assertEqual(opened["document"]["trials"], final["document"]["trials"][:index])
+        finally:
+            moved.rename(source)
 
     def test_strict_transport_and_foreign_checkpoint_rejection(self):
         with self.assertRaises(ValueError):

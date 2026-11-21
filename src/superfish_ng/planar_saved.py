@@ -25,6 +25,10 @@ def _mesh_arrays(space):
 
 
 def planar_result(solution):
+    from .planar_curved_solver import PlanarCurvedSolution
+    if isinstance(solution,PlanarCurvedSolution):
+        from .planar_curved_saved import planar_curved_result
+        return planar_curved_result(solution)
     return dict(format='superfish_ng_planar_result',schema_version=solution.case.to_dict()['schema_version'],physics='cartesian_cutoff_rf',case=solution.case.to_dict(),
         conventions=dict(coordinates='x,y in metres; uniform longitudinal z; beta_z=0',volume_measure='dx dy; per unit z length',
             phasor='peak exp(+i omega t); real and +i quadrature fields explicitly named',
@@ -36,6 +40,10 @@ def planar_result(solution):
 
 
 def save_planar_run(case,solution,directory):
+    from .planar_curved import PlanarCurvedCase
+    if isinstance(case,PlanarCurvedCase):
+        from .planar_curved_saved import save_planar_curved_run
+        return save_planar_curved_run(case,solution,directory)
     if not isinstance(solution,PlanarSolution) or solution.case!=case:raise ValueError('planar case and solution disagree')
     space,k,m,free=planar_matrices(case)
     for name,array in _mesh_arrays(space).items():
@@ -75,10 +83,15 @@ def read_planar_run(directory):
     directory=Path(directory);raw=_snapshot(directory)
     manifest=parse_json(raw['manifest.json'].decode('utf-8'))
     keys(manifest,['format','schema_version','files'],['format','schema_version','files'],'planar manifest')
-    if manifest['format']!='superfish_ng_planar_manifest' or type(manifest['schema_version']) is not int or manifest['schema_version'] not in (1,2):
+    if manifest['format']!='superfish_ng_planar_manifest' or type(manifest['schema_version']) is not int or manifest['schema_version'] not in (1,2,3):
         raise ValueError('unsupported planar manifest format')
     if manifest['files']!={name:hashlib.sha256(raw[name]).hexdigest() for name in sorted(FILES)}:
         raise ValueError('planar native content hash mismatch')
+    if manifest['schema_version']==3:
+        from .planar_curved_saved import read_planar_curved_run
+        solution=read_planar_curved_run(directory)
+        if _snapshot(directory)!=raw:raise ValueError('planar native files changed during verification')
+        return solution
     case=planar_case_from_dict(parse_json(raw['case.json'].decode('utf-8')))
     if manifest['schema_version']!=case.to_dict()['schema_version']:raise ValueError('planar manifest and case versions disagree')
     space,k,m,free=planar_matrices(case);mesh=_arrays(raw['mesh.npz']);expected=_mesh_arrays(space)

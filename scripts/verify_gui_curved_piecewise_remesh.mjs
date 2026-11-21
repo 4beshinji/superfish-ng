@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Real local browser input and computation. Requires a running GUI and Chrome.
-import { spawn } from "node:child_process";
-import { mkdtemp, readFile, writeFile, mkdir, readdir } from "node:fs/promises";
+import { launchBrowser } from "./browser-session.mjs";
+import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
@@ -29,21 +29,13 @@ if (!args["--url"] || !args["--out"] || !args["--sources"])
   );
 const out = resolve(args["--out"]);
 await mkdir(out, { recursive: false });
-const profile = await mkdtemp("/tmp/ng-gui-chrome-");
-const browser = spawn("/usr/bin/google-chrome", [
-  "--headless",
-  "--remote-debugging-port=0",
-  `--user-data-dir=${profile}`,
-  "--disable-background-networking",
-  "--no-first-run",
-  "about:blank",
-]);
+const { profile, browser, dispose } = await launchBrowser();
 let stderr = "",
   ws,
   id = 0;
 const pending = new Map(),
   sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-browser.stderr.on("data", (b) => (stderr += b));
+browser.stderr.on("data", (b) => (stderr = (stderr + b).slice(-65536)));
 const report = {
   passed: false,
   node: process.version,
@@ -306,5 +298,10 @@ try {
 } catch (e) {
   report.error=String(e);process.exitCode=1;console.error(e);
 } finally {
-  await writeFile(out+"/report.json",JSON.stringify(report,null,2));ws?.close();browser.kill();
+  try {
+    await writeFile(out + "/report.json", JSON.stringify(report, null, 2));
+  } finally {
+    for (const entry of pending.values()) clearTimeout(entry.timer);
+    try { ws?.close(); } finally { await dispose(); }
+  }
 }
