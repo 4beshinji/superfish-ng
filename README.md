@@ -1,27 +1,16 @@
 # Superfish-NG
 
-[固定36測定の中断後集計](docs/CURVED_RF_GOAL_INTERRUPTED_MEASUREMENTS.md)を保存しました。31行が終端（27確認達成・4未達）、32行目は途中保存、残る4行は未実行です。元出力のSHA・費用・判定を照合し、全計画の完了とは区別しています。測定の自動継続は停止しています。
+軸対称RF空洞の共振モードを計算する、独立実装のFEMソルバーです
+（研究シード v0.1.0、Python 3.10+ / NumPy・SciPy）。
+空洞形状を与えると、モード周波数・電磁場・RF積分量・表面ピーク場をSI単位で返します。
+CLI・Python API・ローカルブラウザーGUIの3入口から、単発の求解から寸法掃引・
+周波数調整・制約付きRF探索まで、同じ計算核で実行できます。
 
-[RF版5対照の独立全域参照](docs/CURVED_RF_GOAL_EFFICIENCY_REFERENCE.md)を六ケース・両Gauss次数で確認した。球の解析場と長球/丸めの全五modeを保持し、22個別unitと全域積分・相似則がPASS。[04の比較指標と採用祖先判定](docs/CURVED_RF_GOAL_EFFICIENCY_WORKER.md)も17個別unitで確認した。[新規workerの12求解](docs/CURVED_RF_GOAL_EFFICIENCY_EXECUTION.md)で実分岐と全場を確認した。[全保存再検証](docs/CURVED_RF_GOAL_EFFICIENCY_REPLAY.md)も12event・全24sampleの一致と6改変拒否を確認した。[実中断・二段階再開と追加一様確認](docs/CURVED_RF_GOAL_EFFICIENCY_RESUME.md)も無中断の全場/RFとの一致を確認した。[随伴C-call観測と部分保存/資源停止](docs/CURVED_RF_GOAL_EFFICIENCY_FAILURES.md)も限定受入した。[予算停止の保存整合と追加求解ゼロの再開](docs/CURVED_RF_GOAL_EFFICIENCY_BUDGET.md)も異常系として限定受入した。[専用CLIとprocess bundle](docs/CURVED_RF_GOAL_EFFICIENCY_CLI.md)は球一様の起動/再開/全保存再生を限定検証した。[一般kill再開とworker原条件](docs/CURVED_RF_GOAL_EFFICIENCY_WORKER_ACCEPTANCE.md)も受入した。固定36実行・GUIは後続で、親N04と全計画は未完。
-
-軸対称RF空洞のための独立実装 FEM ソルバー（`0.1.0` research seed、Python 3.10+ / NumPy・SciPy）。
-canonical スコープは **真空・閉 PEC・軸接続 m=0 TM** で、これを基準に形状・メッシュ・RF量・
-モード追跡・専用物理（平面 / 同軸 / 材料 Hφ / TE / 静磁・静電）を拡張しています。
-
-現在の受入範囲・証拠の現存/欠落は [B01対応台帳](docs/development-plan/B01-ledger.md)、
-日付ごとの実装履歴は [実装状況](docs/IMPLEMENTATION_STATUS.md) を参照してください。
-
-D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
-[直線真空](docs/VACUUM_HPHI_RF_CONVERGENCE.md)、[曲線P2](docs/CURVED_HPHI_RF_CONVERGENCE.md)の
-三水準を受入しています。元個別E/H・有限guard・量別収束が成立する場合だけ制約/採用を判定します。
-[評価の原条件監査](docs/HPHI_RF_DESIGN_ACCEPTANCE.md)は完了し、探索運用と全開発計画は継続中です。
-
-直線TMのprofile・段差・単一輪郭を元境界法則から調整する
-[版9の実装と原条件監査](docs/STRAIGHT_TM_TUNING_ACCEPTANCE.md)を受入しました。
-独立細分が未達なら停止し、個別ID・元要求・最終場・両R/Qを保存/CLI/GUIで保持します。
-
-直線TEも [版9調整の原条件監査](docs/STRAIGHT_TE_TUNING_ACCEPTANCE.md) を受入しました。
-元Eφと対称セクター/鏡映の順位を保ち、加速量と両R/QはN/Aで表示します。
+この実装は、POISSON/SUPERFISH系の軸対称空洞設計実務を公開数学・論文・公式仕様・
+ライセンス互換の現代ライブラリのみから独立に置き換えるという
+[長期目標](docs/ROADMAP.md)の研究段階です。歴史コードの移植ではなく、
+入力・計算・保存の契約を明示して構築した別実装であり、旧コードやバイナリの
+参照・再配布は行いません（[来歴](docs/PROVENANCE.md)）。
 
 ## 主な機能
 
@@ -29,19 +18,20 @@ D09の専用RF評価は [材料](docs/MATERIAL_HPHI_RF_CONVERGENCE.md)、
 |---|---|
 | 形状 | pillbox、折れ線・段差プロファイル、短円弧、z折返し単一輪郭、native 円/楕円/双曲線弧。軸接続・単一真空領域 |
 | メッシュ | タグ付き三角形の自動生成とJSON読込、P1/P2 場。曲線輪郭は二次幾何写像と固定幾何細分に対応 |
-| 物理 | 真空回転対称 m=0 TM、直線P1/P2・曲線P2 TE、PEC外壁、平坦z端の対称条件。専用経路として同軸・正半径 Hφ・軸接続穴付き・材料 Hφ・平面 / 静磁・静電 |
+| 物理 | 真空回転対称 m=0 TM（直線P1/P2・曲線P2）、軸対称TE、PEC外壁、平坦z端の対称条件。専用入口として同軸・正半径 Hφ・軸接続穴付き・材料 Hφ・平面RF・静磁・静電 |
 | 固有値 | 一般化対称固有値問題、SciPy/ARPACK shift-invert、複数モード |
 | 数値検査 | 固有値残差、質量内積での直交性、電気・磁気エネルギー整合 |
 | RF量 | f、U、表面抵抗、壁損失、Q0、G、通過位相を含む Vacc、R/Q（2定義）、シャントインピーダンス、TTF |
-| 表面電磁場 | P1/P2 片側場、曲線離散場の連続極値の囲い込みと角診断（物理ピークの収束保証とは区別） |
+| 表面電磁場 | P1/P2 片側場、曲線離散場の連続極値の囲い込みと角診断 |
 | モード追跡 | 重み付き部分空間・円筒/profile 写像・明示メッシュ対応。個別ID履歴・回復・再開、合流/分裂の集合継続 |
 | 掃引・最適化 | 形状 Study（逐次・適応・メッシュ切替）、制約付き RF 探索、周波数調整（1変数 / 多変数・曲線寸法） |
 | 出力 | 単位と規約を含む JSON、CSV、NPZ、ParaView 向け ASCII VTK |
 | GUI | ローカルブラウザー GUI（`plot` extra 必須）。編集・計算・中止・保存結果表示・掃引・収束比較 |
 
-対応状況の詳細は [現行の物理入口と構成](docs/ARCHITECTURE.md#current-architecture)、
-[物理仕様と限定受入](docs/PHYSICS.md#現行の範囲と読み方)、[モデル契約](docs/MODEL_CONTRACT.md)、
-[互換対応表](docs/COMPATIBILITY_MATRIX.md) を参照してください。専用Case・保存版・操作範囲を入口別に確認できます。
+全体の構成は [現行の物理入口と構成](docs/ARCHITECTURE.md#current-architecture)、
+物理仕様は [物理・数値仕様](docs/PHYSICS.md#現行の範囲と読み方)、
+入力版の契約は [モデル契約](docs/MODEL_CONTRACT.md)、
+入口別の対応状況は [互換対応表](docs/COMPATIBILITY_MATRIX.md) を参照してください。
 
 ## インストール
 
@@ -103,21 +93,49 @@ superfish-ng gui --workspace out/gui-workspace
 ```
 
 形状・円弧・繰り返し部分の編集、計算と中止、保存場・RF量の表示、寸法掃引・収束比較を
-CLI/Python と共通の入力・計算機能で扱えます。導線は [GUIガイド](docs/GUI_GUIDE.md)、
+CLI/Python と共通の入力・計算機能で扱えます。操作の手順は [GUIガイド](docs/GUI_GUIDE.md)、
 範囲と基準は [GUI開発計画](docs/GUI_IO_PLAN.md)・[受入記録](docs/GUI_ACCEPTANCE.md) を参照。
-
-曲線形状Studyでは、[元P2境界を保つ再メッシュ生成と保存復元](docs/CURVED_BOUNDARY_REMESH_GUI.md)を利用できます。
-元Project・生成条件・計画を完全再検証し、メッシュの幾何条件とRF精度を分けて表示します。
-[独立幾何・解析円筒・非アフィン尺度・全保存場の受入](docs/CURVED_BOUNDARY_REMESH_ACCEPTANCE.md)では、
-固定6求解を元の周波数・場・RF基準で確認しています。
+曲線形状Studyでは、元P2境界を保つ再メッシュ生成と保存復元も利用できます。
 
 ## 入力と出力
 
-- v3 入力は物理・座標・材料・領域を明示します。旧 v1/v2 の hash と数値結果は維持し、
-  未対応の追加物理はエラーとして拒否します。
-- すべて SI 単位・ピーク phasor 規約です。既定で全蓄積エネルギー 1 J に正規化します。
-- TM の R/Q は `|Vacc|²/(ωU)` と `|Vacc|²/(2ωU)` を別名で出力します。m=0 TE では軸加速量と両 R/Q を N/A として保存します。
-- 成果物は完了マーカーと hash を持ち、既存出力を上書きしません。仕様は [入出力仕様](docs/INPUT_OUTPUT.md)・[保存完了契約](docs/SAVE_COMPLETION.md) を参照。
+**入力（何を与えるか）**
+
+- v3 入力は物理・座標・材料・領域を明示します。旧 v1/v2 の hash と数値結果は維持します。
+- 外部で作成した境界タグ付き三角形メッシュも読み込めます（[メッシュ入力](docs/MESH_INPUT.md)）。
+- 未対応の追加物理は近似せず、エラーとして拒否します。
+
+**出力（何を受け取るか）**
+
+- すべて SI 単位・ピーク phasor 規約です。既定で全蓄積エネルギー 1 J に正規化するため、
+  モード間・形状間の相対比較ができます（運転電力 1 W の指定ではありません）。
+- TM の R/Q は `|Vacc|²/(ωU)` と `|Vacc|²/(2ωU)` を別名で出力します。
+  m=0 TE では軸加速量と両 R/Q を N/A として保存します。平面RFは単位長当たり U′ [J/m]・損失 [W/m]。
+- Q0 は理想 PEC 固有場に常伝導表面抵抗を適用する摂動推定です。
+  BCS 損失・複素固有周波数・放射損失を含む完全損失モデルではありません。
+- 成果物は完了マーカーと hash を持ち、既存出力を上書きしません。
+  仕様は [入出力仕様](docs/INPUT_OUTPUT.md)・[保存完了契約](docs/SAVE_COMPLETION.md) を参照。
+
+## 対応範囲とその境界
+
+対応する物理は入口ごとに区別されます。
+
+- **既定入口（`solve`）**: 真空・閉 PEC・軸接続 m=0 TM。直線輪郭 P1/P2、曲線輪郭 P2。
+- **専用入口**: 軸対称TE、閉じた同軸真空、正半径 Hφ、軸接続穴付き、材料 Hφ、平面RF、
+  静磁・静電（軸対称・平面・off-axis）。それぞれ専用の Case/CLI/保存形式を持ちます。
+- 入口ごとの対応・版付きの限定受入は [物理入口表](docs/ARCHITECTURE.md#rf固有問題) と
+  [B01対応台帳](docs/development-plan/B01-ledger.md) で確認できます。
+
+数値の解釈に関する境界です。いずれも未対応の入力は黙って近似せず拒否します。
+
+- プロファイル系は `R(z)>0`、arc_profile は z 非減少の短円弧に限定します。
+  一般 CAD・任意 RFQ の直接入力は対象外です。
+- 表面場の囲い込みは離散場の連続極値に対する保証であり、物理ピークの収束証明とは別判定です。
+  ピークの収束は専用の収束検査で別に確認します。
+- 周波数順のモード番号は物理モード名ではありません。掃引中の個別モード追跡は明示写像で提供し、
+  一般形状の全自動対応は開発中です。
+- 小さな固有値残差は離散化誤差が小さいことの証明ではないため、
+  周波数・場・RF積分・表面場の検査は別々に管理します。
 
 ## 検証
 
@@ -135,43 +153,43 @@ seed 例題の数値だけを確認する場合:
 OPENBLAS_NUM_THREADS=1 python scripts/validate.py --skip-tests --out out/validation-seed-new
 ```
 
-`benchmarks/validation/` に納品時の実測ログと解析比較、`docs/VALIDATION_REPORT.md` に
-数値と解釈を収録しています。NGSolve との独立照合は [独立比較](docs/INDEPENDENT_COMPARISON.md) を参照。
+受け取れる検証証拠は次のとおりです。
 
-## 重要な制約
+- `benchmarks/validation/` の実測ログと解析比較、[検証報告](docs/VALIDATION_REPORT.md) の数値と解釈。
+- NGSolve との独立照合（[独立比較](docs/INDEPENDENT_COMPARISON.md)）。
+- 既知形状についての Wine 版 SUPERFISH との限定照合
+  （[照合記録](docs/SUPERFISH_COMPARISON.md)・[比較環境](docs/WINE_REFERENCE_ENVIRONMENT.md)）。
 
-- canonical スコープは真空・閉 PEC・軸接続 m=0 TM です。一般形状の TE 追跡、m>0 の双極・四重極、
-  軸接続の穴付き領域・曲線内導体、非線形材料の一般経路などは未実装または専用経路に限定されます。
-- プロファイル系は `R(z)>0`、arc_profile は z 非減少の短円弧に限定します。一般 CAD・任意 RFQ は扱いません。
-- Q0 は理想 PEC 固有場に常伝導表面抵抗を適用する摂動推定です。複素固有周波数、超伝導 BCS 損失、放射損失は計算しません。
-- 電磁場はピーク phasor で、既定は全蓄積エネルギー 1 J 正規化です（運転電力 1 W の指定ではありません）。
-- 周波数順のモード番号は物理モード名ではありません。明示写像による追跡に部分対応しますが、一般形状の自動対応は未完です。
-- 既知形状について Wine 版 SUPERFISH との限定照合がありますが、測定との比較・全範囲の互換受入は未実施です。
-  GUI の計算完了はメッシュ収束を意味しません。
+これらは実装の verification であり、実測との比較・全入力範囲の互換受入は未実施です。
+GUI の計算完了はメッシュ収束を意味しません。
+開発中機能の受入状態は台帳（[実装状況](docs/IMPLEMENTATION_STATUS.md)・
+[開発バックログ](docs/BACKLOG.md)）で管理します。
 
 ## ドキュメント
 
-| ファイル | 用途 |
+| 読む目的 | 文書 |
 |---|---|
-| [docs/PHYSICS.md](docs/PHYSICS.md) | 軸上処理・弱形式・境界条件・RF量の定義 |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | モジュール責務、ADR、将来のバックエンド境界 |
-| [docs/IMPLEMENTATION_REVIEW_2026-09-22.md](docs/IMPLEMENTATION_REVIEW_2026-09-22.md) | 既存実装の横断レビュー、根拠・再現・調査範囲 |
-| [docs/SCIENTIFIC_REVIEW_2026-10-13.md](docs/SCIENTIFIC_REVIEW_2026-10-13.md) | 科学的妥当性レビュー、解析再計算、入力と保存解の不整合の再現 |
-| [docs/REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md) | 科学レビュー後の修正・責務分離11カード。受入状態は計画とCURRENTを参照 |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | 依存順と受入基準を持つ開発計画 |
-| [docs/BACKLOG.md](docs/BACKLOG.md) | 実装タスクと現状 |
-| [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) | 受入範囲と日付ごとの実装履歴 |
-| [docs/development-plan/](docs/development-plan/README.md) | 未完了課題の作業カード一覧 |
-| [docs/RESEARCH.md](docs/RESEARCH.md) | 事前調査、既存OSS、採用判断 |
-| [docs/REFERENCES.md](docs/REFERENCES.md) / [docs/references.bib](docs/references.bib) | 文献・一次資料と BibTeX |
-| [docs/PROVENANCE.md](docs/PROVENANCE.md) | 参照制限、参照履歴、clean-room の限界 |
-| [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md) | 依存関係・ライセンス・再現環境 |
-| [docs/CODEX_HANDOFF.md](docs/CODEX_HANDOFF.md) | 作業引き継ぎの記録 |
+| 物理と数値の定義 | [PHYSICS.md](docs/PHYSICS.md) |
+| 構成と物理別入口 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| 入力・保存の契約 | [MODEL_CONTRACT.md](docs/MODEL_CONTRACT.md)・[INPUT_OUTPUT.md](docs/INPUT_OUTPUT.md)・[SAVE_COMPLETION.md](docs/SAVE_COMPLETION.md)・[MESH_INPUT.md](docs/MESH_INPUT.md)・[GENERAL_MESH.md](docs/GENERAL_MESH.md) |
+| GUI の操作 | [GUI_GUIDE.md](docs/GUI_GUIDE.md) |
+| 検証の再現 | [VALIDATION_REPORT.md](docs/VALIDATION_REPORT.md)・[INDEPENDENT_COMPARISON.md](docs/INDEPENDENT_COMPARISON.md)・[TESTING.md](docs/TESTING.md) |
+| 依存・環境 | [DEPENDENCIES.md](docs/DEPENDENCIES.md) |
+| 来歴・文献 | [PROVENANCE.md](docs/PROVENANCE.md)・[RESEARCH.md](docs/RESEARCH.md)・[REFERENCES.md](docs/REFERENCES.md) / [references.bib](docs/references.bib) |
+| 変更履歴 | [CHANGELOG.md](CHANGELOG.md) |
+| 開発計画・現状（内部） | [ROADMAP.md](docs/ROADMAP.md)・[BACKLOG.md](docs/BACKLOG.md)・[IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md)・[REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md)・[development-plan/](docs/development-plan/README.md) |
+| 作業引き継ぎ（内部） | [CODEX_HANDOFF.md](docs/CODEX_HANDOFF.md) |
+
+docs 全体の分類と読み方は [docs索引](docs/README.md) を参照してください。
+docs 直下の大半は作業カードごとの受入・実行記録（append-only）で、
+最新の現在地は [development-plan/CURRENT.md](docs/development-plan/CURRENT.md) と
+台帳の最上位項目で管理します。セッションの進捗要約は README に載せず、台帳へ追記します。
 
 ## 参照・来歴
 
-数学・公開論文・公式仕様・ライセンス互換な現代ライブラリのみを参照します。詳細と限界は
-[PROVENANCE.md](docs/PROVENANCE.md) を参照してください。
+数学・公開論文・公式仕様・ライセンス互換な現代ライブラリのみを参照します。
+参照履歴とその限界（歴史的なtwo-team分離によるmodel-training来歴は確立していないため
+clean-room実装とは呼ばない）は [PROVENANCE.md](docs/PROVENANCE.md) に記録しています。
 
 ## ライセンス
 
@@ -180,8 +198,4 @@ OPENBLAS_NUM_THREADS=1 python scripts/validate.py --skip-tests --out out/validat
 ## 開発への参加
 
 作業前に [AGENTS.md](AGENTS.md)、[CONTRIBUTING.md](CONTRIBUTING.md)、[CODEX_HANDOFF.md](docs/CODEX_HANDOFF.md) を読んでください。
-`docs/BACKLOG.md` から件を選び、受け入れ基準・変更対象テスト・証拠を記録してから実装します。
-
-[N02の幾何・表面診断器](docs/N02_GEOMETRY_SURFACE_MATRIX.md)は保存3×3行列の
-幾何/FEM/求積/元場/離散ピークを別判定し、原楕円の判定一致を確認した。
-新非球形・丸め形状の実精度受入は次のN03で継続する。
+[BACKLOG.md](docs/BACKLOG.md) から件を選び、受け入れ基準・変更対象テスト・証拠を記録してから実装します。
